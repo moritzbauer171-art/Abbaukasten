@@ -595,6 +595,12 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .bogen{width:297mm;height:210mm;background:#FFFFFF;display:flex;justify-content:space-between;position:relative}
 .bogen>.page{flex:0 0 148mm;box-shadow:none}
 .bogen::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:.3mm dashed #8E95A3}
+.bogen.buch::after,.bogen.buch::before{content:"";position:absolute;left:50%;height:5mm;border-left:.25mm solid #B8BEC9}
+.bogen.buch::after{top:0;bottom:auto}
+.bogen.buch::before{bottom:0}
+.bogen.buch>.page:first-child .pg-foot{flex-direction:row-reverse}
+.bogen.buch>.page+.page.d-akte::before,.bogen.buch>.page+.page.d-akte::after{display:none}
+.bogen.buch>.leer{flex:0 0 148mm}
 
 /* Tippkarten */
 .tk-page{padding:10mm;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif}
@@ -1714,7 +1720,7 @@ function renderOut() {
   if (state.out === 'blatt') {
     h += segHTML('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung, 'Fassung');
     if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp, 'Gruppe');
-    h += segHTML('paper', [['a4', 'A4'], ['a5x2', '2 × A5']], sh.meta.paper || 'a4', 'Papier');
+    h += segHTML('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4', 'Papier');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
   }
   $('#pv-opts').innerHTML = h;
@@ -1999,7 +2005,7 @@ function setAccent(node, meta) {
 let fontsOK = false;
 function layout() {
   const sh = state.sheet, meta = sh.meta; const v = sheetView();
-  const a5 = meta.paper === 'a5x2'; AVAIL = GEO[a5 ? 'a5' : 'a4'].avail * MMPX;
+  const buch = meta.paper === 'buch'; const a5 = meta.paper === 'a5x2' || buch; AVAIL = GEO[a5 ? 'a5' : 'a4'].avail * MMPX;
   const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5);
   const body = mp.querySelector('.pg-body'); body.innerHTML = '';
   const ctx = { m: 0, t: 0, meta, body, acc: pageAcc(meta).c, bg: pageBg(meta), view: v };
@@ -2024,6 +2030,16 @@ function layout() {
   });
   body.innerHTML = '';
   if (!a5) return out;
+  if (buch) {
+    // Wie ein aufgeschlagenes Buch: Seite 1 links, Seite 2 rechts, dann 3 und 4 usw.
+    const sheets = [];
+    for (let i = 0; i < out.length; i += 2) {
+      const bg = document.createElement('div'); bg.className = 'bogen buch'; bg.dataset.w = 297; bg.dataset.h = 210;
+      const r = out[i + 1]; bg.append(out[i].pg, r ? r.pg : el('<div class="leer"></div>'));
+      sheets.push({ pg: bg, over: out[i].over || !!(r && r.over) });
+    }
+    state.bookPages = out.length; return sheets;
+  }
   return out.map(o => { const bg = document.createElement('div'); bg.className = 'bogen'; bg.dataset.w = 297; bg.dataset.h = 210; bg.append(o.pg, o.pg.cloneNode(true), cutEl()); return { pg: bg, over: o.over }; });
 }
 
@@ -2041,10 +2057,13 @@ function renderPreview() {
     host.appendChild(slot);
   });
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
+  const buch = state.out === 'blatt' && state.sheet.meta.paper === 'buch';
   const kH = state.out === 'karten' && state.kkHalf;
   const [one, many, unit] = state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
   const cnt = state.out === 'karten' ? (state.kkCount || 0) : out.length;
-  $('#pagecount').textContent = `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
+  const nB = state.bookPages || 0;
+  $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`
+    : `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
   if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
   $('#pv-hint').hidden = !(state.out === 'blatt' && state.sheet.blocks.some(x => x.type === 'material' && String(x.text || '').trim()));
   renderOut(); applyScale(); markSel(); markZl();
@@ -2842,7 +2861,7 @@ async function deliver(name, blob) {
 async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || []); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
 const outSuffix = () => state.out === 'tipps' ? '_Tippkarten' : state.out === 'karten' ? '_Tafelkarten'
-  : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : '');
+  : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : state.sheet.meta.paper === 'buch' ? '_A5-Buch' : '');
 async function exportPDF() {
   if (busy) return;
   clearTimeout(renderTimer); renderPreview();

@@ -23,7 +23,8 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Zeilenangaben:** In der Vorschau auf eine Zeilennummer klicken (für einen Bereich danach auf die letzte Zeile) und die Angabe in das zuletzt benutzte Aufgaben- oder Erwartungsfeld einfügen.
 - **Einfügen aus PDFs:** Trennstriche am Zeilenende und mitkopierte Zeilennummern werden beim Einfügen entfernt.
 - **Genderzeichen:** Hinweis bei Sternchen, Doppelpunkt, Unterstrich oder Binnen-I in eigenen Texten, mit Vorschlag zum Ausschreiben.
-- **2 × A5:** Über der Vorschau „2 × A5“ wählen; jede Seite wird zweimal auf A4 quer gesetzt, mit Schnittlinie.
+- **A5 als Buch:** Über der Vorschau „A5 als Buch“ wählen. Das Blatt wird in A5 gesetzt, und je zwei aufeinanderfolgende Seiten stehen nebeneinander auf A4 quer, wie in einem aufgeschlagenen Buch (Seite 1 und 2, dann 3 und 4). Gut für längere literarische Texte. Seitenzahlen stehen außen, Falzmarken in der Mitte.
+- **A5 doppelt:** Jede A5-Seite wird zweimal auf A4 quer gesetzt, mit Schnittlinie, für halbe Blätter zum Austeilen.
 - **Operator-Check:** erkennt Operatoren in Sie- und du-Form und zeigt den Anforderungsbereich an. Grundlage ist der IQB-Grundstock Deutsch.
 - **Ausgabe:** PDF zum Drucken, Word-Datei (.docx) zum Weiterbearbeiten oder direkt drucken.
 - **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung laden“ spielt sie wieder ein, auch in einem anderen Browser.
