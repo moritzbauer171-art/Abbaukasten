@@ -842,6 +842,37 @@ function detectOps(text) {
   }
   return found;
 }
+// Operatoren in Großbuchstaben, nur in der Ausgabe. Der eingegebene Text bleibt, wie er ist.
+// Gleiche Erkennung wie detectOps; bei trennbaren Verben auch der zweite Teil (STELLEN Sie … DAR).
+function opCaps(text) {
+  const src = String(text || ''); if (!src) return src;
+  const toks = [...src.matchAll(/\p{L}+/gu)].map(m => ({ s: m.index, e: m.index + m[0].length, w: m[0].toLowerCase() }));
+  const sents = []; let cur = [];
+  toks.forEach((t, k) => { if (k && /[.!?;:]\s/.test(src.slice(toks[k - 1].e, t.s))) { sents.push(cur); cur = []; } cur.push(t); });
+  if (cur.length) sents.push(cur);
+  const mark = new Set();
+  for (const S of sents) {
+    const w = S.map(t => t.w);
+    for (let i = 0; i < w.length; i++) {
+      const sie = w[i + 1] === 'sie';
+      const du = !sie && (i === 0 || DU_LEAD.has(w[i - 1]));
+      if (!sie && !du) continue;
+      for (const o of OPS) {
+        const hit = sie ? (o.verb ? o.verb === w[i] && w.slice(i + 2).includes(o.part) : o.op === w[i])
+          : (o.imp === w[i] && (!o.part || w.slice(i + 1).includes(o.part)));
+        if (!hit) continue;
+        mark.add(S[i]);
+        if (o.part) { const j = w.indexOf(o.part, i + 1); if (j > 0) { mark.add(S[j]); if (o.part === 'beziehung' && w[j - 1] === 'in') mark.add(S[j - 1]); } }
+        break;
+      }
+    }
+  }
+  if (!mark.size) return src;
+  let out = '', p = 0;
+  toks.forEach(t => { if (mark.has(t)) { out += src.slice(p, t.s) + src.slice(t.s, t.e).toUpperCase(); p = t.e; } });
+  return out + src.slice(p);
+}
+const taskText = (it, meta) => meta && meta.opCaps === false ? (it.text || '') : opCaps(it.text);
 // Setzt einen Operator an den Anfang des ersten Satzes (Sie- oder du-Form); ein Operator dort wird ersetzt.
 function applyOperator(text, o, anrede) {
   const tpl = anrede === 'du' ? o.tplDu : o.tpl;
@@ -1696,7 +1727,7 @@ function ehMarkdown() {
     if (b.type !== 'tasks') return; if (b.restart) t = 0;
     b.items.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
-      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', `> ${plainMd(it.text) || '–'}`, '');
+      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', `> ${plainMd(taskText(it, m)) || '–'}`, '');
       const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
       const eh = ehLines(it);
@@ -1736,7 +1767,7 @@ function setOut(k) {
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: 'Georg-Herwegh-Gymnasium',
-    showName: true, showDate: true, showAFB: false, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
+    showName: true, showDate: true, showAFB: false, opCaps: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
@@ -1860,7 +1891,7 @@ function buildBlock(b, ctx) {
       const items = b.items.map((it, i) => {
         const r = opsRange(detectOps(it.text));
         const soz = hasSoz ? `<span class="task-soz">${SOZ[it.soz] ? `<img src="${sozURI(it.soz, ctx.acc, ctx.bg)}" alt="${SOZ[it.soz].label}" title="${SOZ[it.soz].label}">` : ''}</span>` : '';
-        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${inlineHTML(it.text) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view)}</span>${taskEH(it, ctx.view)}</div>`;
+        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${inlineHTML(taskText(it, meta)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view)}</span>${taskEH(it, ctx.view)}</div>`;
       }).join('');
       ctx.t += b.items.length;
       const n = put(`<div class="blk blk-tasks${hasSoz ? ' has-soz' : ''}">${b.title ? `<div class="tasks-title">${esc(b.title)}</div>` : ''}${items}</div>`);
@@ -2216,7 +2247,7 @@ function metaCard() {
         ${more ? `<div class="sub-b">
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
           <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
-          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}</div>
+          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}${fCheck('opCaps', 'Operatoren in GROSSBUCHSTABEN', m.opCaps !== false)}</div>
           <div class="chks">${fCheck('groupsOn', 'Gruppenblätter A und B', m.groupsOn)}</div>
           ${m.groupsOn ? `<div class="row">${fText('groupA', 'Zusatz Gruppe A', m.groupA, '')}${fText('groupB', 'Zusatz Gruppe B', m.groupB, '')}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte einer Gruppe zu. Ohne Zuordnung stehen sie auf beiden Blättern.</small>` : ''}
         </div>` : ''}</div>
@@ -3059,7 +3090,7 @@ async function exportDOCX() {
             const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null].filter(Boolean);
             const cells = xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp(sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : ''), { w: sW }) : '')
-              + xtc(xp((it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : '') + xrInline(it.text || '', { sz: 21 })), { w: tW })
+              + xtc(xp((it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : '') + xrInline(taskText(it, m), { sz: 21 })), { w: tW })
               + (afbW ? xtc(rt.map(([t, bold]) => xp(xr(t, { sz: bold ? 18 : 15, b: bold, color: bold ? '1C1F27' : GREY }), { jc: 'right' })).join('') || xp(''), { w: afbW }) : '');
             let row = xtr(cells, { cant: 1 });
             const eh = v.lehrer ? ehLines(it) : [];
