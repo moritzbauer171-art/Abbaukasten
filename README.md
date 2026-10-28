@@ -16,7 +16,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Lehrerfassung:** Unter jeder Aufgabe „Erwartung“ öffnen und Stichpunkte eintragen. Über der Vorschau zwischen Schüler- und Lehrerfassung wechseln; der Erwartungshorizont lässt sich auch als Markdown-Datei speichern.
 - **Gruppenblätter:** In „Weitere Einstellungen“ Gruppenblätter A und B einschalten, Bausteine über ⋯ einer Gruppe zuordnen und über der Vorschau Gruppe A oder B ausgeben.
 - **Gestufte Hilfen:** Unter jeder Aufgabe bis zu drei Tipps eintragen; sie erscheinen als Tippkarten zum Ausschneiden.
-- **Tafelkarten:** Begriff und Stichpunkte eintragen, heraus kommen Karten in A4 quer mit farbigem Rahmen und größtmöglicher Schrift.
+- **Tafelkarten:** Begriff und Stichpunkte eintragen, heraus kommen Karten mit farbigem Rahmen. Einstellbar sind das Format (A4 quer oder A5 quer, zwei pro Blatt), die Schriftgröße (größtmöglich, einheitlich oder fest in pt), die Aufteilung (Stichpunkte pro Karte oder höchstens so viele Wörter pro Karte) und ein Hinweis bei zu langen Stichpunkten.
 - **QR-Code:** Baustein für Videos und Online-Quellen, mit Titel und Quellenangabe.
 - **Klausur:** Im Kopf „Klausur“ wählen. Die erste Seite wird zum Deckblatt (ohne Thema-Feld und Hinweiskasten), die Gewichtung steht bei den Aufgaben.
 - **Sammlung:** Bausteine über ⋯ speichern und in jedes Blatt einfügen; eine Operatorenübersicht ist vorbereitet.

@@ -283,6 +283,12 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .kk-sw{display:flex;flex-wrap:wrap;gap:8px}
 .kk-sw button{width:24px;height:24px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line-strong);cursor:pointer}
 .kk-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink)}
+.kk-set{display:flex;flex-direction:column;gap:10px}
+.kk-grp{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px 12px 12px;background:var(--panel)}
+.kk-gh{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.kk-grp .seg{flex-wrap:wrap}
+.kk-grp .f small{font-size:11.5px;color:var(--faint)}
+.f.kk-pt{max-width:170px}
 
 /* ---------- Bibliothek ---------- */
 .scrim{position:fixed;inset:0;background:rgba(10,14,24,.38);z-index:40}
@@ -598,6 +604,11 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .kk-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.42em}
 .kk-list li{position:relative;padding-left:.85em}
 .kk-list li::before{content:"";position:absolute;left:0;top:.4em;width:.36em;height:.36em;border-radius:50%;background:var(--kc)}
+.kk-page.a5{width:210mm;height:148.5mm;padding:6mm}
+.kk-page.a5 .kk-frame{border-width:1.8mm;border-radius:5mm;padding:8mm 11mm}
+.kk-sheet{width:210mm;height:297mm;background:#FFFFFF;display:flex;flex-direction:column;position:relative}
+.kk-sheet>.kk-page{flex:0 0 148.5mm}
+.kk-sheet::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:.25mm dashed #9AA0AA}
 #fit-host{position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;z-index:-1}
 
 /* Mess- und Druckbühne */
@@ -1301,6 +1312,7 @@ function fitUp(inner, frame, maxPx) {
   let lo = 8, hi = maxPx;
   if (ok(hi)) lo = hi; else for (let k = 0; k < 18; k++) { const mid = (lo + hi) / 2; if (ok(mid)) lo = mid; else hi = mid; }
   inner.style.fontSize = Math.floor(lo) + 'px';
+  return Math.floor(lo);
 }
 
 /* ================= Tippkarten (gestufte Hilfen) ================= */
@@ -1325,34 +1337,86 @@ function layoutTipps() {
 
 /* ================= Tafelkarten (A4 quer) ================= */
 const TK_COLORS = ['#1F4FA0', '#0D6767', '#8A2A3E', '#B45309', '#5B3F99', '#2F6B2F', '#383C44'];
-function karteChunks(c, per) {
+const KK_DEF = { format: 'a4', font: 'max', pt: 60, split: 'points', per: 3, words: 8, warn: 0 };
+const kkOf = meta => ({ ...KK_DEF, per: Number(meta.cardsPer) || 3, ...(meta.kk || {}) });
+const wordCount = s => String(s).trim().split(/\s+/).filter(Boolean).length;
+const kkLines = c => String(c.points || '').split('\n').map(s => s.trim().replace(/^[-–•*]\s*/, '')).filter(Boolean);
+// Stichpunkte auf Karten verteilen: nach Anzahl Stichpunkte oder nach Wortzahl; Leerzeile = neue Karte
+function karteChunks(c, kk) {
   const groups = String(c.points || '').replace(/\r/g, '').split(/\n\s*\n/)
     .map(g => g.split('\n').map(s => s.trim().replace(/^[-–•*]\s*/, '')).filter(Boolean)).filter(g => g.length);
-  const out = []; groups.forEach(g => { for (let i = 0; i < g.length; i += per) out.push(g.slice(i, i + per)); });
+  const out = [];
+  groups.forEach(g => {
+    if (kk.split === 'words') {
+      let cur = [], n = 0;
+      g.forEach(x => { const w = wordCount(x); if (cur.length && n + w > kk.words) { out.push(cur); cur = []; n = 0; } cur.push(x); n += w; });
+      if (cur.length) out.push(cur);
+    } else for (let i = 0; i < g.length; i += kk.per) out.push(g.slice(i, i + kk.per));
+  });
   return out;
 }
 function layoutKarten() {
-  const sh = state.sheet; const per = Number(sh.meta.cardsPer) || 3; const pages = []; const host = $('#fit-host');
+  const sh = state.sheet; const kk = kkOf(sh.meta); const a5 = kk.format === 'a5'; const host = $('#fit-host'); const PT = 96 / 72;
+  const cards = [];
   (sh.cards || []).forEach((c, ci) => {
     const col = c.color || TK_COLORS[ci % TK_COLORS.length];
-    const mk = (inner, term) => el(`<div class="page kk-page" data-w="297" data-h="210" style="--kc:${col}"><div class="kk-frame"><div class="kk-in${term ? ' term' : ''}">${inner}</div></div></div>`);
-    pages.push(mk(`<div class="kk-term">${esc(c.term || 'Begriff')}</div>`, true));
-    karteChunks(c, per).forEach(ch => pages.push(mk(`<ul class="kk-list">${ch.map(s => `<li>${inlineHTML(s)}</li>`).join('')}</ul>`)));
+    const mk = (inner, term) => el(`<div class="page kk-page${a5 ? ' a5' : ''}" data-w="${a5 ? 210 : 297}" data-h="${a5 ? 148.5 : 210}" style="--kc:${col}"><div class="kk-frame"><div class="kk-in${term ? ' term' : ''}">${inner}</div></div></div>`);
+    cards.push({ el: mk(`<div class="kk-term">${esc(c.term || 'Begriff')}</div>`, true), term: true, cid: c.id });
+    karteChunks(c, kk).forEach(ch => cards.push({ el: mk(`<ul class="kk-list">${ch.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>`, false), term: false, cid: c.id }));
   });
-  pages.forEach(pg => { host.appendChild(pg); fitUp(pg.querySelector('.kk-in'), pg.querySelector('.kk-frame'), pg.querySelector('.kk-in.term') ? 340 : 150); host.removeChild(pg); });
-  return pages.map(pg => ({ pg, over: false }));
+  cards.forEach(k => {
+    host.appendChild(k.el); k.inner = k.el.querySelector('.kk-in');
+    k.fit = fitUp(k.inner, k.el.querySelector('.kk-frame'), k.term ? (a5 ? 240 : 340) : kk.font === 'fixed' ? Math.max(20, (Number(kk.pt) || 60) * PT) : (a5 ? 110 : 150));
+  });
+  if (kk.font !== 'max') {
+    const minOf = arr => arr.length ? Math.min(...arr.map(k => k.fit)) : 0;
+    const tMin = minOf(cards.filter(k => k.term)), bMin = minOf(cards.filter(k => !k.term));
+    cards.forEach(k => {
+      let px = k.term ? tMin : (kk.font === 'fixed' ? (Number(kk.pt) || 60) * PT : bMin);
+      if (!k.term && kk.font === 'fixed' && px > k.fit + .5) { k.over = true; px = k.fit; }
+      k.inner.style.fontSize = Math.floor(px) + 'px';
+    });
+  }
+  cards.forEach(k => host.removeChild(k.el));
+  state.kkOver = cards.filter(k => k.over).length;
+  state.kkCount = cards.length;
+  if (!a5) return cards.map(k => ({ pg: k.el, over: false }));
+  const sheets = [];
+  for (let i = 0; i < cards.length; i += 2) {
+    const sht = el('<div class="kk-sheet" data-w="210" data-h="297"></div>');
+    sht.append(cards[i].el); if (cards[i + 1]) sht.append(cards[i + 1].el);
+    sheets.push({ pg: sht, over: false });
+  }
+  return sheets;
 }
 function kartenEditor() {
   const sh = state.sheet; if (!Array.isArray(sh.cards)) sh.cards = [];
-  const cards = sh.cards; const per = Number(sh.meta.cardsPer) || 3;
-  const total = cards.reduce((n, c) => n + 1 + karteChunks(c, per).length, 0);
-  return `<div class="card" data-bid="karten"><div class="card-h"><span class="kind">Tafelkarten</span><span class="sum">${cards.length} ${cards.length === 1 ? 'Begriff' : 'Begriffe'} · ${total} ${total === 1 ? 'Karte' : 'Karten'} · A4 quer</span></div>
+  const cards = sh.cards; const kk = kkOf(sh.meta);
+  const nOf = c => 1 + karteChunks(c, kk).length;
+  const total = cards.reduce((n, c) => n + nOf(c), 0);
+  const seg = (f, opts, label) => `<div class="seg" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-act="kk-set" data-f="${f}" data-v="${v}" aria-pressed="${String(kk[f]) === String(v)}">${l}</button>`).join('')}</div>`;
+  const fontHint = { max: 'Jede Karte so groß, wie der Platz erlaubt.', uniform: 'Alle Stichpunkt-Karten gleich groß, bestimmt von der vollsten Karte. Begriffskarten ebenso.', fixed: 'Feste Größe für die Stichpunkte. Zu volle Karten werden verkleinert.' }[kk.font];
+  return `<div class="card" data-bid="karten"><div class="card-h"><span class="kind">Tafelkarten</span><span class="sum">${cards.length} ${cards.length === 1 ? 'Begriff' : 'Begriffe'} · ${total} ${total === 1 ? 'Karte' : 'Karten'} · ${kk.format === 'a5' ? 'A5 quer' : 'A4 quer'}</span></div>
     <div class="card-b">${gNote('karten')}
-      <div class="f"><span>Stichpunkte pro Karte</span><div class="seg" role="group" aria-label="Stichpunkte pro Karte">${[2, 3, 4].map(n => `<button type="button" data-act="kk-per" data-v="${n}" aria-pressed="${per === n}">${n}</button>`).join('')}</div></div>
-      <small class="hint">Der Begriff steht allein auf der ersten Karte, die Stichpunkte folgen auf eigenen Karten. Eine Leerzeile zwischen Stichpunkten beginnt eine neue Karte. Die Schrift wird so groß wie möglich gesetzt.</small>
+      <div class="kk-set">
+        <div class="kk-grp"><span class="kk-gh">Größe</span>
+          <div class="f"><span>Kartenformat</span>${seg('format', [['a4', 'A4 quer'], ['a5', 'A5 quer · 2 pro Blatt']], 'Kartenformat')}</div>
+          <div class="f"><span>Schriftgröße</span>${seg('font', [['max', 'Größtmöglich'], ['uniform', 'Einheitlich'], ['fixed', 'Fest']], 'Schriftgröße')}<small>${fontHint}</small></div>
+          ${kk.font === 'fixed' ? `<label class="f kk-pt"><span>Stichpunkte in pt</span><input type="number" min="20" max="140" step="2" data-k="meta.kk.pt" value="${esc(kk.pt)}"></label>` : ''}
+          <div data-kkover></div>
+        </div>
+        <div class="kk-grp"><span class="kk-gh">Wörter</span>
+          <div class="f"><span>Karten aufteilen</span>${seg('split', [['points', 'Nach Stichpunkten'], ['words', 'Nach Wörtern']], 'Aufteilung')}</div>
+          ${kk.split === 'words'
+            ? `<div class="f"><span>Höchstens Wörter pro Karte</span>${seg('words', [4, 6, 8, 10, 12, 15].map(n => [n, n]), 'Wörter pro Karte')}<small>Ein Stichpunkt wird nie zerteilt. Ist er allein schon länger, bekommt er eine eigene Karte.</small></div>`
+            : `<div class="f"><span>Stichpunkte pro Karte</span>${seg('per', [1, 2, 3, 4, 5, 6].map(n => [n, n]), 'Stichpunkte pro Karte')}</div>`}
+          <div class="f"><span>Hinweis bei langen Stichpunkten</span>${seg('warn', [[0, 'aus'], [3, 'mehr als 3 Wörter'], [5, 'mehr als 5'], [8, 'mehr als 8']], 'Hinweis bei langen Stichpunkten')}</div>
+        </div>
+      </div>
+      <small class="hint">Der Begriff steht allein auf der ersten Karte, die Stichpunkte folgen auf eigenen Karten. Eine Leerzeile zwischen Stichpunkten beginnt immer eine neue Karte.</small>
     </div></div>
-    ${cards.map((c, i) => { const col = c.color || TK_COLORS[i % TK_COLORS.length]; return `<div class="card kk-card" data-bid="karten">
-      <div class="card-h"><span class="kk-dot" style="background:${col}"></span><span class="kind">Begriff ${i + 1}</span><span class="sum">${esc(c.term || 'ohne Begriff')}</span>
+    ${cards.map((c, i) => { const col = c.color || TK_COLORS[i % TK_COLORS.length]; const n = nOf(c); return `<div class="card kk-card" data-bid="karten">
+      <div class="card-h"><span class="kk-dot" style="background:${col}"></span><span class="kind">Begriff ${i + 1}</span><span class="sum">${esc(c.term || 'ohne Begriff')} · ${n} ${n === 1 ? 'Karte' : 'Karten'}</span>
         <button class="ib" type="button" data-act="kk-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
         <button class="ib" type="button" data-act="kk-down" data-i="${i}" title="Nach unten"${i === cards.length - 1 ? ' disabled' : ''}>${I.down}</button>
         <button class="ib" type="button" data-act="kk-del" data-i="${i}" title="Begriff löschen">${I.del}</button></div>
@@ -1360,13 +1424,16 @@ function kartenEditor() {
         ${fText(`cards.${i}.term`, 'Begriff', c.term, 'z. B. Dogwhistling')}
         <div class="f"><span>Farbe</span><div class="kk-sw">${TK_COLORS.map(x => `<button type="button" data-act="kk-color" data-i="${i}" data-v="${x}" aria-pressed="${col === x}" style="background:${x}" aria-label="Farbe ${x}"></button>`).join('')}</div></div>
         ${fArea(`cards.${i}.points`, 'Stichpunkte', c.points, 5, 'Ein Stichpunkt pro Zeile')}
-        <div data-kw="${i}">${colonWarn(c)}</div>
+        <div data-kw="${i}">${kkWarn(c, kk)}</div>
       </div></div>`; }).join('')}
     <div class="adder"><button type="button" class="btn primary" data-act="kk-add">+ Begriff</button></div>`;
 }
-function colonWarn(c) {
-  const n = String(c.points || '').split('\n').filter(s => s.includes(':')).length;
-  return n ? `<small class="gl-warn">${n} ${n === 1 ? 'Stichpunkt enthält' : 'Stichpunkte enthalten'} einen Doppelpunkt. Kürzer und ohne Doppelpunkt wirkt an der Tafel klarer.</small>` : '';
+function kkWarn(c, kk) {
+  const lines = kkLines(c); const out = [];
+  const colon = lines.filter(x => x.includes(':')).length;
+  if (colon) out.push(`${colon} ${colon === 1 ? 'Stichpunkt enthält' : 'Stichpunkte enthalten'} einen Doppelpunkt. Kürzer und ohne Doppelpunkt wirkt an der Tafel klarer.`);
+  if (kk.warn) { const long = lines.filter(x => wordCount(x) > kk.warn); if (long.length) out.push(`Mehr als ${kk.warn} Wörter: ${long.map(x => `„${esc(x.length > 42 ? x.slice(0, 42) + '…' : x)}“ (${wordCount(x)})`).join(', ')}`); }
+  return out.map(x => `<small class="gl-warn">${x}</small>`).join('');
 }
 
 /* ================= Bausteinsammlung ================= */
@@ -1608,7 +1675,7 @@ function defaultMeta(nr, klasse) {
   return { nr: nr || '', title: '', topic: '', course: k.course, school: 'Georg-Herwegh-Gymnasium',
     showName: true, showDate: true, showAFB: false, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
-    groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3 };
+    groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
 function newBlock(type) {
   const id = 'b' + uid();
@@ -1666,6 +1733,7 @@ function normalizeSheet(sh) {
   sh.blocks.forEach(b => { if (b && b.type === 'material') migrateGlossary(b); });
   if (!Array.isArray(sh.cards)) sh.cards = [];
   sh.meta.exam = { ...defaultMeta('', sh.klasse).exam, ...(sh.meta.exam || {}) };
+  sh.meta.kk = kkOf(sh.meta);
   return sh;
 }
 
@@ -1916,8 +1984,11 @@ function renderPreview() {
     host.appendChild(slot);
   });
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
-  const [one, many, unit] = state.out === 'karten' ? ['Karte', 'Karten', 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
-  $('#pagecount').textContent = `${out.length} ${out.length === 1 ? one : many} · ${unit}`;
+  const kA5 = state.out === 'karten' && kkOf(state.sheet.meta).format === 'a5';
+  const [one, many, unit] = state.out === 'karten' ? ['Karte', 'Karten', kA5 ? 'A5 quer' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  const cnt = kA5 ? (state.kkCount || 0) : out.length;
+  $('#pagecount').textContent = `${cnt} ${cnt === 1 ? one : many}${kA5 ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
+  if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
   $('#pv-hint').hidden = !(state.out === 'blatt' && state.sheet.blocks.some(x => x.type === 'material' && String(x.text || '').trim()));
   renderOut(); applyScale(); markSel(); markZl();
 }
@@ -2120,13 +2191,13 @@ function onInput(e) {
   const t = e.target; const k = t.dataset.k; if (!k) return;
   if (t.type === 'checkbox' || t.tagName === 'SELECT' || t.type === 'file') return;
   const card = t.closest('[data-bid]'); if (!card) return;
-  let v = t.value; if (t.type === 'number') { v = Math.max(1, Math.min(40, parseInt(v, 10) || 1)); }
+  let v = t.value; if (t.type === 'number') { const lo = Number(t.min) || 1, hi = Number(t.max) || 40; v = Math.max(lo, Math.min(hi, parseInt(v, 10) || lo)); }
   setPath(target(card.dataset.bid), k, v);
   const m = k.match(/^items\.(\d+)\.text$/);
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
   if (k === 'text') { const blk = target(card.dataset.bid); const box = card.querySelector('[data-gl]'); if (blk && blk.type === 'material' && box) box.outerHTML = glossRows(blk); }
   const gn = document.querySelector(`#editor [data-gn="${card.dataset.bid}"]`); if (gn) gn.outerHTML = gNote(card.dataset.bid);
-  const kw = k.match(/^cards\.(\d+)\.points$/); if (kw) { const box = document.querySelector(`#editor [data-kw="${kw[1]}"]`); if (box) box.innerHTML = colonWarn(state.sheet.cards[+kw[1]]); }
+  const kw = k.match(/^cards\.(\d+)\.points$/); if (kw) { const box = document.querySelector(`#editor [data-kw="${kw[1]}"]`); if (box) box.innerHTML = kkWarn(state.sheet.cards[+kw[1]], kkOf(state.sheet.meta)); }
   if (k === 'url') { const qw = card.querySelector('[data-qrw]'); if (qw) qw.innerHTML = qrWarn(target(card.dataset.bid)); }
   changed(false);
 }
@@ -2219,7 +2290,7 @@ function onClick(e) {
     case 'kk-del': { const i = +a.dataset.i; snapshot(); const c = state.sheet.cards.splice(i, 1)[0]; changed(true); toast(`Begriff „${c.term || 'ohne Begriff'}“ gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); return; }
     case 'kk-up': case 'kk-down': { const cs = state.sheet.cards; const i = +a.dataset.i, j = act === 'kk-up' ? i - 1 : i + 1; if (j < 0 || j >= cs.length) return; [cs[i], cs[j]] = [cs[j], cs[i]]; changed(true); return; }
     case 'kk-color': state.sheet.cards[+a.dataset.i].color = a.dataset.v; changed(true); return;
-    case 'kk-per': state.sheet.meta.cardsPer = +a.dataset.v; changed(true); return;
+    case 'kk-set': { const m = state.sheet.meta; const f = a.dataset.f; m.kk = { ...kkOf(m), [f]: ['per', 'words', 'warn'].includes(f) ? +a.dataset.v : a.dataset.v }; changed(true); return; }
     case 'gl-add': glossFromTextarea(card, b, a); return;
     case 'gl-edit': { const i = +a.dataset.i; const g = b.glossary && b.glossary[i]; if (g) openGloss({ bid, term: normTerm(g.term), n: g.n || 0, count: occurrences(b.text, g.term).length, idx: i, rect: rectOf(a) }); return; }
     case 'gl-remove': removeGloss(b, +a.dataset.i); return;
