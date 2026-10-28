@@ -8,12 +8,13 @@ ohne Internet läuft. Benötigt: Python 3 mit Pillow, git, unzip. Alles Weitere 
 beim ersten Lauf nach .cache/ (Electron von GitHub, Schriften aus google/fonts, jsPDF, JSZip,
 html2canvas, pefile).
 """
-import pathlib, re, shutil, struct, subprocess, sys, urllib.request, zipfile
+import json, os, pathlib, re, shutil, struct, subprocess, sys, urllib.request, zipfile
 
 D = pathlib.Path(__file__).resolve().parent
 ROOT = D.parent; SRC = D; DL = D / '.cache'; OUT = D / 'out'
 EV = 'v44.10.0'
-VERSION = (SRC / 'package.json').read_text().split('"version": "')[1].split('"')[0]
+PKG = json.loads((SRC / 'package.json').read_text())
+VERSION = os.environ.get('AB_VERSION') or PKG['version']   # GitHub Actions setzt z. B. 1.0.17
 
 # ---------- 0. Zutaten laden (einmalig) ----------
 def get(url, dst):
@@ -102,7 +103,8 @@ def assemble(platform, zipname, exe_from, exe_to):
         if f.name not in keep and f.suffix == '.pak': f.unlink()
     dst = tgt / 'resources' / 'app'
     dst.mkdir()
-    for f in ('main.js', 'preload.js', 'package.json'): shutil.copy(SRC / f, dst / f)
+    for f in ('main.js', 'preload.js'): shutil.copy(SRC / f, dst / f)
+    (dst / 'package.json').write_text(json.dumps({**PKG, 'version': VERSION}, ensure_ascii=False, indent=2))
     shutil.copytree(app, dst / 'app')
     (dst / 'build').mkdir()
     for f in ('icon.ico', 'icon-256.png'): shutil.copy(SRC / 'build' / f, dst / 'build' / f)
@@ -193,7 +195,7 @@ patch_exe(win / 'AB-Werkstatt.exe')
     'und dann "Trotzdem ausführen" klicken. Die Meldung kommt, weil die App nicht kostenpflichtig signiert ist.\r\n\r\n'
     'Ihre Blätter liegen in %APPDATA%\\AB-Werkstatt (Hilfe > Datenordner öffnen).\r\n'
     'Eine neue Version einfach über den alten Ordner entpacken oder daneben legen; die Blätter bleiben erhalten.\r\n', encoding='utf-8')
-zp = OUT / f'AB-Werkstatt-{VERSION}-Windows-x64.zip'
+zp = OUT / 'AB-Werkstatt-Windows-x64.zip'
 zipdir(win, zp)
 print('Windows:', zp, round(zp.stat().st_size / 1e6, 1), 'MB')
 if '--linux' in sys.argv:

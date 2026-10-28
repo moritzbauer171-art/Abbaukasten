@@ -1,0 +1,44 @@
+# Baut die Windows-App bei jeder Änderung an der Seite oder am Desktop-Ordner
+# und legt sie als Download unter Releases ab (immer gleicher Link, siehe README).
+name: Windows-App
+
+on:
+  push:
+    branches: [main]
+    paths: ['index.html', 'desktop/**', '.github/workflows/windows-app.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: windows-app
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Bauen
+        working-directory: desktop
+        run: |
+          export AB_VERSION="$(python3 -c "import json;print(json.load(open('package.json'))['version'].rsplit('.',1)[0])").${{ github.run_number }}"
+          echo "AB_VERSION=$AB_VERSION" >> "$GITHUB_ENV"
+          python3 build_desktop.py
+      - name: Als Release ablegen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="Windows 10 und 11, 64 Bit, ohne Installation. ZIP entpacken (Ordner zusammenlassen) und AB-Werkstatt.exe doppelklicken. Meldet Windows „Der Computer wurde durch Windows geschützt“: „Weitere Informationen“ → „Trotzdem ausführen“. Die Blätter bleiben bei neuen Versionen erhalten (%APPDATA%\\AB-Werkstatt). Version $AB_VERSION, Stand ${GITHUB_SHA::7}."
+          git tag -f windows && git push -f origin windows
+          if gh release view windows >/dev/null 2>&1; then
+            gh release upload windows desktop/out/AB-Werkstatt-Windows-x64.zip --clobber
+            gh release edit windows --title "AB-Werkstatt für Windows ($AB_VERSION)" --notes "$NOTES" --latest
+          else
+            gh release create windows desktop/out/AB-Werkstatt-Windows-x64.zip --title "AB-Werkstatt für Windows ($AB_VERSION)" --notes "$NOTES" --latest
+          fi

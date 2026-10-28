@@ -34,7 +34,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 Die AB-Werkstatt gibt es auch als Programm für Windows 10 und 11. Es läuft ohne Internet, weil alle Schriften und Hilfsprogramme mitgeliefert werden.
 
-1. Unter [Releases](https://github.com/moritzbauer171-art/Abbaukasten/releases/latest) die Datei `AB-Werkstatt-…-Windows-x64.zip` herunterladen.
+1. [AB-Werkstatt-Windows-x64.zip herunterladen](https://github.com/moritzbauer171-art/Abbaukasten/releases/latest/download/AB-Werkstatt-Windows-x64.zip) (etwa 150 MB). Der Link bleibt gleich und liefert immer die neueste Version.
 2. Die ZIP-Datei entpacken, etwa nach `Dokumente\AB-Werkstatt`. Der Ordner muss zusammenbleiben.
 3. `AB-Werkstatt.exe` doppelklicken. Beim ersten Start fragt die App, ob sie Verknüpfungen auf dem Desktop und im Startmenü anlegen soll.
 
@@ -47,9 +47,9 @@ Unterschiede zur Webseite:
 - **Drucken** öffnet den Windows-Druckdialog mit der richtigen Ausrichtung. Bei gemischten Hoch- und Querseiten öffnet sich stattdessen das PDF zum Drucken.
 - **Rechtschreibprüfung** auf Deutsch mit Vorschlägen per Rechtsklick.
 - Die Blätter liegen in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung laden“.
-- Neue Versionen aktualisieren sich nicht von selbst. Die neue ZIP-Datei einfach entpacken; die Blätter bleiben erhalten.
+- Neue Versionen aktualisieren sich nicht von selbst. Die neue ZIP-Datei über den alten Ordner entpacken; die Blätter bleiben erhalten. Die Versionsnummer steht unter Hilfe → Über AB-Werkstatt.
 
-Selbst bauen: im Ordner `desktop/` `python3 build_desktop.py` ausführen (braucht Python 3 mit Pillow, git und unzip; der Rest wird automatisch geladen).
+Die ZIP-Datei baut GitHub nach jeder Änderung an `index.html` oder `desktop/` selbst neu (Reiter „Actions“, Ablauf „Windows-App“). Von Hand bauen: im Ordner `desktop/` `python3 build_desktop.py` ausführen (braucht Python 3 mit Pillow, git und unzip; der Rest wird automatisch geladen).
 
 ## Wo die Blätter liegen
 
