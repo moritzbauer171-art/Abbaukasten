@@ -1,0 +1,8 @@
+{
+  "name": "ab-werkstatt",
+  "productName": "AB-Werkstatt",
+  "version": "1.0.0",
+  "description": "Arbeitsblätter, Tippkarten und Tafelkarten für den Deutschunterricht setzen und drucken",
+  "main": "main.js",
+  "license": "MIT"
+}

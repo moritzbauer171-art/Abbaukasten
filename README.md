@@ -30,6 +30,27 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Ausgabe:** PDF zum Drucken, Word-Datei (.docx) zum Weiterbearbeiten oder direkt drucken.
 - **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung laden“ spielt sie wieder ein, auch in einem anderen Browser.
 
+## Windows-App
+
+Die AB-Werkstatt gibt es auch als Programm für Windows 10 und 11. Es läuft ohne Internet, weil alle Schriften und Hilfsprogramme mitgeliefert werden.
+
+1. Unter [Releases](https://github.com/moritzbauer171-art/Abbaukasten/releases/latest) die Datei `AB-Werkstatt-…-Windows-x64.zip` herunterladen.
+2. Die ZIP-Datei entpacken, etwa nach `Dokumente\AB-Werkstatt`. Der Ordner muss zusammenbleiben.
+3. `AB-Werkstatt.exe` doppelklicken. Beim ersten Start fragt die App, ob sie Verknüpfungen auf dem Desktop und im Startmenü anlegen soll.
+
+Meldet Windows „Der Computer wurde durch Windows geschützt“, auf „Weitere Informationen“ und dann „Trotzdem ausführen“ klicken. Die Meldung erscheint, weil die App keine kostenpflichtige Signatur hat.
+
+Unterschiede zur Webseite:
+
+- **PDF** wird als echtes Text-PDF gespeichert: scharf in jeder Größe, Text markierbar, Hoch- und Querseiten gemischt möglich.
+- **Speichern** fragt immer nach dem Ort (Standard: Dokumente). Danach lässt sich die Datei direkt öffnen oder der Ordner anzeigen.
+- **Drucken** öffnet den Windows-Druckdialog mit der richtigen Ausrichtung. Bei gemischten Hoch- und Querseiten öffnet sich stattdessen das PDF zum Drucken.
+- **Rechtschreibprüfung** auf Deutsch mit Vorschlägen per Rechtsklick.
+- Die Blätter liegen in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung laden“.
+- Neue Versionen aktualisieren sich nicht von selbst. Die neue ZIP-Datei einfach entpacken; die Blätter bleiben erhalten.
+
+Selbst bauen: im Ordner `desktop/` `python3 build_desktop.py` ausführen (braucht Python 3 mit Pillow, git und unzip; der Rest wird automatisch geladen).
+
 ## Wo die Blätter liegen
 
 Solange die Online-Ablage ausgeschaltet ist, speichert die Seite **nur im Browser**, in dem Sie arbeiten. Wer den Browserverlauf samt Websitedaten löscht, löscht auch die Blätter. Deshalb ab und zu eine Sicherung herunterladen.
@@ -50,4 +71,5 @@ Solange die Online-Ablage ausgeschaltet ist, speichert die Seite **nur im Browse
 ## Dateien
 
 - `index.html`: die ganze Anwendung in einer Datei
+- `desktop/`: Windows-App (Electron) mit Bauskript
 - `supabase/schema.sql`: Tabelle und Zugriffsregeln für die Online-Ablage

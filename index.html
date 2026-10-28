@@ -645,6 +645,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   #app,.toast,.overlay,.drawer,.scrim{display:none!important}
   #printroot{display:block}
   #printroot>.pout{break-after:page;box-shadow:none}
+  #printroot>.pout:last-child{break-after:auto}
+  body>*:not(#printroot){display:none!important}
   #printroot .page{box-shadow:none}
 }
 </style>
@@ -2882,6 +2884,15 @@ function loadScript(src) {
 }
 const fileBase = () => { const m = state.sheet.meta; return (m.nr ? 'AB' + slug(m.nr) + '_' : '') + slug(m.title); };
 async function deliver(name, blob) {
+  if (window.abDesktop) {
+    try {
+      const r = await window.abDesktop.save(name, new Uint8Array(await blob.arrayBuffer()));
+      if (r && r.ok) toast(`${r.name} gespeichert`, 'Ordner öffnen', () => window.abDesktop.reveal(r.path));
+      else if (r && r.canceled) toast('Speichern abgebrochen');
+      else toast('Die Datei konnte nicht gespeichert werden.');
+    } catch (err) { console.error(err); toast('Die Datei konnte nicht gespeichert werden.'); }
+    return;
+  }
   if (store.dl) {
     try { await store.dl.save({ filename: name, data: blob }); toast(`${name} gespeichert`); return; }
     catch (err) {
@@ -2907,6 +2918,19 @@ async function exportPDF() {
   const pages = [...document.querySelectorAll('#pages .pout')];
   if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : 'Es gibt noch keine Tafelkarten.'); return; }
   busy = true;
+  if (window.abDesktop) {
+    try {
+      overlay('PDF wird erstellt …'); await fontsIn(document);
+      const info = preparePrint(); if (!info) return;
+      const r = await window.abDesktop.pdf(info);
+      overlay('');
+      if (r && r.ok) toast(`${r.name} gespeichert`, 'Öffnen', () => window.abDesktop.open(r.path));
+      else if (r && r.canceled) toast('Speichern abgebrochen');
+      else toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.');
+    } catch (err) { console.error(err); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
+    finally { overlay(''); busy = false; }
+    return;
+  }
   try {
     overlay('PDF wird vorbereitet …');
     await Promise.all([loadScript(LIBS.h2c), loadScript(LIBS.pdf)]);
@@ -3202,15 +3226,20 @@ function applyResponsive() {
   applyScale();
 }
 function doPrint() {
+  const info = preparePrint(); if (!info) return;
+  if (window.abDesktop) { window.abDesktop.print(info).then(r => { if (r === 'pdf') toast('Hoch- und Querseiten gemischt: Das PDF ist zum Drucken geöffnet.'); }).catch(err => console.error(err)); return; }
+  window.print();
+}
+function preparePrint() {
   const pr = $('#printroot'); pr.innerHTML = '';
-  const pages = [...document.querySelectorAll('#pages .pout')]; if (!pages.length) { toast('Es gibt noch nichts zu drucken.'); return; }
+  const pages = [...document.querySelectorAll('#pages .pout')]; if (!pages.length) { toast('Es gibt noch nichts zu drucken.'); return null; }
   const w = +pages[0].dataset.w || 210, h = +pages[0].dataset.h || 297;
   let st = document.getElementById('print-size'); if (!st) { st = document.createElement('style'); st.id = 'print-size'; document.head.appendChild(st); }
   const ori = p => (+p.dataset.w || 210) > (+p.dataset.h || 297) ? 'quer' : 'hoch';
   const mixed = new Set(pages.map(ori)).size > 1;
   st.textContent = mixed ? '@media print{@page{margin:0}@page quer{size:297mm 210mm;margin:0}@page hoch{size:210mm 297mm;margin:0}}' : `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
   pages.forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; if (mixed) c.style.setProperty('page', ori(p)); c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); pr.appendChild(c); });
-  window.print();
+  return { mixed, landscape: !mixed && w > h, n: pages.length, name: fileBase() + outSuffix() + '.pdf' };
 }
 
 /* ================= Start ================= */
