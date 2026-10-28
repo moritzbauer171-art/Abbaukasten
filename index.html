@@ -842,9 +842,9 @@ function detectOps(text) {
   }
   return found;
 }
-// Operatoren in Großbuchstaben, nur in der Ausgabe. Der eingegebene Text bleibt, wie er ist.
-// Gleiche Erkennung wie detectOps; bei trennbaren Verben auch der zweite Teil (STELLEN Sie … DAR).
-function opCaps(text) {
+// Operatoren fett, nur in der Ausgabe. Der eingegebene Text bleibt, wie er ist.
+// Gleiche Erkennung wie detectOps; bei trennbaren Verben auch der zweite Teil (**Stellen** Sie … **dar**).
+function opBold(text) {
   const src = String(text || ''); if (!src) return src;
   const toks = [...src.matchAll(/\p{L}+/gu)].map(m => ({ s: m.index, e: m.index + m[0].length, w: m[0].toLowerCase() }));
   const sents = []; let cur = [];
@@ -868,11 +868,19 @@ function opCaps(text) {
     }
   }
   if (!mark.size) return src;
+  // Schon formatierte Stellen (**fett**, *kursiv*) bleiben unberührt
+  const fmt = [...src.matchAll(/\*\*[^*]+\*\*|\*[^*]+\*/g)].map(m => [m.index, m.index + m[0].length]);
+  const runs = [];
+  toks.forEach(t => {
+    if (!mark.has(t) || fmt.some(([a, b]) => t.s >= a && t.e <= b)) return;
+    const last = runs[runs.length - 1];
+    if (last && /^\s+$/.test(src.slice(last.e, t.s))) last.e = t.e; else runs.push({ s: t.s, e: t.e });
+  });
   let out = '', p = 0;
-  toks.forEach(t => { if (mark.has(t)) { out += src.slice(p, t.s) + src.slice(t.s, t.e).toUpperCase(); p = t.e; } });
+  runs.forEach(r => { out += src.slice(p, r.s) + '**' + src.slice(r.s, r.e) + '**'; p = r.e; });
   return out + src.slice(p);
 }
-const taskText = (it, meta) => meta && meta.opCaps === false ? (it.text || '') : opCaps(it.text);
+const taskText = (it, meta) => meta && meta.opBold === false ? (it.text || '') : opBold(it.text);
 // Setzt einen Operator an den Anfang des ersten Satzes (Sie- oder du-Form); ein Operator dort wird ersetzt.
 function applyOperator(text, o, anrede) {
   const tpl = anrede === 'du' ? o.tplDu : o.tpl;
@@ -1727,7 +1735,7 @@ function ehMarkdown() {
     if (b.type !== 'tasks') return; if (b.restart) t = 0;
     b.items.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
-      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', `> ${plainMd(taskText(it, m)) || '–'}`, '');
+      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', `> ${plainMd(it.text) || '–'}`, '');
       const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
       const eh = ehLines(it);
@@ -1767,7 +1775,7 @@ function setOut(k) {
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: 'Georg-Herwegh-Gymnasium',
-    showName: true, showDate: true, showAFB: false, opCaps: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
+    showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
@@ -2247,7 +2255,7 @@ function metaCard() {
         ${more ? `<div class="sub-b">
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
           <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
-          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}${fCheck('opCaps', 'Operatoren in GROSSBUCHSTABEN', m.opCaps !== false)}</div>
+          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
           <div class="chks">${fCheck('groupsOn', 'Gruppenblätter A und B', m.groupsOn)}</div>
           ${m.groupsOn ? `<div class="row">${fText('groupA', 'Zusatz Gruppe A', m.groupA, '')}${fText('groupB', 'Zusatz Gruppe B', m.groupB, '')}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte einer Gruppe zu. Ohne Zuordnung stehen sie auf beiden Blättern.</small>` : ''}
         </div>` : ''}</div>

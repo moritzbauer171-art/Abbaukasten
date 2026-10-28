@@ -26,7 +26,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **A5 als Buch:** Über der Vorschau „A5 als Buch“ wählen. Das Blatt wird in A5 gesetzt, und je zwei aufeinanderfolgende Seiten stehen nebeneinander auf A4 quer, wie in einem aufgeschlagenen Buch (Seite 1 und 2, dann 3 und 4). Gut für längere literarische Texte. Seitenzahlen stehen außen, Falzmarken in der Mitte.
 - **A5 doppelt:** Jede A5-Seite wird zweimal auf A4 quer gesetzt, mit Schnittlinie, für halbe Blätter zum Austeilen.
 - **Operator-Check:** erkennt Operatoren in Sie- und du-Form und zeigt den Anforderungsbereich an. Grundlage ist der IQB-Grundstock Deutsch.
-- **Operatoren in Großbuchstaben:** Erkannte Operatoren stehen auf dem Blatt und in der Word-Datei automatisch in Großbuchstaben, bei trennbaren Verben beide Teile (z. B. „FASSEN Sie … ZUSAMMEN“, „NEHMEN Sie STELLUNG“). Der eingetippte Text bleibt unverändert. Abschalten lässt sich das unter „Weitere Einstellungen“.
+- **Operatoren fett:** Erkannte Operatoren stehen auf dem Blatt und in der Word-Datei automatisch fett, bei trennbaren Verben beide Teile (z. B. „**Fassen** Sie … **zusammen**“, „**Nehmen** Sie **Stellung**“). Der eingetippte Text bleibt unverändert. Abschalten lässt sich das unter „Weitere Einstellungen“.
 - **Ausgabe:** PDF zum Drucken, Word-Datei (.docx) zum Weiterbearbeiten oder direkt drucken.
 - **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung laden“ spielt sie wieder ein, auch in einem anderen Browser.
 
