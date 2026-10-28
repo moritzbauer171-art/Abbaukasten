@@ -80,7 +80,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .pane{min-height:0;min-width:0;overflow:auto}
 #editor{background:var(--panel);border-right:1px solid var(--line);padding:14px 14px 40px;display:flex;flex-direction:column;gap:10px;margin-left:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding-left:max(16px, env(safe-area-inset-left, 0px))}
 #preview{display:flex;flex-direction:column;min-width:0}
-.pv-bar{display:flex;align-items:center;gap:10px;padding:10px 16px 0;color:var(--muted);font-size:12.5px}
+.pv-bar{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:10px 16px 0;color:var(--muted);font-size:12.5px}
+.pv-hint{font-size:12px;color:var(--faint)}
 .pv-bar .sp{margin-right:auto}
 #preview-scroll{flex:1;overflow:auto;padding:14px 16px 48px}
 #pages{display:flex;flex-direction:column;align-items:center;gap:22px}
@@ -149,6 +150,51 @@ button,input,select,textarea{font:inherit;color:inherit}
 .add-b:hover{border-color:var(--tinte)}
 .add-b b{font-size:13.5px}
 .add-b span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+/* ---------- Worterklärungen ---------- */
+.gl-list{display:flex;flex-direction:column;gap:6px}
+.gl-row{display:grid;grid-template-columns:22px minmax(0,auto) minmax(0,1fr) 30px;align-items:center;gap:8px}
+.gl-no{width:22px;height:22px;border-radius:6px;background:var(--tinte-soft);color:var(--tinte);font-weight:700;font-size:12px;display:grid;place-items:center}
+.gl-w{border:0;background:none;padding:0;font-family:var(--f-text);font-weight:600;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+button.gl-w:hover{color:var(--tinte);text-decoration:underline}
+.gl-row input{width:100%;min-width:0;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:6px 8px;font-size:13.5px}
+.gl-row.miss .gl-no{background:var(--warn-soft);color:var(--warn)}
+.gl-miss,.gl-warn{font-size:12px;color:var(--warn)}
+.gl-add{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+.gl-add .btn{padding:5px 10px;font-size:13px}
+.gl-add small{font-size:11.5px;color:var(--faint)}
+.gl-scrim{position:fixed;inset:0;z-index:54;background:rgba(10,14,24,.38);display:none}
+.gpop{position:fixed;z-index:55;left:16px;top:16px;width:min(340px,calc(100% - 32px));background:var(--card);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--shadow);padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.gpop-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.gpop-h span{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.gpop form{display:flex;flex-direction:column;gap:10px}
+.gl-term{font-family:var(--f-text);font-size:19px;font-weight:600;line-height:1.25;display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap;overflow-wrap:anywhere}
+.gl-term span{font-family:var(--f-ui);font-size:12px;font-weight:400;color:var(--muted)}
+.gpop .err{color:#C2410C;font-size:13px;font-weight:700}
+.gpop .err:empty{display:none}
+.gpop-a{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gpop-a small{font-size:11.5px;color:var(--faint)}
+@media (max-width:599px){
+  .gl-scrim{display:block}
+  .gpop-a small{display:none}
+  .gpop{left:0!important;right:0;top:auto!important;bottom:0;width:100%;border-radius:16px 16px 0 0;border-width:1px 0 0;
+    padding:14px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
+}
+
+/* ---------- Formatierung (Unterbereich in der Materialkarte) ---------- */
+.sub{border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+.sub-h{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;padding:9px 10px;cursor:pointer;text-align:left;min-width:0;border-radius:9px}
+.sub-h:hover .sub-t{color:var(--tinte)}
+.sub-t{font-size:12.5px;font-weight:700;color:var(--ink);flex:0 0 auto}
+.sub-s{flex:1;min-width:0;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub-h svg{width:14px;height:14px;flex:0 0 auto;color:var(--muted);transition:transform .15s}
+.sub.open .sub-h svg{transform:rotate(180deg)}
+.sub-b{padding:10px 10px 12px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+.seg{display:inline-flex;align-self:flex-start;max-width:100%;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--field)}
+.seg button{border:0;background:transparent;padding:5px 11px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--tinte);color:var(--tinte-ink)}
 
 /* ---------- Bibliothek ---------- */
 .scrim{position:fixed;inset:0;background:rgba(10,14,24,.38);z-index:40}
@@ -254,7 +300,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .mat-no{flex:0 0 auto;font-size:8.5pt;font-weight:700;color:var(--paper);background:var(--acc);padding:.5mm 1.6mm;border-radius:.8mm;line-height:1.3}
 .mat-title{font-weight:700;font-size:10pt;line-height:1.35}
 .mat-cont{font-size:7.5pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);padding-bottom:1.5mm}
-.mat-body{font-family:var(--f-text);font-size:10.5pt;line-height:1.52}
+.mat-body{font-family:var(--mff,var(--f-text));font-size:var(--mfs,10.5pt);line-height:var(--mlh,1.52)}
 .mat-body p{margin:0 0 0 10mm}
 .mat-body p.ind{text-indent:4mm}
 .mat-body sup,.task-body sup,.blk-text sup,.info-text sup{font-size:.62em;line-height:0;vertical-align:.55em}
@@ -263,6 +309,13 @@ button,input,select,textarea{font:inherit;color:inherit}
 .ln-t{flex:1;min-width:0;white-space:nowrap;text-align:justify;text-align-last:justify}
 .ln.pl .ln-t{text-align-last:auto}
 .ln.pf .ln-t{padding-left:4mm}
+.blk-mat.al-left .ln-t{text-align:left;text-align-last:auto}
+.blk-mat.noind .ln.pf .ln-t{padding-left:0}
+.blk-mat.noind .mat-body p.ind{text-indent:0}
+.blk-mat.rand .mat-body{width:calc(100% - 28mm);padding-right:4mm;border-right:.25mm solid var(--paper-hair)}
+#preview .page .mat-body .w{border-radius:.6mm;cursor:pointer}
+#preview .page .mat-body .w:hover{background:var(--acc-tint)}
+#preview .page .mat-body .w.glw{text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:var(--acc);text-decoration-thickness:.35mm;text-underline-offset:.9mm}
 .mat-tail{padding:2mm 0 0 10mm}
 .notes{border-top:.2mm solid var(--paper-hair);padding-top:1mm;font-size:8pt;line-height:1.4;max-width:120mm}
 .notes div{padding-left:3mm;text-indent:-3mm}
@@ -345,7 +398,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   <div class="main">
     <section class="pane" id="editor" aria-label="Bausteine"></section>
     <section class="pane" id="preview" aria-label="Vorschau">
-      <div class="pv-bar"><span class="sp" id="pagecount">A4</span>
+      <div class="pv-bar"><span id="pagecount">A4</span><span class="pv-hint sp" id="pv-hint">Tipp: Wort im Material anklicken, um es zu erklären</span>
         <button class="btn ghost" type="button" id="btn-zoom" data-act="zoom">100 %</button></div>
       <div id="preview-scroll"><div id="pages"></div></div>
     </section>
@@ -355,6 +408,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 <div id="printroot"></div>
 <div id="lib-root"></div>
 <div id="dlg-root"></div>
+<div id="gl-root"></div>
 <input type="file" id="import-file" accept=".json,application/json" hidden>
 <div id="toast-root"></div>
 
@@ -541,6 +595,215 @@ function applyOperator(text, o, anrede) {
 }
 const opsRange = ops =>ops.length ? [Math.min(...ops.map(o => o.afb[0])), Math.max(...ops.map(o => o.afb[1]))] : null;
 
+/* ================= Worterklärungen (Glossar) ================= */
+/* Jede Erklärung hängt an einem Wort (oder einer Wortgruppe) und seiner Stelle im Text:
+   { term, n, text } = n-tes Vorkommen von term. Nummern und Fußnoten entstehen beim Setzen. */
+const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const normTerm = s => String(s || '').replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+const isWordChar = c => /[\p{L}\p{N}]/u.test(c || '');
+function termRe(term) { return new RegExp('(?<![\\p{L}\\p{N}])' + normTerm(term).split(' ').map(escRe).join('[\\s*]+') + '(?![\\p{L}\\p{N}])', 'gu'); }
+function occurrences(text, term) {
+  const t = normTerm(term); if (!t) return [];
+  const re = termRe(t); const src = String(text || ''); const out = []; let m;
+  while ((m = re.exec(src))) { out.push({ start: m.index, end: m.index + m[0].length }); if (!m[0].length) re.lastIndex++; }
+  return out;
+}
+const GM_RE = /(\d+)/g;
+// Setzt unsichtbare Marken hinter die erklärten Wörter und nummeriert in Textreihenfolge
+function glossMarks(b) {
+  const text = String(b.text || ''); const list = []; const missing = [];
+  (b.glossary || []).forEach(g => {
+    const o = occurrences(text, g.term)[g.n || 0];
+    if (o && !list.some(x => x.start === o.start && x.end === o.end)) list.push({ g, start: o.start, end: o.end });
+    else missing.push(g);
+  });
+  list.sort((a, c) => a.start - c.start || a.end - c.end);
+  list.forEach((x, i) => { x.no = i + 1; });
+  let out = text;
+  [...list].sort((a, c) => c.end - a.end || c.no - a.no).forEach(x => { out = out.slice(0, x.end) + '' + x.no + '' + out.slice(x.end); });
+  return { text: out, list, missing };
+}
+// Wörter für das Setzen: HTML mit Fußnotenzahl + reiner Text (für die Klick-Zuordnung)
+function toWordsM(text) {
+  const words = []; let h = '', t = '', gl = false;
+  const push = () => { if (h) words.push({ h, t, gl }); h = ''; t = ''; gl = false; };
+  for (const k of inlineTokens(text)) {
+    if (k.sup) { h += tokHTML(k); continue; }
+    for (const p of k.t.split(/(\s+)/)) {
+      if (!p) continue;
+      if (/^\s+$/.test(p)) { push(); continue; }
+      if (/\d+/.test(p)) gl = true;
+      h += tokHTML({ ...k, t: p }).replace(GM_RE, '<sup class="gl">$1</sup>');
+      t += p.replace(GM_RE, '');
+    }
+  }
+  push(); return words;
+}
+// Ältere Blätter: ^1-Zeichen im Text + Erklärungen zeilenweise → Glossar
+function migrateGlossary(b) {
+  if (Array.isArray(b.glossary)) { delete b.notes; return; }
+  const notes = parseNotes(b.notes); const raw = String(b.text || '');
+  const re = /([\p{L}\p{N}][\p{L}\p{N}-]*)\^(\d+)/gu;
+  let out = '', last = 0, m; const marks = [];
+  while ((m = re.exec(raw))) { out += raw.slice(last, m.index) + m[1]; marks.push({ term: m[1], start: out.length - m[1].length, num: m[2] }); last = m.index + m[0].length; }
+  out += raw.slice(last);
+  const gloss = [], used = new Set();
+  const split = (s, term) => { const p = s.match(/^([^:]{1,80}):\s*(.*)$/); return p && (!term || normTerm(p[1]).toLowerCase() === term.toLowerCase()) ? [normTerm(p[1]), p[2]] : null; };
+  for (const mk of marks) {
+    const occ = occurrences(out, mk.term); let n = occ.findIndex(o => o.start === mk.start); if (n < 0) n = 0;
+    const note = notes.find(x => x.n === mk.num); if (note) used.add(note);
+    const sp = note ? split(note.text, mk.term) : null;
+    gloss.push({ term: mk.term, n, text: sp ? sp[1] : (note ? note.text : '') });
+  }
+  notes.forEach(note => { if (used.has(note)) return; const sp = split(note.text); gloss.push({ term: sp ? sp[0] : '', n: 0, text: sp ? sp[1] : note.text }); });
+  b.text = out; b.glossary = gloss; delete b.notes;
+}
+
+/* ---------- Bearbeiten: Fenster am Wort ---------- */
+const gl = { open: null };
+const rectOf = n => { const r = n.getBoundingClientRect(); return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height }; };
+const narrowGloss = () => window.matchMedia('(max-width: 599px)').matches;
+function glossRows(b) {
+  const gm = glossMarks(b); const G = b.glossary || [];
+  const rows = gm.list.map(x => { const i = G.indexOf(x.g); return `<div class="gl-row"><span class="gl-no">${x.no}</span><button type="button" class="gl-w" data-act="gl-edit" data-i="${i}" title="Bearbeiten">${esc(normTerm(x.g.term))}</button><input type="text" data-k="glossary.${i}.text" value="${esc(x.g.text)}" placeholder="Erklärung" aria-label="Erklärung zu ${esc(normTerm(x.g.term))}"><button class="ib" type="button" data-act="gl-remove" data-i="${i}" title="Worterklärung entfernen">${I.x}</button></div>`; }).join('')
+    + gm.missing.map(g => { const i = G.indexOf(g); return `<div class="gl-row miss"><span class="gl-no">!</span><span class="gl-w">${esc(normTerm(g.term) || 'ohne Wort')}</span><span class="gl-miss">steht nicht mehr im Text</span><button class="ib" type="button" data-act="gl-remove" data-i="${i}" title="Entfernen">${I.x}</button></div>`; }).join('');
+  return `<div class="f gl-box" data-gl="${b.id}"><span>Worterklärungen</span>${rows ? `<div class="gl-list">${rows}</div>` : ''}
+    <div class="gl-add"><button class="btn" type="button" data-act="gl-add">+ Worterklärung</button><small>Wort im Text markieren oder in der Vorschau anklicken</small></div></div>`;
+}
+function openGloss(o) { o.sc = { p: $('#preview-scroll').scrollTop, e: $('#editor').scrollTop }; gl.open = o; renderGloss(); }
+function closeGloss() { if (!gl.open) return; gl.open = null; renderGloss(); }
+function openGlossFor(b, term, n, rect) {
+  const count = occurrences(b.text, term).length;
+  if (!count) { toast('Dieses Wort steht so nicht im Text.'); return; }
+  const idx = (b.glossary || []).findIndex(g => normTerm(g.term) === term && (g.n || 0) === n);
+  openGloss({ bid: b.id, term, n, count, idx, rect });
+}
+// Aus der Markierung im Textfeld des Editors
+function termFromRaw(raw, s, e) {
+  while (s < e && !isWordChar(raw[s])) s++;
+  while (e > s && !isWordChar(raw[e - 1])) e--;
+  if (e <= s) return null;
+  while (s > 0 && isWordChar(raw[s - 1])) s--;
+  while (e < raw.length && isWordChar(raw[e])) e++;
+  const term = normTerm(raw.slice(s, e));
+  const occ = occurrences(raw, term); let n = occ.findIndex(o => o.start === s); if (n < 0) n = occ.filter(o => o.start < s).length;
+  return { term, n };
+}
+function glossFromTextarea(card, b, anchor) {
+  const ta = card.querySelector('textarea[data-k="text"]'); const rect = rectOf(anchor);
+  if (ta && ta.selectionEnd > ta.selectionStart) { const r = termFromRaw(ta.value, ta.selectionStart, ta.selectionEnd); if (r) return openGlossFor(b, r.term, r.n, rect); }
+  openGloss({ bid: b.id, free: true, term: '', n: 0, count: 0, idx: -1, rect });
+}
+// Aus einem Klick (ein Wort) oder einer Markierung (mehrere Wörter) in der Vorschau
+function glossFromSpans(bid, picked, rect) {
+  const b = target(bid); if (!b || b.type !== 'material' || !String(b.text || '').trim()) return;
+  if (picked.length === 1) {
+    const sup = picked[0].querySelector('sup.gl');
+    const x = sup && glossMarks(b).list[+sup.textContent - 1];
+    if (x) return openGloss({ bid, term: normTerm(x.g.term), n: x.g.n || 0, count: occurrences(b.text, x.g.term).length, idx: b.glossary.indexOf(x.g), rect });
+  }
+  const spans = [...document.querySelectorAll(`#pages [data-bid="${bid}"] .mat-body .w`)];
+  const words = spans.map(s => s.dataset.t || ''); const offs = []; let off = 0;
+  words.forEach(w => { offs.push(off); off += w.length + 1; });
+  const plain = words.join(' ');
+  const i0 = spans.indexOf(picked[0]), i1 = spans.indexOf(picked[picked.length - 1]); if (i0 < 0 || i1 < 0) return;
+  let s = offs[i0], e = offs[i1] + words[i1].length;
+  while (s < e && !isWordChar(plain[s])) s++;
+  while (e > s && !isWordChar(plain[e - 1])) e--;
+  if (e <= s) return;
+  const term = normTerm(plain.slice(s, e));
+  const occ = occurrences(plain, term); let n = occ.findIndex(o => o.start === s); if (n < 0) n = occ.filter(o => o.start < s).length;
+  openGlossFor(b, term, n, rect);
+}
+function renderGloss() {
+  const root = $('#gl-root'); const o = gl.open;
+  if (!o) { root.innerHTML = ''; return; }
+  const b = target(o.bid); const g = b && o.idx >= 0 ? b.glossary[o.idx] : null;
+  const termPart = o.free
+    ? `<label class="f"><span>Wort aus dem Text</span><input class="inp" id="gl-term" type="text" autocomplete="off" placeholder="z. B. kundgeworden" value="${esc(o.term)}"></label><div id="gl-occ"></div>`
+    : `<div class="gl-term">${esc(o.term)}${o.count > 1 ? `<span>${o.n + 1}. von ${o.count} Stellen</span>` : ''}</div>`;
+  root.innerHTML = `<div class="gl-scrim" data-act="gl-close"></div>
+    <div class="gpop" id="gpop" role="dialog" aria-labelledby="gl-h">
+      <div class="gpop-h"><span id="gl-h">${g ? 'Worterklärung bearbeiten' : 'Worterklärung'}</span><button class="ib" type="button" data-act="gl-close" title="Schließen">${I.x}</button></div>
+      <form id="gl-form" novalidate>${termPart}
+        <label class="f"><span>Erklärung</span><input class="inp" id="gl-text" type="text" autocomplete="off" placeholder="z. B. bekannt geworden" value="${esc(g ? g.text : '')}"></label>
+        <div class="err" id="gl-err" role="alert"></div>
+        <div class="gpop-a"><button class="btn primary" type="submit">${g ? 'Speichern' : 'Hinzufügen'}</button>${g ? '<button class="link danger" type="button" data-act="gl-del">Entfernen</button>' : '<small>Enter = übernehmen</small>'}</div>
+      </form></div>`;
+  placeGloss();
+  const f = o.free ? $('#gl-term') : $('#gl-text');
+  if (f) { f.focus({ preventScroll: true }); try { f.setSelectionRange(f.value.length, f.value.length); } catch {} }
+}
+function placeGloss() {
+  const p = $('#gpop'); const o = gl.open; if (!p || !o) return;
+  if (narrowGloss()) { p.style.left = ''; p.style.top = ''; return; }
+  const r = o.rect, w = p.offsetWidth, h = p.offsetHeight;
+  const left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+  let top = r.bottom + 10; if (top + h > window.innerHeight - 16) top = Math.max(16, r.top - h - 10);
+  p.style.left = left + 'px'; p.style.top = top + 'px';
+}
+function updOcc() {
+  const o = gl.open; const b = o && target(o.bid); const box = $('#gl-occ'); if (!b || !box) return;
+  const t = normTerm($('#gl-term').value); const c = t ? occurrences(b.text, t).length : 0;
+  box.innerHTML = !t ? '' : !c ? '<small class="gl-warn">Steht so nicht im Text. Groß- und Kleinschreibung beachten.</small>'
+    : c > 1 ? `<label class="f"><span>Welche Stelle?</span><select class="inp" id="gl-n">${Array.from({ length: c }, (_, i) => `<option value="${i}">${i + 1}. Vorkommen</option>`).join('')}</select></label>` : '';
+  placeGloss();
+}
+function removeGloss(b, idx) {
+  if (!b.glossary || !b.glossary[idx]) return;
+  snapshot(); const g = b.glossary.splice(idx, 1)[0]; changed(true);
+  toast(`Worterklärung „${normTerm(g.term)}“ entfernt`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); });
+}
+function onGlossSubmit(e) {
+  e.preventDefault(); const o = gl.open; if (!o) return;
+  const b = target(o.bid); if (!b) return closeGloss();
+  if (!Array.isArray(b.glossary)) b.glossary = [];
+  const fail = m => { $('#gl-err').textContent = m; };
+  const text = $('#gl-text').value.trim();
+  let term = o.term, n = o.n, idx = o.idx;
+  if (o.free) {
+    term = normTerm($('#gl-term').value);
+    if (!term) return fail('Bitte das Wort aus dem Text eintragen.');
+    if (!occurrences(b.text, term).length) return fail('Dieses Wort steht so nicht im Text.');
+    n = $('#gl-n') ? +$('#gl-n').value : 0;
+    idx = b.glossary.findIndex(g => normTerm(g.term) === term && (g.n || 0) === n);
+  }
+  if (!text) { if (idx >= 0) { closeGloss(); removeGloss(b, idx); return; } return fail('Bitte eine Erklärung eintragen.'); }
+  if (idx >= 0) b.glossary[idx].text = text; else b.glossary.push({ term, n, text });
+  closeGloss(); changed(true);
+}
+
+/* ---------- Formatierung der Materialien ---------- */
+const MAT_FMT = {
+  align: { label: 'Ausrichtung', opts: [['justify', 'Blocksatz'], ['left', 'Linksbündig']] },
+  font: { label: 'Schrift', opts: [['serif', 'Mit Serifen'], ['sans', 'Ohne Serifen']] },
+  size: { label: 'Schriftgröße', opts: [['S', 'klein'], ['M', 'normal'], ['L', 'groß']] },
+  lh: { label: 'Zeilenabstand', opts: [['eng', 'eng'], ['normal', 'normal'], ['weit', 'weit']] }
+};
+const FMT_SIZE = { S: 9.5, M: 10.5, L: 12 }, FMT_LH = { eng: 1.35, normal: 1.52, weit: 2 }, FMT_WLINE = { eng: 276, normal: 300, weit: 400 }, FMT_WSZ = { S: 19, M: 21, L: 24 };
+function matFmt(b) {
+  const f = b.fmt || {};
+  return { align: f.align === 'left' ? 'left' : 'justify', font: f.font === 'sans' ? 'sans' : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent !== false, margin: !!f.margin };
+}
+function fmtSummary(b) {
+  const f = matFmt(b);
+  return [f.align === 'left' ? 'Linksbündig' : 'Blocksatz', f.font === 'sans' ? 'ohne Serifen' : 'mit Serifen',
+    String(FMT_SIZE[f.size]).replace('.', ',') + ' pt', 'Zeilenabstand ' + f.lh,
+    f.margin ? 'Notizrand' : '', b.lineNumbers === false ? 'ohne Zeilennummern' : ''].filter(Boolean).join(' · ');
+}
+function fmtEditor(b) {
+  const f = matFmt(b); const open = state.fmtOpen.has(b.id);
+  const isDef = JSON.stringify(f) === JSON.stringify(matFmt({})) && b.lineNumbers !== false;
+  const nMat = state.sheet.blocks.filter(x => x.type === 'material').length;
+  const seg = key => { const d = MAT_FMT[key]; return `<div class="f"><span>${d.label}</span><div class="seg" role="group" aria-label="${d.label}">${d.opts.map(([v, t]) => `<button type="button" data-act="fmt" data-f="${key}" data-v="${v}" aria-pressed="${f[key] === v}">${t}</button>`).join('')}</div></div>`; };
+  return `<div class="sub${open ? ' open' : ''}">
+    <button type="button" class="sub-h" data-act="fmt-toggle" aria-expanded="${open}"><span class="sub-t">Formatierung</span><span class="sub-s">${esc(fmtSummary(b))}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
+    ${open ? `<div class="sub-b">${seg('align')}${seg('font')}<div class="row">${seg('size')}${seg('lh')}</div>
+      <div class="chks">${fCheck('lineNumbers', 'Zeilennummern', b.lineNumbers !== false)}${fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
+      ${isDef && nMat < 2 ? '' : `<div class="row" style="gap:6px 18px">${isDef ? '' : '<button class="link" type="button" data-act="fmt-reset">Standard wiederherstellen</button>'}${nMat > 1 ? '<button class="link" type="button" data-act="fmt-all">Für alle Materialien übernehmen</button>' : ''}</div>`}</div>` : ''}
+  </div>`;
+}
+
 /* ================= Datenmodell ================= */
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
@@ -552,7 +815,7 @@ function newBlock(type) {
   switch (type) {
     case 'heading': return { id, type, text: '' };
     case 'text': return { id, type, text: '' };
-    case 'material': return { id, type, title: '', text: '', notes: '', source: '', lineNumbers: true, memo: '' };
+    case 'material': return { id, type, title: '', text: '', glossary: [], source: '', lineNumbers: true, fmt: {}, memo: '' };
     case 'tasks': return { id, type, title: '', restart: false, items: [{ text: '', tag: '' }] };
     case 'info': return { id, type, kind: 'Merke', title: '', text: '' };
     case 'table': return { id, type, title: '', cols: ['', '', ''], rows: [['', '', ''], ['', '', ''], ['', '', '']], rowHeight: 'normal', firstBold: false };
@@ -576,8 +839,8 @@ function exampleSheet() {
       b('info', { kind: 'Merke', title: 'Sprache der Distanz (konzeptionelle Schriftlichkeit)',
         text: 'Merkmale nach Koch/Oesterreicher: raumzeitliche Distanz, Fremdheit, Themenfixierung, Situationsentbindung, Planung, Endgültigkeit bzw. Fixierung, Sachlichkeit, Monolog, Öffentlichkeit.\nTypische Versprachlichung: Hypotaxe, höhere Komplexität, textverknüpfende Mittel.' }),
       b('material', { title: 'Theodor Storm: Der Schimmelreiter (1888), Beginn der Rahmenerzählung',
-        text: 'Was ich zu berichten beabsichtige, ist mir vor reichlich einem halben Jahrhundert im Hause meiner Urgroßmutter, der alten Frau Senator Feddersen, kundgeworden^1, während ich, an ihrem Lehnstuhl sitzend, mich mit dem Lesen eines in blaue Pappe eingebundenen Zeitschriftenheftes beschäftigte; ich vermag mich nicht mehr zu entsinnen, ob von den »Leipziger« oder von »Pappes Hamburger Lesefrüchten«. Noch fühl ich es gleich einem Schauer, wie dabei die linde^2 Hand der über Achtzigjährigen mitunter liebkosend über das Haupthaar ihres Urenkels hinglitt. Sie selbst und jene Zeit sind längst begraben; vergebens habe ich seitdem jenen Blättern nachgeforscht, und ich kann daher um so weniger weder die Wahrheit der Tatsachen verbürgen^3, als, wenn jemand sie bestreiten wollte, dafür aufstehen; nur so viel kann ich versichern, daß ich sie seit jener Zeit, obgleich sie durch keinen äußeren Anlaß in mir aufs neue belebt wurden, niemals aus dem Gedächtnis verloren habe.',
-        notes: 'kundgeworden: bekannt geworden\nlinde: sanft, zart\nverbürgen: für die Richtigkeit einstehen',
+        text: 'Was ich zu berichten beabsichtige, ist mir vor reichlich einem halben Jahrhundert im Hause meiner Urgroßmutter, der alten Frau Senator Feddersen, kundgeworden, während ich, an ihrem Lehnstuhl sitzend, mich mit dem Lesen eines in blaue Pappe eingebundenen Zeitschriftenheftes beschäftigte; ich vermag mich nicht mehr zu entsinnen, ob von den »Leipziger« oder von »Pappes Hamburger Lesefrüchten«. Noch fühl ich es gleich einem Schauer, wie dabei die linde Hand der über Achtzigjährigen mitunter liebkosend über das Haupthaar ihres Urenkels hinglitt. Sie selbst und jene Zeit sind längst begraben; vergebens habe ich seitdem jenen Blättern nachgeforscht, und ich kann daher um so weniger weder die Wahrheit der Tatsachen verbürgen, als, wenn jemand sie bestreiten wollte, dafür aufstehen; nur so viel kann ich versichern, daß ich sie seit jener Zeit, obgleich sie durch keinen äußeren Anlaß in mir aufs neue belebt wurden, niemals aus dem Gedächtnis verloren habe.',
+        glossary: [{ term: 'kundgeworden', n: 0, text: 'bekannt geworden' }, { term: 'linde', n: 0, text: 'sanft, zart' }, { term: 'verbürgen', n: 0, text: 'für die Richtigkeit einstehen' }],
         source: 'Theodor Storm: Der Schimmelreiter. Novelle (1888). Textgrundlage: Projekt Gutenberg-DE.',
         memo: 'Beispieltext: Wortlaut vor dem Einsatz mit Ihrer Textausgabe abgleichen.' }),
       b('tasks', { title: 'Arbeitsaufträge', items: [
@@ -599,11 +862,12 @@ function normalizeSheet(sh) {
   sh.klasse = KL(sh.klasse).id;
   sh.meta = { ...defaultMeta('', sh.klasse), anrede: 'sie', ...sh.meta };
   if (!Array.isArray(sh.blocks)) sh.blocks = [];
+  sh.blocks.forEach(b => { if (b && b.type === 'material') migrateGlossary(b); });
   return sh;
 }
 
 /* ================= Zustand ================= */
-const state = { sheet: null, sel: null, closed: new Set(), view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null };
+const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
@@ -688,10 +952,12 @@ function buildBlock(b, ctx) {
     }
     case 'material': {
       const no = ++ctx.m; const step = Number(meta.lineStep) || 5;
-      const notes = parseNotes(b.notes);
-      const tail = (notes.length || b.source) ? `<div class="mat-tail">${notes.length ? `<div class="notes">${notes.map(x => `<div><sup>${esc(x.n)}</sup> ${inlineHTML(x.text)}</div>`).join('')}</div>` : ''}${b.source ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
-      const paras = flowParas(b.text);
-      const n = put(`<div class="blk blk-mat"><div class="mat-head"><span class="mat-no">M${no}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${(paras.length ? paras : ['Materialtext']).map((p, i) => `<p class="${i ? 'ind' : ''}">${toWords(p).map(w => `<span class="w">${w}</span>`).join(' ')}</p>`).join('')}</div>${tail}</div>`);
+      const gm = glossMarks(b); const fm = matFmt(b); const notes = gm.list;
+      const tail = (notes.length || b.source) ? `<div class="mat-tail">${notes.length ? `<div class="notes">${notes.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${b.source ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
+      const paras = flowParas(gm.text);
+      const fcls = (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
+      const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fm.font === 'sans' ? 'var(--f-ui)' : 'var(--f-text)'}`;
+      const n = put(`<div class="blk blk-mat${fcls}" style="${fsty}"><div class="mat-head"><span class="mat-no">M${no}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${(paras.length ? paras : ['Materialtext']).map((p, i) => `<p class="${i ? 'ind' : ''}">${toWordsM(p).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
@@ -702,12 +968,12 @@ function buildBlock(b, ctx) {
         [...p.querySelectorAll('.w')].forEach(w => {
           const t = w.getBoundingClientRect().top;
           if (top === null || t > top + lh * .5) { flush(false); top = t; }
-          cur.push(w.innerHTML);
+          cur.push(w.outerHTML);
         });
         flush(true);
       });
-      bodyEl.innerHTML = lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no">${b.lineNumbers && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
-      if (!b.lineNumbers) bodyEl.querySelectorAll('.ln-no').forEach(x => x.style.visibility = 'hidden');
+      bodyEl.innerHTML = lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
+      if (b.lineNumbers === false) bodyEl.querySelectorAll('.ln-no').forEach(x => x.style.visibility = 'hidden');
       const head = n.querySelector('.mat-head'), tailEl = n.querySelector('.mat-tail');
       const lineEls = [...bodyEl.children];
       const atoms = [head, ...lineEls, ...(tailEl ? [tailEl] : [])];
@@ -834,6 +1100,7 @@ function renderPreview() {
     host.appendChild(slot);
   });
   $('#pagecount').textContent = `${out.length} ${out.length === 1 ? 'Seite' : 'Seiten'} · A4`;
+  $('#pv-hint').hidden = !state.sheet.blocks.some(x => x.type === 'material' && String(x.text || '').trim());
   applyScale(); markSel();
 }
 function applyScale() {
@@ -902,10 +1169,10 @@ function bodyFor(b, num) {
     case 'text': return fArea('text', 'Text', b.text, 4, 'Einleitung oder Hinweis', '', 'Leerzeile = neuer Absatz · **fett** · *kursiv*');
     case 'material': return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       ${fText('title', 'Titel / Autor', b.title, 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
-      ${fArea('text', 'Text', b.text, 9, 'Originaltext einfügen', 'serif', 'Leerzeile = neuer Absatz (eingerückt). Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen. Fußnotenzeichen: ^1')}
-      ${fArea('notes', 'Worterklärungen', b.notes, 3, 'kundgeworden: bekannt geworden', '', 'Eine Erklärung pro Zeile, nummeriert in der Reihenfolge der ^-Zeichen')}
+      ${fArea('text', 'Text', b.text, 9, 'Originaltext einfügen', 'serif', 'Leerzeile = neuer Absatz. Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen.')}
+      ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
-      <div class="chks">${fCheck('lineNumbers', 'Zeilennummern', b.lineNumbers)}</div>
+      ${fmtEditor(b)}
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`;
     case 'tasks': {
       const start = num[b.id].from;
@@ -993,7 +1260,7 @@ function refreshSummaries() {
 
 /* ---------- Änderungen ---------- */
 function target(bid) { return bid === 'meta' ? state.sheet.meta : state.sheet.blocks.find(b => b.id === bid); }
-function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) o = o[ks[i]]; o[ks[ks.length - 1]] = v; }
+function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) { if (o[ks[i]] == null || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
 function changed(structural) {
   if (state.sheet.example) state.sheet.example = false;
   state.touched = true;
@@ -1011,6 +1278,7 @@ function onInput(e) {
   setPath(target(card.dataset.bid), k, v);
   const m = k.match(/^items\.(\d+)\.text$/);
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
+  if (k === 'text') { const blk = target(card.dataset.bid); const box = card.querySelector('[data-gl]'); if (blk && blk.type === 'material' && box) box.outerHTML = glossRows(blk); }
   changed(false);
 }
 function onChange(e) {
@@ -1032,7 +1300,7 @@ function onChange(e) {
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
   setPath(target(card.dataset.bid), k, v);
-  changed((t.type === 'checkbox' && k === 'restart') || k === 'anrede');
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'lineNumbers' || k.startsWith('fmt.'))) || k === 'anrede');
 }
 function onClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
@@ -1063,6 +1331,16 @@ function onClick(e) {
     case 'col-add': if (b.cols.length < 6) { b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
     case 'col-del': if (b.cols.length > 1) { b.cols.pop(); b.rows.forEach(r => r.pop()); changed(true); } return;
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
+    case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
+    case 'fmt-toggle': if (state.fmtOpen.has(bid)) state.fmtOpen.delete(bid); else state.fmtOpen.add(bid); renderEditor(); return;
+    case 'fmt-reset': b.fmt = {}; b.lineNumbers = true; changed(true); return;
+    case 'fmt-all': {
+      let n = 0; blocks.forEach(x => { if (x.type === 'material' && x !== b) { x.fmt = clone(b.fmt || {}); x.lineNumbers = b.lineNumbers !== false; n++; } });
+      changed(true); toast(`Formatierung für ${n} ${n === 1 ? 'weiteres Material' : 'weitere Materialien'} übernommen`); return;
+    }
+    case 'gl-add': glossFromTextarea(card, b, a); return;
+    case 'gl-edit': { const i = +a.dataset.i; const g = b.glossary && b.glossary[i]; if (g) openGloss({ bid, term: normTerm(g.term), n: g.n || 0, count: occurrences(b.text, g.term).length, idx: i, rect: rectOf(a) }); return; }
+    case 'gl-remove': removeGloss(b, +a.dataset.i); return;
   }
 }
 
@@ -1210,6 +1488,7 @@ async function doSave(b, snap) {
 
 /* ---------- Öffnen, Reiter wechseln ---------- */
 function openSheet(sh) {
+  closeGloss();
   if (savePending) saveNow();
   state.sheet = normalizeSheet(sh); state.sel = null; state.closed = new Set(); undoSnap = null; state.touched = false;
   if (state.sheet.klasse !== state.klasse) { state.klasse = state.sheet.klasse; lsSet(LS.klasse, state.klasse); renderTabs(); }
@@ -1606,7 +1885,7 @@ function xr(text, o = {}) {
   if (o.sup) p.push('<w:vertAlign w:val="superscript"/>');
   return `<w:r>${p.length ? `<w:rPr>${p.join('')}</w:rPr>` : ''}<w:t xml:space="preserve">${xesc(text)}</w:t></w:r>`;
 }
-const xrInline = (str, base = {}) => inlineTokens(str).map(t => xr(t.t, { ...base, b: base.b || t.b, i: base.i || t.i, sup: t.sup })).join('');
+const xrInline = (str, base = {}) => inlineTokens(str).map(t => String(t.t).split(/\uE000(\d+)\uE001/).map((part, i) => i % 2 ? xr(part, { ...base, sup: 1 }) : (part ? xr(part, { ...base, b: base.b || t.b, i: base.i || t.i, sup: t.sup }) : '')).join('')).join('');
 const xrLines = (str, base = {}) => String(str).split('\n').map(l => xrInline(l, base)).join('<w:r><w:br/></w:r>');
 function xp(runs, o = {}) {
   const p = [];
@@ -1669,13 +1948,16 @@ async function exportDOCX() {
       if (b.type === 'pagebreak') { parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'); continue; }
       if (b.type === 'material') {
         mNo++;
-        const ln = !!b.lineNumbers;
+        const ln = b.lineNumbers !== false;
         if (ln && secOpen) closeSect(false);
         parts.push(spacer());
         parts.push(xp(xr('M' + mNo, { b: 1, sz: 17, color: A }) + xr('   ') + xrInline(b.title || '', { b: 1, sz: 20 }), { keepNext: true, after: 100 }));
-        flowParas(b.text).forEach((p, i) => parts.push(xp(xrInline(p, { font: SERIF, sz: 21 }), { style: 'Materialtext', noLn: false, line: 300, jc: 'both', ind: i ? `<w:ind w:firstLine="${TW(4)}"/>` : '' })));
-        const notes = parseNotes(b.notes);
-        if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ') + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
+        const gmD = glossMarks(b), fm = matFmt(b);
+        const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
+        const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
+        flowParas(gmD.text).forEach((p, i) => parts.push(xp(xrInline(p, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(i), bdr: mBdr })));
+        const notes = gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
+        if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
         if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { before: 60 }));
         if (ln) closeSect(true); else secOpen = true;
         continue;
@@ -1812,6 +2094,7 @@ function boot() {
   $('#reiter').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
+    if (gl.open) { closeGloss(); return; }
     if (state.dlg) { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
     if (state.libOpen) { state.libOpen = false; state.confirmDel = null; renderLib(); }
   });
@@ -1829,7 +2112,42 @@ function boot() {
     if (act === 'print') doPrint();
   });
   $('#btn-zoom').addEventListener('click', () => { state.zoom = state.zoom === 'fit' ? 'full' : 'fit'; applyScale(); });
+  $('#gl-root').addEventListener('submit', onGlossSubmit);
+  $('#gl-root').addEventListener('input', e => { if (e.target.id === 'gl-term') updOcc(); });
+  $('#gl-root').addEventListener('click', e => {
+    const a = e.target.closest('[data-act]'); if (!a || !gl.open) return;
+    if (a.dataset.act === 'gl-close') closeGloss();
+    if (a.dataset.act === 'gl-del') { const o = gl.open; const b = target(o.bid); closeGloss(); if (b && o.idx >= 0) removeGloss(b, o.idx); }
+  });
+  document.addEventListener('pointerdown', e => { if (gl.open && !e.target.closest('#gpop')) closeGloss(); }, true);
+  // Schließt erst, wenn wirklich weggescrollt wurde (kleine Sprünge durch Fokus ignorieren)
+  ['#preview-scroll', '#editor'].forEach(q => $(q).addEventListener('scroll', () => {
+    const o = gl.open; if (!o || !o.sc || narrowGloss()) return;
+    if (Math.abs($('#preview-scroll').scrollTop - o.sc.p) > 60 || Math.abs($('#editor').scrollTop - o.sc.e) > 60) closeGloss();
+  }, { passive: true }));
+  window.addEventListener('resize', () => { if (gl.open) placeGloss(); });
+  const selectQuiet = bid => {
+    state.sel = bid; markSel();
+    document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel'));
+    const c = document.querySelector(`#editor .card[data-bid="${bid}"]`); if (c) c.classList.add('sel');
+  };
+  let skipClick = false;
+  // Mehrere Wörter markieren → Worterklärung für die Wortgruppe
+  $('#pages').addEventListener('mouseup', () => {
+    const sel = window.getSelection(); if (!sel || sel.isCollapsed || !sel.rangeCount) return;
+    const r = sel.getRangeAt(0); const sc = r.startContainer;
+    const blk = (sc.nodeType === 1 ? sc : sc.parentElement).closest('.blk-mat'); if (!blk) return;
+    const bid = blk.dataset.bid;
+    const picked = [...document.querySelectorAll(`#pages [data-bid="${bid}"] .mat-body .w`)].filter(w => r.intersectsNode(w));
+    if (!picked.length) return;
+    const rect = rectOf(r); sel.removeAllRanges();
+    skipClick = true; setTimeout(() => { skipClick = false; }, 350);
+    selectQuiet(bid); glossFromSpans(bid, picked, rect);
+  });
   $('#pages').addEventListener('click', e => {
+    if (skipClick) { skipClick = false; return; }
+    const w = e.target.closest('.mat-body .w'); const wb = w && w.closest('.blk-mat');
+    if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;
     const bid = n.dataset.bid; state.sel = bid; state.closed.delete(bid);
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
