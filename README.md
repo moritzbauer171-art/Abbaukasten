@@ -10,6 +10,8 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Bausteine:** Material mit automatischen Zeilennummern, Aufgaben, Infokasten, Tabelle, Schreibfläche (Linien oder Kästchen), Überschrift, Absatz, Zitat, Bild, Seitenumbruch.
 - **Worterklärungen:** In der Vorschau ein Wort im Material anklicken (oder mehrere Wörter markieren), Erklärung eintippen, Enter. Hochzahl und Fußnote setzt die Seite selbst und nummeriert in Textreihenfolge. Im Editor geht es auch über „+ Worterklärung“.
 - **Formatierung der Materialien:** Standard ist Blocksatz mit Serifenschrift. Unter „Formatierung“ in der Materialkarte lassen sich Ausrichtung, Schrift, Schriftgröße, Zeilenabstand, Absatzeinzug, Zeilennummern und ein Rand für Notizen einstellen.
+- **Designs:** Im Kopf zwischen Klar, Akte (Schreibmaschine, Stempel, Lochung, Papierton), Zeitung (Fraktur-Kopf, Linien) und Tagebuch (Handschrift, Randlinie) wählen. Akte und Zeitung sind einfarbig. Die Word-Datei bleibt im schlichten Standardlayout.
+- **Sozialformen:** Jede Aufgabe kann ein Piktogramm für Einzelarbeit, Partnerarbeit, Gruppenarbeit oder Plenum bekommen (auch im Word-Export).
 - **Operator-Check:** erkennt Operatoren in Sie- und du-Form und zeigt den Anforderungsbereich an. Grundlage ist der IQB-Grundstock Deutsch.
 - **Ausgabe:** PDF zum Drucken, Word-Datei (.docx) zum Weiterbearbeiten oder direkt drucken.
 - **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung laden“ spielt sie wieder ein, auch in einem anderen Browser.
