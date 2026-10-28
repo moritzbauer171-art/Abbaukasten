@@ -82,12 +82,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 #editor{background:var(--panel);border-right:1px solid var(--line);padding:14px 14px 40px;display:flex;flex-direction:column;gap:10px;margin-left:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding-left:max(16px, env(safe-area-inset-left, 0px))}
 #preview{display:flex;flex-direction:column;min-width:0}
 .pv-bar{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;padding:10px 16px 0;color:var(--muted);font-size:12.5px}
-.pv-hint{font-size:12px;color:var(--faint)}
+.pv-hint{font-size:12px;color:var(--faint);padding:4px 16px 0}
 .pv-bar .sp{margin-right:auto}
 #preview-scroll{flex:1;overflow:auto;padding:14px 16px 48px}
 #pages{display:flex;flex-direction:column;align-items:center;gap:22px}
 .slot{position:relative;flex:0 0 auto}
-.slot>.page{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:var(--shadow)}
+.slot>.pout{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:var(--shadow)}
 .pg-warn{position:absolute;left:8px;bottom:8px;background:#C2410C;color:#fff;font:700 11px/1.3 var(--f-ui);padding:4px 8px;border-radius:6px;z-index:2}
 
 /* ---------- Editor-Karten ---------- */
@@ -228,6 +228,62 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .soz button:hover{color:var(--ink);border-color:var(--tinte)}
 .soz button[aria-pressed="true"]{--soz-bg:var(--tinte);background:var(--tinte);border-color:var(--tinte);color:var(--tinte-ink)}
 
+/* ---------- Ausgabe-Leiste und Vorschau-Optionen ---------- */
+.tabrow{display:flex;align-items:flex-end;justify-content:space-between;gap:6px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.outsw{margin-bottom:6px}
+.outsw button{display:inline-flex;align-items:center;gap:6px}
+.outsw button span{font-size:10.5px;line-height:1.5;padding:0 6px;border-radius:999px;background:var(--line);color:var(--muted);font-variant-numeric:tabular-nums}
+.outsw button[aria-pressed="true"] span{background:rgba(255,255,255,.22);color:inherit}
+.seg.sm button{padding:4px 10px;font-size:12px}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pv-opts{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-right:auto;min-width:0}
+.pv-empty{max-width:440px;margin:40px auto;padding:22px 24px;text-align:center;color:var(--muted);font-size:14px;line-height:1.5;border:1px dashed var(--line-strong);border-radius:12px;background:var(--panel)}
+
+/* ---------- Menü an der Karte ---------- */
+.mn{position:fixed;z-index:56;min-width:220px;max-width:calc(100% - 16px);background:var(--card);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column}
+.mn button{display:flex;align-items:center;gap:8px;border:0;background:transparent;text-align:left;padding:7px 10px;border-radius:7px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.mn button:hover,.mn button:focus-visible{background:var(--tinte-soft)}
+.mn button.danger{color:#C2410C}
+.mn button[aria-checked="true"]{font-weight:700}
+.mn button[aria-checked="true"]::after{content:"";margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--tinte)}
+.mn hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+.mn small{padding:4px 10px 2px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gpill{font-size:11px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--tinte-soft);color:var(--tinte);flex:0 0 auto;white-space:nowrap}
+
+/* ---------- Aufgaben-Extras ---------- */
+.tx-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tx{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--line-strong);background:transparent;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx:hover{color:var(--ink);border-color:var(--tinte)}
+.tx.filled{border-style:solid;color:var(--ink)}
+.tx.filled::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--tinte);flex:0 0 auto}
+.tx.on{border-color:var(--tinte);background:var(--tinte-soft);color:var(--ink)}
+.tx-pts{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted)}
+.tx-pts input{width:96px;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:3px 7px;font-size:12.5px}
+.tx-f{gap:6px}
+.tx-f textarea{min-height:58px}
+
+/* ---------- Hinweise ---------- */
+.gnote{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:7px 10px}
+.gn-hit{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:baseline}
+.gnote .link{font-size:12px;padding:0}
+.zl-hint{font-size:11.5px;color:var(--muted)}
+.zl-a{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- Sammlung ---------- */
+.snips{display:flex;flex-direction:column;gap:6px;border-top:1px dashed var(--line);padding-top:10px;margin-top:2px}
+.snip{display:flex;align-items:center;gap:4px}
+.snip-add{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 10px;cursor:pointer;text-align:left}
+.snip-add:hover{border-color:var(--tinte)}
+.snip-add b{font-size:13px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.snip-add span{font-size:11.5px;color:var(--muted)}
+
+/* ---------- Tafelkarten-Editor ---------- */
+.kk-dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+.kk-sw{display:flex;flex-wrap:wrap;gap:8px}
+.kk-sw button{width:24px;height:24px;border-radius:50%;border:2px solid var(--card);box-shadow:0 0 0 1px var(--line-strong);cursor:pointer}
+.kk-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink)}
+
 /* ---------- Bibliothek ---------- */
 .scrim{position:fixed;inset:0;background:rgba(10,14,24,.38);z-index:40}
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--panel);z-index:41;display:flex;flex-direction:column;box-shadow:var(--shadow);
@@ -254,9 +310,9 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .overlay div{background:var(--card);color:var(--ink);border-radius:12px;padding:18px 22px;font-weight:700;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
 
 /* ---------- Reiter (eine Ablage je Klasse) ---------- */
-.reiter{display:flex;align-items:flex-end;gap:2px;padding-top:6px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.reiter{display:flex;align-items:flex-end;gap:2px;padding-top:6px;margin-bottom:-1px;overflow-x:auto;scrollbar-width:none;min-width:0}
 .reiter::-webkit-scrollbar{display:none}
-.rt{display:flex;align-items:center;gap:8px;flex:0 0 auto;border:1px solid transparent;border-bottom:0;background:transparent;margin-bottom:-1px;padding:8px 16px 9px;border-radius:10px 10px 0 0;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.rt{display:flex;align-items:center;gap:8px;flex:0 0 auto;border:1px solid transparent;border-bottom:0;background:transparent;margin-bottom:0;padding:8px 16px 9px;border-radius:10px 10px 0 0;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap}
 .rt i{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
 .rt span{font-size:11px;line-height:1.55;padding:0 6px;border-radius:999px;background:var(--line);color:var(--muted);font-variant-numeric:tabular-nums}
 .rt:hover{color:var(--ink)}
@@ -292,7 +348,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   .main{grid-template-columns:minmax(0,1fr)}
   #editor{border-right:0;margin-left:0;padding-left:0;padding-right:0;background:transparent}
   #preview-scroll{padding-left:0;padding-right:0}
-  .pv-bar{padding-left:0;padding-right:0}
+  .pv-bar,.pv-hint{padding-left:0;padding-right:0}
   .brand span{display:none}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
@@ -468,6 +524,82 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .d-tagebuch .mat-no{border-radius:1.4mm;font-family:var(--f-disp);font-size:12pt;padding:0 2mm}
 .d-tagebuch .q-mark{font-family:var(--f-disp)}
 
+/* Lehrerfassung, Gruppen, Klausur */
+.task-eh{grid-column:2 / -1;margin-top:1.2mm;background:#F1F2F4;border-left:.8mm solid #9AA0AA;border-radius:0 .8mm .8mm 0;padding:1.4mm 2.6mm 1.6mm;font-size:9.5pt;line-height:1.38;color:#2A2D35}
+.task-eh>span{display:block;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif;font-size:6.8pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6A707C}
+.task-eh ul{margin:.4mm 0 0;padding-left:4mm}
+.task-afb b{color:var(--paper-ink);font-size:8.5pt}
+.pg-badge{position:absolute;top:5.5mm;right:18mm;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif;font-size:7pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B3261E;border:.3mm solid #B3261E;border-radius:.8mm;padding:.3mm 1.6mm}
+.grp-badge{display:flex;align-items:baseline;gap:2.4mm;font-size:9pt;color:var(--paper-muted)}
+.grp-badge b{background:var(--acc);color:#FFFFFF;padding:.5mm 2.6mm;border-radius:.8mm;font-size:9.5pt;letter-spacing:.03em}
+.blk[data-grp]::after{content:attr(data-grp);position:absolute;right:0;top:-3.4mm;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif;font-size:6.3pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.blk-cover{display:flex;flex-direction:column;gap:4mm}
+.cv-top{display:flex;justify-content:space-between;gap:6mm;font-size:8pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-muted);border-bottom:.6mm solid var(--acc);padding-bottom:1.6mm}
+.cv-title{font-family:var(--f-disp,var(--f-text));font-weight:600;font-size:26pt;line-height:1.1;margin-top:16mm}
+.cv-sub{font-size:11pt;color:var(--paper-muted);margin-top:-2mm}
+.cv-grid{width:100%;border-collapse:collapse;font-size:10.5pt;margin-top:6mm}
+.cv-grid th{text-align:left;font-weight:700;width:44mm;padding:3.2mm 0 1.4mm;vertical-align:bottom;border-bottom:.25mm solid var(--paper-hair)}
+.cv-grid td{padding:3.2mm 0 1.4mm;border-bottom:.25mm solid var(--paper-rule);vertical-align:bottom}
+.cv-h{font-size:8pt;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);margin-top:5mm}
+.cv-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1.4mm;font-size:10pt}
+.cv-list li{display:flex;gap:3mm}
+.cv-list b{flex:0 0 9mm;color:var(--acc)}
+.cv-tasks{border-collapse:collapse;font-size:10pt;width:90mm}
+.cv-tasks td{border:.25mm solid var(--paper-rule);padding:1.6mm 3mm}
+.cv-tasks tr:first-child td{font-weight:700;background:var(--acc-tint)}
+.run-head{display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;font-size:8pt;color:var(--paper-muted);border-bottom:.4mm solid var(--acc);padding-bottom:1.4mm}
+.run-head span:last-child{display:flex;gap:2mm;align-items:flex-end}
+.run-head i{display:inline-block;width:60mm;border-bottom:.2mm solid var(--paper-rule);height:3.4mm}
+
+/* QR-Code */
+.blk-qr{display:flex;gap:4.5mm;align-items:center}
+.blk-qr img{flex:0 0 auto;image-rendering:pixelated}
+.qr-t{display:flex;flex-direction:column;gap:1mm;min-width:0}
+.qr-t b{font-size:10.5pt}
+.qr-url{font-size:7.8pt;color:var(--paper-muted);word-break:break-all}
+.qr-note{font-size:8.5pt}
+.qr-empty{flex:0 0 auto;border:.3mm dashed var(--paper-hair);display:grid;place-items:center;color:var(--paper-muted);font-size:8pt;text-align:center;padding:2mm}
+
+/* Zeilenangaben in der Vorschau */
+#preview .page .ln-no{cursor:pointer;border-radius:.6mm;padding-block:.5mm}
+#preview .page .ln-no:empty::before{content:"\200b"}
+#preview .page .ln-no:hover{background:var(--acc-tint);color:var(--acc)}
+#preview .page .ln-no:empty:hover::before{content:attr(data-n)}
+#preview .page .ln.zsel .ln-t{background:var(--acc-tint)}
+#preview .page .ln.zsel .ln-no{color:var(--acc);font-weight:700}
+#preview .page .ln.zsel .ln-no:empty::before{content:attr(data-n)}
+
+/* Zwei A5 auf A4 quer */
+.page.a5{width:148mm;height:210mm;padding:10mm 11mm 0}
+.page.a5 .pg-foot{left:11mm;right:11mm;bottom:6mm}
+.page.a5 .pg-badge{right:11mm;top:3.5mm}
+.page.a5.d-akte::before{left:3.5mm;top:62.25mm}
+.page.a5.d-akte::after{left:3.5mm;top:142.25mm}
+.page.a5.d-tagebuch::before{left:7.5mm}
+#measure-host .page.a5{height:auto}
+.bogen{width:297mm;height:210mm;background:#FFFFFF;display:flex;justify-content:space-between;position:relative}
+.bogen>.page{flex:0 0 148mm;box-shadow:none}
+.bogen::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:.25mm dashed #9AA0AA}
+
+/* Tippkarten */
+.tk-page{padding:10mm;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif}
+.tk-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,minmax(0,1fr));height:277mm;padding:.25mm 0 0 .25mm}
+.tk-card{border:.25mm dashed #9AA0AA;margin:-.25mm 0 0 -.25mm;padding:6mm 7mm 4mm;display:flex;flex-direction:column;gap:3mm;min-height:0;overflow:hidden}
+.tk-h{display:flex;align-items:center;gap:2.4mm;font-size:8.5pt;color:var(--paper-muted)}
+.tk-h b{background:var(--acc);color:#FFFFFF;font-size:9pt;padding:.5mm 2.4mm;border-radius:.8mm}
+.tk-t{flex:1;min-height:0;font-size:12pt;line-height:1.4;overflow:hidden}
+.tk-f{font-size:6.8pt;color:var(--paper-muted)}
+
+/* Tafelkarten */
+.kk-page{width:297mm;height:210mm;padding:9mm;background:#FFFFFF}
+.kk-frame{width:100%;height:100%;border:2.4mm solid var(--kc);border-radius:7mm;display:flex;align-items:center;justify-content:center;padding:12mm 16mm;overflow:hidden}
+.kk-in{width:100%;font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;font-weight:700;color:#1C1F27;line-height:1.16;overflow-wrap:normal;word-break:normal}
+.kk-in.term{text-align:center;color:var(--kc)}
+.kk-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.42em}
+.kk-list li{position:relative;padding-left:.85em}
+.kk-list li::before{content:"";position:absolute;left:0;top:.4em;width:.36em;height:.36em;border-radius:50%;background:var(--kc)}
+#fit-host{position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;z-index:-1}
+
 /* Mess- und Druckbühne */
 #measure-host{position:fixed;left:0;top:0;width:0;height:0;overflow:visible;visibility:hidden;pointer-events:none;z-index:-1}
 #measure-host .page{height:auto;position:absolute;left:0;top:0}
@@ -477,7 +609,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   body{padding:0!important;background:#fff}
   #app,.toast,.overlay,.drawer,.scrim{display:none!important}
   #printroot{display:block}
-  #printroot .page{break-after:page;box-shadow:none}
+  #printroot>.pout{break-after:page;box-shadow:none}
+  #printroot .page{box-shadow:none}
 }
 </style>
 </head>
@@ -501,21 +634,25 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
       <button class="btn" type="button" id="btn-print" data-act="print" hidden>Drucken</button>
     </div>
   </header>
-  <nav class="reiter" id="reiter" role="tablist" aria-label="Klassen"></nav>
+  <div class="tabrow"><nav class="reiter" id="reiter" role="tablist" aria-label="Klassen"></nav><div class="seg sm outsw" id="outsw" role="group" aria-label="Ausgabe"></div></div>
   <div class="main">
     <section class="pane" id="editor" aria-label="Bausteine"></section>
     <section class="pane" id="preview" aria-label="Vorschau">
-      <div class="pv-bar"><span id="pagecount">A4</span><span class="pv-hint sp" id="pv-hint">Tipp: Wort im Material anklicken, um es zu erklären</span>
+      <div class="pv-bar"><span id="pagecount">A4</span><div class="pv-opts" id="pv-opts"></div>
         <button class="btn ghost" type="button" id="btn-zoom" data-act="zoom">100 %</button></div>
+      <div class="pv-hint" id="pv-hint">Tipp: Wort im Material anklicken für eine Worterklärung · Zeilennummer anklicken für eine Zeilenangabe</div>
       <div id="preview-scroll"><div id="pages"></div></div>
     </section>
   </div>
 </div>
 <div id="measure-host"><div class="page" id="measure"><div class="pg-body"></div></div></div>
+<div id="fit-host"></div>
 <div id="printroot"></div>
 <div id="lib-root"></div>
 <div id="dlg-root"></div>
 <div id="gl-root"></div>
+<div id="zl-root"></div>
+<div id="menu-root"></div>
 <input type="file" id="import-file" accept=".json,application/json" hidden>
 <div id="toast-root"></div>
 
@@ -525,7 +662,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
-const AVAIL = 264 * MMPX;          // nutzbare Höhe je Seite (mm → px)
+let AVAIL = 264 * MMPX;          // nutzbare Höhe je Seite (mm → px)
 const GAP = 5 * MMPX;              // Abstand zwischen Bausteinen
 const LIBS = {
   h2c: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
@@ -561,6 +698,7 @@ const TYPES = {
   heading:  { label:'Überschrift',   desc:'Zwischentitel' },
   text:     { label:'Absatz',        desc:'Einleitung, Hinweis' },
   quote:    { label:'Zitat',         desc:'Impuls zum Einstieg' },
+  qr:       { label:'QR-Code',       desc:'Link zu Video, Quelle' },
   image:    { label:'Bild',          desc:'Grafik, Schaubild' },
   pagebreak:{ label:'Seitenumbruch', desc:'Rest auf neue Seite' }
 };
@@ -1008,11 +1146,469 @@ async function sozPNG(kind, color) {
   return imageBytes(cv.toDataURL('image/png'));
 }
 
+/* ================= QR-Code (eigener Kodierer: Byte-Modus, Fehlerkorrektur M, Version 1–15) ================= */
+const QR = (() => {
+  const EXP = new Array(512), LOG = new Array(256);
+  let v = 1; for (let i = 0; i < 255; i++) { EXP[i] = v; LOG[v] = i; v <<= 1; if (v & 256) v ^= 0x11D; }
+  for (let i = 255; i < 512; i++) EXP[i] = EXP[i - 255];
+  const mul = (a, b) => (a && b) ? EXP[LOG[a] + LOG[b]] : 0;
+  function rs(data, n) {
+    let g = [1];
+    for (let i = 0; i < n; i++) { const q = new Array(g.length + 1).fill(0); for (let j = 0; j < g.length; j++) { q[j] ^= g[j]; q[j + 1] ^= mul(g[j], EXP[i]); } g = q; }
+    const r = new Array(n).fill(0);
+    for (const d of data) { const f = d ^ r.shift(); r.push(0); if (f) for (let j = 0; j < n; j++) r[j] ^= mul(g[j + 1], f); }
+    return r;
+  }
+  // [EC je Block, Blöcke Gruppe 1, Daten je Block, Blöcke Gruppe 2, Daten je Block]
+  const ECM = [null, [10, 1, 16, 0, 0], [16, 1, 28, 0, 0], [26, 1, 44, 0, 0], [18, 2, 32, 0, 0], [24, 2, 43, 0, 0], [16, 4, 27, 0, 0], [18, 4, 31, 0, 0], [22, 2, 38, 2, 39], [22, 3, 36, 2, 37], [26, 4, 43, 1, 44], [30, 1, 50, 4, 51], [22, 6, 36, 2, 37], [22, 8, 37, 1, 38], [24, 4, 40, 5, 41], [24, 5, 41, 5, 42]];
+  const ALIGN = [null, [], [6, 18], [6, 22], [6, 26], [6, 30], [6, 34], [6, 22, 38], [6, 24, 42], [6, 26, 46], [6, 28, 50], [6, 30, 54], [6, 32, 58], [6, 34, 62], [6, 26, 46, 66], [6, 26, 48, 70]];
+  const MASKS = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x, y) => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+    (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0,
+    (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+  function encode(text) {
+    const bytes = Array.from(new TextEncoder().encode(String(text)));
+    let ver = 0, spec = null;
+    for (let k = 1; k <= 15; k++) { const s = ECM[k]; if (4 + (k < 10 ? 8 : 16) + bytes.length * 8 <= (s[1] * s[2] + s[3] * s[4]) * 8) { ver = k; spec = s; break; } }
+    if (!ver) return null;
+    const dataCw = spec[1] * spec[2] + spec[3] * spec[4];
+    const bb = []; const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bb.push((val >>> i) & 1); };
+    put(4, 4); put(bytes.length, ver < 10 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    put(0, Math.min(4, dataCw * 8 - bb.length));
+    while (bb.length % 8) bb.push(0);
+    const data = []; for (let i = 0; i < bb.length; i += 8) data.push(parseInt(bb.slice(i, i + 8).join(''), 2));
+    for (let p = 0; data.length < dataCw; p++) data.push(p % 2 ? 0x11 : 0xEC);
+    const blocks = []; let k = 0;
+    for (let g = 0; g < 2; g++) { const cnt = spec[1 + g * 2], len = spec[2 + g * 2]; for (let i = 0; i < cnt; i++) { const d = data.slice(k, k + len); k += len; blocks.push({ d, e: rs(d, spec[0]) }); } }
+    const cw = []; const maxD = Math.max(...blocks.map(b => b.d.length));
+    for (let i = 0; i < maxD; i++) blocks.forEach(b => { if (i < b.d.length) cw.push(b.d[i]); });
+    for (let i = 0; i < spec[0]; i++) blocks.forEach(b => cw.push(b.e[i]));
+    const size = ver * 4 + 17;
+    const M = Array.from({ length: size }, () => new Array(size).fill(false));
+    const F = Array.from({ length: size }, () => new Array(size).fill(false));
+    const set = (x, y, on) => { M[y][x] = on; F[y][x] = true; };
+    for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    const finder = (cx, cy) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const x = cx + dx, y = cy + dy; if (x < 0 || y < 0 || x >= size || y >= size) continue; const d = Math.max(Math.abs(dx), Math.abs(dy)); set(x, y, d !== 2 && d !== 4); } };
+    finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+    const al = ALIGN[ver], n = al.length;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+      if ((i === 0 && j === 0) || (i === 0 && j === n - 1) || (i === n - 1 && j === 0)) continue;
+      for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(al[i] + dx, al[j] + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+    }
+    const format = mask => {
+      const d = mask; let r = d; for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+      const bits = ((d << 10) | r) ^ 0x5412; const bit = i => ((bits >>> i) & 1) !== 0;
+      for (let i = 0; i <= 5; i++) set(8, i, bit(i));
+      set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8));
+      for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+      for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i));
+      for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i));
+      set(8, size - 8, true);
+    };
+    format(0);
+    if (ver >= 7) {
+      let r = ver; for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1F25);
+      const bits = (ver << 12) | r;
+      for (let i = 0; i < 18; i++) { const on = ((bits >>> i) & 1) !== 0; const a = size - 11 + i % 3, b = Math.floor(i / 3); set(a, b, on); set(b, a, on); }
+    }
+    let bi = 0; const total = cw.length * 8;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < size; vert++) for (let j = 0; j < 2; j++) {
+        const x = right - j; const up = ((right + 1) & 2) === 0; const y = up ? size - 1 - vert : vert;
+        if (!F[y][x] && bi < total) { M[y][x] = ((cw[bi >>> 3] >>> (7 - (bi & 7))) & 1) !== 0; bi++; }
+      }
+    }
+    const applyMask = m => { for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!F[y][x] && MASKS[m](x, y)) M[y][x] = !M[y][x]; };
+    const p1 = [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0], p2 = [0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1];
+    const penalty = () => {
+      let p = 0;
+      for (let y = 0; y < size; y++) { let run = 1; for (let x = 1; x < size; x++) { if (M[y][x] === M[y][x - 1]) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else run = 1; } }
+      for (let x = 0; x < size; x++) { let run = 1; for (let y = 1; y < size; y++) { if (M[y][x] === M[y - 1][x]) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else run = 1; } }
+      for (let y = 0; y < size - 1; y++) for (let x = 0; x < size - 1; x++) { const c = M[y][x]; if (c === M[y][x + 1] && c === M[y + 1][x] && c === M[y + 1][x + 1]) p += 3; }
+      const hits = get => { let c = 0; for (let i = 0; i + 11 <= size; i++) { let a = true, b = true; for (let q = 0; q < 11; q++) { const val = get(i + q) ? 1 : 0; if (val !== p1[q]) a = false; if (val !== p2[q]) b = false; } if (a) c++; if (b) c++; } return c; };
+      for (let y = 0; y < size; y++) p += 40 * hits(i => M[y][i]);
+      for (let x = 0; x < size; x++) p += 40 * hits(i => M[i][x]);
+      let dark = 0; for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (M[y][x]) dark++;
+      const tot = size * size; p += 10 * Math.floor(Math.abs(dark * 20 - tot * 10) / tot);
+      return p;
+    };
+    let best = 0, bestP = Infinity;
+    for (let m = 0; m < 8; m++) { applyMask(m); format(m); const p = penalty(); if (p < bestP) { bestP = p; best = m; } applyMask(m); }
+    applyMask(best); format(best);
+    return { size, M, ver };
+  }
+  const cache = new Map();
+  function dataURL(text, px = 8) {
+    const key = px + '|' + text; if (cache.has(key)) return cache.get(key);
+    const q = encode(text); if (!q) return '';
+    const n = q.size + 8; const c = document.createElement('canvas'); c.width = c.height = n * px;
+    const x = c.getContext('2d'); x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000000';
+    for (let y = 0; y < q.size; y++) for (let xx = 0; xx < q.size; xx++) if (q.M[y][xx]) x.fillRect((xx + 4) * px, (y + 4) * px, px, px);
+    let u = ''; try { u = c.toDataURL('image/png'); } catch {}
+    if (cache.size > 40) cache.clear();
+    cache.set(key, u); return u;
+  }
+  return { encode, dataURL };
+})();
+
+/* ================= Ansicht: Fassung, Gruppen, Papier ================= */
+const GEO = { a4: { avail: 264 }, a5: { avail: 182 } };
+function sheetView() { return { lehrer: state.fassung === 'lehrer', grp: state.sheet.meta.groupsOn ? state.grp : 'all' }; }
+const blockVisible = (b, v) => !v || v.grp === 'all' || !b.group || b.group === v.grp;
+const tipsOf = it => (Array.isArray(it.tips) ? it.tips : (it.tips && typeof it.tips === 'object' ? [0, 1, 2].map(j => it.tips[j]) : [])).map(s => String(s || '').trim()).filter(Boolean);
+const ehLines = it => String(it.eh || '').split('\n').map(s => s.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
+function taskRight(it, r, meta, v) {
+  const out = []; const isK = meta.mode === 'klausur';
+  if (isK && String(it.pts || '').trim()) out.push(`<b>${esc(it.pts)}</b>`);
+  if ((meta.showAFB || (v && v.lehrer)) && r) out.push('AFB ' + afbLabel(r));
+  const n = tipsOf(it).length; if (n && !isK) out.push(`Tipps: ${n}`);
+  return out.join('<br>');
+}
+function taskEH(it, v) {
+  const lines = ehLines(it); if (!v || !v.lehrer || !lines.length) return '';
+  return `<div class="task-eh"><span>Erwartung</span><ul>${lines.map(s => `<li>${inlineHTML(s)}</li>`).join('')}</ul></div>`;
+}
+function buildCover(meta, sh, v, body) {
+  const ex = meta.exam || {};
+  const mats = sh.blocks.filter(b => b.type === 'material' && blockVisible(b, v));
+  const tasks = []; let t = 0;
+  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; b.items.forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
+  const sub = [meta.course, ex.halbjahr].filter(Boolean).map(esc).join(' · ');
+  const node = el(`<div class="blk blk-cover" data-bid="meta">
+    <div class="cv-top"><span>${esc(meta.school || '')}</span><span>${esc(meta.course || '')}</span></div>
+    <div class="cv-title">${esc(ex.label || 'Klausur')}</div>${sub ? `<div class="cv-sub">${sub}</div>` : ''}
+    <table class="cv-grid"><tr><th>Name</th><td></td></tr><tr><th>Datum</th><td>${esc(ex.datum || '')}</td></tr>${ex.zeit ? `<tr><th>Bearbeitungszeit</th><td>${esc(ex.zeit)}</td></tr>` : ''}${ex.hilfsmittel ? `<tr><th>Hilfsmittel</th><td>${esc(ex.hilfsmittel)}</td></tr>` : ''}</table>
+    ${mats.length ? `<div class="cv-h">Materialgrundlage</div><ul class="cv-list">${mats.map((b, i) => `<li><b>M${i + 1}</b><span>${inlineHTML(b.title) || 'ohne Titel'}</span></li>`).join('')}</ul>` : ''}
+    ${tasks.length ? `<div class="cv-h">Aufgaben</div><table class="cv-tasks"><tr><td>Aufgabe</td><td>Gewichtung</td></tr>${tasks.map(x => `<tr><td>${x.no}</td><td>${esc(x.pts) || '&nbsp;'}</td></tr>`).join('')}</table>` : ''}
+  </div>`);
+  body.appendChild(node); return { type: 'cover', el: node };
+}
+function buildRunHead(meta, body) {
+  const ex = meta.exam || {};
+  const node = el(`<div class="blk run-head" data-bid="meta"><span>${[ex.label || 'Klausur', meta.course].filter(Boolean).map(esc).join(' · ')}</span><span>Name <i></i></span></div>`);
+  body.appendChild(node); return { type: 'head', el: node };
+}
+function buildGroupBadge(meta, g, body) {
+  const node = el(`<div class="blk grp-badge" data-bid="meta"><b>Gruppe ${g}</b><span>${esc(g === 'A' ? meta.groupA : meta.groupB)}</span></div>`);
+  body.appendChild(node); return { type: 'badge', el: node };
+}
+// Passt Text in feste Kästen ein (Tippkarten verkleinern, Tafelkarten vergrößern)
+function fitDown(n, max = 12, min = 7.5) { let s = max; n.style.fontSize = s + 'pt'; while (n.scrollHeight > n.clientHeight + 1 && s > min) { s -= .5; n.style.fontSize = s + 'pt'; } }
+function fitUp(inner, frame, maxPx) {
+  const cs = getComputedStyle(frame);
+  const H = frame.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  const ok = px => { inner.style.fontSize = px + 'px'; return inner.offsetHeight <= H + .5 && inner.scrollWidth <= inner.clientWidth + .5; };
+  let lo = 8, hi = maxPx;
+  if (ok(hi)) lo = hi; else for (let k = 0; k < 18; k++) { const mid = (lo + hi) / 2; if (ok(mid)) lo = mid; else hi = mid; }
+  inner.style.fontSize = Math.floor(lo) + 'px';
+}
+
+/* ================= Tippkarten (gestufte Hilfen) ================= */
+function tipCards() {
+  const sh = state.sheet, meta = sh.meta; const cards = []; let t = 0;
+  for (const b of sh.blocks) {
+    if (b.type !== 'tasks') continue; if (b.restart) t = 0;
+    for (const it of b.items) { t++; const tips = tipsOf(it); tips.forEach((tx, j) => cards.push({ no: t, lvl: j + 1, of: tips.length, text: tx, grp: meta.groupsOn && b.group ? b.group : '' })); }
+  }
+  return cards;
+}
+function layoutTipps() {
+  const meta = state.sheet.meta; const a = pageAcc(meta); const cards = tipCards(); const pages = []; const host = $('#fit-host');
+  for (let i = 0; i < cards.length; i += 8) {
+    const pg = el(`<div class="page tk-page" data-w="210" data-h="297"><div class="tk-grid">${cards.slice(i, i + 8).map(c => `<div class="tk-card"><div class="tk-h"><b>Tipp ${c.lvl}</b><span>zu Aufgabe ${c.no}${c.grp ? ' · Gruppe ' + c.grp : ''}</span></div><div class="tk-t">${inlineHTML(c.text)}</div><div class="tk-f">${esc(meta.title || '')}${c.of > 1 ? ` · Tipp ${c.lvl} von ${c.of}` : ''}</div></div>`).join('')}</div></div>`);
+    pg.style.setProperty('--acc', a.c); pg.style.setProperty('--acc-tint', a.t);
+    host.appendChild(pg); pg.querySelectorAll('.tk-t').forEach(n => fitDown(n)); host.removeChild(pg);
+    pages.push({ pg, over: false });
+  }
+  return pages;
+}
+
+/* ================= Tafelkarten (A4 quer) ================= */
+const TK_COLORS = ['#1F4FA0', '#0D6767', '#8A2A3E', '#B45309', '#5B3F99', '#2F6B2F', '#383C44'];
+function karteChunks(c, per) {
+  const groups = String(c.points || '').replace(/\r/g, '').split(/\n\s*\n/)
+    .map(g => g.split('\n').map(s => s.trim().replace(/^[-–•*]\s*/, '')).filter(Boolean)).filter(g => g.length);
+  const out = []; groups.forEach(g => { for (let i = 0; i < g.length; i += per) out.push(g.slice(i, i + per)); });
+  return out;
+}
+function layoutKarten() {
+  const sh = state.sheet; const per = Number(sh.meta.cardsPer) || 3; const pages = []; const host = $('#fit-host');
+  (sh.cards || []).forEach((c, ci) => {
+    const col = c.color || TK_COLORS[ci % TK_COLORS.length];
+    const mk = (inner, term) => el(`<div class="page kk-page" data-w="297" data-h="210" style="--kc:${col}"><div class="kk-frame"><div class="kk-in${term ? ' term' : ''}">${inner}</div></div></div>`);
+    pages.push(mk(`<div class="kk-term">${esc(c.term || 'Begriff')}</div>`, true));
+    karteChunks(c, per).forEach(ch => pages.push(mk(`<ul class="kk-list">${ch.map(s => `<li>${inlineHTML(s)}</li>`).join('')}</ul>`)));
+  });
+  pages.forEach(pg => { host.appendChild(pg); fitUp(pg.querySelector('.kk-in'), pg.querySelector('.kk-frame'), pg.querySelector('.kk-in.term') ? 340 : 150); host.removeChild(pg); });
+  return pages.map(pg => ({ pg, over: false }));
+}
+function kartenEditor() {
+  const sh = state.sheet; if (!Array.isArray(sh.cards)) sh.cards = [];
+  const cards = sh.cards; const per = Number(sh.meta.cardsPer) || 3;
+  const total = cards.reduce((n, c) => n + 1 + karteChunks(c, per).length, 0);
+  return `<div class="card" data-bid="karten"><div class="card-h"><span class="kind">Tafelkarten</span><span class="sum">${cards.length} ${cards.length === 1 ? 'Begriff' : 'Begriffe'} · ${total} ${total === 1 ? 'Karte' : 'Karten'} · A4 quer</span></div>
+    <div class="card-b">${gNote('karten')}
+      <div class="f"><span>Stichpunkte pro Karte</span><div class="seg" role="group" aria-label="Stichpunkte pro Karte">${[2, 3, 4].map(n => `<button type="button" data-act="kk-per" data-v="${n}" aria-pressed="${per === n}">${n}</button>`).join('')}</div></div>
+      <small class="hint">Der Begriff steht allein auf der ersten Karte, die Stichpunkte folgen auf eigenen Karten. Eine Leerzeile zwischen Stichpunkten beginnt eine neue Karte. Die Schrift wird so groß wie möglich gesetzt.</small>
+    </div></div>
+    ${cards.map((c, i) => { const col = c.color || TK_COLORS[i % TK_COLORS.length]; return `<div class="card kk-card" data-bid="karten">
+      <div class="card-h"><span class="kk-dot" style="background:${col}"></span><span class="kind">Begriff ${i + 1}</span><span class="sum">${esc(c.term || 'ohne Begriff')}</span>
+        <button class="ib" type="button" data-act="kk-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
+        <button class="ib" type="button" data-act="kk-down" data-i="${i}" title="Nach unten"${i === cards.length - 1 ? ' disabled' : ''}>${I.down}</button>
+        <button class="ib" type="button" data-act="kk-del" data-i="${i}" title="Begriff löschen">${I.del}</button></div>
+      <div class="card-b">
+        ${fText(`cards.${i}.term`, 'Begriff', c.term, 'z. B. Dogwhistling')}
+        <div class="f"><span>Farbe</span><div class="kk-sw">${TK_COLORS.map(x => `<button type="button" data-act="kk-color" data-i="${i}" data-v="${x}" aria-pressed="${col === x}" style="background:${x}" aria-label="Farbe ${x}"></button>`).join('')}</div></div>
+        ${fArea(`cards.${i}.points`, 'Stichpunkte', c.points, 5, 'Ein Stichpunkt pro Zeile')}
+        <div data-kw="${i}">${colonWarn(c)}</div>
+      </div></div>`; }).join('')}
+    <div class="adder"><button type="button" class="btn primary" data-act="kk-add">+ Begriff</button></div>`;
+}
+function colonWarn(c) {
+  const n = String(c.points || '').split('\n').filter(s => s.includes(':')).length;
+  return n ? `<small class="gl-warn">${n} ${n === 1 ? 'Stichpunkt enthält' : 'Stichpunkte enthalten'} einen Doppelpunkt. Kürzer und ohne Doppelpunkt wirkt an der Tafel klarer.</small>` : '';
+}
+
+/* ================= Bausteinsammlung ================= */
+const LS_SNIP = 'abw.snips';
+const userSnips = () => { const s = lsGet(LS_SNIP); return Array.isArray(s) ? s.filter(x => x && x.block && TYPES[x.block.type]) : []; };
+function opsTableBlock() {
+  return { ...newBlock('table'), title: 'Operatoren (IQB-Grundstock Deutsch)', cols: ['Operator', 'Anforderungsbereich'], rows: OPS.filter(o => o.iqb).map(o => [o.op, 'AFB ' + afbLabel(o.afb)]), rowHeight: 'normal', firstBold: true };
+}
+function allSnips() { return [{ id: 'builtin-ops', name: 'Operatorenübersicht (IQB-Grundstock)', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
+function snipBlock(id) {
+  if (id === 'builtin-ops') return opsTableBlock();
+  const s = userSnips().find(x => x.id === id); if (!s) return null;
+  const b = clone(s.block); b.id = 'b' + uid(); delete b.group; return b;
+}
+function saveSnip(b) {
+  const list = userSnips(); const c = clone(b); delete c.group;
+  const name = (TYPES[b.type].label + ': ' + summary(b, numbering(state.sheet))).slice(0, 70);
+  list.unshift({ id: 's' + uid(), name, block: c }); lsSet(LS_SNIP, list.slice(0, 60));
+  toast('In der Sammlung gespeichert');
+}
+function adderHTML() {
+  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}"><b>${t.label}</b><span>${t.desc}</span></button>`).join('')}</div>
+    <div class="snips"><span class="lbl">Aus der Sammlung</span>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
+      <small class="hint">Eigene Bausteine speichern Sie über ⋯ an der jeweiligen Karte.</small></div></div>`;
+}
+
+/* ================= Menü an der Karte (⋯) ================= */
+const menu = { open: null };
+function openMenu(bid, anchor) { menu.open = { bid, rect: rectOf(anchor) }; renderMenu(); }
+function closeMenu() { if (!menu.open) return; menu.open = null; renderMenu(); }
+function renderMenu() {
+  const root = $('#menu-root'); const o = menu.open;
+  if (!o) { root.innerHTML = ''; return; }
+  const b = target(o.bid); if (!b) { menu.open = null; root.innerHTML = ''; return; }
+  const gOn = state.sheet.meta.groupsOn; const g = b.group || '';
+  root.innerHTML = `<div class="mn" id="mn" role="menu">
+    <button type="button" role="menuitem" data-mn="dup">Duplizieren</button>
+    ${b.type === 'pagebreak' ? '' : '<button type="button" role="menuitem" data-mn="snip">In der Sammlung speichern</button>'}
+    ${gOn ? `<hr><small>Gilt für</small>${[['', 'Beide Gruppen'], ['A', 'Nur Gruppe A'], ['B', 'Nur Gruppe B']].map(([v, l]) => `<button type="button" role="menuitemradio" aria-checked="${g === v}" data-mn="grp" data-v="${v}">${l}</button>`).join('')}` : ''}
+    <hr><button type="button" role="menuitem" class="danger" data-mn="del">Löschen</button></div>`;
+  const m = $('#mn'); const r = o.rect;
+  const left = Math.min(Math.max(8, r.right - m.offsetWidth), window.innerWidth - m.offsetWidth - 8);
+  let top = r.bottom + 4; if (top + m.offsetHeight > window.innerHeight - 8) top = Math.max(8, r.top - m.offsetHeight - 4);
+  m.style.left = left + 'px'; m.style.top = top + 'px';
+  const first = m.querySelector('button'); if (first) first.focus({ preventScroll: true });
+}
+function onMenuClick(e) {
+  const a = e.target.closest('[data-mn]'); if (!a || !menu.open) return;
+  const bid = menu.open.bid; closeMenu();
+  const blocks = state.sheet.blocks; const idx = blocks.findIndex(x => x.id === bid); const b = blocks[idx]; if (!b) return;
+  switch (a.dataset.mn) {
+    case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); break; }
+    case 'snip': saveSnip(b); renderEditor(); break;
+    case 'grp': b.group = a.dataset.v || ''; changed(true); break;
+    case 'del': snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${TYPES[b.type].label} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); break;
+  }
+}
+
+/* ================= Aufgaben: Erwartung, Tipps, Etikett, Gewichtung ================= */
+const taskKey = (bid, i, w) => `${bid}:${i}:${w}`;
+function taskExtras(b, i, it) {
+  const isK = state.sheet.meta.mode === 'klausur';
+  const open = w => state.taskOpen.has(taskKey(b.id, i, w));
+  const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
+  const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}</div>`;
+  if (open('eh')) h += `<label class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span><textarea data-k="items.${i}.eh" rows="3" placeholder="Ein Punkt pro Zeile">${esc(it.eh || '')}</textarea></label>`;
+  if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => `<input type="text" data-k="items.${i}.tips.${j}" value="${esc(t[j] || '')}" placeholder="Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}">`).join('')}</div>`; }
+  if (open('tag')) h += `<label class="f tx-f"><span>Etikett</span><input type="text" data-k="items.${i}.tag" value="${esc(it.tag || '')}" placeholder="z. B. Zusatz, Wahlaufgabe"></label>`;
+  return h;
+}
+
+/* ================= Zeilenangaben per Klick ================= */
+const zl = { open: null };
+const lastField = { bid: null, k: null, pos: null, end: null };
+function fieldLabel(b, k) {
+  const num = numbering(state.sheet); const m = k.match(/^items\.(\d+)\.(text|eh|tips|tag)(?:\.(\d+))?/);
+  if (b.type === 'tasks' && m) { const n = num[b.id].from + +m[1]; return `Aufgabe ${n}${m[2] === 'eh' ? ' · Erwartung' : m[2] === 'tips' ? ` · Tipp ${+m[3] + 1}` : ''}`; }
+  return TYPES[b.type].label;
+}
+function fieldTarget() {
+  if (!lastField.bid) return null; const b = state.sheet.blocks.find(x => x.id === lastField.bid);
+  if (!b || b.type === 'material') return null; return { ...lastField, label: fieldLabel(b, lastField.k) };
+}
+function zlText() {
+  const o = zl.open; const lo = Math.min(o.a, o.b), hi = Math.max(o.a, o.b);
+  const many = state.sheet.blocks.filter(x => x.type === 'material').length > 1;
+  return `(${many && o.mNo ? `M${o.mNo}, ` : ''}Z. ${lo === hi ? lo : lo + '–' + hi})`;
+}
+function openZl(bid, n, mNo, rect) {
+  if (zl.open && zl.open.bid === bid) { zl.open.b = n; zl.open.rect = rect; } else zl.open = { bid, a: n, b: n, mNo, rect };
+  renderZl(); markZl();
+}
+function closeZl() { if (!zl.open) return; zl.open = null; renderZl(); markZl(); }
+function markZl() {
+  document.querySelectorAll('#pages .ln.zsel').forEach(n => n.classList.remove('zsel'));
+  const o = zl.open; if (!o) return; const lo = Math.min(o.a, o.b), hi = Math.max(o.a, o.b);
+  document.querySelectorAll(`#pages [data-bid="${o.bid}"] .ln-no`).forEach(n => { const k = +n.dataset.n; if (k >= lo && k <= hi) n.parentElement.classList.add('zsel'); });
+}
+function renderZl() {
+  const r = $('#zl-root'); const o = zl.open; if (!o) { r.innerHTML = ''; return; }
+  const tgt = fieldTarget();
+  r.innerHTML = `<div class="gl-scrim" data-zl="close"></div><div class="gpop" id="zlpop" role="dialog" aria-labelledby="zl-h">
+    <div class="gpop-h"><span id="zl-h">Zeilenangabe</span><button class="ib" type="button" data-zl="close" title="Schließen">${I.x}</button></div>
+    <div class="gl-term">${esc(zlText())}</div>
+    <small class="zl-hint">Für einen Bereich die letzte Zeile anklicken.</small>
+    <div class="zl-a">${tgt ? `<button class="btn primary" type="button" data-zl="ins">In „${esc(tgt.label)}“ einfügen</button>` : ''}<button class="btn" type="button" data-zl="copy">Kopieren</button></div>
+    ${tgt ? '' : '<small class="zl-hint">Tipp: Erst in ein Aufgaben- oder Erwartungsfeld klicken, dann landet die Angabe direkt dort.</small>'}</div>`;
+  placePop($('#zlpop'), o.rect);
+}
+function placePop(p, r) {
+  if (!p) return; if (narrowGloss()) { p.style.left = ''; p.style.top = ''; return; }
+  const w = p.offsetWidth, h = p.offsetHeight;
+  const left = Math.min(Math.max(16, r.left + r.width / 2 - w / 2), window.innerWidth - w - 16);
+  let top = r.bottom + 10; if (top + h > window.innerHeight - 16) top = Math.max(16, r.top - h - 10);
+  p.style.left = left + 'px'; p.style.top = top + 'px';
+}
+function zlInsert() {
+  const f = fieldTarget(); const txt = zlText(); if (!f) return zlCopy();
+  state.closed.delete(f.bid);
+  const mm = f.k.match(/^items\.(\d+)\.(eh|tips|tag)/); if (mm) state.taskOpen.add(taskKey(f.bid, +mm[1], mm[2]));
+  renderEditor();
+  const x = $(`#editor [data-bid="${f.bid}"] [data-k="${f.k}"]`); if (!x) return zlCopy();
+  const val = x.value; const p = Math.min(f.pos == null ? val.length : f.pos, val.length); const e = Math.max(p, Math.min(f.end == null ? p : f.end, val.length));
+  const before = val.slice(0, p), after = val.slice(e);
+  const ins = (before && !/\s$/.test(before) ? ' ' : '') + txt + (after && !/^[\s.,;:)]/.test(after) ? ' ' : '');
+  x.value = before + ins + after; const np = (before + ins).length;
+  x.dispatchEvent(new Event('input', { bubbles: true }));
+  try { x.focus({ preventScroll: true }); x.setSelectionRange(np, np); } catch {}
+  lastField.pos = lastField.end = np;
+  closeZl(); toast(`${txt} eingefügt in ${f.label}`);
+}
+function zlCopy() {
+  const txt = zlText(); closeZl();
+  const done = () => toast(`${txt} kopiert`);
+  try { navigator.clipboard.writeText(txt).then(done, () => toast(`Kopieren nicht möglich. Die Angabe lautet ${txt}`)); } catch { toast(`Die Angabe lautet ${txt}`); }
+}
+
+/* ================= Einfügen aus PDFs ================= */
+function cleanPdf(raw) {
+  let t = String(raw).replace(/\r\n?/g, '\n').replace(/­/g, ''); let hy = 0, ln = 0;
+  t = t.replace(/(\p{L})-[ \t]*\n[ \t]*(\p{Ll})/gu, (m, a, b) => { hy++; return a + b; });
+  const lines = t.split('\n');
+  const strip = (re, fix) => {
+    const nums = []; lines.forEach((l, i) => { const m = l.match(re); if (m && +m[1] % 5 === 0) nums.push([i, +m[1]]); });
+    if (nums.length >= 2 && nums.every((x, i) => !i || x[1] > nums[i - 1][1])) nums.forEach(([i]) => { lines[i] = fix(lines[i]); ln++; });
+  };
+  strip(/^\s*(\d{1,3})\s+\S/, l => l.replace(/^\s*\d{1,3}\s+/, ''));
+  strip(/\S\s+(\d{1,3})\s*$/, l => l.replace(/\s+\d{1,3}\s*$/, ''));
+  return { t: lines.join('\n'), hy, ln };
+}
+
+/* ================= Genderzeichen (Schulvorgabe: ausschreiben) ================= */
+const GENDER_RE = /([A-Za-zÄÖÜäöüß]+)(?:\*|:|_|·)(innen|in)(?![a-zäöüß])|([a-zäöüß]+)(Innen)(?![a-zäöüß])/g;
+function genderRepl(stem, plural) {
+  if (!plural) return `${stem}in oder ${stem}`;
+  const masc = /(er|el|en)$/.test(stem) ? stem : /(or|ent|ant|ist|at|og|eg|graf|oph|ent)$/.test(stem) ? stem + 'en' : /e$/.test(stem) ? stem + 'n' : stem + 'e';
+  return `${stem}innen und ${masc}`;
+}
+function genderHits(texts) {
+  const out = new Map();
+  texts.forEach(t => String(t == null ? '' : t).replace(GENDER_RE, (m, s1, suf1, s2) => { if (!out.has(m)) out.set(m, genderRepl(s1 || s2, (suf1 || 'innen').toLowerCase() === 'innen')); return m; }));
+  return [...out].map(([m, r]) => ({ m, r }));
+}
+function gTargets(bid) {
+  const sh = state.sheet;
+  if (bid === 'meta') { const m = sh.meta; if (!m.exam) m.exam = {}; return [[m, 'title'], [m, 'topic'], [m.exam, 'label'], [m.exam, 'hilfsmittel'], [m, 'groupA'], [m, 'groupB']]; }
+  if (bid === 'karten') return (sh.cards || []).flatMap(c => [[c, 'term'], [c, 'points']]);
+  const b = sh.blocks.find(x => x.id === bid); if (!b) return [];
+  switch (b.type) {
+    case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
+    case 'info': return [[b, 'title'], [b, 'text']];
+    case 'heading': case 'text': return [[b, 'text']];
+    case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
+    case 'qr': return [[b, 'title'], [b, 'note']];
+    case 'image': return [[b, 'caption']];
+    default: return [];
+  }
+}
+function gNote(bid) {
+  const hits = genderHits(gTargets(bid).map(([o, k]) => o[k]));
+  if (!hits.length) return `<div data-gn="${bid}" hidden></div>`;
+  return `<div class="gnote" data-gn="${bid}"><b>Genderzeichen</b><span>Laut Schulvorgabe ausschreiben:</span>${hits.map(h => `<span class="gn-hit">„${esc(h.m)}“ <button type="button" class="link" data-act="gfix" data-m="${esc(h.m)}" data-r="${esc(h.r)}">→ ${esc(h.r)}</button></span>`).join('')}</div>`;
+}
+function gFix(bid, m, r) { gTargets(bid).forEach(([o, k]) => { if (typeof o[k] === 'string') o[k] = o[k].split(m).join(r); }); changed(true); toast(`„${m}“ ersetzt`); }
+
+/* ================= Erwartungshorizont als Markdown ================= */
+const plainMd = s => String(s || '').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').replace(/\^(\d+)/g, '$1').trim();
+function ehMarkdown() {
+  const sh = state.sheet, m = sh.meta; const isK = m.mode === 'klausur'; const L = [];
+  L.push(`# Erwartungshorizont: ${m.title || 'Ohne Titel'}`, '', [isK ? (m.exam && m.exam.label) || 'Klausur' : '', m.course, m.school, !isK && m.nr ? 'AB ' + m.nr : ''].filter(Boolean).join(' · '));
+  if (m.topic && !isK) L.push('', `Thema: ${m.topic}`);
+  const mats = sh.blocks.filter(b => b.type === 'material');
+  if (mats.length) { L.push('', '## Materialien', ''); mats.forEach((b, i) => L.push(`- **M${i + 1}:** ${plainMd(b.title) || 'ohne Titel'}${b.source ? ` (${plainMd(b.source)})` : ''}`)); }
+  L.push('', '## Aufgaben'); let t = 0;
+  sh.blocks.forEach(b => {
+    if (b.type !== 'tasks') return; if (b.restart) t = 0;
+    b.items.forEach(it => {
+      t++; const ops = detectOps(it.text); const r = opsRange(ops);
+      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', `> ${plainMd(it.text) || '–'}`, '');
+      const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
+      if (info) L.push(`_${info}_`, '');
+      const eh = ehLines(it);
+      L.push('**Erwartung**', '', ...(eh.length ? eh.map(s => `- ${plainMd(s)}`) : ['- (noch offen)']));
+      const tips = tipsOf(it); if (tips.length) L.push('', '**Gestufte Hilfen**', '', ...tips.map((s, j) => `${j + 1}. ${plainMd(s)}`));
+    });
+  });
+  return L.join('\n') + '\n';
+}
+async function exportEH() { await deliver(fileBase() + '_Erwartungshorizont.md', new Blob([ehMarkdown()], { type: 'text/markdown' })); }
+
+/* ================= Leiste: Ausgabe und Vorschau-Optionen ================= */
+function segHTML(key, opts, cur, label) {
+  return `<div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-pv="${key}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${l}</button>`).join('')}</div>`;
+}
+function renderOut() {
+  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length;
+  $('#outsw').innerHTML = [['blatt', 'Arbeitsblatt', 0], ['tipps', 'Tippkarten', nT], ['karten', 'Tafelkarten', nK]]
+    .map(([k, l, n]) => `<button type="button" data-out="${k}" aria-pressed="${state.out === k}">${l}${n ? `<span>${n}</span>` : ''}</button>`).join('');
+  let h = '';
+  if (state.out === 'blatt') {
+    h += segHTML('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung, 'Fassung');
+    if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp, 'Gruppe');
+    h += segHTML('paper', [['a4', 'A4'], ['a5x2', '2 × A5']], sh.meta.paper || 'a4', 'Papier');
+    if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
+  }
+  $('#pv-opts').innerHTML = h;
+  const w = $('#btn-docx'); w.disabled = state.out !== 'blatt'; w.title = state.out === 'blatt' ? '' : 'Word gibt es nur für das Arbeitsblatt';
+}
+function setOut(k) {
+  if (state.out === k) return;
+  state.out = k; closeGloss(); closeZl(); closeMenu();
+  renderEditor(); $('#editor').scrollTop = 0; renderPreview();
+}
+
 /* ================= Datenmodell ================= */
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: 'Georg-Herwegh-Gymnasium',
-    showName: true, showDate: true, showAFB: false, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar' };
+    showName: true, showDate: true, showAFB: false, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
+    mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
+    groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3 };
 }
 function newBlock(type) {
   const id = 'b' + uid();
@@ -1025,6 +1621,7 @@ function newBlock(type) {
     case 'table': return { id, type, title: '', cols: ['', '', ''], rows: [['', '', ''], ['', '', ''], ['', '', '']], rowHeight: 'normal', firstBold: false };
     case 'lines': return { id, type, count: 8, style: 'linien' };
     case 'quote': return { id, type, text: '', author: '' };
+    case 'qr': return { id, type, url: '', title: '', note: '', size: 'M' };
     case 'image': return { id, type, src: '', w: 0, h: 0, caption: '', source: '', width: 80 };
     default: return { id, type: 'pagebreak' };
   }
@@ -1067,11 +1664,13 @@ function normalizeSheet(sh) {
   sh.meta = { ...defaultMeta('', sh.klasse), anrede: 'sie', ...sh.meta };
   if (!Array.isArray(sh.blocks)) sh.blocks = [];
   sh.blocks.forEach(b => { if (b && b.type === 'material') migrateGlossary(b); });
+  if (!Array.isArray(sh.cards)) sh.cards = [];
+  sh.meta.exam = { ...defaultMeta('', sh.klasse).exam, ...(sh.meta.exam || {}) };
   return sh;
 }
 
 /* ================= Zustand ================= */
-const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null };
+const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
@@ -1096,7 +1695,7 @@ function buildHead(meta, body) {
 
 function buildBlock(b, ctx) {
   const body = ctx.body, meta = ctx.meta;
-  const put = html => { const n = el(html); n.dataset.bid = b.id; body.appendChild(n); return n; };
+  const put = html => { const n = el(html); n.dataset.bid = b.id; if (ctx.view && ctx.view.grp === 'all' && meta.groupsOn && b.group) n.dataset.grp = 'Gruppe ' + b.group; body.appendChild(n); return n; };
   switch (b.type) {
     case 'pagebreak': return { type: 'pagebreak' };
     case 'heading': return { type: 'heading', el: put(`<div class="blk blk-h"><h2>${inlineHTML(b.text || 'Überschrift')}</h2></div>`) };
@@ -1107,6 +1706,11 @@ function buildBlock(b, ctx) {
     }
     case 'info': return { type: 'info', el: put(`<div class="blk blk-info"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`) };
     case 'quote': return { type: 'quote', el: put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`) };
+    case 'qr': {
+      const sz = { S: 22, M: 30, L: 40 }[b.size] || 30; const url = String(b.url || '').trim(); const src = url ? QR.dataURL(url) : '';
+      const pic = src ? `<img src="${src}" alt="QR-Code" style="width:${sz}mm;height:${sz}mm">` : `<div class="qr-empty" style="width:${sz}mm;height:${sz}mm">${url ? 'Link zu lang' : 'QR-Code'}</div>`;
+      return { type: 'qr', el: put(`<div class="blk blk-qr">${pic}<div class="qr-t">${b.title ? `<b>${inlineHTML(b.title)}</b>` : ''}<span class="qr-url">${url ? esc(url) : 'Link eintragen'}</span>${b.note ? `<span class="qr-note">${inlineHTML(b.note)}</span>` : ''}</div></div>`) };
+    }
     case 'image': {
       const img = b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
       return { type: 'image', el: put(`<div class="blk blk-img">${img}${b.caption ? `<div class="img-cap">${inlineHTML(b.caption)}</div>` : ''}${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };
@@ -1125,7 +1729,7 @@ function buildBlock(b, ctx) {
       const items = b.items.map((it, i) => {
         const r = opsRange(detectOps(it.text));
         const soz = hasSoz ? `<span class="task-soz">${SOZ[it.soz] ? `<img src="${sozURI(it.soz, ctx.acc, ctx.bg)}" alt="${SOZ[it.soz].label}" title="${SOZ[it.soz].label}">` : ''}</span>` : '';
-        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${inlineHTML(it.text) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'}</div><span class="task-afb">${show && r ? 'AFB ' + afbLabel(r) : ''}</span></div>`;
+        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${inlineHTML(it.text) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view)}</span>${taskEH(it, ctx.view)}</div>`;
       }).join('');
       ctx.t += b.items.length;
       const n = put(`<div class="blk blk-tasks${hasSoz ? ' has-soz' : ''}">${b.title ? `<div class="tasks-title">${esc(b.title)}</div>` : ''}${items}</div>`);
@@ -1172,7 +1776,7 @@ function buildBlock(b, ctx) {
         });
         flush(true);
       });
-      bodyEl.innerHTML = lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
+      bodyEl.innerHTML = lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no" data-n="${i + 1}">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
       if (b.lineNumbers === false) bodyEl.querySelectorAll('.ln-no').forEach(x => x.style.visibility = 'hidden');
       const head = n.querySelector('.mat-head'), tailEl = n.querySelector('.mat-tail');
       const lineEls = [...bodyEl.children];
@@ -1269,52 +1873,63 @@ function setAccent(node, meta) {
 
 let fontsOK = false;
 function layout() {
-  const sh = state.sheet, meta = sh.meta;
-  const mp = $('#measure'); setAccent(mp, meta);
+  const sh = state.sheet, meta = sh.meta; const v = sheetView();
+  const a5 = meta.paper === 'a5x2'; AVAIL = GEO[a5 ? 'a5' : 'a4'].avail * MMPX;
+  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5);
   const body = mp.querySelector('.pg-body'); body.innerHTML = '';
-  const ctx = { m: 0, t: 0, meta, body, acc: pageAcc(meta).c, bg: pageBg(meta) };
-  const items = [buildHead(meta, body)];
-  for (const b of sh.blocks) { if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
+  const ctx = { m: 0, t: 0, meta, body, acc: pageAcc(meta).c, bg: pageBg(meta), view: v };
+  const items = [];
+  if (meta.mode === 'klausur') items.push(buildCover(meta, sh, v, body), { type: 'pagebreak' }, buildRunHead(meta, body));
+  else items.push(buildHead(meta, body));
+  if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
+  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
   const pages = paginate(items);
+  const tag = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? 'Gruppe ' + v.grp : ''].filter(Boolean).join(' · ');
   const out = pages.map((p, i) => {
-    const pg = document.createElement('div'); pg.className = 'page'; setAccent(pg, meta);
+    const pg = document.createElement('div'); pg.className = 'page'; setAccent(pg, meta); pg.classList.toggle('a5', a5);
+    pg.dataset.w = 210; pg.dataset.h = 297;
     const pb = document.createElement('div'); pb.className = 'pg-body'; pg.appendChild(pb);
     p.list.forEach(pl => pb.appendChild(pl.whole ? pl.it.el.cloneNode(true) : pl.it.assemble(pl.s, pl.e)));
     const left = [meta.school, meta.course].filter(Boolean).map(esc).join(' · ');
-    const right = (meta.nr ? 'AB ' + esc(meta.nr) : '') + (pages.length > 1 ? (meta.nr ? ' · ' : '') + `${designOf(meta) === 'akte' ? 'Blatt' : 'Seite'} ${i + 1} von ${pages.length}` : '');
+    const right = [tag, meta.mode !== 'klausur' && meta.nr ? 'AB ' + esc(meta.nr) : '', pages.length > 1 ? `${designOf(meta) === 'akte' ? 'Blatt' : 'Seite'} ${i + 1} von ${pages.length}` : ''].filter(Boolean).join(' · ');
     pg.appendChild(el(`<div class="pg-foot"><span>${left}</span><span>${right}</span></div>`));
+    if (v.lehrer) pg.appendChild(el('<div class="pg-badge">Lehrerfassung</div>'));
     return { pg, over: !!p.over };
   });
   body.innerHTML = '';
-  return out;
+  if (!a5) return out;
+  return out.map(o => { const bg = document.createElement('div'); bg.className = 'bogen'; bg.dataset.w = 297; bg.dataset.h = 210; bg.append(o.pg, o.pg.cloneNode(true)); return { pg: bg, over: o.over }; });
 }
 
 let renderTimer = null;
 function scheduleRender(ms = 220) { clearTimeout(renderTimer); renderTimer = setTimeout(renderPreview, ms); }
 function renderPreview() {
   let out;
-  try { out = layout(); } catch (err) { console.error(err); return; }
+  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
+  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
+    pg.classList.add('pout');
     const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(pg);
     if (over) slot.appendChild(el('<div class="pg-warn">Ein Baustein ist länger als eine Seite</div>'));
     host.appendChild(slot);
   });
-  $('#pagecount').textContent = `${out.length} ${out.length === 1 ? 'Seite' : 'Seiten'} · A4`;
-  $('#pv-hint').hidden = !state.sheet.blocks.some(x => x.type === 'material' && String(x.text || '').trim());
-  applyScale(); markSel();
+  const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
+  const [one, many, unit] = state.out === 'karten' ? ['Karte', 'Karten', 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  $('#pagecount').textContent = `${out.length} ${out.length === 1 ? one : many} · ${unit}`;
+  $('#pv-hint').hidden = !(state.out === 'blatt' && state.sheet.blocks.some(x => x.type === 'material' && String(x.text || '').trim()));
+  renderOut(); applyScale(); markSel(); markZl();
 }
 function applyScale() {
-  const pane = $('#preview-scroll'); const pw = 210 * MMPX, ph = 297 * MMPX;
-  const cs = getComputedStyle(pane);
+  const pane = $('#preview-scroll'); const cs = getComputedStyle(pane);
   const w = pane.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
-  let s = state.zoom === 'fit' ? Math.min(1.1, w / pw) : 1;
-  if (!(s > 0.2)) s = 0.2;
-  document.querySelectorAll('#pages .slot').forEach(sl => {
-    sl.style.width = pw * s + 'px'; sl.style.height = ph * s + 'px';
-    sl.firstChild.style.transform = `scale(${s})`;
-  });
+  const slots = [...document.querySelectorAll('#pages .slot')];
+  const dims = sl => [(+sl.firstChild.dataset.w || 210) * MMPX, (+sl.firstChild.dataset.h || 297) * MMPX];
+  const maxW = Math.max(210 * MMPX, ...slots.map(sl => dims(sl)[0]));
+  let sc = state.zoom === 'fit' ? Math.min(1.1, w / maxW) : 1;
+  if (!(sc > 0.2)) sc = 0.2;
+  slots.forEach(sl => { const [pw, ph] = dims(sl); sl.style.width = pw * sc + 'px'; sl.style.height = ph * sc + 'px'; sl.firstChild.style.transform = `scale(${sc})`; });
   $('#btn-zoom').textContent = state.zoom === 'fit' ? '100 %' : 'Einpassen';
 }
 function markSel() {
@@ -1328,6 +1943,7 @@ const I = {
   down: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 3v10M4 9l4 4 4-4"/></svg>',
   dup: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5"/><path d="M3 10.5V3.8C3 3.3 3.3 3 3.8 3h6.7"/></svg>',
   del: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.7 9h5.6l.7-9"/></svg>',
+  more: '<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="12.5" cy="8" r="1.4"/></svg>',
   x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4l8 8M12 4l-8 8"/></svg>'
 };
 const fText = (k, label, v, ph = '', extra = '') => `<label class="f"><span>${label}</span><input type="text" data-k="${k}" value="${esc(v)}" placeholder="${esc(ph)}"${extra}></label>`;
@@ -1362,8 +1978,15 @@ function summary(b, num) {
     case 'text': return (b.text || 'leer').slice(0, 60);
     case 'quote': return (b.text || 'leer').slice(0, 60);
     case 'image': return b.src ? (b.caption || 'Bild') : 'noch kein Bild';
+    case 'qr': return b.title || b.url || 'noch kein Link';
     default: return 'Rest beginnt auf neuer Seite';
   }
+}
+function qrWarn(b) {
+  const url = String(b.url || '').trim(); if (!url) return '';
+  if (!QR.encode(url)) return '<small class="gl-warn">Der Link ist zu lang für einen QR-Code. Bitte kürzen.</small>';
+  if (!/^(https?:\/\/|www\.)/i.test(url)) return '<small class="gl-warn">Links beginnen meist mit https://</small>';
+  return '';
 }
 function bodyFor(b, num) {
   switch (b.type) {
@@ -1386,7 +2009,7 @@ function bodyFor(b, num) {
           <textarea data-k="items.${i}.text" rows="2" placeholder="${state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …'}">${esc(it.text)}</textarea>
           <div class="chips" data-chips="${i}">${chipsHTML(it.text)}</div>
           <div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>
-          <input class="tag" type="text" data-k="items.${i}.tag" value="${esc(it.tag)}" placeholder="Etikett, z. B. Gruppe A (optional)">
+          ${taskExtras(b, i, it)}
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
         <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div>
@@ -1414,6 +2037,10 @@ function bodyFor(b, num) {
     }
     case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)']])}
       <label class="f narrow"><span>Zeilen</span><input type="number" min="1" max="40" data-k="count" value="${esc(b.count)}"></label></div>`;
+    case 'qr': return `${fText('url', 'Link', b.url, 'https://…')}<div data-qrw>${qrWarn(b)}</div>
+      ${fText('title', 'Titel', b.title, 'z. B. CORRECTIV: Desinformation erkennen (Video)')}
+      ${fText('note', 'Quelle / Hinweis', b.note, 'z. B. abgerufen am 28.10.2026')}
+      <div class="row">${fSelect('size', 'Größe', b.size || 'M', [['S', 'klein (22 mm)'], ['M', 'mittel (30 mm)'], ['L', 'groß (40 mm)']])}</div>`;
     case 'image': return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
       ${fText('caption', 'Bildunterschrift', b.caption, '')}${fText('source', 'Quelle', b.source, '')}
@@ -1422,35 +2049,50 @@ function bodyFor(b, num) {
   }
 }
 function metaCard() {
-  const m = state.sheet.meta; const closed = state.closed.has('meta');
+  const m = state.sheet.meta; const closed = state.closed.has('meta'); const ex = m.exam || {}; const isK = m.mode === 'klausur'; const more = state.fmtOpen.has('meta-more');
+  const moreSum = [m.course, KL(state.sheet.klasse).label, m.anrede === 'du' ? 'du' : 'Sie', m.groupsOn ? 'Gruppen A/B' : ''].filter(Boolean).join(' · ');
+  const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
+    : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'meta' ? ' sel' : ''}" data-bid="meta">
-    <div class="card-h" data-act="toggle"><span class="kind">Kopf</span><span class="sum">${m.nr ? 'AB ' + esc(m.nr) + ' · ' : ''}${esc(m.title || 'Ohne Titel')}</span></div>
-    <div class="card-b">
-      <div class="row">${`<label class="f narrow"><span>AB-Nr.</span><input type="text" data-k="nr" value="${esc(m.nr)}" placeholder="7"></label>`}${fText('title', 'Titel', m.title, 'Titel des Arbeitsblatts')}</div>
-      ${fText('topic', 'Thema / Unterzeile', m.topic, 'optional')}
-      <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
-      <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
-      <div class="chks">${fCheck('showName', 'Namensfeld', m.showName)}${fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}</div>
+    <div class="card-h" data-act="toggle"><span class="kind">Kopf</span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span></div>
+    <div class="card-b">${gNote('meta')}
+      <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" data-k="nr" value="${esc(m.nr)}" placeholder="7"></label>${fText('title', isK ? 'Titel (für die Ablage)' : 'Titel', m.title, 'Titel des Arbeitsblatts')}</div>
+      ${isK ? '' : fText('topic', 'Thema / Unterzeile', m.topic, 'optional')}
+      <div class="f"><span>Art</span><div class="seg" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
+      ${isK ? `<div class="row">${fText('exam.label', 'Bezeichnung', ex.label, 'Klausur')}${fText('exam.halbjahr', 'Kurshalbjahr', ex.halbjahr, 'z. B. 1. Kurshalbjahr')}</div>
+        <div class="row">${fText('exam.datum', 'Datum', ex.datum, 'leer = zum Ausfüllen')}${fText('exam.zeit', 'Bearbeitungszeit', ex.zeit, 'z. B. 135 Minuten')}</div>
+        ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
+        <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${designEditor(m)}
-      ${DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>' : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div>
-        <small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`}
+      ${colors}
+      <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
+        ${more ? `<div class="sub-b">
+          <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
+          <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
+          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}</div>
+          <div class="chks">${fCheck('groupsOn', 'Gruppenblätter A und B', m.groupsOn)}</div>
+          ${m.groupsOn ? `<div class="row">${fText('groupA', 'Zusatz Gruppe A', m.groupA, '')}${fText('groupB', 'Zusatz Gruppe B', m.groupB, '')}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte einer Gruppe zu. Ohne Zuordnung stehen sie auf beiden Blättern.</small>` : ''}
+        </div>` : ''}</div>
     </div></div>`;
 }
 function renderEditor(focusSel) {
   const ed = $('#editor'); const st = ed.scrollTop;
   const fa = document.activeElement; let focus = focusSel || null;
   if (!focus && fa && ed.contains(fa) && fa.dataset.k) { const c = fa.closest('[data-bid]'); focus = `[data-bid="${c.dataset.bid}"] [data-k="${fa.dataset.k}"]`; }
-  const num = numbering(state.sheet); const blocks = state.sheet.blocks;
-  ed.innerHTML = metaCard() + blocks.map((b, i) => {
-    const closed = state.closed.has(b.id);
-    return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-      <div class="card-h" data-act="toggle"><span class="kind">${TYPES[b.type].label}</span><span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
-        <button class="ib" type="button" data-act="up" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
-        <button class="ib" type="button" data-act="down" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
-        <button class="ib" type="button" data-act="dup" title="Duplizieren">${I.dup}</button>
-        <button class="ib" type="button" data-act="del" title="Löschen">${I.del}</button></div>
-      ${b.type === 'pagebreak' ? '' : `<div class="card-b">${bodyFor(b, num)}</div>`}</div>`;
-  }).join('') + `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}"><b>${t.label}</b><span>${t.desc}</span></button>`).join('')}</div></div>`;
+  if (state.out === 'karten') ed.innerHTML = kartenEditor();
+  else {
+    const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
+    const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : '';
+    ed.innerHTML = intro + metaCard() + blocks.map((b, i) => {
+      const closed = state.closed.has(b.id);
+      return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
+        <div class="card-h" data-act="toggle"><span class="kind">${TYPES[b.type].label}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
+          <button class="ib" type="button" data-act="up" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
+          <button class="ib" type="button" data-act="down" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
+          <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
+        ${b.type === 'pagebreak' ? '' : `<div class="card-b">${gNote(b.id)}${bodyFor(b, num)}</div>`}</div>`;
+    }).join('') + adderHTML();
+  }
   ed.scrollTop = st;
   if (focus) { const f = ed.querySelector(focus); if (f) { f.focus({ preventScroll: true }); if (f.setSelectionRange && typeof f.value === 'string' && f.type !== 'number') { const l = f.value.length; try { f.setSelectionRange(l, l); } catch {} } } }
 }
@@ -1463,7 +2105,7 @@ function refreshSummaries() {
 }
 
 /* ---------- Änderungen ---------- */
-function target(bid) { return bid === 'meta' ? state.sheet.meta : state.sheet.blocks.find(b => b.id === bid); }
+function target(bid) { return bid === 'meta' ? state.sheet.meta : bid === 'karten' ? state.sheet : state.sheet.blocks.find(b => b.id === bid); }
 function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) { if (o[ks[i]] == null || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
 function changed(structural) {
   if (state.sheet.example) state.sheet.example = false;
@@ -1483,6 +2125,9 @@ function onInput(e) {
   const m = k.match(/^items\.(\d+)\.text$/);
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
   if (k === 'text') { const blk = target(card.dataset.bid); const box = card.querySelector('[data-gl]'); if (blk && blk.type === 'material' && box) box.outerHTML = glossRows(blk); }
+  const gn = document.querySelector(`#editor [data-gn="${card.dataset.bid}"]`); if (gn) gn.outerHTML = gNote(card.dataset.bid);
+  const kw = k.match(/^cards\.(\d+)\.points$/); if (kw) { const box = document.querySelector(`#editor [data-kw="${kw[1]}"]`); if (box) box.innerHTML = colonWarn(state.sheet.cards[+kw[1]]); }
+  if (k === 'url') { const qw = card.querySelector('[data-qrw]'); if (qw) qw.innerHTML = qrWarn(target(card.dataset.bid)); }
   changed(false);
 }
 function onChange(e) {
@@ -1504,7 +2149,8 @@ function onChange(e) {
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
   setPath(target(card.dataset.bid), k, v);
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'lineNumbers' || k.startsWith('fmt.'))) || k === 'anrede');
+  if (k === 'groupsOn' && !v) state.grp = 'all';
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'showName' || k === 'showDate')) || k === 'anrede');
 }
 function onClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
@@ -1544,6 +2190,36 @@ function onClick(e) {
       let n = 0; blocks.forEach(x => { if (x.type === 'material' && x !== b) { x.fmt = clone(b.fmt || {}); x.lineNumbers = b.lineNumbers !== false; n++; } });
       changed(true); toast(`Formatierung für ${n} ${n === 1 ? 'weiteres Material' : 'weitere Materialien'} übernommen`); return;
     }
+    case 'menu': openMenu(bid, a); return;
+    case 'mode': state.sheet.meta.mode = a.dataset.v; changed(true); return;
+    case 'sub-toggle': { const key = a.dataset.key; if (state.fmtOpen.has(key)) state.fmtOpen.delete(key); else state.fmtOpen.add(key); renderEditor(); return; }
+    case 'tx': {
+      const i = +a.dataset.i, w = a.dataset.w, key = taskKey(bid, i, w);
+      if (state.taskOpen.has(key)) state.taskOpen.delete(key);
+      else { state.taskOpen.add(key); const it = b.items[i]; if (w === 'tips' && !Array.isArray(it.tips)) it.tips = tipsOf(it).concat(['', '', '']).slice(0, 3); }
+      renderEditor();
+      if (state.taskOpen.has(key)) { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${i}.${w === 'tips' ? 'tips.0' : w}"]`); if (f) f.focus({ preventScroll: true }); }
+      return;
+    }
+    case 'snip-add': {
+      const nb = snipBlock(a.dataset.id); if (!nb) return;
+      const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
+      blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; state.closed.delete(nb.id); changed(true);
+      const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      return;
+    }
+    case 'snip-del': lsSet(LS_SNIP, userSnips().filter(x => x.id !== a.dataset.id)); renderEditor(); toast('Aus der Sammlung entfernt'); return;
+    case 'gfix': gFix(bid, a.dataset.m, a.dataset.r); return;
+    case 'kk-add': {
+      const cs = state.sheet.cards || (state.sheet.cards = []); const used = cs.map(c => c.color);
+      cs.push({ id: 'k' + uid(), term: '', color: TK_COLORS.find(c => !used.includes(c)) || TK_COLORS[cs.length % TK_COLORS.length], points: '' });
+      changed(true); const f = $(`#editor [data-k="cards.${cs.length - 1}.term"]`); if (f) { f.scrollIntoView({ block: 'nearest' }); f.focus({ preventScroll: true }); }
+      return;
+    }
+    case 'kk-del': { const i = +a.dataset.i; snapshot(); const c = state.sheet.cards.splice(i, 1)[0]; changed(true); toast(`Begriff „${c.term || 'ohne Begriff'}“ gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); return; }
+    case 'kk-up': case 'kk-down': { const cs = state.sheet.cards; const i = +a.dataset.i, j = act === 'kk-up' ? i - 1 : i + 1; if (j < 0 || j >= cs.length) return; [cs[i], cs[j]] = [cs[j], cs[i]]; changed(true); return; }
+    case 'kk-color': state.sheet.cards[+a.dataset.i].color = a.dataset.v; changed(true); return;
+    case 'kk-per': state.sheet.meta.cardsPer = +a.dataset.v; changed(true); return;
     case 'gl-add': glossFromTextarea(card, b, a); return;
     case 'gl-edit': { const i = +a.dataset.i; const g = b.glossary && b.glossary[i]; if (g) openGloss({ bid, term: normTerm(g.term), n: g.n || 0, count: occurrences(b.text, g.term).length, idx: i, rect: rectOf(a) }); return; }
     case 'gl-remove': removeGloss(b, +a.dataset.i); return;
@@ -1694,9 +2370,10 @@ async function doSave(b, snap) {
 
 /* ---------- Öffnen, Reiter wechseln ---------- */
 function openSheet(sh) {
-  closeGloss();
+  closeGloss(); closeZl(); closeMenu();
   if (savePending) saveNow();
-  state.sheet = normalizeSheet(sh); state.sel = null; state.closed = new Set(); undoSnap = null; state.touched = false;
+  state.sheet = normalizeSheet(sh); state.sel = null; state.closed = new Set(); state.taskOpen = new Set(); undoSnap = null; state.touched = false;
+  if (!state.sheet.meta.groupsOn) state.grp = 'all';
   if (state.sheet.klasse !== state.klasse) { state.klasse = state.sheet.klasse; lsSet(LS.klasse, state.klasse); renderTabs(); }
   if (!state.sheet.example) rememberLast(state.sheet);
   idleStatus();
@@ -1830,16 +2507,18 @@ async function exportBackup() {
   const sheets = [];
   for (const d of state.lib) { try { const sh = await backend.load(d.id); if (sh) sheets.push(sh); } catch {} }
   overlay('');
-  if (!sheets.length) { toast('Es gibt noch keine gespeicherten Blätter.'); return; }
+  if (!sheets.length && !userSnips().length) { toast('Es gibt noch keine gespeicherten Blätter.'); return; }
   const now = new Date(); const stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-  const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: now.toISOString(), sheets });
+  const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: now.toISOString(), sheets, snips: userSnips() });
   await deliver(`AB-Werkstatt_Sicherung_${stamp}.json`, new Blob([data], { type: 'application/json' }));
 }
 async function importBackup(file) {
   if (!backend) return;
   let obj; try { obj = JSON.parse(await file.text()); } catch { toast('Die Datei ist keine gültige Sicherung.'); return; }
+  const sn = obj && Array.isArray(obj.snips) ? obj.snips.filter(x => x && x.id && x.block && TYPES[x.block.type]) : [];
+  if (sn.length) { const have = userSnips(); const ids = new Set(have.map(x => x.id)); lsSet(LS_SNIP, have.concat(sn.filter(x => !ids.has(x.id))).slice(0, 60)); }
   const list = obj && Array.isArray(obj.sheets) ? obj.sheets : [];
-  if (!list.length) { toast('In der Datei sind keine Arbeitsblätter.'); return; }
+  if (!list.length) { if (sn.length) { renderEditor(); toast('Sammlung übernommen'); } else toast('In der Datei sind keine Arbeitsblätter.'); return; }
   overlay('Sicherung wird geladen …');
   let n = 0, same = 0, bad = 0;
   for (const raw of list) {
@@ -2033,30 +2712,33 @@ async function deliver(name, blob) {
 }
 async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || []); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
+const outSuffix = () => state.out === 'tipps' ? '_Tippkarten' : state.out === 'karten' ? '_Tafelkarten'
+  : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : '');
 async function exportPDF() {
-  if (busy) return; busy = true;
+  if (busy) return;
+  clearTimeout(renderTimer); renderPreview();
+  const pages = [...document.querySelectorAll('#pages .pout')];
+  if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : 'Es gibt noch keine Tafelkarten.'); return; }
+  busy = true;
   try {
     overlay('PDF wird vorbereitet …');
     await Promise.all([loadScript(LIBS.h2c), loadScript(LIBS.pdf)]);
-    clearTimeout(renderTimer); renderPreview();
-    const pages = [...document.querySelectorAll('#pages .page')];
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
-    const W = Math.round(210 * MMPX), H = Math.round(297 * MMPX);
+    const { jsPDF } = window.jspdf; let pdf = null;
     for (let i = 0; i < pages.length; i++) {
-      overlay(`PDF wird erstellt … Seite ${i + 1} von ${pages.length}`);
-      const pg = pages[i]; pg.setAttribute('data-x', '1');
+      overlay(`PDF wird erstellt … ${i + 1} von ${pages.length}`);
+      const pg = pages[i]; const wmm = +pg.dataset.w || 210, hmm = +pg.dataset.h || 297; const orient = wmm > hmm ? 'landscape' : 'portrait';
+      pg.setAttribute('data-x', '1');
       let canvas;
       try {
         canvas = await window.html2canvas(pg, {
           scale: 2.5, backgroundColor: '#ffffff', useCORS: true, logging: false,
-          x: 0, y: 0, width: W, height: H, scrollX: 0, scrollY: 0, windowWidth: 1000, windowHeight: 1400,
+          x: 0, y: 0, width: Math.round(wmm * MMPX), height: Math.round(hmm * MMPX), scrollX: 0, scrollY: 0, windowWidth: 1400, windowHeight: 1400,
           onclone: async doc => {
             const c = doc.querySelector('[data-x="1"]');
             const host = doc.createElement('div'); host.style.cssText = 'position:absolute;left:0;top:0;margin:0;padding:0;background:#fff;z-index:9999';
             doc.body.appendChild(host); host.appendChild(c);
             c.style.transform = 'none'; c.style.boxShadow = 'none'; c.style.position = 'relative';
-            c.querySelectorAll('.is-sel').forEach(n => n.classList.remove('is-sel'));
+            c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel'));
             const app = doc.getElementById('app'); if (app) app.style.display = 'none';
             const mh = doc.getElementById('measure-host'); if (mh) mh.remove();
             doc.documentElement.style.padding = '0'; doc.body.style.padding = '0'; doc.body.style.margin = '0';
@@ -2064,12 +2746,12 @@ async function exportPDF() {
           }
         });
       } finally { pg.removeAttribute('data-x'); }
-      if (i) pdf.addPage('a4', 'portrait');
-      pdf.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+      if (!pdf) pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: orient, compress: true }); else pdf.addPage('a4', orient);
+      pdf.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
     }
     pdf.setProperties({ title: (state.sheet.meta.nr ? 'AB ' + state.sheet.meta.nr + ' – ' : '') + (state.sheet.meta.title || ''), subject: state.sheet.meta.topic || '', creator: 'AB-Werkstatt' });
     overlay('');
-    await deliver(fileBase() + '.pdf', pdf.output('blob'));
+    await deliver(fileBase() + outSuffix() + '.pdf', pdf.output('blob'));
   } catch (err) { console.error(err); overlay(''); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
   finally { overlay(''); busy = false; }
 }
@@ -2112,7 +2794,7 @@ function xp(runs, o = {}) {
 const NIL = s => `<w:${s} w:val="nil"/>`;
 const LINE = (s, sz, col) => `<w:${s} w:val="single" w:sz="${sz}" w:space="0" w:color="${col}"/>`;
 function xtc(content, o = {}) {
-  return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.borders ? `<w:tcBorders>${o.borders}</w:tcBorders>` : ''}${o.shd ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>` : ''}${o.mar ? `<w:tcMar>${o.mar}</w:tcMar>` : ''}${o.v ? `<w:vAlign w:val="${o.v}"/>` : ''}</w:tcPr>${content || '<w:p><w:pPr><w:suppressLineNumbers/></w:pPr></w:p>'}</w:tc>`;
+  return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.span ? `<w:gridSpan w:val="${o.span}"/>` : ''}${o.borders ? `<w:tcBorders>${o.borders}</w:tcBorders>` : ''}${o.shd ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>` : ''}${o.mar ? `<w:tcMar>${o.mar}</w:tcMar>` : ''}${o.v ? `<w:vAlign w:val="${o.v}"/>` : ''}</w:tcPr>${content || '<w:p><w:pPr><w:suppressLineNumbers/></w:pPr></w:p>'}</w:tc>`;
 }
 function xtbl(widths, rowsXml, borders, mar) {
   return `<w:tbl><w:tblPr><w:tblW w:w="${widths.reduce((a, b) => a + b, 0)}" w:type="dxa"/><w:tblBorders>${borders}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar>${mar || '<w:top w:w="0" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="85" w:type="dxa"/>'}</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rowsXml}</w:tbl>`;
@@ -2133,6 +2815,8 @@ async function exportDOCX() {
     const sh = state.sheet, m = sh.meta; const acc = ACCENTS[m.accent] || ACCENTS.tinte;
     const A = acc.c.slice(1).toUpperCase(), AT = acc.t.slice(1).toUpperCase(), GREY = '5A606E', RULE = '8E95A3';
     const step = Number(m.lineStep) || 5;
+    const v = sheetView(); const isK = m.mode === 'klausur'; const blocksV = sh.blocks.filter(b => blockVisible(b, v));
+    const tagW = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? 'Gruppe ' + v.grp : ''].filter(Boolean).join(' · ');
     const parts = []; const media = []; let first = true; let secOpen = false;
     const sozRel = {}; let drawId = 1000;
     for (const k of Object.keys(SOZ)) {
@@ -2150,13 +2834,35 @@ async function exportDOCX() {
     if (m.showName && m.showDate) { tabs = `<w:tabs><w:tab w:val="left" w:pos="${TW(88)}"/><w:tab w:val="left" w:leader="underscore" w:pos="${TW(138)}"/><w:tab w:val="left" w:pos="${TW(142)}"/><w:tab w:val="right" w:leader="underscore" w:pos="${CW}"/></w:tabs>`; fieldRuns = '<w:r><w:tab/></w:r>' + xr('Name ', { sz: 17, color: GREY }) + '<w:r><w:tab/></w:r><w:r><w:tab/></w:r>' + xr('Datum ', { sz: 17, color: GREY }) + '<w:r><w:tab/></w:r>'; }
     else if (m.showName) { tabs = `<w:tabs><w:tab w:val="left" w:pos="${TW(100)}"/><w:tab w:val="right" w:leader="underscore" w:pos="${CW}"/></w:tabs>`; fieldRuns = '<w:r><w:tab/></w:r>' + xr('Name ', { sz: 17, color: GREY }) + '<w:r><w:tab/></w:r>'; }
     else if (m.showDate) { tabs = `<w:tabs><w:tab w:val="left" w:pos="${TW(132)}"/><w:tab w:val="right" w:leader="underscore" w:pos="${CW}"/></w:tabs>`; fieldRuns = '<w:r><w:tab/></w:r>' + xr('Datum ', { sz: 17, color: GREY }) + '<w:r><w:tab/></w:r>'; }
-    parts.push(xp(xr(course, { caps: 1, b: 1, sz: 15, color: GREY, sp: 10 }) + fieldRuns, { tabs, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="${A}"/></w:pBdr>`, after: 0 }));
-    parts.push(xp((m.nr ? xr('AB ' + m.nr + '   ', { b: 1, sz: 24, color: A }) : '') + xr(m.title || 'Ohne Titel', { font: SERIF, b: 1, sz: 33 }), { before: 200, after: m.topic ? 40 : 0, keepNext: true }));
-    if (m.topic) parts.push(xp(xr(m.topic, { sz: 18, color: GREY }), {}));
+    if (isK) {
+      const ex = m.exam || {};
+      parts.push(xp(xr([m.school, m.course].filter(Boolean).join(' · '), { caps: 1, b: 1, sz: 15, color: GREY, sp: 10 }), { bdr: `<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="${A}"/></w:pBdr>` }));
+      parts.push(xp(xr(ex.label || 'Klausur', { font: SERIF, b: 1, sz: 52 }), { before: 900, after: 80 }));
+      const sub = [m.course, ex.halbjahr].filter(Boolean).join(' · '); if (sub) parts.push(xp(xr(sub, { sz: 22, color: GREY }), { after: 240 }));
+      const fbd = NIL('top') + NIL('left') + LINE('bottom', 4, RULE) + NIL('right') + LINE('insideH', 4, RULE) + NIL('insideV');
+      const frow = (k, val) => xtr(xtc(xp(xr(k, { b: 1, sz: 21 })), { w: TW(44), v: 'bottom' }) + xtc(xp(xr(val || '', { sz: 21 })), { w: CW - TW(44), v: 'bottom' }), { h: TW(10) });
+      parts.push(xtbl([TW(44), CW - TW(44)], frow('Name', '') + frow('Datum', ex.datum) + (ex.zeit ? frow('Bearbeitungszeit', ex.zeit) : '') + (ex.hilfsmittel ? frow('Hilfsmittel', ex.hilfsmittel) : ''), fbd));
+      const matsC = blocksV.filter(b => b.type === 'material');
+      if (matsC.length) { parts.push(xp(xr('Materialgrundlage', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 })); matsC.forEach((b, i) => parts.push(xp(xr('M' + (i + 1) + '   ', { b: 1, sz: 20, color: A }) + xrInline(b.title || 'ohne Titel', { sz: 20 }), { after: 40 }))); }
+      const tl = []; let tt = 0; blocksV.forEach(b => { if (b.type !== 'tasks') return; if (b.restart) tt = 0; b.items.forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
+      if (tl.length) {
+        parts.push(xp(xr('Aufgaben', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 }));
+        const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(q => LINE(q, 4, RULE)).join('');
+        const cm = `<w:top w:w="${TW(1.4)}" w:type="dxa"/><w:left w:w="${TW(2.5)}" w:type="dxa"/><w:bottom w:w="${TW(1.4)}" w:type="dxa"/><w:right w:w="${TW(2.5)}" w:type="dxa"/>`;
+        parts.push(xtbl([TW(30), TW(45)], xtr(xtc(xp(xr('Aufgabe', { b: 1, sz: 19 })), { w: TW(30), shd: AT }) + xtc(xp(xr('Gewichtung', { b: 1, sz: 19 })), { w: TW(45), shd: AT })) + tl.map(([n, p]) => xtr(xtc(xp(xr(n, { sz: 19 })), { w: TW(30) }) + xtc(xp(xr(p, { sz: 19 })), { w: TW(45) }))).join(''), bd, cm));
+      }
+      parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>');
+      parts.push(xp(xr([ex.label || 'Klausur', m.course].filter(Boolean).join(' · ') + '   Name ', { sz: 17, color: GREY }) + '<w:r><w:tab/></w:r>', { tabs: `<w:tabs><w:tab w:val="right" w:leader="underscore" w:pos="${CW}"/></w:tabs>`, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="8" w:space="4" w:color="${A}"/></w:pBdr>` }));
+    } else {
+      parts.push(xp(xr(course, { caps: 1, b: 1, sz: 15, color: GREY, sp: 10 }) + fieldRuns, { tabs, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="${A}"/></w:pBdr>`, after: 0 }));
+      parts.push(xp((m.nr ? xr('AB ' + m.nr + '   ', { b: 1, sz: 24, color: A }) : '') + xr(m.title || 'Ohne Titel', { font: SERIF, b: 1, sz: 33 }), { before: 200, after: m.topic ? 40 : 0, keepNext: true }));
+      if (m.topic) parts.push(xp(xr(m.topic, { sz: 18, color: GREY }), {}));
+    }
+    if (tagW) parts.push(xp(xr(tagW, { b: 1, sz: 18, color: v.lehrer ? 'B3261E' : A }) + (v.grp !== 'all' ? xr('   ' + (v.grp === 'A' ? m.groupA : m.groupB), { sz: 18, color: GREY }) : ''), { before: 120 }));
     secOpen = true;
 
     let mNo = 0, tNo = 0;
-    for (const b of sh.blocks) {
+    for (const b of blocksV) {
       if (b.type === 'tasks' && b.restart) tNo = 0;
       if (b.type === 'pagebreak') { parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'); continue; }
       if (b.type === 'material') {
@@ -2197,15 +2903,23 @@ async function exportDOCX() {
         case 'tasks': {
           if (b.title) parts.push(xp(xr(b.title, { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { keepNext: true, after: 60 }));
           const sW = b.items.some(it => sozRel[it.soz]) ? TW(10) : 0;
-          const afbW = m.showAFB ? TW(18) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
+          const showA = m.showAFB || v.lehrer; const anyPts = isK && b.items.some(it => String(it.pts || '').trim());
+          const afbW = (showA || anyPts) ? TW(20) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
           const rows = b.items.map(it => {
             tNo++;
             const r = opsRange(detectOps(it.text));
+            const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null].filter(Boolean);
             const cells = xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp(sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : ''), { w: sW }) : '')
               + xtc(xp((it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : '') + xrInline(it.text || '', { sz: 21 })), { w: tW })
-              + (afbW ? xtc(xp(xr(r ? 'AFB ' + afbLabel(r) : '', { sz: 15, color: GREY }), { jc: 'right' }), { w: afbW }) : '');
-            return xtr(cells, { cant: 1 });
+              + (afbW ? xtc(rt.map(([t, bold]) => xp(xr(t, { sz: bold ? 18 : 15, b: bold, color: bold ? '1C1F27' : GREY }), { jc: 'right' })).join('') || xp(''), { w: afbW }) : '');
+            let row = xtr(cells, { cant: 1 });
+            const eh = v.lehrer ? ehLines(it) : [];
+            if (eh.length) {
+              const ehCell = xp(xr('ERWARTUNG', { b: 1, sz: 13, color: '6A707C', sp: 10 })) + eh.map(q => xp(xr('– ', { sz: 19 }) + xrInline(q, { sz: 19 }), { ind: `<w:ind w:left="${TW(3)}" w:hanging="${TW(3)}"/>` })).join('');
+              row += xtr(xtc('', { w: nW }) + (sW ? xtc('', { w: sW }) : '') + xtc(ehCell, { w: tW + afbW, span: afbW ? 2 : 0, shd: 'F1F2F4', mar: `<w:top w:w="${TW(1.2)}" w:type="dxa"/><w:left w:w="${TW(2.4)}" w:type="dxa"/><w:bottom w:w="${TW(1.4)}" w:type="dxa"/><w:right w:w="${TW(2.4)}" w:type="dxa"/>` }), { cant: 1 });
+            }
+            return row;
           }).join('');
           parts.push(xtbl([nW, ...(sW ? [sW] : []), tW, ...(afbW ? [afbW] : [])], rows, NOB, `<w:top w:w="${TW(.9)}" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="${TW(.9)}" w:type="dxa"/><w:right w:w="0" w:type="dxa"/>`));
           break;
@@ -2235,6 +2949,15 @@ async function exportDOCX() {
           }
           break;
         }
+        case 'qr': {
+          const url = String(b.url || '').trim(); if (!url) break;
+          const sz = { S: 22, M: 30, L: 40 }[b.size] || 30; let pic = '';
+          try { const u = QR.dataURL(url, 8); if (u) { const n = media.length + 1; media.push({ n, bytes: await imageBytes(u), ext: 'png' }); pic = picXml(n, sz * 36000, sz * 36000, 'QR-Code'); } } catch {}
+          const qW = TW(sz + 5);
+          const txt = (b.title ? xp(xrInline(b.title, { b: 1, sz: 21 })) : '') + xp(xr(url, { sz: 15, color: GREY })) + (b.note ? xp(xrInline(b.note, { sz: 17 })) : '');
+          parts.push(xtbl([qW, CW - qW], xtr(xtc(xp(pic), { w: qW, v: 'center' }) + xtc(txt, { w: CW - qW, v: 'center' }), { cant: 1 }), NOB));
+          break;
+        }
         case 'image': {
           if (!b.src) break;
           try {
@@ -2254,7 +2977,7 @@ async function exportDOCX() {
     const XH = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
     const documentXml = `${XH}<w:document ${NS}><w:body>${body}</w:body></w:document>`;
     const footLeft = [m.school, m.course].filter(Boolean).join(' · ');
-    const footerXml = `${XH}<w:ftr ${NS}><w:p><w:pPr><w:pBdr><w:top w:val="single" w:sz="4" w:space="4" w:color="C8CCD5"/></w:pBdr><w:tabs><w:tab w:val="right" w:pos="${CW}"/></w:tabs><w:spacing w:before="0" w:after="0"/></w:pPr>${xr(footLeft, { sz: 15, color: GREY })}<w:r><w:rPr><w:sz w:val="15"/></w:rPr><w:tab/></w:r>${xr((m.nr ? 'AB ' + m.nr + ' · ' : '') + 'Seite ', { sz: 15, color: GREY })}<w:fldSimple w:instr=" PAGE "><w:r><w:rPr><w:color w:val="${GREY}"/><w:sz w:val="15"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple></w:p></w:ftr>`;
+    const footerXml = `${XH}<w:ftr ${NS}><w:p><w:pPr><w:pBdr><w:top w:val="single" w:sz="4" w:space="4" w:color="C8CCD5"/></w:pBdr><w:tabs><w:tab w:val="right" w:pos="${CW}"/></w:tabs><w:spacing w:before="0" w:after="0"/></w:pPr>${xr(footLeft, { sz: 15, color: GREY })}<w:r><w:rPr><w:sz w:val="15"/></w:rPr><w:tab/></w:r>${xr((tagW ? tagW + ' · ' : '') + (!isK && m.nr ? 'AB ' + m.nr + ' · ' : '') + 'Seite ', { sz: 15, color: GREY })}<w:fldSimple w:instr=" PAGE "><w:r><w:rPr><w:color w:val="${GREY}"/><w:sz w:val="15"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple></w:p></w:ftr>`;
     const stylesXml = `${XH}<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="${SANS}" w:eastAsia="${SANS}" w:hAnsi="${SANS}" w:cs="${SANS}"/><w:color w:val="1C1F27"/><w:sz w:val="21"/><w:szCs w:val="21"/><w:lang w:val="de-DE" w:eastAsia="de-DE" w:bidi="ar-SA"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>`
       + `<w:style w:type="paragraph" w:default="1" w:styleId="Standard"><w:name w:val="Normal"/><w:qFormat/></w:style>`
       + `<w:style w:type="paragraph" w:customStyle="1" w:styleId="Materialtext"><w:name w:val="Materialtext"/><w:basedOn w:val="Standard"/><w:qFormat/><w:pPr><w:spacing w:after="0" w:line="300" w:lineRule="auto"/><w:jc w:val="both"/></w:pPr><w:rPr><w:rFonts w:ascii="${SERIF}" w:hAnsi="${SERIF}" w:cs="${SERIF}"/><w:sz w:val="21"/><w:szCs w:val="21"/></w:rPr></w:style>`
@@ -2274,7 +2997,7 @@ async function exportDOCX() {
     media.forEach(x => zip.file(`word/media/bild${x.n}.${x.ext || 'jpeg'}`, x.bytes));
     const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
     overlay('');
-    await deliver(fileBase() + '.docx', blob);
+    await deliver(fileBase() + outSuffix().replace('_A5', '') + '.docx', blob);
   } catch (err) { console.error(err); overlay(''); toast('Word-Datei konnte nicht erstellt werden. Bitte erneut versuchen.'); }
   finally { overlay(''); busy = false; }
 }
@@ -2293,7 +3016,11 @@ function applyResponsive() {
 }
 function doPrint() {
   const pr = $('#printroot'); pr.innerHTML = '';
-  document.querySelectorAll('#pages .page').forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; c.querySelectorAll('.is-sel').forEach(n => n.classList.remove('is-sel')); pr.appendChild(c); });
+  const pages = [...document.querySelectorAll('#pages .pout')]; if (!pages.length) { toast('Es gibt noch nichts zu drucken.'); return; }
+  const w = +pages[0].dataset.w || 210, h = +pages[0].dataset.h || 297;
+  let st = document.getElementById('print-size'); if (!st) { st = document.createElement('style'); st.id = 'print-size'; document.head.appendChild(st); }
+  st.textContent = `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
+  pages.forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); pr.appendChild(c); });
   window.print();
 }
 
@@ -2307,8 +3034,38 @@ function boot() {
   $('#dlg-root').addEventListener('submit', onDlgSubmit);
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
   $('#reiter').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
+  $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
+  $('#pv-opts').addEventListener('click', e => {
+    const b = e.target.closest('[data-pv]'); if (!b) return; const k = b.dataset.pv, v = b.dataset.v;
+    if (k === 'ehmd') { exportEH(); return; }
+    if (k === 'fassung') { state.fassung = v; if (v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); renderEditor(); }
+    if (k === 'grp') state.grp = v;
+    if (k === 'paper') { state.sheet.meta.paper = v; changed(false); }
+    closeZl(); renderPreview();
+  });
+  $('#menu-root').addEventListener('click', onMenuClick);
+  $('#zl-root').addEventListener('click', e => { const a = e.target.closest('[data-zl]'); if (!a) return; const k = a.dataset.zl; if (k === 'close') closeZl(); if (k === 'ins') zlInsert(); if (k === 'copy') zlCopy(); });
+  const trackField = e => {
+    const t = e.target; if (!t.dataset || !t.dataset.k || !/^(INPUT|TEXTAREA)$/.test(t.tagName) || t.type === 'checkbox') return;
+    const card = t.closest('[data-bid]'); const bid = card && card.dataset.bid; const blk = bid && state.sheet.blocks.find(x => x.id === bid);
+    if (!blk || blk.type === 'material') return;
+    lastField.bid = bid; lastField.k = t.dataset.k; lastField.pos = t.selectionStart; lastField.end = t.selectionEnd;
+  };
+  ['focusin', 'keyup', 'mouseup', 'input', 'focusout'].forEach(ev => ed.addEventListener(ev, trackField));
+  ed.addEventListener('paste', e => {
+    const t = e.target; if (t.tagName !== 'TEXTAREA' || t.dataset.k !== 'text') return;
+    const card = t.closest('[data-bid]'); const blk = card && target(card.dataset.bid); if (!blk || blk.type !== 'material') return;
+    const raw = e.clipboardData && e.clipboardData.getData('text'); if (!raw) return;
+    const r = cleanPdf(raw); if (!r.hy && !r.ln) return;
+    e.preventDefault();
+    let ok = false; try { ok = document.execCommand('insertText', false, r.t); } catch {}
+    if (!ok) { t.setRangeText(r.t, t.selectionStart, t.selectionEnd, 'end'); t.dispatchEvent(new Event('input', { bubbles: true })); }
+    toast([r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} Zeilennummern` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt');
+  });
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
+    if (menu.open) { closeMenu(); return; }
+    if (zl.open) { closeZl(); return; }
     if (gl.open) { closeGloss(); return; }
     if (state.dlg) { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
     if (state.libOpen) { state.libOpen = false; state.confirmDel = null; renderLib(); }
@@ -2334,7 +3091,11 @@ function boot() {
     if (a.dataset.act === 'gl-close') closeGloss();
     if (a.dataset.act === 'gl-del') { const o = gl.open; const b = target(o.bid); closeGloss(); if (b && o.idx >= 0) removeGloss(b, o.idx); }
   });
-  document.addEventListener('pointerdown', e => { if (gl.open && !e.target.closest('#gpop')) closeGloss(); }, true);
+  document.addEventListener('pointerdown', e => {
+    if (gl.open && !e.target.closest('#gpop')) closeGloss();
+    if (zl.open && !e.target.closest('#zlpop') && !e.target.closest('#pages .ln-no')) closeZl();
+    if (menu.open && !e.target.closest('#mn')) closeMenu();
+  }, true);
   // Schließt erst, wenn wirklich weggescrollt wurde (kleine Sprünge durch Fokus ignorieren)
   ['#preview-scroll', '#editor'].forEach(q => $(q).addEventListener('scroll', () => {
     const o = gl.open; if (!o || !o.sc || narrowGloss()) return;
@@ -2361,6 +3122,11 @@ function boot() {
   });
   $('#pages').addEventListener('click', e => {
     if (skipClick) { skipClick = false; return; }
+    const lnno = e.target.closest('.ln-no');
+    if (lnno && lnno.dataset.n) {
+      const blk = lnno.closest('.blk-mat');
+      if (blk) { const lab = blk.querySelector('.mat-no, .mat-cont'); const mNo = lab ? +((lab.textContent.match(/M(\d+)/) || [])[1] || 0) : 0; selectQuiet(blk.dataset.bid); openZl(blk.dataset.bid, +lnno.dataset.n, mNo, rectOf(lnno)); return; }
+    }
     const w = e.target.closest('.mat-body .w'); const wb = w && w.closest('.blk-mat');
     if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;

@@ -12,6 +12,18 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Formatierung der Materialien:** Standard ist Blocksatz mit Serifenschrift. Unter „Formatierung“ in der Materialkarte lassen sich Ausrichtung, Schrift, Schriftgröße, Zeilenabstand, Absatzeinzug, Zeilennummern und ein Rand für Notizen einstellen.
 - **Designs:** Im Kopf zwischen Klar, Akte (Schreibmaschine, Stempel, Lochung, Papierton), Zeitung (Fraktur-Kopf, Linien) und Tagebuch (Handschrift, Randlinie) wählen. Akte und Zeitung sind einfarbig. Die Word-Datei bleibt im schlichten Standardlayout.
 - **Sozialformen:** Jede Aufgabe kann ein Piktogramm für Einzelarbeit, Partnerarbeit, Gruppenarbeit oder Plenum bekommen (auch im Word-Export).
+- **Ausgaben:** Neben den Reitern wählen Sie zwischen Arbeitsblatt, Tippkarten und Tafelkarten. PDF und Drucken geben immer das aus, was die Vorschau zeigt.
+- **Lehrerfassung:** Unter jeder Aufgabe „Erwartung“ öffnen und Stichpunkte eintragen. Über der Vorschau zwischen Schüler- und Lehrerfassung wechseln; der Erwartungshorizont lässt sich auch als Markdown-Datei speichern.
+- **Gruppenblätter:** In „Weitere Einstellungen“ Gruppenblätter A und B einschalten, Bausteine über ⋯ einer Gruppe zuordnen und über der Vorschau Gruppe A oder B ausgeben.
+- **Gestufte Hilfen:** Unter jeder Aufgabe bis zu drei Tipps eintragen; sie erscheinen als Tippkarten zum Ausschneiden.
+- **Tafelkarten:** Begriff und Stichpunkte eintragen, heraus kommen Karten in A4 quer mit farbigem Rahmen und größtmöglicher Schrift.
+- **QR-Code:** Baustein für Videos und Online-Quellen, mit Titel und Quellenangabe.
+- **Klausur:** Im Kopf „Klausur“ wählen. Die erste Seite wird zum Deckblatt (ohne Thema-Feld und Hinweiskasten), die Gewichtung steht bei den Aufgaben.
+- **Sammlung:** Bausteine über ⋯ speichern und in jedes Blatt einfügen; eine Operatorenübersicht ist vorbereitet.
+- **Zeilenangaben:** In der Vorschau auf eine Zeilennummer klicken (für einen Bereich danach auf die letzte Zeile) und die Angabe in das zuletzt benutzte Aufgaben- oder Erwartungsfeld einfügen.
+- **Einfügen aus PDFs:** Trennstriche am Zeilenende und mitkopierte Zeilennummern werden beim Einfügen entfernt.
+- **Genderzeichen:** Hinweis bei Sternchen, Doppelpunkt, Unterstrich oder Binnen-I in eigenen Texten, mit Vorschlag zum Ausschreiben.
+- **2 × A5:** Über der Vorschau „2 × A5“ wählen; jede Seite wird zweimal auf A4 quer gesetzt, mit Schnittlinie.
 - **Operator-Check:** erkennt Operatoren in Sie- und du-Form und zeigt den Anforderungsbereich an. Grundlage ist der IQB-Grundstock Deutsch.
 - **Ausgabe:** PDF zum Drucken, Word-Datei (.docx) zum Weiterbearbeiten oder direkt drucken.
 - **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung laden“ spielt sie wieder ein, auch in einem anderen Browser.
