@@ -298,6 +298,9 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .tbl-ed .rtx{border:0;border-radius:0;background:transparent;padding:6px 8px;font-size:13px;min-height:31px}
 .tbl-ed .rtx:focus{box-shadow:inset 0 0 0 2px var(--tinte)}
 .tbl-ed tr:first-child .rtx{font-weight:700}
+.tbl-ed td.rh-c{min-width:0;width:64px;background:var(--panel)}
+.tbl-ed .rh-c input{width:100%;border:0;background:transparent;padding:6px 8px;font-size:12.5px;text-align:right}
+.tbl-ed .rh-h{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;padding:3px 4px;line-height:1.2}
 .tbl-ed .rtx.is-empty::before{left:8px;top:6px}
 /* Leiste beim Markieren */
 .rt-bar{position:fixed;z-index:60;display:flex;align-items:center;gap:1px;padding:4px;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow)}
@@ -499,6 +502,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .tb td{border:.25mm solid var(--paper-rule);padding:1.6mm 2mm;vertical-align:top}
 .tb.h-normal td{height:8mm}.tb.h-hoch td{height:16mm}.tb.h-sehrhoch td{height:28mm}
 .tb.fb td:first-child{font-weight:700}
+.tb td.lc{position:relative}
+.tb td .cl{position:absolute;left:2mm;right:2mm;height:0;border-top:.2mm solid var(--paper-hair)}
 
 /* Schreibfläche */
 .wl{height:9mm;border-bottom:.2mm solid var(--paper-rule)}
@@ -853,6 +858,12 @@ const TYPE_ICON = {
 };
 const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
 const iconKey = b => b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type;
+// Tabellen: Höhe einer Zeile in mm (Voreinstellung, eigene Höhe oder Höhe dieser Zeile)
+const TB_H = { normal: 8, hoch: 16, sehrhoch: 28, gross: 40 };
+const tbBaseMM = b => b.rowHeight === 'eigen' ? Math.max(5, Math.min(250, Number(b.rowMM) || 50)) : TB_H[b.rowHeight] || 8;
+const tbRowMM = (b, ri) => { const own = b.rowEach && Array.isArray(b.rowH) ? Number(b.rowH[ri]) : 0; return own >= 5 ? Math.min(250, own) : tbBaseMM(b); };
+// Schreiblinien in einer leeren Zelle: etwa alle 9 mm, die untere Zellkante ist die letzte Linie
+const tbLines = h => Math.max(1, Math.round(h / 9));
 const typeLabel = b => b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
@@ -2172,8 +2183,10 @@ function buildBlock(b, ctx) {
     case 'table': {
       const cols = b.cols.length;
       const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map(c => `<th>${inlineHTML(c)}</th>`).join('')}</tr></thead>` : '';
-      const rows = b.rows.map(r => `<tr>${Array.from({ length: cols }, (_, i) => `<td>${inlineHTML(r[i] || '')}</td>`).join('')}</tr>`).join('');
-      const n = put(`<div class="blk blk-table">${b.title ? `<div class="tb-title">${inlineHTML(b.title)}</div>` : ''}<table class="tb h-${b.rowHeight || 'normal'}${b.firstBold ? ' fb' : ''}">${head}<tbody>${rows}</tbody></table></div>`);
+      const rows = b.rows.map((r, ri) => { const h = tbRowMM(b, ri), N = tbLines(h); return `<tr>${Array.from({ length: cols }, (_, i) => {
+        const c = r[i] || ''; const ln = b.cellLines && !String(c).trim() && N > 1 ? Array.from({ length: N - 1 }, (_, j) => `<i class="cl" style="top:${((j + 1) * h / N).toFixed(2)}mm"></i>`).join('') : '';
+        return `<td style="height:${h}mm"${ln ? ' class="lc"' : ''}>${inlineHTML(c)}${ln}</td>`; }).join('')}</tr>`; }).join('');
+      const n = put(`<div class="blk blk-table">${b.title ? `<div class="tb-title">${inlineHTML(b.title)}</div>` : ''}<table class="tb${b.firstBold ? ' fb' : ''}">${head}<tbody>${rows}</tbody></table></div>`);
       const atoms = [...n.querySelectorAll('tbody tr')];
       return {
         type: 'table', el: n, atoms, keepFirst: 2, keepLast: 1,
@@ -2894,11 +2907,11 @@ function bodyFor(b, num) {
     }
     case 'quote': return `${fRich('text', 'Zitat', b.text, { rows: 3, ph: '„…“' })}${fText('author', 'Quelle / Urheber', b.author, 'z. B. Victor Klemperer: LTI (1947)')}`;
     case 'table': {
-      const cols = b.cols.length;
+      const cols = b.cols.length; if (!Array.isArray(b.rowH)) b.rowH = []; const each = !!b.rowEach;
       return `${fText('title', 'Titel (optional)', b.title, '')}
         <div class="tbl-ed"><table>
-          <tr>${b.cols.map((c, ci) => `<td>${rtField(`cols.${ci}`, c, { mode: 'line', ph: `Kopf ${ci + 1}`, aria: `Spaltenkopf ${ci + 1}` })}</td>`).join('')}</tr>
-          ${b.rows.map((r, ri) => `<tr>${Array.from({ length: cols }, (_, ci) => `<td>${rtField(`rows.${ri}.${ci}`, r[ci] || '', { mode: 'line', ph: 'leer', aria: `Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`).join('')}</tr>`).join('')}
+          <tr>${b.cols.map((c, ci) => `<td>${rtField(`cols.${ci}`, c, { mode: 'line', ph: `Kopf ${ci + 1}`, aria: `Spaltenkopf ${ci + 1}` })}</td>`).join('')}${each ? '<td class="rh-c rh-h">Höhe<br>in mm</td>' : ''}</tr>
+          ${b.rows.map((r, ri) => `<tr>${Array.from({ length: cols }, (_, ci) => `<td>${rtField(`rows.${ri}.${ci}`, r[ci] || '', { mode: 'line', ph: 'leer', aria: `Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`).join('')}${each ? `<td class="rh-c"><input type="number" min="5" max="250" step="1" data-k="rowH.${ri}" value="${esc(b.rowH[ri] || '')}" placeholder="${tbBaseMM(b)}" aria-label="Höhe von Zeile ${ri + 1} in mm" title="leer = wie unten eingestellt"></td>` : ''}</tr>`).join('')}
         </table></div>
         <div class="row" style="gap:16px">
           <button class="link" type="button" data-act="row-add">+ Zeile</button>
@@ -2906,9 +2919,10 @@ function bodyFor(b, num) {
           <button class="link" type="button" data-act="col-add"${cols >= 6 ? ' disabled' : ''}>+ Spalte</button>
           <button class="link" type="button" data-act="col-del"${cols < 2 ? ' disabled' : ''}>− Spalte</button>
         </div>
-        <div class="row">${fSelect('rowHeight', 'Zeilenhöhe', b.rowHeight, [['normal', 'normal (8 mm)'], ['hoch', 'hoch (16 mm)'], ['sehrhoch', 'sehr hoch (28 mm)']])}</div>
-        <div class="chks">${fCheck('firstBold', 'Erste Spalte fett', b.firstBold)}</div>
-        <p class="hint" style="margin:0">Leere Zellen bleiben zum Ausfüllen frei.</p>`;
+        <div class="f"><span>Schreibplatz je Zeile</span><div class="seg sm" role="group" aria-label="Schreibplatz je Zeile">${[['normal', '8 mm'], ['hoch', '16 mm'], ['sehrhoch', '28 mm'], ['gross', '40 mm'], ['eigen', 'eigene Höhe']].map(([v, l]) => `<button type="button" data-act="tb-h" data-v="${v}" aria-pressed="${(b.rowHeight || 'normal') === v}">${l}</button>`).join('')}</div></div>
+        ${b.rowHeight === 'eigen' ? `<label class="f narrow"><span>Höhe in mm</span><input type="number" min="5" max="250" step="1" data-k="rowMM" value="${esc(b.rowMM || 50)}"></label>` : ''}
+        <div class="chks">${fCheck('cellLines', 'Schreiblinien in leeren Zellen', b.cellLines)}${fCheck('rowEach', 'Höhe je Zeile einzeln', each)}${fCheck('firstBold', 'Erste Spalte fett', b.firstBold)}</div>
+        <p class="hint" style="margin:0">Leere Zellen bleiben zum Ausfüllen frei.${each ? ' Ein leeres Höhenfeld übernimmt den Schreibplatz von oben.' : ''} Sehr hohe Zeilen beginnen auf der nächsten Seite.</p>`;
     }
     case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)']])}
       <label class="f narrow"><span>Zeilen</span><input type="number" min="1" max="40" data-k="count" value="${esc(b.count)}"></label></div>`;
@@ -3001,7 +3015,7 @@ function onInput(e) {
   if (t.type === 'checkbox' || t.tagName === 'SELECT' || t.type === 'file') return;
   const card = t.closest('[data-bid]'); if (!card) return;
   let v = isRt ? rtSerialize(t).raw : t.value; if (isRt) t.classList.toggle('is-empty', !v.trim());
-  if (t.type === 'number') { const lo = Number(t.min) || 1, hi = Number(t.max) || 40; v = Math.max(lo, Math.min(hi, parseInt(v, 10) || lo)); }
+  if (t.type === 'number') { if (/^rowH\.\d+$/.test(k) && !String(t.value).trim()) v = ''; else { const lo = Number(t.min) || 1, hi = Number(t.max) || 40; v = Math.max(lo, Math.min(hi, parseInt(v, 10) || lo)); } }
   setPath(target(card.dataset.bid), k, v);
   const m = k.match(/^items\.(\d+)\.text$/);
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
@@ -3038,7 +3052,7 @@ function onChange(e) {
   if (k === 'width' || k === 'lineStep') v = Number(v);
   setPath(target(card.dataset.bid), k, v);
   if (k === 'groupsOn' && !v) state.grp = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'showName' || k === 'showDate')) || k === 'anrede');
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'showName' || k === 'showDate')) || k === 'anrede');
 }
 function onClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
@@ -3066,13 +3080,14 @@ function onClick(e) {
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', () => { state.sheet = undoSnap; changed(true); }); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
     case 'row-add': b.rows.push(Array(b.cols.length).fill('')); changed(true); return;
-    case 'row-del': if (b.rows.length > 1) { b.rows.pop(); changed(true); } return;
+    case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); changed(true); } return;
     case 'col-add': if (b.cols.length < 6) { b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
     case 'col-del': if (b.cols.length > 1) { b.cols.pop(); b.rows.forEach(r => r.pop()); changed(true); } return;
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
     case 'meta-set': { const mm = state.sheet.meta; if (a.dataset.f === 'headGap') { if (a.dataset.v) mm.headGap = a.dataset.v; else delete mm.headGap; changed(true); } return; }
+    case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
     case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
@@ -3889,11 +3904,18 @@ async function exportDOCX() {
         case 'table': {
           if (b.title) parts.push(xp(xrInline(b.title, { b: 1, sz: 20 }), { keepNext: true, after: 80 }));
           const n = b.cols.length; const w = Math.floor(CW / n); const widths = Array(n).fill(w);
-          const hh = { normal: TW(8), hoch: TW(16), sehrhoch: TW(28) }[b.rowHeight] || TW(8);
           const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => LINE(s, 4, RULE)).join('');
           const hasHead = b.cols.some(c => c.trim());
           const head = hasHead ? xtr(b.cols.map(c => xtc(xp(xrInline(c, { b: 1, sz: 19 })), { w, shd: AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
-          const rows = b.rows.map(r => xtr(Array.from({ length: n }, (_, i) => xtc(xp(xrInline(r[i] || '', { sz: 19, b: b.firstBold && i === 0 })), { w })).join(''), { h: hh, cant: 1 })).join('');
+          const lineBdr = '<w:pBdr><w:bottom w:val="single" w:sz="2" w:space="0" w:color="C8CCD5"/></w:pBdr>';
+          const rows = b.rows.map((r, ri) => {
+            const hmm = tbRowMM(b, ri), N = tbLines(hmm);
+            return xtr(Array.from({ length: n }, (_, i) => {
+              const c = r[i] || '';
+              if (b.cellLines && !String(c).trim() && N > 1) return xtc(Array.from({ length: N - 1 }, (_, j) => xp('', { line: TW(j ? hmm / N : Math.max(2, hmm / N - 1.6)), rule: 'exact', bdr: lineBdr, mark: 2 })).join(''), { w });
+              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })), { w });
+            }).join(''), { h: TW(hmm), cant: 1 });
+          }).join('');
           parts.push(xtbl(widths, head + rows, bd, `<w:top w:w="${TW(1.6)}" w:type="dxa"/><w:left w:w="${TW(2)}" w:type="dxa"/><w:bottom w:w="${TW(1.6)}" w:type="dxa"/><w:right w:w="${TW(2)}" w:type="dxa"/>`));
           break;
         }
