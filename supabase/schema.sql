@@ -10,6 +10,7 @@ create table if not exists public.ab_arbeitsblaetter (
   title       text not null default '',
   nr          text not null default '',
   data        jsonb not null,                       -- das ganze Blatt (Kopf, Bausteine, Bilder)
+  suchtext    text not null default '',             -- für die Suche in „Meine Blätter“ (Migration „ab_werkstatt_suchtext“)
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
   primary key (user_id, id)

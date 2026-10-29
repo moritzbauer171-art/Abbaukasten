@@ -117,6 +117,7 @@ function menu() {
     { label: 'Datei', submenu: [
       { label: 'Meine Blätter', accelerator: 'CmdOrCtrl+O', click: click('#btn-lib') },
       { label: 'Speichern unter …', accelerator: 'CmdOrCtrl+Shift+S', click: click('#btn-saveas') },
+      { label: 'Ausgeben …', accelerator: 'CmdOrCtrl+E', click: click('#btn-out') },
       { type: 'separator' },
       { label: 'Als PDF speichern …', accelerator: 'CmdOrCtrl+S', click: click('#btn-pdf') },
       { label: 'Als Word-Datei speichern …', click: click('#btn-docx') },

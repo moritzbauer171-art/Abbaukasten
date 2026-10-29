@@ -61,7 +61,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .status i{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:0 0 auto}
 .status[data-s="supabase"] i,.status[data-s="claude"] i,.status[data-s="local"] i{background:#2E8A5C}
 .status[data-s="saving"] i{background:var(--tinte)}
-.status[data-s="error"] i,.status[data-s="toolarge"] i,.status[data-s="offline"] i,.status[data-s="quota"] i{background:#C2410C}
+.status[data-s="error"] i,.status[data-s="toolarge"] i,.status[data-s="offline"] i,.status[data-s="quota"] i,.status[data-s="conflict"] i{background:#C2410C}
 .status span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:var(--card);border-radius:8px;padding:7px 12px;font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap}
@@ -110,6 +110,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .card.closed .chev svg{transform:rotate(-90deg)}
 .fold-bar{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:12.5px;color:var(--faint);margin:-2px 2px -4px}
 .fold-bar .link{font-size:12.5px}
+.hist-b{display:flex;gap:2px;margin-right:auto}
+.hist-b .ib:disabled{opacity:.35;cursor:default}
 .memo-flag{font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:7px;padding:6px 9px}
 .f{display:flex;flex-direction:column;gap:4px;min-width:0}
 .f>span,.lbl{font-size:12px;font-weight:700;color:var(--muted)}
@@ -151,6 +153,23 @@ button,input,select,textarea{font:inherit;color:inherit}
 .thumb{max-width:100%;max-height:160px;border-radius:6px;border:1px solid var(--line);align-self:flex-start;background:#fff}
 .hint{font-size:12px;color:var(--faint)}
 .adder{border:1px dashed var(--line-strong);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.card-h[draggable="true"]{cursor:grab}
+.card.dragging{opacity:.4}
+.card.drop-before{box-shadow:0 -4px 0 0 var(--tinte)}
+.card.drop-after{box-shadow:0 4px 0 0 var(--tinte)}
+.ins-row{position:relative;height:0;margin:-5px 0;z-index:2;display:flex;justify-content:center}
+.ins-btn{position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line-strong);background:var(--panel);color:var(--muted);font-size:16px;line-height:1;font-weight:700;cursor:pointer;opacity:.0;transition:opacity .12s,background .12s;display:grid;place-items:center;padding:0}
+#editor:hover .ins-btn{opacity:.55}
+.ins-row:hover .ins-btn,.ins-btn:focus-visible{opacity:1;background:var(--tinte);color:var(--tinte-ink);border-color:var(--tinte)}
+@media (hover:none){.ins-btn{opacity:.6}}
+.ins-pal{border:1.5px solid var(--tinte);border-radius:10px;background:var(--card);padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 0 0 3px var(--tinte-soft)}
+.ins-pal-h{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700;color:var(--tinte);letter-spacing:.04em;text-transform:uppercase}
+.ins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px}
+.ins-b{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--field);border-radius:8px;padding:5px 7px;cursor:pointer;text-align:left;font-size:12.5px;color:var(--ink);min-width:0}
+.ins-b b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ins-b .add-ic{width:26px;height:26px;flex:0 0 auto}
+.ins-b .add-ic svg{width:16px;height:16px}
+.ins-b:hover{border-color:var(--tinte)}
 .adder .lbl{margin:0}
 .adder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .add-b{display:flex;flex-direction:row;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 10px 7px 8px;cursor:pointer;text-align:left;min-width:0;color:var(--ink)}
@@ -208,6 +227,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button:hover{color:var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--tinte);color:var(--tinte-ink)}
+.seg button:disabled{opacity:.4;cursor:default}
 .cols-seg button{display:inline-flex;align-items:center;gap:6px}
 .cols-seg svg{width:18px;height:13px;flex:0 0 auto}
 
@@ -372,6 +392,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .lib-item .m{font-size:12px;color:var(--muted)}
 .lib-item .a{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
 .lib-item[draggable="true"]{cursor:grab}
+.lib-hit{font-size:12px;color:var(--muted);line-height:1.35}
+.lib-hit mark{background:var(--tinte-soft);color:var(--ink);border-radius:3px;padding:0 1px}
 .lib-item .t .grip{margin-left:auto;width:8px;height:14px;color:var(--faint);flex:0 0 auto;align-self:center}
 .lib-fadd{display:inline-flex;align-items:center;gap:6px}
 .lib-fadd .fi{width:16px;height:16px}
@@ -444,6 +466,49 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .dlg .sa-file>div{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
 .dlg .sa-file b{font-size:13px}
 .dlg .sa-file span{font-size:12px;color:var(--muted);line-height:1.35}
+.ib-help{width:34px;padding-left:0;padding-right:0;justify-content:center;font-weight:800;font-size:15px}
+.dlg.dlg-help{width:min(720px,calc(100% - 32px))}
+.help{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:6px 22px}
+.help h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinte);margin:6px 0 4px}
+.help dl{margin:0;display:flex;flex-direction:column;gap:5px}
+.help dt{font-weight:700;font-size:13px}
+.help dd{margin:0 0 3px;font-size:12.5px;color:var(--muted);line-height:1.35}
+#tip-root{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom, 0px));z-index:45;max-width:min(340px,calc(100% - 32px))}
+.tipcard{background:var(--panel);border:1.5px solid var(--tinte);border-radius:12px;box-shadow:var(--shadow);padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
+.tip-h{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tinte)}
+.tipcard b{font-size:14px}
+.tipcard p{margin:0;font-size:13px;line-height:1.4;color:var(--ink)}
+.tip-a{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.cf-opts{display:flex;flex-direction:column;gap:8px}
+.dlg.dlg-new{width:min(640px,calc(100% - 32px))}
+.tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.tpl{display:flex;align-items:flex-start;gap:9px;text-align:left;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:9px 10px;cursor:pointer;color:var(--ink)}
+.tpl:hover,.tpl:focus-visible{border-color:var(--tinte);background:var(--tinte-soft)}
+.tpl .add-ic{flex:0 0 auto}
+.tpl>span{display:flex;flex-direction:column;gap:2px;min-width:0}
+.tpl b{font-size:14px}
+.tpl>span>span{font-size:11.5px;color:var(--muted);line-height:1.3}
+.tpl-copy{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line);padding-top:10px}
+.dlg.dlg-out{width:min(520px,calc(100% - 32px))}
+.out-g{display:flex;flex-direction:column;gap:10px}
+.out-fmts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.out-fmt{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--ink)}
+.out-fmt svg{grid-row:1/3;width:26px;height:26px;color:var(--tinte)}
+.out-fmt b{font-size:14px}
+.out-fmt span{font-size:11.5px;color:var(--muted);line-height:1.25}
+.out-fmt[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);box-shadow:0 0 0 2px var(--tinte-soft)}
+.out-fmt:disabled{opacity:.45;cursor:default}
+.out-chk{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px 12px}
+.out-chk-h{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;font-size:13px}
+.out-chk-h span{font-weight:400;color:var(--muted);font-size:12px}
+.out-chk ul{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+.out-chk li{font-size:12.5px;line-height:1.35;padding-left:20px;position:relative}
+.out-chk li::before{position:absolute;left:0;top:0;font-weight:700}
+.out-chk li.warn{color:var(--warn)}
+.out-chk li.warn::before{content:"!";width:14px;height:14px;border-radius:50%;background:var(--warn);color:#fff;font-size:10px;display:grid;place-items:center;top:1px}
+.out-chk li.note{color:var(--muted)}
+.out-chk li.note::before{content:"i";width:14px;height:14px;border-radius:50%;border:1px solid var(--muted);font-size:9.5px;display:grid;place-items:center;top:1px;box-sizing:border-box}
+.out-ok{margin:4px 0 0;font-size:12.5px;color:var(--muted)}
 .dlg .links{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
 .btn[disabled]{opacity:.55;cursor:default}
 
@@ -462,6 +527,18 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   #preview-scroll{padding-left:0;padding-right:0}
   .pv-bar,.pv-hint{padding-left:0;padding-right:0}
   .brand span{display:none}
+}
+@media (max-width: 560px){
+  .brand b{font-size:17px}
+  .actions .btn{padding:6px 9px}
+  #btn-lib .l-short,#btn-saveas .l-short{display:none}
+  #btn-lib svg,#btn-saveas svg{margin:0}
+  .ib-help{width:30px}
+  .status span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pv-hint{display:none}
+  .dlg{padding:16px 14px 14px}
+  .tpl-grid{grid-template-columns:1fr}
+  #tip-root{left:8px;right:8px;max-width:none}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 
@@ -813,14 +890,17 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
+      <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn" type="button" id="btn-lib" data-act="lib-open">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span class="l-long">Meine Blätter</span><span class="l-short">Blätter</span></button>
       <button class="btn" type="button" id="btn-saveas" data-act="saveas" title="Speichern unter (Strg+Umschalt+S)">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 2.5h8.3l2.7 2.7v8.3h-11z"/><path d="M5.2 2.5v3.2h4.6V2.5"/><path d="M5 13.5V9.6h6v3.9"/></svg><span class="l-long">Speichern unter</span><span class="l-short">Speichern</span></button>
-      <button class="btn" type="button" id="btn-docx" data-act="docx">
+      <button class="btn primary" type="button" id="btn-out" data-act="out" title="PDF, Word oder Drucken">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V1.8h8V6"/><rect x="1.8" y="6" width="12.4" height="5.5" rx="1"/><path d="M4 9.5h8v4.7H4z"/></svg><span class="l-long">Ausgeben</span><span class="l-short">Ausgeben</span></button>
+      <button class="btn" type="button" id="btn-docx" data-act="docx" hidden>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.8h5.5l3 3v9.4H4z"/><path d="M9.5 1.8v3h3"/><path d="M5.8 8l.9 3.6L8 8.6l1.3 3L10.2 8"/></svg>Word</button>
-      <button class="btn primary" type="button" id="btn-pdf" data-act="pdf">
+      <button class="btn primary" type="button" id="btn-pdf" data-act="pdf" hidden>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V1.8h8V6"/><rect x="1.8" y="6" width="12.4" height="5.5" rx="1"/><path d="M4 9.5h8v4.7H4z"/></svg><span class="l-long">PDF zum Drucken</span><span class="l-short">PDF</span></button>
       <button class="btn" type="button" id="btn-print" data-act="print" hidden>Drucken</button>
     </div>
@@ -858,6 +938,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   <button type="button" data-rt="x" title="Formatierung entfernen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h11M11.5 5 9 19"/><path d="m15 14 5 5M20 14l-5 5"/></svg></button>
 </div>
 <div id="toast-root"></div>
+<div id="tip-root"></div>
 
 <script>
 (() => {
@@ -898,6 +979,7 @@ const H_SP = { top: { m: 4, l: 9 }, bot: { m: 3, l: 7 } };
 // Piktogramme der Bausteine (24er-Raster, Strich in Textfarbe)
 const TYPE_ICON = {
   meta: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8.5h16M7 5.8h5M7.5 12.5h9M7.5 16h6"/>',
+  seite: '<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><path d="M8 6.5h8M8 17.5h8" stroke-dasharray="1.6 1.6"/><path d="M2.5 6v12M21.5 6v12" opacity=".5"/>',
   material: '<rect x="5.5" y="3" width="14" height="18" rx="2"/><path d="M9.5 7.5h7M9.5 11h7M9.5 14.5h7M9.5 18h4.5"/><path d="M2.8 7.5h.6M2.8 14.5h.6" stroke-width="2.2"/>',
   poem: '<path d="M20 4C13.2 4.4 8.7 9 8.1 15.8L6.6 20"/><path d="M8.4 14.1c4.7-.4 8.9-3.7 11.6-10.1"/><path d="M11 10.8h4.4"/><path d="M3.5 20.5h6"/>',
   tasks: '<rect x="3.5" y="4" width="6.5" height="6.5" rx="1.5"/><path d="m5.2 7.3 1.3 1.3 2-2.3"/><path d="M13 7.2h7.5"/><rect x="3.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M13 16.8h7.5"/>',
@@ -1372,7 +1454,7 @@ function updOcc() {
 function removeGloss(b, idx) {
   if (!b.glossary || !b.glossary[idx]) return;
   snapshot(); const g = b.glossary.splice(idx, 1)[0]; changed(true);
-  toast(`Worterklärung „${normTerm(g.term)}“ entfernt`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); });
+  toast(`Worterklärung „${normTerm(g.term)}“ entfernt`, 'Rückgängig', histUndo);
 }
 function onGlossSubmit(e) {
   e.preventDefault(); const o = gl.open; if (!o) return;
@@ -1861,6 +1943,11 @@ function saveSnip(b) {
   list.unshift({ id: 's' + uid(), name, block: c }); lsSet(LS_SNIP, list.slice(0, 60));
   toast('In der Sammlung gespeichert');
 }
+// Einfügen an Ort und Stelle: ein „+“ zwischen den Karten öffnet die Bausteinauswahl genau dort
+function insRow(i) {
+  if (state.insAt === i) return `<div class="ins-pal" data-at="${i}"><div class="ins-pal-h"><span>Baustein hier einfügen</span><button type="button" class="ib" data-act="ins-close" title="Schließen">${I.x}</button></div><div class="ins-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="ins-b" data-act="ins-add" data-type="${k}" data-at="${i}" title="${esc(t.desc)}"><i class="add-ic">${typeIcon(k)}</i><b>${t.label}</b></button>`).join('')}</div></div>`;
+  return `<div class="ins-row"><button type="button" class="ins-btn" data-act="ins-open" data-at="${i}" title="Baustein hier einfügen" aria-label="Baustein hier einfügen">+</button></div>`;
+}
 function adderHTML() {
   return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}"><i class="add-ic">${typeIcon(k)}</i><span class="add-tx"><b>${t.label}</b><span>${t.desc}</span></span></button>`).join('')}</div>
     <div class="snips"><span class="lbl">Aus der Sammlung</span>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
@@ -1895,7 +1982,7 @@ function onMenuClick(e) {
     case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); break; }
     case 'snip': saveSnip(b); renderEditor(); break;
     case 'grp': b.group = a.dataset.v || ''; changed(true); break;
-    case 'del': snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); break;
+    case 'del': snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', histUndo); break;
   }
 }
 
@@ -2078,7 +2165,6 @@ function renderOut() {
   if (state.out === 'blatt') {
     h += segHTML('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung, 'Fassung');
     if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp, 'Gruppe');
-    h += segHTML('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4', 'Papier');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
   }
   $('#pv-opts').innerHTML = h;
@@ -2119,6 +2205,125 @@ function newBlock(type) {
 function blankSheet(nr, klasse) {
   const m = newBlock('material'); const t = newBlock('tasks');
   return { id: 'ab-' + uid(), klasse: KL(klasse).id, example: false, updatedAt: Date.now(), meta: { ...defaultMeta(nr, klasse), title: 'Neues Arbeitsblatt' }, blocks: [m, t] };
+}
+/* ---------- Vorlagen für neue Blätter ---------- */
+// Jede Vorlage bringt typische Bausteine mit; Aufgaben stehen je nach Klasse in der Sie- oder du-Form.
+const TPL = [
+  { k: 'leer', label: 'Leeres Blatt', d: 'Material und Aufgaben', ic: 'text' },
+  { k: 'gedicht', label: 'Gedichtanalyse', d: 'Gedicht, Aufgaben, Tabelle für sprachliche Mittel, Formulierungshilfen', ic: 'poem' },
+  { k: 'sachtext', label: 'Sachtextanalyse', d: 'Text, Argumentationsstruktur, Tabelle, Formulierungshilfen', ic: 'material' },
+  { k: 'eroerterung', label: 'Erörterung', d: 'Aufbau, Pro-und-Contra-Tabelle, Schreibfläche', ic: 'table' },
+  { k: 'szene', label: 'Szenenanalyse', d: 'Dramenszene, Gesprächsverhalten, Figurentabelle', ic: 'phrases' },
+  { k: 'stationen', label: 'Stationenarbeit', d: 'Drei Stationen mit Material und Aufgaben, je eine Seite', ic: 'tasks' },
+  { k: 'klausur', label: 'Klausur', d: 'Deckblatt, Material, zwei Aufgaben mit Gewichtung', ic: 'meta' }
+];
+function tplSheet(key, kl) {
+  const sh = blankSheet(nextNr(kl), kl); const du = sh.meta.anrede === 'du'; const T = (sie, d) => (du ? d : sie);
+  const B = (type, o) => Object.assign(newBlock(type), o);
+  const tasks = (list, o = {}) => B('tasks', { title: o.title || '', items: list.map(x => ({ text: Array.isArray(x) ? T(x[0], x[1]) : x.text, tag: '', ...(x.pts ? { pts: x.pts } : {}) })) });
+  const PH = heads => B('phrases', { groups: heads.map(h => { const p = PHRASE_SETS.find(x => x.head === h); return { head: p.head, text: p.lines.join('\n') }; }) });
+  const merke = (title, text) => B('info', { kind: 'Merke', title, text });
+  const mat = (memo, o = {}) => B(o.poem ? 'poem' : 'material', { memo, ...o.extra });
+  const tab = (cols, n, h) => B('table', { cols, rows: Array.from({ length: n }, () => cols.map(() => '')), rowHeight: h || 'hoch', firstBold: false });
+  switch (key) {
+    case 'gedicht':
+      sh.meta.title = 'Gedichtanalyse';
+      sh.blocks = [
+        mat('Gedicht einfügen, Autor, Titel, Jahr und Quelle ergänzen.', { poem: true }),
+        tasks([
+          ['Formulieren Sie nach dem ersten Lesen eine Deutungshypothese.', 'Formuliere nach dem ersten Lesen eine Deutungshypothese.'],
+          ['Analysieren Sie Inhalt, Aufbau und formale Gestaltung des Gedichts (Strophen, Metrum, Reim).', 'Analysiere Inhalt, Aufbau und formale Gestaltung des Gedichts (Strophen, Metrum, Reim).'],
+          ['Untersuchen Sie die sprachlichen Mittel und erläutern Sie ihre Wirkung. Belegen Sie mit Versangaben.', 'Untersuche die sprachlichen Mittel und erläutere ihre Wirkung. Belege mit Versangaben.'],
+          ['Interpretieren Sie das Gedicht, indem Sie Ihre Deutungshypothese überprüfen.', 'Interpretiere das Gedicht, indem du deine Deutungshypothese überprüfst.']
+        ], { title: 'Arbeitsaufträge' }),
+        tab(['Textstelle (V.)', 'Sprachliches Mittel', 'Wirkung und Deutung'], 4),
+        merke('Aufbau einer Gedichtanalyse', '- Einleitung: Autor, Titel, Erscheinungsjahr, Thema, Deutungshypothese\n- Hauptteil: Inhalt, Aufbau und Form, sprachliche Mittel mit ihrer Wirkung, jeweils mit Versangaben\n- Schluss: Deutungshypothese überprüfen, Ergebnis zusammenfassen'),
+        PH(['Einleitung', 'Sprachliche Mittel deuten', 'Zitieren und Belegen'])
+      ]; break;
+    case 'sachtext':
+      sh.meta.title = 'Sachtextanalyse';
+      sh.blocks = [
+        mat('Sachtext einfügen und Quelle ergänzen.'),
+        merke('Argumentationsstruktur', '- These: Behauptung, die begründet werden soll\n- Argument: Begründung der These\n- Beleg oder Beispiel: stützt das Argument, etwa mit Fakten, Zahlen, Expertenmeinungen oder Erfahrungen'),
+        tasks([
+          ['Fassen Sie die zentrale Position des Textes zusammen.', 'Fasse die zentrale Position des Textes zusammen.'],
+          ['Analysieren Sie den Argumentationsgang und die sprachliche Gestaltung des Textes. Belegen Sie mit Zeilenangaben.', 'Analysiere den Argumentationsgang und die sprachliche Gestaltung des Textes. Belege mit Zeilenangaben.'],
+          ['Beurteilen Sie die Überzeugungskraft der Argumentation.', 'Beurteile, wie überzeugend die Argumentation ist.']
+        ], { title: 'Arbeitsaufträge' }),
+        tab(['Abschnitt (Z.)', 'Inhalt', 'Funktion im Argumentationsgang'], 4),
+        PH(['Einleitung', 'Zitieren und Belegen', 'Argumentieren'])
+      ]; break;
+    case 'eroerterung':
+      sh.meta.title = 'Erörterung';
+      sh.blocks = [
+        merke('Aufbau einer Erörterung', '- Einleitung: Hinführung zum Thema und Fragestellung\n- Hauptteil: Argumente mit Beispielen, vom schwächeren zum stärkeren; bei der dialektischen Erörterung zuerst die Gegenseite\n- Schluss: begründetes eigenes Urteil'),
+        mat('Optional: Text oder Schaubild als Grundlage einfügen, sonst diesen Baustein löschen.'),
+        tasks([
+          ['Erörtern Sie, ob … .', 'Erörtere, ob … .']
+        ], { title: 'Arbeitsauftrag' }),
+        tab(['Pro', 'Contra'], 4, 'sehrhoch'),
+        PH(['Argumentieren', 'Urteilen und Schluss']),
+        B('lines', { count: 12, style: 'linien' })
+      ]; break;
+    case 'szene':
+      sh.meta.title = 'Szenenanalyse';
+      sh.blocks = [
+        mat('Szene mit Sprecherangaben einfügen, Drama, Akt und Szene sowie Quelle ergänzen.'),
+        tasks([
+          ['Ordnen Sie die Szene in den Handlungszusammenhang des Dramas ein.', 'Ordne die Szene in den Handlungszusammenhang des Dramas ein.'],
+          ['Analysieren Sie das Gesprächsverhalten der Figuren und die sprachliche Gestaltung der Szene. Belegen Sie mit Zeilenangaben.', 'Analysiere das Gesprächsverhalten der Figuren und die sprachliche Gestaltung der Szene. Belege mit Zeilenangaben.'],
+          ['Erläutern Sie die Bedeutung der Szene für die Figurenkonstellation und den weiteren Handlungsverlauf.', 'Erläutere die Bedeutung der Szene für die Figurenkonstellation und den weiteren Handlungsverlauf.']
+        ], { title: 'Arbeitsaufträge' }),
+        tab(['Figur', 'Redeanteil und Redeweise', 'Absicht und Wirkung'], 3),
+        PH(['Einleitung', 'Zitieren und Belegen'])
+      ]; break;
+    case 'stationen': {
+      sh.meta.title = 'Stationenarbeit';
+      const st = n => [B('heading', { text: `Station ${n}: …` }), mat(`Material für Station ${n} einfügen.`), tasks([['…', '…']])];
+      sh.blocks = [
+        B('text', { text: T('Bearbeiten Sie die Stationen in beliebiger Reihenfolge. Haken Sie erledigte Stationen ab.', 'Bearbeite die Stationen in beliebiger Reihenfolge. Hake erledigte Stationen ab.') }),
+        ...st(1), B('pagebreak'), ...st(2), B('pagebreak'), ...st(3)
+      ]; break;
+    }
+    case 'klausur':
+      sh.meta.title = du ? 'Klassenarbeit' : 'Klausur'; sh.meta.mode = 'klausur';
+      sh.meta.exam = { ...sh.meta.exam, label: du ? 'Klassenarbeit' : 'Klausur' };
+      sh.blocks = [
+        mat('Text einfügen und Quelle ergänzen.'),
+        tasks([
+          { text: T('Analysieren Sie … . Belegen Sie mit Zeilenangaben.', 'Analysiere … . Belege mit Zeilenangaben.'), pts: '60 %' },
+          { text: T('Erörtern Sie … .', 'Erörtere … .'), pts: '40 %' }
+        ])
+      ]; break;
+  }
+  return sh;
+}
+function newDlgHTML() {
+  const kl = KL(state.klasse); const list = state.lib.filter(d => d.klasse === kl.id).sort((a, b) => b.updatedAt - a.updatedAt);
+  const fs = libFolders(kl.id);
+  return `<h2 id="dlg-t">Neues Blatt</h2><p>${esc(kl.label)} · Aufgaben in der ${kl.anrede === 'du' ? 'du' : 'Sie'}-Form. Alles lässt sich danach frei ändern.</p>
+    <div class="tpl-grid">${TPL.map(t => `<button type="button" class="tpl" data-act="tpl" data-k="${t.k}"><i class="add-ic">${typeIcon(t.ic)}</i><span><b>${t.label}</b><span>${t.d}</span></span></button>`).join('')}</div>
+    ${list.length ? `<div class="tpl-copy"><label class="f" style="flex:1"><span>Oder ein vorhandenes Blatt als Grundlage</span><select id="tpl-src">${list.map(d => `<option value="${esc(d.id)}">${d.nr ? 'AB ' + esc(d.nr) + ' · ' : ''}${esc(d.title)}</option>`).join('')}</select></label><button class="btn" type="button" data-act="tpl-copy">Kopie anlegen</button></div>` : ''}
+    ${fs.length ? `<label class="f"><span>Ordner</span><select id="tpl-f"><option value="">Ohne Ordner</option>${fs.map(f => `<option value="${esc(f.id)}">${esc(f.name)}</option>`).join('')}</select></label>` : ''}
+    <div class="row"><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+}
+async function newFromTpl(key) {
+  const fo = ($('#tpl-f') || {}).value || ''; state.dlg = null; renderDlg();
+  state.libOpen = false; state.confirmDel = null; renderLib();
+  const sh = key === 'leer' ? blankSheet(nextNr(state.klasse), state.klasse) : tplSheet(key, state.klasse);
+  openSheet(sh); state.openSnap = null; saveNow(); if (fo) { setPlace(sh.id, fo); savePrefs(); }
+  setView('edit'); const t = $('#editor [data-bid="meta"] [data-k="title"]'); if (t) { t.focus(); t.select(); }
+  toast(key === 'leer' ? 'Neues Blatt angelegt' : `Vorlage „${TPL.find(x => x.k === key).label}“ angelegt · Titel und Texte jetzt anpassen`);
+}
+async function newFromCopy() {
+  const id = ($('#tpl-src') || {}).value; const fo = ($('#tpl-f') || {}).value || ''; if (!id) return;
+  state.dlg = null; renderDlg(); state.libOpen = false; renderLib();
+  try {
+    const src = await backend.load(id); if (!src) throw new Error('fehlt');
+    const c = normalizeSheet(src); c.id = 'ab-' + uid(); c.example = false; c.meta.title = (c.meta.title || 'Ohne Titel') + ' (Kopie)'; c.meta.nr = nextNr(c.klasse) || c.meta.nr;
+    openSheet(c); state.openSnap = null; saveNow(); const f2 = fo || folderOf(id, c.klasse); if (f2) { setPlace(c.id, f2); savePrefs(); }
+    setView('edit'); toast('Kopie angelegt · Titel jetzt anpassen');
+  } catch { toast('Die Kopie hat nicht geklappt. Bitte erneut versuchen.'); }
 }
 function exampleSheet() {
   const b = (type, o) => Object.assign(newBlock(type), o);
@@ -2166,10 +2371,23 @@ function normalizeSheet(sh) {
 const closedKey = id => 'abw-zu-' + id;
 function loadClosed(id) { try { const a = JSON.parse(localStorage.getItem(closedKey(id)) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); } }
 function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; if (state.closed.size) localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); else localStorage.removeItem(closedKey(id)); } catch {} }
-const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
+const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, insAt: null, base: null, conflict: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
+// Installierbar als App (Startbildschirm, Vollbild, offline) nur auf der eigenen Online-Seite, nicht in Claude und nicht in der Windows-App
+function setupPWA() {
+  if (location.protocol !== 'https:' || isFramed || window.claude || window.abDesktop || !('serviceWorker' in navigator)) return;
+  const add = (tag, attrs) => { const n = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); document.head.appendChild(n); };
+  add('link', { rel: 'manifest', href: 'manifest.webmanifest' });
+  add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' });
+  add('meta', { name: 'theme-color', content: '#2741B5' });
+  add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
+  add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
+  add('meta', { name: 'apple-mobile-web-app-title', content: 'AB-Werkstatt' });
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.warn('Offline-Speicher nicht verfügbar', err)));
+}
+const isNarrow = () => window.matchMedia('(max-width: 899px)').matches;
 const canPrint = location.protocol === 'file:' || (!isFramed && !window.claude);
 
 /* ================= Blatt setzen (Messen + Umbrechen) ================= */
@@ -3072,9 +3290,6 @@ function metaCard() {
         <div class="row">${fText('exam.datum', 'Datum', ex.datum, 'leer = zum Ausfüllen')}${fText('exam.zeit', 'Bearbeitungszeit', ex.zeit, 'z. B. 135 Minuten')}</div>
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
-      ${designEditor(m)}
-      ${colors}
-      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
       <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
         ${more ? `<div class="sub-b">
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
@@ -3085,6 +3300,23 @@ function metaCard() {
         </div>` : ''}</div>
     </div></div>`;
 }
+// Eigene Karte für alles, was das Aussehen der Seite bestimmt
+function seiteCard() {
+  const m = state.sheet.meta; const closed = state.closed.has('seite');
+  const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
+    : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
+  const paper = m.paper || 'a4'; const gl = { n: 'normal', m: 'mehr', l: 'viel' };
+  const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
+  return `<div class="card${closed ? ' closed' : ''}${state.sel === 'seite' ? ' sel' : ''}" data-bid="seite">
+    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('seite')}</span><span class="kind">Seite</span><span class="sum">${esc(sum)}</span></div>
+    <div class="card-b">
+      ${designEditor(m)}
+      ${colors}
+      <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
+      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
+
+    </div></div>`;
+}
 function renderEditor(focusSel) {
   const ed = $('#editor'); const st = ed.scrollTop;
   const fa = document.activeElement; let focus = focusSel || null;
@@ -3093,11 +3325,11 @@ function renderEditor(focusSel) {
   else {
     const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
     const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : '';
-    const fold = `<div class="fold-bar"><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
-    ed.innerHTML = fold + intro + metaCard() + blocks.map((b, i) => {
+    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
+    ed.innerHTML = fold + intro + metaCard() + seiteCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
-      return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
+      return insRow(i) + `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
+        <div class="card-h" data-act="toggle" draggable="true" title="Zum Umsortieren ziehen"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
           <button class="ib" type="button" data-act="up" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
@@ -3117,11 +3349,36 @@ function refreshSummaries() {
 }
 
 /* ---------- Änderungen ---------- */
-function target(bid) { return bid === 'meta' ? state.sheet.meta : bid === 'karten' ? state.sheet : state.sheet.blocks.find(b => b.id === bid); }
+function target(bid) { return bid === 'meta' || bid === 'seite' ? state.sheet.meta : bid === 'karten' ? state.sheet : state.sheet.blocks.find(b => b.id === bid); }
 function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) { if (o[ks[i]] == null || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
+/* ---------- Verlauf: Rückgängig und Wiederholen für das ganze Blatt ---------- */
+// Tippen wird zu einem Schritt zusammengefasst (kurze Pause), Bausteinänderungen sind sofort ein eigener Schritt.
+const hist = { past: [], future: [], last: null, timer: null, id: null };
+const histSig = sh => JSON.stringify({ ...sh, updatedAt: 0 });
+function histReset() { clearTimeout(hist.timer); hist.timer = null; hist.past = []; hist.future = []; hist.last = state.sheet ? histSig(state.sheet) : null; hist.id = state.sheet && state.sheet.id; histUI(); }
+function histCommit() {
+  clearTimeout(hist.timer); hist.timer = null;
+  if (!state.sheet) return; if (hist.id !== state.sheet.id) { histReset(); return; }
+  const cur = histSig(state.sheet); if (cur === hist.last) return;
+  hist.past.push(hist.last); const lim = cur.length > 1500000 ? 12 : 60; while (hist.past.length > lim) hist.past.shift();
+  hist.future = []; hist.last = cur; histUI();
+}
+function histNote(structural) { if (structural) histCommit(); else { clearTimeout(hist.timer); hist.timer = setTimeout(histCommit, 700); } }
+function histApply() {
+  const sh = JSON.parse(hist.last); sh.updatedAt = Date.now(); state.sheet = sh;
+  if (state.sel && state.sel !== 'meta' && state.sel !== 'seite' && !sh.blocks.some(b => b.id === state.sel)) state.sel = null;
+  state.touched = true; closeGloss(); closeZl(); closeMenu();
+  renderEditor(); renderTabs(); scheduleRender(30); scheduleSave(); histUI();
+}
+function histUndo() { if (hist.timer) histCommit(); if (!hist.past.length) { toast('Es gibt nichts mehr rückgängig zu machen.'); return; } hist.future.push(hist.last); hist.last = hist.past.pop(); histApply(); }
+function histRedo() { if (hist.timer) histCommit(); if (!hist.future.length) return; hist.past.push(hist.last); hist.last = hist.future.pop(); histApply(); }
+function histUI() {
+  const u = document.querySelector('#editor [data-act="undo"]'), r = document.querySelector('#editor [data-act="redo"]');
+  if (u) u.disabled = !hist.past.length && !hist.timer; if (r) r.disabled = !hist.future.length;
+}
 function changed(structural) {
   if (state.sheet.example) state.sheet.example = false;
-  state.touched = true;
+  state.touched = true; histNote(structural); if (!structural) histUI();
   if (structural) renderEditor(); else refreshSummaries();
   scheduleRender(); scheduleSave();
 }
@@ -3146,7 +3403,7 @@ function onInput(e) {
   changed(false);
 }
 function onChange(e) {
-  const t = e.target;
+  const t = e.target; if (hist.timer) histCommit();
   if (t.dataset.act === 'op') {
     const card = t.closest('[data-bid]'); const b = target(card.dataset.bid); const i = +t.dataset.i;
     const o = OPS.find(x => x.op === t.value); if (!o) return;
@@ -3174,8 +3431,30 @@ function onChange(e) {
   if (k === 'groupsOn' && !v) state.grp = 'all';
   changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'showName' || k === 'showDate')) || k === 'anrede');
 }
+/* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
+let edDrag = null;
+function edClearDrop() { document.querySelectorAll('#editor .drop-before,#editor .drop-after').forEach(n => n.classList.remove('drop-before', 'drop-after')); }
+function edTarget(e) {
+  if (!edDrag) return null;
+  const c = e.target.closest && e.target.closest('#editor .card[data-bid]');
+  if (c && c.dataset.bid !== 'meta' && c.dataset.bid !== 'seite') {
+    if (c.dataset.bid === edDrag) return null;
+    const r = c.getBoundingClientRect(); const before = e.clientY < r.top + Math.min(r.height / 2, 60);
+    return { el: c, cls: before ? 'drop-before' : 'drop-after', ref: c.dataset.bid, before };
+  }
+  const ad = e.target.closest && e.target.closest('#editor .adder'); if (ad) { const last = state.sheet.blocks[state.sheet.blocks.length - 1]; if (last && last.id !== edDrag) { const el = $(`#editor .card[data-bid="${last.id}"]`); return el ? { el, cls: 'drop-after', ref: last.id, before: false } : null; } }
+  const top = e.target.closest && e.target.closest('#editor .card[data-bid="seite"],#editor .card[data-bid="meta"]'); if (top) { const first = state.sheet.blocks[0]; if (first && first.id !== edDrag) { const el = $(`#editor .card[data-bid="${first.id}"]`); return el ? { el, cls: 'drop-before', ref: first.id, before: true } : null; } }
+  return null;
+}
+function edDrop(id, ref, before) {
+  const bl = state.sheet.blocks; const i = bl.findIndex(b => b.id === id); if (i < 0) return;
+  if (hist.timer) histCommit();
+  const [b] = bl.splice(i, 1); let j = bl.findIndex(x => x.id === ref); if (j < 0) j = bl.length; else if (!before) j++;
+  bl.splice(j, 0, b); state.sel = id; changed(true);
+}
 function onClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
+  if (hist.timer && !/^(toggle|undo|redo|ins-open|ins-close|sub-toggle|fmt-toggle)$/.test(a.dataset.act)) histCommit();
   const act = a.dataset.act; const card = a.closest('[data-bid]'); const bid = card && card.dataset.bid;
   const blocks = state.sheet.blocks; const idx = blocks.findIndex(b => b.id === bid); const b = blocks[idx];
   switch (act) {
@@ -3188,7 +3467,15 @@ function onClick(e) {
     }
     case 'up': case 'down': { const j = act === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); return; }
     case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); return; }
-    case 'del': { snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); return; }
+    case 'del': { snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', histUndo); return; }
+    case 'ins-open': state.insAt = +a.dataset.at; renderEditor(); { const p = $('#editor .ins-pal'); if (p) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } return;
+    case 'ins-close': state.insAt = null; renderEditor(); return;
+    case 'ins-add': {
+      const nb = newBlock(a.dataset.type); const at = Math.max(0, Math.min(blocks.length, +a.dataset.at));
+      blocks.splice(at, 0, nb); state.sel = nb.id; state.closed.delete(nb.id); state.insAt = null; changed(true);
+      const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea,.rtx'); if (f) f.focus({ preventScroll: true }); }
+      return;
+    }
     case 'add': {
       const nb = newBlock(a.dataset.type);
       const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
@@ -3197,13 +3484,14 @@ function onClick(e) {
       return;
     }
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
-    case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', () => { state.sheet = undoSnap; changed(true); }); return; }
+    case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
     case 'row-add': b.rows.push(Array(b.cols.length).fill('')); changed(true); return;
     case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); if (Array.isArray(b.eh)) b.eh.length = Math.min(b.eh.length, b.rows.length); changed(true); } return;
     case 'col-add': if (b.cols.length < 6) { b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
     case 'col-del': if (b.cols.length > 1) { b.cols.pop(); b.rows.forEach(r => r.pop()); if (Array.isArray(b.eh)) b.eh.forEach(r => { if (Array.isArray(r) && r.length > b.cols.length) r.length = b.cols.length; }); changed(true); } return;
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
+    case 'paper': state.sheet.meta.paper = a.dataset.v; changed(true); renderOut(); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
     case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { mm[f] = a.dataset.v || 'n'; changed(true); } return; }
@@ -3215,7 +3503,9 @@ function onClick(e) {
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
     case 'phr-del': { const g = b.groups || []; g.splice(+a.dataset.i, 1); if (!g.length) g.push({ head: '', text: '' }); changed(true); return; }
     case 'phr-up': { const g = b.groups || [], i = +a.dataset.i; if (i > 0) [g[i - 1], g[i]] = [g[i], g[i - 1]]; changed(true); return; }
-    case 'fold-all': state.closed = new Set(['meta', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
+    case 'undo': histUndo(); return;
+    case 'redo': histRedo(); return;
+    case 'fold-all': state.closed = new Set(['meta', 'seite', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
     case 'unfold-all': state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
@@ -3251,7 +3541,7 @@ function onClick(e) {
       changed(true); const f = $(`#editor [data-k="cards.${cs.length - 1}.term"]`); if (f) { f.scrollIntoView({ block: 'nearest' }); f.focus({ preventScroll: true }); }
       return;
     }
-    case 'kk-del': { const i = +a.dataset.i; snapshot(); const c = state.sheet.cards.splice(i, 1)[0]; changed(true); toast(`Begriff „${c.term || 'ohne Begriff'}“ gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); return; }
+    case 'kk-del': { const i = +a.dataset.i; snapshot(); const c = state.sheet.cards.splice(i, 1)[0]; changed(true); toast(`Begriff „${c.term || 'ohne Begriff'}“ gelöscht`, 'Rückgängig', histUndo); return; }
     case 'kk-up': case 'kk-down': { const cs = state.sheet.cards; const i = +a.dataset.i, j = act === 'kk-up' ? i - 1 : i + 1; if (j < 0 || j >= cs.length) return; [cs[i], cs[j]] = [cs[j], cs[i]]; changed(true); return; }
     case 'kk-color': state.sheet.cards[+a.dataset.i].color = a.dataset.v; changed(true); return;
     case 'kk-size': state.sheet.cards[+a.dataset.i].size = a.dataset.v; changed(true); return;
@@ -3290,7 +3580,21 @@ const LS = { lib: 'abw.lib', last: 'abw.last', klasse: 'abw.klasse', cur: 'abw.c
 const lsDel = k => { try { localStorage.removeItem(k); } catch {} };
 const inClaude = !!(window.claude && typeof window.claude.use === 'function');
 function localLib() { return lsGet(LS.lib) || {}; }
-function entryOf(sh) { return { id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), updatedAt: sh.updatedAt || 0 }; }
+// Suchtext eines Blatts: alles, wonach man ein Blatt wiederfinden möchte (ohne Formatierungszeichen, höchstens 4000 Zeichen)
+function searchText(sh) {
+  const out = []; const add = v => { if (v != null && String(v).trim()) out.push(String(v)); };
+  const m = sh.meta || {}; add(m.topic); if (m.mode === 'klausur') add(m.exam && m.exam.label);
+  (sh.blocks || []).forEach(b => {
+    add(b.title); add(b.source); add(b.caption);
+    if (b.type === 'tasks') (b.items || []).forEach(it => add(it.text));
+    if (['info', 'heading', 'text', 'quote'].includes(b.type)) { add(b.text); add(b.author); }
+    if (b.type === 'material') { add(String(b.text || '').slice(0, 400)); (b.glossary || []).forEach(g => add(g.term)); }
+    if (b.type === 'table') (b.cols || []).forEach(add);
+    if (b.type === 'phrases') (b.groups || []).forEach(g => add(g.head));
+  });
+  return out.join(' ').replace(/[*+=_\\]+/g, '').replace(/\s+/g, ' ').trim().slice(0, 4000);
+}
+function entryOf(sh) { return { id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), updatedAt: sh.updatedAt || 0, q: searchText(sh) }; }
 
 const localB = {
   kind: 'local', key: 'local',
@@ -3307,7 +3611,7 @@ function claudeB(db, id) {
     kind: 'claude', key: 'claude:' + id,
     async list() {
       const snap = await col().get();
-      return snap.docs.filter(d => d.exists && d.data() && d.data().sheet).map(d => { const x = d.data(); return { id: d.id, klasse: KL(x.klasse).id, title: x.title || 'Ohne Titel', nr: String(x.nr || ''), updatedAt: x.updatedAt || 0 }; });
+      return snap.docs.filter(d => d.exists && d.data() && d.data().sheet).map(d => { const x = d.data(); return { id: d.id, klasse: KL(x.klasse).id, title: x.title || 'Ohne Titel', nr: String(x.nr || ''), updatedAt: x.updatedAt || 0, q: x.q || searchText(x.sheet) }; });
     },
     async load(docId) { const d = await col().doc(docId).get(); return d.exists && d.data().sheet ? clone(d.data().sheet) : null; },
     async save(sh) {
@@ -3316,6 +3620,7 @@ function claudeB(db, id) {
       try { await col().doc(sh.id).set(body); } catch (e) { throw (e && e.code === 'invalid_argument') ? { code: 'toolarge' } : e; }
     },
     async remove(docId) { await col().doc(docId).delete(); },
+    async stamp(docId) { const d = await col().doc(docId).get(); return d.exists && d.data() ? Number(d.data().updatedAt) || 0 : null; },
     async loadPrefs() { const d = await col().doc('ordner-einstellungen').get(); return d.exists && d.data() ? d.data().prefs || null : null; },
     async savePrefs(p) { await col().doc('ordner-einstellungen').set({ kind: 'prefs', prefs: p, updatedAt: Date.now() }); }
   };
@@ -3326,12 +3631,13 @@ function supaB(sb, user) {
   return {
     kind: 'supabase', key: 'sb:' + user.id,
     async list() {
-      const rows = chk(await T().select('id,klasse,title,nr,updated_at').order('updated_at', { ascending: false })) || [];
-      return rows.map(r => ({ id: r.id, klasse: KL(r.klasse).id, title: r.title || 'Ohne Titel', nr: r.nr || '', updatedAt: Date.parse(r.updated_at) || 0 }));
+      const rows = chk(await T().select('id,klasse,title,nr,updated_at,suchtext').order('updated_at', { ascending: false })) || [];
+      return rows.map(r => ({ id: r.id, klasse: KL(r.klasse).id, title: r.title || 'Ohne Titel', nr: r.nr || '', updatedAt: Date.parse(r.updated_at) || 0, q: r.suchtext || '' }));
     },
     async load(id) { const d = chk(await T().select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
-    async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
+    async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, suchtext: searchText(sh), updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
     async remove(id) { chk(await T().delete().eq('id', id)); },
+    async stamp(id) { const d = chk(await T().select('updated_at').eq('id', id).maybeSingle()); return d ? Date.parse(d.updated_at) || 0 : null; },
     async loadPrefs() { const d = chk(await sb.from('ab_einstellungen').select('data').maybeSingle()); return d ? d.data : null; },
     async savePrefs(p) { chk(await sb.from('ab_einstellungen').upsert({ user_id: user.id, data: p, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })); }
   };
@@ -3341,7 +3647,7 @@ function supaB(sb, user) {
 const STATUS = {
   pending: 'Wird geladen …', saving: 'Speichert …',
   supabase: 'Online gespeichert', claude: 'Gespeichert in „Meine Blätter“', local: 'Gespeichert in diesem Browser',
-  offline: 'Noch nicht online · lokal gesichert, wird nachgeholt', error: 'Nicht gespeichert · nächste Änderung versucht es erneut',
+  offline: 'Noch nicht online · lokal gesichert, wird nachgeholt', conflict: 'Nicht gespeichert · auf einem anderen Gerät geändert', error: 'Nicht gespeichert · nächste Änderung versucht es erneut',
   toolarge: 'Zu groß zum Speichern · Bilder verkleinern', quota: 'Browser-Speicher voll · Bilder verkleinern oder Blätter löschen'
 };
 function setStatus(s) {
@@ -3387,6 +3693,7 @@ function saveNow() {
   clearTimeout(saveTimer);
   const sh = state.sheet;
   if (!sh || sh.example) { savePending = false; return saveChain; }
+  if (state.conflict) { savePending = true; return saveChain; }
   if (!backend) { savePending = true; return saveChain; }
   savePending = false;
   sh.updatedAt = Date.now();
@@ -3398,7 +3705,12 @@ function saveNow() {
 async function doSave(b, snap) {
   const mine = () => state.sheet && state.sheet.id === snap.id;
   try {
+    if (b.stamp && mine() && state.base && state.base.id === snap.id && !snap.force) {
+      let r = null; try { r = await b.stamp(snap.id); } catch {}
+      if (r && r > state.base.stamp + 500 && mine()) { state.conflict = { remote: r }; savePending = true; setStatus('conflict'); state.dlg = { mode: 'conflict', remote: r }; renderDlg(); return; }
+    }
     await b.save(snap);
+    if (mine() && state.base && state.base.id === snap.id) state.base.stamp = snap.updatedAt || state.base.stamp;
     if (b.kind !== 'local') dropPending(b, snap.id);
     if (b === backend) upsertLib(entryOf(snap));
     if (mine() && !savePending) setStatus(b.kind);
@@ -3418,6 +3730,7 @@ function openSheet(sh) {
   state.openSnap = state.sheet.example ? null : clone(state.sheet);
   if (!state.sheet.meta.groupsOn) state.grp = 'all';
   if (state.sheet.klasse !== state.klasse) { state.klasse = state.sheet.klasse; lsSet(LS.klasse, state.klasse); renderTabs(); }
+  histReset(); state.insAt = null; state.base = { id: state.sheet.id, stamp: state.sheet.updatedAt || 0 }; state.conflict = null;
   if (!state.sheet.example) rememberLast(state.sheet);
   idleStatus();
   renderEditor(); renderPreview(); $('#editor').scrollTop = 0;
@@ -3643,10 +3956,13 @@ const GRIP_SVG = '<svg class="grip" viewBox="0 0 10 16" fill="currentColor" aria
 function libListHTML(k, q) {
   const fmt = t => new Date(t).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const fs = libFolders(k.id); const all = state.lib.filter(d => d.klasse === k.id);
-  const match = d => !q || (d.title + ' ' + d.nr).toLowerCase().includes(q);
+  const words = q ? q.split(/\s+/).filter(Boolean) : [];
+  const hay = d => (d.title + ' ' + d.nr + ' ' + (d.q || '')).toLowerCase();
+  const match = d => !words.length || words.every(w => hay(d).includes(w));
+  const hit = d => { if (!words.length) return ''; const head = (d.title + ' ' + d.nr).toLowerCase(); const w = words.find(x => !head.includes(x)); if (!w) return ''; const t = d.q || ''; const i = t.toLowerCase().indexOf(w); if (i < 0) return ''; const a = Math.max(0, t.lastIndexOf(' ', Math.max(0, i - 28)) + 1), e = Math.min(t.length, i + w.length + 40); const sn = t.slice(a, e); const j = sn.toLowerCase().indexOf(w); return `<div class="m lib-hit">${a > 0 ? '… ' : ''}${esc(sn.slice(0, j))}<mark>${esc(sn.slice(j, j + w.length))}</mark>${esc(sn.slice(j + w.length))}${e < t.length ? ' …' : ''}</div>`; };
   const item = d => { const fid = folderOf(d.id, k.id); return `<div class="lib-item${d.id === state.sheet.id ? ' cur' : ''}" data-id="${esc(d.id)}" draggable="true">
       <div class="t" data-act="lib-open-sheet">${d.nr ? `<em>AB ${esc(d.nr)}</em>` : ''}<span>${esc(d.title)}</span>${GRIP_SVG}</div>
-      <div class="m">geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
+      ${hit(d)}<div class="m">geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
       <div class="a">${state.confirmDel === d.id
         ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
         : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-dup">Duplizieren</button>${fs.length ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id}">Ordner</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
@@ -3738,7 +4054,7 @@ function renderLib() {
     <div class="acct">${acct}</div>
     ${nLocal ? `<div class="notice"><span>${nLocal} ${nLocal === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser.</span><button class="link" type="button" data-act="lib-migrate">Online übernehmen</button></div>` : ''}
     <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neues Blatt</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}<button class="btn lib-fadd" type="button" data-act="lib-fnew">${FOLDER_SVG}Neuer Ordner</button></div>
-    <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen nach Titel oder Nummer" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
+    <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>
     <div class="drawer-foot"><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
@@ -3775,9 +4091,9 @@ async function onLibClick(e) {
     case 'lib-move': state.moveOpen = state.moveOpen === id ? null : id; renderLib(); break;
     case 'lib-move-to': if (id) moveSheetTo(id, a.dataset.fid || ''); break;
     case 'lib-close': closeLib(); break;
-    case 'lib-new': closeLib(); openSheet(blankSheet(nextNr(state.klasse), state.klasse)); state.openSnap = null; saveNow(); setView('edit'); break;
+    case 'lib-new': state.dlg = { mode: 'new' }; renderDlg(); break;
     case 'lib-example': closeLib(); openSheet(exampleSheet()); break;
-    case 'lib-open-sheet': if (id) { closeLib(); await openById(id); } break;
+    case 'lib-open-sheet': if (id) { closeLib(); await openById(id); if (isNarrow()) setView('preview'); } break;
     case 'lib-dup':
       if (!id) break;
       closeLib();
@@ -3812,7 +4128,170 @@ function authMsg(err) {
   return 'Das hat nicht geklappt: ' + m;
 }
 function openDlg(mode) { if (!store.sb) return; state.dlg = { mode, email: (state.dlg && state.dlg.email) || '' }; renderDlg(); }
-function closeDlg() { state.dlg = null; renderDlg(); }
+function closeDlg() { const d = state.dlg; if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); }
+/* ---------- Geändert auf einem anderen Gerät ---------- */
+function conflictHTML() {
+  const t = new Date(state.dlg.remote).toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return `<h2 id="dlg-t">Auf einem anderen Gerät geändert</h2>
+    <p>„${esc(state.sheet.meta.title || 'Ohne Titel')}“ wurde inzwischen woanders gespeichert (${esc(t)}). Ihre Änderungen hier sind noch nicht gespeichert. Was soll gelten?</p>
+    <div class="cf-opts">
+      <button type="button" class="tpl" data-act="cf-theirs"><span><b>Neuere Fassung laden</b><span>Die Änderungen vom anderen Gerät übernehmen. Was Sie hier geändert haben, verfällt.</span></span></button>
+      <button type="button" class="tpl" data-act="cf-both"><span><b>Beide behalten</b><span>Ihre Fassung wird als Kopie gespeichert, das Blatt behält die Änderungen vom anderen Gerät.</span></span></button>
+      <button type="button" class="tpl" data-act="cf-mine"><span><b>Meine Fassung behalten</b><span>Ihre Fassung überschreibt die Änderungen vom anderen Gerät.</span></span></button>
+    </div>`;
+}
+async function conflictResolve(how) {
+  const sh = state.sheet; const remote = state.conflict && state.conflict.remote; state.dlg = null; renderDlg();
+  if (how === 'mine') { state.conflict = null; if (state.base) state.base.stamp = remote || Date.now(); await saveNow(); toast('Ihre Fassung ist gespeichert.'); return; }
+  let theirs = null; try { theirs = await backend.load(sh.id); } catch {}
+  if (how === 'both') {
+    const c = clone(sh); c.id = 'ab-' + uid(); c.meta.title = (c.meta.title || 'Ohne Titel') + ' (Kopie)'; c.updatedAt = Date.now(); c.example = false;
+    try { await backend.save(c); upsertLib(entryOf(c)); const fo = folderOf(sh.id, sh.klasse); if (fo) { setPlace(c.id, fo); savePrefs(); } } catch { toast('Die Kopie konnte nicht gespeichert werden.'); return; }
+  }
+  savePending = false; clearTimeout(saveTimer); state.conflict = null;
+  if (theirs) openSheet(theirs); else idleStatus();
+  toast(how === 'both' ? 'Ihre Fassung liegt jetzt als Kopie in „Meine Blätter“.' : 'Die neuere Fassung ist geladen.');
+}
+// Beim Zurückkehren zur Seite: neuere Fassung still übernehmen, wenn hier nichts Ungespeichertes ist
+let lastStampCheck = 0;
+async function checkRemote() {
+  const b = backend; const sh = state.sheet;
+  if (!b || !b.stamp || !sh || sh.example || state.conflict || state.dlg || Date.now() - lastStampCheck < 4000 || !state.base || state.base.id !== sh.id) return;
+  lastStampCheck = Date.now();
+  let r = null; try { r = await b.stamp(sh.id); } catch { return; }
+  if (!r || r <= state.base.stamp + 500 || state.sheet !== sh) return;
+  if (savePending) { saveNow(); return; }
+  let theirs = null; try { theirs = await b.load(sh.id); } catch {}
+  if (theirs && state.sheet === sh && !savePending) { openSheet(theirs); toast('Neuere Fassung von einem anderen Gerät geladen.'); }
+  try { await refreshLib(); } catch {}
+}
+
+/* ---------- Hilfe und Tipps ---------- */
+const HELP = [
+  ['Bausteine', [
+    ['„+“ zwischen zwei Karten', 'fügt einen Baustein genau dort ein.'],
+    ['Kopfzeile einer Karte ziehen', 'sortiert die Bausteine um. Tipp: vorher „Alle zuklappen“.'],
+    ['⋯ an einer Karte', 'Duplizieren, Löschen, Gruppe A/B, in die Sammlung speichern.'],
+    ['Baustein in der Vorschau anklicken', 'springt zur passenden Karte.']]],
+  ['Material und Gedicht', [
+    ['Wort in der Vorschau anklicken', 'legt eine Worterklärung an (Fußnote unter dem Material).'],
+    ['Zeilennummer in der Vorschau anklicken', 'ergibt eine Zeilenangabe; eine zweite Nummer macht daraus einen Bereich (Z. 3–5). „Einfügen“ setzt sie in die zuletzt bearbeitete Aufgabe.'],
+    ['Text aus einem PDF einfügen', 'Zeilenumbrüche, Trennstriche und Zeilennummern werden entfernt. Strg+Umschalt+V behält die Zeilen.'],
+    ['Enter / Leerzeile', 'neue Zeile / neuer Absatz.'],
+    ['Spalten, Formatierung', 'zweispaltig, Schrift, Größe, Zeilenabstand, Notizrand.']]],
+  ['Text formatieren', [
+    ['Text markieren', 'zeigt die Leiste mit fett, kursiv, unterstrichen, Marker, Liste, Lücke.'],
+    ['Strg+B · Strg+I · Strg+U', 'fett · kursiv · unterstrichen'],
+    ['Strg+Umschalt+H', 'Textmarker'],
+    ['„- “ oder „1. “ am Zeilenanfang', 'beginnt eine Liste; ___ wird eine Lücke zum Ausfüllen.']]],
+  ['Aufgaben', [
+    ['Operatoren', 'werden erkannt und fett gesetzt; dazu der Anforderungsbereich.'],
+    ['Erwartung', 'steht nur in der Lehrerfassung und im Erwartungshorizont (.md).'],
+    ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten.']]],
+  ['Meine Blätter', [
+    ['Ordner', 'Blätter auf einen Ordner ziehen; ohne Maus bei einem Blatt „Ordner“ wählen.'],
+    ['Sortierung', 'zuletzt geändert, nach Nummer, nach Titel oder eigene Reihenfolge (zwischen zwei Blätter ziehen).'],
+    ['Suche', 'findet auch Wörter aus Materialtiteln, Aufgaben und Infokästen.'],
+    ['Sicherung', '„Alle Blätter sichern“ lädt alles als Datei herunter, „Sicherung oder Datei laden“ spielt sie wieder ein.']]],
+  ['Tastenkürzel', [
+    ['Strg+Z · Strg+Y', 'Rückgängig · Wiederholen (außerhalb von Textfeldern für das ganze Blatt)'],
+    ['Strg+Umschalt+S', 'Speichern unter'],
+    ['Esc', 'schließt Fenster, Menüs und „Meine Blätter“'],
+    ['In der Windows-App', 'Strg+E Ausgeben · Strg+P Drucken · Strg+O Meine Blätter']]]
+];
+function helpHTML() {
+  return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
+    <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
+    <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Tipps noch einmal zeigen</button></div>`;
+}
+const TIPS = [
+  ['Bausteine einfügen und umsortieren', 'Mit „+“ zwischen zwei Karten fügen Sie einen Baustein genau dort ein. An der Kopfzeile einer Karte lässt sie sich verschieben.'],
+  ['Worterklärung per Klick', 'Klicken Sie in der Vorschau auf ein Wort im Material. Die Erklärung erscheint als Fußnote.'],
+  ['Zeilenangaben per Klick', 'Klicken Sie in der Vorschau auf eine Zeilennummer, für einen Bereich auf eine zweite. „Einfügen“ setzt die Angabe in die Aufgabe.'],
+  ['Ausgeben', 'PDF, Word oder Drucken stecken jetzt in einem Fenster, mit Fassung, Papier und einer kurzen Prüfung vor dem Druck.'],
+  ['Rückgängig und Hilfe', 'Strg+Z oder der Pfeil über den Karten macht Schritte rückgängig. Alle Kniffe finden Sie oben unter „?“.']
+];
+const LS_TIPS = 'abw.tips';
+let tipIdx = -1;
+function showTip(i) {
+  const r = $('#tip-root'); tipIdx = i;
+  if (i < 0 || i >= TIPS.length) { r.innerHTML = ''; lsSet(LS_TIPS, 1); return; }
+  const [h, t] = TIPS[i];
+  r.innerHTML = `<div class="tipcard" role="status"><div class="tip-h"><span>Tipp ${i + 1} von ${TIPS.length}</span><button type="button" class="ib" data-tip="close" title="Tipps ausblenden">${I.x}</button></div><b>${esc(h)}</b><p>${esc(t)}</p><div class="tip-a">${i > 0 ? '<button type="button" class="link" data-tip="prev">Zurück</button>' : '<span></span>'}<button type="button" class="btn primary" data-tip="next">${i < TIPS.length - 1 ? 'Weiter' : 'Fertig'}</button></div></div>`;
+}
+
+/* ---------- Ausgeben ---------- */
+// Ein Fenster für PDF, Word und Drucken. Die Auswahl wirkt sofort auf die Vorschau; Abbrechen stellt den alten Stand wieder her.
+const LS_OUTFMT = 'abw.outfmt';
+function outState() { return { out: state.out, fassung: state.fassung, grp: state.grp, paper: state.sheet.meta.paper || 'a4' }; }
+function outApply(o) {
+  if (o.out !== state.out) { state.out = o.out; renderEditor(); }
+  state.fassung = o.fassung; state.grp = o.grp;
+  if ((state.sheet.meta.paper || 'a4') !== o.paper) { state.sheet.meta.paper = o.paper; changed(true); }
+  clearTimeout(renderTimer); renderPreview();
+}
+function openOut() {
+  closeGloss(); closeZl(); closeMenu();
+  clearTimeout(renderTimer); renderPreview();
+  const f = lsGet(LS_OUTFMT); const fmt = ['pdf', 'docx', 'print'].includes(f) && (f !== 'print' || canPrint) ? f : 'pdf';
+  state.dlg = { mode: 'out', orig: outState(), fmt: state.out !== 'blatt' && fmt === 'docx' ? 'pdf' : fmt };
+  renderDlg();
+}
+// Hinweise vor dem Ausgeben (nichts davon hält auf, es ist nur zum Draufschauen)
+function outChecks() {
+  const sh = state.sheet, m = sh.meta, v = sheetView(), L = [];
+  const warn = t => L.push({ k: 'warn', t }), note = t => L.push({ k: 'note', t });
+  if (state.out === 'blatt') {
+    if (v.lehrer) warn('Lehrerfassung: Erwartungen und Lösungen sind sichtbar. Nicht an die Klasse austeilen.');
+    if (v.grp !== 'all') note(`Nur Gruppe ${v.grp}: Bausteine der anderen Gruppe fehlen.`);
+    if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') warn('Das Blatt hat noch keinen richtigen Titel.');
+    const num = numbering(sh); let tno = 0;
+    sh.blocks.forEach(b => {
+      if (b.type === 'tasks' && b.restart) tno = 0;
+      if (!blockVisible(b, v)) { if (b.type === 'tasks') tno += b.items.length; return; }
+      if (b.type === 'material') {
+        const lab = `M${num[b.id] ? num[b.id].m : ''}`;
+        if (String(b.memo || '').trim()) warn(`${lab}: Ihre Notiz „${String(b.memo).trim().slice(0, 90)}“`);
+        if (!String(b.text || '').trim()) warn(`${lab} hat noch keinen Text.`);
+        if (!String(b.source || '').trim()) note(`${lab} hat keine Quellenangabe.`);
+      }
+      if (b.type === 'tasks') b.items.forEach(it => { tno++; if (!String(it.text || '').trim()) warn(`Aufgabe ${tno} ist leer.`); });
+      if (b.type === 'heading' && !String(b.text || '').trim()) note('Eine Überschrift ist leer.');
+      if (b.type === 'image' && !b.src) warn('Ein Bild-Baustein hat noch kein Bild.');
+      if (b.type === 'qr' && !String(b.url || '').trim()) warn('Ein QR-Code hat noch keinen Link.');
+    });
+    const g = genderHits(['meta', ...sh.blocks.map(b => b.id)].flatMap(id => gTargets(id).map(([o, k]) => o[k])));
+    if (g.length) note(`Genderzeichen: ${g.slice(0, 3).map(h => '„' + h.m.replace(/\\/g, '') + '“').join(', ')}${g.length > 3 ? ' …' : ''} (Schulvorgabe: ausschreiben)`);
+  }
+  const over = document.querySelectorAll('#pages .pg-warn').length;
+  if (over) warn(`${over === 1 ? 'Ein Baustein ist' : over + ' Bausteine sind'} länger als eine Seite und ${over === 1 ? 'wird' : 'werden'} abgeschnitten.`);
+  return L;
+}
+function outHTML() {
+  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length;
+  const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t, dis]) => `<button type="button" data-act="out-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}"${dis ? ' disabled' : ''}>${t}</button>`).join('')}</div>`;
+  const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
+    ['docx', 'Word', state.out === 'blatt' ? 'zum Weiterbearbeiten' : 'nur fürs Arbeitsblatt', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
+    ...(canPrint ? [['print', 'Drucken', 'direkt an den Drucker', '<path d="M6 7V2.5h8V7"/><rect x="3" y="7" width="14" height="6.5" rx="1.2"/><path d="M6 11.5h8v6H6z"/>']] : [])];
+  const pages = document.querySelectorAll('#pages .pout').length;
+  const checks = outChecks();
+  const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken' }[d.fmt];
+  return `<h2 id="dlg-t">Ausgeben</h2>
+    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK]], state.out)}</div>
+    <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${v === 'docx' && state.out !== 'blatt' ? ' disabled' : ''}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
+    ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
+      ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp)}</div>` : ''}
+      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}</div>
+    <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
+      ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div>`;
+}
+async function outGo() {
+  const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
+  const fmt = d.fmt; state.dlg = null; renderDlg(); renderOut();
+  if (fmt === 'docx') await exportDOCX(); else if (fmt === 'print') doPrint(); else await exportPDF();
+}
+
 /* ---------- Speichern unter ---------- */
 const sheetSig = sh => JSON.stringify({ ...sh, updatedAt: 0 });
 function openSaveAs() { closeGloss(); closeZl(); closeMenu(); state.dlg = { mode: 'saveas' }; renderDlg(); }
@@ -3892,7 +4371,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -3907,6 +4386,10 @@ function renderDlg() {
       </form>`;
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`;
   if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
+  if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
+  if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
+  if (d.mode === 'new') { r.querySelector('.dlg').classList.add('dlg-new'); const f = r.querySelector('.tpl'); if (f) f.focus(); return; }
+  if (d.mode === 'out') { r.querySelector('.dlg').classList.add('dlg-out'); const g = r.querySelector('[data-act="out-go"]'); if (g) g.focus(); return; }
   const f = r.querySelector(d.mode === 'login' && !d.email ? '#dlg-email' : '#dlg-pw'); if (f) f.focus();
 }
 function dlgMsg(err, info) {
@@ -3938,6 +4421,20 @@ async function onDlgClick(e) {
   const act = a.dataset.act;
   if (act === 'dlg-close') { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
   if (act === 'sa-file') { saveAsFile(); return; }
+  if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
+  if (act === 'tpl') { newFromTpl(a.dataset.k); return; }
+  if (act === 'tips-again') { closeDlg(); showTip(0); return; }
+  if (act === 'tpl-copy') { newFromCopy(); return; }
+  if (state.dlg.mode === 'out') {
+    if (act === 'out-set') {
+      const f = a.dataset.f, v = a.dataset.v; const o = outState();
+      if (f === 'fmt') state.dlg.fmt = v;
+      else { o[f] = v; if (f === 'out' && v !== 'blatt' && state.dlg.fmt === 'docx') state.dlg.fmt = 'pdf'; if (f === 'fassung' && v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); outApply(o); renderOut(); }
+      renderDlg(); return;
+    }
+    if (act === 'out-go') { outGo(); return; }
+    if (act === 'out-eh') { exportEH(); return; }
+  }
   const email = dlgVal('#dlg-email'); const pw = ($('#dlg-pw') || {}).value || '';
   if (act === 'dlg-signup') {
     if (!email || pw.length < 6) return dlgMsg('Bitte E-Mail und ein Passwort mit mindestens 6 Zeichen eingeben.');
@@ -4423,6 +4920,22 @@ function boot() {
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
   $('#reiter').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
+  const edEl = $('#editor');
+  edEl.addEventListener('dragstart', e => {
+    const h = e.target.closest && e.target.closest('.card-h[draggable="true"]'); if (!h) return;
+    const c = h.closest('.card'); edDrag = c.dataset.bid;
+    try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', c.querySelector('.kind') ? c.querySelector('.kind').textContent : 'Baustein'); } catch {}
+    setTimeout(() => c.classList.add('dragging'), 0);
+  });
+  edEl.addEventListener('dragover', e => { if (!edDrag) return; const t = edTarget(e); edClearDrop(); if (!t) return; e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch {} t.el.classList.add(t.cls); });
+  edEl.addEventListener('drop', e => { if (!edDrag) return; const t = edTarget(e); const id = edDrag; edClearDrop(); edDrag = null; if (!t) return; e.preventDefault(); edDrop(id, t.ref, t.before); });
+  edEl.addEventListener('dragend', () => { edDrag = null; edClearDrop(); document.querySelectorAll('#editor .card.dragging').forEach(n => n.classList.remove('dragging')); });
+  document.addEventListener('keydown', e => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey) return; const k = e.key.toLowerCase(); if (k !== 'z' && k !== 'y') return;
+    const t = e.target; if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+    if (state.dlg || state.libOpen || state.out === 'karten' && false) return;
+    e.preventDefault(); if (k === 'y' || e.shiftKey) histRedo(); else histUndo();
+  });
   $('#pv-opts').addEventListener('click', e => {
     const b = e.target.closest('[data-pv]'); if (!b) return; const k = b.dataset.pv, v = b.dataset.v;
     if (k === 'ehmd') { exportEH(); return; }
@@ -4529,7 +5042,7 @@ function boot() {
     if (menu.open) { closeMenu(); return; }
     if (zl.open) { closeZl(); return; }
     if (gl.open) { closeGloss(); return; }
-    if (state.dlg) { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
+    if (state.dlg) { if (state.dlg.mode === 'conflict') return; if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
     if (state.libOpen) { if (state.fMenu || state.fDel || state.moveOpen) { state.fMenu = state.fDel = state.moveOpen = null; renderLib(); return; } state.libOpen = false; state.confirmDel = null; state.fNew = false; state.fEdit = null; renderLib(); }
   });
   $('.bar').addEventListener('click', e => {
@@ -4542,6 +5055,8 @@ function boot() {
     }
     if (act === 'login') openDlg('login');
     if (act === 'saveas') openSaveAs();
+    if (act === 'out') openOut();
+    if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
     if (act === 'print') doPrint();
@@ -4598,9 +5113,10 @@ function boot() {
     renderEditor(); markSel();
     const c = $(`#editor [data-bid="${bid}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
   });
-  if (canPrint) $('#btn-print').hidden = false;
   window.matchMedia('(max-width: 899px)').addEventListener('change', applyResponsive);
   try { new ResizeObserver(() => applyScale()).observe($('#preview-scroll')); } catch { window.addEventListener('resize', applyScale); }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkRemote(); });
+  window.addEventListener('focus', () => checkRemote());
   window.addEventListener('online', () => { flushPending().then(() => { if (state.sheet && !savePending) idleStatus(); }); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && savePending) saveNow(); });
   window.addEventListener('pagehide', () => { if (savePending) saveNow(); });
@@ -4614,6 +5130,10 @@ function boot() {
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
+  setupPWA();
+  if (isNarrow()) setView('preview');
+  $('#tip-root').addEventListener('click', e => { const b = e.target.closest('[data-tip]'); if (!b) return; const k = b.dataset.tip; showTip(k === 'close' ? -1 : k === 'prev' ? tipIdx - 1 : tipIdx + 1 < TIPS.length ? tipIdx + 1 : -1); });
+  if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg && !lsGet(LS_TIPS)) showTip(0); }, 1800);
 }
 boot();
 
