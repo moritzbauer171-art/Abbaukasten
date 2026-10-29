@@ -820,6 +820,8 @@ const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
    Zum Einschalten Project URL und Publishable key eintragen (Anleitung in README.md). */
 const SUPABASE = { url: '', key: '' };
 const INFO_KINDS = ['Info','Merke','Tipp','Hinweis','Methode','Definition'];
+// Zusätzlicher Abstand bei Überschriften (mm): mehr / viel
+const H_SP = { top: { m: 4, l: 9 }, bot: { m: 3, l: 7 } };
 const typeLabel = b => b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
@@ -966,6 +968,16 @@ function poemVerses(text) {
   String(text || '').replace(/\r/g, '').split(/\n[ \t]*\n/).map(st => st.split('\n').map(v => v.trim()).filter(Boolean)).filter(st => st.length)
     .forEach((st, si) => st.forEach((v, vi) => out.push({ t: v, st: si > 0 && vi === 0 })));
   return out;
+}
+// Material (Prosa): Leerzeile = neuer Absatz, einfacher Umbruch = neue Zeile im selben Absatz
+const matParas = t => String(t || '').replace(/\r/g, '').split(/\n[ \t]*\n/).map(p => p.split('\n').map(l => l.trim()).filter(Boolean)).filter(p => p.length);
+// Text aus PDFs: Umbrüche innerhalb eines Absatzes werden zu Leerzeichen (beim Einfügen)
+const joinLines = t => String(t || '').split(/\n[ \t]*\n/).map(p => p.replace(/[ \t]*\n[ \t]*/g, ' ')).join('\n\n');
+// Ältere Blätter: einfache Umbrüche im Material wurden früher zusammengezogen. Einmalig so speichern, wie es auf dem Blatt stand.
+function migrateMatNl(b) {
+  if (!b || b.type !== 'material' || b.nl) return;
+  if (b.form !== 'gedicht') b.text = String(b.text || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean).join('\n\n');
+  b.nl = 1;
 }
 const flowParas = t => String(t || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
 // Absätze durch Leerzeile; einfache Umbrüche bleiben Zeilenumbrüche
@@ -1737,7 +1749,7 @@ function allSnips() { return [{ id: 'builtin-ops', name: 'Operatorenübersicht (
 function snipBlock(id) {
   if (id === 'builtin-ops') return opsTableBlock();
   const s = userSnips().find(x => x.id === id); if (!s) return null;
-  const b = clone(s.block); b.id = 'b' + uid(); delete b.group; return b;
+  const b = clone(s.block); b.id = 'b' + uid(); delete b.group; migrateMatNl(b); return b;
 }
 function saveSnip(b) {
   const list = userSnips(); const c = clone(b); delete c.group;
@@ -1980,7 +1992,7 @@ function newBlock(type) {
   switch (type) {
     case 'heading': return { id, type, text: '' };
     case 'text': return { id, type, text: '' };
-    case 'material': return { id, type, title: '', text: '', glossary: [], source: '', lineNumbers: true, fmt: {}, memo: '' };
+    case 'material': return { id, type, title: '', text: '', glossary: [], source: '', lineNumbers: true, fmt: {}, memo: '', nl: 1 };
     case 'tasks': return { id, type, title: '', restart: false, items: [{ text: '', tag: '' }] };
     case 'info': return { id, type, kind: 'Merke', title: '', text: '' };
     case 'table': return { id, type, title: '', cols: ['', '', ''], rows: [['', '', ''], ['', '', ''], ['', '', '']], rowHeight: 'normal', firstBold: false };
@@ -2030,7 +2042,7 @@ function normalizeSheet(sh) {
   sh.klasse = KL(sh.klasse).id;
   sh.meta = { ...defaultMeta('', sh.klasse), anrede: 'sie', ...sh.meta };
   if (!Array.isArray(sh.blocks)) sh.blocks = [];
-  sh.blocks.forEach(b => { if (b && b.type === 'material') migrateGlossary(b); });
+  sh.blocks.forEach(b => { if (b && b.type === 'material') { migrateGlossary(b); migrateMatNl(b); } });
   if (!Array.isArray(sh.cards)) sh.cards = [];
   sh.meta.exam = { ...defaultMeta('', sh.klasse).exam, ...(sh.meta.exam || {}) };
   sh.meta.kk = kkOf(sh.meta);
@@ -2069,7 +2081,7 @@ function buildBlock(b, ctx) {
   const put = html => { const n = el(html); n.dataset.bid = b.id; if (ctx.view && ctx.view.grp === 'all' && meta.groupsOn && b.group) n.dataset.grp = 'Gruppe ' + b.group; body.appendChild(n); return n; };
   switch (b.type) {
     case 'pagebreak': return { type: 'pagebreak' };
-    case 'heading': return { type: 'heading', el: put(`<div class="blk blk-h"><h2>${inlineHTML(b.text || 'Überschrift')}</h2></div>`) };
+    case 'heading': return { type: 'heading', el: put(`<div class="blk blk-h" style="${H_SP.top[b.padTop] ? `padding-top:${H_SP.top[b.padTop]}mm;` : ''}${H_SP.bot[b.padBot] ? `padding-bottom:${H_SP.bot[b.padBot]}mm;` : ''}"><h2>${inlineHTML(b.text || 'Überschrift')}</h2></div>`) };
     case 'text': {
       const n = put(`<div class="blk blk-text${b.stil ? ' st-' + b.stil : ''}">${parasHTML(b.text) || '<p style="color:var(--paper-hair)">Absatz</p>'}</div>`);
       const atoms = b.stil === 'merksatz' ? [] : [...n.children];
@@ -2133,17 +2145,17 @@ function buildBlock(b, ctx) {
       const no = ++ctx.m; const step = Number(meta.lineStep) || 5; const matLab = (designOf(meta) === 'akte' ? 'Anlage M' : 'M') + no;
       const gm = glossMarks(b); const fm = matFmt(b); const notes = gm.list;
       const tail = (notes.length || b.source) ? `<div class="mat-tail">${notes.length ? `<div class="notes">${notes.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${b.source ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
-      const poem = b.form === 'gedicht'; const paras = poem ? [] : flowParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
+      const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
       const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}`;
-      const n = put(`<div class="blk blk-mat${fcls}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : ['Materialtext']).map((p, i) => `<p class="${i ? 'ind' : ''}">${toWordsM(p).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : [['Materialtext']]).map((p, i) => p.map((seg, j) => `<p class="${i && !j ? 'ind' : ''}${j ? ' br' : ''}">${toWordsM(seg).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')).join('')}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
       const lines = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
         let top = null, cur = [], first = true;
-        const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0, pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st') }); first = false; cur = []; } };
+        const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0 && !p.classList.contains('br'), pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st') }); first = false; cur = []; } };
         [...p.querySelectorAll('.w')].forEach(w => {
           const t = w.getBoundingClientRect().top;
           if (top === null || t > top + lh * .5) { flush(false); top = t; }
@@ -2735,13 +2747,14 @@ function qrWarn(b) {
 }
 function bodyFor(b, num) {
   switch (b.type) {
-    case 'heading': return fText('text', 'Überschrift', b.text, 'z. B. Vertiefung');
+    case 'heading': return `${fText('text', 'Überschrift', b.text, 'z. B. Vertiefung')}
+      <div class="row">${[['padTop', 'Abstand davor'], ['padBot', 'Abstand danach']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="blk-set" data-f="${f}" data-v="${v}" aria-pressed="${(b[f] || '') === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>`;
     case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
     case 'material': { const poem = b.form === 'gedicht'; return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       <div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>
       ${fText('title', 'Titel / Autor', b.title, poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
-        : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Leerzeile = neuer Absatz. Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen. Text markieren zum Hervorheben.' })}
+        : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${fmtEditor(b)}
@@ -2955,6 +2968,7 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
+    case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
     case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
@@ -3698,7 +3712,7 @@ async function exportDOCX() {
         const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
         const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
         if (b.form === 'gedicht') poemVerses(gmD.text).forEach(v => parts.push(xp(xrInline(v.t, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: 'left', before: v.st ? 160 : 0, ind: `<w:ind w:left="${TW(6)}" w:hanging="${TW(6)}"${fm.margin ? ` w:right="${TW(28)}"` : ''}/>`, bdr: mBdr })));
-        else flowParas(gmD.text).forEach((p, i) => parts.push(xp(xrInline(p, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(i), bdr: mBdr })));
+        else matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => parts.push(xp(xrInline(seg, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(j ? 0 : i), bdr: mBdr }))));
         const notes = gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
         if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
         if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { before: 60 }));
@@ -3708,7 +3722,7 @@ async function exportDOCX() {
       secOpen = true;
       parts.push(spacer());
       switch (b.type) {
-        case 'heading': parts.push(xp(xrInline(b.text || '', { font: SERIF, b: 1, sz: 25, color: A }), { keepNext: true })); break;
+        case 'heading': parts.push(xp(xrInline(b.text || '', { font: SERIF, b: 1, sz: 25, color: A }), { keepNext: true, before: TW(H_SP.top[b.padTop] || 0), after: TW(H_SP.bot[b.padBot] || 0) })); break;
         case 'text': {
           const st = b.stil || '';
           const body = xpRich(b.text, st === 'klein' ? { sz: 18, color: GREY } : { sz: 21 }, { indMm: st === 'einzug' ? 8 : 0 });
@@ -3962,9 +3976,14 @@ function boot() {
         if (!raw.includes('\n')) { if (/^[ \t]/.test(pt) && !/^\s/.test(raw)) raw = ' ' + raw; if (/[ \t]$/.test(pt) && !/\s$/.test(raw)) raw += ' '; }
         rtInsertRaw(rt, raw); if (note) toast(note); return;
       }
+      const keep = Date.now() < plainPasteUntil; // Strg+Umschalt+V: Zeilen wie in der Vorlage
       let t = (cd.getData('text/plain') || '').replace(/\r\n?/g, '\n'); if (!t) return;
-      if (isMat) { const r = cleanPdf(t, poem); if (r.hy || r.ln) { t = r.t; note = [r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} ${poem ? 'Versnummern' : 'Zeilennummern'}` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt'; } }
-      if (isMat && !poem) { const g = guessParas(t); if (g !== t) { t = g; note = (note ? note + ' · ' : '') + 'Jede Zeile als eigener Absatz übernommen'; } }
+      if (isMat) { const r = cleanPdf(t, poem || keep); if (r.hy || r.ln) { t = r.t; note = [r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} ${poem ? 'Versnummern' : 'Zeilennummern'}` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt'; } }
+      if (isMat && !poem && !keep) {
+        const g = guessParas(t);
+        if (g !== t) { t = g; note = (note ? note + ' · ' : '') + 'Jede Zeile als eigener Absatz übernommen'; }
+        else { const j = joinLines(t); if (j !== t) { t = j; note = (note ? note + ' · ' : '') + 'Zeilenumbrüche der Vorlage zusammengezogen · Strg+Umschalt+V behält sie'; } }
+      }
       if (mode === 'line') t = t.replace(/\s*\n\s*/g, ' ');
       document.execCommand('insertText', false, deQuoteStr(t));
       if (note) toast(note);
