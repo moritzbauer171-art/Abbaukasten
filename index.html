@@ -208,6 +208,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button:hover{color:var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--tinte);color:var(--tinte-ink)}
+.cols-seg button{display:inline-flex;align-items:center;gap:6px}
+.cols-seg svg{width:18px;height:13px;flex:0 0 auto}
 
 /* ---------- Designs: Auswahl im Kopf ---------- */
 .dz-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -499,6 +501,9 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .info-title{font-weight:700;font-size:10.5pt;margin-top:.6mm}
 .info-text{font-size:10pt;margin-top:1mm}
 .info-text p{margin:0}.info-text p+p{margin-top:1.6mm}
+.info-text.ic2{column-count:2;column-gap:7mm;orphans:2;widows:2;background-image:linear-gradient(90deg,transparent 49.9%,var(--paper-hair) 49.9%,var(--paper-hair) 50.1%,transparent 50.1%)}
+.info-text.ic2.ic-m{column-count:auto;width:calc((100% - 7mm) / 2);background-image:none}
+.info-text.ic2 .rl{break-inside:auto}
 
 /* Zitat */
 .blk-quote{padding:1mm 6mm 1mm 12mm;position:relative}
@@ -2165,12 +2170,20 @@ function buildBlock(b, ctx) {
       return { type: 'phrases', el: put(`<div class="blk blk-phr c${cols}"><div class="phr-h">${PHR_ICON}<span>${inlineHTML(b.title || 'Formulierungshilfen')}</span></div><div class="phr-grid">${(gs.length ? gs : [{ head: '', lines: ['Formulierung …'] }]).map(g => `<div class="phr-g">${g.head ? `<div class="phr-gh">${inlineHTML(g.head)}</div>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`) };
     }
     case 'info': {
-      const n = put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`);
-      const body = n.querySelector('.info-text'); const heads = [...n.children].filter(x => x !== body); const parts = splitParas(body);
+      const two = b.cols === 2;
+      const n = put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text${two ? ' ic2' : ''}">${parasHTML(b.text)}</div></div>`);
+      const body = n.querySelector('.info-text'); const heads = [...n.children].filter(x => x !== body);
+      // Zwei Spalten: Zeilenstücke in Spaltenbreite bilden, damit die Umbrüche später genau passen
+      if (two) body.classList.add('ic-m');
+      const parts = splitParas(body);
+      if (two) body.classList.remove('ic-m');
       if (parts.length < 2) return { type: 'info', el: n };
       const atoms = [...heads, ...parts];
-      return { type: 'info', el: n, atoms, keepFirst: heads.length + 1, keepLast: 1, assemble: nestedAssemble(n, heads, body, atoms),
+      const it = { type: 'info', el: n, atoms, keepFirst: heads.length + 1, keepLast: 1, assemble: nestedAssemble(n, heads, body, atoms),
         contPre: () => parseFloat(getComputedStyle(n).paddingTop) + parseFloat(getComputedStyle(body).marginTop) };
+      // Spaltensatz gleicht die Höhe aus: Teilhöhen werden direkt gemessen
+      if (two) { const memo = new Map(); it.partH = (s0, e0) => { const k = s0 + ':' + e0; if (!memo.has(k)) { const w = it.assemble(s0, e0); ctx.body.appendChild(w); memo.set(k, w.getBoundingClientRect().height); w.remove(); } return memo.get(k); }; }
+      return it;
     }
     case 'quote': {
       const n = put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`);
@@ -2360,7 +2373,7 @@ function measure(it) {
   if (!it.assemble) it.assemble = (s, e) => { const w = it.el.cloneNode(false); it.atoms.slice(s, e).forEach(a => w.appendChild(a.cloneNode(true))); return w; };
 }
 const sum = (a, s, e) => { let t = 0; for (let i = s; i < e; i++) t += a[i]; return t; };
-function minStart(it) { if (!it || !it.el) return 0; if (!it.atoms) return Math.min(it.h, AVAIL); return it.pre + sum(it.ah, 0, Math.min(it.keepFirst, it.atoms.length)); }
+function minStart(it) { if (!it || !it.el) return 0; if (!it.atoms) return Math.min(it.h, AVAIL); if (it.partH) return it.partH(0, Math.min(it.keepFirst, it.atoms.length)); return it.pre + sum(it.ah, 0, Math.min(it.keepFirst, it.atoms.length)); }
 
 function paginate(items) {
   const pages = [{ list: [], used: 0 }];
@@ -2386,12 +2399,13 @@ function paginate(items) {
       const room = AVAIL - cur().used - gap;
       const pre = s === 0 ? it.pre : it.cpre;
       let e = s, h = pre + it.post;
-      while (e < n && h + it.ah[e] <= room) { h += it.ah[e]; e++; }
+      if (it.partH) { while (e < n && it.partH(s, e + 1) <= room) e++; h = e > s ? it.partH(s, e) : 0; }
+      else while (e < n && h + it.ah[e] <= room) { h += it.ah[e]; e++; }
       if (e === n) { cur().list.push({ it, s, e }); cur().used += gap + h; break; }
       const needFirst = s === 0 ? Math.min(it.keepFirst, n) : 1;
       if (e - s < needFirst) { if (cur().list.length) { fresh(); continue; } e = Math.max(e, s + 1); }
       if (n - e < it.keepLast) { const e2 = n - it.keepLast; if (e2 - s >= needFirst) e = e2; else if (cur().list.length && s === 0) { fresh(); continue; } }
-      const ph = pre + sum(it.ah, s, e) + (e === n ? it.post : 0);
+      const ph = it.partH ? it.partH(s, e) : pre + sum(it.ah, s, e) + (e === n ? it.post : 0);
       cur().list.push({ it, s, e }); cur().used += gap + ph;
       if (cur().used > AVAIL + 1) cur().over = true;
       fresh(); s = e;
@@ -2924,7 +2938,9 @@ function bodyFor(b, num) {
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, INFO_KINDS.map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
-      ${stilTiles(b, ST_INFO)}${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
+      ${stilTiles(b, ST_INFO)}
+      <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M2 2.5h16M2 6h16M2 9.5h16M2 13h11"/>'], ['2', 'zwei', '<path d="M2 2.5h7M2 6h7M2 9.5h7M2 13h5M11 2.5h7M11 6h7M11 9.5h7M11 13h4"/>']].map(([v, l, d]) => `<button type="button" data-act="info-cols" data-v="${v}" aria-pressed="${String(b.cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div>
+      ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
     case 'phrases': {
       if (!Array.isArray(b.groups) || !b.groups.length) b.groups = [{ head: '', text: '' }];
       return `${fText('title', 'Überschrift', b.title, 'Formulierungshilfen')}
@@ -3123,6 +3139,7 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
+    case 'info-cols': if (a.dataset.v === '2') b.cols = 2; else delete b.cols; changed(true); return;
     case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { if (a.dataset.v) mm[f] = a.dataset.v; else delete mm[f]; changed(true); } return; }
     case 'tb-mode': if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
     case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
@@ -3876,6 +3893,25 @@ function xtbl(widths, rowsXml, borders, mar) {
 }
 const xtr = (cells, o = {}) => `<w:tr><w:trPr>${o.cant ? '<w:cantSplit/>' : ''}${o.h ? `<w:trHeight w:val="${o.h}" w:hRule="${o.rule || 'atLeast'}"/>` : ''}${o.header ? '<w:tblHeader/>' : ''}</w:trPr>${cells}</w:tr>`;
 const NOB = NIL('top') + NIL('left') + NIL('bottom') + NIL('right') + NIL('insideH') + NIL('insideV');
+// Text etwa zur Hälfte teilen: an einer Absatz- oder Zeilengrenze, sonst an einem Leerzeichen, an dem keine Formatierung offen ist
+function splitHalf(raw) {
+  const t = String(raw || '').replace(/\r/g, '').trim(); const half = t.length / 2;
+  const cand = []; const re = /\n\s*\n|\n/g; let m;
+  while ((m = re.exec(t))) cand.push({ i: m.index, j: m.index + m[0].length, w: m[0].length > 1 ? 0 : 1 });
+  const best = cand.sort((a, b) => Math.abs(a.i - half) + a.w * 8 - (Math.abs(b.i - half) + b.w * 8))[0];
+  if (best && Math.abs(best.i - half) < t.length * .2) return [t.slice(0, best.i), t.slice(best.j)];
+  const open = str => { const c = (str.match(/\*\*/g) || []).length, u = (str.match(/\+\+/g) || []).length, h = (str.match(/==/g) || []).length; const i = (str.replace(/\*\*/g, '').match(/\*/g) || []).length; return c % 2 || u % 2 || h % 2 || i % 2; };
+  const sp = []; const rs = /[.!?:;]\s|\s/g; while ((m = rs.exec(t))) sp.push({ i: m.index + m[0].length - 1, w: /[.!?:;]/.test(m[0][0]) ? 0 : 1 });
+  sp.sort((a, b) => Math.abs(a.i - half) + a.w * 12 - (Math.abs(b.i - half) + b.w * 12));
+  const ok = sp.find(x => !open(t.slice(0, x.i)) && !t.slice(0, x.i).endsWith('\n'));
+  return ok ? [t.slice(0, ok.i).trimEnd(), t.slice(ok.i + 1).trimStart()] : [t, ''];
+}
+function infoCols2(b, iw) {
+  const [l, r] = splitHalf(b.text); const sz = b.stil === 'klein' ? 17 : 20; const w1 = Math.floor(iw / 2), w2 = iw - w1; const g = TW(3.5);
+  const cell = (txt, w, mar, bd) => xtc(xpRich(txt, { sz }, { first: 0, gap: 80 }) || xp(''), { w, mar, borders: bd });
+  const row = xtr(cell(l, w1, `<w:left w:w="0" w:type="dxa"/><w:right w:w="${g}" w:type="dxa"/>`) + cell(r, w2, `<w:left w:w="${g}" w:type="dxa"/><w:right w:w="0" w:type="dxa"/>`, LINE('left', 4, 'B9BFCB')));
+  return xp('', { line: 80, rule: 'exact', mark: 2 }) + xtbl([w1, w2], row, NOB, '<w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/>') + xp('', { line: 20, rule: 'exact', mark: 2 });
+}
 
 async function imageBytes(src) {
   if (src.startsWith('data:')) { const b64 = src.split(',')[1]; const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
@@ -3990,10 +4026,10 @@ async function exportDOCX() {
         case 'info': {
           const inner = xp(xr(b.kind || 'Info', { b: 1, caps: 1, sz: 14, color: A, sp: 14 }), { keepNext: true })
             + (b.title ? xp(xrInline(b.title, { b: 1, sz: 21 }), { before: 20, keepNext: true }) : '')
-            + xpRich(b.text, { sz: b.stil === 'klein' ? 17 : 20 }, { first: 40, gap: 80 });
+            + (b.cols === 2 && String(b.text || '').length <= 3000 ? infoCols2(b, CW - TW(8)) : xpRich(b.text, { sz: b.stil === 'klein' ? 17 : 20 }, { first: 40, gap: 80 }));
           const st = b.stil || '';
           const bd = st === 'rahmen' ? ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 10, A)).join('') : `<w:top w:val="nil"/><w:left w:val="single" w:sz="24" w:space="0" w:color="${A}"/><w:bottom w:val="nil"/><w:right w:val="nil"/>`;
-          parts.push(xtbl([CW], xtr(xtc(inner, { w: CW, borders: bd, shd: st === 'rahmen' || st === 'linie' ? '' : AT, mar: `<w:top w:w="${TW(3)}" w:type="dxa"/><w:left w:w="${TW(4)}" w:type="dxa"/><w:bottom w:w="${TW(3)}" w:type="dxa"/><w:right w:w="${TW(4)}" w:type="dxa"/>` }), { cant: 1 }), NOB));
+          parts.push(xtbl([CW], xtr(xtc(inner, { w: CW, borders: bd, shd: st === 'rahmen' || st === 'linie' ? '' : AT, mar: `<w:top w:w="${TW(3)}" w:type="dxa"/><w:left w:w="${TW(4)}" w:type="dxa"/><w:bottom w:w="${TW(3)}" w:type="dxa"/><w:right w:w="${TW(4)}" w:type="dxa"/>` }), { cant: String(b.text || '').length <= 3000 ? 1 : 0 }), NOB));
           break;
         }
         case 'tasks': {
