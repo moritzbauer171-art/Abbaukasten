@@ -461,7 +461,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .mat-body p.ind{text-indent:4mm}
 .mat-body sup,.task-body sup,.blk-text sup,.info-text sup{font-size:.62em;line-height:0;vertical-align:.55em}
 .ln{display:flex;align-items:baseline}
-.ln-no{flex:0 0 7mm;margin-right:3mm;text-align:right;font-family:var(--f-ui);font-size:7pt;color:var(--paper-muted);font-variant-numeric:tabular-nums}
+.ln-no{flex:0 0 7mm;margin-right:3mm;text-align:right;font-family:var(--f-ui);font-size:7pt;line-height:1;color:var(--paper-muted);font-variant-numeric:tabular-nums}
+.ln-no:empty::before{content:"\200b"}
 .ln-t{flex:1;min-width:0;white-space:nowrap;text-align:justify;text-align-last:justify}
 .ln.pl .ln-t{text-align-last:auto}
 .ln.pf .ln-t{padding-left:4mm}
@@ -634,8 +635,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .qr-empty{flex:0 0 auto;border:.3mm dashed var(--paper-hair);display:grid;place-items:center;color:var(--paper-muted);font-size:8pt;text-align:center;padding:2mm}
 
 /* Zeilenangaben in der Vorschau */
-#preview .page .ln-no{cursor:pointer;border-radius:.6mm;padding-block:.5mm}
-#preview .page .ln-no:empty::before{content:"\200b"}
+#preview .page .ln-no{cursor:pointer;border-radius:.6mm;padding-block:.5mm;margin-block:-.5mm}
 #preview .page .ln-no:hover{background:var(--acc-tint);color:var(--acc)}
 #preview .page .ln-no:empty:hover::before{content:attr(data-n)}
 #preview .page .ln.zsel .ln-t{background:var(--acc-tint)}
@@ -1580,7 +1580,7 @@ const QR = (() => {
 /* ================= Ansicht: Fassung, Gruppen, Papier ================= */
 const GEO = { a4: { avail: 264 }, a5: { avail: 182 } };
 // Freiraum über der Fußzeile (mm): normal / mehr / viel
-const BOT_GAP = { a4: { '': 6, m: 14, l: 24 }, a5: { '': 4, m: 9, l: 16 } };
+const BOT_GAP = { a4: { '': 9, m: 17, l: 27 }, a5: { '': 6, m: 11, l: 18 } };
 function sheetView() { return { lehrer: state.fassung === 'lehrer', grp: state.sheet.meta.groupsOn ? state.grp : 'all' }; }
 const blockVisible = (b, v) => !v || v.grp === 'all' || !b.group || b.group === v.grp;
 const tipsOf = it => (Array.isArray(it.tips) ? it.tips : (it.tips && typeof it.tips === 'object' ? [0, 1, 2].map(j => it.tips[j]) : [])).map(s => String(s || '').trim()).filter(Boolean);
