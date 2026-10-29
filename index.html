@@ -153,10 +153,16 @@ button,input,select,textarea{font:inherit;color:inherit}
 .adder{border:1px dashed var(--line-strong);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
 .adder .lbl{margin:0}
 .adder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-.add-b{display:flex;flex-direction:column;align-items:flex-start;gap:0;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 10px;cursor:pointer;text-align:left;min-width:0}
+.add-b{display:flex;flex-direction:row;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 10px 7px 8px;cursor:pointer;text-align:left;min-width:0;color:var(--ink)}
+.add-ic{flex:0 0 auto;width:32px;height:32px;border-radius:8px;background:var(--tinte-soft);color:var(--tinte);display:grid;place-items:center}
+.add-ic svg{width:19px;height:19px}
+.add-tx{display:flex;flex-direction:column;min-width:0}
+.add-b:hover .add-ic{background:var(--tinte);color:var(--tinte-ink)}
+.kind-i{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--tinte-soft);color:var(--tinte);display:grid;place-items:center;margin-right:-1px}
+.kind-i svg{width:15px;height:15px}
 .add-b:hover{border-color:var(--tinte)}
 .add-b b{font-size:13.5px}
-.add-b span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.add-tx>span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 
 /* ---------- Worterklärungen ---------- */
 .gl-list{display:flex;flex-direction:column;gap:6px}
@@ -822,13 +828,32 @@ const SUPABASE = { url: '', key: '' };
 const INFO_KINDS = ['Info','Merke','Tipp','Hinweis','Methode','Definition'];
 // Zusätzlicher Abstand bei Überschriften (mm): mehr / viel
 const H_SP = { top: { m: 4, l: 9 }, bot: { m: 3, l: 7 } };
+// Piktogramme der Bausteine (24er-Raster, Strich in Textfarbe)
+const TYPE_ICON = {
+  meta: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8.5h16M7 5.8h5M7.5 12.5h9M7.5 16h6"/>',
+  material: '<rect x="5.5" y="3" width="14" height="18" rx="2"/><path d="M9.5 7.5h7M9.5 11h7M9.5 14.5h7M9.5 18h4.5"/><path d="M2.8 7.5h.6M2.8 14.5h.6" stroke-width="2.2"/>',
+  poem: '<path d="M20 4C13.2 4.4 8.7 9 8.1 15.8L6.6 20"/><path d="M8.4 14.1c4.7-.4 8.9-3.7 11.6-10.1"/><path d="M11 10.8h4.4"/><path d="M3.5 20.5h6"/>',
+  tasks: '<rect x="3.5" y="4" width="6.5" height="6.5" rx="1.5"/><path d="m5.2 7.3 1.3 1.3 2-2.3"/><path d="M13 7.2h7.5"/><rect x="3.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M13 16.8h7.5"/>',
+  info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.7v.2" stroke-width="2.6"/>',
+  phrases: '<path d="M4 5h16v10.5H10.5L6 19v-3.5H4z"/><path d="M8 9h8M8 12h5"/>',
+  table: '<rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/>',
+  lines: '<path d="M3.5 9.5h9M3.5 14h17M3.5 18.5h17"/><path d="m14.5 10.3 5.2-5.2 1.9 1.9-5.2 5.2-2.6.7z"/>',
+  heading: '<path d="M6 5v14M15 5v14M6 12h9"/><path d="M18.5 19h2.5"/>',
+  text: '<path d="M4 6h16M4 10h16M4 14h16M4 18h10"/>',
+  quote: '<path d="M10.5 6.5C7 7.6 5 10.2 5 13.6V18h5v-5H7.3c.2-2 1.4-3.6 3.6-4.6zM19.5 6.5c-3.5 1.1-5.5 3.7-5.5 7.1V18h5v-5h-2.7c.2-2 1.4-3.6 3.6-4.6z" fill="currentColor" stroke="none"/>',
+  qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z"/>',
+  image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
+  pagebreak: '<path d="M5 3v5.5h14V3M5 21v-5.5h14V21"/><path d="M3 12h2.5M8.2 12h2.5M13.3 12h2.5M18.5 12H21"/>'
+};
+const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
+const iconKey = b => b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type;
 const typeLabel = b => b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
-  poem:     { label:'Gedicht',       desc:'Verse, Strophen, Verszählung' },
+  poem:     { label:'Gedicht',       desc:'Verse und Strophen' },
   tasks:    { label:'Aufgaben',      desc:'mit Operator-Check' },
   info:     { label:'Infokasten',    desc:'Merke, Tipp, Definition' },
-  phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge und Wendungen' },
+  phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge, Wendungen' },
   table:    { label:'Tabelle',       desc:'zum Ausfüllen' },
   lines:    { label:'Schreibfläche', desc:'Linien oder Kästchen' },
   heading:  { label:'Überschrift',   desc:'Zwischentitel' },
@@ -1758,7 +1783,7 @@ function saveSnip(b) {
   toast('In der Sammlung gespeichert');
 }
 function adderHTML() {
-  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}"><b>${t.label}</b><span>${t.desc}</span></button>`).join('')}</div>
+  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}"><i class="add-ic">${typeIcon(k)}</i><span class="add-tx"><b>${t.label}</b><span>${t.desc}</span></span></button>`).join('')}</div>
     <div class="snips"><span class="lbl">Aus der Sammlung</span>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
       <small class="hint">Eigene Bausteine speichern Sie über ⋯ an der jeweiligen Karte.</small></div></div>`;
 }
@@ -2826,7 +2851,7 @@ function metaCard() {
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'meta' ? ' sel' : ''}" data-bid="meta">
-    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind">Kopf</span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span></div>
+    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('meta')}</span><span class="kind">Kopf</span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span></div>
     <div class="card-b">${gNote('meta')}
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" data-k="nr" value="${esc(m.nr)}" placeholder="7"></label>${fText('title', isK ? 'Titel (für die Ablage)' : 'Titel', m.title, 'Titel des Arbeitsblatts')}</div>
       ${isK ? '' : fText('topic', 'Thema / Unterzeile', m.topic, 'optional')}
@@ -2859,7 +2884,7 @@ function renderEditor(focusSel) {
     ed.innerHTML = fold + intro + metaCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
       return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
+        <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
           <button class="ib" type="button" data-act="up" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
