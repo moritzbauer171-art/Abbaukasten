@@ -371,6 +371,41 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .lib-item .t em{font-style:normal;font-size:11px;font-weight:700;color:var(--tinte);border:1px solid var(--tinte);border-radius:5px;padding:0 5px;flex:0 0 auto}
 .lib-item .m{font-size:12px;color:var(--muted)}
 .lib-item .a{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.lib-item[draggable="true"]{cursor:grab}
+.lib-item .t .grip{margin-left:auto;width:8px;height:14px;color:var(--faint);flex:0 0 auto;align-self:center}
+.lib-fadd{display:inline-flex;align-items:center;gap:6px}
+.lib-fadd .fi{width:16px;height:16px}
+.lib-tools{display:flex;gap:8px;align-items:center}
+.lib-tools .lib-sort{width:auto;flex:0 1 auto;max-width:45%}
+.lib-fnew{display:flex;gap:6px;align-items:center;margin-bottom:10px}
+.lib-fnew .fi{width:18px;height:18px;color:var(--tinte);flex:0 0 auto}
+.lib-fnew .inp{flex:1;min-width:0}
+.lib-fs{display:flex;flex-direction:column;gap:6px;border-radius:9px}
+.lib-f{display:flex;align-items:center;gap:4px;border-radius:8px}
+.lib-f .lib-fren{flex:1;min-width:0}
+.lib-fh{flex:1;min-width:0;display:flex;align-items:center;gap:7px;border:0;background:transparent;padding:6px;font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;border-radius:8px}
+.lib-fh:hover{background:var(--tinte-soft)}
+.lib-fh .chev-s{width:14px;height:14px;color:var(--muted);flex:0 0 auto;transition:transform .15s}
+.lib-fs.open>.lib-f .chev-s{transform:rotate(90deg)}
+.lib-fh .fi{width:18px;height:18px;color:var(--tinte);flex:0 0 auto}
+.lib-fh .fn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lib-fh .fc{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:700;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 7px;flex:0 0 auto}
+.lib-f[draggable="true"]{cursor:grab}
+.lib-fb{display:flex;flex-direction:column;gap:8px;margin-left:12px;padding-left:12px;border-left:2px solid var(--line);min-height:6px}
+.lib-loose .lib-fb{margin-left:0;padding-left:0;border-left:0}
+.lib-lh{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 6px 0}
+.lib-fe{font-size:12.5px;color:var(--faint);border:1.5px dashed var(--line-strong);border-radius:9px;padding:10px 12px}
+.lib-fmenu{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;font-size:12.5px;padding:0 8px 4px 34px}
+.lib-fmenu.warnrow{color:var(--warn)}
+.lib-mv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.lib-mv .chip{border:1px solid var(--line-strong);background:var(--field);border-radius:14px;padding:3px 10px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.lib-mv .chip.on{background:var(--tinte);color:var(--tinte-ink);border-color:var(--tinte)}
+.lib-item.dragging,.lib-fs.dragging{opacity:.4}
+.lib-item.drop-before,.lib-fs.drop-before{box-shadow:0 -3px 0 0 var(--tinte)}
+.lib-item.drop-after,.lib-fs.drop-after{box-shadow:0 3px 0 0 var(--tinte)}
+.lib-fs.drop-into>.lib-f{background:var(--tinte-soft);box-shadow:inset 0 0 0 2px var(--tinte)}
+.lib-fs.drop-into>.lib-fb{border-left-color:var(--tinte)}
+.lib-loose.drop-into{box-shadow:0 0 0 2px var(--tinte);background:var(--tinte-soft)}
 .empty{color:var(--muted);font-size:13px;padding:18px 4px}
 
 /* ---------- Toast / Overlay ---------- */
@@ -2131,7 +2166,7 @@ function normalizeSheet(sh) {
 const closedKey = id => 'abw-zu-' + id;
 function loadClosed(id) { try { const a = JSON.parse(localStorage.getItem(closedKey(id)) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); } }
 function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; if (state.closed.size) localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); else localStorage.removeItem(closedKey(id)); } catch {} }
-const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null };
+const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
@@ -3262,7 +3297,9 @@ const localB = {
   async list() { return Object.values(localLib()).filter(d => d && d.sheet && d.sheet.meta).map(d => ({ ...entryOf(d.sheet), updatedAt: d.updatedAt || d.sheet.updatedAt || 0 })); },
   async load(id) { const d = localLib()[id]; return d && d.sheet ? clone(d.sheet) : null; },
   async save(sh) { const lib = localLib(); lib[sh.id] = { updatedAt: sh.updatedAt, sheet: sh }; if (!lsSet(LS.lib, lib)) throw { code: 'quota' }; },
-  async remove(id) { const lib = localLib(); delete lib[id]; lsSet(LS.lib, lib); }
+  async remove(id) { const lib = localLib(); delete lib[id]; lsSet(LS.lib, lib); },
+  async loadPrefs() { return lsGet(LS_PREF); },
+  async savePrefs(p) { if (!lsSet(LS_PREF, p)) throw { code: 'quota' }; }
 };
 function claudeB(db, id) {
   const col = () => db.collection('data/users/' + id);
@@ -3278,7 +3315,9 @@ function claudeB(db, id) {
       if (JSON.stringify(body).length > 250000) throw { code: 'toolarge' };
       try { await col().doc(sh.id).set(body); } catch (e) { throw (e && e.code === 'invalid_argument') ? { code: 'toolarge' } : e; }
     },
-    async remove(docId) { await col().doc(docId).delete(); }
+    async remove(docId) { await col().doc(docId).delete(); },
+    async loadPrefs() { const d = await col().doc('ordner-einstellungen').get(); return d.exists && d.data() ? d.data().prefs || null : null; },
+    async savePrefs(p) { await col().doc('ordner-einstellungen').set({ kind: 'prefs', prefs: p, updatedAt: Date.now() }); }
   };
 }
 function supaB(sb, user) {
@@ -3292,7 +3331,9 @@ function supaB(sb, user) {
     },
     async load(id) { const d = chk(await T().select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
     async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
-    async remove(id) { chk(await T().delete().eq('id', id)); }
+    async remove(id) { chk(await T().delete().eq('id', id)); },
+    async loadPrefs() { const d = chk(await sb.from('ab_einstellungen').select('data').maybeSingle()); return d ? d.data : null; },
+    async savePrefs(p) { chk(await sb.from('ab_einstellungen').upsert({ user_id: user.id, data: p, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })); }
   };
 }
 
@@ -3416,7 +3457,7 @@ async function deleteSheet(id) {
   await saveChain;
   try { await backend.remove(id); } catch { toast('Löschen hat nicht geklappt. Bitte erneut versuchen.'); return; }
   if (backend.kind !== 'local') dropPending(backend, id);
-  state.lib = state.lib.filter(d => d.id !== id); state.confirmDel = null;
+  state.lib = state.lib.filter(d => d.id !== id); state.confirmDel = null; dropPlace(id);
   const cur = lsGet(LS.cur); if (cur && cur.sheet && cur.sheet.id === id) lsDel(LS.cur);
   renderTabs(); renderLib();
   if (state.sheet.id === id) await openForKlasse(state.klasse);
@@ -3436,6 +3477,7 @@ async function useBackend(b) {
     toast('Die Ablage ist gerade nicht erreichbar. Änderungen werden lokal gesichert und später nachgetragen.');
     return;
   }
+  await loadPrefs(b); if (state.libOpen) renderLib();
   await flushPending();
   if (t !== backendToken) return;
   if (state.touched && !state.sheet.example) await saveNow();
@@ -3500,6 +3542,7 @@ async function migrateLocal() {
   }
   lsSet(LS.lib, lib);
   try { await refreshLib(); } catch {}
+  mergePrefs(lsGet(LS_PREF)); if (state.libOpen) renderLib();
   toast(`${n} ${n === 1 ? 'Blatt' : 'Blätter'} online übernommen`);
 }
 
@@ -3512,7 +3555,7 @@ async function exportBackup() {
   overlay('');
   if (!sheets.length && !userSnips().length) { toast('Es gibt noch keine gespeicherten Blätter.'); return; }
   const now = new Date(); const stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-  const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: now.toISOString(), sheets, snips: userSnips() });
+  const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: now.toISOString(), sheets, snips: userSnips(), prefs: state.prefs });
   await deliver(`AB-Werkstatt_Sicherung_${stamp}.json`, new Blob([data], { type: 'application/json' }));
 }
 async function importBackup(file) {
@@ -3533,6 +3576,7 @@ async function importBackup(file) {
   }
   overlay('');
   try { await refreshLib(); } catch {}
+  if (obj.prefs) mergePrefs(obj.prefs);
   const extra = [same ? `${same} schon aktuell` : '', bad ? `${bad} nicht lesbar` : ''].filter(Boolean).join(', ');
   if (list.length === 1 && (n || same) && list[0] && list[0].id) {
     state.libOpen = false; state.confirmDel = null; renderLib();
@@ -3541,14 +3585,146 @@ async function importBackup(file) {
   toast(`${n} ${n === 1 ? 'Blatt' : 'Blätter'} übernommen${extra ? ' · ' + extra : ''}`);
 }
 
+/* ---------- Ordner in „Meine Blätter“ ---------- */
+// Ordner gelten je Reiter. Gespeichert wird ein kleines Einstellungsdokument je Ablage: Ordner, Zuordnung der Blätter, eigene Reihenfolge.
+const LS_PREF = 'abw.ordner', LS_SORT = 'abw.sort', LS_FZU = 'abw.fzu';
+const LIB_SORT = [['neu', 'Zuletzt geändert'], ['nr', 'Nach AB-Nr.'], ['titel', 'Nach Titel'], ['eigen', 'Eigene Reihenfolge']];
+function normPrefs(p) {
+  p = p && typeof p === 'object' ? p : {};
+  const obj = o => (o && typeof o === 'object' && !Array.isArray(o) ? o : {});
+  const folders = (Array.isArray(p.folders) ? p.folders : []).filter(f => f && typeof f.id === 'string' && String(f.name || '').trim())
+    .map(f => ({ id: f.id, klasse: KL(f.klasse).id, name: String(f.name).trim().slice(0, 60) }));
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) } };
+}
+const fClosed = new Set(lsGet(LS_FZU) || []);
+const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
+let prefsTimer = null;
+function savePrefs() {
+  clearTimeout(prefsTimer); const b = backend;
+  prefsTimer = setTimeout(async () => {
+    if (!b || !b.savePrefs || b !== backend) return;
+    try { await b.savePrefs(clone(state.prefs)); } catch (err) { console.error(err); toast('Die Ordner konnten gerade nicht gespeichert werden. Die nächste Änderung versucht es erneut.'); }
+  }, 250);
+}
+async function loadPrefs(b) { let p = null; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); } if (b === backend) state.prefs = normPrefs(p); }
+function mergePrefs(p) {
+  const lp = normPrefs(p); if (!lp.folders.length && !Object.keys(lp.place).length) return false;
+  const ids = new Set(state.prefs.folders.map(f => f.id));
+  lp.folders.forEach(f => { if (!ids.has(f.id)) state.prefs.folders.push(f); });
+  Object.entries(lp.place).forEach(([sid, fid]) => { if (!state.prefs.place[sid]) state.prefs.place[sid] = fid; });
+  Object.entries(lp.order).forEach(([k, v]) => { if (!state.prefs.order[k] && Array.isArray(v)) state.prefs.order[k] = v; });
+  savePrefs(); return true;
+}
+const libFolders = kl => state.prefs.folders.filter(f => f.klasse === kl);
+function folderOf(id, kl) { const f = state.prefs.place[id]; return f && state.prefs.folders.some(x => x.id === f && x.klasse === kl) ? f : ''; }
+function setPlace(id, fid) { if (fid) state.prefs.place[id] = fid; else delete state.prefs.place[id]; }
+function dropPlace(id) { let ch = !!state.prefs.place[id]; delete state.prefs.place[id]; Object.values(state.prefs.order).forEach(o => { const i = Array.isArray(o) ? o.indexOf(id) : -1; if (i >= 0) { o.splice(i, 1); ch = true; } }); if (ch) savePrefs(); }
+const libSort = () => { const v = lsGet(LS_SORT); return LIB_SORT.some(x => x[0] === v) ? v : 'neu'; };
+const orderKey = (fid, kl) => fid || '_' + kl;
+function sortLibList(arr, fid, kl, mode = libSort()) {
+  const a = arr.slice();
+  const nrv = d => { const n = parseFloat(String(d.nr).replace(',', '.')); return isNaN(n) ? Infinity : n; };
+  if (mode === 'nr') a.sort((x, y) => nrv(x) - nrv(y) || x.title.localeCompare(y.title, 'de', { numeric: true }));
+  else if (mode === 'titel') a.sort((x, y) => x.title.localeCompare(y.title, 'de', { numeric: true }));
+  else if (mode === 'eigen') { const o = state.prefs.order[orderKey(fid, kl)] || []; const pos = id => { const i = o.indexOf(id); return i < 0 ? Infinity : i; }; a.sort((x, y) => pos(x.id) - pos(y.id) || y.updatedAt - x.updatedAt); }
+  else a.sort((x, y) => y.updatedAt - x.updatedAt);
+  return a;
+}
+// Beim Wechsel auf „Eigene Reihenfolge“ bleibt die Reihenfolge stehen, die gerade zu sehen ist
+function freezeOrder(kl) {
+  const mode = libSort(); if (mode === 'eigen') return;
+  const all = state.lib.filter(d => d.klasse === kl);
+  ['', ...libFolders(kl).map(f => f.id)].forEach(fid => { state.prefs.order[orderKey(fid, kl)] = sortLibList(all.filter(d => folderOf(d.id, kl) === fid), fid, kl, mode).map(d => d.id); });
+  lsSet(LS_SORT, 'eigen');
+}
+const FOLDER_SVG = '<svg class="fi" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5a1.5 1.5 0 0 1 1.5-1.5h3.6l1.6 1.8H16a1.5 1.5 0 0 1 1.5 1.5v7.7A1.5 1.5 0 0 1 16 16.5H4A1.5 1.5 0 0 1 2.5 15z"/></svg>';
+const CHEV_SVG = '<svg class="chev-s" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>';
+const GRIP_SVG = '<svg class="grip" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="4" r="1.2"/><circle cx="7" cy="4" r="1.2"/><circle cx="3" cy="8" r="1.2"/><circle cx="7" cy="8" r="1.2"/><circle cx="3" cy="12" r="1.2"/><circle cx="7" cy="12" r="1.2"/></svg>';
+function libListHTML(k, q) {
+  const fmt = t => new Date(t).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const fs = libFolders(k.id); const all = state.lib.filter(d => d.klasse === k.id);
+  const match = d => !q || (d.title + ' ' + d.nr).toLowerCase().includes(q);
+  const item = d => { const fid = folderOf(d.id, k.id); return `<div class="lib-item${d.id === state.sheet.id ? ' cur' : ''}" data-id="${esc(d.id)}" draggable="true">
+      <div class="t" data-act="lib-open-sheet">${d.nr ? `<em>AB ${esc(d.nr)}</em>` : ''}<span>${esc(d.title)}</span>${GRIP_SVG}</div>
+      <div class="m">geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
+      <div class="a">${state.confirmDel === d.id
+        ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
+        : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-dup">Duplizieren</button>${fs.length ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id}">Ordner</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
+      ${state.moveOpen === d.id ? `<div class="lib-mv"><span>Verschieben nach</span>${[['', 'Ohne Ordner'], ...fs.map(f => [f.id, f.name])].map(([id, n]) => `<button type="button" class="chip${fid === id ? ' on' : ''}" data-act="lib-move-to" data-fid="${esc(id)}">${esc(n)}</button>`).join('')}</div>` : ''}
+    </div>`; };
+  const sec = f => {
+    const total = all.filter(d => folderOf(d.id, k.id) === f.id).length;
+    const its = sortLibList(all.filter(d => folderOf(d.id, k.id) === f.id && match(d)), f.id, k.id);
+    if (q && !its.length) return '';
+    const open = !!q || !fClosed.has(f.id); const edit = state.fEdit === f.id;
+    return `<section class="lib-fs${open ? ' open' : ''}" data-fid="${esc(f.id)}">
+      <div class="lib-f" data-fid="${esc(f.id)}" draggable="${edit ? 'false' : 'true'}">${edit
+        ? `<input class="inp lib-fren" type="text" value="${esc(f.name)}" maxlength="60" aria-label="Name des Ordners"><button class="btn primary" type="button" data-act="lib-fren-ok">OK</button>`
+        : `<button type="button" class="lib-fh" data-act="lib-ftoggle" aria-expanded="${open}" title="${open ? 'Zuklappen' : 'Aufklappen'}">${CHEV_SVG}${FOLDER_SVG}<span class="fn">${esc(f.name)}</span><span class="fc">${total}</span></button><button type="button" class="ib" data-act="lib-fmenu" title="Ordner bearbeiten" aria-expanded="${state.fMenu === f.id}">${I.more}</button>`}</div>
+      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
+      ${state.fDel === f.id ? `<div class="lib-fmenu warnrow"><span>Ordner „${esc(f.name)}“ löschen?${total === 1 ? ' Das Blatt darin bleibt erhalten und liegt danach ohne Ordner.' : total ? ` Die ${total} Blätter darin bleiben erhalten und liegen danach ohne Ordner.` : ''}</span><button class="link danger" type="button" data-act="lib-fdel-yes">Löschen</button><button class="link" type="button" data-act="lib-fdel-no">Abbrechen</button></div>` : ''}
+      ${open ? `<div class="lib-fb" data-fid="${esc(f.id)}">${its.length ? its.map(item).join('') : `<div class="lib-fe">Leer · Blätter hierher ziehen oder bei einem Blatt „Ordner“ wählen</div>`}</div>` : ''}
+    </section>`;
+  };
+  const loose = sortLibList(all.filter(d => !folderOf(d.id, k.id) && match(d)), '', k.id);
+  const folders = fs.map(sec).join('');
+  if (!all.length && !fs.length) return `<div class="empty">Noch keine Blätter unter ${esc(k.label)}. Sobald Sie ein Blatt bearbeiten, erscheint es hier.</div>`;
+  if (q && !folders && !loose.length) return '<div class="empty">Keine Treffer.</div>';
+  return folders + ((loose.length || fs.length) && !(q && !loose.length) ? `<section class="lib-fs lib-loose open" data-fid="">${fs.length ? '<div class="lib-f lib-lh" data-fid="">Ohne Ordner</div>' : ''}<div class="lib-fb" data-fid="">${loose.length ? loose.map(item).join('') : '<div class="lib-fe">Hierher ziehen, um ein Blatt aus seinem Ordner zu nehmen</div>'}</div></section>` : '');
+}
+function newFolder(name) {
+  name = String(name || '').trim().slice(0, 60); if (!name) return false;
+  const f = { id: 'f-' + uid(), klasse: KL(state.klasse).id, name };
+  state.prefs.folders.push(f); state.fNew = false; savePrefs(); renderLib();
+  toast(`Ordner „${name}“ angelegt · Blätter einfach hineinziehen`); return true;
+}
+function moveSheetTo(id, fid, ref, before) {
+  const kl = KL(state.klasse).id; const d = state.lib.find(x => x.id === id); if (!d) return;
+  const from = folderOf(id, kl); let note = '';
+  if (ref) {
+    if (libSort() !== 'eigen') { freezeOrder(kl); note = ' · Sortierung jetzt: eigene Reihenfolge'; }
+    const grp = sortLibList(state.lib.filter(x => x.klasse === kl && folderOf(x.id, kl) === fid && x.id !== id), fid, kl).map(x => x.id);
+    let i = grp.indexOf(ref); if (i < 0) i = grp.length; else if (!before) i++;
+    grp.splice(i, 0, id); state.prefs.order[orderKey(fid, kl)] = grp;
+  }
+  setPlace(id, fid);
+  if (from !== fid) { Object.values(state.prefs.order).forEach(o => { if (Array.isArray(o) && o !== state.prefs.order[orderKey(fid, kl)]) { const j = o.indexOf(id); if (j >= 0) o.splice(j, 1); } }); if (fid) fClosed.delete(fid), saveFClosed(); }
+  state.moveOpen = null; savePrefs(); renderLib();
+  if (from !== fid) { const f = state.prefs.folders.find(x => x.id === fid); toast(`„${d.title}“ ${f ? `liegt jetzt in „${f.name}“` : 'liegt jetzt ohne Ordner'}${note}`); }
+  else if (note) toast(note.slice(3));
+}
+function moveFolder(id, ref, before) {
+  const a = state.prefs.folders; const i = a.findIndex(f => f.id === id); if (i < 0) return;
+  const [f] = a.splice(i, 1); let j = a.findIndex(x => x.id === ref); if (j < 0) j = a.length; else if (!before) j++;
+  a.splice(j, 0, f); savePrefs(); renderLib();
+}
+function stepFolder(id, dir) {
+  const kl = KL(state.klasse).id; const mine = libFolders(kl); const i = mine.findIndex(f => f.id === id); const t = mine[i + dir];
+  if (t) moveFolder(id, t.id, dir < 0);
+}
+/* Ziehen und Ablegen in „Meine Blätter“ */
+let libDrag = null;
+function libClearDrop() { document.querySelectorAll('#lib-root .drop-into,#lib-root .drop-before,#lib-root .drop-after').forEach(n => n.classList.remove('drop-into', 'drop-before', 'drop-after')); }
+function libTarget(e) {
+  const d = libDrag; if (!d) return null;
+  const secEl = e.target.closest && e.target.closest('.lib-fs'); if (!secEl) return null;
+  if (d.kind === 'folder') {
+    if (secEl.classList.contains('lib-loose') || secEl.dataset.fid === d.id) return null;
+    const r = secEl.getBoundingClientRect(); const before = e.clientY < r.top + Math.min(r.height, 44) / 2 || e.clientY < r.top + r.height / 2;
+    return { el: secEl, cls: before ? 'drop-before' : 'drop-after', ref: secEl.dataset.fid, before };
+  }
+  const it = e.target.closest('.lib-item');
+  if (it && it.dataset.id !== d.id) { const r = it.getBoundingClientRect(); const before = e.clientY < r.top + r.height / 2; return { el: it, cls: before ? 'drop-before' : 'drop-after', fid: secEl.dataset.fid, ref: it.dataset.id, before }; }
+  if (it) return null;
+  return { el: secEl, cls: 'drop-into', fid: secEl.dataset.fid };
+}
+
 /* ---------- Meine Blätter ---------- */
 function renderLib() {
   const root = $('#lib-root');
   if (!state.libOpen) { root.innerHTML = ''; return; }
   const k = KL(state.klasse);
   const q = state.libQuery.trim().toLowerCase();
-  const list = state.lib.filter(d => d.klasse === k.id && (!q || (d.title + ' ' + d.nr).toLowerCase().includes(q)));
-  const fmt = t => new Date(t).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   let acct;
   if (backend && backend.kind === 'supabase') acct = `<span>Online gespeichert für <b>${esc(store.user && store.user.email || '')}</b></span><button class="link" type="button" data-act="logout">Abmelden</button>`;
   else if (backend && backend.kind === 'claude') acct = '<span>Ihre Blätter liegen in Ihrem claude.ai-Konto und sind nur für Sie sichtbar.</span>';
@@ -3556,27 +3732,48 @@ function renderLib() {
   else acct = '<span>Ihre Blätter liegen nur in diesem Browser. Sichern Sie sie ab und zu als Datei.</span>';
   const nLocal = backend && backend.kind === 'supabase' ? Object.keys(localLib()).length : 0;
   const keep = document.activeElement && document.activeElement.id === 'lib-q';
+  const oldList = root.querySelector('.lib-list'); const scroll = oldList ? oldList.scrollTop : 0;
   root.innerHTML = `<div class="scrim" data-act="lib-close"></div><aside class="drawer" role="dialog" aria-label="Meine Blätter">
     <div class="drawer-h"><div class="dh"><h2>Meine Blätter</h2><span>${esc(k.label)}</span></div><button class="ib" type="button" data-act="lib-close" title="Schließen">${I.x}</button></div>
     <div class="acct">${acct}</div>
     ${nLocal ? `<div class="notice"><span>${nLocal} ${nLocal === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser.</span><button class="link" type="button" data-act="lib-migrate">Online übernehmen</button></div>` : ''}
-    <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neues Blatt</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}</div>
-    <div class="row"><input class="inp" id="lib-q" type="search" placeholder="Suchen nach Titel oder Nummer" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"></div>
-    <div class="lib-list">${list.length ? list.map(d => `<div class="lib-item${d.id === state.sheet.id ? ' cur' : ''}" data-id="${esc(d.id)}">
-        <div class="t" data-act="lib-open-sheet">${d.nr ? `<em>AB ${esc(d.nr)}</em>` : ''}<span>${esc(d.title)}</span></div>
-        <div class="m">geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
-        <div class="a">${state.confirmDel === d.id
-          ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
-          : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-dup">Duplizieren</button><button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
-      </div>`).join('') : `<div class="empty">${q ? 'Keine Treffer.' : `Noch keine Blätter unter ${esc(k.label)}. Sobald Sie ein Blatt bearbeiten, erscheint es hier.`}</div>`}</div>
+    <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neues Blatt</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}<button class="btn lib-fadd" type="button" data-act="lib-fnew">${FOLDER_SVG}Neuer Ordner</button></div>
+    <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen nach Titel oder Nummer" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
+    ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
+    <div class="lib-list">${libListHTML(k, q)}</div>
     <div class="drawer-foot"><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
+  const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+  else if (state.fNew) { const i = $('#lib-fnew'); if (i) i.focus(); }
+  else if (state.fEdit) { const i = root.querySelector('.lib-fren'); if (i) { i.focus(); i.select(); } }
 }
 async function onLibClick(e) {
   const a = e.target.closest('[data-act]'); if (!a) return;
   const item = a.closest('[data-id]'); const id = item && item.dataset.id;
-  const closeLib = () => { state.libOpen = false; state.confirmDel = null; renderLib(); };
+  const closeLib = () => { state.libOpen = false; state.confirmDel = null; state.fNew = false; state.fEdit = state.fMenu = state.fDel = state.moveOpen = null; renderLib(); };
+  const fid = a.closest('[data-fid]') ? a.closest('[data-fid]').dataset.fid : '';
   switch (a.dataset.act) {
+    case 'lib-fnew': state.fNew = true; state.fEdit = state.fMenu = state.fDel = null; renderLib(); break;
+    case 'lib-fnew-ok': if (!newFolder(($('#lib-fnew') || {}).value)) { const i = $('#lib-fnew'); if (i) i.focus(); } break;
+    case 'lib-fnew-no': state.fNew = false; renderLib(); break;
+    case 'lib-ftoggle': if (fClosed.has(fid)) fClosed.delete(fid); else fClosed.add(fid); saveFClosed(); renderLib(); break;
+    case 'lib-fmenu': state.fMenu = state.fMenu === fid ? null : fid; state.fDel = null; renderLib(); break;
+    case 'lib-fren': state.fEdit = fid; state.fMenu = null; renderLib(); break;
+    case 'lib-fren-ok': { const i = a.parentNode.querySelector('.lib-fren'); const f = state.prefs.folders.find(x => x.id === fid); const v = i ? i.value.trim().slice(0, 60) : ''; if (f && v) { f.name = v; savePrefs(); } state.fEdit = null; renderLib(); break; }
+    case 'lib-fup': stepFolder(fid, -1); break;
+    case 'lib-fdown': stepFolder(fid, 1); break;
+    case 'lib-fdel': state.fDel = fid; state.fMenu = null; renderLib(); break;
+    case 'lib-fdel-no': state.fDel = null; renderLib(); break;
+    case 'lib-fdel-yes': {
+      const f = state.prefs.folders.find(x => x.id === fid);
+      state.prefs.folders = state.prefs.folders.filter(x => x.id !== fid);
+      Object.keys(state.prefs.place).forEach(sid => { if (state.prefs.place[sid] === fid) delete state.prefs.place[sid]; });
+      delete state.prefs.order[fid]; fClosed.delete(fid); saveFClosed(); state.fDel = null; savePrefs(); renderLib();
+      if (f) toast(`Ordner „${f.name}“ gelöscht`);
+      break;
+    }
+    case 'lib-move': state.moveOpen = state.moveOpen === id ? null : id; renderLib(); break;
+    case 'lib-move-to': if (id) moveSheetTo(id, a.dataset.fid || ''); break;
     case 'lib-close': closeLib(); break;
     case 'lib-new': closeLib(); openSheet(blankSheet(nextNr(state.klasse), state.klasse)); state.openSnap = null; saveNow(); setView('edit'); break;
     case 'lib-example': closeLib(); openSheet(exampleSheet()); break;
@@ -3587,6 +3784,7 @@ async function onLibClick(e) {
       try {
         const src = await backend.load(id); if (!src) throw new Error('fehlt');
         const c = normalizeSheet(src); c.id = 'ab-' + uid(); c.example = false; c.meta.title = (c.meta.title || 'Ohne Titel') + ' (Kopie)';
+        const fo = folderOf(id, c.klasse); if (fo) { setPlace(c.id, fo); savePrefs(); }
         openSheet(c); saveNow();
       } catch { toast('Duplizieren hat nicht geklappt. Bitte erneut versuchen.'); }
       break;
@@ -3628,7 +3826,8 @@ function saveAsHTML() {
     <form id="dlg-form" data-mode="saveas" novalidate>
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" id="sa-nr" value="${esc(m.nr || '')}" placeholder="7"></label>
         <label class="f" style="flex:1"><span>Titel</span><input type="text" id="sa-title" value="${esc(title)}" placeholder="Titel des Arbeitsblatts"></label></div>
-      <label class="f"><span>Reiter</span><select id="sa-kl">${KLASSEN.map(k => `<option value="${k.id}"${k.id === sh.klasse ? ' selected' : ''}>${esc(k.label)}</option>`).join('')}</select></label>
+      <div class="row"><label class="f" style="flex:1"><span>Reiter</span><select id="sa-kl">${KLASSEN.map(k => `<option value="${k.id}"${k.id === sh.klasse ? ' selected' : ''}>${esc(k.label)}</option>`).join('')}</select></label>
+        <label class="f" style="flex:1"><span>Ordner</span><select id="sa-f">${saFolderOpts(sh.klasse, folderOf(sh.id, sh.klasse))}</select></label></div>
       ${dirty ? `<label class="chk sa-keep"><input type="checkbox" id="sa-keep" checked><span>Das bisherige Blatt „${esc(was)}“ so lassen, wie es beim Öffnen war</span></label>
         <small class="sa-hint">Ihre Änderungen seit dem Öffnen stehen dann nur im neuen Blatt. Ohne Haken behält auch das bisherige Blatt die Änderungen.</small>` : ''}
       <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
@@ -3637,10 +3836,11 @@ function saveAsHTML() {
         <button class="btn" type="button" data-act="sa-file">Als Datei speichern …</button></div>
     </form>`;
 }
+const saFolderOpts = (kl, sel) => `<option value="">Ohne Ordner</option>` + libFolders(kl).map(f => `<option value="${esc(f.id)}"${f.id === sel ? ' selected' : ''}>${esc(f.name)}</option>`).join('');
 function saveAsFields() {
   const title = dlgVal('#sa-title'), nr = dlgVal('#sa-nr'), kl = KL(($('#sa-kl') || {}).value || state.sheet.klasse).id;
-  const keep = !!($('#sa-keep') && $('#sa-keep').checked);
-  return { title, nr, kl, keep };
+  const keep = !!($('#sa-keep') && $('#sa-keep').checked); const folder = ($('#sa-f') || {}).value || '';
+  return { title, nr, kl, keep, folder };
 }
 // Titel, Nummer und Reiter übernehmen; Kurs, Farbe und Schule wechseln mit, solange sie der Voreinstellung entsprechen
 function applySaveAs(sh, f) {
@@ -3663,11 +3863,12 @@ async function doSaveAs() {
     // Neues, noch unbenanntes Blatt: einfach benennen
     applySaveAs(cur, f);
     if (state.klasse !== cur.klasse) { state.klasse = cur.klasse; lsSet(LS.klasse, cur.klasse); }
+    setPlace(cur.id, f.folder); savePrefs();
     changed(true); renderTabs(); await saveNow(); state.openSnap = clone(state.sheet);
     toast(`Gespeichert als „${f.title}“${where}`); return;
   }
   const dirty = sheetSig(cur) !== sheetSig(state.openSnap);
-  const c = clone(cur); c.id = 'ab-' + uid(); applySaveAs(c, f);
+  const c = clone(cur); c.id = 'ab-' + uid(); applySaveAs(c, f); setPlace(c.id, f.folder); savePrefs();
   let note = '';
   if (dirty && f.keep) {
     // Bisheriges Blatt auf den Stand beim Öffnen zurücksetzen
@@ -4193,8 +4394,32 @@ function boot() {
   ed.addEventListener('input', onInput); ed.addEventListener('change', onChange); ed.addEventListener('click', onClick);
   $('#lib-root').addEventListener('click', onLibClick);
   $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } });
+  $('#lib-root').addEventListener('change', e => { if (e.target.id === 'lib-sort') { if (e.target.value === 'eigen') freezeOrder(KL(state.klasse).id); else lsSet(LS_SORT, e.target.value); savePrefs(); renderLib(); } });
+  $('#lib-root').addEventListener('keydown', e => {
+    const t = e.target;
+    if (t.id === 'lib-fnew') { if (e.key === 'Enter') { e.preventDefault(); newFolder(t.value); } else if (e.key === 'Escape') { e.stopPropagation(); state.fNew = false; renderLib(); } }
+    else if (t.classList && t.classList.contains('lib-fren')) { if (e.key === 'Enter') { e.preventDefault(); t.parentNode.querySelector('[data-act="lib-fren-ok"]').click(); } else if (e.key === 'Escape') { e.stopPropagation(); state.fEdit = null; renderLib(); } }
+  }, true);
+  $('#lib-root').addEventListener('dragstart', e => {
+    const it = e.target.closest && e.target.closest('.lib-item[draggable="true"]'); const fh = !it && e.target.closest && e.target.closest('.lib-f[draggable="true"]');
+    if (!it && !fh) return;
+    libDrag = it ? { kind: 'sheet', id: it.dataset.id } : { kind: 'folder', id: fh.dataset.fid };
+    try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', (it || fh).textContent.trim().slice(0, 80)); } catch {}
+    const src = it || fh.closest('.lib-fs'); setTimeout(() => src.classList.add('dragging'), 0);
+  });
+  $('#lib-root').addEventListener('dragover', e => {
+    if (!libDrag) return; const t = libTarget(e); libClearDrop();
+    if (!t) return; e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch {} t.el.classList.add(t.cls);
+  });
+  $('#lib-root').addEventListener('drop', e => {
+    if (!libDrag) return; const t = libTarget(e); const d = libDrag; libClearDrop(); libDrag = null;
+    if (!t) return; e.preventDefault();
+    if (d.kind === 'folder') moveFolder(d.id, t.ref, t.before); else moveSheetTo(d.id, t.fid || '', t.ref, t.before);
+  });
+  $('#lib-root').addEventListener('dragend', () => { libDrag = null; libClearDrop(); document.querySelectorAll('#lib-root .dragging').forEach(n => n.classList.remove('dragging')); });
   $('#dlg-root').addEventListener('click', onDlgClick);
   $('#dlg-root').addEventListener('submit', onDlgSubmit);
+  $('#dlg-root').addEventListener('change', e => { if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, ''); });
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
   $('#reiter').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
@@ -4305,7 +4530,7 @@ function boot() {
     if (zl.open) { closeZl(); return; }
     if (gl.open) { closeGloss(); return; }
     if (state.dlg) { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
-    if (state.libOpen) { state.libOpen = false; state.confirmDel = null; renderLib(); }
+    if (state.libOpen) { if (state.fMenu || state.fDel || state.moveOpen) { state.fMenu = state.fDel = state.moveOpen = null; renderLib(); return; } state.libOpen = false; state.confirmDel = null; state.fNew = false; state.fEdit = null; renderLib(); }
   });
   $('.bar').addEventListener('click', e => {
     const a = e.target.closest('[data-act]'); if (!a) return;

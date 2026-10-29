@@ -32,3 +32,21 @@ create policy "AB: eigene Blätter löschen" on public.ab_arbeitsblaetter for de
 
 revoke all on public.ab_arbeitsblaetter from anon;
 grant select, insert, update, delete on public.ab_arbeitsblaetter to authenticated;
+
+-- Einstellungen je Konto: Ordner, Zuordnung der Blätter, eigene Reihenfolge (Migration „ab_werkstatt_einstellungen“)
+create table if not exists public.ab_einstellungen (
+  user_id     uuid primary key default auth.uid() references auth.users (id) on delete cascade,
+  data        jsonb not null default '{}'::jsonb,
+  updated_at  timestamptz not null default now()
+);
+alter table public.ab_einstellungen enable row level security;
+drop policy if exists "AB: eigene Einstellungen lesen"   on public.ab_einstellungen;
+drop policy if exists "AB: eigene Einstellungen anlegen" on public.ab_einstellungen;
+drop policy if exists "AB: eigene Einstellungen ändern"  on public.ab_einstellungen;
+drop policy if exists "AB: eigene Einstellungen löschen" on public.ab_einstellungen;
+create policy "AB: eigene Einstellungen lesen"   on public.ab_einstellungen for select to authenticated using ((select auth.uid()) = user_id);
+create policy "AB: eigene Einstellungen anlegen" on public.ab_einstellungen for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "AB: eigene Einstellungen ändern"  on public.ab_einstellungen for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "AB: eigene Einstellungen löschen" on public.ab_einstellungen for delete to authenticated using ((select auth.uid()) = user_id);
+revoke all on public.ab_einstellungen from anon;
+grant select, insert, update, delete on public.ab_einstellungen to authenticated;
