@@ -104,6 +104,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .card-b{padding:2px 12px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
 .card.closed .card-b{display:none}
 .card.closed .card-h{border-radius:10px}
+.chev{width:24px;height:24px;margin:-2px -2px -2px -6px;border:0;background:transparent;color:var(--muted);display:grid;place-items:center;border-radius:6px;flex:0 0 auto;cursor:pointer;padding:0}
+.chev:hover{background:var(--tinte-soft);color:var(--ink)}
+.chev svg{width:14px;height:14px;transition:transform .15s}
+.card.closed .chev svg{transform:rotate(-90deg)}
+.fold-bar{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:12.5px;color:var(--faint);margin:-2px 2px -4px}
+.fold-bar .link{font-size:12.5px}
 .memo-flag{font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:7px;padding:6px 9px}
 .f{display:flex;flex-direction:column;gap:4px;min-width:0}
 .f>span,.lbl{font-size:12px;font-weight:700;color:var(--muted)}
@@ -884,7 +890,7 @@ function inlineTokens(str) {
     if (p && !p.gap && !p.sup && p.re === x.rs && RT_FL.every(f => p[f] === fl[f])) { p.t += x.t; p.re = x.re; }
     else out.push({ t: x.t, b: fl.b, i: fl.i, u: fl.u, m: fl.m, rs: x.rs, re: x.re });
   }
-  return out;
+  return quoteToks(out);
 }
 function tokHTML(k) {
   if (k.sup) return '<sup>' + esc(k.t) + '</sup>';
@@ -898,6 +904,36 @@ function tokHTML(k) {
   return h;
 }
 const plainText = s => inlineTokens(s).map(k => k.gap ? '___' : k.t).join('');
+/* Deutsche Anführungszeichen: „…“ am Wortanfang unten, am Wortende oben.
+   Einfache nur, wenn sie paarweise stehen (‚…‘); Apostrophe (geht's) bleiben. Guillemets »…« bleiben. */
+const Q_OPEN_BEFORE = /[\s([{–—\-\/>„‚«»]/;
+function deQuoteStr(str) {
+  const s = String(str ?? ''); if (!/["“”„'‘’‚]/.test(s)) return s;
+  const a = s.split('');
+  const opener = i => i === 0 || Q_OPEN_BEFORE.test(a[i - 1]);
+  const word = c => !!c && /[\p{L}\p{N}]/u.test(c);
+  for (let i = 0; i < a.length; i++) {
+    if (!'"“”„'.includes(a[i])) continue;
+    if (opener(i) && i + 1 < a.length && !/\s/.test(a[i + 1])) a[i] = '„';
+    else if (i > 0 && !/\s/.test(a[i - 1])) a[i] = '“';
+  }
+  for (let i = 0; i < a.length; i++) {
+    if (!"'‘’‚".includes(a[i]) || !opener(i) || !word(a[i + 1])) continue;
+    for (let j = i + 1; j < a.length && a[j] !== '\n'; j++) {
+      if (!"'‘’".includes(a[j]) || word(a[j + 1]) || !a[j - 1] || /\s/.test(a[j - 1])) continue;
+      a[i] = '‚'; a[j] = '‘'; i = j; break;
+    }
+  }
+  return a.join('');
+}
+// In den Textstücken einer Zeile (Formatierung bleibt erhalten, Längen bleiben gleich)
+function quoteToks(toks) {
+  const flat = toks.map(t => t.gap ? 'x' : t.t).join('');
+  if (!/["“”„'‘’‚]/.test(flat)) return toks;
+  const f = deQuoteStr(flat); let p = 0;
+  for (const t of toks) { const n = t.gap ? 1 : t.t.length; if (!t.gap && !t.sup) t.t = f.slice(p, p + n); p += n; }
+  return toks;
+}
 const inlineHTML = s => inlineTokens(s).map(tokHTML).join('');
 // Absätze durch Leerzeile; einfache Umbrüche (z. B. aus PDFs kopiert) werden zu Leerzeichen
 const flowParas = t => String(t || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
@@ -1281,14 +1317,14 @@ function designEditor(m) {
 function headHTML(meta) {
   const d = designOf(meta);
   const fields = (meta.showName ? '<span>Name<i></i></span>' : '') + (meta.showDate ? '<span class="dt">Datum<i></i></span>' : '');
-  const title = esc(meta.title || 'Ohne Titel');
+  const title = esc(deQuoteStr(meta.title || 'Ohne Titel'));
   if (d === 'akte') {
     const org = [meta.school, meta.course].filter(Boolean).map(esc).join(' · ');
     const stamp = meta.stamp == null ? 'VERTRAULICH' : String(meta.stamp).trim();
     const sig = (meta.showName ? '<div class="ak-f ak-line"><span>Bearbeitet von</span><u></u></div>' : '') + (meta.showDate ? '<div class="ak-f ak-line ak-dt"><span>Datum</span><u></u></div>' : '');
     return `<div class="blk blk-head ak" data-bid="meta"><div class="ak-box">
       <div class="ak-band"><span class="ak-tab">Akte</span><span class="ak-org">${org}</span></div>
-      <div class="ak-row">${meta.nr ? `<div class="ak-f ak-az"><span>Aktenzeichen</span><b>AB ${esc(meta.nr)}</b></div>` : ''}<div class="ak-f ak-betr"><span>Betreff</span><b>${title}</b>${meta.topic ? `<i>${esc(meta.topic)}</i>` : ''}</div></div>
+      <div class="ak-row">${meta.nr ? `<div class="ak-f ak-az"><span>Aktenzeichen</span><b>AB ${esc(meta.nr)}</b></div>` : ''}<div class="ak-f ak-betr"><span>Betreff</span><b>${title}</b>${meta.topic ? `<i>${esc(deQuoteStr(meta.topic))}</i>` : ''}</div></div>
       ${sig ? `<div class="ak-row ak-sig">${sig}</div>` : ''}</div>
       ${stamp ? `<div class="ak-stamp">${esc(stamp)}</div>` : ''}</div>`;
   }
@@ -1299,18 +1335,18 @@ function headHTML(meta) {
       <div class="zt-top"><span>${meta.nr ? 'Ausgabe Nr. ' + esc(meta.nr) : '&nbsp;'}</span><span class="hd-fields">${fields}</span></div>
       <div class="zt-rule"></div><div class="zt-mast">${esc(mast || meta.course || 'Kurszeitung')}</div><div class="zt-rule b"></div>
       ${line ? `<div class="zt-line">${line}</div>` : ''}
-      <h1 class="zt-title">${title}</h1>${meta.topic ? `<p class="zt-deck">${esc(meta.topic)}</p>` : ''}</div>`;
+      <h1 class="zt-title">${title}</h1>${meta.topic ? `<p class="zt-deck">${esc(deQuoteStr(meta.topic))}</p>` : ''}</div>`;
   }
   const course = [meta.course, meta.school].filter(Boolean).map(esc).join(' · ');
   if (d === 'tagebuch') {
     return `<div class="blk blk-head tg" data-bid="meta">
       <div class="tg-top"><span class="tg-course">${course || '&nbsp;'}</span><span class="hd-fields">${fields}</span></div>
-      <div class="tg-main${meta.nr ? ' has-nr' : ''}">${meta.nr ? `<span class="tg-nr">Nr. ${esc(meta.nr)}</span>` : ''}<h1>${title}</h1>${meta.topic ? `<p>${esc(meta.topic)}</p>` : ''}</div></div>`;
+      <div class="tg-main${meta.nr ? ' has-nr' : ''}">${meta.nr ? `<span class="tg-nr">Nr. ${esc(meta.nr)}</span>` : ''}<h1>${title}</h1>${meta.topic ? `<p>${esc(deQuoteStr(meta.topic))}</p>` : ''}</div></div>`;
   }
   return `<div class="blk blk-head" data-bid="meta">
     <div class="hd-top"><span class="hd-course">${course || '&nbsp;'}</span><span class="hd-fields">${fields}</span></div>
     <div class="hd-main">${meta.nr ? `<div class="hd-nr"><small>AB</small><b>${esc(meta.nr)}</b></div>` : ''}
-      <div class="hd-titles"><h1>${title}</h1>${meta.topic ? `<p>${esc(meta.topic)}</p>` : ''}</div></div></div>`;
+      <div class="hd-titles"><h1>${title}</h1>${meta.topic ? `<p>${esc(deQuoteStr(meta.topic))}</p>` : ''}</div></div></div>`;
 }
 
 /* ================= Sozialformen ================= */
@@ -1572,7 +1608,7 @@ function layoutKarten() {
   (sh.cards || []).forEach((c, ci) => {
     const col = c.color || TK_COLORS[ci % TK_COLORS.length]; const bSize = kkSizeB(c, kk); const tSize = kkSizeT(c, kk);
     const mk = (inner, term, z = KK_SIZE[term ? tSize : bSize]) => el(`<div class="page kk-page${z.cls}" data-w="${z.w}" data-h="${z.h}" style="--kc:${col}"><div class="kk-frame"><div class="kk-in${term ? ' term' : ''}">${inner}</div></div></div>`);
-    cards.push({ el: mk(`<div class="kk-term">${esc(c.term || 'Begriff')}</div>`, true), term: true, size: tSize, cid: c.id });
+    cards.push({ el: mk(`<div class="kk-term">${esc(deQuoteStr(c.term || 'Begriff'))}</div>`, true), term: true, size: tSize, cid: c.id });
     karteChunks(c, kk).forEach(ch => cards.push({ el: mk(`<ul class="kk-list">${ch.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>`, false), term: false, size: bSize, cid: c.id }));
   });
   cards.forEach(k => {
@@ -1776,7 +1812,7 @@ function placePop(p, r) {
 }
 function zlInsert() {
   const f = fieldTarget(); const txt = zlText(); if (!f) return zlCopy();
-  state.closed.delete(f.bid);
+  state.closed.delete(f.bid); saveClosed();
   const mm = f.k.match(/^items\.(\d+)\.(eh|tips|tag)/); if (mm) state.taskOpen.add(taskKey(f.bid, +mm[1], mm[2]));
   renderEditor();
   const x = $(`#editor [data-bid="${f.bid}"] [data-k="${f.k}"]`); if (!x) return zlCopy();
@@ -1966,6 +2002,9 @@ function normalizeSheet(sh) {
 }
 
 /* ================= Zustand ================= */
+const closedKey = id => 'abw-zu-' + id;
+function loadClosed(id) { try { const a = JSON.parse(localStorage.getItem(closedKey(id)) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); } }
+function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; if (state.closed.size) localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); else localStorage.removeItem(closedKey(id)); } catch {} }
 const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
@@ -2580,7 +2619,7 @@ function metaCard() {
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'meta' ? ' sel' : ''}" data-bid="meta">
-    <div class="card-h" data-act="toggle"><span class="kind">Kopf</span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span></div>
+    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind">Kopf</span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span></div>
     <div class="card-b">${gNote('meta')}
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" data-k="nr" value="${esc(m.nr)}" placeholder="7"></label>${fText('title', isK ? 'Titel (für die Ablage)' : 'Titel', m.title, 'Titel des Arbeitsblatts')}</div>
       ${isK ? '' : fText('topic', 'Thema / Unterzeile', m.topic, 'optional')}
@@ -2609,10 +2648,11 @@ function renderEditor(focusSel) {
   else {
     const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
     const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : '';
-    ed.innerHTML = intro + metaCard() + blocks.map((b, i) => {
+    const fold = `<div class="fold-bar"><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
+    ed.innerHTML = fold + intro + metaCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
       return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"><span class="kind">${TYPES[b.type].label}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
+        <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind">${TYPES[b.type].label}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
           <button class="ib" type="button" data-act="up" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
@@ -2691,7 +2731,8 @@ function onClick(e) {
     case 'toggle': {
       if (e.target.closest('.ib')) return;
       if (state.closed.has(bid)) state.closed.delete(bid); else state.closed.add(bid);
-      state.sel = bid; card.classList.toggle('closed', state.closed.has(bid));
+      state.sel = bid; card.classList.toggle('closed', state.closed.has(bid)); saveClosed();
+      { const ch = card.querySelector('.chev'), zu = state.closed.has(bid); if (ch) { ch.setAttribute('aria-expanded', String(!zu)); ch.title = zu ? 'Aufklappen' : 'Zuklappen'; } }
       document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel')); card.classList.add('sel'); markSel(); return;
     }
     case 'up': case 'down': { const j = act === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); return; }
@@ -2714,6 +2755,8 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
+    case 'fold-all': state.closed = new Set(['meta', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
+    case 'unfold-all': state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
     case 'fmt-toggle': if (state.fmtOpen.has(bid)) state.fmtOpen.delete(bid); else state.fmtOpen.add(bid); renderEditor(); return;
@@ -2905,7 +2948,7 @@ async function doSave(b, snap) {
 function openSheet(sh) {
   closeGloss(); closeZl(); closeMenu();
   if (savePending) saveNow();
-  state.sheet = normalizeSheet(sh); state.sel = null; state.closed = new Set(); state.taskOpen = new Set(); undoSnap = null; state.touched = false;
+  state.sheet = normalizeSheet(sh); state.sel = null; state.closed = loadClosed(state.sheet.id); state.taskOpen = new Set(); undoSnap = null; state.touched = false;
   if (!state.sheet.meta.groupsOn) state.grp = 'all';
   if (state.sheet.klasse !== state.klasse) { state.klasse = state.sheet.klasse; lsSet(LS.klasse, state.klasse); renderTabs(); }
   if (!state.sheet.example) rememberLast(state.sheet);
@@ -3430,8 +3473,8 @@ async function exportDOCX() {
       parts.push(xp(xr([ex.label || 'Klausur', m.course].filter(Boolean).join(' · ') + '   Name ', { sz: 17, color: GREY }) + '<w:r><w:tab/></w:r>', { tabs: `<w:tabs><w:tab w:val="right" w:leader="underscore" w:pos="${CW}"/></w:tabs>`, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="8" w:space="4" w:color="${A}"/></w:pBdr>` }));
     } else {
       parts.push(xp(xr(course, { caps: 1, b: 1, sz: 15, color: GREY, sp: 10 }) + fieldRuns, { tabs, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="${A}"/></w:pBdr>`, after: 0 }));
-      parts.push(xp((m.nr ? xr('AB ' + m.nr + '   ', { b: 1, sz: 24, color: A }) : '') + xr(m.title || 'Ohne Titel', { font: SERIF, b: 1, sz: 33 }), { before: 200, after: m.topic ? 40 : 0, keepNext: true }));
-      if (m.topic) parts.push(xp(xr(m.topic, { sz: 18, color: GREY }), {}));
+      parts.push(xp((m.nr ? xr('AB ' + m.nr + '   ', { b: 1, sz: 24, color: A }) : '') + xr(deQuoteStr(m.title || 'Ohne Titel'), { font: SERIF, b: 1, sz: 33 }), { before: 200, after: m.topic ? 40 : 0, keepNext: true }));
+      if (m.topic) parts.push(xp(xr(deQuoteStr(m.topic), { sz: 18, color: GREY }), {}));
     }
     if (tagW) parts.push(xp(xr(tagW, { b: 1, sz: 18, color: v.lehrer ? 'B3261E' : A }) + (v.grp !== 'all' ? xr('   ' + (v.grp === 'A' ? m.groupA : m.groupB), { sz: 18, color: GREY }) : ''), { before: 120 }));
     secOpen = true;
@@ -3648,6 +3691,33 @@ function boot() {
     lastField.bid = bid; lastField.k = t.dataset.k; lastField.pos = t.selectionStart; lastField.end = t.selectionEnd;
   };
   ['focusin', 'keyup', 'mouseup', 'input', 'focusout'].forEach(ev => ed.addEventListener(ev, trackField));
+  // Anführungszeichen beim Tippen: „ am Wortanfang, “ am Ende; in Link-Feldern und der Suche bleibt das gerade Zeichen
+  const quoteField = t => { const rt = t.closest && t.closest('.rtx'); if (rt) return rt; if ((t.tagName === 'INPUT' && t.type === 'text') || t.tagName === 'TEXTAREA') return t.id === 'lib-q' || (t.dataset && t.dataset.k === 'url') ? null : t; return null; };
+  const textBefore = el => {
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return el.value.slice(0, el.selectionStart);
+    const s = getSelection(); if (!s.rangeCount) return ''; const r = s.getRangeAt(0);
+    let blk = r.startContainer.nodeType === 3 ? r.startContainer.parentNode : r.startContainer;
+    while (blk && blk !== el && !/^(DIV|P|LI)$/.test(blk.nodeName)) blk = blk.parentNode;
+    const pre = document.createRange(); pre.setStart(blk || el, 0); pre.setEnd(r.startContainer, r.startOffset); return pre.toString();
+  };
+  document.addEventListener('beforeinput', e => {
+    if (e.inputType !== 'insertText' || (e.data !== '"' && e.data !== "'")) return;
+    const el = quoteField(e.target); if (!el) return;
+    const before = textBefore(el); const prev = before.slice(-1); let q;
+    if (e.data === '"') q = !prev || Q_OPEN_BEFORE.test(prev) ? '„' : '“';
+    else if (!prev || Q_OPEN_BEFORE.test(prev)) q = '‚';
+    else if (/‚[^‘]*$/.test(before.split('\n').pop())) q = '‘';
+    else return; // Apostroph bleibt, wie getippt
+    e.preventDefault();
+    document.execCommand('insertText', false, q);
+  }, true);
+  document.addEventListener('paste', e => {
+    const t = e.target; if (t.closest && t.closest('.rtx')) return; // eigene Behandlung im Editor
+    const el = quoteField(t); if (!el) return;
+    const raw = e.clipboardData && e.clipboardData.getData('text/plain'); if (!raw || !/["“”„'‘’‚]/.test(raw)) return;
+    const fixed = deQuoteStr(t.tagName === 'INPUT' ? raw.replace(/\s*\n\s*/g, ' ') : raw); if (fixed === raw) return;
+    e.preventDefault(); document.execCommand('insertText', false, fixed);
+  }, true);
   // Formatierungsleiste
   const rtb = $('#rt-bar');
   rtb.addEventListener('mousedown', e => e.preventDefault());
@@ -3668,7 +3738,7 @@ function boot() {
       const card = rt.closest('[data-bid]'); const blk = card && target(card.dataset.bid); let note = '';
       if (blk && blk.type === 'material' && rt.dataset.k === 'text') { const r = cleanPdf(raw); if (r.hy || r.ln) { raw = r.t; note = [r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} Zeilennummern` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt'; } }
       if (rt.dataset.rt === 'line') raw = raw.replace(/\s*\n\s*/g, ' ');
-      document.execCommand('insertText', false, raw);
+      document.execCommand('insertText', false, deQuoteStr(raw));
       if (note) toast(note);
       return;
     }
@@ -3749,7 +3819,7 @@ function boot() {
     const w = e.target.closest('.mat-body .w'); const wb = w && w.closest('.blk-mat');
     if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;
-    const bid = n.dataset.bid; state.sel = bid; state.closed.delete(bid);
+    const bid = n.dataset.bid; state.sel = bid; state.closed.delete(bid); saveClosed();
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
     renderEditor(); markSel();
     const c = $(`#editor [data-bid="${bid}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
