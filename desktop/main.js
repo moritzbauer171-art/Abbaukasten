@@ -116,9 +116,10 @@ function menu() {
   const tpl = [
     { label: 'Datei', submenu: [
       { label: 'Meine Blätter', accelerator: 'CmdOrCtrl+O', click: click('#btn-lib') },
+      { label: 'Speichern unter …', accelerator: 'CmdOrCtrl+Shift+S', click: click('#btn-saveas') },
       { type: 'separator' },
       { label: 'Als PDF speichern …', accelerator: 'CmdOrCtrl+S', click: click('#btn-pdf') },
-      { label: 'Als Word-Datei speichern …', accelerator: 'CmdOrCtrl+Shift+S', click: click('#btn-docx') },
+      { label: 'Als Word-Datei speichern …', click: click('#btn-docx') },
       { label: 'Drucken …', accelerator: 'CmdOrCtrl+P', click: click('#btn-print') },
       ...(isWin ? [{ type: 'separator' }, { label: 'Verknüpfungen anlegen', click: () => { const n = makeShortcuts(); dialog.showMessageBox(win, { type: 'info', title: APP_NAME, message: n ? 'Verknüpfungen auf dem Desktop und im Startmenü angelegt.' : 'Die Verknüpfungen konnten nicht angelegt werden.' }); } }] : []),
       { type: 'separator' },

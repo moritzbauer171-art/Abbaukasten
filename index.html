@@ -400,6 +400,13 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .dlg .err{color:#C2410C;font-size:13px;font-weight:700}
 .dlg .err:empty{display:none}
 .dlg .ok{background:var(--tinte-soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.dlg .sa-keep{align-items:flex-start;font-size:13.5px;line-height:1.35}
+.dlg .sa-keep input{margin-top:1px;flex:0 0 auto}
+.dlg .sa-hint{font-size:12px;color:var(--muted);margin:-6px 0 0 25px}
+.dlg .sa-file{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding-top:12px;margin-top:2px}
+.dlg .sa-file>div{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.dlg .sa-file b{font-size:13px}
+.dlg .sa-file span{font-size:12px;color:var(--muted);line-height:1.35}
 .dlg .links{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap}
 .btn[disabled]{opacity:.55;cursor:default}
 
@@ -769,6 +776,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn" type="button" id="btn-lib" data-act="lib-open">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span class="l-long">Meine Blätter</span><span class="l-short">Blätter</span></button>
+      <button class="btn" type="button" id="btn-saveas" data-act="saveas" title="Speichern unter (Strg+Umschalt+S)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 2.5h8.3l2.7 2.7v8.3h-11z"/><path d="M5.2 2.5v3.2h4.6V2.5"/><path d="M5 13.5V9.6h6v3.9"/></svg><span class="l-long">Speichern unter</span><span class="l-short">Speichern</span></button>
       <button class="btn" type="button" id="btn-docx" data-act="docx">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.8h5.5l3 3v9.4H4z"/><path d="M9.5 1.8v3h3"/><path d="M5.8 8l.9 3.6L8 8.6l1.3 3L10.2 8"/></svg>Word</button>
       <button class="btn primary" type="button" id="btn-pdf" data-act="pdf">
@@ -2116,7 +2125,7 @@ function normalizeSheet(sh) {
 const closedKey = id => 'abw-zu-' + id;
 function loadClosed(id) { try { const a = JSON.parse(localStorage.getItem(closedKey(id)) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); } }
 function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; if (state.closed.size) localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); else localStorage.removeItem(closedKey(id)); } catch {} }
-const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null };
+const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
@@ -3316,6 +3325,7 @@ function openSheet(sh) {
   closeGloss(); closeZl(); closeMenu();
   if (savePending) saveNow();
   state.sheet = normalizeSheet(sh); state.sel = null; state.closed = loadClosed(state.sheet.id); state.taskOpen = new Set(); undoSnap = null; state.touched = false;
+  state.openSnap = state.sheet.example ? null : clone(state.sheet);
   if (!state.sheet.meta.groupsOn) state.grp = 'all';
   if (state.sheet.klasse !== state.klasse) { state.klasse = state.sheet.klasse; lsSet(LS.klasse, state.klasse); renderTabs(); }
   if (!state.sheet.example) rememberLast(state.sheet);
@@ -3475,6 +3485,10 @@ async function importBackup(file) {
   overlay('');
   try { await refreshLib(); } catch {}
   const extra = [same ? `${same} schon aktuell` : '', bad ? `${bad} nicht lesbar` : ''].filter(Boolean).join(', ');
+  if (list.length === 1 && (n || same) && list[0] && list[0].id) {
+    state.libOpen = false; state.confirmDel = null; renderLib();
+    if (await openById(list[0].id)) { toast(`„${state.sheet.meta.title || 'Ohne Titel'}“ geöffnet${same ? ' · war schon aktuell' : ''}`); return; }
+  }
   toast(`${n} ${n === 1 ? 'Blatt' : 'Blätter'} übernommen${extra ? ' · ' + extra : ''}`);
 }
 
@@ -3506,7 +3520,7 @@ function renderLib() {
           ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
           : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-dup">Duplizieren</button><button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
       </div>`).join('') : `<div class="empty">${q ? 'Keine Treffer.' : `Noch keine Blätter unter ${esc(k.label)}. Sobald Sie ein Blatt bearbeiten, erscheint es hier.`}</div>`}</div>
-    <div class="drawer-foot"><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung laden</button></div></aside>`;
+    <div class="drawer-foot"><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
 }
 async function onLibClick(e) {
@@ -3515,7 +3529,7 @@ async function onLibClick(e) {
   const closeLib = () => { state.libOpen = false; state.confirmDel = null; renderLib(); };
   switch (a.dataset.act) {
     case 'lib-close': closeLib(); break;
-    case 'lib-new': closeLib(); openSheet(blankSheet(nextNr(state.klasse), state.klasse)); saveNow(); setView('edit'); break;
+    case 'lib-new': closeLib(); openSheet(blankSheet(nextNr(state.klasse), state.klasse)); state.openSnap = null; saveNow(); setView('edit'); break;
     case 'lib-example': closeLib(); openSheet(exampleSheet()); break;
     case 'lib-open-sheet': if (id) { closeLib(); await openById(id); } break;
     case 'lib-dup':
@@ -3552,11 +3566,83 @@ function authMsg(err) {
 }
 function openDlg(mode) { if (!store.sb) return; state.dlg = { mode, email: (state.dlg && state.dlg.email) || '' }; renderDlg(); }
 function closeDlg() { state.dlg = null; renderDlg(); }
+/* ---------- Speichern unter ---------- */
+const sheetSig = sh => JSON.stringify({ ...sh, updatedAt: 0 });
+function openSaveAs() { closeGloss(); closeZl(); closeMenu(); state.dlg = { mode: 'saveas' }; renderDlg(); }
+function saveAsHTML() {
+  const sh = state.sheet, m = sh.meta; const isK = m.mode === 'klausur';
+  const fresh = !state.openSnap; const dirty = !fresh && sheetSig(sh) !== sheetSig(state.openSnap);
+  const was = (m.nr ? (isK ? 'Nr. ' : 'AB ') + m.nr + ' · ' : '') + (m.title || 'Ohne Titel');
+  const title = m.title && !(fresh && m.title === 'Neues Arbeitsblatt') ? m.title : '';
+  return `<h2 id="dlg-t">Speichern unter</h2>
+    <p>${fresh ? 'Das Blatt wird unter diesem Namen in „Meine Blätter“ gespeichert.' : 'Es entsteht ein neues Blatt mit dem jetzigen Stand. Danach arbeiten Sie im neuen Blatt weiter.'}</p>
+    <form id="dlg-form" data-mode="saveas" novalidate>
+      <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" id="sa-nr" value="${esc(m.nr || '')}" placeholder="7"></label>
+        <label class="f" style="flex:1"><span>Titel</span><input type="text" id="sa-title" value="${esc(title)}" placeholder="Titel des Arbeitsblatts"></label></div>
+      <label class="f"><span>Reiter</span><select id="sa-kl">${KLASSEN.map(k => `<option value="${k.id}"${k.id === sh.klasse ? ' selected' : ''}>${esc(k.label)}</option>`).join('')}</select></label>
+      ${dirty ? `<label class="chk sa-keep"><input type="checkbox" id="sa-keep" checked><span>Das bisherige Blatt „${esc(was)}“ so lassen, wie es beim Öffnen war</span></label>
+        <small class="sa-hint">Ihre Änderungen seit dem Öffnen stehen dann nur im neuen Blatt. Ohne Haken behält auch das bisherige Blatt die Änderungen.</small>` : ''}
+      <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
+      <div class="row"><button class="btn primary" type="submit">Speichern</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>
+      <div class="sa-file"><div><b>Als Datei</b><span>Zum Ablegen in einem Ordner oder Weitergeben. Öffnen über „Meine Blätter“ → „Sicherung oder Datei laden“.</span></div>
+        <button class="btn" type="button" data-act="sa-file">Als Datei speichern …</button></div>
+    </form>`;
+}
+function saveAsFields() {
+  const title = dlgVal('#sa-title'), nr = dlgVal('#sa-nr'), kl = KL(($('#sa-kl') || {}).value || state.sheet.klasse).id;
+  const keep = !!($('#sa-keep') && $('#sa-keep').checked);
+  return { title, nr, kl, keep };
+}
+// Titel, Nummer und Reiter übernehmen; Kurs, Farbe und Schule wechseln mit, solange sie der Voreinstellung entsprechen
+function applySaveAs(sh, f) {
+  const old = KL(sh.klasse), nw = KL(f.kl);
+  if (old.id !== nw.id) {
+    if (sh.meta.course === old.course) sh.meta.course = nw.course;
+    if (sh.meta.accent === old.accent) sh.meta.accent = nw.accent;
+    if (sh.meta.school === old.school) sh.meta.school = nw.school;
+    sh.klasse = nw.id;
+  }
+  sh.meta.title = f.title; sh.meta.nr = f.nr; sh.example = false;
+}
+async function doSaveAs() {
+  const f = saveAsFields();
+  if (!f.title) { dlgMsg('Bitte einen Titel eingeben.'); const t = $('#sa-title'); if (t) t.focus(); return; }
+  const cur = state.sheet; const from = KL(cur.klasse); const nw = KL(f.kl);
+  const where = from.id !== nw.id ? ` unter ${nw.label}` : '';
+  closeDlg();
+  if (!state.openSnap) {
+    // Neues, noch unbenanntes Blatt: einfach benennen
+    applySaveAs(cur, f);
+    if (state.klasse !== cur.klasse) { state.klasse = cur.klasse; lsSet(LS.klasse, cur.klasse); }
+    changed(true); renderTabs(); await saveNow(); state.openSnap = clone(state.sheet);
+    toast(`Gespeichert als „${f.title}“${where}`); return;
+  }
+  const dirty = sheetSig(cur) !== sheetSig(state.openSnap);
+  const c = clone(cur); c.id = 'ab-' + uid(); applySaveAs(c, f);
+  let note = '';
+  if (dirty && f.keep) {
+    // Bisheriges Blatt auf den Stand beim Öffnen zurücksetzen
+    clearTimeout(saveTimer); savePending = false;
+    const back = clone(state.openSnap); back.updatedAt = Date.now(); const b = backend;
+    if (b) saveChain = saveChain.then(() => doSave(b, back)).catch(() => {});
+    note = ' · das bisherige Blatt ist unverändert';
+  } else if (savePending) saveNow();
+  openSheet(c); saveNow();
+  toast(`Gespeichert als „${f.title}“${where}${note}`);
+}
+async function saveAsFile() {
+  const f = saveAsFields(); const sh = clone(state.sheet);
+  if (f.title) sh.meta.title = f.title; sh.meta.nr = f.nr; sh.example = false; sh.updatedAt = Date.now();
+  const name = ((sh.meta.nr ? 'AB' + slug(sh.meta.nr) + '_' : '') + slug(sh.meta.title || 'Arbeitsblatt')) + '.json';
+  const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: new Date().toISOString(), sheets: [sh] });
+  closeDlg();
+  await deliver(name, new Blob([data], { type: 'application/json' }));
+}
 function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'newpw'
+  const body = d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -3570,6 +3656,7 @@ function renderDlg() {
         <div class="links"><button class="link" type="button" data-act="dlg-reset">Passwort vergessen?</button><button class="link" type="button" data-act="dlg-close">Ohne Anmeldung weiter</button></div>
       </form>`;
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`;
+  if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
   const f = r.querySelector(d.mode === 'login' && !d.email ? '#dlg-email' : '#dlg-pw'); if (f) f.focus();
 }
 function dlgMsg(err, info) {
@@ -3582,6 +3669,7 @@ async function authCall(fn) { dlgBusy(true); try { return await fn(); } catch (e
 async function onDlgSubmit(e) {
   e.preventDefault();
   const mode = e.target.dataset.mode; const pw = ($('#dlg-pw') || {}).value || '';
+  if (mode === 'saveas') { doSaveAs(); return; }
   if (mode === 'newpw') {
     if (pw.length < 6) return dlgMsg('Das Passwort braucht mindestens 6 Zeichen.');
     const { error } = await authCall(() => store.sb.auth.updateUser({ password: pw }));
@@ -3599,6 +3687,7 @@ async function onDlgClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || !state.dlg) return;
   const act = a.dataset.act;
   if (act === 'dlg-close') { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
+  if (act === 'sa-file') { saveAsFile(); return; }
   const email = dlgVal('#dlg-email'); const pw = ($('#dlg-pw') || {}).value || '';
   if (act === 'dlg-signup') {
     if (!email || pw.length < 6) return dlgMsg('Bitte E-Mail und ein Passwort mit mindestens 6 Zeichen eingeben.');
@@ -4158,6 +4247,7 @@ function boot() {
     toast([r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} Zeilennummern` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt');
   });
   document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && (e.key === 's' || e.key === 'S')) { e.preventDefault(); if (!state.dlg) openSaveAs(); return; }
     if (e.key !== 'Escape') return;
     if (menu.open) { closeMenu(); return; }
     if (zl.open) { closeZl(); return; }
@@ -4174,6 +4264,7 @@ function boot() {
       const q = $('#lib-q'); if (q && !window.matchMedia('(max-width: 899px)').matches) q.focus();
     }
     if (act === 'login') openDlg('login');
+    if (act === 'saveas') openSaveAs();
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
     if (act === 'print') doPrint();

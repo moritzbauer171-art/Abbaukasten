@@ -41,7 +41,8 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Operator-Check:** erkennt Operatoren in Sie- und du-Form und zeigt den Anforderungsbereich an. Grundlage ist der IQB-Grundstock Deutsch.
 - **Operatoren fett:** Erkannte Operatoren stehen auf dem Blatt und in der Word-Datei automatisch fett, bei trennbaren Verben beide Teile (z. B. „**Fassen** Sie … **zusammen**“, „**Nehmen** Sie **Stellung**“). Der eingetippte Text bleibt unverändert. Abschalten lässt sich das unter „Weitere Einstellungen“.
 - **Ausgabe:** PDF zum Drucken, Word-Datei (.docx) zum Weiterbearbeiten oder direkt drucken.
-- **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung laden“ spielt sie wieder ein, auch in einem anderen Browser.
+- **Speichern unter:** Knopf oben (oder Strg+Umschalt+S). Speichert den jetzigen Stand als neues Blatt mit eigenem Titel, eigener Nummer und wahlweise in einem anderen Reiter; danach geht es im neuen Blatt weiter. Wurde das bisherige Blatt seit dem Öffnen verändert, bleibt es auf Wunsch so, wie es beim Öffnen war. Ein neues, noch unbenanntes Blatt wird einfach benannt. „Als Datei speichern …“ legt das einzelne Blatt als .json-Datei ab (in der Windows-App mit Ordnerauswahl).
+- **Sicherung:** „Meine Blätter“ → „Alle Blätter sichern (.json)“ lädt alle Blätter als Datei herunter, „Sicherung oder Datei laden“ spielt sie wieder ein, auch in einem anderen Browser. Eine Datei mit einem einzelnen Blatt wird nach dem Laden gleich geöffnet.
 
 ## Windows-App
 
@@ -59,7 +60,7 @@ Unterschiede zur Webseite:
 - **Speichern** fragt immer nach dem Ort (Standard: Dokumente). Danach lässt sich die Datei direkt öffnen oder der Ordner anzeigen.
 - **Drucken** öffnet den Windows-Druckdialog mit der richtigen Ausrichtung. Bei gemischten Hoch- und Querseiten öffnet sich stattdessen das PDF zum Drucken.
 - **Rechtschreibprüfung** auf Deutsch mit Vorschlägen per Rechtsklick.
-- Die Blätter liegen in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung laden“.
+- Die Blätter liegen in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung oder Datei laden“.
 - Neue Versionen aktualisieren sich nicht von selbst. Die neue ZIP-Datei über den alten Ordner entpacken; die Blätter bleiben erhalten. Die Versionsnummer steht unter Hilfe → Über AB-Werkstatt.
 
 Die ZIP-Datei baut GitHub nach jeder Änderung an `index.html` oder `desktop/` selbst neu (Reiter „Actions“, Ablauf „Windows-App“). Von Hand bauen: im Ordner `desktop/` `python3 build_desktop.py` ausführen (braucht Python 3 mit Pillow, git und unzip; der Rest wird automatisch geladen).
