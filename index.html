@@ -262,6 +262,37 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .tx-pts input{width:96px;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:3px 7px;font-size:12.5px}
 .tx-f{gap:6px}
 .tx-f textarea{min-height:58px}
+/* ---------- Textfelder mit sichtbarer Formatierung ---------- */
+.rtx{position:relative;width:100%;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:7px 9px;font-size:14px;line-height:1.45;min-height:calc(var(--rows,3) * 1.45em + 16px);max-height:60vh;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;min-width:0}
+.rtx:focus{outline:none;border-color:var(--tinte);box-shadow:0 0 0 3px var(--tinte-soft)}
+.rtx.serif{font-family:var(--f-text)}
+.rtx.is-empty::before{content:attr(data-ph);position:absolute;left:10px;top:7px;color:var(--faint);pointer-events:none}
+.rtx div,.rtx p{margin:0}
+.rtx ul,.rtx ol{margin:.1em 0;padding-left:1.5em}
+.rtx li{margin:.1em 0}
+.rtx li::marker{color:var(--tinte)}
+.rtx sup{font-size:.7em}
+.rtx .mk,.rtx [style*="background-color"]:not([style*="transparent"]):not([style*="rgba(0, 0, 0, 0)"]){background-color:var(--ed-mark,#FFE680)!important;color:#1A1E29;border-radius:2px}
+.rtx [style*="background-color: transparent"],.rtx [style*="rgba(0, 0, 0, 0)"]{background-color:var(--field)!important}
+.rtx img.gap{display:inline-block;width:64px;height:1.05em;border-bottom:1.5px solid currentColor;vertical-align:-.2em;margin:0 3px;opacity:.8}
+.rtx-line{min-height:0;max-height:none;white-space:normal}
+.task-ed .rtx{min-height:58px}
+.tx-f .rtx{min-height:58px}
+.tx-f .rtx-line{min-height:0}
+.tbl-ed .rtx{border:0;border-radius:0;background:transparent;padding:6px 8px;font-size:13px;min-height:31px}
+.tbl-ed .rtx:focus{box-shadow:inset 0 0 0 2px var(--tinte)}
+.tbl-ed tr:first-child .rtx{font-weight:700}
+.tbl-ed .rtx.is-empty::before{left:8px;top:6px}
+/* Leiste beim Markieren */
+.rt-bar{position:fixed;z-index:60;display:flex;align-items:center;gap:1px;padding:4px;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow)}
+.rt-bar[hidden]{display:none}
+.rt-bar button{min-width:31px;height:31px;border:0;background:transparent;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:var(--ink);cursor:pointer;font-size:15px;padding:0 7px;line-height:1}
+.rt-bar button:hover{background:var(--tinte-soft)}
+.rt-bar button[aria-pressed="true"]{background:var(--tinte);color:var(--tinte-ink)}
+.rt-bar button span{font-size:12px;font-weight:700}
+.rt-bar .sep{width:1px;height:20px;background:var(--line);margin:0 4px}
+.rt-bar svg{width:18px;height:18px;flex:0 0 auto}
+.rt-bar[data-mode="inline"] [data-full],.rt-bar[data-mode="line"] [data-full]{display:none}
 
 /* ---------- Hinweise ---------- */
 .gnote{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:7px 10px}
@@ -635,6 +666,30 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .bogen>.cut{left:50%;top:9mm;margin-left:-3.25mm;padding:1.2mm 0;transform:rotate(90deg)}
 #fit-host{position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;z-index:-1}
 
+/* Auszeichnung im Text */
+.page mark{background:var(--acc-mark,#FFF0A8);color:inherit;border-radius:.4mm;padding:0 .06em}
+.page u{text-decoration-thickness:.2mm;text-underline-offset:.55mm}
+.page .gap{display:inline-block;width:30mm;height:1em;border-bottom:.25mm solid var(--paper-ink);vertical-align:-.28em;margin:0 .8mm}
+.page p:has(>.gap),.page li:has(>.gap),.task-body:has(>.gap){line-height:2.05}
+.mat-body mark{padding:0 .14em;margin:0 -.14em;border-radius:0}
+.mat-body u{text-decoration:none;border-bottom:.2mm solid currentColor;padding:0 .14em;margin:0 -.14em}
+.page .rl{margin:1.2mm 0 0;padding-left:5.5mm}
+.page .rl:first-child{margin-top:0}
+.page .rl li{margin:.6mm 0 0;padding-left:.8mm}
+.page ul.rl{list-style:disc}
+.page ol.rl{list-style:decimal}
+.page ul.rl li::marker{color:var(--acc)}
+.page ol.rl li::marker{color:var(--acc);font-weight:700}
+.task-body p{margin:0}.task-body p+p{margin-top:1.2mm}
+.page .rl+p{margin-top:1.4mm}
+/* Stile für Absatz und Infokasten (nach den Designs, damit sie gelten) */
+.blk-text.st-einzug{padding-left:8mm}
+.blk-text.st-merksatz{border:.45mm solid var(--acc);border-radius:1.4mm;padding:2.6mm 4mm 2.8mm}
+.blk-text.st-klein{font-size:9pt;color:var(--paper-muted);line-height:1.4}
+.blk-info.st-rahmen{background:transparent;border:.4mm solid var(--acc);border-radius:1.2mm;padding:3mm 4mm 3.2mm;box-shadow:none}
+.blk-info.st-linie{background:transparent;border:0;border-left:1.2mm solid var(--acc);border-radius:0;padding:1mm 0 1mm 4mm;box-shadow:none}
+.blk-info.st-klein .info-text{font-size:8.8pt}
+
 /* Mess- und Druckbühne */
 #measure-host{position:fixed;left:0;top:0;width:0;height:0;overflow:visible;visibility:hidden;pointer-events:none;z-index:-1}
 #measure-host .page{height:auto;position:absolute;left:0;top:0}
@@ -691,6 +746,18 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 <div id="zl-root"></div>
 <div id="menu-root"></div>
 <input type="file" id="import-file" accept=".json,application/json" hidden>
+<div id="rt-bar" class="rt-bar" role="toolbar" aria-label="Formatierung" hidden>
+  <button type="button" data-rt="b" title="Fett (Strg+B)"><b style="font-size:15px">B</b></button>
+  <button type="button" data-rt="i" title="Kursiv (Strg+I)"><i style="font-family:Georgia,serif;font-size:16px">I</i></button>
+  <button type="button" data-rt="u" title="Unterstrichen (Strg+U)"><u style="font-size:15px">U</u></button>
+  <button type="button" data-rt="m" title="Textmarker (Strg+Umschalt+H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14" stroke-width="3.2" opacity=".45"/><path d="M8.5 15.5 15.8 5.2l3 2.2-7.2 10.3H8.5z"/><path d="m8.5 15.5-1.2 2.3"/></svg></button>
+  <span class="sep" data-full></span>
+  <button type="button" data-rt="ul" data-full title="Aufzählung (oder „- “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.2" fill="currentColor" stroke="none"/><path d="M9.5 7H20M9.5 12H20M9.5 17H20"/></svg></button>
+  <button type="button" data-rt="ol" data-full title="Nummerierung (oder „1. “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5 5.5 4.5V9.5M4 9.5h3M4 14.8c.3-.9 2.8-1.1 2.8.4 0 1.2-2.8 2.1-2.8 3.3h3"/><path d="M10.5 7H20M10.5 12H20M10.5 17H20"/></svg></button>
+  <button type="button" data-rt="gap" data-full title="Lücke zum Ausfüllen (ersetzt das Markierte; oder ___ tippen)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17.5h18"/><path d="M3 14.5v3M21 14.5v3"/><path d="M8 11.5 10 6l2 5.5M8.7 9.8h2.6" stroke-width="1.5"/></svg><span>Lücke</span></button>
+  <span class="sep"></span>
+  <button type="button" data-rt="x" title="Formatierung entfernen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h11M11.5 5 9 19"/><path d="m15 14 5 5M20 14l-5 5"/></svg></button>
+</div>
 <div id="toast-root"></div>
 
 <script>
@@ -783,30 +850,77 @@ const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch {
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } };
 
 /* ---------- Inline-Auszeichnung: **fett**, *kursiv*, ^1 hochgestellt ---------- */
+/* Text mit leichter Auszeichnung. Gespeichert wird weiterhin als Text:
+   **fett**  *kursiv*  ++unterstrichen++  ==Marker==  ___ (Lücke)  ^1 (Hochzahl)
+   Zeilen mit „- “ oder „1. “ sind Listenpunkte. Ein \ vor einem Sonderzeichen macht es zu normalem Text.
+   Die Textfelder zeigen das formatiert an; die Zeichen sieht man beim Schreiben nicht. */
+const RT_ESC = '\\*+=_^-.)•';
+const RT_MK = { b: '**', i: '*', u: '++', m: '==' };
+const RT_FL = ['b', 'i', 'u', 'm'];
+const LIST_LINE = /^(?:([-•])|(\d{1,2})[.)])\s+(.*)$/;
 function inlineTokens(str) {
-  const out = []; const re = /\*\*([^*]+)\*\*|\*([^*]+)\*|\^([0-9]+|\*)/g;
-  let last = 0, m; str = String(str || '');
-  while ((m = re.exec(str))) {
-    if (m.index > last) out.push({ t: str.slice(last, m.index) });
-    if (m[1] != null) out.push({ t: m[1], b: 1 });
-    else if (m[2] != null) out.push({ t: m[2], i: 1 });
-    else out.push({ t: m[3], sup: 1 });
-    last = re.lastIndex;
+  str = String(str ?? '');
+  const lex = []; let buf = '', bs = 0, i = 0;
+  const flush = () => { if (buf) lex.push({ k: 't', t: buf, rs: bs, re: i }); buf = ''; };
+  const add = (ch, from) => { if (!buf) bs = from; buf += ch; };
+  while (i < str.length) {
+    const c = str[i], n = str[i + 1];
+    if (c === '\\' && n && RT_ESC.includes(n)) { add(n, i); i += 2; continue; }
+    if (c === '_' && n === '_' && str[i + 2] === '_') { flush(); let j = i; while (str[j] === '_') j++; lex.push({ k: 'gap', rs: i, re: j }); i = j; continue; }
+    if (c === '^' && n && /[0-9*]/.test(n)) { flush(); const t = str.slice(i + 1).match(/^(\d+|\*)/)[1]; lex.push({ k: 'sup', t, rs: i, re: i + 1 + t.length }); i += 1 + t.length; continue; }
+    const f = c === '*' ? (n === '*' ? 'b' : 'i') : c === '+' && n === '+' ? 'u' : c === '=' && n === '=' ? 'm' : null;
+    if (f) { flush(); const len = RT_MK[f].length; lex.push({ k: 'mk', f, t: str.slice(i, i + len), rs: i, re: i + len }); i += len; continue; }
+    add(c, i); i++;
   }
-  if (last < str.length) out.push({ t: str.slice(last) });
+  flush();
+  // Je Art paarweise; ein übriges Zeichen bleibt normaler Text
+  for (const f of RT_FL) { const ms = lex.filter(x => x.k === 'mk' && x.f === f); if (ms.length % 2) ms[ms.length - 1].k = 't'; }
+  const out = []; const fl = { b: 0, i: 0, u: 0, m: 0 };
+  for (const x of lex) {
+    if (x.k === 'mk') { fl[x.f] ^= 1; continue; }
+    if (x.k === 'gap') { out.push({ t: '', gap: 1, rs: x.rs, re: x.re }); continue; }
+    if (x.k === 'sup') { out.push({ t: x.t, sup: 1, rs: x.rs, re: x.re }); continue; }
+    const p = out[out.length - 1];
+    if (p && !p.gap && !p.sup && p.re === x.rs && RT_FL.every(f => p[f] === fl[f])) { p.t += x.t; p.re = x.re; }
+    else out.push({ t: x.t, b: fl.b, i: fl.i, u: fl.u, m: fl.m, rs: x.rs, re: x.re });
+  }
   return out;
 }
-function tokHTML(k) { let h = esc(k.t); if (k.sup) return '<sup>' + h + '</sup>'; if (k.b) h = '<b>' + h + '</b>'; if (k.i) h = '<i>' + h + '</i>'; return h; }
+function tokHTML(k) {
+  if (k.sup) return '<sup>' + esc(k.t) + '</sup>';
+  if (k.gap) return '<span class="gap"></span>';
+  let h = esc(k.t);
+  const ws = !String(k.t).trim(); // reine Leerzeichen nicht hinterlegen oder unterstreichen
+  if (k.m && !ws) h = '<mark>' + h + '</mark>';
+  if (k.u && !ws) h = '<u>' + h + '</u>';
+  if (k.i) h = '<i>' + h + '</i>';
+  if (k.b) h = '<b>' + h + '</b>';
+  return h;
+}
+const plainText = s => inlineTokens(s).map(k => k.gap ? '___' : k.t).join('');
 const inlineHTML = s => inlineTokens(s).map(tokHTML).join('');
 // Absätze durch Leerzeile; einfache Umbrüche (z. B. aus PDFs kopiert) werden zu Leerzeichen
 const flowParas = t => String(t || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
 // Absätze durch Leerzeile; einfache Umbrüche bleiben Zeilenumbrüche
 const lineParas = t => String(t || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
-const parasHTML = t => lineParas(t).map(p => '<p>' + p.split('\n').map(inlineHTML).join('<br>') + '</p>').join('');
+// Absätze, darin Zeilen; Zeilen mit „- “ / „1. “ werden Listen
+const parasHTML = t => lineParas(t).map(p => {
+  let h = '', buf = [], list = null;
+  const flushP = () => { if (buf.length) h += '<p>' + buf.map(inlineHTML).join('<br>') + '</p>'; buf = []; };
+  const flushL = () => { if (list) h += `<${list.tag} class="rl">${list.items.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</${list.tag}>`; list = null; };
+  p.split('\n').forEach(l => {
+    const m = l.match(LIST_LINE);
+    if (!m) { flushL(); buf.push(l); return; }
+    const tag = m[1] ? 'ul' : 'ol'; flushP();
+    if (!list || list.tag !== tag) { flushL(); list = { tag, items: [] }; }
+    list.items.push(m[3]);
+  });
+  flushP(); flushL(); return h;
+}).join('');
 function toWords(text) {
   const words = []; let cur = '';
   for (const k of inlineTokens(text)) {
-    if (k.sup) { cur += tokHTML(k); continue; }
+    if (k.sup || k.gap) { cur += tokHTML(k); continue; }
     for (const p of k.t.split(/(\s+)/)) {
       if (!p) continue;
       if (/^\s+$/.test(p)) { if (cur) { words.push(cur); cur = ''; } }
@@ -827,7 +941,7 @@ function parseNotes(t) {
 const DU_LEAD = new Set(['und', 'oder', 'dann', 'danach', 'anschließend', 'abschließend', 'zunächst', 'außerdem', 'schließlich', 'nun', 'bitte']);
 function detectOps(text) {
   const found = [];
-  const sentences = String(text || '').split(/(?<=[.!?;:])\s+/);
+  const sentences = plainText(text).split(/(?<=[.!?;:])\s+/);
   for (const s of sentences) {
     const w = s.toLowerCase().replace(/[.,;:!?()„“”"«»‚‘’…–—]/g, ' ').split(/\s+/).filter(Boolean);
     for (let i = 0; i < w.length; i++) {
@@ -871,10 +985,10 @@ function opBold(text) {
   }
   if (!mark.size) return src;
   // Schon formatierte Stellen (**fett**, *kursiv*) bleiben unberührt
-  const fmt = [...src.matchAll(/\*\*[^*]+\*\*|\*[^*]+\*/g)].map(m => [m.index, m.index + m[0].length]);
+  const fmt = inlineTokens(src).filter(t => t.b).map(t => [t.rs, t.re]);
   const runs = [];
   toks.forEach(t => {
-    if (!mark.has(t) || fmt.some(([a, b]) => t.s >= a && t.e <= b)) return;
+    if (!mark.has(t) || fmt.some(([a, b]) => t.s < b && t.e > a)) return;
     const last = runs[runs.length - 1];
     if (last && /^\s+$/.test(src.slice(last.e, t.s))) last.e = t.e; else runs.push({ s: t.s, e: t.e });
   });
@@ -949,7 +1063,7 @@ function toWordsM(text) {
   const words = []; let h = '', t = '', gl = false;
   const push = () => { if (h) words.push({ h, t, gl }); h = ''; t = ''; gl = false; };
   for (const k of inlineTokens(text)) {
-    if (k.sup) { h += tokHTML(k); continue; }
+    if (k.sup || k.gap) { h += tokHTML(k); continue; }
     for (const p of k.t.split(/(\s+)/)) {
       if (!p) continue;
       if (/^\s+$/.test(p)) { push(); continue; }
@@ -1011,8 +1125,13 @@ function termFromRaw(raw, s, e) {
   return { term, n };
 }
 function glossFromTextarea(card, b, anchor) {
-  const ta = card.querySelector('textarea[data-k="text"]'); const rect = rectOf(anchor);
-  if (ta && ta.selectionEnd > ta.selectionStart) { const r = termFromRaw(ta.value, ta.selectionStart, ta.selectionEnd); if (r) return openGlossFor(b, r.term, r.n, rect); }
+  const ta = card.querySelector('[data-k="text"]'); const rect = rectOf(anchor);
+  const sel = getSelection();
+  if (ta && ta.classList.contains('rtx') && sel.rangeCount && !sel.isCollapsed && ta.contains(sel.anchorNode)) {
+    const r = rtSerialize(ta, { caret: sel.getRangeAt(0), plain: true }); const t = r.end > r.start ? termFromRaw(r.raw, r.start, r.end) : null;
+    if (t) return openGlossFor(b, t.term, t.n, rect);
+  }
+  if (ta && ta.tagName === 'TEXTAREA' && ta.selectionEnd > ta.selectionStart) { const r = termFromRaw(ta.value, ta.selectionStart, ta.selectionEnd); if (r) return openGlossFor(b, r.term, r.n, rect); }
   openGloss({ bid: b.id, free: true, term: '', n: 0, count: 0, idx: -1, rect });
 }
 // Aus einem Klick (ein Wort) oder einer Markierung (mehrere Wörter) in der Vorschau
@@ -1604,8 +1723,8 @@ function taskExtras(b, i, it) {
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
   let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}</div>`;
-  if (open('eh')) h += `<label class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span><textarea data-k="items.${i}.eh" rows="3" placeholder="Ein Punkt pro Zeile">${esc(it.eh || '')}</textarea></label>`;
-  if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => `<input type="text" data-k="items.${i}.tips.${j}" value="${esc(t[j] || '')}" placeholder="Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}">`).join('')}</div>`; }
+  if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
+  if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
   if (open('tag')) h += `<label class="f tx-f"><span>Etikett</span><input type="text" data-k="items.${i}.tag" value="${esc(it.tag || '')}" placeholder="z. B. Zusatz, Wahlaufgabe"></label>`;
   return h;
 }
@@ -1661,12 +1780,17 @@ function zlInsert() {
   const mm = f.k.match(/^items\.(\d+)\.(eh|tips|tag)/); if (mm) state.taskOpen.add(taskKey(f.bid, +mm[1], mm[2]));
   renderEditor();
   const x = $(`#editor [data-bid="${f.bid}"] [data-k="${f.k}"]`); if (!x) return zlCopy();
-  const val = x.value; const p = Math.min(f.pos == null ? val.length : f.pos, val.length); const e = Math.max(p, Math.min(f.end == null ? p : f.end, val.length));
+  const isRt = x.classList.contains('rtx');
+  const val = isRt ? rtSerialize(x).raw : x.value; const p = Math.min(f.pos == null ? val.length : f.pos, val.length); const e = Math.max(p, Math.min(f.end == null ? p : f.end, val.length));
   const before = val.slice(0, p), after = val.slice(e);
   const ins = (before && !/\s$/.test(before) ? ' ' : '') + txt + (after && !/^[\s.,;:)]/.test(after) ? ' ' : '');
-  x.value = before + ins + after; const np = (before + ins).length;
-  x.dispatchEvent(new Event('input', { bubbles: true }));
-  try { x.focus({ preventScroll: true }); x.setSelectionRange(np, np); } catch {}
+  const np = (before + ins).length;
+  if (isRt) { rtSetRaw(x, before + ins + after, np); x.dispatchEvent(new Event('input', { bubbles: true })); }
+  else {
+    x.value = before + ins + after;
+    x.dispatchEvent(new Event('input', { bubbles: true }));
+    try { x.focus({ preventScroll: true }); x.setSelectionRange(np, np); } catch {}
+  }
   lastField.pos = lastField.end = np;
   closeZl(); toast(`${txt} eingefügt in ${f.label}`);
 }
@@ -1691,7 +1815,7 @@ function cleanPdf(raw) {
 }
 
 /* ================= Genderzeichen (Schulvorgabe: ausschreiben) ================= */
-const GENDER_RE = /([A-Za-zÄÖÜäöüß]+)(?:\*|:|_|·)(innen|in)(?![a-zäöüß])|([a-zäöüß]+)(Innen)(?![a-zäöüß])/g;
+const GENDER_RE = /([A-Za-zÄÖÜäöüß]+)(?:\\?\*|:|\\?_|·)(innen|in)(?![a-zäöüß])|([a-zäöüß]+)(Innen)(?![a-zäöüß])/g;
 function genderRepl(stem, plural) {
   if (!plural) return `${stem}in oder ${stem}`;
   const masc = /(er|el|en)$/.test(stem) ? stem : /(or|ent|ant|ist|at|og|eg|graf|oph|ent)$/.test(stem) ? stem + 'en' : /e$/.test(stem) ? stem + 'n' : stem + 'e';
@@ -1720,12 +1844,12 @@ function gTargets(bid) {
 function gNote(bid) {
   const hits = genderHits(gTargets(bid).map(([o, k]) => o[k]));
   if (!hits.length) return `<div data-gn="${bid}" hidden></div>`;
-  return `<div class="gnote" data-gn="${bid}"><b>Genderzeichen</b><span>Laut Schulvorgabe ausschreiben:</span>${hits.map(h => `<span class="gn-hit">„${esc(h.m)}“ <button type="button" class="link" data-act="gfix" data-m="${esc(h.m)}" data-r="${esc(h.r)}">→ ${esc(h.r)}</button></span>`).join('')}</div>`;
+  return `<div class="gnote" data-gn="${bid}"><b>Genderzeichen</b><span>Laut Schulvorgabe ausschreiben:</span>${hits.map(h => `<span class="gn-hit">„${esc(h.m.replace(/\\/g, ''))}“ <button type="button" class="link" data-act="gfix" data-m="${esc(h.m)}" data-r="${esc(h.r)}">→ ${esc(h.r)}</button></span>`).join('')}</div>`;
 }
-function gFix(bid, m, r) { gTargets(bid).forEach(([o, k]) => { if (typeof o[k] === 'string') o[k] = o[k].split(m).join(r); }); changed(true); toast(`„${m}“ ersetzt`); }
+function gFix(bid, m, r) { gTargets(bid).forEach(([o, k]) => { if (typeof o[k] === 'string') o[k] = o[k].split(m).join(r); }); changed(true); toast(`„${m.replace(/\\/g, '')}“ ersetzt`); }
 
 /* ================= Erwartungshorizont als Markdown ================= */
-const plainMd = s => String(s || '').replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').replace(/\^(\d+)/g, '$1').trim();
+const plainMd = s => plainText(s).trim();
 function ehMarkdown() {
   const sh = state.sheet, m = sh.meta; const isK = m.mode === 'klausur'; const L = [];
   L.push(`# Erwartungshorizont: ${m.title || 'Ohne Titel'}`, '', [isK ? (m.exam && m.exam.label) || 'Klausur' : '', m.course, m.school, !isK && m.nr ? 'AB ' + m.nr : ''].filter(Boolean).join(' · '));
@@ -1737,7 +1861,7 @@ function ehMarkdown() {
     if (b.type !== 'tasks') return; if (b.restart) t = 0;
     b.items.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
-      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', `> ${plainMd(it.text) || '–'}`, '');
+      L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', (plainMd(it.text) || '–').split('\n').map(l => '> ' + l).join('\n'), '');
       const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
       const eh = ehLines(it);
@@ -1872,11 +1996,11 @@ function buildBlock(b, ctx) {
     case 'pagebreak': return { type: 'pagebreak' };
     case 'heading': return { type: 'heading', el: put(`<div class="blk blk-h"><h2>${inlineHTML(b.text || 'Überschrift')}</h2></div>`) };
     case 'text': {
-      const n = put(`<div class="blk blk-text">${parasHTML(b.text) || '<p style="color:var(--paper-hair)">Absatz</p>'}</div>`);
-      const atoms = [...n.children];
+      const n = put(`<div class="blk blk-text${b.stil ? ' st-' + b.stil : ''}">${parasHTML(b.text) || '<p style="color:var(--paper-hair)">Absatz</p>'}</div>`);
+      const atoms = b.stil === 'merksatz' ? [] : [...n.children];
       return { type: 'text', el: n, atoms: atoms.length > 1 ? atoms : null, keepFirst: 1, keepLast: 1 };
     }
-    case 'info': return { type: 'info', el: put(`<div class="blk blk-info"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`) };
+    case 'info': return { type: 'info', el: put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`) };
     case 'quote': return { type: 'quote', el: put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`) };
     case 'qr': {
       const sz = { S: 22, M: 30, L: 40 }[b.size] || 30; const url = String(b.url || '').trim(); const src = url ? QR.dataURL(url) : '';
@@ -1901,7 +2025,7 @@ function buildBlock(b, ctx) {
       const items = b.items.map((it, i) => {
         const r = opsRange(detectOps(it.text));
         const soz = hasSoz ? `<span class="task-soz">${SOZ[it.soz] ? `<img src="${sozURI(it.soz, ctx.acc, ctx.bg)}" alt="${SOZ[it.soz].label}" title="${SOZ[it.soz].label}">` : ''}</span>` : '';
-        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${inlineHTML(taskText(it, meta)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view)}</span>${taskEH(it, ctx.view)}</div>`;
+        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view)}</span>${taskEH(it, ctx.view)}</div>`;
       }).join('');
       ctx.t += b.items.length;
       const n = put(`<div class="blk blk-tasks${hasSoz ? ' has-soz' : ''}">${b.title ? `<div class="tasks-title">${esc(b.title)}</div>` : ''}${items}</div>`);
@@ -2036,9 +2160,12 @@ function paginate(items) {
   return pages;
 }
 
+// Helle Version der Blattfarbe für den Textmarker (ohne color-mix, damit html2canvas sie kennt)
+const mixHex = (hex, w) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * (1 - w) + 255 * w).toString(16).padStart(2, '0')).join('').toUpperCase();
+const markColor = meta => mixHex(pageAcc(meta).c, .74);
 function setAccent(node, meta) {
   const d = designOf(meta); const a = pageAcc(meta);
-  node.style.setProperty('--acc', a.c); node.style.setProperty('--acc-tint', a.t);
+  node.style.setProperty('--acc', a.c); node.style.setProperty('--acc-tint', a.t); node.style.setProperty('--acc-mark', markColor(meta));
   Object.keys(DESIGNS).forEach(k => node.classList.toggle('d-' + k, k === d));
   node.classList.toggle('tone', d === 'akte' && meta.tone !== false);
 }
@@ -2135,6 +2262,217 @@ const I = {
   x: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4l8 8M12 4l-8 8"/></svg>'
 };
 const fText = (k, label, v, ph = '', extra = '') => `<label class="f"><span>${label}</span><input type="text" data-k="${k}" value="${esc(v)}" placeholder="${esc(ph)}"${extra}></label>`;
+/* ---------- Textfelder mit sichtbarer Formatierung (statt **Zeichen**) ---------- */
+const GAP_IMG = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+const GAP_ED = `<img class="gap" alt="Lücke" src="${GAP_IMG}">`;
+const ED_MARK = 'rgb(255, 230, 128)';
+const RT_HINT = 'Text markieren zum Formatieren · „- “ beginnt eine Liste · ___ wird eine Lücke';
+function edTok(k) {
+  if (k.sup) return '<sup>' + esc(k.t) + '</sup>';
+  if (k.gap) return GAP_ED;
+  let h = esc(k.t);
+  if (k.m) h = `<span class="mk" style="background-color: ${ED_MARK};">${h}</span>`;
+  if (k.u) h = '<u>' + h + '</u>';
+  if (k.i) h = '<i>' + h + '</i>';
+  if (k.b) h = '<b>' + h + '</b>';
+  return h;
+}
+// Gespeicherter Text → Inhalt des Textfelds
+function richHTML(raw, mode) {
+  const s = String(raw ?? ''); if (!s) return '';
+  const inl = l => inlineTokens(l).map(edTok).join('');
+  if (mode === 'line') return inl(s.replace(/\s*\n\s*/g, ' '));
+  let h = '', list = null;
+  const flushL = () => { if (list) h += `<${list.tag}>${list.items.join('')}</${list.tag}>`; list = null; };
+  s.split('\n').forEach(l => {
+    const m = mode === 'full' && l.match(LIST_LINE);
+    if (m) { const tag = m[1] ? 'ul' : 'ol'; if (!list || list.tag !== tag) { flushL(); list = { tag, items: [] }; } list.items.push(`<li>${inl(m[3]) || '<br>'}</li>`); return; }
+    flushL(); h += `<div>${inl(l) || '<br>'}</div>`;
+  });
+  flushL(); return h;
+}
+const rtEsc = t => t.replace(/[\\*+=_^]/g, c => '\\' + c);
+// Inhalt des Textfelds → gespeicherter Text. Mit opt.caret (Range) auch die Position im gespeicherten Text.
+function rtSerialize(root, opt = {}) {
+  const mode = root.dataset.rt || 'full', plain = !!opt.plain, R = opt.caret || null;
+  const S0 = '', S1 = '';
+  const lines = [{ pre: '', runs: [] }]; let closed = false;
+  const cur = () => lines[lines.length - 1];
+  const push = (pre = '') => { lines.push({ pre, runs: [] }); closed = false; };
+  const blockStart = pre => { const c = cur(); if (closed || c.runs.some(r => !r.s)) push(pre); else if (pre) c.pre = pre; closed = false; };
+  const run = r => {
+    if (closed) push(); const c = cur(); const last = c.runs[c.runs.length - 1];
+    if (r.t != null && last && last.t != null && RT_FL.every(f => (last[f] || 0) === (r[f] || 0))) last.t += r.t; else c.runs.push(r);
+  };
+  const text = (t, fl) => { t = t.replace(/ /g, ' '); if (t) run({ t, ...fl }); };
+  const sent = ch => cur().runs.push({ s: ch });
+  const BLOCK = /^(DIV|P|LI|UL|OL|H[1-6]|BLOCKQUOTE|PRE|TABLE|TR|TD)$/;
+  const flagsOf = (el, fl) => {
+    const f = { ...fl }, tn = el.nodeName, st = el.style || {};
+    if (tn === 'B' || tn === 'STRONG') f.b = 1;
+    if (tn === 'I' || tn === 'EM') f.i = 1;
+    if (tn === 'U' || tn === 'INS') f.u = 1;
+    if (tn === 'MARK') f.m = 1;
+    if (st.fontWeight) f.b = st.fontWeight === 'bold' || st.fontWeight === 'bolder' || +st.fontWeight >= 600 ? 1 : 0;
+    if (st.fontStyle) f.i = st.fontStyle === 'italic' ? 1 : 0;
+    const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : td === 'none' ? 0 : f.u;
+    const bg = st.backgroundColor; if (bg) f.m = /^(transparent|rgba\(0, 0, 0, 0\)|initial|inherit|unset)$/.test(bg) ? 0 : 1;
+    return f;
+  };
+  const trailing = (n, blk) => { for (let x = n; x && x !== blk; x = x.parentNode) for (let y = x.nextSibling; y; y = y.nextSibling) if (y.nodeType === 1 || (y.nodeType === 3 && y.nodeValue)) return false; return true; };
+  const blockOf = n => { let x = n.parentNode; while (x && x !== root && !BLOCK.test(x.nodeName)) x = x.parentNode; return x || root; };
+  const walk = (node, fl, listTag) => {
+    const kids = node.childNodes;
+    for (let i = 0; i <= kids.length; i++) {
+      if (R) { if (R.startContainer === node && R.startOffset === i) sent(S0); if (R.endContainer === node && R.endOffset === i) sent(S1); }
+      if (i === kids.length) break;
+      const n = kids[i];
+      if (n.nodeType === 3) {
+        const t = n.nodeValue;
+        if (!t || (/^\s*$/.test(t) && /\n/.test(t) && (node === root || node.nodeName === 'UL' || node.nodeName === 'OL'))) continue;
+        if (R && (R.startContainer === n || R.endContainer === n)) {
+          const ms = []; if (R.startContainer === n) ms.push([R.startOffset, S0]); if (R.endContainer === n) ms.push([R.endOffset, S1]);
+          let p = 0; for (const [o, ch] of ms) { if (o > p) text(t.slice(p, o), fl); sent(ch); p = Math.max(p, o); }
+          if (p < t.length) text(t.slice(p), fl);
+        } else text(t, fl);
+        continue;
+      }
+      if (n.nodeType !== 1) continue;
+      const tag = n.nodeName;
+      if (tag === 'BR') { if (!trailing(n, blockOf(n))) push(); continue; }
+      if (tag === 'IMG') { if (n.classList.contains('gap')) run({ gap: 1 }); continue; }
+      if (tag === 'SUP') { const t = n.textContent; if (/^(\d+|\*)$/.test(t)) run({ sup: t }); else text(t, fl); continue; }
+      if (tag === 'UL' || tag === 'OL') { walk(n, fl, tag); closed = true; continue; }
+      if (BLOCK.test(tag)) { blockStart(tag === 'LI' ? (listTag === 'OL' ? 'ol' : 'ul') : ''); walk(n, flagsOf(n, fl), listTag); closed = true; continue; }
+      walk(n, flagsOf(n, fl), listTag);
+    }
+  };
+  walk(root, { b: 0, i: 0, u: 0, m: 0 }, null);
+  const out = []; let olN = 0, prev = '';
+  for (const L of lines) {
+    let t = '';
+    if (plain) t = L.runs.map(r => r.s || (r.gap ? '___' : r.sup != null ? r.sup : r.t)).join('');
+    else {
+      const open = { b: 0, i: 0, u: 0, m: 0 };
+      for (const r of L.runs) {
+        if (r.s) { t += r.s; continue; }
+        if (r.gap) { t += '___'; continue; }
+        if (r.sup != null) { t += '^' + r.sup; continue; }
+        for (const f of RT_FL) if ((r[f] || 0) !== open[f]) { t += RT_MK[f]; open[f] = r[f] || 0; }
+        t += rtEsc(r.t);
+      }
+      for (const f of RT_FL) if (open[f]) t += RT_MK[f];
+    }
+    let pre = '';
+    if (mode === 'full' && L.pre) { olN = L.pre === 'ol' ? (prev === 'ol' ? olN + 1 : 1) : 0; pre = L.pre === 'ol' ? olN + '. ' : '- '; }
+    else if (mode === 'full' && !plain && LIST_LINE.test(t.replace(/[]/g, ''))) t = t.replace(/^([]*)([-•]|\d{1,2})/, (m0, sn, x) => /^\d/.test(x) ? sn + x + '\\' : sn + '\\' + x);
+    prev = L.pre; out.push(pre + t);
+  }
+  let raw = out.join(mode === 'line' ? ' ' : '\n'), a = -1, b = -1;
+  if (R) { a = raw.indexOf(S0); if (a >= 0) raw = raw.slice(0, a) + raw.slice(a + 1); b = raw.indexOf(S1); if (b >= 0) raw = raw.slice(0, b) + raw.slice(b + 1); }
+  raw = raw.replace(/\n+$/, '');
+  a = Math.min(a, raw.length); b = Math.min(b < 0 ? a : b, raw.length);
+  return { raw, start: a, end: b };
+}
+function rtCaretEnd(el) { const rg = document.createRange(); rg.selectNodeContents(el); rg.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); }
+// Text setzen und die Schreibmarke an eine Stelle im gespeicherten Text legen
+function rtSetRaw(el, raw, caret) {
+  const C = '';
+  el.innerHTML = richHTML(caret == null ? raw : raw.slice(0, caret) + C + raw.slice(caret), el.dataset.rt);
+  el.classList.toggle('is-empty', !String(raw).trim());
+  el.focus({ preventScroll: true });
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n;
+  while (caret != null && (n = w.nextNode())) {
+    const i = n.nodeValue.indexOf(C); if (i < 0) continue;
+    n.nodeValue = n.nodeValue.slice(0, i) + n.nodeValue.slice(i + 1);
+    const rg = document.createRange(); rg.setStart(n, i); rg.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); return;
+  }
+  rtCaretEnd(el);
+}
+function rtSelectText(el, str) {
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n;
+  while ((n = w.nextNode())) { const i = n.nodeValue.indexOf(str); if (i >= 0) { const rg = document.createRange(); rg.setStart(n, i); rg.setEnd(n, i + str.length); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); return true; } }
+  return false;
+}
+const rtField = (k, v, o = {}) => { const mode = o.mode || 'full'; return `<div class="rtx rtx-${mode}${o.cls ? ' ' + o.cls : ''}${String(v ?? '').trim() ? '' : ' is-empty'}" contenteditable="true" role="textbox"${mode === 'line' ? '' : ' aria-multiline="true"'} aria-label="${esc(o.aria || '')}" spellcheck="true" data-k="${k}" data-rt="${mode}" data-ph="${esc(o.ph || '')}" style="--rows:${o.rows || (mode === 'line' ? 1 : 3)}">${richHTML(v, mode)}</div>`; };
+const fRich = (k, label, v, o = {}) => `<div class="f rt-f"><span>${label}</span>${rtField(k, v, { aria: label, ...o })}${o.hint ? `<small>${o.hint}</small>` : ''}</div>`;
+
+/* ---------- Leiste beim Markieren ---------- */
+function rtFieldSel() { const s = getSelection(); if (!s || !s.rangeCount) return null; const n = s.anchorNode; const e = n && (n.nodeType === 1 ? n : n.parentElement); const f = e && e.closest('#editor .rtx'); return f && f.contains(s.focusNode) ? f : null; }
+function rtMarked() {
+  const s = getSelection(); const f = rtFieldSel(); if (!f || !s.rangeCount) return false;
+  for (let n = s.getRangeAt(0).startContainer; n && n !== f; n = n.parentNode) {
+    if (n.nodeType !== 1) continue; if (n.nodeName === 'MARK') return true;
+    const bg = n.style && n.style.backgroundColor; if (bg && !/^(transparent|rgba\(0, 0, 0, 0\))$/.test(bg)) return true;
+  }
+  return false;
+}
+function rtBar() {
+  const bar = $('#rt-bar'); if (!bar) return;
+  const f = rtFieldSel(); const s = getSelection();
+  if (!f || s.isCollapsed || document.activeElement !== f) { bar.hidden = true; return; }
+  bar.dataset.mode = f.dataset.rt;
+  for (const [k, c] of Object.entries({ b: 'bold', i: 'italic', u: 'underline', ul: 'insertUnorderedList', ol: 'insertOrderedList' })) {
+    let on = false; try { on = document.queryCommandState(c); } catch {}
+    const b = bar.querySelector(`[data-rt="${k}"]`); if (b) b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  bar.querySelector('[data-rt="m"]').setAttribute('aria-pressed', rtMarked() ? 'true' : 'false');
+  bar.hidden = false;
+  const r0 = s.getRangeAt(0).getBoundingClientRect(); const r = r0.width || r0.height ? r0 : f.getBoundingClientRect();
+  const w = bar.offsetWidth, h = bar.offsetHeight;
+  let top = r.top - h - 8; if (top < 8) top = r.bottom + 8;
+  bar.style.left = Math.min(Math.max(8, r.left + r.width / 2 - w / 2), innerWidth - w - 8) + 'px'; bar.style.top = top + 'px';
+}
+function rtCmd(k) {
+  const f = rtFieldSel(); if (!f) return;
+  const ex = (c, v = null) => { try { document.execCommand(c, false, v); } catch {} };
+  const full = f.dataset.rt === 'full';
+  switch (k) {
+    case 'b': ex('bold'); break;
+    case 'i': ex('italic'); break;
+    case 'u': ex('underline'); break;
+    case 'm': ex('hiliteColor', rtMarked() ? 'transparent' : ED_MARK); break;
+    case 'ul': if (full) ex('insertUnorderedList'); break;
+    case 'ol': if (full) ex('insertOrderedList'); break;
+    case 'gap': if (full) ex('insertHTML', GAP_ED); break;
+    case 'x': ex('removeFormat'); if (rtMarked()) ex('hiliteColor', 'transparent'); break;
+  }
+  rtBar();
+}
+// Beim Tippen: „- “ oder „1. “ am Zeilenanfang wird Liste, ___ wird Lücke (Strg+Z macht es rückgängig)
+function rtAuto(e, el) {
+  if (el.dataset.rt !== 'full' || e.inputType !== 'insertText' || (e.data !== ' ' && e.data !== '_')) return false;
+  const s = getSelection(); if (!s.rangeCount || !s.isCollapsed) return false;
+  const r = s.getRangeAt(0); const tn = r.startContainer; if (tn.nodeType !== 3) return false;
+  let blk = tn.parentNode; while (blk !== el && !/^(DIV|P|LI)$/.test(blk.nodeName)) blk = blk.parentNode;
+  if (e.data === ' ' && blk.nodeName !== 'LI') {
+    const pre = document.createRange(); pre.setStart(blk, 0); pre.setEnd(tn, r.startOffset);
+    const m = pre.toString().replace(/ /g, ' ').match(/^(?:([-•*])|1[.)]) $/);
+    if (m) { s.removeAllRanges(); s.addRange(pre); document.execCommand('delete'); document.execCommand(m[1] ? 'insertUnorderedList' : 'insertOrderedList'); return true; }
+  }
+  if (e.data === '_' && r.startOffset >= 3 && tn.nodeValue.slice(r.startOffset - 3, r.startOffset) === '___') {
+    const g = document.createRange(); g.setStart(tn, r.startOffset - 3); g.setEnd(tn, r.startOffset);
+    s.removeAllRanges(); s.addRange(g); document.execCommand('insertHTML', false, GAP_ED); return true;
+  }
+  return false;
+}
+
+/* ---------- Stil-Muster für Absatz und Infokasten ---------- */
+const stL = (x, ys, w, last, h = 2.6, col = '#5A6170') => ys.map((y, i) => `<rect x="${x}" y="${y}" width="${i === ys.length - 1 ? last : w}" height="${h}" rx="${h / 2}" fill="${col}"/>`).join('');
+const ST_TEXT = {
+  '': { label: 'Normal', d: 'Normaler Absatz', pic: stL(9, [10, 16, 22, 28], 46, 30) },
+  einzug: { label: 'Eingerückt', d: 'Mit Einzug links, etwa für Beispiele oder Zitate im Text', pic: '<path d="M7 19h7M11 15.6l3.4 3.4-3.4 3.4" fill="none" stroke="#1F4FA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' + stL(20, [10, 16, 22, 28], 36, 22) },
+  merksatz: { label: 'Merksatz', d: 'Gerahmt in der Blattfarbe', pic: '<rect x="6.9" y="5.9" width="50.2" height="28.2" rx="3.5" fill="#FFFFFF" stroke="#1F4FA0" stroke-width="1.8"/>' + stL(13, [13, 19, 25], 38, 24, 2.6, '#2B2F38') },
+  klein: { label: 'Klein', d: 'Kleinere, hellere Schrift für Hinweise', pic: stL(9, [11, 15.5, 20, 24.5, 29], 40, 24, 1.8, '#A3A9B6') }
+};
+const ST_INFO = {
+  '': { label: 'Fläche', d: 'Getönte Fläche mit Balken', pic: '<rect x="6" y="6" width="52" height="28" rx="2" fill="#DCE3F5"/><rect x="6" y="6" width="3.2" height="28" fill="#1F4FA0"/>' + stL(14, [12.5, 18.5, 24.5], 38, 24) },
+  rahmen: { label: 'Rahmen', d: 'Nur ein Rahmen, spart Toner', pic: '<rect x="6.9" y="6.9" width="50.2" height="26.2" rx="2.5" fill="#FFFFFF" stroke="#1F4FA0" stroke-width="1.8"/>' + stL(13, [12.5, 18.5, 24.5], 38, 24) },
+  linie: { label: 'Linie', d: 'Nur der Balken am Rand, spart Toner', pic: '<rect x="6" y="6" width="3.2" height="28" fill="#1F4FA0"/>' + stL(15, [12.5, 18.5, 24.5], 38, 24) },
+  klein: { label: 'Klein', d: 'Fläche mit kleinerer Schrift', pic: '<rect x="6" y="6" width="52" height="28" rx="2" fill="#DCE3F5"/><rect x="6" y="6" width="3.2" height="28" fill="#1F4FA0"/>' + stL(14, [12, 16.5, 21, 25.5], 38, 22, 1.8, '#5A6170') }
+};
+const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid" role="group" aria-label="Stil">${Object.entries(S).map(([k, x]) => `<button type="button" class="km" data-act="blk-stil" data-v="${k}" aria-pressed="${(b.stil || '') === k}" title="${esc(x.d)}"><svg viewBox="0 0 64 40" aria-hidden="true">${x.pic}</svg><b>${x.label}</b></button>`).join('')}</div></div>`;
+
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;
 const fCheck = (k, label, v) => `<label class="chk"><input type="checkbox" data-k="${k}"${v ? ' checked' : ''}>${label}</label>`;
 const fSelect = (k, label, v, opts) => `<label class="f"><span>${label}</span><select data-k="${k}">${opts.map(([val, t]) => `<option value="${esc(val)}"${String(val) === String(v) ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
@@ -2163,8 +2501,8 @@ function summary(b, num) {
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
     case 'lines': return `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
     case 'heading': return b.text || 'leer';
-    case 'text': return (b.text || 'leer').slice(0, 60);
-    case 'quote': return (b.text || 'leer').slice(0, 60);
+    case 'text': return (plainText(b.text) || 'leer').slice(0, 60);
+    case 'quote': return (plainText(b.text) || 'leer').slice(0, 60);
     case 'image': return b.src ? (b.caption || 'Bild') : 'noch kein Bild';
     case 'qr': return b.title || b.url || 'noch kein Link';
     default: return 'Rest beginnt auf neuer Seite';
@@ -2179,10 +2517,10 @@ function qrWarn(b) {
 function bodyFor(b, num) {
   switch (b.type) {
     case 'heading': return fText('text', 'Überschrift', b.text, 'z. B. Vertiefung');
-    case 'text': return fArea('text', 'Text', b.text, 4, 'Einleitung oder Hinweis', '', 'Leerzeile = neuer Absatz · **fett** · *kursiv*');
+    case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
     case 'material': return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       ${fText('title', 'Titel / Autor', b.title, 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
-      ${fArea('text', 'Text', b.text, 9, 'Originaltext einfügen', 'serif', 'Leerzeile = neuer Absatz. Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen.')}
+      ${fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Leerzeile = neuer Absatz. Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen. Text markieren zum Hervorheben.' })}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${fmtEditor(b)}
@@ -2194,7 +2532,7 @@ function bodyFor(b, num) {
           <div class="task-ed-h"><span class="no">${start + i}</span>${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
-          <textarea data-k="items.${i}.text" rows="2" placeholder="${state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …'}">${esc(it.text)}</textarea>
+          ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: `Aufgabe ${start + i}` })}
           <div class="chips" data-chips="${i}">${chipsHTML(it.text)}</div>
           <div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>
           ${taskExtras(b, i, it)}
@@ -2204,14 +2542,14 @@ function bodyFor(b, num) {
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, INFO_KINDS.map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
-      ${fArea('text', 'Text', b.text, 4, '', '', 'Leerzeile = neuer Absatz · **fett** · *kursiv*')}`;
-    case 'quote': return `${fArea('text', 'Zitat', b.text, 3, '„…“')}${fText('author', 'Quelle / Urheber', b.author, 'z. B. Victor Klemperer: LTI (1947)')}`;
+      ${stilTiles(b, ST_INFO)}${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
+    case 'quote': return `${fRich('text', 'Zitat', b.text, { rows: 3, ph: '„…“' })}${fText('author', 'Quelle / Urheber', b.author, 'z. B. Victor Klemperer: LTI (1947)')}`;
     case 'table': {
       const cols = b.cols.length;
       return `${fText('title', 'Titel (optional)', b.title, '')}
         <div class="tbl-ed"><table>
-          <tr>${b.cols.map((c, ci) => `<td><input type="text" data-k="cols.${ci}" value="${esc(c)}" placeholder="Kopf ${ci + 1}" aria-label="Spaltenkopf ${ci + 1}"></td>`).join('')}</tr>
-          ${b.rows.map((r, ri) => `<tr>${Array.from({ length: cols }, (_, ci) => `<td><input type="text" data-k="rows.${ri}.${ci}" value="${esc(r[ci] || '')}" placeholder="leer" aria-label="Zeile ${ri + 1}, Spalte ${ci + 1}"></td>`).join('')}</tr>`).join('')}
+          <tr>${b.cols.map((c, ci) => `<td>${rtField(`cols.${ci}`, c, { mode: 'line', ph: `Kopf ${ci + 1}`, aria: `Spaltenkopf ${ci + 1}` })}</td>`).join('')}</tr>
+          ${b.rows.map((r, ri) => `<tr>${Array.from({ length: cols }, (_, ci) => `<td>${rtField(`rows.${ri}.${ci}`, r[ci] || '', { mode: 'line', ph: 'leer', aria: `Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`).join('')}</tr>`).join('')}
         </table></div>
         <div class="row" style="gap:16px">
           <button class="link" type="button" data-act="row-add">+ Zeile</button>
@@ -2282,7 +2620,8 @@ function renderEditor(focusSel) {
     }).join('') + adderHTML();
   }
   ed.scrollTop = st;
-  if (focus) { const f = ed.querySelector(focus); if (f) { f.focus({ preventScroll: true }); if (f.setSelectionRange && typeof f.value === 'string' && f.type !== 'number') { const l = f.value.length; try { f.setSelectionRange(l, l); } catch {} } } }
+  ed.style.setProperty('--ed-mark', markColor(state.sheet.meta));
+  if (focus) { const f = ed.querySelector(focus); if (f && f.classList.contains('rtx')) { f.focus({ preventScroll: true }); rtCaretEnd(f); } else if (f) { f.focus({ preventScroll: true }); if (f.setSelectionRange && typeof f.value === 'string' && f.type !== 'number') { const l = f.value.length; try { f.setSelectionRange(l, l); } catch {} } } }
 }
 function refreshSummaries() {
   const num = numbering(state.sheet);
@@ -2305,10 +2644,13 @@ let undoSnap = null;
 function snapshot() { undoSnap = clone(state.sheet); }
 
 function onInput(e) {
-  const t = e.target; const k = t.dataset.k; if (!k) return;
+  const t = e.target; const isRt = !!(t.classList && t.classList.contains('rtx'));
+  if (isRt && rtAuto(e, t)) return;
+  const k = t.dataset.k; if (!k) return;
   if (t.type === 'checkbox' || t.tagName === 'SELECT' || t.type === 'file') return;
   const card = t.closest('[data-bid]'); if (!card) return;
-  let v = t.value; if (t.type === 'number') { const lo = Number(t.min) || 1, hi = Number(t.max) || 40; v = Math.max(lo, Math.min(hi, parseInt(v, 10) || lo)); }
+  let v = isRt ? rtSerialize(t).raw : t.value; if (isRt) t.classList.toggle('is-empty', !v.trim());
+  if (t.type === 'number') { const lo = Number(t.min) || 1, hi = Number(t.max) || 40; v = Math.max(lo, Math.min(hi, parseInt(v, 10) || lo)); }
   setPath(target(card.dataset.bid), k, v);
   const m = k.match(/^items\.(\d+)\.text$/);
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
@@ -2327,7 +2669,8 @@ function onChange(e) {
     it.text = applyOperator(it.text, o, state.sheet.meta.anrede);
     changed(true);
     const ta = $(`#editor [data-bid="${b.id}"] [data-k="items.${i}.text"]`);
-    if (ta) { ta.focus(); const p = ta.value.indexOf('…'); if (p >= 0) ta.setSelectionRange(p, p + 1); }
+    if (ta && ta.classList.contains('rtx')) { ta.focus(); if (!rtSelectText(ta, '…')) rtCaretEnd(ta); }
+    else if (ta) { ta.focus(); const p = ta.value.indexOf('…'); if (p >= 0) ta.setSelectionRange(p, p + 1); }
     return;
   }
   if (t.dataset.act === 'img') { const card = t.closest('[data-bid]'); if (t.files && t.files[0]) handleImage(t.files[0], target(card.dataset.bid)); return; }
@@ -2358,7 +2701,7 @@ function onClick(e) {
       const nb = newBlock(a.dataset.type);
       const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
       blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; state.closed.delete(nb.id); changed(true);
-      const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea'); if (f) f.focus({ preventScroll: true }); }
+      const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea,.rtx'); if (f) f.focus({ preventScroll: true }); }
       return;
     }
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
@@ -2370,6 +2713,7 @@ function onClick(e) {
     case 'col-del': if (b.cols.length > 1) { b.cols.pop(); b.rows.forEach(r => r.pop()); changed(true); } return;
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
+    case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
     case 'fmt-toggle': if (state.fmtOpen.has(bid)) state.fmtOpen.delete(bid); else state.fmtOpen.add(bid); renderEditor(); return;
@@ -2982,10 +3326,29 @@ function xr(text, o = {}) {
   if (o.color) p.push(`<w:color w:val="${o.color}"/>`);
   if (o.sp) p.push(`<w:spacing w:val="${o.sp}"/>`);
   if (o.sz) p.push(`<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>`);
+  if (o.u) p.push('<w:u w:val="single"/>');
+  if (o.mark) p.push(`<w:shd w:val="clear" w:color="auto" w:fill="${o.mark}"/>`);
   if (o.sup) p.push('<w:vertAlign w:val="superscript"/>');
   return `<w:r>${p.length ? `<w:rPr>${p.join('')}</w:rPr>` : ''}<w:t xml:space="preserve">${xesc(text)}</w:t></w:r>`;
 }
-const xrInline = (str, base = {}) => inlineTokens(str).map(t => String(t.t).split(/\uE000(\d+)\uE001/).map((part, i) => i % 2 ? xr(part, { ...base, sup: 1 }) : (part ? xr(part, { ...base, b: base.b || t.b, i: base.i || t.i, sup: t.sup }) : '')).join('')).join('');
+let DOCX_MARK = 'C9D3EA', DOCX_ACC = '1F4FA0';
+const xrInline = (str, base = {}) => inlineTokens(str).map(t => t.gap ? xr(' '.repeat(18), { ...base, b: 0, i: 0, u: 1, mark: null }) : String(t.t).split(/(\d+)/).map((part, i) => i % 2 ? xr(part, { ...base, sup: 1 }) : (part ? xr(part, { ...base, b: base.b || t.b, i: base.i || t.i, u: base.u || t.u, mark: t.m ? DOCX_MARK : base.mark, sup: t.sup }) : '')).join('')).join('');
+// Absätze mit Listen als Word-Absätze (Aufzählung mit hängendem Einzug)
+function xpRich(str, base = {}, o = {}) {
+  const L = o.indMm || 0; const out = []; const indP = L ? `<w:ind w:left="${TW(L)}"/>` : '';
+  lineParas(str).forEach(p => {
+    let buf = [], n = 0;
+    const flushP = () => { if (buf.length) out.push(xp(buf.map(l => xrInline(l, base)).join('<w:r><w:br/></w:r>'), { before: out.length ? (o.gap ?? 100) : (o.first || 0), ind: indP })); buf = []; };
+    p.split('\n').forEach(l => {
+      const m = l.match(LIST_LINE);
+      if (!m) { n = 0; buf.push(l); return; }
+      flushP(); n = m[1] ? 0 : n + 1;
+      out.push(xp(xr(m[1] ? '•' : n + '.', { ...base, b: 1, color: DOCX_ACC }) + '<w:r><w:tab/></w:r>' + xrInline(m[3], base), { before: out.length ? 40 : (o.first || 0), ind: `<w:ind w:left="${TW(L + 6)}" w:hanging="${TW(5)}"/>` }));
+    });
+    flushP();
+  });
+  return out.join('');
+}
 const xrLines = (str, base = {}) => String(str).split('\n').map(l => xrInline(l, base)).join('<w:r><w:br/></w:r>');
 function xp(runs, o = {}) {
   const p = [];
@@ -3025,6 +3388,7 @@ async function exportDOCX() {
     await loadScript(LIBS.zip);
     const sh = state.sheet, m = sh.meta; const acc = ACCENTS[m.accent] || ACCENTS.tinte;
     const A = acc.c.slice(1).toUpperCase(), AT = acc.t.slice(1).toUpperCase(), GREY = '5A606E', RULE = '8E95A3';
+    DOCX_ACC = A; DOCX_MARK = mixHex(acc.c, .74).slice(1);
     const step = Number(m.lineStep) || 5;
     const v = sheetView(); const isK = m.mode === 'klausur'; const blocksV = sh.blocks.filter(b => blockVisible(b, v));
     const tagW = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? 'Gruppe ' + v.grp : ''].filter(Boolean).join(' · ');
@@ -3096,7 +3460,15 @@ async function exportDOCX() {
       parts.push(spacer());
       switch (b.type) {
         case 'heading': parts.push(xp(xrInline(b.text || '', { font: SERIF, b: 1, sz: 25, color: A }), { keepNext: true })); break;
-        case 'text': lineParas(b.text).forEach((p, i) => parts.push(xp(xrLines(p, { sz: 21 }), { before: i ? 100 : 0 }))); break;
+        case 'text': {
+          const st = b.stil || '';
+          const body = xpRich(b.text, st === 'klein' ? { sz: 18, color: GREY } : { sz: 21 }, { indMm: st === 'einzug' ? 8 : 0 });
+          if (st === 'merksatz') {
+            const bd = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 12, A)).join('');
+            parts.push(xtbl([CW], xtr(xtc(body || xp(''), { w: CW, borders: bd, mar: `<w:top w:w="${TW(3)}" w:type="dxa"/><w:left w:w="${TW(4)}" w:type="dxa"/><w:bottom w:w="${TW(3)}" w:type="dxa"/><w:right w:w="${TW(4)}" w:type="dxa"/>` }), { cant: 1 }), NOB));
+          } else parts.push(body);
+          break;
+        }
         case 'quote': {
           const lines = lineParas(b.text);
           lines.forEach((p, i) => parts.push(xp((i === 0 ? xr('„ ', { font: SERIF, b: 1, sz: 32, color: A }) : '') + xrLines(p, { font: SERIF, i: 1, sz: 25 }), { ind: `<w:ind w:left="${TW(10)}" w:right="${TW(6)}"/>`, keepNext: true })));
@@ -3106,9 +3478,10 @@ async function exportDOCX() {
         case 'info': {
           const inner = xp(xr(b.kind || 'Info', { b: 1, caps: 1, sz: 14, color: A, sp: 14 }), { keepNext: true })
             + (b.title ? xp(xrInline(b.title, { b: 1, sz: 21 }), { before: 20, keepNext: true }) : '')
-            + lineParas(b.text).map((p, i) => xp(xrLines(p, { sz: 20 }), { before: i ? 80 : 40 })).join('');
-          const bd = `<w:top w:val="nil"/><w:left w:val="single" w:sz="24" w:space="0" w:color="${A}"/><w:bottom w:val="nil"/><w:right w:val="nil"/>`;
-          parts.push(xtbl([CW], xtr(xtc(inner, { w: CW, borders: bd, shd: AT, mar: `<w:top w:w="${TW(3)}" w:type="dxa"/><w:left w:w="${TW(4)}" w:type="dxa"/><w:bottom w:w="${TW(3)}" w:type="dxa"/><w:right w:w="${TW(4)}" w:type="dxa"/>` }), { cant: 1 }), NOB));
+            + xpRich(b.text, { sz: b.stil === 'klein' ? 17 : 20 }, { first: 40, gap: 80 });
+          const st = b.stil || '';
+          const bd = st === 'rahmen' ? ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 10, A)).join('') : `<w:top w:val="nil"/><w:left w:val="single" w:sz="24" w:space="0" w:color="${A}"/><w:bottom w:val="nil"/><w:right w:val="nil"/>`;
+          parts.push(xtbl([CW], xtr(xtc(inner, { w: CW, borders: bd, shd: st === 'rahmen' || st === 'linie' ? '' : AT, mar: `<w:top w:w="${TW(3)}" w:type="dxa"/><w:left w:w="${TW(4)}" w:type="dxa"/><w:bottom w:w="${TW(3)}" w:type="dxa"/><w:right w:w="${TW(4)}" w:type="dxa"/>` }), { cant: 1 }), NOB));
           break;
         }
         case 'tasks': {
@@ -3122,7 +3495,7 @@ async function exportDOCX() {
             const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null].filter(Boolean);
             const cells = xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp(sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : ''), { w: sW }) : '')
-              + xtc(xp((it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : '') + xrInline(taskText(it, m), { sz: 21 })), { w: tW })
+              + xtc((() => { const tt = taskText(it, m); const tagR = it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; return /\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 })); })(), { w: tW })
               + (afbW ? xtc(rt.map(([t, bold]) => xp(xr(t, { sz: bold ? 18 : 15, b: bold, color: bold ? '1C1F27' : GREY }), { jc: 'right' })).join('') || xp(''), { w: afbW }) : '');
             let row = xtr(cells, { cant: 1 });
             const eh = v.lehrer ? ehLines(it) : [];
@@ -3264,13 +3637,41 @@ function boot() {
   $('#menu-root').addEventListener('click', onMenuClick);
   $('#zl-root').addEventListener('click', e => { const a = e.target.closest('[data-zl]'); if (!a) return; const k = a.dataset.zl; if (k === 'close') closeZl(); if (k === 'ins') zlInsert(); if (k === 'copy') zlCopy(); });
   const trackField = e => {
-    const t = e.target; if (!t.dataset || !t.dataset.k || !/^(INPUT|TEXTAREA)$/.test(t.tagName) || t.type === 'checkbox') return;
+    const rt = e.target.closest && e.target.closest('.rtx'); const t = rt || e.target;
+    if (!t.dataset || !t.dataset.k || (!rt && (!/^(INPUT|TEXTAREA)$/.test(t.tagName) || t.type === 'checkbox'))) return;
     const card = t.closest('[data-bid]'); const bid = card && card.dataset.bid; const blk = bid && state.sheet.blocks.find(x => x.id === bid);
     if (!blk || blk.type === 'material') return;
+    if (rt) {
+      const s = getSelection(); if (!s.rangeCount || !rt.contains(s.anchorNode)) return;
+      const r = rtSerialize(rt, { caret: s.getRangeAt(0) }); lastField.bid = bid; lastField.k = t.dataset.k; lastField.pos = r.start; lastField.end = r.end; return;
+    }
     lastField.bid = bid; lastField.k = t.dataset.k; lastField.pos = t.selectionStart; lastField.end = t.selectionEnd;
   };
   ['focusin', 'keyup', 'mouseup', 'input', 'focusout'].forEach(ev => ed.addEventListener(ev, trackField));
+  // Formatierungsleiste
+  const rtb = $('#rt-bar');
+  rtb.addEventListener('mousedown', e => e.preventDefault());
+  rtb.addEventListener('click', e => { const btn = e.target.closest('[data-rt]'); if (btn) rtCmd(btn.dataset.rt); });
+  document.addEventListener('selectionchange', () => requestAnimationFrame(rtBar));
+  ed.addEventListener('scroll', () => { if (!rtb.hidden) rtBar(); }, { passive: true });
+  window.addEventListener('resize', () => { if (!rtb.hidden) rtBar(); });
+  ed.addEventListener('keydown', e => {
+    const f = e.target.closest && e.target.closest('.rtx'); if (!f) return;
+    if (e.key === 'Enter' && f.dataset.rt === 'line') { e.preventDefault(); return; }
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'h' || e.key === 'H')) { e.preventDefault(); rtCmd('m'); }
+  });
   ed.addEventListener('paste', e => {
+    const rt = e.target.closest && e.target.closest('.rtx');
+    if (rt) {
+      e.preventDefault();
+      let raw = ((e.clipboardData && e.clipboardData.getData('text/plain')) || '').replace(/\r\n?/g, '\n'); if (!raw) return;
+      const card = rt.closest('[data-bid]'); const blk = card && target(card.dataset.bid); let note = '';
+      if (blk && blk.type === 'material' && rt.dataset.k === 'text') { const r = cleanPdf(raw); if (r.hy || r.ln) { raw = r.t; note = [r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} Zeilennummern` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt'; } }
+      if (rt.dataset.rt === 'line') raw = raw.replace(/\s*\n\s*/g, ' ');
+      document.execCommand('insertText', false, raw);
+      if (note) toast(note);
+      return;
+    }
     const t = e.target; if (t.tagName !== 'TEXTAREA' || t.dataset.k !== 'text') return;
     const card = t.closest('[data-bid]'); const blk = card && target(card.dataset.bid); if (!blk || blk.type !== 'material') return;
     const raw = e.clipboardData && e.clipboardData.getData('text'); if (!raw) return;
