@@ -834,9 +834,9 @@ const ACCENTS = {
 };
 /* Reiter: eine Ablage je Klasse. Neue Blätter übernehmen Kurs, Farbe und Anrede der Klasse. */
 const KLASSEN = [
-  { id: 'gk',   label: 'Grundkurs',   course: 'Grundkurs Deutsch',   accent: 'tinte',  anrede: 'sie' },
-  { id: 'k10',  label: 'Klasse 10',   course: 'Deutsch Klasse 10',   accent: 'petrol', anrede: 'du' },
-  { id: 'k910', label: 'Klasse 9/10', course: 'Deutsch Klasse 9/10', accent: 'wein',   anrede: 'du' }
+  { id: 'gk',   label: 'Grundkurs',   course: 'Grundkurs Deutsch',   school: 'Georg-Herwegh-Gymnasium', accent: 'tinte',  anrede: 'sie' },
+  { id: 'k10',  label: 'Klasse 10',   course: 'Deutsch Klasse 10',   school: 'Waldseeschule',           accent: 'petrol', anrede: 'du' },
+  { id: 'k910', label: 'Klasse 9/10', course: 'Deutsch Klasse 9/10', school: 'Waldseeschule',           accent: 'wein',   anrede: 'du' }
 ];
 const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
 /* Online-Ablage über Supabase. Leer = ausgeschaltet: Blätter bleiben im Browser.
@@ -2043,7 +2043,7 @@ function setOut(k) {
 /* ================= Datenmodell ================= */
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
-  return { nr: nr || '', title: '', topic: '', course: k.course, school: 'Georg-Herwegh-Gymnasium',
+  return { nr: nr || '', title: '', topic: '', course: k.course, school: k.school,
     showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
@@ -2101,7 +2101,9 @@ function draftFor(k) { return k === 'gk' ? exampleSheet() : Object.assign(blankS
 // Ältere Blätter (vor den Reitern) gehören zum Grundkurs
 function normalizeSheet(sh) {
   sh.klasse = KL(sh.klasse).id;
+  const schoolOld = !(sh.meta && sh.meta.schoolV);
   sh.meta = { ...defaultMeta('', sh.klasse), anrede: 'sie', ...sh.meta };
+  if (schoolOld) { if (sh.meta.school === KLASSEN[0].school) sh.meta.school = KL(sh.klasse).school; sh.meta.schoolV = 1; }
   if (!Array.isArray(sh.blocks)) sh.blocks = [];
   sh.blocks.forEach(b => { if (b && b.type === 'material') { migrateGlossary(b); migrateMatNl(b); } });
   if (!Array.isArray(sh.cards)) sh.cards = [];
@@ -3345,6 +3347,7 @@ function moveKlasse(v) {
   const sh = state.sheet; const old = KL(sh.klasse), nw = KL(v); if (old.id === nw.id) return;
   if (sh.meta.course === old.course) sh.meta.course = nw.course;
   if (sh.meta.accent === old.accent) sh.meta.accent = nw.accent;
+  if (sh.meta.school === old.school) sh.meta.school = nw.school;
   sh.klasse = nw.id; state.klasse = nw.id; lsSet(LS.klasse, nw.id);
   changed(true); renderTabs();
   toast(`Das Blatt liegt jetzt unter ${nw.label}`);

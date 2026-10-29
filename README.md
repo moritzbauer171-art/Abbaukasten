@@ -6,7 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
-- **Reiter je Klasse:** Grundkurs, Klasse 10 und Klasse 9/10. Jeder Reiter hat eine eigene Ablage. Neue Blätter übernehmen Kursbezeichnung, Farbe und Anrede der Klasse (Grundkurs: Sie, Klasse 10 und 9/10: du). Über das Feld „Reiter“ im Kopf lässt sich ein Blatt in eine andere Klasse verschieben.
+- **Reiter je Klasse:** Grundkurs, Klasse 10 und Klasse 9/10. Jeder Reiter hat eine eigene Ablage. Neue Blätter übernehmen Kursbezeichnung, Schule, Farbe und Anrede der Klasse (Grundkurs: Georg-Herwegh-Gymnasium, Sie; Klasse 10 und 9/10: Waldseeschule, du). Über das Feld „Reiter“ im Kopf lässt sich ein Blatt in eine andere Klasse verschieben.
 - **Bausteine:** Material mit automatischen Zeilennummern, Gedicht, Aufgaben, Infokasten, Formulierungshilfen, Tabelle, Schreibfläche (Linien oder Kästchen), Überschrift, Absatz, Zitat, Bild, Seitenumbruch.
 - **Gedicht:** Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse (lange Verse brechen mit Einzug um und bekommen keine eigene Nummer), Angaben lauten „V. 3“. Worterklärungen, Formatierung und Notizrand wie beim Material. Ein vorhandenes Material lässt sich über „Textform“ auf Gedicht umstellen.
 - **Formulierungshilfen:** Satzanfänge und Wendungen in Gruppen, eine Formulierung pro Zeile, ein- oder zweispaltig. Vorlagen: Einleitung, Sprachliche Mittel deuten, Zitieren und Belegen, Argumentieren, Vergleichen, Urteilen und Schluss.
