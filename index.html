@@ -1586,6 +1586,7 @@ function buildCover(meta, sh, v, body) {
 function buildRunHead(meta, body) {
   const ex = meta.exam || {};
   const node = el(`<div class="blk run-head" data-bid="meta"><span>${[ex.label || 'Klausur', meta.course].filter(Boolean).map(esc).join(' · ')}</span><span>Name <i></i></span></div>`);
+  if (H_SP.top[meta.headGap]) node.style.paddingBottom = H_SP.top[meta.headGap] + 'mm';
   body.appendChild(node); return { type: 'head', el: node };
 }
 function buildGroupBadge(meta, g, body) {
@@ -2096,7 +2097,7 @@ function numbering(sheet) {
 function el(html) { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
 
 function buildHead(meta, body) {
-  const node = el(headHTML(meta));
+  const node = el(headHTML(meta)); if (H_SP.top[meta.headGap]) node.style.paddingBottom = H_SP.top[meta.headGap] + 'mm';
   body.appendChild(node);
   return { type: 'head', el: node };
 }
@@ -2862,6 +2863,7 @@ function metaCard() {
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${designEditor(m)}
       ${colors}
+      <div class="f"><span>Abstand nach dem Kopf</span><div class="seg sm" role="group" aria-label="Abstand nach dem Kopf">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="headGap" data-v="${v}" aria-pressed="${(m.headGap || '') === v}">${t}</button>`).join('')}</div></div>
       <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
         ${more ? `<div class="sub-b">
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
@@ -2993,6 +2995,7 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
+    case 'meta-set': { const mm = state.sheet.meta; if (a.dataset.f === 'headGap') { if (a.dataset.v) mm.headGap = a.dataset.v; else delete mm.headGap; changed(true); } return; }
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
     case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
@@ -3720,6 +3723,7 @@ async function exportDOCX() {
       parts.push(xp((m.nr ? xr('AB ' + m.nr + '   ', { b: 1, sz: 24, color: A }) : '') + xr(deQuoteStr(m.title || 'Ohne Titel'), { font: SERIF, b: 1, sz: 33 }), { before: 200, after: m.topic ? 40 : 0, keepNext: true }));
       if (m.topic) parts.push(xp(xr(deQuoteStr(m.topic), { sz: 18, color: GREY }), {}));
     }
+    if (H_SP.top[m.headGap]) parts.push(xp('', { line: TW(H_SP.top[m.headGap]), rule: 'exact' }));
     if (tagW) parts.push(xp(xr(tagW, { b: 1, sz: 18, color: v.lehrer ? 'B3261E' : A }) + (v.grp !== 'all' ? xr('   ' + (v.grp === 'A' ? m.groupA : m.groupB), { sz: 18, color: GREY }) : ''), { before: 120 }));
     secOpen = true;
 
