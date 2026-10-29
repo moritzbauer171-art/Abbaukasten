@@ -2059,7 +2059,7 @@ function setOut(k) {
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: k.school,
-    showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar',
+    showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar', headGap: 'm', botGap: 'm',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     groupsOn: false, groupA: 'für Gruppe 1 und 3', groupB: 'für Gruppe 2 und 4', paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
@@ -3039,7 +3039,7 @@ function metaCard() {
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${designEditor(m)}
       ${colors}
-      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${(m[f] || '') === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
+      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
       <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
         ${more ? `<div class="sub-b">
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
@@ -3171,7 +3171,7 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
-    case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { if (a.dataset.v) mm[f] = a.dataset.v; else delete mm[f]; changed(true); } return; }
+    case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { mm[f] = a.dataset.v || 'n'; changed(true); } return; }
     case 'tb-mode': if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
     case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
