@@ -706,6 +706,12 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .blk-info.st-linie{background:transparent;border:0;border-left:1.2mm solid var(--acc);border-radius:0;padding:1mm 0 1mm 4mm;box-shadow:none}
 .blk-info.st-klein .info-text{font-size:8.8pt}
 
+/* Zeilenstücke langer Absätze: sehen aus wie ein Absatz */
+.page p.lf-c{margin-top:0!important;text-indent:0!important}
+.page .rl.lw+.rl.lw{margin-top:0}
+.page .rl li.lf-c{margin-top:0;list-style:none}
+.page .pg-body{overflow-wrap:break-word}
+
 /* Gedicht */
 .blk-mat.gedicht .mat-body p{padding-left:6mm;text-indent:-6mm}
 .blk-mat.gedicht .ln-t{text-align:left;text-align-last:auto}
@@ -2110,15 +2116,30 @@ function buildBlock(b, ctx) {
     case 'heading': return { type: 'heading', el: put(`<div class="blk blk-h" style="${H_SP.top[b.padTop] ? `padding-top:${H_SP.top[b.padTop]}mm;` : ''}${H_SP.bot[b.padBot] ? `padding-bottom:${H_SP.bot[b.padBot]}mm;` : ''}"><h2>${inlineHTML(b.text || 'Überschrift')}</h2></div>`) };
     case 'text': {
       const n = put(`<div class="blk blk-text${b.stil ? ' st-' + b.stil : ''}">${parasHTML(b.text) || '<p style="color:var(--paper-hair)">Absatz</p>'}</div>`);
-      const atoms = b.stil === 'merksatz' ? [] : [...n.children];
-      return { type: 'text', el: n, atoms: atoms.length > 1 ? atoms : null, keepFirst: 1, keepLast: 1 };
+      const atoms = splitParas(n);
+      return { type: 'text', el: n, atoms: atoms.length > 1 ? atoms : null, keepFirst: 1, keepLast: 1, contPre: () => parseFloat(getComputedStyle(n).paddingTop) || 0 };
     }
     case 'phrases': {
       const gs = phrGroups(b); const cols = (+b.cols || 2) === 1 ? 1 : 2;
       return { type: 'phrases', el: put(`<div class="blk blk-phr c${cols}"><div class="phr-h">${PHR_ICON}<span>${inlineHTML(b.title || 'Formulierungshilfen')}</span></div><div class="phr-grid">${(gs.length ? gs : [{ head: '', lines: ['Formulierung …'] }]).map(g => `<div class="phr-g">${g.head ? `<div class="phr-gh">${inlineHTML(g.head)}</div>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`) };
     }
-    case 'info': return { type: 'info', el: put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`) };
-    case 'quote': return { type: 'quote', el: put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`) };
+    case 'info': {
+      const n = put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`);
+      const body = n.querySelector('.info-text'); const heads = [...n.children].filter(x => x !== body); const parts = splitParas(body);
+      if (parts.length < 2) return { type: 'info', el: n };
+      const atoms = [...heads, ...parts];
+      return { type: 'info', el: n, atoms, keepFirst: heads.length + 1, keepLast: 1, assemble: nestedAssemble(n, heads, body, atoms),
+        contPre: () => parseFloat(getComputedStyle(n).paddingTop) + parseFloat(getComputedStyle(body).marginTop) };
+    }
+    case 'quote': {
+      const n = put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`);
+      const body = n.querySelector('.q-text'); const mark = n.querySelector('.q-mark'); const auth = n.querySelector('.q-author');
+      const parts = body.children.length ? splitParas(body) : [];
+      if (parts.length < 2) return { type: 'quote', el: n };
+      const atoms = [...parts, ...(auth ? [auth] : [])];
+      return { type: 'quote', el: n, atoms, keepFirst: 1, keepLast: 1, assemble: nestedAssemble(n, [], body, atoms, mark),
+        contPre: () => parseFloat(getComputedStyle(n).paddingTop) };
+    }
     case 'qr': {
       const sz = { S: 22, M: 30, L: 40 }[b.size] || 30; const url = String(b.url || '').trim(); const src = url ? QR.dataURL(url) : '';
       const pic = src ? `<img src="${src}" alt="QR-Code" style="width:${sz}mm;height:${sz}mm">` : `<div class="qr-empty" style="width:${sz}mm;height:${sz}mm">${url ? 'Link zu lang' : 'QR-Code'}</div>`;
@@ -2223,6 +2244,62 @@ function gridTile() {
   x.fillStyle = '#C6CBD5'; x.fillRect(0, 0, 60, 2); x.fillRect(0, 0, 2, 60);
   try { tileURL = c.toDataURL('image/png'); } catch { tileURL = ''; }
   return tileURL;
+}
+
+/* ---------- Lange Absätze über Seiten verteilen ---------- */
+// Teilt einen Absatz (p oder li) an Zeilengrenzen in Stücke; die Formatierung bleibt erhalten (Range.cloneContents).
+// Die ersten und die letzten zwei Zeilen bleiben zusammen, damit nie eine einzelne Zeile oben oder unten auf einer Seite steht.
+function lineFrags(el) {
+  const cs = getComputedStyle(el); const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.4 || 16;
+  if (el.getBoundingClientRect().height < lh * 5.5) return [el];
+  const starts = []; let lastTop = null; const rg = document.createRange();
+  const mark = (t, node, off) => { if (lastTop === null) { lastTop = t; return; } if (t > lastTop + lh * .5) { starts.push({ node, off }); lastTop = t; } };
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT); let n;
+  while ((n = w.nextNode())) {
+    if (n.nodeType === 1) { if (n.matches('.gap, img')) { const p = n.parentNode; mark(n.getBoundingClientRect().top, p, [...p.childNodes].indexOf(n)); } continue; }
+    const t = n.nodeValue; const re = /\S+/g; let m;
+    while ((m = re.exec(t))) { rg.setStart(n, m.index); rg.setEnd(n, m.index + m[0].length); const rs = rg.getClientRects(); if (rs.length) mark(rs[0].top, n, m.index); }
+  }
+  if (starts.length < 5) return [el];
+  const pts = [null, ...starts.slice(1, starts.length - 1), null];
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const r = document.createRange();
+    if (pts[i]) r.setStart(pts[i].node, pts[i].off); else r.setStart(el, 0);
+    if (pts[i + 1]) r.setEnd(pts[i + 1].node, pts[i + 1].off); else r.setEnd(el, el.childNodes.length);
+    const f = el.cloneNode(false); f.appendChild(r.cloneContents()); f.classList.add('lf'); if (i) f.classList.add('lf-c');
+    out.push(f);
+  }
+  return out;
+}
+// Macht den Inhalt eines Textbereichs umbrechbar: Listen werden zu einzelnen Punkten, lange Absätze zu Zeilenstücken
+function splitParas(box) {
+  [...box.children].forEach(c => {
+    if (!/^(UL|OL)$/.test(c.nodeName)) return;
+    let k = Number(c.getAttribute('start')) || 1;
+    [...c.children].forEach(li => { const w = c.cloneNode(false); if (c.nodeName === 'OL') w.setAttribute('start', k++); w.classList.add('lw'); w.appendChild(li); box.insertBefore(w, c); });
+    c.remove();
+  });
+  [...box.children].forEach(c => {
+    if (c.nodeName === 'P') { const fr = lineFrags(c); if (fr.length > 1) { fr.forEach(f => box.insertBefore(f, c)); c.remove(); } }
+    else if (c.classList.contains('lw') && c.firstElementChild) {
+      const fr = lineFrags(c.firstElementChild);
+      if (fr.length > 1) { fr.forEach(f => { const w = c.cloneNode(false); w.appendChild(f); box.insertBefore(w, c); }); c.remove(); }
+    }
+  });
+  return [...box.children];
+}
+// Zusammensetzen eines geteilten Kastens: Kopfteile direkt, Absätze wieder im Textbereich
+function nestedAssemble(n, heads, body, atoms, extra) {
+  return (s, e) => {
+    const w = n.cloneNode(false); let bc = null;
+    if (s === 0 && extra) w.appendChild(extra.cloneNode(true));
+    atoms.slice(s, e).forEach(a => {
+      if (a.parentNode === body) { if (!bc) { bc = body.cloneNode(false); w.appendChild(bc); } bc.appendChild(a.cloneNode(true)); }
+      else w.appendChild(a.cloneNode(true));
+    });
+    return w;
+  };
 }
 
 function measure(it) {
