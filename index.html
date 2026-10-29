@@ -278,13 +278,17 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .rtx li{margin:.1em 0}
 .rtx li::marker{color:var(--tinte)}
 .rtx sup{font-size:.7em}
-.rtx .mk,.rtx [style*="background-color"]:not([style*="transparent"]):not([style*="rgba(0, 0, 0, 0)"]){background-color:var(--ed-mark,#FFE680)!important;color:#1A1E29;border-radius:2px}
+.rtx [style*="background-color"]{background-color:transparent!important}
+.rtx .mk,.rtx [style*="background-color: rgb(255, 230, 128)"]{background-color:var(--ed-mark,#FFE680)!important;color:#1A1E29;border-radius:2px}
 .rtx [style*="background-color: transparent"],.rtx [style*="rgba(0, 0, 0, 0)"]{background-color:var(--field)!important}
 .rtx img.gap{display:inline-block;width:64px;height:1.05em;border-bottom:1.5px solid currentColor;vertical-align:-.2em;margin:0 3px;opacity:.8}
 .rtx-line{min-height:0;max-height:none;white-space:normal}
 .task-ed .rtx{min-height:58px}
 .tx-f .rtx{min-height:58px}
 .tx-f .rtx-line{min-height:0}
+.phr-ed{border:1px solid var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:7px;background:var(--panel)}
+.phr-ed-h{display:flex;align-items:flex-end;gap:4px}
+.phr-ed-h .f{flex:1;min-width:0}
 .tbl-ed .rtx{border:0;border-radius:0;background:transparent;padding:6px 8px;font-size:13px;min-height:31px}
 .tbl-ed .rtx:focus{box-shadow:inset 0 0 0 2px var(--tinte)}
 .tbl-ed tr:first-child .rtx{font-weight:700}
@@ -696,6 +700,23 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .blk-info.st-linie{background:transparent;border:0;border-left:1.2mm solid var(--acc);border-radius:0;padding:1mm 0 1mm 4mm;box-shadow:none}
 .blk-info.st-klein .info-text{font-size:8.8pt}
 
+/* Gedicht */
+.blk-mat.gedicht .mat-body p{padding-left:6mm;text-indent:-6mm}
+.blk-mat.gedicht .ln-t{text-align:left;text-align-last:auto}
+.blk-mat.gedicht .ln.vc .ln-t{padding-left:6mm}
+.blk-mat.gedicht .ln.st{padding-top:.75em}
+/* Formulierungshilfen */
+.blk-phr{border:.35mm solid var(--acc-mark,#C9D3EA);border-radius:1.4mm;padding:2.6mm 4mm 3mm}
+.phr-h{display:flex;align-items:center;gap:1.8mm;font-size:7.2pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:1.6mm}
+.phr-h .phr-i{width:4.4mm;height:4.4mm;flex:0 0 auto}
+.phr-grid{display:grid;gap:2.4mm 7mm}
+.blk-phr.c2 .phr-grid{grid-template-columns:1fr 1fr}
+.phr-gh{font-weight:700;font-size:9.5pt;margin-bottom:.4mm}
+.phr-g ul{list-style:none;margin:0;padding:0}
+.phr-g li{position:relative;padding-left:3.6mm;font-size:9.5pt;line-height:1.4;margin-top:.6mm}
+.phr-g li::before{content:"›";position:absolute;left:0;top:-.15mm;color:var(--acc);font-weight:700}
+.d-akte .blk-phr,.d-zeitung .blk-phr{border-color:var(--acc)}
+
 /* Mess- und Druckbühne */
 #measure-host{position:fixed;left:0;top:0;width:0;height:0;overflow:visible;visibility:hidden;pointer-events:none;z-index:-1}
 #measure-host .page{height:auto;position:absolute;left:0;top:0}
@@ -799,10 +820,13 @@ const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
    Zum Einschalten Project URL und Publishable key eintragen (Anleitung in README.md). */
 const SUPABASE = { url: '', key: '' };
 const INFO_KINDS = ['Info','Merke','Tipp','Hinweis','Methode','Definition'];
+const typeLabel = b => b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
+  poem:     { label:'Gedicht',       desc:'Verse, Strophen, Verszählung' },
   tasks:    { label:'Aufgaben',      desc:'mit Operator-Check' },
   info:     { label:'Infokasten',    desc:'Merke, Tipp, Definition' },
+  phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge und Wendungen' },
   table:    { label:'Tabelle',       desc:'zum Ausfüllen' },
   lines:    { label:'Schreibfläche', desc:'Linien oder Kästchen' },
   heading:  { label:'Überschrift',   desc:'Zwischentitel' },
@@ -936,6 +960,13 @@ function quoteToks(toks) {
 }
 const inlineHTML = s => inlineTokens(s).map(tokHTML).join('');
 // Absätze durch Leerzeile; einfache Umbrüche (z. B. aus PDFs kopiert) werden zu Leerzeichen
+// Gedicht: Verse (eine Zeile = ein Vers), Strophen durch Leerzeilen
+function poemVerses(text) {
+  const out = [];
+  String(text || '').replace(/\r/g, '').split(/\n[ \t]*\n/).map(st => st.split('\n').map(v => v.trim()).filter(Boolean)).filter(st => st.length)
+    .forEach((st, si) => st.forEach((v, vi) => out.push({ t: v, st: si > 0 && vi === 0 })));
+  return out;
+}
 const flowParas = t => String(t || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
 // Absätze durch Leerzeile; einfache Umbrüche bleiben Zeilenumbrüche
 const lineParas = t => String(t || '').replace(/\r/g, '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
@@ -1263,9 +1294,10 @@ function matFmt(b) {
 }
 function fmtSummary(b) {
   const f = matFmt(b);
-  return [f.align === 'left' ? 'Linksbündig' : 'Blocksatz', f.font === 'sans' ? 'ohne Serifen' : 'mit Serifen',
+  const poem = b.form === 'gedicht';
+  return [poem ? 'Verse' : f.align === 'left' ? 'Linksbündig' : 'Blocksatz', f.font === 'sans' ? 'ohne Serifen' : 'mit Serifen',
     String(FMT_SIZE[f.size]).replace('.', ',') + ' pt', 'Zeilenabstand ' + f.lh,
-    f.margin ? 'Notizrand' : '', b.lineNumbers === false ? 'ohne Zeilennummern' : ''].filter(Boolean).join(' · ');
+    f.margin ? 'Notizrand' : '', b.lineNumbers === false ? (poem ? 'ohne Verszählung' : 'ohne Zeilennummern') : ''].filter(Boolean).join(' · ');
 }
 function fmtEditor(b) {
   const f = matFmt(b); const open = state.fmtOpen.has(b.id);
@@ -1274,8 +1306,8 @@ function fmtEditor(b) {
   const seg = key => { const d = MAT_FMT[key]; return `<div class="f"><span>${d.label}</span><div class="seg" role="group" aria-label="${d.label}">${d.opts.map(([v, t]) => `<button type="button" data-act="fmt" data-f="${key}" data-v="${v}" aria-pressed="${f[key] === v}">${t}</button>`).join('')}</div></div>`; };
   return `<div class="sub${open ? ' open' : ''}">
     <button type="button" class="sub-h" data-act="fmt-toggle" aria-expanded="${open}"><span class="sub-t">Formatierung</span><span class="sub-s">${esc(fmtSummary(b))}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
-    ${open ? `<div class="sub-b">${seg('align')}${seg('font')}<div class="row">${seg('size')}${seg('lh')}</div>
-      <div class="chks">${fCheck('lineNumbers', 'Zeilennummern', b.lineNumbers !== false)}${fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
+    ${open ? `<div class="sub-b">${b.form === 'gedicht' ? '' : seg('align')}${seg('font')}<div class="row">${seg('size')}${seg('lh')}</div>
+      <div class="chks">${fCheck('lineNumbers', b.form === 'gedicht' ? 'Verszählung' : 'Zeilennummern', b.lineNumbers !== false)}${b.form === 'gedicht' ? '' : fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
       ${isDef && nMat < 2 ? '' : `<div class="row" style="gap:6px 18px">${isDef ? '' : '<button class="link" type="button" data-act="fmt-reset">Standard wiederherstellen</button>'}${nMat > 1 ? '<button class="link" type="button" data-act="fmt-all">Für alle Materialien übernehmen</button>' : ''}</div>`}</div>` : ''}
   </div>`;
 }
@@ -1709,7 +1741,7 @@ function snipBlock(id) {
 }
 function saveSnip(b) {
   const list = userSnips(); const c = clone(b); delete c.group;
-  const name = (TYPES[b.type].label + ': ' + summary(b, numbering(state.sheet))).slice(0, 70);
+  const name = (typeLabel(b) + ': ' + summary(b, numbering(state.sheet))).slice(0, 70);
   list.unshift({ id: 's' + uid(), name, block: c }); lsSet(LS_SNIP, list.slice(0, 60));
   toast('In der Sammlung gespeichert');
 }
@@ -1747,7 +1779,7 @@ function onMenuClick(e) {
     case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); break; }
     case 'snip': saveSnip(b); renderEditor(); break;
     case 'grp': b.group = a.dataset.v || ''; changed(true); break;
-    case 'del': snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${TYPES[b.type].label} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); break;
+    case 'del': snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); break;
   }
 }
 
@@ -1771,7 +1803,7 @@ const lastField = { bid: null, k: null, pos: null, end: null };
 function fieldLabel(b, k) {
   const num = numbering(state.sheet); const m = k.match(/^items\.(\d+)\.(text|eh|tips|tag)(?:\.(\d+))?/);
   if (b.type === 'tasks' && m) { const n = num[b.id].from + +m[1]; return `Aufgabe ${n}${m[2] === 'eh' ? ' · Erwartung' : m[2] === 'tips' ? ` · Tipp ${+m[3] + 1}` : ''}`; }
-  return TYPES[b.type].label;
+  return typeLabel(b);
 }
 function fieldTarget() {
   if (!lastField.bid) return null; const b = state.sheet.blocks.find(x => x.id === lastField.bid);
@@ -1780,7 +1812,8 @@ function fieldTarget() {
 function zlText() {
   const o = zl.open; const lo = Math.min(o.a, o.b), hi = Math.max(o.a, o.b);
   const many = state.sheet.blocks.filter(x => x.type === 'material').length > 1;
-  return `(${many && o.mNo ? `M${o.mNo}, ` : ''}Z. ${lo === hi ? lo : lo + '–' + hi})`;
+  const bl = state.sheet.blocks.find(x => x.id === o.bid); const zv = bl && bl.form === 'gedicht' ? 'V.' : 'Z.';
+  return `(${many && o.mNo ? `M${o.mNo}, ` : ''}${zv} ${lo === hi ? lo : lo + '–' + hi})`;
 }
 function openZl(bid, n, mNo, rect) {
   if (zl.open && zl.open.bid === bid) { zl.open.b = n; zl.open.rect = rect; } else zl.open = { bid, a: n, b: n, mNo, rect };
@@ -1796,7 +1829,7 @@ function renderZl() {
   const r = $('#zl-root'); const o = zl.open; if (!o) { r.innerHTML = ''; return; }
   const tgt = fieldTarget();
   r.innerHTML = `<div class="gl-scrim" data-zl="close"></div><div class="gpop" id="zlpop" role="dialog" aria-labelledby="zl-h">
-    <div class="gpop-h"><span id="zl-h">Zeilenangabe</span><button class="ib" type="button" data-zl="close" title="Schließen">${I.x}</button></div>
+    <div class="gpop-h"><span id="zl-h">${(state.sheet.blocks.find(x => x.id === o.bid) || {}).form === 'gedicht' ? 'Versangabe' : 'Zeilenangabe'}</span><button class="ib" type="button" data-zl="close" title="Schließen">${I.x}</button></div>
     <div class="gl-term">${esc(zlText())}</div>
     <small class="zl-hint">Für einen Bereich die letzte Zeile anklicken.</small>
     <div class="zl-a">${tgt ? `<button class="btn primary" type="button" data-zl="ins">In „${esc(tgt.label)}“ einfügen</button>` : ''}<button class="btn" type="button" data-zl="copy">Kopieren</button></div>
@@ -1837,9 +1870,9 @@ function zlCopy() {
 }
 
 /* ================= Einfügen aus PDFs ================= */
-function cleanPdf(raw) {
+function cleanPdf(raw, noHy) {
   let t = String(raw).replace(/\r\n?/g, '\n').replace(/­/g, ''); let hy = 0, ln = 0;
-  t = t.replace(/(\p{L})-[ \t]*\n[ \t]*(\p{Ll})/gu, (m, a, b) => { hy++; return a + b; });
+  if (!noHy) t = t.replace(/(\p{L})-[ \t]*\n[ \t]*(\p{Ll})/gu, (m, a, b) => { hy++; return a + b; });
   const lines = t.split('\n');
   const strip = (re, fix) => {
     const nums = []; lines.forEach((l, i) => { const m = l.match(re); if (m && +m[1] % 5 === 0) nums.push([i, +m[1]]); });
@@ -1870,6 +1903,7 @@ function gTargets(bid) {
   switch (b.type) {
     case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
     case 'info': return [[b, 'title'], [b, 'text']];
+    case 'phrases': return [[b, 'title'], ...(b.groups || []).flatMap(g => [[g, 'head'], [g, 'text']])];
     case 'heading': case 'text': return [[b, 'text']];
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
     case 'qr': return [[b, 'title'], [b, 'note']];
@@ -1954,6 +1988,8 @@ function newBlock(type) {
     case 'quote': return { id, type, text: '', author: '' };
     case 'qr': return { id, type, url: '', title: '', note: '', size: 'M' };
     case 'image': return { id, type, src: '', w: 0, h: 0, caption: '', source: '', width: 80 };
+    case 'poem': return { ...newBlock('material'), form: 'gedicht' };
+    case 'phrases': return { id, type, title: 'Formulierungshilfen', cols: 2, groups: [{ head: '', text: '' }] };
     default: return { id, type: 'pagebreak' };
   }
 }
@@ -2039,6 +2075,10 @@ function buildBlock(b, ctx) {
       const atoms = b.stil === 'merksatz' ? [] : [...n.children];
       return { type: 'text', el: n, atoms: atoms.length > 1 ? atoms : null, keepFirst: 1, keepLast: 1 };
     }
+    case 'phrases': {
+      const gs = phrGroups(b); const cols = (+b.cols || 2) === 1 ? 1 : 2;
+      return { type: 'phrases', el: put(`<div class="blk blk-phr c${cols}"><div class="phr-h">${PHR_ICON}<span>${inlineHTML(b.title || 'Formulierungshilfen')}</span></div><div class="phr-grid">${(gs.length ? gs : [{ head: '', lines: ['Formulierung …'] }]).map(g => `<div class="phr-g">${g.head ? `<div class="phr-gh">${inlineHTML(g.head)}</div>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`) };
+    }
     case 'info': return { type: 'info', el: put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`) };
     case 'quote': return { type: 'quote', el: put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`) };
     case 'qr': {
@@ -2093,17 +2133,17 @@ function buildBlock(b, ctx) {
       const no = ++ctx.m; const step = Number(meta.lineStep) || 5; const matLab = (designOf(meta) === 'akte' ? 'Anlage M' : 'M') + no;
       const gm = glossMarks(b); const fm = matFmt(b); const notes = gm.list;
       const tail = (notes.length || b.source) ? `<div class="mat-tail">${notes.length ? `<div class="notes">${notes.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${b.source ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
-      const paras = flowParas(gm.text);
-      const fcls = (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
+      const poem = b.form === 'gedicht'; const paras = poem ? [] : flowParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
+      const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}`;
-      const n = put(`<div class="blk blk-mat${fcls}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${(paras.length ? paras : ['Materialtext']).map((p, i) => `<p class="${i ? 'ind' : ''}">${toWordsM(p).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : ['Materialtext']).map((p, i) => `<p class="${i ? 'ind' : ''}">${toWordsM(p).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
       const lines = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
         let top = null, cur = [], first = true;
-        const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0, pl: last }); first = false; cur = []; } };
+        const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0, pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st') }); first = false; cur = []; } };
         [...p.querySelectorAll('.w')].forEach(w => {
           const t = w.getBoundingClientRect().top;
           if (top === null || t > top + lh * .5) { flush(false); top = t; }
@@ -2111,7 +2151,9 @@ function buildBlock(b, ctx) {
         });
         flush(true);
       });
-      bodyEl.innerHTML = lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no" data-n="${i + 1}">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
+      bodyEl.innerHTML = poem
+        ? lines.map(L => `<div class="ln vs${L.st ? ' st' : ''}${L.cont ? ' vc' : ''}"><span class="ln-no" data-n="${L.v}">${b.lineNumbers !== false && !L.cont && L.v % step === 0 ? L.v : ''}</span><span class="ln-t">${L.html}</span></div>`).join('')
+        : lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no" data-n="${i + 1}">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
       if (b.lineNumbers === false) bodyEl.querySelectorAll('.ln-no').forEach(x => x.style.visibility = 'hidden');
       const head = n.querySelector('.mat-head'), tailEl = n.querySelector('.mat-tail');
       const lineEls = [...bodyEl.children];
@@ -2355,7 +2397,7 @@ function rtSerialize(root, opt = {}) {
     if (st.fontWeight) f.b = st.fontWeight === 'bold' || st.fontWeight === 'bolder' || +st.fontWeight >= 600 ? 1 : 0;
     if (st.fontStyle) f.i = st.fontStyle === 'italic' ? 1 : 0;
     const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : td === 'none' ? 0 : f.u;
-    const bg = st.backgroundColor; if (bg) f.m = /^(transparent|rgba\(0, 0, 0, 0\)|initial|inherit|unset)$/.test(bg) ? 0 : 1;
+    const bg = st.backgroundColor; if (bg) f.m = isHighlight(bg) ? 1 : /^(transparent|rgba\(0, 0, 0, 0\))$/.test(bg) ? 0 : f.m;
     return f;
   };
   const trailing = (n, blk) => { for (let x = n; x && x !== blk; x = x.parentNode) for (let y = x.nextSibling; y; y = y.nextSibling) if (y.nodeType === 1 || (y.nodeType === 3 && y.nodeValue)) return false; return true; };
@@ -2387,6 +2429,15 @@ function rtSerialize(root, opt = {}) {
     }
   };
   walk(root, { b: 0, i: 0, u: 0, m: 0 }, null);
+  const out = emitLines(lines, mode, plain);
+  let raw = out.join(mode === 'line' ? ' ' : '\n'), a = -1, b = -1;
+  if (R) { a = raw.indexOf(S0); if (a >= 0) raw = raw.slice(0, a) + raw.slice(a + 1); b = raw.indexOf(S1); if (b >= 0) raw = raw.slice(0, b) + raw.slice(b + 1); }
+  raw = raw.replace(/\n+$/, '');
+  a = Math.min(a, raw.length); b = Math.min(b < 0 ? a : b, raw.length);
+  return { raw, start: a, end: b };
+}
+// Zeilen [{ pre: 'ul'|'ol'|'', runs }] → gespeicherter Text (je Zeile ein Eintrag)
+function emitLines(lines, mode, plain = false) {
   const out = []; let olN = 0, prev = '';
   for (const L of lines) {
     let t = '';
@@ -2404,15 +2455,131 @@ function rtSerialize(root, opt = {}) {
     }
     let pre = '';
     if (mode === 'full' && L.pre) { olN = L.pre === 'ol' ? (prev === 'ol' ? olN + 1 : 1) : 0; pre = L.pre === 'ol' ? olN + '. ' : '- '; }
-    else if (mode === 'full' && !plain && LIST_LINE.test(t.replace(/[]/g, ''))) t = t.replace(/^([]*)([-•]|\d{1,2})/, (m0, sn, x) => /^\d/.test(x) ? sn + x + '\\' : sn + '\\' + x);
+    else if (mode === 'full' && !plain && LIST_LINE.test(t.replace(/[\uE0F0\uE0F1]/g, ''))) t = t.replace(/^([\uE0F0\uE0F1]*)([-•]|\d{1,2})/, (m0, sn, x) => /^\d/.test(x) ? sn + x + '\\' : sn + '\\' + x);
     prev = L.pre; out.push(pre + t);
   }
-  let raw = out.join(mode === 'line' ? ' ' : '\n'), a = -1, b = -1;
-  if (R) { a = raw.indexOf(S0); if (a >= 0) raw = raw.slice(0, a) + raw.slice(a + 1); b = raw.indexOf(S1); if (b >= 0) raw = raw.slice(0, b) + raw.slice(b + 1); }
-  raw = raw.replace(/\n+$/, '');
-  a = Math.min(a, raw.length); b = Math.min(b < 0 ? a : b, raw.length);
-  return { raw, start: a, end: b };
+  return out;
 }
+
+/* ---------- Einfügen mit Formatierung (Word, Google Docs, Webseiten, andere Textfelder) ---------- */
+const HL_WORDS = /^(yellow|lime|aqua|cyan|fuchsia|magenta|pink|lightgreen|lightblue|lightyellow|gold|khaki|orange|greenyellow|lightpink)$/i;
+function isHighlight(bg, styleAttr) {
+  if (/mso-highlight/i.test(styleAttr || '')) return true;
+  if (!bg || /^(transparent|initial|inherit|unset|none)$/.test(bg)) return false;
+  if (HL_WORDS.test(bg)) return true;
+  const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?/); if (!m) return false;
+  const r = +m[1], g = +m[2], b = +m[3], a = m[4] == null ? 1 : +m[4]; if (a < .3) return false;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+  return mx > 170 && (mx - mn) / mx > .3; // helle, kräftige Farbe = Textmarker; Weiß, Grau und Dunkles nicht
+}
+function htmlToRaw(html, mode, opt = {}) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script,style,head,title,meta,link,noscript,template,iframe,object,embed,svg,img,video,audio,canvas,button,input,select,textarea,rt,rp').forEach(n => n.remove());
+  const LEAF = 'p,h1,h2,h3,h4,h5,h6,li';
+  // Gedicht: Jeder Absatz ein Vers, wenn Strophen durch leere Absätze getrennt sind (so schreibt Word) oder es gar keine Zeilenumbrüche gibt
+  let verseP = false;
+  if (opt.poem) {
+    const leaves = [...doc.body.querySelectorAll(LEAF + ',div')].filter(x => !x.querySelector(LEAF + ',div'));
+    verseP = leaves.length > 1 && (leaves.some(x => !x.textContent.replace(/[\s\u00A0]/g, '')) || !doc.body.querySelector('br'));
+  }
+  const paras = []; let para = null, line = null, pend = null, brRun = 0, pendPre = '';
+  const rank = { line: 1, para: 2 };
+  const brk = k => { if (!pend || rank[k] > rank[pend]) pend = k; };
+  const has = L => L.runs.some(r => r.gap || r.sup != null || (r.t && r.t.trim()));
+  const nl = () => ({ pre: pendPre, runs: [] });
+  const put = r => {
+    if (r.t != null && !r.sup && !r.t.trim() && (!para || pend || !has(line))) return; // Leerraum zwischen Absätzen
+    if (!para) { para = [line = nl()]; paras.push(para); }
+    else if (pend === 'para' && para.some(has)) { para = [line = nl()]; paras.push(para); }
+    else if (pend && has(line)) para.push(line = nl());
+    else if (pendPre) line.pre = pendPre;
+    pend = null; pendPre = ''; brRun = 0;
+    if (r.t != null && !r.sup) {
+      let t = r.t; const last = line.runs[line.runs.length - 1];
+      if (!line.runs.length || (last && last.t != null && / $/.test(last.t))) t = t.replace(/^ +/, '');
+      if (!t) return; r.t = t;
+      if (last && last.t != null && !last.sup && RT_FL.every(f => (last[f] || 0) === (r[f] || 0))) { last.t += t; return; }
+    }
+    line.runs.push(r);
+  };
+  const flagsOf = (el, fl) => {
+    const f = { ...fl }, tn = el.nodeName, st = el.style || {}, sa = el.getAttribute('style') || '';
+    if (/^(B|STRONG|H[1-6]|TH|DT)$/.test(tn)) f.b = 1;
+    if (/^(I|EM|CITE|DFN|VAR)$/.test(tn)) f.i = 1;
+    if (tn === 'U' || tn === 'INS') f.u = 1;
+    if (tn === 'MARK') f.m = 1;
+    const fw = st.fontWeight; if (fw) f.b = fw === 'bold' || fw === 'bolder' || +fw >= 600 ? 1 : 0;
+    if (st.fontStyle) f.i = /italic|oblique/.test(st.fontStyle) ? 1 : 0;
+    const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : /none/.test(td) ? 0 : f.u;
+    if (isHighlight(st.backgroundColor, sa)) f.m = 1;
+    return f;
+  };
+  const walk = (node, fl, ctx) => {
+    for (const n of node.childNodes) {
+      if (n.nodeType === 3) {
+        let t = n.nodeValue;
+        if (ctx.pre) { t.replace(/\r/g, '').split('\n').forEach((part, i) => { if (i) brk('line'); if (part) put({ t: part.replace(/\t/g, '    '), ...fl }); }); continue; }
+        t = t.replace(/[\s\u00A0]+/g, ' '); if (t) put({ t, ...fl });
+        continue;
+      }
+      if (n.nodeType !== 1) continue;
+      const tag = n.nodeName;
+      if (tag === 'BR') { if (brRun >= 1 && pend === 'line') brk('para'); else brk('line'); brRun++; continue; }
+      if (tag === 'SUP' && /^\s*(\d+|\*)\s*$/.test(n.textContent)) { put({ t: n.textContent.trim(), sup: n.textContent.trim() }); continue; }
+      if (tag === 'UL' || tag === 'OL') { brk('para'); walk(n, fl, { ...ctx, list: tag, n: 0 }); brk('para'); continue; }
+      if (tag === 'LI') {
+        ctx.n = (ctx.n || 0) + 1;
+        if (mode === 'full') { brk('line'); pendPre = ctx.list === 'OL' ? 'ol' : 'ul'; walk(n, flagsOf(n, fl), ctx); brk('line'); }
+        else { brk(mode === 'inline' ? 'para' : 'line'); put({ t: ctx.list === 'OL' ? ctx.n + '. ' : '• ', ...fl }); walk(n, flagsOf(n, fl), ctx); brk(mode === 'inline' ? 'para' : 'line'); }
+        continue;
+      }
+      if (tag === 'TD' || tag === 'TH') { walk(n, flagsOf(n, fl), ctx); put({ t: ' ', ...fl }); continue; }
+      if (tag === 'TR') { brk(mode === 'full' ? 'line' : 'para'); walk(n, fl, ctx); brk(mode === 'full' ? 'line' : 'para'); continue; }
+      if (/^(P|H[1-6]|BLOCKQUOTE|PRE|SECTION|ARTICLE|HEADER|FOOTER|ASIDE|NAV|MAIN|FIGURE|FIGCAPTION|ADDRESS|DL|DT|DD|TABLE|CENTER|FORM|FIELDSET)$/.test(tag)) {
+        const empty = !n.textContent.replace(/[\s\u00A0]/g, '') && !n.querySelector('img');
+        if (verseP && /^(P|H[1-6])$/.test(tag)) { brk(empty ? 'para' : 'line'); if (!empty) walk(n, flagsOf(n, fl), ctx); brk('line'); continue; }
+        brk('para'); walk(n, flagsOf(n, fl), tag === 'PRE' ? { ...ctx, pre: true } : ctx); brk('para'); continue;
+      }
+      if (tag === 'DIV') {
+        // Wie in den Textfeldern: ein DIV ist eine Zeile, ein leeres DIV eine Leerzeile (= neuer Absatz)
+        const empty = !n.textContent.replace(/[\s\u00A0]/g, '');
+        if (empty && !n.querySelector('img')) { brk('para'); continue; }
+        brk('line'); walk(n, flagsOf(n, fl), ctx); brk('line'); continue;
+      }
+      walk(n, flagsOf(n, fl), ctx);
+    }
+  };
+  walk(doc.body, { b: 0, i: 0, u: 0, m: 0 }, {});
+  const lines = [];
+  paras.forEach(p => {
+    const ls = p.filter(has); if (!ls.length) return;
+    if (lines.length) lines.push({ pre: '', runs: [] });
+    ls.forEach(L => {
+      const tx = L.runs.filter(r => r.t != null && !r.sup);
+      if (tx.length) { tx[tx.length - 1].t = tx[tx.length - 1].t.replace(/\s+$/, ''); }
+      L.runs = quoteToks(L.runs.filter(r => r.gap || r.sup != null || r.t));
+      lines.push(L);
+    });
+  });
+  const out = emitLines(lines, mode);
+  return mode === 'line' ? out.filter(Boolean).join(' ') : out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+// Gespeicherten Text an der Schreibmarke einsetzen (mit Rückgängig)
+function rtInsertRaw(rt, raw) {
+  const mode = rt.dataset.rt;
+  if (mode === 'line' || !raw.includes('\n')) { document.execCommand('insertHTML', false, inlineTokens(raw.replace(/\s*\n\s*/g, ' ')).map(edTok).join('')); return; }
+  document.execCommand('insertHTML', false, richHTML(raw, mode));
+}
+// Reiner Text ohne Leerzeilen, dessen Zeilen wie ganze Absätze aussehen (Word, Webseiten): Zeilen als Absätze
+function guessParas(t) {
+  if (/\n[ \t]*\n/.test(t)) return t;
+  const L = t.split('\n').map(x => x.trim()).filter(Boolean); if (L.length < 2) return t;
+  const ends = L.filter(x => /[.!?:;“"»«)…]$/.test(x)).length / L.length;
+  const avg = L.reduce((a, x) => a + x.length, 0) / L.length;
+  return ends >= .7 || avg >= 110 ? L.join('\n\n') : t;
+}
+let plainPasteUntil = 0;
+
 function rtCaretEnd(el) { const rg = document.createRange(); rg.selectNodeContents(el); rg.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); }
 // Text setzen und die Schreibmarke an eine Stelle im gespeicherten Text legen
 function rtSetRaw(el, raw, caret) {
@@ -2442,7 +2609,7 @@ function rtMarked() {
   const s = getSelection(); const f = rtFieldSel(); if (!f || !s.rangeCount) return false;
   for (let n = s.getRangeAt(0).startContainer; n && n !== f; n = n.parentNode) {
     if (n.nodeType !== 1) continue; if (n.nodeName === 'MARK') return true;
-    const bg = n.style && n.style.backgroundColor; if (bg && !/^(transparent|rgba\(0, 0, 0, 0\))$/.test(bg)) return true;
+    const bg = n.style && n.style.backgroundColor; if (bg && isHighlight(bg)) return true; if (bg && /^(transparent|rgba\(0, 0, 0, 0\))$/.test(bg)) return false;
   }
   return false;
 }
@@ -2510,6 +2677,18 @@ const ST_INFO = {
   linie: { label: 'Linie', d: 'Nur der Balken am Rand, spart Toner', pic: '<rect x="6" y="6" width="3.2" height="28" fill="#1F4FA0"/>' + stL(15, [12.5, 18.5, 24.5], 38, 24) },
   klein: { label: 'Klein', d: 'Fläche mit kleinerer Schrift', pic: '<rect x="6" y="6" width="52" height="28" rx="2" fill="#DCE3F5"/><rect x="6" y="6" width="3.2" height="28" fill="#1F4FA0"/>' + stL(14, [12, 16.5, 21, 25.5], 38, 22, 1.8, '#5A6170') }
 };
+/* ---------- Formulierungshilfen: Vorlagen ---------- */
+const PHRASE_SETS = [
+  { head: 'Einleitung', lines: ['In dem Text „…“ von … (…) geht es um …', 'Der Text „…“ wurde … veröffentlicht und thematisiert …', 'Im Mittelpunkt steht …', 'Die Kernaussage lautet, dass …'] },
+  { head: 'Sprachliche Mittel deuten', lines: ['Auffällig ist die Verwendung von …', 'Durch die Metapher „…“ (Z. …) wird verdeutlicht, dass …', 'Die Wiederholung von … unterstreicht …', 'Der Satzbau wirkt …, weil …', 'Dies lässt sich so deuten, dass …'] },
+  { head: 'Zitieren und Belegen', lines: ['Das zeigt sich in Zeile …: „…“', 'Wie es in Z. … heißt, …', 'Der Erzähler betont, dass … (vgl. Z. …).', 'Dafür spricht die Formulierung „…“ (Z. …).'] },
+  { head: 'Argumentieren', lines: ['Ein wichtiges Argument für … ist, dass …', 'Hinzu kommt, dass …', 'Dagegen lässt sich einwenden, dass …', 'Zwar …, aber …', 'Ein Beispiel dafür ist …'] },
+  { head: 'Vergleichen', lines: ['Im Unterschied zu … zeigt …', 'Während in M1 …, wird in M2 …', 'Gemeinsam ist beiden Texten, dass …', 'Ähnlich wie … stellt auch …'] },
+  { head: 'Urteilen und Schluss', lines: ['Abschließend lässt sich festhalten, dass …', 'Insgesamt überzeugt mich …, weil …', 'Meiner Meinung nach …, da …', 'Zusammenfassend zeigt sich, dass …'] }
+];
+const PHR_ICON = '<svg class="phr-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10.5H10.5L6 19v-3.5H4z"/><path d="M8 9h8M8 12h5"/></svg>';
+const phrGroups = b => (Array.isArray(b.groups) ? b.groups : []).map(g => ({ head: String(g.head || '').trim(), lines: String(g.text || '').split('\n').map(x => x.trim()).filter(Boolean) })).filter(g => g.head || g.lines.length);
+
 const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid" role="group" aria-label="Stil">${Object.entries(S).map(([k, x]) => `<button type="button" class="km" data-act="blk-stil" data-v="${k}" aria-pressed="${(b.stil || '') === k}" title="${esc(x.d)}"><svg viewBox="0 0 64 40" aria-hidden="true">${x.pic}</svg><b>${x.label}</b></button>`).join('')}</div></div>`;
 
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;
@@ -2538,6 +2717,7 @@ function summary(b, num) {
     case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : ''); }
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
+    case 'phrases': { const n = phrGroups(b).reduce((a, g) => a + g.lines.length, 0); return `${plainText(b.title || 'Formulierungshilfen')} · ${n} ${n === 1 ? 'Wendung' : 'Wendungen'}`; }
     case 'lines': return `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
     case 'heading': return b.text || 'leer';
     case 'text': return (plainText(b.text) || 'leer').slice(0, 60);
@@ -2557,13 +2737,15 @@ function bodyFor(b, num) {
   switch (b.type) {
     case 'heading': return fText('text', 'Überschrift', b.text, 'z. B. Vertiefung');
     case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
-    case 'material': return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
-      ${fText('title', 'Titel / Autor', b.title, 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
-      ${fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Leerzeile = neuer Absatz. Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen. Text markieren zum Hervorheben.' })}
+    case 'material': { const poem = b.form === 'gedicht'; return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
+      <div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>
+      ${fText('title', 'Titel / Autor', b.title, poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
+      ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
+        : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Leerzeile = neuer Absatz. Einfache Zeilenumbrüche, etwa aus PDFs, werden zusammengezogen. Text markieren zum Hervorheben.' })}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${fmtEditor(b)}
-      ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`;
+      ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`; }
     case 'tasks': {
       const start = num[b.id].from;
       return `${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
@@ -2582,6 +2764,18 @@ function bodyFor(b, num) {
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, INFO_KINDS.map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
       ${stilTiles(b, ST_INFO)}${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
+    case 'phrases': {
+      if (!Array.isArray(b.groups) || !b.groups.length) b.groups = [{ head: '', text: '' }];
+      return `${fText('title', 'Überschrift', b.title, 'Formulierungshilfen')}
+        <div class="row"><div class="f"><span>Spalten</span><div class="seg sm" role="group" aria-label="Spalten">${[[1, 'eine'], [2, 'zwei']].map(([n, l]) => `<button type="button" data-act="phr-cols" data-v="${n}" aria-pressed="${((+b.cols || 2) === 1 ? 1 : 2) === n}">${l}</button>`).join('')}</div></div>
+          <label class="f"><span>Vorlage hinzufügen</span><select data-act="phr-set"><option value="">Vorlage wählen …</option>${PHRASE_SETS.map((p, i) => `<option value="${i}">${esc(p.head)}</option>`).join('')}</select></label></div>
+        ${b.groups.map((g, i) => `<div class="phr-ed"><div class="phr-ed-h">${fText(`groups.${i}.head`, `Gruppe ${i + 1}`, g.head, 'Überschrift, z. B. Einleitung (optional)')}
+            <button class="ib" type="button" data-act="phr-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
+            <button class="ib" type="button" data-act="phr-del" data-i="${i}" title="Gruppe entfernen">${I.x}</button></div>
+          ${rtField(`groups.${i}.text`, g.text || '', { mode: 'inline', rows: 3, ph: 'Eine Formulierung pro Zeile, z. B. Der Text handelt von …', aria: `Formulierungen Gruppe ${i + 1}` })}</div>`).join('')}
+        <button class="link" type="button" data-act="phr-add">+ Gruppe</button>
+        <small class="hint">Eine Formulierung pro Zeile. „…“ zeigt, wo weitergeschrieben wird.</small>`;
+    }
     case 'quote': return `${fRich('text', 'Zitat', b.text, { rows: 3, ph: '„…“' })}${fText('author', 'Quelle / Urheber', b.author, 'z. B. Victor Klemperer: LTI (1947)')}`;
     case 'table': {
       const cols = b.cols.length;
@@ -2652,7 +2846,7 @@ function renderEditor(focusSel) {
     ed.innerHTML = fold + intro + metaCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
       return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind">${TYPES[b.type].label}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
+        <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
           <button class="ib" type="button" data-act="up" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="Nach unten"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
@@ -2713,6 +2907,12 @@ function onChange(e) {
     else if (ta) { ta.focus(); const p = ta.value.indexOf('…'); if (p >= 0) ta.setSelectionRange(p, p + 1); }
     return;
   }
+  if (t.dataset.act === 'phr-set') {
+    const card = t.closest('[data-bid]'); const b = card && target(card.dataset.bid); const set = PHRASE_SETS[+t.value]; if (!b || !set || t.value === '') return;
+    const gs = Array.isArray(b.groups) ? b.groups : (b.groups = []); const g = { head: set.head, text: set.lines.join('\n') };
+    if (gs.length === 1 && !String(gs[0].head || '').trim() && !String(gs[0].text || '').trim()) gs[0] = g; else gs.push(g);
+    changed(true); toast(`Vorlage „${set.head}“ eingefügt`); return;
+  }
   if (t.dataset.act === 'img') { const card = t.closest('[data-bid]'); if (t.files && t.files[0]) handleImage(t.files[0], target(card.dataset.bid)); return; }
   const k = t.dataset.k; if (!k) return;
   const card = t.closest('[data-bid]'); if (!card) return;
@@ -2737,7 +2937,7 @@ function onClick(e) {
     }
     case 'up': case 'down': { const j = act === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); return; }
     case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); return; }
-    case 'del': { snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${TYPES[b.type].label} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); return; }
+    case 'del': { snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', () => { state.sheet = undoSnap; undoSnap = null; changed(true); }); return; }
     case 'add': {
       const nb = newBlock(a.dataset.type);
       const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
@@ -2755,6 +2955,11 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
+    case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
+    case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
+    case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
+    case 'phr-del': { const g = b.groups || []; g.splice(+a.dataset.i, 1); if (!g.length) g.push({ head: '', text: '' }); changed(true); return; }
+    case 'phr-up': { const g = b.groups || [], i = +a.dataset.i; if (i > 0) [g[i - 1], g[i]] = [g[i], g[i - 1]]; changed(true); return; }
     case 'fold-all': state.closed = new Set(['meta', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
     case 'unfold-all': state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
@@ -3492,7 +3697,8 @@ async function exportDOCX() {
         const gmD = glossMarks(b), fm = matFmt(b);
         const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
         const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
-        flowParas(gmD.text).forEach((p, i) => parts.push(xp(xrInline(p, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(i), bdr: mBdr })));
+        if (b.form === 'gedicht') poemVerses(gmD.text).forEach(v => parts.push(xp(xrInline(v.t, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: 'left', before: v.st ? 160 : 0, ind: `<w:ind w:left="${TW(6)}" w:hanging="${TW(6)}"${fm.margin ? ` w:right="${TW(28)}"` : ''}/>`, bdr: mBdr })));
+        else flowParas(gmD.text).forEach((p, i) => parts.push(xp(xrInline(p, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(i), bdr: mBdr })));
         const notes = gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
         if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
         if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { before: 60 }));
@@ -3516,6 +3722,15 @@ async function exportDOCX() {
           const lines = lineParas(b.text);
           lines.forEach((p, i) => parts.push(xp((i === 0 ? xr('„ ', { font: SERIF, b: 1, sz: 32, color: A }) : '') + xrLines(p, { font: SERIF, i: 1, sz: 25 }), { ind: `<w:ind w:left="${TW(10)}" w:right="${TW(6)}"/>`, keepNext: true })));
           if (b.author) parts.push(xp(xrInline(b.author, { sz: 17, color: GREY }), { jc: 'right', before: 60 }));
+          break;
+        }
+        case 'phrases': {
+          const gs = phrGroups(b); if (!gs.length) break; const cols = (+b.cols || 2) === 1 ? 1 : 2; const w = Math.floor(CW / cols);
+          parts.push(xp(xr(plainText(b.title || 'Formulierungshilfen'), { b: 1, caps: 1, sz: 15, color: A, sp: 14 }), { keepNext: true, after: 40 }));
+          const cell = g => (g.head ? xp(xrInline(g.head, { b: 1, sz: 19 }), { after: 10, keepNext: true }) : '') + g.lines.map(l => xp(xr('›', { b: 1, sz: 19, color: A }) + '<w:r><w:tab/></w:r>' + xrInline(l, { sz: 19 }), { ind: `<w:ind w:left="${TW(4)}" w:hanging="${TW(4)}"/>`, before: 20 })).join('');
+          const rows = []; for (let i = 0; i < gs.length; i += cols) rows.push(xtr(Array.from({ length: cols }, (_, j) => xtc(gs[i + j] ? cell(gs[i + j]) : xp(''), { w })).join(''), { cant: 1 }));
+          const bd = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 6, DOCX_MARK)).join('') + NIL('insideH') + NIL('insideV');
+          parts.push(xtbl(Array(cols).fill(w), rows.join(''), bd, `<w:top w:w="${TW(1.5)}" w:type="dxa"/><w:left w:w="${TW(3)}" w:type="dxa"/><w:bottom w:w="${TW(2)}" w:type="dxa"/><w:right w:w="${TW(3)}" w:type="dxa"/>`));
           break;
         }
         case 'info': {
@@ -3718,6 +3933,8 @@ function boot() {
     const fixed = deQuoteStr(t.tagName === 'INPUT' ? raw.replace(/\s*\n\s*/g, ' ') : raw); if (fixed === raw) return;
     e.preventDefault(); document.execCommand('insertText', false, fixed);
   }, true);
+  // Strg+Umschalt+V: nur den Text einfügen
+  document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'v' || e.key === 'V')) plainPasteUntil = Date.now() + 1500; }, true);
   // Formatierungsleiste
   const rtb = $('#rt-bar');
   rtb.addEventListener('mousedown', e => e.preventDefault());
@@ -3734,11 +3951,22 @@ function boot() {
     const rt = e.target.closest && e.target.closest('.rtx');
     if (rt) {
       e.preventDefault();
-      let raw = ((e.clipboardData && e.clipboardData.getData('text/plain')) || '').replace(/\r\n?/g, '\n'); if (!raw) return;
-      const card = rt.closest('[data-bid]'); const blk = card && target(card.dataset.bid); let note = '';
-      if (blk && blk.type === 'material' && rt.dataset.k === 'text') { const r = cleanPdf(raw); if (r.hy || r.ln) { raw = r.t; note = [r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} Zeilennummern` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt'; } }
-      if (rt.dataset.rt === 'line') raw = raw.replace(/\s*\n\s*/g, ' ');
-      document.execCommand('insertText', false, deQuoteStr(raw));
+      const cd = e.clipboardData; if (!cd) return;
+      const card = rt.closest('[data-bid]'); const blk = card && target(card.dataset.bid); const mode = rt.dataset.rt;
+      const isMat = !!(blk && blk.type === 'material' && rt.dataset.k === 'text'); const poem = isMat && blk.form === 'gedicht';
+      const html = Date.now() < plainPasteUntil ? '' : (cd.getData('text/html') || '');
+      let raw = '', note = '';
+      if (/<[a-z][^>]*>/i.test(html)) { try { raw = htmlToRaw(html, mode, { poem }); } catch (err) { console.error(err); raw = ''; } if (raw.trim() && mode !== 'line') note = 'Mit Formatierung und Absätzen eingefügt · Strg+Umschalt+V fügt nur den Text ein'; }
+      if (raw.trim()) {
+        const pt = cd.getData('text/plain') || '';
+        if (!raw.includes('\n')) { if (/^[ \t]/.test(pt) && !/^\s/.test(raw)) raw = ' ' + raw; if (/[ \t]$/.test(pt) && !/\s$/.test(raw)) raw += ' '; }
+        rtInsertRaw(rt, raw); if (note) toast(note); return;
+      }
+      let t = (cd.getData('text/plain') || '').replace(/\r\n?/g, '\n'); if (!t) return;
+      if (isMat) { const r = cleanPdf(t, poem); if (r.hy || r.ln) { t = r.t; note = [r.hy ? `${r.hy} Trennstriche` : '', r.ln ? `${r.ln} ${poem ? 'Versnummern' : 'Zeilennummern'}` : ''].filter(Boolean).join(' und ') + ' aus der Vorlage entfernt'; } }
+      if (isMat && !poem) { const g = guessParas(t); if (g !== t) { t = g; note = (note ? note + ' · ' : '') + 'Jede Zeile als eigener Absatz übernommen'; } }
+      if (mode === 'line') t = t.replace(/\s*\n\s*/g, ' ');
+      document.execCommand('insertText', false, deQuoteStr(t));
       if (note) toast(note);
       return;
     }
