@@ -60,30 +60,34 @@ Unterschiede zur Webseite:
 - **Speichern** fragt immer nach dem Ort (Standard: Dokumente). Danach lässt sich die Datei direkt öffnen oder der Ordner anzeigen.
 - **Drucken** öffnet den Windows-Druckdialog mit der richtigen Ausrichtung. Bei gemischten Hoch- und Querseiten öffnet sich stattdessen das PDF zum Drucken.
 - **Rechtschreibprüfung** auf Deutsch mit Vorschlägen per Rechtsklick.
-- Die Blätter liegen in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung oder Datei laden“.
+- Mit Anmeldung (EduFire-Konto) liegen die Blätter online wie auf der Seite; dafür braucht die App Internet. Ohne Anmeldung liegen sie in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung oder Datei laden“.
 - Neue Versionen aktualisieren sich nicht von selbst. Die neue ZIP-Datei über den alten Ordner entpacken; die Blätter bleiben erhalten. Die Versionsnummer steht unter Hilfe → Über AB-Werkstatt.
 
 Die ZIP-Datei baut GitHub nach jeder Änderung an `index.html` oder `desktop/` selbst neu (Reiter „Actions“, Ablauf „Windows-App“). Von Hand bauen: im Ordner `desktop/` `python3 build_desktop.py` ausführen (braucht Python 3 mit Pillow, git und unzip; der Rest wird automatisch geladen).
 
 ## Wo die Blätter liegen
 
-Solange die Online-Ablage ausgeschaltet ist, speichert die Seite **nur im Browser**, in dem Sie arbeiten. Wer den Browserverlauf samt Websitedaten löscht, löscht auch die Blätter. Deshalb ab und zu eine Sicherung herunterladen.
+- **Online-Seite (GitHub Pages) und Windows-App:** Nach der Anmeldung mit dem EduFire-Konto liegen die Blätter online in Supabase (Projekt der Organisation EduFire, Tabelle `ab_arbeitsblaetter`) und sind auf jedem Gerät gleich. Jedes Konto sieht nur seine eigenen Blätter. Ohne Anmeldung („Ohne Anmeldung weiter“) speichert die Seite nur im Browser bzw. die App nur auf dem Computer.
+- **Blätter übernehmen:** Liegen nach der Anmeldung noch Blätter nur im Browser oder auf dem Computer, bietet die Seite „Online übernehmen“ an.
+- **Version in Claude:** speichert weiterhin im claude.ai-Konto. Umziehen über „Meine Blätter → Alle Blätter sichern“ und auf der Online-Seite „Sicherung oder Datei laden“.
+- Ab und zu eine Sicherung herunterladen schadet nie.
 
-## Online-Ablage mit Supabase einschalten (später)
+## Online-Ablage (Supabase)
 
-1. Im Supabase-Dashboard das Projekt öffnen (z. B. „ABs“).
-2. **SQL Editor** → Inhalt von [`supabase/schema.sql`](supabase/schema.sql) einfügen → **Run**. Das legt die Tabelle `worksheets` an. Jedes Konto sieht nur seine eigenen Blätter.
-3. **Authentication → URL Configuration:** als *Site URL* `https://moritzbauer171-art.github.io/Abbaukasten/` eintragen. Dann führen Bestätigungs- und Passwort-Links zurück auf diese Seite.
-4. **Project Settings → API:** *Project URL* und *Publishable key* kopieren und in `index.html` eintragen:
-   ```js
-   const SUPABASE = { url: 'https://xxxx.supabase.co', key: 'sb_publishable_…' };
-   ```
-   Der Publishable key ist für öffentliche Webseiten gedacht. Den *secret key* niemals hier eintragen.
-5. Seite neu laden → **Anmelden** → einmal **Konto anlegen**. Blätter, die bisher nur im Browser lagen, lassen sich mit „Online übernehmen“ hochladen.
-6. Empfehlung: Danach unter **Authentication → Sign In / Providers** „Allow new users to sign up“ ausschalten, damit niemand sonst Konten anlegt.
+Eingerichtet im Supabase-Projekt der Organisation **EduFire**; Tabelle und Zugriffsregeln stehen in [`supabase/schema.sql`](supabase/schema.sql). In `index.html` stehen Project URL und Publishable key:
+
+```js
+const SUPABASE = { url: 'https://beggvunasgsckybbsbnc.supabase.co', key: 'sb_publishable_…', table: 'ab_arbeitsblaetter' };
+```
+
+Der Publishable key ist für öffentliche Seiten gedacht; geschützt wird über Anmeldung und Zugriffsregeln. Den *secret key* niemals hier eintragen. Leere Werte schalten die Online-Ablage aus.
+
+Einmalig im Supabase-Dashboard: **Authentication → URL Configuration → Redirect URLs** um `https://moritzbauer171-art.github.io/Abbaukasten/` ergänzen. Dann führen Bestätigungs- und „Passwort vergessen“-Links zurück auf die AB-Werkstatt. Die *Site URL* gilt für das ganze EduFire-Projekt und kann bleiben, wie sie ist.
+
+Free-Projekte pausiert Supabase nach etwa einer Woche ohne Nutzung. Dann im Dashboard **Restore project** wählen; die Daten bleiben erhalten.
 
 ## Dateien
 
 - `index.html`: die ganze Anwendung in einer Datei
 - `desktop/`: Windows-App (Electron) mit Bauskript
-- `supabase/schema.sql`: Tabelle und Zugriffsregeln für die Online-Ablage
+- `supabase/schema.sql`: Tabelle `ab_arbeitsblaetter` und Zugriffsregeln für die Online-Ablage

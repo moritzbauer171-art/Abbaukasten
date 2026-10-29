@@ -848,9 +848,10 @@ const KLASSEN = [
   { id: 'k910', label: 'Klasse 9/10', course: 'Deutsch Klasse 9/10', school: 'Waldseeschule',           accent: 'wein',   anrede: 'du' }
 ];
 const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
-/* Online-Ablage über Supabase. Leer = ausgeschaltet: Blätter bleiben im Browser.
-   Zum Einschalten Project URL und Publishable key eintragen (Anleitung in README.md). */
-const SUPABASE = { url: '', key: '' };
+/* Online-Ablage über Supabase (Projekt in der Organisation EduFire, Tabelle ab_arbeitsblaetter).
+   Der Publishable key ist für öffentliche Seiten gedacht; geschützt wird über Anmeldung und Zugriffsregeln (RLS).
+   url oder key leer = ausgeschaltet: Blätter bleiben im Browser. */
+const SUPABASE = { url: 'https://beggvunasgsckybbsbnc.supabase.co', key: 'sb_publishable_xf8Ep709gm3S3YLVXXsv_w_tIY1_hTb', table: 'ab_arbeitsblaetter' };
 const INFO_KINDS = ['Info','Merke','Tipp','Hinweis','Methode','Definition'];
 // Zusätzlicher Abstand bei Überschriften (mm): mehr / viel
 const H_SP = { top: { m: 4, l: 9 }, bot: { m: 3, l: 7 } };
@@ -3233,7 +3234,7 @@ function claudeB(db, id) {
   };
 }
 function supaB(sb, user) {
-  const T = () => sb.from('worksheets');
+  const T = () => sb.from(SUPABASE.table || 'ab_arbeitsblaetter');
   const chk = r => { if (r.error) throw r.error; return r.data; };
   return {
     kind: 'supabase', key: 'sb:' + user.id,
@@ -3242,7 +3243,7 @@ function supaB(sb, user) {
       return rows.map(r => ({ id: r.id, klasse: KL(r.klasse).id, title: r.title || 'Ohne Titel', nr: r.nr || '', updatedAt: Date.parse(r.updated_at) || 0 }));
     },
     async load(id) { const d = chk(await T().select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
-    async save(sh) { chk(await T().upsert({ id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, updated_at: new Date(sh.updatedAt || Date.now()).toISOString() })); },
+    async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
     async remove(id) { chk(await T().delete().eq('id', id)); }
   };
 }
@@ -3647,7 +3648,7 @@ function renderDlg() {
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
         ${msgs}<div class="row"><button class="btn primary" type="submit">Speichern</button></div></form>`
-    : `<h2 id="dlg-t">Anmelden</h2><p>Mit einem Konto liegen Ihre Arbeitsblätter online und sind auf jedem Gerät da.</p>
+    : `<h2 id="dlg-t">Anmelden</h2><p>Melden Sie sich mit Ihrem EduFire-Konto an. Dann liegen Ihre Arbeitsblätter online und sind auf jedem Gerät da.</p>
       <form id="dlg-form" data-mode="login" novalidate>
         <label class="f"><span>E-Mail</span><input class="inp" id="dlg-email" type="email" autocomplete="username" value="${esc(d.email)}"></label>
         <label class="f"><span>Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="current-password"></label>
