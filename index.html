@@ -479,6 +479,9 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .blk-mat.noind .ln.pf .ln-t{padding-left:0}
 .blk-mat.noind .mat-body p.ind{text-indent:0}
 .blk-mat.rand .mat-body{width:calc(100% - 28mm);padding-right:4mm;border-right:.25mm solid var(--paper-hair)}
+.blk-mat.mc-m .mat-body{width:calc((100% - 5mm) / 2)}
+.mat-body.mc-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:5mm;align-items:start}
+.mc-cols .mcol>.ln.st:first-child{padding-top:0}
 #preview .page .mat-body .w{border-radius:.6mm;cursor:pointer}
 #preview .page .mat-body .w:hover{background:var(--acc-tint)}
 #preview .page .mat-body .w.glw{text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:var(--acc);text-decoration-thickness:.35mm;text-underline-offset:.9mm}
@@ -501,9 +504,6 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .info-title{font-weight:700;font-size:10.5pt;margin-top:.6mm}
 .info-text{font-size:10pt;margin-top:1mm}
 .info-text p{margin:0}.info-text p+p{margin-top:1.6mm}
-.info-text.ic2{column-count:2;column-gap:7mm;orphans:2;widows:2;background-image:linear-gradient(90deg,transparent 49.9%,var(--paper-hair) 49.9%,var(--paper-hair) 50.1%,transparent 50.1%)}
-.info-text.ic2.ic-m{column-count:auto;width:calc((100% - 7mm) / 2);background-image:none}
-.info-text.ic2 .rl{break-inside:auto}
 
 /* Zitat */
 .blk-quote{padding:1mm 6mm 1mm 12mm;position:relative}
@@ -1368,14 +1368,14 @@ const MAT_FMT = {
 const FMT_SIZE = { S: 9.5, M: 10.5, L: 12 }, FMT_LH = { eng: 1.35, normal: 1.52, weit: 2 }, FMT_WLINE = { eng: 276, normal: 300, weit: 400 }, FMT_WSZ = { S: 19, M: 21, L: 24 };
 function matFmt(b) {
   const f = b.fmt || {};
-  return { align: f.align === 'left' ? 'left' : 'justify', font: f.font === 'sans' ? 'sans' : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent !== false, margin: !!f.margin };
+  return { align: f.align === 'left' ? 'left' : 'justify', font: f.font === 'sans' ? 'sans' : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent !== false, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1 };
 }
 function fmtSummary(b) {
   const f = matFmt(b);
   const poem = b.form === 'gedicht';
   return [poem ? 'Verse' : f.align === 'left' ? 'Linksbündig' : 'Blocksatz', f.font === 'sans' ? 'ohne Serifen' : 'mit Serifen',
     String(FMT_SIZE[f.size]).replace('.', ',') + ' pt', 'Zeilenabstand ' + f.lh,
-    f.margin ? 'Notizrand' : '', b.lineNumbers === false ? (poem ? 'ohne Verszählung' : 'ohne Zeilennummern') : ''].filter(Boolean).join(' · ');
+    f.cols === 2 ? 'zweispaltig' : '', f.margin ? 'Notizrand' : '', b.lineNumbers === false ? (poem ? 'ohne Verszählung' : 'ohne Zeilennummern') : ''].filter(Boolean).join(' · ');
 }
 function fmtEditor(b) {
   const f = matFmt(b); const open = state.fmtOpen.has(b.id);
@@ -1385,7 +1385,7 @@ function fmtEditor(b) {
   return `<div class="sub${open ? ' open' : ''}">
     <button type="button" class="sub-h" data-act="fmt-toggle" aria-expanded="${open}"><span class="sub-t">Formatierung</span><span class="sub-s">${esc(fmtSummary(b))}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
     ${open ? `<div class="sub-b">${b.form === 'gedicht' ? '' : seg('align')}${seg('font')}<div class="row">${seg('size')}${seg('lh')}</div>
-      <div class="chks">${fCheck('lineNumbers', b.form === 'gedicht' ? 'Verszählung' : 'Zeilennummern', b.lineNumbers !== false)}${b.form === 'gedicht' ? '' : fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
+      <div class="chks">${fCheck('lineNumbers', b.form === 'gedicht' ? 'Verszählung' : 'Zeilennummern', b.lineNumbers !== false)}${b.form === 'gedicht' ? '' : fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${f.cols === 2 ? '' : fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>${f.cols === 2 && (b.fmt || {}).margin ? '<small class="hint">Der Rand für Notizen entfällt bei zwei Spalten.</small>' : ''}
       ${isDef && nMat < 2 ? '' : `<div class="row" style="gap:6px 18px">${isDef ? '' : '<button class="link" type="button" data-act="fmt-reset">Standard wiederherstellen</button>'}${nMat > 1 ? '<button class="link" type="button" data-act="fmt-all">Für alle Materialien übernehmen</button>' : ''}</div>`}</div>` : ''}
   </div>`;
 }
@@ -2170,20 +2170,12 @@ function buildBlock(b, ctx) {
       return { type: 'phrases', el: put(`<div class="blk blk-phr c${cols}"><div class="phr-h">${PHR_ICON}<span>${inlineHTML(b.title || 'Formulierungshilfen')}</span></div><div class="phr-grid">${(gs.length ? gs : [{ head: '', lines: ['Formulierung …'] }]).map(g => `<div class="phr-g">${g.head ? `<div class="phr-gh">${inlineHTML(g.head)}</div>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`) };
     }
     case 'info': {
-      const two = b.cols === 2;
-      const n = put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text${two ? ' ic2' : ''}">${parasHTML(b.text)}</div></div>`);
-      const body = n.querySelector('.info-text'); const heads = [...n.children].filter(x => x !== body);
-      // Zwei Spalten: Zeilenstücke in Spaltenbreite bilden, damit die Umbrüche später genau passen
-      if (two) body.classList.add('ic-m');
-      const parts = splitParas(body);
-      if (two) body.classList.remove('ic-m');
+      const n = put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`);
+      const body = n.querySelector('.info-text'); const heads = [...n.children].filter(x => x !== body); const parts = splitParas(body);
       if (parts.length < 2) return { type: 'info', el: n };
       const atoms = [...heads, ...parts];
-      const it = { type: 'info', el: n, atoms, keepFirst: heads.length + 1, keepLast: 1, assemble: nestedAssemble(n, heads, body, atoms),
+      return { type: 'info', el: n, atoms, keepFirst: heads.length + 1, keepLast: 1, assemble: nestedAssemble(n, heads, body, atoms),
         contPre: () => parseFloat(getComputedStyle(n).paddingTop) + parseFloat(getComputedStyle(body).marginTop) };
-      // Spaltensatz gleicht die Höhe aus: Teilhöhen werden direkt gemessen
-      if (two) { const memo = new Map(); it.partH = (s0, e0) => { const k = s0 + ':' + e0; if (!memo.has(k)) { const w = it.assemble(s0, e0); ctx.body.appendChild(w); memo.set(k, w.getBoundingClientRect().height); w.remove(); } return memo.get(k); }; }
-      return it;
     }
     case 'quote': {
       const n = put(`<div class="blk blk-quote"><span class="q-mark">„</span><div class="q-text">${parasHTML(b.text) || 'Zitat'}</div>${b.author ? `<div class="q-author">${inlineHTML(b.author)}</div>` : ''}</div>`);
@@ -2253,7 +2245,8 @@ function buildBlock(b, ctx) {
       const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
       const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}`;
-      const n = put(`<div class="blk blk-mat${fcls}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : [['Materialtext']]).map((p, i) => p.map((seg, j) => `<p class="${i && !j ? 'ind' : ''}${j ? ' br' : ''}">${toWordsM(seg).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')).join('')}</div>${tail}</div>`);
+      const two = fm.cols === 2;
+      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : [['Materialtext']]).map((p, i) => p.map((seg, j) => `<p class="${i && !j ? 'ind' : ''}${j ? ' br' : ''}">${toWordsM(seg).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')).join('')}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
@@ -2275,6 +2268,7 @@ function buildBlock(b, ctx) {
       const head = n.querySelector('.mat-head'), tailEl = n.querySelector('.mat-tail');
       const lineEls = [...bodyEl.children];
       const atoms = [head, ...lineEls, ...(tailEl ? [tailEl] : [])];
+      if (two) return matTwoCols({ n, b, ctx, head, tailEl, bodyEl, lineEls, atoms, matLab, poem });
       return {
         type: 'material', el: n, atoms, keepFirst: 3, keepLast: tailEl ? 3 : 2,
         contPre: () => 5.2 * MMPX,
@@ -2373,6 +2367,44 @@ function measure(it) {
   if (!it.assemble) it.assemble = (s, e) => { const w = it.el.cloneNode(false); it.atoms.slice(s, e).forEach(a => w.appendChild(a.cloneNode(true))); return w; };
 }
 const sum = (a, s, e) => { let t = 0; for (let i = s; i < e; i++) t += a[i]; return t; };
+/* Material in zwei Spalten: Zeilen in Spaltenbreite ermittelt, je Seite links und rechts verteilt */
+function matTwoCols({ n, ctx, head, tailEl, bodyEl, lineEls, atoms, matLab, poem }) {
+  const H = new Map(lineEls.map(l => [l, l.getBoundingClientRect().height]));
+  const hs = [...H.values()].sort((a, c) => a - c); const lh = hs[Math.floor(hs.length / 2)] || 20;
+  const stPad = poem && lineEls[0] ? parseFloat(getComputedStyle(lineEls.find(l => l.classList.contains('st')) || lineEls[0]).paddingTop) || 0 : 0;
+  // Teilungsstelle: beide Spalten möglichst gleich hoch; Gedichte lieber zwischen Strophen, nie mitten in einem umbrochenen Vers
+  const split = ls => {
+    const m = ls.length; if (m < 2) return m;
+    const tot = ls.reduce((a, l) => a + H.get(l), 0); let best = m, cost = Infinity, left = 0;
+    for (let k = 1; k < m; k++) {
+      left += H.get(ls[k - 1]); const c = ls[k].classList;
+      const right = tot - left - (c.contains('st') ? stPad : 0);
+      let x = Math.max(left, right);
+      if (poem) { if (!c.contains('st')) x += lh * 2; if (c.contains('vc')) x += lh * 6; }
+      else { if (c.contains('pl')) x += lh * .6; if (ls[k - 1].classList.contains('pf')) x += lh * .6; }
+      if (x < cost - .01 || (Math.abs(x - cost) < .01 && left >= right)) { cost = x; best = k; }
+    }
+    return best;
+  };
+  const assemble = (s, e) => {
+    const w = n.cloneNode(false); w.classList.remove('mc-m');
+    if (s > 0) w.appendChild(el(`<div class="mat-cont">${matLab} · Fortsetzung</div>`));
+    const sel = atoms.slice(s, e);
+    if (sel[0] === head) w.appendChild(head.cloneNode(true));
+    const ls = sel.filter(a => a !== head && a !== tailEl);
+    if (ls.length) {
+      const bc = bodyEl.cloneNode(false); bc.classList.add('mc-cols'); const k = split(ls);
+      [ls.slice(0, k), ls.slice(k)].forEach(part => { const c = document.createElement('div'); c.className = 'mcol'; part.forEach(l => c.appendChild(l.cloneNode(true))); bc.appendChild(c); });
+      w.appendChild(bc);
+    }
+    if (tailEl && sel.includes(tailEl)) w.appendChild(tailEl.cloneNode(true));
+    return w;
+  };
+  const full = assemble(0, atoms.length); n.replaceWith(full);
+  const memo = new Map();
+  const partH = (s, e) => { const key = s + ':' + e; if (!memo.has(key)) { const w = assemble(s, e); ctx.body.appendChild(w); memo.set(key, w.getBoundingClientRect().height); w.remove(); } return memo.get(key); };
+  return { type: 'material', el: full, atoms, keepFirst: 3, keepLast: tailEl ? 3 : 2, contPre: () => 5.2 * MMPX, assemble, partH };
+}
 function minStart(it) { if (!it || !it.el) return 0; if (!it.atoms) return Math.min(it.h, AVAIL); if (it.partH) return it.partH(0, Math.min(it.keepFirst, it.atoms.length)); return it.pre + sum(it.ah, 0, Math.min(it.keepFirst, it.atoms.length)); }
 
 function paginate(items) {
@@ -2913,7 +2945,8 @@ function bodyFor(b, num) {
       <div class="row">${[['padTop', 'Abstand davor'], ['padBot', 'Abstand danach']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="blk-set" data-f="${f}" data-v="${v}" aria-pressed="${(b[f] || '') === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>`;
     case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
     case 'material': { const poem = b.form === 'gedicht'; return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
-      <div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>
+      <div class="row" style="gap:8px 18px"><div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>
+        <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>
       ${fText('title', 'Titel / Autor', b.title, poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
@@ -2939,7 +2972,6 @@ function bodyFor(b, num) {
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, INFO_KINDS.map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
       ${stilTiles(b, ST_INFO)}
-      <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M2 2.5h16M2 6h16M2 9.5h16M2 13h11"/>'], ['2', 'zwei', '<path d="M2 2.5h7M2 6h7M2 9.5h7M2 13h5M11 2.5h7M11 6h7M11 9.5h7M11 13h4"/>']].map(([v, l, d]) => `<button type="button" data-act="info-cols" data-v="${v}" aria-pressed="${String(b.cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div>
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
     case 'phrases': {
       if (!Array.isArray(b.groups) || !b.groups.length) b.groups = [{ head: '', text: '' }];
@@ -3139,7 +3171,6 @@ function onClick(e) {
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
-    case 'info-cols': if (a.dataset.v === '2') b.cols = 2; else delete b.cols; changed(true); return;
     case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { if (a.dataset.v) mm[f] = a.dataset.v; else delete mm[f]; changed(true); } return; }
     case 'tb-mode': if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
     case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
@@ -3893,25 +3924,7 @@ function xtbl(widths, rowsXml, borders, mar) {
 }
 const xtr = (cells, o = {}) => `<w:tr><w:trPr>${o.cant ? '<w:cantSplit/>' : ''}${o.h ? `<w:trHeight w:val="${o.h}" w:hRule="${o.rule || 'atLeast'}"/>` : ''}${o.header ? '<w:tblHeader/>' : ''}</w:trPr>${cells}</w:tr>`;
 const NOB = NIL('top') + NIL('left') + NIL('bottom') + NIL('right') + NIL('insideH') + NIL('insideV');
-// Text etwa zur Hälfte teilen: an einer Absatz- oder Zeilengrenze, sonst an einem Leerzeichen, an dem keine Formatierung offen ist
-function splitHalf(raw) {
-  const t = String(raw || '').replace(/\r/g, '').trim(); const half = t.length / 2;
-  const cand = []; const re = /\n\s*\n|\n/g; let m;
-  while ((m = re.exec(t))) cand.push({ i: m.index, j: m.index + m[0].length, w: m[0].length > 1 ? 0 : 1 });
-  const best = cand.sort((a, b) => Math.abs(a.i - half) + a.w * 8 - (Math.abs(b.i - half) + b.w * 8))[0];
-  if (best && Math.abs(best.i - half) < t.length * .2) return [t.slice(0, best.i), t.slice(best.j)];
-  const open = str => { const c = (str.match(/\*\*/g) || []).length, u = (str.match(/\+\+/g) || []).length, h = (str.match(/==/g) || []).length; const i = (str.replace(/\*\*/g, '').match(/\*/g) || []).length; return c % 2 || u % 2 || h % 2 || i % 2; };
-  const sp = []; const rs = /[.!?:;]\s|\s/g; while ((m = rs.exec(t))) sp.push({ i: m.index + m[0].length - 1, w: /[.!?:;]/.test(m[0][0]) ? 0 : 1 });
-  sp.sort((a, b) => Math.abs(a.i - half) + a.w * 12 - (Math.abs(b.i - half) + b.w * 12));
-  const ok = sp.find(x => !open(t.slice(0, x.i)) && !t.slice(0, x.i).endsWith('\n'));
-  return ok ? [t.slice(0, ok.i).trimEnd(), t.slice(ok.i + 1).trimStart()] : [t, ''];
-}
-function infoCols2(b, iw) {
-  const [l, r] = splitHalf(b.text); const sz = b.stil === 'klein' ? 17 : 20; const w1 = Math.floor(iw / 2), w2 = iw - w1; const g = TW(3.5);
-  const cell = (txt, w, mar, bd) => xtc(xpRich(txt, { sz }, { first: 0, gap: 80 }) || xp(''), { w, mar, borders: bd });
-  const row = xtr(cell(l, w1, `<w:left w:w="0" w:type="dxa"/><w:right w:w="${g}" w:type="dxa"/>`) + cell(r, w2, `<w:left w:w="${g}" w:type="dxa"/><w:right w:w="0" w:type="dxa"/>`, LINE('left', 4, 'B9BFCB')));
-  return xp('', { line: 80, rule: 'exact', mark: 2 }) + xtbl([w1, w2], row, NOB, '<w:top w:w="0" w:type="dxa"/><w:left w:w="0" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="0" w:type="dxa"/>') + xp('', { line: 20, rule: 'exact', mark: 2 });
-}
+
 
 async function imageBytes(src) {
   if (src.startsWith('data:')) { const b64 = src.split(',')[1]; const bin = atob(b64); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
@@ -3936,8 +3949,8 @@ async function exportDOCX() {
       try { const n = media.length + 1; media.push({ n, bytes: await sozPNG(k, acc.c), ext: 'png' }); sozRel[k] = n; } catch {}
     }
     const picXml = (rel, cx, cy, label) => { const id = ++drawId; return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="${xesc(label)}" descr="${xesc(label)}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="soz${rel}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${rel}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`; };
-    const sect = ln => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/>${first ? '' : '<w:type w:val="continuous"/>'}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}<w:cols w:space="708"/></w:sectPr>`;
-    const closeSect = ln => { parts.push(xp('', { line: 20, rule: 'exact', mark: 2, sect: sect(ln) })); first = false; secOpen = false; };
+    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/>${first ? '' : '<w:type w:val="continuous"/>'}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
+    const closeSect = (ln, two) => { parts.push(xp('', { line: 20, rule: 'exact', mark: 2, sect: sect(ln, two) })); first = false; secOpen = false; };
     const spacer = () => xp('', { line: TW(5), rule: 'exact', mark: 4 });
 
     // Kopf
@@ -3980,19 +3993,21 @@ async function exportDOCX() {
       if (b.type === 'pagebreak') { parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'); continue; }
       if (b.type === 'material') {
         mNo++;
-        const ln = b.lineNumbers !== false;
-        if (ln && secOpen) closeSect(false);
+        const ln = b.lineNumbers !== false; const fm = matFmt(b); const two = fm.cols === 2;
+        if ((ln || two) && secOpen) closeSect(false);
         parts.push(spacer());
         parts.push(xp(xr('M' + mNo, { b: 1, sz: 17, color: A }) + xr('   ') + xrInline(b.title || '', { b: 1, sz: 20 }), { keepNext: true, after: 100 }));
-        const gmD = glossMarks(b), fm = matFmt(b);
+        if (two) closeSect(false);
+        const gmD = glossMarks(b);
         const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
         const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
         if (b.form === 'gedicht') poemVerses(gmD.text).forEach(v => parts.push(xp(xrInline(v.t, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: 'left', before: v.st ? 160 : 0, ind: `<w:ind w:left="${TW(6)}" w:hanging="${TW(6)}"${fm.margin ? ` w:right="${TW(28)}"` : ''}/>`, bdr: mBdr })));
         else matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => parts.push(xp(xrInline(seg, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size] }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(j ? 0 : i), bdr: mBdr }))));
+        if (two) closeSect(ln, true);
         const notes = gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
         if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
         if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { before: 60 }));
-        if (ln) closeSect(true); else secOpen = true;
+        if (two) secOpen = true; else if (ln) closeSect(true); else secOpen = true;
         continue;
       }
       secOpen = true;
@@ -4026,7 +4041,7 @@ async function exportDOCX() {
         case 'info': {
           const inner = xp(xr(b.kind || 'Info', { b: 1, caps: 1, sz: 14, color: A, sp: 14 }), { keepNext: true })
             + (b.title ? xp(xrInline(b.title, { b: 1, sz: 21 }), { before: 20, keepNext: true }) : '')
-            + (b.cols === 2 && String(b.text || '').length <= 3000 ? infoCols2(b, CW - TW(8)) : xpRich(b.text, { sz: b.stil === 'klein' ? 17 : 20 }, { first: 40, gap: 80 }));
+            + xpRich(b.text, { sz: b.stil === 'klein' ? 17 : 20 }, { first: 40, gap: 80 });
           const st = b.stil || '';
           const bd = st === 'rahmen' ? ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 10, A)).join('') : `<w:top w:val="nil"/><w:left w:val="single" w:sz="24" w:space="0" w:color="${A}"/><w:bottom w:val="nil"/><w:right w:val="nil"/>`;
           parts.push(xtbl([CW], xtr(xtc(inner, { w: CW, borders: bd, shd: st === 'rahmen' || st === 'linie' ? '' : AT, mar: `<w:top w:w="${TW(3)}" w:type="dxa"/><w:left w:w="${TW(4)}" w:type="dxa"/><w:bottom w:w="${TW(3)}" w:type="dxa"/><w:right w:w="${TW(4)}" w:type="dxa"/>` }), { cant: String(b.text || '').length <= 3000 ? 1 : 0 }), NOB));
