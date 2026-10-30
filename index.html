@@ -78,6 +78,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .tabs button[aria-pressed="true"]{background:var(--tinte);color:var(--tinte-ink)}
 
 .main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(340px,450px) minmax(0,1fr);gap:0}
+.main.wide{grid-template-columns:minmax(0,1fr)}
+#btn-wide{padding:5px 8px}
+#btn-wide svg{width:15px;height:15px}
+#btn-wide[aria-pressed="true"]{color:var(--tinte)}
+@media (max-width: 899px){#btn-wide{display:none}}
 .pane{min-height:0;min-width:0;overflow:auto}
 #editor{background:var(--panel);border-right:1px solid var(--line);padding:14px 14px 40px;display:flex;flex-direction:column;gap:10px;margin-left:calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding-left:max(16px, env(safe-area-inset-left, 0px))}
 #preview{display:flex;flex-direction:column;min-width:0}
@@ -92,6 +97,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 
 /* ---------- Editor-Karten ---------- */
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:0}
+.card.closed{background:color-mix(in srgb, var(--card) 70%, transparent)}
+.card.closed:hover{background:var(--card)}
 .card.sel{border-color:var(--tinte);box-shadow:0 0 0 2px var(--tinte-soft)}
 .card-h{display:flex;align-items:center;gap:8px;padding:9px 8px 9px 12px;cursor:pointer;user-select:none;min-width:0}
 .card-h .kind{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);flex:0 0 auto}
@@ -109,7 +116,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 .chev svg{width:14px;height:14px;transition:transform .15s}
 .card.closed .chev svg{transform:rotate(-90deg)}
 .fold-bar{display:flex;align-items:center;justify-content:flex-end;gap:6px;font-size:12.5px;color:var(--faint);margin:-2px 2px -4px}
-.fold-bar .link{font-size:12.5px}
+.fold-bar .link{font-size:12.5px;color:var(--muted)}
+.fold-bar .link:hover{color:var(--tinte)}
+.fold-bar .onecard{white-space:nowrap}
+.fold-bar .onecard .cb{display:inline-block;width:11px;height:11px;border:1.5px solid currentColor;border-radius:3px;margin-right:5px;vertical-align:-1px;position:relative}
+.fold-bar .onecard[aria-pressed="true"] .cb{background:currentColor}
+.fold-bar .onecard[aria-pressed="true"] .cb::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+.f>small.fh{display:none}
+.f:focus-within>small.fh{display:block}
 .hist-b{display:flex;gap:2px;margin-right:auto}
 .hist-b .ib:disabled{opacity:.35;cursor:default}
 .memo-flag{font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:7px;padding:6px 9px}
@@ -154,12 +168,13 @@ button,input,select,textarea{font:inherit;color:inherit}
 .hint{font-size:12px;color:var(--faint)}
 .adder{border:1px dashed var(--line-strong);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
 .card-h[draggable="true"]{cursor:grab}
+@media (hover:hover){.card-h .ib[data-act="up"],.card-h .ib[data-act="down"]{opacity:0;transition:opacity .12s}.card:hover .card-h .ib[data-act="up"]:not(:disabled),.card:hover .card-h .ib[data-act="down"]:not(:disabled),.card-h .ib:focus-visible{opacity:1}.card:hover .card-h .ib:disabled{opacity:.3}}
 .card.dragging{opacity:.4}
 .card.drop-before{box-shadow:0 -4px 0 0 var(--tinte)}
 .card.drop-after{box-shadow:0 4px 0 0 var(--tinte)}
 .ins-row{position:relative;height:0;margin:-5px 0;z-index:2;display:flex;justify-content:center}
 .ins-btn{position:absolute;top:-11px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line-strong);background:var(--panel);color:var(--muted);font-size:16px;line-height:1;font-weight:700;cursor:pointer;opacity:.0;transition:opacity .12s,background .12s;display:grid;place-items:center;padding:0}
-#editor:hover .ins-btn{opacity:.55}
+#editor:hover .ins-btn{opacity:.3}
 .ins-row:hover .ins-btn,.ins-btn:focus-visible{opacity:1;background:var(--tinte);color:var(--tinte-ink);border-color:var(--tinte)}
 @media (hover:none){.ins-btn{opacity:.6}}
 .ins-pal{border:1.5px solid var(--tinte);border-radius:10px;background:var(--card);padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px;box-shadow:0 0 0 3px var(--tinte-soft)}
@@ -171,13 +186,19 @@ button,input,select,textarea{font:inherit;color:inherit}
 .ins-b .add-ic svg{width:16px;height:16px}
 .ins-b:hover{border-color:var(--tinte)}
 .adder .lbl{margin:0}
-.adder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.adder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:6px}
+.adder .add-b{padding:5px 8px 5px 6px;gap:7px}
+.adder .add-ic{width:26px;height:26px;border-radius:7px}
+.adder .add-ic svg{width:16px;height:16px}
+.adder .add-b b{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.snips-h{align-self:flex-start;font-size:12.5px;color:var(--muted)}
 .add-b{display:flex;flex-direction:row;align-items:center;gap:9px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 10px 7px 8px;cursor:pointer;text-align:left;min-width:0;color:var(--ink)}
-.add-ic{flex:0 0 auto;width:32px;height:32px;border-radius:8px;background:var(--tinte-soft);color:var(--tinte);display:grid;place-items:center}
+.add-ic{flex:0 0 auto;width:32px;height:32px;border-radius:8px;background:var(--line);color:var(--muted);display:grid;place-items:center}
 .add-ic svg{width:19px;height:19px}
 .add-tx{display:flex;flex-direction:column;min-width:0}
 .add-b:hover .add-ic{background:var(--tinte);color:var(--tinte-ink)}
-.kind-i{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--tinte-soft);color:var(--tinte);display:grid;place-items:center;margin-right:-1px}
+.kind-i{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--line);color:var(--muted);display:grid;place-items:center;margin-right:-1px;transition:background .12s,color .12s}
+.card.sel .kind-i,.card:not(.closed) .kind-i{background:var(--tinte-soft);color:var(--tinte)}
 .kind-i svg{width:15px;height:15px}
 .add-b:hover{border-color:var(--tinte)}
 .add-b b{font-size:13.5px}
@@ -264,7 +285,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 
 /* ---------- Ausgabe-Leiste und Vorschau-Optionen ---------- */
 .tabrow{display:flex;align-items:flex-end;justify-content:space-between;gap:6px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
-.outsw{margin-bottom:6px}
+.outsw{margin:0}
 .outsw button{display:inline-flex;align-items:center;gap:6px}
 .outsw button span{font-size:10.5px;line-height:1.5;padding:0 6px;border-radius:999px;background:var(--line);color:var(--muted);font-variant-numeric:tabular-nums}
 .outsw button[aria-pressed="true"] span{background:rgba(255,255,255,.22);color:inherit}
@@ -330,6 +351,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 /* Leiste beim Markieren */
 .rt-bar{position:fixed;z-index:60;display:flex;align-items:center;gap:1px;padding:4px;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow)}
 .rt-bar[hidden]{display:none}
+[hidden]{display:none!important}
 .rt-bar button{min-width:31px;height:31px;border:0;background:transparent;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;gap:4px;color:var(--ink);cursor:pointer;font-size:15px;padding:0 7px;line-height:1}
 .rt-bar button:hover{background:var(--tinte-soft)}
 .rt-bar button[aria-pressed="true"]{background:var(--tinte);color:var(--tinte-ink)}
@@ -368,6 +390,10 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .km svg{display:block;width:100%;height:auto;aspect-ratio:80/50;border-radius:5px;background:#ECEEF3}
 .km b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .km-d{font-size:12px;color:var(--muted);line-height:1.45}
+.km-sm{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.km-sm .km{flex-direction:row;align-items:center;gap:7px;padding:4px 8px 4px 5px;text-align:left}
+.km-sm .km svg{width:32px;flex:0 0 32px;height:20px;aspect-ratio:auto}
+.km-sm .km b{font-size:12.5px;font-weight:600}
 .km-i{width:16px;height:12px;flex:0 0 auto;vertical-align:-2px;margin-right:5px}
 .seg button .km-i{margin-right:4px}
 .kk-fine .seg{flex-wrap:wrap}
@@ -494,7 +520,22 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .rt.rt-edit svg{width:15px;height:15px}
 .rt.rt-edit span{font-size:13.5px;line-height:inherit;padding:0;border-radius:0;background:none;color:inherit}
 .rt.rt-edit:hover{color:var(--tinte)}
-.dlg.dlg-new{width:min(640px,calc(100% - 32px))}
+.dlg.dlg-new{width:min(680px,calc(100% - 32px))}
+.nw-g{display:flex;flex-direction:column;gap:12px}
+.nw-kl{display:flex;flex-wrap:wrap;gap:6px}
+.nw-k{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--field);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer}
+.nw-k i{width:9px;height:9px;border-radius:50%}
+.nw-k[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft)}
+.nw-tpl{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.nw-tpl .tpl{padding:7px 9px;align-items:center}
+.nw-tpl .tpl>span>span{display:none}
+.nw-tpl .tpl .add-ic{width:28px;height:28px}
+.nw-tpl .tpl .add-ic svg{width:17px;height:17px}
+.tpl[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);box-shadow:0 0 0 2px var(--tinte-soft)}
+.tpl[aria-pressed="true"] .add-ic{background:var(--tinte);color:var(--tinte-ink)}
+.nw-row{align-items:flex-end}
+.f>span .opt{font-style:normal;font-weight:400;color:var(--faint)}
+.btn-new svg{width:15px;height:15px}
 .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .tpl{display:flex;align-items:flex-start;gap:9px;text-align:left;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:9px 10px;cursor:pointer;color:var(--ink)}
 .tpl:hover,.tpl:focus-visible{border-color:var(--tinte);background:var(--tinte-soft)}
@@ -552,6 +593,9 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   .pv-hint{display:none}
   .dlg{padding:16px 14px 14px}
   .tpl-grid{grid-template-columns:1fr}
+  .tpl-grid.nw-tpl{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .nw-tpl .tpl{padding:6px 8px;gap:7px;font-size:13.5px}
+  .nw-tpl .tpl .add-ic{width:24px;height:24px}
   #tip-root{left:8px;right:8px;max-width:none}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
@@ -906,6 +950,8 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
     <div class="actions">
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
+      <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neues Arbeitsblatt anlegen">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg><span class="l-long">Neues Blatt</span><span class="l-short">Neu</span></button>
       <button class="btn" type="button" id="btn-lib" data-act="lib-open">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span class="l-long">Meine Blätter</span><span class="l-short">Blätter</span></button>
       <button class="btn" type="button" id="btn-saveas" data-act="saveas" title="Speichern unter (Strg+Umschalt+S)">
@@ -919,11 +965,12 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
       <button class="btn" type="button" id="btn-print" data-act="print" hidden>Drucken</button>
     </div>
   </header>
-  <div class="tabrow"><nav class="reiter" id="reiter" role="tablist" aria-label="Klassen"></nav><div class="seg sm outsw" id="outsw" role="group" aria-label="Ausgabe"></div></div>
+  <div class="tabrow"><nav class="reiter" id="reiter" role="tablist" aria-label="Klassen"></nav></div>
   <div class="main">
     <section class="pane" id="editor" aria-label="Bausteine"></section>
     <section class="pane" id="preview" aria-label="Vorschau">
-      <div class="pv-bar"><span id="pagecount">A4</span><div class="pv-opts" id="pv-opts"></div>
+      <div class="pv-bar"><div class="seg sm outsw" id="outsw" role="group" aria-label="Ausgabe"></div><div class="pv-opts" id="pv-opts"></div><span id="pagecount">A4</span>
+        <button class="btn ghost" type="button" id="btn-wide" title="Vorschau groß: Karten ausblenden" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg></button>
         <button class="btn ghost" type="button" id="btn-zoom" data-act="zoom">100 %</button></div>
       <div class="pv-hint" id="pv-hint">Tipp: Wort im Material anklicken für eine Worterklärung · Zeilennummer anklicken für eine Zeilenangabe</div>
       <div id="preview-scroll"><div id="pages"></div></div>
@@ -1960,7 +2007,7 @@ function saveSnip(b) {
   const list = userSnips(); const c = clone(b); delete c.group;
   const name = (typeLabel(b) + ': ' + summary(b, numbering(state.sheet))).slice(0, 70);
   list.unshift({ id: 's' + uid(), name, block: c }); lsSet(LS_SNIP, list.slice(0, 60));
-  toast('In der Sammlung gespeichert');
+  state.fmtOpen.add('snips'); toast('In der Sammlung gespeichert · unten bei „Baustein hinzufügen“');
 }
 // Einfügen an Ort und Stelle: ein „+“ zwischen den Karten öffnet die Bausteinauswahl genau dort
 function insRow(i) {
@@ -1968,8 +2015,9 @@ function insRow(i) {
   return `<div class="ins-row"><button type="button" class="ins-btn" data-act="ins-open" data-at="${i}" title="Baustein hier einfügen" aria-label="Baustein hier einfügen">+</button></div>`;
 }
 function adderHTML() {
-  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}"><i class="add-ic">${typeIcon(k)}</i><span class="add-tx"><b>${t.label}</b><span>${t.desc}</span></span></button>`).join('')}</div>
-    <div class="snips"><span class="lbl">Aus der Sammlung</span>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
+  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}" title="${esc(t.desc)}"><i class="add-ic">${typeIcon(k)}</i><span class="add-tx"><b>${t.label}</b></span></button>`).join('')}</div>
+    ${(() => { const open = state.fmtOpen.has('snips'); const n = allSnips().length; return `<button type="button" class="link snips-h" data-act="sub-toggle" data-key="snips" aria-expanded="${open}">${open ? '▾' : '▸'} Aus der Sammlung · ${n}</button>`; })()}
+    <div class="snips"${state.fmtOpen.has('snips') ? '' : ' hidden'}>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
       <small class="hint">Eigene Bausteine speichern Sie über ⋯ an der jeweiligen Karte.</small></div></div>`;
 }
 
@@ -2317,32 +2365,62 @@ function tplSheet(key, kl) {
   }
   return sh;
 }
+// Neues Blatt: erst die wichtigsten Angaben (Klasse, Vorlage, Titel, Nummer, Thema, Papier, Ordner), dann direkt bearbeiten
+function openNew() {
+  closeGloss(); closeZl(); closeMenu();
+  const kl = KL(state.klasse).id;
+  state.dlg = { mode: 'new', kl, tpl: 'leer', title: '', titleSet: false, nr: nextNr(kl), nrSet: false, topic: '', paper: 'a4', folder: '', src: '' };
+  renderDlg();
+}
 function newDlgHTML() {
-  const kl = KL(state.klasse); const list = state.lib.filter(d => d.klasse === kl.id).sort((a, b) => b.updatedAt - a.updatedAt);
-  const fs = libFolders(kl.id);
-  return `<h2 id="dlg-t">Neues Blatt</h2><p>${esc(kl.label)} · Aufgaben in der ${kl.anrede === 'du' ? 'du' : 'Sie'}-Form. Alles lässt sich danach frei ändern.</p>
-    <div class="tpl-grid">${TPL.map(t => `<button type="button" class="tpl" data-act="tpl" data-k="${t.k}"><i class="add-ic">${typeIcon(t.ic)}</i><span><b>${t.label}</b><span>${t.d}</span></span></button>`).join('')}</div>
-    ${list.length ? `<div class="tpl-copy"><label class="f" style="flex:1"><span>Oder ein vorhandenes Blatt als Grundlage</span><select id="tpl-src">${list.map(d => `<option value="${esc(d.id)}">${d.nr ? 'AB ' + esc(d.nr) + ' · ' : ''}${esc(d.title)}</option>`).join('')}</select></label><button class="btn" type="button" data-act="tpl-copy">Kopie anlegen</button></div>` : ''}
-    ${fs.length ? `<label class="f"><span>Ordner</span><select id="tpl-f"><option value="">Ohne Ordner</option>${fs.map(f => `<option value="${esc(f.id)}">${esc(f.name)}</option>`).join('')}</select></label>` : ''}
-    <div class="row"><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+  const d = state.dlg; const kl = KL(d.kl);
+  const list = state.lib.filter(x => x.klasse === kl.id).sort((a, b) => b.updatedAt - a.updatedAt);
+  const fs = libFolders(kl.id); const tpls = [...TPL, ...(list.length ? [{ k: 'copy', label: 'Kopie eines Blatts', d: 'ein vorhandenes Blatt als Grundlage', ic: 'dup' }] : [])];
+  const t = tpls.find(x => x.k === d.tpl) || TPL[0]; const isK = d.tpl === 'klausur';
+  const defTitle = d.tpl === 'leer' ? '' : d.tpl === 'copy' ? '' : (isK && kl.anrede === 'du' ? 'Klassenarbeit' : t.label);
+  return `<h2 id="dlg-t">Neues Arbeitsblatt</h2>
+    <div class="nw-g">
+      <div class="f"><span>Klasse</span><div class="nw-kl">${KLASSEN.map(k => `<button type="button" class="nw-k" data-act="nw-kl" data-v="${k.id}" aria-pressed="${k.id === kl.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}</button>`).join('')}</div>
+        <small>${esc(kl.course || kl.label)}${kl.school ? ' · ' + esc(kl.school) : ''} · Aufgaben in der ${kl.anrede === 'du' ? 'du' : 'Sie'}-Form</small></div>
+      <div class="f"><span>Vorlage</span><div class="tpl-grid nw-tpl">${tpls.map(x => `<button type="button" class="tpl" data-act="nw-tpl" data-k="${x.k}" aria-pressed="${x.k === d.tpl}" title="${esc(x.d)}"><i class="add-ic">${x.ic === 'dup' ? I.dup : typeIcon(x.ic)}</i><span><b>${x.label}</b><span>${x.d}</span></span></button>`).join('')}</div></div>
+      ${d.tpl === 'copy' ? `<label class="f"><span>Grundlage</span><select id="nw-src">${list.map(x => `<option value="${esc(x.id)}"${x.id === d.src ? ' selected' : ''}>${x.nr ? 'AB ' + esc(x.nr) + ' · ' : ''}${esc(x.title)}</option>`).join('')}</select></label>` : ''}
+      <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input class="inp" id="nw-nr" value="${esc(d.nr)}" placeholder="7"></label>
+        <label class="f" style="flex:1"><span>Titel</span><input class="inp" id="nw-title" value="${esc(d.titleSet ? d.title : defTitle)}" placeholder="${d.tpl === 'copy' ? 'leer = Titel der Grundlage' : 'Worum geht es?'}" maxlength="140"></label></div>
+      ${isK ? '' : `<label class="f"><span>Thema / Unterzeile <em class="opt">optional</em></span><input class="inp" id="nw-topic" value="${esc(d.topic)}" placeholder="z. B. Sprache der Distanz im literarischen Text" maxlength="200"></label>`}
+      <div class="row nw-row"><div class="f"><span>Papier</span><div class="seg sm" role="group">${[['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, l]) => `<button type="button" data-act="nw-paper" data-v="${v}" aria-pressed="${d.paper === v}">${l}</button>`).join('')}</div></div>
+        ${fs.length ? `<label class="f" style="flex:1"><span>Ordner</span><select id="nw-f"><option value="">Ohne Ordner</option>${fs.map(f => `<option value="${esc(f.id)}"${f.id === d.folder ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>` : ''}</div>
+    </div>
+    <div class="row"><button class="btn primary" type="button" data-act="nw-go">Blatt anlegen und bearbeiten</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
 }
-async function newFromTpl(key) {
-  const fo = ($('#tpl-f') || {}).value || ''; state.dlg = null; renderDlg();
-  state.libOpen = false; state.confirmDel = null; renderLib();
-  const sh = key === 'leer' ? blankSheet(nextNr(state.klasse), state.klasse) : tplSheet(key, state.klasse);
-  openSheet(sh); state.openSnap = null; saveNow(); if (fo) { setPlace(sh.id, fo); savePrefs(); }
-  setView('edit'); const t = $('#editor [data-bid="meta"] [data-k="title"]'); if (t) { t.focus(); t.select(); }
-  toast(key === 'leer' ? 'Neues Blatt angelegt' : `Vorlage „${TPL.find(x => x.k === key).label}“ angelegt · Titel und Texte jetzt anpassen`);
+function newDlgRead() {
+  const d = state.dlg; if (!d) return;
+  const v = id => { const n = $(id); return n ? n.value : null; };
+  const t = v('#nw-title'); if (t != null && (d.titleSet || t !== (newDlgDefTitle()))) { d.title = t; d.titleSet = true; }
+  const nr = v('#nw-nr'); if (nr != null && nr !== d.nr) { d.nr = nr; d.nrSet = true; }
+  const tp = v('#nw-topic'); if (tp != null) d.topic = tp;
+  const f = v('#nw-f'); if (f != null) d.folder = f;
+  const sr = v('#nw-src'); if (sr != null) d.src = sr;
 }
-async function newFromCopy() {
-  const id = ($('#tpl-src') || {}).value; const fo = ($('#tpl-f') || {}).value || ''; if (!id) return;
-  state.dlg = null; renderDlg(); state.libOpen = false; renderLib();
-  try {
-    const src = await backend.load(id); if (!src) throw new Error('fehlt');
-    const c = normalizeSheet(src); c.id = 'ab-' + uid(); c.example = false; c.meta.title = (c.meta.title || 'Ohne Titel') + ' (Kopie)'; c.meta.nr = nextNr(c.klasse) || c.meta.nr;
-    openSheet(c); state.openSnap = null; saveNow(); const f2 = fo || folderOf(id, c.klasse); if (f2) { setPlace(c.id, f2); savePrefs(); }
-    setView('edit'); toast('Kopie angelegt · Titel jetzt anpassen');
-  } catch { toast('Die Kopie hat nicht geklappt. Bitte erneut versuchen.'); }
+function newDlgDefTitle() { const d = state.dlg; const kl = KL(d.kl); const t = TPL.find(x => x.k === d.tpl); if (!t || d.tpl === 'leer') return ''; return d.tpl === 'klausur' && kl.anrede === 'du' ? 'Klassenarbeit' : t.label; }
+async function newGo() {
+  newDlgRead(); const d = state.dlg; const kl = d.kl; let sh;
+  if (d.tpl === 'copy') {
+    const id = d.src || ($('#nw-src') || {}).value; if (!id) return;
+    try { const src = await backend.load(id); if (!src) throw new Error('fehlt'); sh = normalizeSheet(src); sh.id = 'ab-' + uid(); sh.example = false; sh.updatedAt = Date.now(); if (!d.titleSet || !d.title.trim()) sh.meta.title = (sh.meta.title || 'Ohne Titel') + ' (Kopie)'; }
+    catch { dlgMsg('Die Grundlage konnte nicht geladen werden. Bitte erneut versuchen.'); return; }
+  } else sh = d.tpl === 'leer' ? blankSheet(d.nr, kl) : tplSheet(d.tpl, kl);
+  const title = (d.titleSet ? d.title : newDlgDefTitle()).trim();
+  if (title) sh.meta.title = title; else if (d.tpl === 'leer') sh.meta.title = 'Neues Arbeitsblatt';
+  sh.meta.nr = String(d.nr || '').trim(); if (d.topic.trim() && sh.meta.mode !== 'klausur') sh.meta.topic = d.topic.trim();
+  sh.meta.paper = d.paper;
+  state.dlg = null; renderDlg(); state.libOpen = false; state.confirmDel = null; renderLib();
+  openSheet(sh); state.openSnap = null; saveNow();
+  if (d.folder) { setPlace(sh.id, d.folder); savePrefs(); }
+  // direkt bearbeiten: die erste inhaltliche Karte öffnen und hineinspringen
+  const first = sh.blocks.find(b => b.type === 'material' || b.type === 'poem') || sh.blocks.find(b => b.type !== 'pagebreak');
+  setView('edit');
+  if (first) { state.sel = first.id; openOnly(first.id); renderEditor(); const c = $(`#editor [data-bid="${first.id}"]`); if (c) { c.scrollIntoView({ block: 'start' }); const f = c.querySelector('.rtx,textarea,input[type=text]'); if (f) f.focus({ preventScroll: true }); } }
+  toast(d.tpl === 'leer' ? 'Neues Blatt angelegt' : d.tpl === 'copy' ? 'Kopie angelegt' : `Vorlage „${(TPL.find(x => x.k === d.tpl) || {}).label}“ angelegt`);
 }
 function exampleSheet() {
   const b = (type, o) => Object.assign(newBlock(type), o);
@@ -2388,9 +2466,22 @@ function normalizeSheet(sh) {
 
 /* ================= Zustand ================= */
 const closedKey = id => 'abw-zu-' + id;
-function loadClosed(id) { try { const a = JSON.parse(localStorage.getItem(closedKey(id)) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch { return new Set(); } }
-function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; if (state.closed.size) localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); else localStorage.removeItem(closedKey(id)); } catch {} }
-const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, insAt: null, base: null, conflict: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
+function loadClosed(id) { try { const raw = localStorage.getItem(closedKey(id)); if (raw == null) return null; const a = JSON.parse(raw); return new Set(Array.isArray(a) ? a : []); } catch { return null; } }
+const cardIds = () => ['meta', 'seite', ...state.sheet.blocks.filter(b => b.type !== 'pagebreak').map(b => b.id)];
+const LS_ONECARD = 'abw.onecard';
+const oneCard = () => lsGet(LS_ONECARD) !== 0;
+// Standard: nur der Kopf ist offen (mit „Eine Karte offen“), sonst alles offen
+const defaultClosed = () => oneCard() ? new Set(cardIds().filter(x => x !== 'meta')) : new Set();
+// Immer nur eine Karte offen (außer nach „Alle aufklappen“)
+function enforceOne() {
+  if (state.allOpen || state.out === 'karten' || !oneCard()) return;
+  const ids = cardIds(); const open = ids.filter(x => !state.closed.has(x)); if (open.length <= 1) return;
+  const keep = open.includes(state.sel) ? state.sel : open[0];
+  state.closed = new Set(ids.filter(x => x !== keep));
+}
+function openOnly(bid) { if (!oneCard()) { state.closed.delete(bid); saveClosed(); return; } state.allOpen = false; state.closed = new Set(cardIds().filter(x => x !== bid)); saveClosed(); }
+function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); } catch {} }
+const state = { sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, insAt: null, allOpen: false, wide: false, base: null, conflict: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
@@ -2792,7 +2883,7 @@ function renderPreview() {
   $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`
     : `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
   if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
-  $('#pv-hint').hidden = !(state.out === 'blatt' && state.sheet.blocks.some(x => x.type === 'material' && String(x.text || '').trim()));
+  $('#pv-hint').hidden = true;
   renderOut(); applyScale(); markSel(); markZl();
 }
 function applyScale() {
@@ -2801,7 +2892,7 @@ function applyScale() {
   const slots = [...document.querySelectorAll('#pages .slot')];
   const dims = sl => [(+sl.firstChild.dataset.w || 210) * MMPX, (+sl.firstChild.dataset.h || 297) * MMPX];
   const maxW = Math.max(210 * MMPX, ...slots.map(sl => dims(sl)[0]));
-  let sc = state.zoom === 'fit' ? Math.min(1.1, w / maxW) : 1;
+  let sc = state.zoom === 'fit' ? Math.min(state.wide ? 1.6 : 1.1, w / maxW) : 1;
   if (!(sc > 0.2)) sc = 0.2;
   slots.forEach(sl => { const [pw, ph] = dims(sl); sl.style.width = pw * sc + 'px'; sl.style.height = ph * sc + 'px'; sl.firstChild.style.transform = `scale(${sc})`; });
   $('#btn-zoom').textContent = state.zoom === 'fit' ? '100 %' : 'Einpassen';
@@ -3079,7 +3170,7 @@ function rtSelectText(el, str) {
   return false;
 }
 const rtField = (k, v, o = {}) => { const mode = o.mode || 'full'; return `<div class="rtx rtx-${mode}${o.cls ? ' ' + o.cls : ''}${String(v ?? '').trim() ? '' : ' is-empty'}" contenteditable="true" role="textbox"${mode === 'line' ? '' : ' aria-multiline="true"'} aria-label="${esc(o.aria || '')}" spellcheck="true" data-k="${k}" data-rt="${mode}" data-ph="${esc(o.ph || '')}" style="--rows:${o.rows || (mode === 'line' ? 1 : 3)}">${richHTML(v, mode)}</div>`; };
-const fRich = (k, label, v, o = {}) => `<div class="f rt-f"><span>${label}</span>${rtField(k, v, { aria: label, ...o })}${o.hint ? `<small>${o.hint}</small>` : ''}</div>`;
+const fRich = (k, label, v, o = {}) => `<div class="f rt-f"><span>${label}</span>${rtField(k, v, { aria: label, ...o })}${o.hint ? `<small class="fh">${o.hint}</small>` : ''}</div>`;
 
 /* ---------- Leiste beim Markieren ---------- */
 function rtFieldSel() { const s = getSelection(); if (!s || !s.rangeCount) return null; const n = s.anchorNode; const e = n && (n.nodeType === 1 ? n : n.parentElement); const f = e && e.closest('#editor .rtx'); return f && f.contains(s.focusNode) ? f : null; }
@@ -3167,7 +3258,7 @@ const PHRASE_SETS = [
 const PHR_ICON = '<svg class="phr-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10.5H10.5L6 19v-3.5H4z"/><path d="M8 9h8M8 12h5"/></svg>';
 const phrGroups = b => (Array.isArray(b.groups) ? b.groups : []).map(g => ({ head: String(g.head || '').trim(), lines: String(g.text || '').split('\n').map(x => x.trim()).filter(Boolean) })).filter(g => g.head || g.lines.length);
 
-const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid" role="group" aria-label="Stil">${Object.entries(S).map(([k, x]) => `<button type="button" class="km" data-act="blk-stil" data-v="${k}" aria-pressed="${(b.stil || '') === k}" title="${esc(x.d)}"><svg viewBox="0 0 64 40" aria-hidden="true">${x.pic}</svg><b>${x.label}</b></button>`).join('')}</div></div>`;
+const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid km-sm" role="group" aria-label="Stil">${Object.entries(S).map(([k, x]) => `<button type="button" class="km" data-act="blk-stil" data-v="${k}" aria-pressed="${(b.stil || '') === k}" title="${esc(x.d)}"><svg viewBox="0 0 64 40" aria-hidden="true">${x.pic}</svg><b>${x.label}</b></button>`).join('')}</div></div>`;
 
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;
 const fCheck = (k, label, v) => `<label class="chk"><input type="checkbox" data-k="${k}"${v ? ' checked' : ''}>${label}</label>`;
@@ -3296,7 +3387,7 @@ function bodyFor(b, num) {
 }
 function metaCard() {
   const m = state.sheet.meta; const closed = state.closed.has('meta'); const ex = m.exam || {}; const isK = m.mode === 'klausur'; const more = state.fmtOpen.has('meta-more');
-  const moreSum = [m.course, KL(state.sheet.klasse).label, m.anrede === 'du' ? 'du' : 'Sie', m.groupsOn ? 'Gruppen A/B' : ''].filter(Boolean).join(' · ');
+  const moreSum = [isK ? 'Klausur' : '', m.course, KL(state.sheet.klasse).label, m.anrede === 'du' ? 'du' : 'Sie', m.groupsOn ? 'Gruppen A/B' : ''].filter(Boolean).join(' · ');
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'meta' ? ' sel' : ''}" data-bid="meta">
@@ -3304,13 +3395,13 @@ function metaCard() {
     <div class="card-b">${gNote('meta')}
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" data-k="nr" value="${esc(m.nr)}" placeholder="7"></label>${fText('title', isK ? 'Titel (für die Ablage)' : 'Titel', m.title, 'Titel des Arbeitsblatts')}</div>
       ${isK ? '' : fText('topic', 'Thema / Unterzeile', m.topic, 'optional')}
-      <div class="f"><span>Art</span><div class="seg" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
       ${isK ? `<div class="row">${fText('exam.label', 'Bezeichnung', ex.label, 'Klausur')}${fText('exam.halbjahr', 'Kurshalbjahr', ex.halbjahr, 'z. B. 1. Kurshalbjahr')}</div>
         <div class="row">${fText('exam.datum', 'Datum', ex.datum, 'leer = zum Ausfüllen')}${fText('exam.zeit', 'Bearbeitungszeit', ex.zeit, 'z. B. 135 Minuten')}</div>
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
         ${more ? `<div class="sub-b">
+      <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
           <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
           <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
@@ -3342,9 +3433,10 @@ function renderEditor(focusSel) {
   if (!focus && fa && ed.contains(fa) && fa.dataset.k) { const c = fa.closest('[data-bid]'); focus = `[data-bid="${c.dataset.bid}"] [data-k="${fa.dataset.k}"]`; }
   if (state.out === 'karten') ed.innerHTML = kartenEditor();
   else {
+    enforceOne();
     const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
     const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : '';
-    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
+    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
     ed.innerHTML = fold + intro + metaCard() + seiteCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
       return insRow(i) + `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
@@ -3479,26 +3571,30 @@ function onClick(e) {
   switch (act) {
     case 'toggle': {
       if (e.target.closest('.ib')) return;
-      if (state.closed.has(bid)) state.closed.delete(bid); else state.closed.add(bid);
-      state.sel = bid; card.classList.toggle('closed', state.closed.has(bid)); saveClosed();
-      { const ch = card.querySelector('.chev'), zu = state.closed.has(bid); if (ch) { ch.setAttribute('aria-expanded', String(!zu)); ch.title = zu ? 'Aufklappen' : 'Zuklappen'; } }
-      document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel')); card.classList.add('sel'); markSel(); return;
+      const opening = state.closed.has(bid);
+      if (opening && !state.allOpen && oneCard()) state.closed = new Set(cardIds().filter(x => x !== bid));
+      else if (opening) state.closed.delete(bid); else state.closed.add(bid);
+      state.sel = bid; saveClosed();
+      document.querySelectorAll('#editor .card[data-bid]').forEach(c => { const zu = state.closed.has(c.dataset.bid); c.classList.toggle('closed', zu); const ch = c.querySelector('.chev'); if (ch) { ch.setAttribute('aria-expanded', String(!zu)); ch.title = zu ? 'Aufklappen' : 'Zuklappen'; } });
+      document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel')); card.classList.add('sel'); markSel();
+      if (opening) { const r = card.getBoundingClientRect(), er = $('#editor').getBoundingClientRect(); if (r.top < er.top || r.top > er.top + er.height * .6) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+      return;
     }
     case 'up': case 'down': { const j = act === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); return; }
-    case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); return; }
+    case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; openOnly(c.id); changed(true); return; }
     case 'del': { snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', histUndo); return; }
     case 'ins-open': state.insAt = +a.dataset.at; renderEditor(); { const p = $('#editor .ins-pal'); if (p) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } return;
     case 'ins-close': state.insAt = null; renderEditor(); return;
     case 'ins-add': {
       const nb = newBlock(a.dataset.type); const at = Math.max(0, Math.min(blocks.length, +a.dataset.at));
-      blocks.splice(at, 0, nb); state.sel = nb.id; state.closed.delete(nb.id); state.insAt = null; changed(true);
+      blocks.splice(at, 0, nb); state.sel = nb.id; state.insAt = null; openOnly(nb.id); changed(true);
       const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea,.rtx'); if (f) f.focus({ preventScroll: true }); }
       return;
     }
     case 'add': {
       const nb = newBlock(a.dataset.type);
       const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
-      blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; state.closed.delete(nb.id); changed(true);
+      blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; openOnly(nb.id); changed(true);
       const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea,.rtx'); if (f) f.focus({ preventScroll: true }); }
       return;
     }
@@ -3522,10 +3618,11 @@ function onClick(e) {
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
     case 'phr-del': { const g = b.groups || []; g.splice(+a.dataset.i, 1); if (!g.length) g.push({ head: '', text: '' }); changed(true); return; }
     case 'phr-up': { const g = b.groups || [], i = +a.dataset.i; if (i > 0) [g[i - 1], g[i]] = [g[i], g[i - 1]]; changed(true); return; }
+    case 'onecard': lsSet(LS_ONECARD, oneCard() ? 0 : 1); state.allOpen = false; if (oneCard()) enforceOne(); saveClosed(); renderEditor(); toast(oneCard() ? 'Beim Öffnen einer Karte schließen sich die anderen.' : 'Karten bleiben offen, bis Sie sie schließen.'); return;
     case 'undo': histUndo(); return;
     case 'redo': histRedo(); return;
-    case 'fold-all': state.closed = new Set(['meta', 'seite', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
-    case 'unfold-all': state.closed = new Set(); saveClosed(); renderEditor(); return;
+    case 'fold-all': state.allOpen = false; state.closed = new Set(['meta', 'seite', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
+    case 'unfold-all': state.allOpen = true; state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
     case 'fmt-toggle': if (state.fmtOpen.has(bid)) state.fmtOpen.delete(bid); else state.fmtOpen.add(bid); renderEditor(); return;
@@ -3548,7 +3645,7 @@ function onClick(e) {
     case 'snip-add': {
       const nb = snipBlock(a.dataset.id); if (!nb) return;
       const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
-      blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; state.closed.delete(nb.id); changed(true);
+      blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; openOnly(nb.id); changed(true);
       const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       return;
     }
@@ -3745,7 +3842,7 @@ async function doSave(b, snap) {
 function openSheet(sh) {
   closeGloss(); closeZl(); closeMenu();
   if (savePending) saveNow();
-  state.sheet = normalizeSheet(sh); state.sel = null; state.closed = loadClosed(state.sheet.id); state.taskOpen = new Set(); undoSnap = null; state.touched = false;
+  state.sheet = normalizeSheet(sh); state.sel = null; state.closed = loadClosed(state.sheet.id) || defaultClosed(); state.allOpen = false; state.taskOpen = new Set(); undoSnap = null; state.touched = false;
   state.openSnap = state.sheet.example ? null : clone(state.sheet);
   if (!state.sheet.meta.groupsOn) state.grp = 'all';
   if (state.sheet.klasse !== state.klasse) { state.klasse = state.sheet.klasse; lsSet(LS.klasse, state.klasse); renderTabs(); }
@@ -3977,7 +4074,7 @@ function klassenSave() {
   state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
   if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
   renderTabs(); renderEditor(); if (state.libOpen) renderLib();
-  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „Neues Blatt“ gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
+  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neues Blatt“ oben gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
   else toast('Klassen gespeichert');
 }
 
@@ -4176,7 +4273,7 @@ async function onLibClick(e) {
     case 'lib-move': state.moveOpen = state.moveOpen === id ? null : id; renderLib(); break;
     case 'lib-move-to': if (id) moveSheetTo(id, a.dataset.fid || ''); break;
     case 'lib-close': closeLib(); break;
-    case 'lib-new': state.dlg = { mode: 'new' }; renderDlg(); break;
+    case 'lib-new': openNew(); break;
     case 'lib-example': closeLib(); openSheet(exampleSheet()); break;
     case 'lib-open-sheet': if (id) { closeLib(); await openById(id); if (isNarrow()) setView('preview'); } break;
     case 'lib-dup':
@@ -4256,7 +4353,9 @@ async function checkRemote() {
 /* ---------- Hilfe und Tipps ---------- */
 const HELP = [
   ['Bausteine', [
+    ['„+ Neues Blatt“ oben', 'fragt Klasse, Vorlage, Nummer, Titel, Thema, Papier und Ordner ab und öffnet danach gleich den ersten Text.'],
     ['„+“ zwischen zwei Karten', 'fügt einen Baustein genau dort ein.'],
+    ['Kopfzeile einer Karte anklicken', 'öffnet die Karte und schließt die anderen. Mehrere offen lassen: Haken bei „Eine Karte offen“ herausnehmen.'],
     ['Kopfzeile einer Karte ziehen', 'sortiert die Bausteine um. Tipp: vorher „Alle zuklappen“.'],
     ['⋯ an einer Karte', 'Duplizieren, Löschen, Gruppe A/B, in die Sammlung speichern.'],
     ['Baustein in der Vorschau anklicken', 'springt zur passenden Karte.']]],
@@ -4284,7 +4383,7 @@ const HELP = [
     ['Strg+Z · Strg+Y', 'Rückgängig · Wiederholen (außerhalb von Textfeldern für das ganze Blatt)'],
     ['Strg+Umschalt+S', 'Speichern unter'],
     ['Esc', 'schließt Fenster, Menüs und „Meine Blätter“'],
-    ['In der Windows-App', 'Strg+E Ausgeben · Strg+P Drucken · Strg+O Meine Blätter']]]
+    ['In der Windows-App', 'Strg+N Neues Blatt · Strg+E Ausgeben · Strg+P Drucken · Strg+O Meine Blätter']]]
 ];
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
@@ -4476,7 +4575,7 @@ function renderDlg() {
   if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
   if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
   if (d.mode === 'klassen') { r.querySelector('.dlg').classList.add('dlg-kl'); if (d.setup) r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.setup ? '#kl-school' : '[data-kf="label"]'); if (f && d.setup) f.focus(); return; }
-  if (d.mode === 'new') { r.querySelector('.dlg').classList.add('dlg-new'); const f = r.querySelector('.tpl'); if (f) f.focus(); return; }
+  if (d.mode === 'new') { r.querySelector('.dlg').classList.add('dlg-new'); const f = r.querySelector('#nw-title'); if (f && !d.focused) { d.focused = true; f.focus(); } return; }
   if (d.mode === 'out') { r.querySelector('.dlg').classList.add('dlg-out'); const g = r.querySelector('[data-act="out-go"]'); if (g) g.focus(); return; }
   const f = r.querySelector(d.mode === 'login' && !d.email ? '#dlg-email' : '#dlg-pw'); if (f) f.focus();
 }
@@ -4518,9 +4617,14 @@ async function onDlgClick(e) {
     if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
     if (act === 'kl-save') { klassenSave(); return; }
   }
-  if (act === 'tpl') { newFromTpl(a.dataset.k); return; }
+  if (state.dlg.mode === 'new') {
+    const d = state.dlg; newDlgRead();
+    if (act === 'nw-kl') { d.kl = a.dataset.v; if (!d.nrSet) d.nr = nextNr(d.kl); d.folder = ''; d.src = ''; if (d.tpl === 'copy' && !state.lib.some(x => x.klasse === d.kl)) d.tpl = 'leer'; renderDlg(); return; }
+    if (act === 'nw-tpl') { d.tpl = a.dataset.k; renderDlg(); return; }
+    if (act === 'nw-paper') { d.paper = a.dataset.v; renderDlg(); return; }
+    if (act === 'nw-go') { newGo(); return; }
+  }
   if (act === 'tips-again') { closeDlg(); showTip(0); return; }
-  if (act === 'tpl-copy') { newFromCopy(); return; }
   if (state.dlg.mode === 'out') {
     if (act === 'out-set') {
       const f = a.dataset.f, v = a.dataset.v; const o = outState();
@@ -4960,7 +5064,9 @@ function setView(v) {
 }
 function applyResponsive() {
   const narrow = window.matchMedia('(max-width: 899px)').matches;
-  $('#editor').hidden = narrow && state.view !== 'edit';
+  $('#editor').hidden = narrow ? state.view !== 'edit' : !!state.wide;
+  $('.main').classList.toggle('wide', !narrow && !!state.wide);
+  const wb = $('#btn-wide'); if (wb) { wb.setAttribute('aria-pressed', String(!!state.wide)); wb.title = state.wide ? 'Karten wieder einblenden' : 'Vorschau groß: Karten ausblenden'; }
   $('#preview').hidden = narrow && state.view !== 'preview';
   applyScale();
 }
@@ -5012,6 +5118,7 @@ function boot() {
   $('#lib-root').addEventListener('dragend', () => { libDrag = null; libClearDrop(); document.querySelectorAll('#lib-root .dragging').forEach(n => n.classList.remove('dragging')); });
   $('#dlg-root').addEventListener('click', onDlgClick);
   $('#dlg-root').addEventListener('submit', onDlgSubmit);
+  $('#dlg-root').addEventListener('keydown', e => { if (e.key === 'Enter' && state.dlg && state.dlg.mode === 'new' && e.target.tagName === 'INPUT') { e.preventDefault(); newGo(); } });
   $('#dlg-root').addEventListener('input', e => {
     const t = e.target; const d = state.dlg; if (!d || d.mode !== 'klassen') return;
     if (t.id === 'kl-school') { d.school = t.value; return; }
@@ -5160,11 +5267,13 @@ function boot() {
     if (act === 'login') openDlg('login');
     if (act === 'saveas') openSaveAs();
     if (act === 'out') openOut();
+    if (act === 'new') openNew();
     if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
     if (act === 'print') doPrint();
   });
+  $('#btn-wide').addEventListener('click', () => { state.wide = !state.wide; applyResponsive(); });
   $('#btn-zoom').addEventListener('click', () => { state.zoom = state.zoom === 'fit' ? 'full' : 'fit'; applyScale(); });
   $('#gl-root').addEventListener('submit', onGlossSubmit);
   $('#gl-root').addEventListener('input', e => { if (e.target.id === 'gl-term') updOcc(); });
@@ -5212,7 +5321,8 @@ function boot() {
     const w = e.target.closest('.mat-body .w'); const wb = w && w.closest('.blk-mat');
     if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;
-    const bid = n.dataset.bid; state.sel = bid; state.closed.delete(bid); saveClosed();
+    const bid = n.dataset.bid; state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed();
+    if (state.wide) { state.wide = false; applyResponsive(); }
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
     renderEditor(); markSel();
     const c = $(`#editor [data-bid="${bid}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });

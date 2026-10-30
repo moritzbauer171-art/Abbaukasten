@@ -115,6 +115,7 @@ function menu() {
   const isWin = process.platform === 'win32';
   const tpl = [
     { label: 'Datei', submenu: [
+      { label: 'Neues Blatt …', accelerator: 'CmdOrCtrl+N', click: click('#btn-new') },
       { label: 'Meine Blätter', accelerator: 'CmdOrCtrl+O', click: click('#btn-lib') },
       { label: 'Speichern unter …', accelerator: 'CmdOrCtrl+Shift+S', click: click('#btn-saveas') },
       { label: 'Ausgeben …', accelerator: 'CmdOrCtrl+E', click: click('#btn-out') },
