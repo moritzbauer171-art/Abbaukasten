@@ -17,6 +17,7 @@
   --ink:#1A1E29; --muted:#5A6277; --faint:#878FA3;
   --tinte:#2741B5; --tinte-ink:#FFFFFF; --tinte-soft:#E4E9FA;
   --warn:#8F5300; --warn-soft:#FDF0D5;
+  --rot:#C0392B; --rot-soft:#FBEAE6; --karo:rgba(39,65,181,.075); --edge:rgba(22,30,52,.18);
   --afb1:#2F6B8A; --afb2:#2741B5; --afb3:#7B2C6F;
   --shadow:0 1px 2px rgba(22,30,52,.10), 0 10px 28px rgba(22,30,52,.12);
   --paper:#FFFFFF; --paper-ink:#1C1F27; --paper-muted:#5A606E; --paper-rule:#8E95A3; --paper-hair:#C8CCD5;
@@ -30,6 +31,7 @@
   --ink:#E6E9F0; --muted:#A3ABBD; --faint:#7D8598;
   --tinte:#93A6FF; --tinte-ink:#0E1430; --tinte-soft:#232B4B;
   --warn:#F0B55C; --warn-soft:#3A2B10;
+  --rot:#FF8C7E; --rot-soft:#3D1F1B; --karo:rgba(147,166,255,.06); --edge:rgba(0,0,0,.55);
   --afb1:#8CC3E3; --afb2:#9EB0FF; --afb3:#E39BD4;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
   color-scheme:dark;
@@ -40,6 +42,7 @@
   --ink:#E6E9F0; --muted:#A3ABBD; --faint:#7D8598;
   --tinte:#93A6FF; --tinte-ink:#0E1430; --tinte-soft:#232B4B;
   --warn:#F0B55C; --warn-soft:#3A2B10;
+  --rot:#FF8C7E; --rot-soft:#3D1F1B; --karo:rgba(147,166,255,.06); --edge:rgba(0,0,0,.55);
   --afb1:#8CC3E3; --afb2:#9EB0FF; --afb3:#E39BD4;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.45);
   color-scheme:dark;
@@ -568,6 +571,47 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .btn[disabled]{opacity:.55;cursor:default}
 
 /* ---------- Mobil ---------- */
+
+/* ---------- Gestaltung: Setzkasten und Tinte ---------- */
+/* Klassenfarbe: oben ein schmaler Streifen, der aktive Reiter trägt sie als Kante */
+:root{--kl:#1F4FA0;--kl-l:#1F4FA0;--kl-t:#E9EEF8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--kl-l:var(--kl-hi,#8FA9D8);--kl-t:var(--kl-dk,#1E2840)}}
+:root[data-theme="dark"]{--kl-l:var(--kl-hi,#8FA9D8);--kl-t:var(--kl-dk,#1E2840)}
+body{border-top:3px solid var(--kl);transition:border-color .25s}
+.rt[aria-selected="true"]{box-shadow:inset 0 3px 0 var(--kl-l)}
+/* Titel mit Randnotiz in Rotstift */
+.brand{align-items:center;gap:10px}
+.brand span{font-family:"Caveat",cursive;font-size:22px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--rot);line-height:1;transform:rotate(-6deg) translateY(1px);display:inline-block}
+/* Schreibtisch: Karopapier unter der Vorschau, die Seiten liegen darauf wie ein kleiner Stapel */
+#preview-scroll{background-color:var(--desk);background-image:linear-gradient(var(--karo) 1px,transparent 1px),linear-gradient(90deg,var(--karo) 1px,transparent 1px);background-size:5mm 5mm;background-attachment:local}
+.slot>.pout{box-shadow:0 1px 2px rgba(22,30,52,.14),4px 5px 0 -1px var(--paper),4px 5px 0 0 var(--edge),0 14px 30px rgba(22,30,52,.13)}
+/* Prüfhinweise in Korrekturrot */
+.out-chk li.warn,.gnote,.gl-miss,.gl-warn,.chip.warn{color:var(--rot)}
+.gnote,.chip.warn{background:var(--rot-soft)}
+.gl-row.miss .gl-no{background:var(--rot-soft);color:var(--rot)}
+.out-chk li.warn::before{background:var(--rot)}
+.pg-warn{background:var(--rot)}
+/* Meine Blätter: Hängeregister mit Reitern, Blätter als Karteikarten */
+.drawer-h .dh span{font-size:13px;letter-spacing:0;text-transform:none;font-weight:700;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.drawer-h .dh span::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--kl)}
+.lib-fs:not(.lib-loose){gap:0}
+.lib-fs:not(.lib-loose)>.lib-f{align-self:flex-start;max-width:100%;background:var(--kl-t);border:1px solid var(--line);border-bottom:0;border-radius:9px 9px 0 0;box-shadow:inset 0 3px 0 var(--kl-l);padding:2px 2px 0 4px;position:relative;z-index:1;margin-bottom:-1px}
+.lib-fs:not(.lib-loose)>.lib-f .lib-fh{padding:7px 8px 6px 4px}
+.lib-fs:not(.lib-loose)>.lib-f .lib-fh:hover{background:transparent;color:var(--tinte)}
+.lib-fs:not(.lib-loose)>.lib-f .lib-fh .fi{color:var(--kl-l)}
+.lib-fs:not(.lib-loose)>.lib-f .lib-fh .fc{background:var(--panel)}
+.lib-fs:not(.lib-loose)>.lib-fmenu{padding:8px 10px;background:var(--kl-t);border:1px solid var(--line);border-bottom:0}
+.lib-fs:not(.lib-loose)>.lib-fb{margin:0 0 6px;padding:10px;border:1px solid var(--line);border-radius:0 9px 9px 9px;background:linear-gradient(var(--kl-t),var(--panel) 46px)}
+.lib-fs:not(.lib-loose):not(.open)>.lib-f{border-bottom:1px solid var(--line);border-radius:9px;margin-bottom:6px}
+.lib-fs.drop-into>.lib-fb{border-color:var(--tinte);box-shadow:0 0 0 1px var(--tinte)}
+.lib-loose>.lib-lh{text-transform:none;letter-spacing:0;font-size:13px;color:var(--muted);padding:10px 4px 2px}
+.lib-item{border-left:4px solid var(--kl-l);border-radius:4px 9px 9px 4px;position:relative}
+.lib-item .t{padding-bottom:6px;border-bottom:1px solid color-mix(in srgb,var(--rot) 30%,transparent)}
+.lib-item .t span{min-width:0}
+.lib-item .t em{order:2;margin-left:auto;font-family:var(--f-ui);font-size:11.5px;letter-spacing:.02em;color:var(--kl-l);border:1.5px solid var(--kl-l);border-radius:4px;padding:1px 6px;transform:rotate(-4deg);opacity:.9;white-space:nowrap}
+.lib-item .t .grip{order:3;margin-left:auto}
+.lib-item .t em+span+.grip{margin-left:6px}
+.lib-item.cur{border-color:var(--tinte);border-left-color:var(--kl-l);box-shadow:0 0 0 1px var(--tinte)}
 @media (max-width: 899px){
   .bar{gap:8px 10px}
   .brand{order:1}
@@ -581,7 +625,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
   #editor{border-right:0;margin-left:0;padding-left:0;padding-right:0;background:transparent}
   #preview-scroll{padding-left:0;padding-right:0}
   .pv-bar,.pv-hint{padding-left:0;padding-right:0}
-  .brand span{display:none}
+  .brand span{font-size:20px}
 }
 @media (max-width: 560px){
   .brand b{font-size:17px}
@@ -3785,7 +3829,15 @@ function sortLib() { state.lib.sort((a, b) => b.updatedAt - a.updatedAt); }
 function upsertLib(e) { const i = state.lib.findIndex(d => d.id === e.id); if (i >= 0) state.lib[i] = e; else state.lib.push(e); sortLib(); renderTabs(); if (state.libOpen) renderLib(); }
 async function refreshLib() { if (!backend) return; state.lib = await backend.list(); sortLib(); renderTabs(); if (state.libOpen) renderLib(); }
 function nextNr(k) { let m = 0; state.lib.forEach(d => { if (d.klasse !== k) return; const n = parseInt(d.nr, 10); if (n > m) m = n; }); return m ? String(m + 1) : ''; }
+function setKlColor() {
+  const k = KL(state.klasse); const a = ACCENTS[k.accent] || ACCENTS.tinte; const r = document.documentElement.style;
+  r.setProperty('--kl', a.c); r.setProperty('--kl-l', a.c); r.setProperty('--kl-t', a.t); r.setProperty('--kl-hi', mixHex(a.c, .45)); r.setProperty('--kl-dk', '#' + [1, 3, 5].map(i => Math.round(parseInt(a.c.slice(i, i + 2), 16) * .28 + 30 * .72).toString(16).padStart(2, '0')).join(''));
+  const dark = matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light' || document.documentElement.dataset.theme === 'dark';
+  if (dark) { r.setProperty('--kl-l', mixHex(a.c, .45)); r.setProperty('--kl-t', 'var(--kl-dk)'); }
+}
+try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.sheet) setKlColor(); }); } catch {}
 function renderTabs() {
+  setKlColor();
   const counts = {}; state.lib.forEach(d => { counts[d.klasse] = (counts[d.klasse] || 0) + 1; });
   $('#reiter').innerHTML = KLASSEN.map(k => `<button type="button" role="tab" class="rt" data-k="${k.id}" aria-selected="${state.klasse === k.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}${counts[k.id] ? `<span>${counts[k.id]}</span>` : ''}</button>`).join('') + `<button type="button" class="rt rt-edit" data-kl="edit" title="Klassen anlegen und bearbeiten" aria-label="Klassen anlegen und bearbeiten"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3.5v9M3.5 8h9"/></svg><span class="l-long">Klassen</span></button>`;
 }
