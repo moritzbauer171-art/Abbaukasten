@@ -1142,10 +1142,15 @@ const TYPE_ICON = {
   quote: '<path d="M10.5 6.5C7 7.6 5 10.2 5 13.6V18h5v-5H7.3c.2-2 1.4-3.6 3.6-4.6zM19.5 6.5c-3.5 1.1-5.5 3.7-5.5 7.1V18h5v-5h-2.7c.2-2 1.4-3.6 3.6-4.6z" fill="currentColor" stroke="none"/>',
   qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z"/>',
   image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
+  quelle: '<path d="M8 4h9.5A2.5 2.5 0 0 1 20 6.5V18a2 2 0 0 1-2 2H9"/><path d="M8 4a2.5 2.5 0 0 0-2.5 2.5V9H9"/><path d="M9 20a2 2 0 0 1-2-2V6.5"/><path d="M11.5 9h5M11.5 12.5h5M11.5 16h3"/>',
+  darstellung: '<path d="M3.5 5.5A1.5 1.5 0 0 1 5 4h5.5A1.5 1.5 0 0 1 12 5.5V20a2 2 0 0 0-2-2H3.5z"/><path d="M20.5 5.5A1.5 1.5 0 0 0 19 4h-5.5A1.5 1.5 0 0 0 12 5.5V20a2 2 0 0 1 2-2h6.5z"/>',
+  zeitleiste: '<path d="M3 12h18"/><path d="M6.5 8.5v7M12 6.5v11M17.5 8.5v7"/>',
+  protokoll: '<path d="M9 3.5h6M10 3.5v6l-5 8.6A1.9 1.9 0 0 0 6.6 21h10.8a1.9 1.9 0 0 0 1.6-2.9L14 9.5v-6"/><path d="M7.4 15.5h9.2"/>',
+  zeichnung: '<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="m8 16 1-3.2 6.2-6.2 2.2 2.2-6.2 6.2z"/>',
   pagebreak: '<path d="M5 3v5.5h14V3M5 21v-5.5h14V21"/><path d="M3 12h2.5M8.2 12h2.5M13.3 12h2.5M18.5 12H21"/>'
 };
 const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
-const iconKey = b => b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type;
+const iconKey = b => b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type;
 // Tabellen: Höhe einer Zeile in mm (Voreinstellung, eigene Höhe oder Höhe dieser Zeile)
 const TB_H = { normal: 8, hoch: 16, sehrhoch: 28, gross: 40 };
 const tbBaseMM = b => b.rowHeight === 'eigen' ? Math.max(5, Math.min(250, Number(b.rowMM) || 50)) : TB_H[b.rowHeight] || 8;
@@ -1155,7 +1160,7 @@ const tbRowMM = (b, ri) => { const own = b.rowEach && Array.isArray(b.rowH) ? Nu
 const tbEh = (b, ri, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '').split('\n').map(x => x.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
 const tbEhCount = b => b.rows.reduce((n, r, ri) => n + r.reduce((k, _, ci) => k + (tbEh(b, ri, ci).length ? 1 : 0), 0), 0);
 const tbLines = h => Math.max(1, Math.round(h / 9));
-const typeLabel = b => b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
+const typeLabel = b => b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
   poem:     { label:'Gedicht',       desc:'Verse und Strophen' },
@@ -1171,6 +1176,38 @@ const TYPES = {
   image:    { label:'Bild',          desc:'Grafik, Schaubild' },
   pagebreak:{ label:'Seitenumbruch', desc:'Rest auf neue Seite' }
 };
+
+/* Bausteinliste je Fach. Ein Eintrag ist eine Bausteinart mit Voreinstellungen (pre). Gedichte gibt es nur in Deutsch. */
+const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
+const PALETTE = {
+  deutsch: ['material', 'poem', 'tasks', 'info', 'phrases', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => PAL(t)),
+  gp: [
+    PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Textquelle mit Zeilennummern (Q1)', ic: 'quelle', pre: { mk: 'q' } }),
+    PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
+    PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }),
+    PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
+    PAL('tasks'), PAL('info'), PAL('phrases'), PAL('table'),
+    PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal' } }),
+    PAL('lines'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('image', { desc: 'Grafik, Schaubild, Karte' }), PAL('pagebreak')
+  ],
+  bio: [
+    PAL('material', { desc: 'Fachtext mit Zeilennummern (M1)' }),
+    PAL('image', { k: 'abbildung', label: 'Abbildung', desc: 'Foto, Schema, Diagramm (Abb. 1)', pre: { mk: 'a' } }),
+    PAL('tasks'), PAL('info'), PAL('phrases'), PAL('table'),
+    PAL('table', { k: 'protokoll', label: 'Versuchsprotokoll', desc: 'Frage, Hypothese, Durchführung, Auswertung', ic: 'protokoll', pre: { cols: ['Versuchsprotokoll', 'Notizen'], rows: ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'].map(x => [x, '']), rowHeight: 'hoch', firstBold: true } }),
+    PAL('lines', { k: 'zeichnung', label: 'Zeichenfläche', desc: 'Rahmen für Zeichnung oder Skizze', ic: 'zeichnung', pre: { style: 'rahmen', count: 12 } }),
+    PAL('lines', { desc: 'Linien oder Kästchen' }), PAL('heading'), PAL('text'), PAL('qr'), PAL('pagebreak')
+  ]
+};
+const paletteFor = () => PALETTE[fachKey()] || PALETTE.deutsch;
+function paletteBlock(k, type) {
+  const e = paletteFor().find(x => x.k === k) || Object.values(PALETTE).flat().find(x => x.k === k);
+  const nb = newBlock(e ? e.type : type);
+  if (e && e.pre) Object.assign(nb, JSON.parse(JSON.stringify(e.pre)));
+  return nb;
+}
+/* Infokasten-Arten je Fach */
+const INFO_KINDS_BY = { deutsch: INFO_KINDS, gp: ['Info', 'Merke', 'Hintergrund', 'Methode', 'Definition', 'Tipp', 'Hinweis'], bio: ['Info', 'Merke', 'Definition', 'Methode', 'Sicherheit', 'Tipp', 'Hinweis'] };
 
 /* Operatoren: IQB-Grundstock Deutsch (gemeinsamer Abituraufgabenpool) + gebräuchliche Ergänzungen */
 const OPS = [
@@ -2192,11 +2229,11 @@ function saveSnip(b) {
 }
 // Einfügen an Ort und Stelle: ein „+“ zwischen den Karten öffnet die Bausteinauswahl genau dort
 function insRow(i) {
-  if (state.insAt === i) return `<div class="ins-pal" data-at="${i}"><div class="ins-pal-h"><span>Baustein hier einfügen</span><button type="button" class="ib" data-act="ins-close" title="Schließen">${I.x}</button></div><div class="ins-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="ins-b" data-act="ins-add" data-type="${k}" data-at="${i}" title="${esc(t.desc)}"><i class="add-ic">${typeIcon(k)}</i><b>${t.label}</b></button>`).join('')}</div></div>`;
+  if (state.insAt === i) return `<div class="ins-pal" data-at="${i}"><div class="ins-pal-h"><span>Baustein hier einfügen</span><button type="button" class="ib" data-act="ins-close" title="Schließen">${I.x}</button></div><div class="ins-grid">${paletteFor().map(t => `<button type="button" class="ins-b" data-act="ins-add" data-type="${t.type}" data-pk="${t.k}" data-at="${i}" title="${esc(t.desc)}"><i class="add-ic">${typeIcon(t.ic)}</i><b>${t.label}</b></button>`).join('')}</div></div>`;
   return `<div class="ins-row"><button type="button" class="ins-btn" data-act="ins-open" data-at="${i}" title="Baustein hier einfügen" aria-label="Baustein hier einfügen">+</button></div>`;
 }
 function adderHTML() {
-  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${Object.entries(TYPES).map(([k, t]) => `<button type="button" class="add-b" data-act="add" data-type="${k}" title="${esc(t.desc)}"><i class="add-ic">${typeIcon(k)}</i><span class="add-tx"><b>${t.label}</b></span></button>`).join('')}</div>
+  return `<div class="adder"><span class="lbl">Baustein hinzufügen</span><div class="adder-grid">${paletteFor().map(t => `<button type="button" class="add-b" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)}"><i class="add-ic">${typeIcon(t.ic)}</i><span class="add-tx"><b>${t.label}</b></span></button>`).join('')}</div>
     ${(() => { const open = state.fmtOpen.has('snips'); const n = allSnips().length; return `<button type="button" class="link snips-h" data-act="sub-toggle" data-key="snips" aria-expanded="${open}">${open ? '▾' : '▸'} Aus der Sammlung · ${n}</button>`; })()}
     <div class="snips"${state.fmtOpen.has('snips') ? '' : ' hidden'}>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
       <small class="hint">Eigene Bausteine speichern Sie über ⋯ an der jeweiligen Karte.</small></div></div>`;
@@ -2467,20 +2504,20 @@ const TPL = [
 ];
 const TPL_GP = [
   { k: 'leer', label: 'Leeres Blatt', d: 'Material und Aufgaben', ic: 'text' },
-  { k: 'g-quelle', title: 'Quellenanalyse', label: 'Textquelle', d: 'Quelle mit Zeilen, Quellenanalyse in drei Schritten, Steckbrief, Formulierungshilfen', ic: 'material' },
+  { k: 'g-quelle', title: 'Quellenanalyse', label: 'Textquelle', d: 'Quelle mit Zeilen, Quellenanalyse in drei Schritten, Steckbrief, Formulierungshilfen', ic: 'quelle' },
   { k: 'g-bild', title: 'Karikaturanalyse', label: 'Karikatur, Bildquelle', d: 'Beschriftetes Bild, Beschreiben – Deuten – Beurteilen, Tabelle', ic: 'image' },
-  { k: 'g-darst', title: 'Darstellung analysieren', label: 'Darstellung', d: 'Text aus der Forschung, These und Argumente, Überprüfung', ic: 'quote' },
+  { k: 'g-darst', title: 'Darstellung analysieren', label: 'Darstellung', d: 'Text aus der Forschung, These und Argumente, Überprüfung', ic: 'darstellung' },
   { k: 'g-stat', title: 'Statistik auswerten', label: 'Statistik, Schaubild', d: 'Schaubild, Auswertung in vier Schritten, Formulierungshilfen', ic: 'table' },
   { k: 'g-urteil', label: 'Urteilsbildung', d: 'Streitfrage, Pro und Contra, Sach- und Werturteil', ic: 'phrases' },
-  { k: 'g-chronik', label: 'Zeitleiste', d: 'Darstellung, Ereignisse ordnen, Bedeutung erläutern', ic: 'heading' },
+  { k: 'g-chronik', label: 'Zeitleiste', d: 'Darstellung, Ereignisse ordnen, Bedeutung erläutern', ic: 'zeitleiste' },
   { k: 'stationen', label: 'Stationenarbeit', d: 'Drei Stationen mit Material und Aufgaben, je eine Seite', ic: 'tasks' },
   { k: 'g-klausur', label: 'Klausur', d: 'Deckblatt, Quelle, drei Aufgaben (AFB I–III) mit Gewichtung', ic: 'meta' }
 ];
 const TPL_BIO = [
   { k: 'leer', label: 'Leeres Blatt', d: 'Material und Aufgaben', ic: 'text' },
-  { k: 'b-versuch', title: 'Versuchsprotokoll', label: 'Versuch', d: 'Erkenntnisweg, Protokoll von der Frage bis zur Auswertung, Fläche für den Aufbau', ic: 'table' },
+  { k: 'b-versuch', title: 'Versuchsprotokoll', label: 'Versuch', d: 'Erkenntnisweg, Protokoll von der Frage bis zur Auswertung, Fläche für den Aufbau', ic: 'protokoll' },
   { k: 'b-diagramm', title: 'Diagramm auswerten', label: 'Diagramm', d: 'Abbildung, Auswertung in Schritten, Formulierungshilfen', ic: 'image' },
-  { k: 'b-zeichnen', title: 'Mikroskopieren und Zeichnen', label: 'Zeichnen', d: 'Regeln für biologische Zeichnungen, freie Zeichenfläche', ic: 'lines' },
+  { k: 'b-zeichnen', title: 'Mikroskopieren und Zeichnen', label: 'Zeichnen', d: 'Regeln für biologische Zeichnungen, freie Zeichenfläche', ic: 'zeichnung' },
   { k: 'b-abb', title: 'Abbildung beschriften', label: 'Abbildung beschriften', d: 'Abbildung mit Nummern, Tabelle für Bezeichnung und Funktion', ic: 'image' },
   { k: 'b-text', title: 'Fachtext erschließen', label: 'Fachtext', d: 'Text mit Zeilen, Fachbegriffe, Fließdiagramm', ic: 'material' },
   { k: 'b-steckbrief', title: 'Steckbrief', label: 'Steckbrief', d: 'Lebewesen mit Bild, Merkmale und Angepasstheit', ic: 'tasks' },
@@ -3738,7 +3775,7 @@ function bodyFor(b, num) {
     case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
     case 'material': { const poem = b.form === 'gedicht'; return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       ${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
-      <div class="row" style="gap:8px 18px"><div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>
+      <div class="row" style="gap:8px 18px">${fachKey() === 'deutsch' || poem ? `<div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>` : ''}
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
@@ -3763,7 +3800,7 @@ function bodyFor(b, num) {
         <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
-    case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, INFO_KINDS.map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
+    case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
       ${stilTiles(b, ST_INFO)}
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
     case 'phrases': {
@@ -4017,13 +4054,13 @@ function onClick(e) {
     case 'ins-open': state.insAt = +a.dataset.at; renderEditor(); { const p = $('#editor .ins-pal'); if (p) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } return;
     case 'ins-close': state.insAt = null; renderEditor(); return;
     case 'ins-add': {
-      const nb = newBlock(a.dataset.type); const at = Math.max(0, Math.min(blocks.length, +a.dataset.at));
+      const nb = paletteBlock(a.dataset.pk, a.dataset.type); const at = Math.max(0, Math.min(blocks.length, +a.dataset.at));
       blocks.splice(at, 0, nb); state.sel = nb.id; state.insAt = null; openOnly(nb.id); changed(true);
       const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea,.rtx'); if (f) f.focus({ preventScroll: true }); }
       return;
     }
     case 'add': {
-      const nb = newBlock(a.dataset.type);
+      const nb = paletteBlock(a.dataset.pk, a.dataset.type);
       const at = state.sel && state.sel !== 'meta' ? blocks.findIndex(x => x.id === state.sel) + 1 : blocks.length;
       blocks.splice(at > 0 ? at : blocks.length, 0, nb); state.sel = nb.id; openOnly(nb.id); changed(true);
       const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) { nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = nc.querySelector('input[type=text],textarea,.rtx'); if (f) f.focus({ preventScroll: true }); }
