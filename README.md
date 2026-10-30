@@ -6,7 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
-- **Reiter je Klasse:** Grundkurs, Klasse 10 und Klasse 9/10. Jeder Reiter hat eine eigene Ablage. Neue Blätter übernehmen Kursbezeichnung, Schule, Farbe und Anrede der Klasse (Grundkurs: Georg-Herwegh-Gymnasium, Sie; Klasse 10 und 9/10: Waldseeschule, du). Über das Feld „Reiter“ im Kopf lässt sich ein Blatt in eine andere Klasse verschieben.
+- **Klassen je Konto:** Jedes Konto hat eigene Reiter. Über „Klassen“ neben den Reitern lassen sich Klassen anlegen, umbenennen, umsortieren und (wenn leer) entfernen, jeweils mit Name, Kurs auf dem Blatt, Schule, Anrede (Sie/du) und Farbe. Neue Blätter übernehmen diese Angaben; vorhandene Blätter behalten ihre. Konten mit Blättern in den bisherigen Reitern behalten Grundkurs (Georg-Herwegh-Gymnasium, Sie), Klasse 10 und Klasse 9/10 (Waldseeschule, du). Neue Nutzer richten beim ersten Start ihre Klassen ein.
 - **Bausteine:** Material mit automatischen Zeilennummern, Gedicht, Aufgaben, Infokasten, Formulierungshilfen, Tabelle, Schreibfläche (Linien oder Kästchen), Überschrift, Absatz, Zitat, Bild, Seitenumbruch.
 - **Gedicht:** Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse (lange Verse brechen mit Einzug um und bekommen keine eigene Nummer), Angaben lauten „V. 3“. Worterklärungen, Formatierung und Notizrand wie beim Material. Ein vorhandenes Material lässt sich über „Textform“ auf Gedicht umstellen.
 - **Formulierungshilfen:** Satzanfänge und Wendungen in Gruppen, eine Formulierung pro Zeile, ein- oder zweispaltig. Vorlagen: Einleitung, Sprachliche Mittel deuten, Zitieren und Belegen, Argumentieren, Vergleichen, Urteilen und Schluss.
@@ -95,6 +95,17 @@ Der Publishable key ist für öffentliche Seiten gedacht; geschützt wird über 
 Einmalig im Supabase-Dashboard: **Authentication → URL Configuration → Redirect URLs** um `https://moritzbauer171-art.github.io/Abbaukasten/` ergänzen. Dann führen Bestätigungs- und „Passwort vergessen“-Links zurück auf die AB-Werkstatt. Die *Site URL* gilt für das ganze EduFire-Projekt und kann bleiben, wie sie ist.
 
 Free-Projekte pausiert Supabase nach etwa einer Woche ohne Nutzung. Dann im Dashboard **Restore project** wählen; die Daten bleiben erhalten.
+
+## Weitere Nutzer
+
+Jedes Konto sieht nur seine eigenen Blätter, Ordner und Klassen. Neue Nutzer richten beim ersten Start ihre Klassen ein.
+
+Der eingebaute Mailversand von Supabase verschickt Bestätigungs- und Passwort-Mails nur an Mitglieder der eigenen Supabase-Organisation. Für Kolleginnen und Kollegen deshalb einer dieser Wege:
+
+- **Konto selbst anlegen (einfach, empfohlen für wenige Personen):** Supabase-Dashboard → **Authentication → Users → Add user → Create new user**, E-Mail und ein Startpasswort eintragen, „Auto Confirm User“ anhaken. Die Person meldet sich mit diesen Daten an. „Allow new users to sign up“ kann dabei ausgeschaltet bleiben. Passwort vergessen: im Dashboard beim Nutzer neu setzen.
+- **Selbst registrieren lassen:** eigenen Mailversand einrichten (**Authentication → Emails → SMTP Settings**, z. B. mit einem Mailkonto oder einem Mailanbieter), dann **Authentication → Sign In / Providers → Allow new users to sign up** einschalten und unter **URL Configuration → Redirect URLs** `https://moritzbauer171-art.github.io/Abbaukasten/` eintragen.
+
+Speicher: Der kostenlose Tarif erlaubt 500 MB Datenbank; ein Blatt braucht im Schnitt rund 25 KB (mit Bildern mehr).
 
 ## Dateien
 

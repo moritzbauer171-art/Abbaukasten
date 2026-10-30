@@ -480,6 +480,19 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .tipcard p{margin:0;font-size:13px;line-height:1.4;color:var(--ink)}
 .tip-a{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
 .cf-opts{display:flex;flex-direction:column;gap:8px}
+.dlg.dlg-kl{width:min(640px,calc(100% - 32px))}
+.kl-list{display:flex;flex-direction:column;gap:10px}
+.kl-row{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px 10px;display:flex;flex-direction:column;gap:8px}
+.kl-top{display:flex;align-items:center;gap:6px}
+.kl-top .inp{flex:1;min-width:0;font-weight:700}
+.kl-dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+.kl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 12px;align-items:end}
+.kl-sw{display:flex;gap:6px}
+.kl-c{width:24px;height:24px;border-radius:50%;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--line-strong);cursor:pointer;padding:0}
+.kl-c[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ink)}
+.rt.rt-edit{color:var(--muted);gap:5px;padding-left:12px;padding-right:12px}
+.rt.rt-edit svg{width:15px;height:15px}
+.rt.rt-edit:hover{color:var(--tinte)}
 .dlg.dlg-new{width:min(640px,calc(100% - 32px))}
 .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
 .tpl{display:flex;align-items:flex-start;gap:9px;text-align:left;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:9px 10px;cursor:pointer;color:var(--ink)}
@@ -963,11 +976,16 @@ const ACCENTS = {
   graphit: { name:'Graphit', c:'#383C44', t:'#ECEDF0' }
 };
 /* Reiter: eine Ablage je Klasse. Neue Blätter übernehmen Kurs, Farbe und Anrede der Klasse. */
-const KLASSEN = [
+const DEFAULT_KLASSEN = [
   { id: 'gk',   label: 'Grundkurs',   course: 'Grundkurs Deutsch',   school: 'Georg-Herwegh-Gymnasium', accent: 'tinte',  anrede: 'sie' },
   { id: 'k10',  label: 'Klasse 10',   course: 'Deutsch Klasse 10',   school: 'Waldseeschule',           accent: 'petrol', anrede: 'du' },
   { id: 'k910', label: 'Klasse 9/10', course: 'Deutsch Klasse 9/10', school: 'Waldseeschule',           accent: 'wein',   anrede: 'du' }
 ];
+// Die Klassen gehören zum Konto (Einstellungen der Ablage). DEFAULT_KLASSEN sind die ursprünglichen drei Reiter.
+const LEGACY_IDS = ['gk', 'k10', 'k910'];
+const LS_KLCACHE = 'abw.klassen';
+const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie' });
+let KLASSEN = (() => { try { const c = JSON.parse(localStorage.getItem(LS_KLCACHE) || 'null'); if (Array.isArray(c) && c.length) return c.map(normKlasse); } catch {} return DEFAULT_KLASSEN.map((k, i) => normKlasse(k, i)); })();
 const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
 /* Online-Ablage über Supabase (Projekt in der Organisation EduFire, Tabelle ab_arbeitsblaetter).
    Der Publishable key ist für öffentliche Seiten gedacht; geschützt wird über Anmeldung und Zugriffsregeln (RLS).
@@ -2358,7 +2376,7 @@ function normalizeSheet(sh) {
   sh.klasse = KL(sh.klasse).id;
   const schoolOld = !(sh.meta && sh.meta.schoolV);
   sh.meta = { ...defaultMeta('', sh.klasse), anrede: 'sie', ...sh.meta };
-  if (schoolOld) { if (sh.meta.school === KLASSEN[0].school) sh.meta.school = KL(sh.klasse).school; sh.meta.schoolV = 1; }
+  if (schoolOld) { if (sh.meta.school === 'Georg-Herwegh-Gymnasium' && KL(sh.klasse).school) sh.meta.school = KL(sh.klasse).school; sh.meta.schoolV = 1; }
   if (!Array.isArray(sh.blocks)) sh.blocks = [];
   sh.blocks.forEach(b => { if (b && b.type === 'material') { migrateGlossary(b); migrateMatNl(b); } });
   if (!Array.isArray(sh.cards)) sh.cards = [];
@@ -3598,7 +3616,7 @@ function entryOf(sh) { return { id: sh.id, klasse: KL(sh.klasse).id, title: sh.m
 
 const localB = {
   kind: 'local', key: 'local',
-  async list() { return Object.values(localLib()).filter(d => d && d.sheet && d.sheet.meta).map(d => ({ ...entryOf(d.sheet), updatedAt: d.updatedAt || d.sheet.updatedAt || 0 })); },
+  async list() { return Object.values(localLib()).filter(d => d && d.sheet && d.sheet.meta).map(d => ({ ...entryOf(d.sheet), kraw: d.sheet.klasse, updatedAt: d.updatedAt || d.sheet.updatedAt || 0 })); },
   async load(id) { const d = localLib()[id]; return d && d.sheet ? clone(d.sheet) : null; },
   async save(sh) { const lib = localLib(); lib[sh.id] = { updatedAt: sh.updatedAt, sheet: sh }; if (!lsSet(LS.lib, lib)) throw { code: 'quota' }; },
   async remove(id) { const lib = localLib(); delete lib[id]; lsSet(LS.lib, lib); },
@@ -3611,7 +3629,7 @@ function claudeB(db, id) {
     kind: 'claude', key: 'claude:' + id,
     async list() {
       const snap = await col().get();
-      return snap.docs.filter(d => d.exists && d.data() && d.data().sheet).map(d => { const x = d.data(); return { id: d.id, klasse: KL(x.klasse).id, title: x.title || 'Ohne Titel', nr: String(x.nr || ''), updatedAt: x.updatedAt || 0, q: x.q || searchText(x.sheet) }; });
+      return snap.docs.filter(d => d.exists && d.data() && d.data().sheet).map(d => { const x = d.data(); return { id: d.id, kraw: x.klasse, klasse: KL(x.klasse).id, title: x.title || 'Ohne Titel', nr: String(x.nr || ''), updatedAt: x.updatedAt || 0, q: x.q || searchText(x.sheet) }; });
     },
     async load(docId) { const d = await col().doc(docId).get(); return d.exists && d.data().sheet ? clone(d.data().sheet) : null; },
     async save(sh) {
@@ -3632,7 +3650,7 @@ function supaB(sb, user) {
     kind: 'supabase', key: 'sb:' + user.id,
     async list() {
       const rows = chk(await T().select('id,klasse,title,nr,updated_at,suchtext').order('updated_at', { ascending: false })) || [];
-      return rows.map(r => ({ id: r.id, klasse: KL(r.klasse).id, title: r.title || 'Ohne Titel', nr: r.nr || '', updatedAt: Date.parse(r.updated_at) || 0, q: r.suchtext || '' }));
+      return rows.map(r => ({ id: r.id, kraw: r.klasse, klasse: KL(r.klasse).id, title: r.title || 'Ohne Titel', nr: r.nr || '', updatedAt: Date.parse(r.updated_at) || 0, q: r.suchtext || '' }));
     },
     async load(id) { const d = chk(await T().select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
     async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, suchtext: searchText(sh), updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
@@ -3663,7 +3681,7 @@ async function refreshLib() { if (!backend) return; state.lib = await backend.li
 function nextNr(k) { let m = 0; state.lib.forEach(d => { if (d.klasse !== k) return; const n = parseInt(d.nr, 10); if (n > m) m = n; }); return m ? String(m + 1) : ''; }
 function renderTabs() {
   const counts = {}; state.lib.forEach(d => { counts[d.klasse] = (counts[d.klasse] || 0) + 1; });
-  $('#reiter').innerHTML = KLASSEN.map(k => `<button type="button" role="tab" class="rt" data-k="${k.id}" aria-selected="${state.klasse === k.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}${counts[k.id] ? `<span>${counts[k.id]}</span>` : ''}</button>`).join('');
+  $('#reiter').innerHTML = KLASSEN.map(k => `<button type="button" role="tab" class="rt" data-k="${k.id}" aria-selected="${state.klasse === k.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}${counts[k.id] ? `<span>${counts[k.id]}</span>` : ''}</button>`).join('') + `<button type="button" class="rt rt-edit" data-kl="edit" title="Klassen anlegen und bearbeiten" aria-label="Klassen anlegen und bearbeiten"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3.5v9M3.5 8h9"/></svg><span class="l-long">Klassen</span></button>`;
 }
 
 /* ---------- Zwischenspeicher für Änderungen, die online noch fehlen ---------- */
@@ -3790,12 +3808,13 @@ async function useBackend(b) {
     toast('Die Ablage ist gerade nicht erreichbar. Änderungen werden lokal gesichert und später nachgetragen.');
     return;
   }
-  await loadPrefs(b); if (state.libOpen) renderLib();
+  await loadPrefs(b); applyKlassen(); if (state.libOpen) renderLib();
   await flushPending();
   if (t !== backendToken) return;
-  if (state.touched && !state.sheet.example) await saveNow();
+  if (state.touched && !state.sheet.example && KLASSEN.some(k => k.id === state.sheet.klasse)) await saveNow();
   else await openForKlasse(state.klasse);
   state.touched = false;
+  setTimeout(maybeSetup, 0);
 }
 async function initBackend() {
   if (inClaude) {
@@ -3898,6 +3917,69 @@ async function importBackup(file) {
   toast(`${n} ${n === 1 ? 'Blatt' : 'Blätter'} übernommen${extra ? ' · ' + extra : ''}`);
 }
 
+/* ---------- Klassen je Konto ---------- */
+// Bestehende Konten (mit Blättern in den alten Reitern) behalten Grundkurs, Klasse 10 und Klasse 9/10.
+// Neue Konten richten beim ersten Start ihre eigenen Klassen ein.
+function applyKlassen() {
+  let ks = Array.isArray(state.prefs.klassen) && state.prefs.klassen.length ? state.prefs.klassen.map(normKlasse) : null;
+  state.needSetup = false;
+  if (!ks) {
+    const legacy = state.lib.some(d => LEGACY_IDS.includes(d.kraw || d.klasse) && (d.kraw || '') !== '');
+    // Wer bisher nur im Browser gearbeitet hat und sich jetzt anmeldet, nimmt seine Klassen mit
+    const lp = backend && backend.kind !== 'local' ? normPrefs(lsGet(LS_PREF)) : null;
+    const localLegacy = backend && backend.kind !== 'local' && Object.values(localLib()).some(x => x && x.sheet && LEGACY_IDS.includes(x.sheet.klasse));
+    if (lp && lp.klassen) { ks = lp.klassen; state.prefs.klassen = ks; savePrefs(); }
+    else if (legacy || localLegacy) { ks = DEFAULT_KLASSEN.map(normKlasse); state.prefs.klassen = ks; savePrefs(); }
+    else { ks = [normKlasse({ id: 'k1', label: 'Meine Klasse', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0)]; state.needSetup = true; }
+  }
+  KLASSEN = ks; lsSet(LS_KLCACHE, ks);
+  state.lib.forEach(d => { d.klasse = KL(d.kraw || d.klasse).id; });
+  if (!KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); }
+  renderTabs(); if (state.libOpen) renderLib();
+}
+// Ohne Anmeldung, aber mit Online-Ablage: erst anmelden lassen (die Einrichtung folgt nur für neue Konten)
+function maybeSetup(afterLogin) { if (!state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
+function openKlassen(setup) {
+  const rows = (setup ? [] : KLASSEN).map(k => ({ ...k }));
+  if (setup) rows.push(normKlasse({ id: 'k1', label: '', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0));
+  state.dlg = { mode: 'klassen', setup: !!setup, rows, school: setup ? '' : null };
+  renderDlg();
+}
+function klassenHTML() {
+  const d = state.dlg; const cnt = id => state.lib.filter(x => x.klasse === id).length;
+  const row = (k, i) => `<div class="kl-row" data-i="${i}">
+      <div class="kl-top"><span class="kl-dot" style="background:${ACCENTS[k.accent].c}"></span><input class="inp" data-kf="label" value="${esc(k.label)}" placeholder="Name des Reiters, z. B. 8b oder LK Deutsch" maxlength="40" aria-label="Name des Reiters">
+        ${d.setup ? '' : `<button type="button" class="ib" data-act="kl-up" data-i="${i}" title="Nach vorn"${i === 0 ? ' disabled' : ''}>${I.up}</button><button type="button" class="ib" data-act="kl-down" data-i="${i}" title="Nach hinten"${i === d.rows.length - 1 ? ' disabled' : ''}>${I.down}</button>`}
+        <button type="button" class="ib" data-act="kl-del" data-i="${i}" title="${cnt(k.id) ? `Enthält ${cnt(k.id)} Blätter – erst verschieben oder löschen` : 'Entfernen'}"${(cnt(k.id) || d.rows.length < 2) ? ' disabled' : ''}>${I.del}</button></div>
+      <div class="kl-grid">
+        <label class="f"><span>Kurs auf dem Blatt</span><input class="inp" data-kf="course" value="${esc(k.course)}" placeholder="z. B. Deutsch Klasse 8b" maxlength="80"></label>
+        ${d.setup ? '' : `<label class="f"><span>Schule</span><input class="inp" data-kf="school" value="${esc(k.school)}" placeholder="Schule" maxlength="80"></label>`}
+        <div class="f"><span>Anrede</span><div class="seg sm" role="group"><button type="button" data-act="kl-set" data-f="anrede" data-v="sie" data-i="${i}" aria-pressed="${k.anrede === 'sie'}">Sie</button><button type="button" data-act="kl-set" data-f="anrede" data-v="du" data-i="${i}" aria-pressed="${k.anrede === 'du'}">du</button></div></div>
+        <div class="f"><span>Farbe</span><div class="kl-sw">${Object.entries(ACCENTS).map(([a, x]) => `<button type="button" class="kl-c" data-act="kl-set" data-f="accent" data-v="${a}" data-i="${i}" aria-pressed="${k.accent === a}" title="${x.name}" style="background:${x.c}"></button>`).join('')}</div></div>
+      </div></div>`;
+  return `<h2 id="dlg-t">${d.setup ? 'Willkommen in der AB-Werkstatt' : 'Klassen'}</h2>
+    <p>${d.setup ? 'Legen Sie Ihre Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
+    ${d.setup ? `<label class="f"><span>Ihre Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
+    <div class="kl-list">${d.rows.map(row).join('')}</div>
+    <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
+    <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
+    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>`;
+}
+function klassenSave() {
+  const d = state.dlg; const school = d.setup ? dlgVal('#kl-school') : null;
+  const rows = d.rows.filter(k => String(k.label).trim());
+  if (!rows.length) { dlgMsg('Bitte mindestens einer Klasse einen Namen geben.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
+  const used = new Set();
+  const ks = rows.map((k, i) => { let id = k.id && !used.has(k.id) ? k.id : 'k-' + uid(); used.add(id); return normKlasse({ ...k, id, school: d.setup ? school : k.school, course: k.course || k.label }, i); });
+  const setup = d.setup; state.prefs.klassen = ks; state.dlg = null; renderDlg();
+  KLASSEN = ks; lsSet(LS_KLCACHE, ks); state.needSetup = false; savePrefs();
+  state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
+  if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
+  renderTabs(); renderEditor(); if (state.libOpen) renderLib();
+  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „Neues Blatt“ gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
+  else toast('Klassen gespeichert');
+}
+
 /* ---------- Ordner in „Meine Blätter“ ---------- */
 // Ordner gelten je Reiter. Gespeichert wird ein kleines Einstellungsdokument je Ablage: Ordner, Zuordnung der Blätter, eigene Reihenfolge.
 const LS_PREF = 'abw.ordner', LS_SORT = 'abw.sort', LS_FZU = 'abw.fzu';
@@ -3907,7 +3989,8 @@ function normPrefs(p) {
   const obj = o => (o && typeof o === 'object' && !Array.isArray(o) ? o : {});
   const folders = (Array.isArray(p.folders) ? p.folders : []).filter(f => f && typeof f.id === 'string' && String(f.name || '').trim())
     .map(f => ({ id: f.id, klasse: KL(f.klasse).id, name: String(f.name).trim().slice(0, 60) }));
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) } };
+  const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
 const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
@@ -3921,11 +4004,12 @@ function savePrefs() {
 }
 async function loadPrefs(b) { let p = null; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); } if (b === backend) state.prefs = normPrefs(p); }
 function mergePrefs(p) {
-  const lp = normPrefs(p); if (!lp.folders.length && !Object.keys(lp.place).length) return false;
+  const lp = normPrefs(p); if (!lp.folders.length && !Object.keys(lp.place).length && !lp.klassen) return false;
   const ids = new Set(state.prefs.folders.map(f => f.id));
   lp.folders.forEach(f => { if (!ids.has(f.id)) state.prefs.folders.push(f); });
   Object.entries(lp.place).forEach(([sid, fid]) => { if (!state.prefs.place[sid]) state.prefs.place[sid] = fid; });
   Object.entries(lp.order).forEach(([k, v]) => { if (!state.prefs.order[k] && Array.isArray(v)) state.prefs.order[k] = v; });
+  if (lp.klassen) { const have = state.prefs.klassen || []; const ids = new Set(have.map(k => k.id)); state.prefs.klassen = have.concat(lp.klassen.filter(k => !ids.has(k.id))); applyKlassen(); }
   savePrefs(); return true;
 }
 const libFolders = kl => state.prefs.folders.filter(f => f.klasse === kl);
@@ -4123,12 +4207,14 @@ function authMsg(err) {
   if (c === 'user_already_exists' || /already (been )?registered/i.test(m)) return 'Für diese E-Mail gibt es schon ein Konto. Bitte melden Sie sich an.';
   if (c === 'weak_password' || /password should|at least 6/i.test(m)) return 'Das Passwort ist zu kurz oder zu einfach (mindestens 6 Zeichen).';
   if (/rate limit|too many/i.test(m) || /rate_limit/.test(c || '')) return 'Zu viele Versuche. Bitte in ein paar Minuten erneut versuchen.';
-  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten sind für diese Seite abgeschaltet.';
+  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die diese AB-Werkstatt betreut. Sie bekommen dann E-Mail und Passwort zum Anmelden.';
+  if (c === 'email_address_not_authorized' || /not authorized/i.test(m)) return 'Die Bestätigungsmail kann an diese Adresse noch nicht verschickt werden. Bitte bei der Person melden, die diese AB-Werkstatt betreut.';
+  if (c === 'over_email_send_rate_limit' || /email rate limit/i.test(m)) return 'Gerade wurden zu viele Mails verschickt. Bitte in einer Stunde erneut versuchen.';
   if (/failed to fetch|network|load failed/i.test(m)) return 'Keine Verbindung zum Server. Bitte die Internetverbindung prüfen.';
   return 'Das hat nicht geklappt: ' + m;
 }
 function openDlg(mode) { if (!store.sb) return; state.dlg = { mode, email: (state.dlg && state.dlg.email) || '' }; renderDlg(); }
-function closeDlg() { const d = state.dlg; if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); }
+function closeDlg() { const d = state.dlg; if (d && d.mode === 'klassen' && d.setup) return; if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); if (d && d.mode === 'login') setTimeout(() => maybeSetup(true), 0); }
 /* ---------- Geändert auf einem anderen Gerät ---------- */
 function conflictHTML() {
   const t = new Date(state.dlg.remote).toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -4371,12 +4457,12 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
         ${msgs}<div class="row"><button class="btn primary" type="submit">Speichern</button></div></form>`
-    : `<h2 id="dlg-t">Anmelden</h2><p>Melden Sie sich mit Ihrem EduFire-Konto an. Dann liegen Ihre Arbeitsblätter online und sind auf jedem Gerät da.</p>
+    : `<h2 id="dlg-t">Anmelden</h2><p>Mit einem Konto liegen Ihre Arbeitsblätter online und sind auf jedem Gerät da. Noch kein Konto? Mit den Zugangsdaten anmelden, die Sie bekommen haben, oder „Konto anlegen“ wählen.</p>
       <form id="dlg-form" data-mode="login" novalidate>
         <label class="f"><span>E-Mail</span><input class="inp" id="dlg-email" type="email" autocomplete="username" value="${esc(d.email)}"></label>
         <label class="f"><span>Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="current-password"></label>
@@ -4388,6 +4474,7 @@ function renderDlg() {
   if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
   if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
   if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
+  if (d.mode === 'klassen') { r.querySelector('.dlg').classList.add('dlg-kl'); if (d.setup) r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.setup ? '#kl-school' : '[data-kf="label"]'); if (f && d.setup) f.focus(); return; }
   if (d.mode === 'new') { r.querySelector('.dlg').classList.add('dlg-new'); const f = r.querySelector('.tpl'); if (f) f.focus(); return; }
   if (d.mode === 'out') { r.querySelector('.dlg').classList.add('dlg-out'); const g = r.querySelector('[data-act="out-go"]'); if (g) g.focus(); return; }
   const f = r.querySelector(d.mode === 'login' && !d.email ? '#dlg-email' : '#dlg-pw'); if (f) f.focus();
@@ -4422,6 +4509,14 @@ async function onDlgClick(e) {
   if (act === 'dlg-close') { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
   if (act === 'sa-file') { saveAsFile(); return; }
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
+  if (state.dlg.mode === 'klassen') {
+    const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
+    if (act === 'kl-set') { d.rows[i][a.dataset.f] = a.dataset.v; renderDlg(); return; }
+    if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede }, n)); d.rows[n].label = ''; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
+    if (act === 'kl-del') { d.rows.splice(i, 1); renderDlg(); return; }
+    if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
+    if (act === 'kl-save') { klassenSave(); return; }
+  }
   if (act === 'tpl') { newFromTpl(a.dataset.k); return; }
   if (act === 'tips-again') { closeDlg(); showTip(0); return; }
   if (act === 'tpl-copy') { newFromCopy(); return; }
@@ -4916,9 +5011,17 @@ function boot() {
   $('#lib-root').addEventListener('dragend', () => { libDrag = null; libClearDrop(); document.querySelectorAll('#lib-root .dragging').forEach(n => n.classList.remove('dragging')); });
   $('#dlg-root').addEventListener('click', onDlgClick);
   $('#dlg-root').addEventListener('submit', onDlgSubmit);
+  $('#dlg-root').addEventListener('input', e => {
+    const t = e.target; const d = state.dlg; if (!d || d.mode !== 'klassen') return;
+    if (t.id === 'kl-school') { d.school = t.value; return; }
+    const r = t.closest('.kl-row'); if (!r || !t.dataset.kf) return; const row = d.rows[+r.dataset.i];
+    const prevLabel = row.label; row[t.dataset.kf] = t.value;
+    // Kurs automatisch vorschlagen, solange er dem Namen folgt
+    if (t.dataset.kf === 'label' && d.setup) { const c = r.querySelector('[data-kf="course"]'); if (c && (!row.course || row.course === 'Deutsch' || row.course === 'Deutsch ' + prevLabel)) { row.course = t.value ? 'Deutsch ' + t.value : 'Deutsch'; c.value = row.course; } }
+  });
   $('#dlg-root').addEventListener('change', e => { if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, ''); });
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
-  $('#reiter').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
+  $('#reiter').addEventListener('click', e => { if (e.target.closest('[data-kl]')) { openKlassen(false); return; } const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
   const edEl = $('#editor');
   edEl.addEventListener('dragstart', e => {
@@ -5042,7 +5145,7 @@ function boot() {
     if (menu.open) { closeMenu(); return; }
     if (zl.open) { closeZl(); return; }
     if (gl.open) { closeGloss(); return; }
-    if (state.dlg) { if (state.dlg.mode === 'conflict') return; if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
+    if (state.dlg) { if (state.dlg.mode === 'conflict' || (state.dlg.mode === 'klassen' && state.dlg.setup)) return; if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
     if (state.libOpen) { if (state.fMenu || state.fDel || state.moveOpen) { state.fMenu = state.fDel = state.moveOpen = null; renderLib(); return; } state.libOpen = false; state.confirmDel = null; state.fNew = false; state.fEdit = null; renderLib(); }
   });
   $('.bar').addEventListener('click', e => {
@@ -5122,7 +5225,7 @@ function boot() {
   window.addEventListener('pagehide', () => { if (savePending) saveNow(); });
 
   // Erster Stand: zuletzt geöffnetes Blatt dieses Reiters aus dem Zwischenspeicher, sonst Entwurf
-  const k = lsGet(LS.klasse); state.klasse = KLASSEN.some(x => x.id === k) ? k : 'gk';
+  const k = lsGet(LS.klasse); state.klasse = KLASSEN.some(x => x.id === k) ? k : KLASSEN[0].id;
   const cached = lsGet(LS.cur);
   const ok = cached && cached.sheet && cached.sheet.meta && Array.isArray(cached.sheet.blocks) && KL(cached.sheet.klasse).id === state.klasse;
   state.sheet = normalizeSheet(ok ? cached.sheet : draftFor(state.klasse));
