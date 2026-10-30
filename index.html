@@ -586,6 +586,36 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 /* Schreibtisch: Karopapier unter der Vorschau, die Seiten liegen darauf wie ein kleiner Stapel */
 #preview-scroll{background-color:var(--desk);background-image:linear-gradient(var(--karo) 1px,transparent 1px),linear-gradient(90deg,var(--karo) 1px,transparent 1px);background-size:5mm 5mm;background-attachment:local}
 .slot>.pout{box-shadow:0 1px 2px rgba(22,30,52,.14),4px 5px 0 -1px var(--paper),4px 5px 0 0 var(--edge),0 14px 30px rgba(22,30,52,.13)}
+/* Fach wechseln: die Randnotiz ist ein Knopf */
+.brand{position:relative}
+.fach-btn{display:inline-flex;align-items:center;gap:2px;border:0;background:transparent;padding:2px 6px 2px 4px;border-radius:8px;cursor:pointer;color:var(--rot)}
+.fach-btn svg{width:12px;height:12px;flex:0 0 auto;opacity:.75;transform:translateY(2px)}
+.fach-btn:hover{background:var(--rot-soft)}
+.fach-btn[aria-expanded="true"]{background:var(--rot-soft)}
+.fach-pop{position:absolute;left:120px;top:calc(100% + 6px);z-index:45;background:var(--card);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;gap:2px}
+.fach-pop[hidden]{display:none}
+.fp-h{font-size:12px;font-weight:700;color:var(--muted);padding:4px 8px 6px}
+.fp-i{display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:10px;border:0;background:transparent;border-radius:8px;padding:8px 10px;text-align:left;cursor:pointer;color:var(--ink);font-size:14px}
+.fp-i i{width:10px;height:10px;border-radius:50%}
+.fp-i b{font-family:var(--f-text);font-size:16px;font-weight:700;white-space:nowrap}
+.fp-i small{white-space:nowrap}
+.fp-i small{font-size:12px;color:var(--muted)}
+.fp-i:hover,.fp-i:focus-visible{background:var(--tinte-soft);outline:none}
+.fp-i[aria-pressed="true"]{background:var(--tinte-soft)}
+.fp-i[aria-pressed="true"] b::after{content:" ✓";color:var(--tinte)}
+.fp-kl{display:block;font-size:13px;color:var(--tinte);font-weight:700}
+.fp-sep{height:1px;background:var(--line);margin:4px 6px}
+.kl-want{background:var(--tinte-soft);border-radius:8px;padding:8px 10px}
+/* Grundfarbe der Seite je Fach: Deutsch Tinte, Geschichte/Politik Umbra, Biologie Blattgrün */
+:root[data-fach="gp"]{--tinte:#7A4E1D;--tinte-soft:#F3E9DC;--desk:#E8E4DC;--karo:rgba(122,78,29,.08)}
+:root[data-fach="bio"]{--tinte:#2E6B3A;--tinte-soft:#E2F0E4;--desk:#E0E7E1;--karo:rgba(46,107,58,.085)}
+@media (prefers-color-scheme: dark){
+  :root[data-fach="gp"]:not([data-theme="light"]){--tinte:#E3B47C;--tinte-ink:#2A1A08;--tinte-soft:#3A2C1C;--desk:#15130F;--karo:rgba(227,180,124,.06)}
+  :root[data-fach="bio"]:not([data-theme="light"]){--tinte:#8FD49C;--tinte-ink:#0C2412;--tinte-soft:#1F3324;--desk:#0F1511;--karo:rgba(143,212,156,.06)}
+}
+:root[data-theme="dark"][data-fach="gp"]{--tinte:#E3B47C;--tinte-ink:#2A1A08;--tinte-soft:#3A2C1C;--desk:#15130F;--karo:rgba(227,180,124,.06)}
+:root[data-theme="dark"][data-fach="bio"]{--tinte:#8FD49C;--tinte-ink:#0C2412;--tinte-soft:#1F3324;--desk:#0F1511;--karo:rgba(143,212,156,.06)}
+body{transition:background-color .3s,border-color .25s}
 /* Prüfhinweise in Korrekturrot */
 .out-chk li.warn,.gnote,.gl-miss,.gl-warn,.chip.warn{color:var(--rot)}
 .gnote,.chip.warn{background:var(--rot-soft)}
@@ -746,6 +776,7 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 /* Bild */
 .blk-img{text-align:center}
 .blk-img img{display:inline-block;max-width:100%;height:auto}
+.frame-area{border:.3mm solid var(--paper-rule);border-radius:1mm}
 .blk-img.lab{text-align:left}
 .blk-img.lab .img-c{text-align:center}
 .blk-img.lab .img-src{text-align:left;padding-left:10mm}
@@ -847,7 +878,7 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 .cv-h{font-size:8pt;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--acc);margin-top:5mm}
 .cv-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1.4mm;font-size:10pt}
 .cv-list li{display:flex;gap:3mm}
-.cv-list b{flex:0 0 9mm;color:var(--acc)}
+.cv-list b{flex:0 0 auto;min-width:9mm;white-space:nowrap;color:var(--acc)}
 .cv-tasks{border-collapse:collapse;font-size:10pt;width:90mm}
 .cv-tasks td{border:.25mm solid var(--paper-rule);padding:1.6mm 3mm}
 .cv-tasks tr:first-child td{font-weight:700;background:var(--acc-tint)}
@@ -989,7 +1020,7 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 <body>
 <div id="app">
   <header class="bar">
-    <div class="brand"><b>AB-Werkstatt</b><span>Deutsch</span></div>
+    <div class="brand"><b>AB-Werkstatt</b><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
     <div class="tabs" role="group" aria-label="Ansicht">
       <button type="button" id="tab-edit" data-act="tab" data-v="edit" aria-pressed="true">Bearbeiten</button>
       <button type="button" id="tab-prev" data-act="tab" data-v="preview" aria-pressed="false">Vorschau</button>
@@ -1081,9 +1112,9 @@ const DEFAULT_KLASSEN = [
 // Die Klassen gehören zum Konto (Einstellungen der Ablage). DEFAULT_KLASSEN sind die ursprünglichen drei Reiter.
 const LEGACY_IDS = ['gk', 'k10', 'k910'];
 const LS_KLCACHE = 'abw.klassen';
-const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && k.fach === 'gp' ? 'gp' : 'deutsch' });
+const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && (k.fach === 'gp' || k.fach === 'bio') ? k.fach : 'deutsch' });
 /* Fächer: bestimmen Operatoren, Vorlagen, Formulierungshilfen und Materialarten */
-const FAECHER = { deutsch: { label: 'Deutsch', course: 'Deutsch', ops: 'IQB-Grundstock Deutsch', opsShort: 'IQB-Grundstock' }, gp: { label: 'Geschichte/Politik', course: 'Geschichte', ops: 'KMK-Operatoren Geschichte', opsShort: 'KMK-Liste Geschichte' } };
+const FAECHER = { deutsch: { label: 'Deutsch', course: 'Deutsch', ops: 'IQB-Grundstock Deutsch', opsShort: 'IQB-Grundstock' }, gp: { label: 'Geschichte/Politik', course: 'Geschichte', ops: 'KMK-Operatoren Geschichte', opsShort: 'KMK-Liste Geschichte' }, bio: { label: 'Biologie', course: 'Biologie', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' } };
 const fachKey = kl => KL(kl || (state.sheet ? state.sheet.klasse : state.klasse)).fach || 'deutsch';
 const fachInfo = kl => FAECHER[fachKey(kl)] || FAECHER.deutsch;
 let KLASSEN = (() => { try { const c = JSON.parse(localStorage.getItem(LS_KLCACHE) || 'null'); if (Array.isArray(c) && c.length) return c.map(normKlasse); } catch {} return DEFAULT_KLASSEN.map((k, i) => normKlasse(k, i)); })();
@@ -1207,15 +1238,60 @@ const OPS_GP_TABLE = [
   ['erörtern', 'I–III', 'eine These oder ein Problem durch Abwägen von Argumenten prüfen und mit einem begründeten eigenen Urteil abschließen'],
   ['interpretieren', 'I–III', 'den Sinn von Quellen erschließen und eine begründete Deutung entwickeln']
 ];
+/* Operatoren Biologie: KMK, Deutsche Schulen im Ausland, naturwissenschaftliche Fächer (2013), Angaben für Biologie mit dem dort genannten AFB.
+   Prüfen/überprüfen gilt dort nur für Chemie und steht hier bei den Ergänzungen, ebenso beschriften und erstellen. */
+const OPS_BIO = [
+  { op:'benennen', afb:[1,1], iqb:1 }, { op:'darstellen', afb:[1,1], iqb:1, verb:'stellen', part:'dar', tpl:'Stellen Sie … dar.' },
+  { op:'dokumentieren', afb:[1,1], iqb:1 }, { op:'nennen', afb:[1,1], iqb:1 }, { op:'protokollieren', afb:[1,1], iqb:1 },
+  { op:'skizzieren', afb:[1,1], iqb:1 }, { op:'zeichnen', afb:[1,1], iqb:1 },
+  { op:'ableiten', afb:[2,2], iqb:1, verb:'leiten', part:'ab', end:1, tpl:'Leiten Sie … ab.' },
+  { op:'abschätzen', afb:[2,2], iqb:1, verb:'schätzen', part:'ab', end:1, tpl:'Schätzen Sie … ab.' },
+  { op:'analysieren', afb:[2,2], iqb:1 }, { op:'anwenden', afb:[2,2], iqb:1, verb:'wenden', part:'an', end:1, tpl:'Wenden Sie … an.' },
+  { op:'berechnen', afb:[2,2], iqb:1 }, { op:'beschreiben', afb:[2,2], iqb:1 }, { op:'bestimmen', afb:[2,2], iqb:1 },
+  { op:'erklären', afb:[2,2], iqb:1 }, { op:'erläutern', afb:[2,2], iqb:1 }, { op:'formulieren', afb:[2,2], iqb:1 },
+  { op:'herleiten', afb:[2,2], iqb:1, verb:'leiten', part:'her', end:1, tpl:'Leiten Sie … her.' },
+  { op:'klassifizieren', afb:[2,2], iqb:1 }, { op:'ordnen', afb:[2,2], iqb:1 }, { op:'untersuchen', afb:[2,2], iqb:1 },
+  { op:'verallgemeinern', afb:[2,2], iqb:1 }, { op:'vergleichen', afb:[2,2], iqb:1 },
+  { op:'zusammenfassen', afb:[2,2], iqb:1, verb:'fassen', part:'zusammen', tpl:'Fassen Sie … zusammen.' },
+  { op:'Hypothesen aufstellen', afb:[3,3], iqb:1, verb:'stellen', part:'auf', end:1, tpl:'Stellen Sie eine Hypothese zu … auf.' },
+  { op:'auswerten', afb:[3,3], iqb:1, verb:'werten', part:'aus', end:1, tpl:'Werten Sie … aus.' },
+  { op:'begründen', afb:[3,3], iqb:1 }, { op:'beurteilen', afb:[3,3], iqb:1 }, { op:'bewerten', afb:[3,3], iqb:1 },
+  { op:'beweisen', afb:[3,3], iqb:1 }, { op:'diskutieren', afb:[3,3], iqb:1 }, { op:'interpretieren', afb:[3,3], iqb:1 },
+  { op:'deuten', afb:[3,3], iqb:1 }, { op:'planen', afb:[3,3], iqb:1 },
+  { op:'beschriften', afb:[1,1] }, { op:'erstellen', afb:[2,2] }, { op:'prüfen', afb:[2,2] }, { op:'überprüfen', afb:[2,2] }
+];
+const OPS_BIO_TABLE = [
+  ['benennen, nennen', 'I', 'Begriffe, Strukturen oder Fakten ohne Erläuterung angeben oder zuordnen'],
+  ['darstellen, skizzieren', 'I', 'Sachverhalte, Methoden oder Ergebnisse strukturiert und auf das Wesentliche reduziert wiedergeben, auch als Skizze'],
+  ['dokumentieren, protokollieren', 'I', 'Ablauf, Beobachtungen und Ergebnisse eines Versuchs fachgerecht festhalten'],
+  ['zeichnen', 'I', 'beobachtbare oder gegebene Strukturen genau darstellen'],
+  ['beschreiben', 'II', 'Sachverhalte oder Abläufe geordnet und in Fachsprache wiedergeben'],
+  ['analysieren, untersuchen', 'II', 'Bestandteile, Merkmale und Beziehungen systematisch erfassen und darstellen'],
+  ['ableiten, herleiten', 'II', 'aus Erkenntnissen oder Gleichungen begründet Schlüsse ziehen'],
+  ['anwenden', 'II', 'einen bekannten Zusammenhang oder eine Methode auf einen neuen Sachverhalt übertragen'],
+  ['berechnen, bestimmen, abschätzen', 'II', 'Ergebnisse aus gegebenen Werten ermitteln oder Größenordnungen begründet angeben'],
+  ['erklären', 'II', 'Zusammenhänge auf Regeln, Gesetze oder Ursachen zurückführen'],
+  ['erläutern', 'II', 'Sachverhalte mit Beispielen oder zusätzlichen Informationen verständlich machen'],
+  ['klassifizieren, ordnen', 'II', 'Begriffe oder Lebewesen nach Merkmalen systematisch einteilen'],
+  ['vergleichen', 'II', 'Gemeinsamkeiten und Unterschiede ermitteln'],
+  ['zusammenfassen, verallgemeinern', 'II', 'das Wesentliche knapp wiedergeben oder daraus eine allgemeinere Aussage gewinnen'],
+  ['Hypothesen aufstellen', 'III', 'eine begründete Vermutung formulieren, die sich überprüfen lässt'],
+  ['auswerten', 'III', 'Daten oder Beobachtungen verknüpfen, zu einer Aussage bündeln und Schlüsse ziehen'],
+  ['begründen, beweisen', 'III', 'Aussagen mit fachlichen Argumenten stützen oder widerlegen'],
+  ['beurteilen, bewerten', 'III', 'zu einem Sachverhalt eine fachlich begründete eigene Einschätzung abgeben'],
+  ['diskutieren', 'III', 'Argumente dafür und dagegen gegenüberstellen und abwägen'],
+  ['interpretieren, deuten', 'III', 'Ergebnisse oder Sachverhalte im Hinblick auf mögliche Erklärungen untersuchen'],
+  ['planen', 'III', 'zu einer Frage einen Versuch entwerfen und eine Anleitung erstellen']
+];
 const IRREG = { nehmen: 'nimm', geben: 'gib', entwerfen: 'entwirf', entwickeln: 'entwickle' };
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-[OPS, OPS_GP].forEach(L => L.forEach(o => {
+[OPS, OPS_GP, OPS_BIO].forEach(L => L.forEach(o => {
   if (!o.tpl) o.tpl = cap(o.op) + ' Sie …';
   const base = o.verb || o.op;
   o.imp = IRREG[base] || (base.endsWith('ern') ? base.slice(0, -1) + 'e' : base.slice(0, -2) + 'e');
   o.tplDu = cap(o.imp) + o.tpl.replace(/^\S+ Sie/, '').replace(/^ sich /, ' dich ');
 }));
-const curOps = () => fachKey() === 'gp' ? OPS_GP : OPS;
+const curOps = () => ({ gp: OPS_GP, bio: OPS_BIO })[fachKey()] || OPS;
 // Abgetrenntes Teil am Ende eines (Teil-)Satzes, damit „zu“, „auf“, „ab“, „nach“ nicht überall zählen
 const partAtEnd = (s, p) => new RegExp('(^|[\\s(„])' + p + '(?=\\s*([,.;:!?)“”–—]|$|(und|oder|sowie|aber|denn)\\s))', 'i').test(s);
 const ROMAN = ['', 'I', 'II', 'III'];
@@ -2098,10 +2174,11 @@ function kkWarn(c, kk, i) {
 const LS_SNIP = 'abw.snips';
 const userSnips = () => { const s = lsGet(LS_SNIP); return Array.isArray(s) ? s.filter(x => x && x.block && TYPES[x.block.type]) : []; };
 function opsTableBlock() {
+  if (fachKey() === 'bio') return { ...newBlock('table'), title: 'Operatoren Biologie (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_BIO_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true };
   if (fachKey() === 'gp') return { ...newBlock('table'), title: 'Operatoren Geschichte (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_GP_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true };
   return { ...newBlock('table'), title: 'Operatoren (IQB-Grundstock Deutsch)', cols: ['Operator', 'Anforderungsbereich'], rows: OPS.filter(o => o.iqb).map(o => [o.op, 'AFB ' + afbLabel(o.afb)]), rowHeight: 'normal', firstBold: true };
 }
-function allSnips() { return [{ id: 'builtin-ops', name: fachKey() === 'gp' ? 'Operatorenübersicht (KMK Geschichte)' : 'Operatorenübersicht (IQB-Grundstock)', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
+function allSnips() { return [{ id: 'builtin-ops', name: ({ gp: 'Operatorenübersicht (KMK Geschichte)', bio: 'Operatorenübersicht (KMK Biologie)' })[fachKey()] || 'Operatorenübersicht (IQB-Grundstock)', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
 function snipBlock(id) {
   if (id === 'builtin-ops') return opsTableBlock();
   const s = userSnips().find(x => x.id === id); if (!s) return null;
@@ -2399,13 +2476,25 @@ const TPL_GP = [
   { k: 'stationen', label: 'Stationenarbeit', d: 'Drei Stationen mit Material und Aufgaben, je eine Seite', ic: 'tasks' },
   { k: 'g-klausur', label: 'Klausur', d: 'Deckblatt, Quelle, drei Aufgaben (AFB I–III) mit Gewichtung', ic: 'meta' }
 ];
-const tplsFor = kl => fachKey(kl) === 'gp' ? TPL_GP : TPL;
-const isKlausurTpl = k => k === 'klausur' || k === 'g-klausur';
+const TPL_BIO = [
+  { k: 'leer', label: 'Leeres Blatt', d: 'Material und Aufgaben', ic: 'text' },
+  { k: 'b-versuch', title: 'Versuchsprotokoll', label: 'Versuch', d: 'Erkenntnisweg, Protokoll von der Frage bis zur Auswertung, Fläche für den Aufbau', ic: 'table' },
+  { k: 'b-diagramm', title: 'Diagramm auswerten', label: 'Diagramm', d: 'Abbildung, Auswertung in Schritten, Formulierungshilfen', ic: 'image' },
+  { k: 'b-zeichnen', title: 'Mikroskopieren und Zeichnen', label: 'Zeichnen', d: 'Regeln für biologische Zeichnungen, freie Zeichenfläche', ic: 'lines' },
+  { k: 'b-abb', title: 'Abbildung beschriften', label: 'Abbildung beschriften', d: 'Abbildung mit Nummern, Tabelle für Bezeichnung und Funktion', ic: 'image' },
+  { k: 'b-text', title: 'Fachtext erschließen', label: 'Fachtext', d: 'Text mit Zeilen, Fachbegriffe, Fließdiagramm', ic: 'material' },
+  { k: 'b-steckbrief', title: 'Steckbrief', label: 'Steckbrief', d: 'Lebewesen mit Bild, Merkmale und Angepasstheit', ic: 'tasks' },
+  { k: 'b-bewerten', title: 'Bewerten', label: 'Bewerten', d: 'Streitfrage, Sachinformation, Werte, Pro und Contra', ic: 'phrases' },
+  { k: 'stationen', label: 'Stationenarbeit', d: 'Drei Stationen mit Material und Aufgaben, je eine Seite', ic: 'tasks' },
+  { k: 'b-klausur', label: 'Klausur', d: 'Deckblatt, Material und Abbildung, drei Aufgaben (AFB I–III)', ic: 'meta' }
+];
+const tplsFor = kl => ({ gp: TPL_GP, bio: TPL_BIO })[fachKey(kl)] || TPL;
+const isKlausurTpl = k => k === 'klausur' || k === 'g-klausur' || k === 'b-klausur';
 function tplSheet(key, kl) {
   const sh = blankSheet(nextNr(kl), kl); const du = sh.meta.anrede === 'du'; const T = (sie, d) => (du ? d : sie);
   const B = (type, o) => Object.assign(newBlock(type), o);
   const tasks = (list, o = {}) => B('tasks', { title: o.title || '', items: list.map(x => ({ text: Array.isArray(x) ? T(x[0], x[1]) : x.text, tag: '', ...(x.pts ? { pts: x.pts } : {}) })) });
-  const PH = heads => B('phrases', { groups: heads.map(h => { const p = [...PHRASE_SETS_GP, ...PHRASE_SETS].find(x => x.head === h); return { head: p.head, text: p.lines.join('\n') }; }) });
+  const PH = heads => B('phrases', { groups: heads.map(h => { const p = [...PHRASE_SETS_GP, ...PHRASE_SETS_BIO, ...PHRASE_SETS].find(x => x.head === h); return { head: p.head, text: p.lines.join('\n') }; }) });
   const rowsOf = (cols, first, h) => B('table', { cols, rows: first.map(f => [f, ...cols.slice(1).map(() => '')]), rowHeight: h || 'hoch', firstBold: true });
   const merke = (title, text) => B('info', { kind: 'Merke', title, text });
   const mat = (memo, o = {}) => B(o.poem ? 'poem' : 'material', { memo, ...o.extra });
@@ -2568,6 +2657,103 @@ function tplSheet(key, kl) {
           { text: T('Beurteilen Sie … .', 'Beurteile … .'), pts: '30 %' }
         ])
       ]; break;
+    case 'b-versuch':
+      sh.meta.title = 'Versuchsprotokoll';
+      sh.blocks = [
+        merke('Der naturwissenschaftliche Erkenntnisweg', '- Beobachtung und Fragestellung\n- Hypothese: begründete Vermutung, die sich überprüfen lässt\n- Experiment planen und durchführen, mit Kontrollansatz\n- Beobachtung festhalten und auswerten\n- Hypothese bestätigen oder verwerfen'),
+        tasks([
+          ['Stellen Sie eine Hypothese zur Fragestellung auf.', 'Stelle eine Hypothese zur Fragestellung auf.'],
+          ['Protokollieren Sie den Versuch.', 'Protokolliere den Versuch.'],
+          ['Werten Sie Ihre Beobachtungen aus und überprüfen Sie Ihre Hypothese.', 'Werte deine Beobachtungen aus und überprüfe deine Hypothese.']
+        ], { title: 'Arbeitsaufträge' }),
+        rowsOf(['Versuchsprotokoll', 'Notizen'], ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'], 'hoch'),
+        B('heading', { text: 'Versuchsaufbau (Skizze)' }),
+        B('lines', { count: 9, style: 'rahmen' }),
+        PH(['Hypothese formulieren', 'Beobachtung beschreiben', 'Ergebnis und Fehlerbetrachtung'])
+      ]; break;
+    case 'b-diagramm':
+      sh.meta.title = 'Diagramm auswerten';
+      sh.blocks = [
+        B('image', { mk: 'a', caption: 'Abbildung: … (Quelle)' }),
+        merke('Diagramme auswerten', '- Thema: Was ist in Abhängigkeit wovon dargestellt?\n- Achsen: Größen und Einheiten auf der x- und y-Achse\n- Beschreiben: Verlauf, Maximum, Minimum, Wendepunkte\n- Erklären: Ursachen für den Verlauf mit Fachwissen\n- Ergebnis: eine Aussage in einem Satz'),
+        tasks([
+          ['Beschreiben Sie den Verlauf der Kurve.', 'Beschreibe den Verlauf der Kurve.'],
+          ['Erklären Sie den Verlauf mithilfe Ihrer Kenntnisse.', 'Erkläre den Verlauf mithilfe deiner Kenntnisse.'],
+          ['Leiten Sie aus dem Diagramm eine allgemeine Aussage ab.', 'Leite aus dem Diagramm eine allgemeine Aussage ab.']
+        ], { title: 'Arbeitsaufträge' }),
+        PH(['Diagramm beschreiben', 'Erklären (Ursache und Wirkung)'])
+      ]; break;
+    case 'b-zeichnen':
+      sh.meta.title = 'Mikroskopieren und Zeichnen';
+      sh.blocks = [
+        merke('Regeln für biologische Zeichnungen', '- Mit spitzem Bleistift, ohne Farbe und Schattierung\n- Nur zeichnen, was zu sehen ist, und groß genug\n- Beschriftung mit Linealstrichen, die sich nicht kreuzen\n- Überschrift mit Objekt, Vergrößerung und Datum'),
+        tasks([
+          ['Zeichnen Sie einen Ausschnitt mit etwa fünf Zellen.', 'Zeichne einen Ausschnitt mit etwa fünf Zellen.'],
+          ['Beschriften Sie die erkennbaren Zellbestandteile.', 'Beschrifte die erkennbaren Zellbestandteile.'],
+          ['Vergleichen Sie Ihre Zeichnung mit der Abbildung im Buch.', 'Vergleiche deine Zeichnung mit der Abbildung im Buch.']
+        ], { title: 'Arbeitsaufträge' }),
+        B('text', { text: T('Objekt: ______________   Vergrößerung: ______   Datum: __________', 'Objekt: ______________   Vergrößerung: ______   Datum: __________') }),
+        B('lines', { count: 13, style: 'rahmen' })
+      ]; break;
+    case 'b-abb':
+      sh.meta.title = 'Abbildung beschriften';
+      sh.blocks = [
+        B('image', { mk: 'a', caption: 'Abbildung: … mit Ziffern 1 bis 6' }),
+        tasks([
+          ['Benennen Sie die mit Ziffern markierten Strukturen.', 'Benenne die mit Ziffern markierten Strukturen.'],
+          ['Erläutern Sie die Funktion von drei Strukturen.', 'Erläutere die Funktion von drei Strukturen.']
+        ], { title: 'Arbeitsaufträge' }),
+        rowsOf(['Nr.', 'Bezeichnung', 'Funktion'], ['1', '2', '3', '4', '5', '6'], 'normal')
+      ]; break;
+    case 'b-text':
+      sh.meta.title = 'Fachtext erschließen';
+      sh.blocks = [
+        mat('Fachtext einfügen und Quelle ergänzen. Schwierige Wörter in der Vorschau anklicken und erklären.'),
+        tasks([
+          ['Fassen Sie die wichtigsten Aussagen des Textes zusammen.', 'Fasse die wichtigsten Aussagen des Textes zusammen.'],
+          ['Stellen Sie den beschriebenen Ablauf in einem Fließdiagramm dar.', 'Stelle den beschriebenen Ablauf in einem Fließdiagramm dar.'],
+          ['Erklären Sie die Fachbegriffe in eigenen Worten.', 'Erkläre die Fachbegriffe in eigenen Worten.']
+        ], { title: 'Arbeitsaufträge' }),
+        tab(['Fachbegriff', 'Erklärung in eigenen Worten'], 5, 'normal'),
+        B('lines', { count: 8, style: 'rahmen' }),
+        PH(['Erklären (Ursache und Wirkung)'])
+      ]; break;
+    case 'b-steckbrief':
+      sh.meta.title = 'Steckbrief';
+      sh.blocks = [
+        B('image', { mk: 'a', caption: 'Abbildung: …' }),
+        rowsOf(['Steckbrief', 'Angaben'], ['Name', 'Klasse und Ordnung', 'Lebensraum', 'Nahrung', 'Fortpflanzung', 'Besonderheiten'], 'hoch'),
+        tasks([
+          ['Beschreiben Sie den Körperbau.', 'Beschreibe den Körperbau.'],
+          ['Erläutern Sie an zwei Merkmalen, wie das Lebewesen an seinen Lebensraum angepasst ist.', 'Erläutere an zwei Merkmalen, wie das Lebewesen an seinen Lebensraum angepasst ist.']
+        ], { title: 'Arbeitsaufträge' })
+      ]; break;
+    case 'b-bewerten':
+      sh.meta.title = 'Bewerten';
+      sh.blocks = [
+        B('heading', { text: 'Streitfrage: …?' }),
+        mat('Sachinformation zur Streitfrage einfügen.'),
+        merke('Bewerten in der Biologie', '- Sachinformation: Was weiß man? Was ist unsicher?\n- Werte: Welche Werte sind betroffen (Gesundheit, Tierwohl, Naturschutz, Freiheit)?\n- Handlungsmöglichkeiten mit ihren Folgen gegenüberstellen\n- Begründet entscheiden und die eigenen Kriterien nennen'),
+        tasks([
+          ['Stellen Sie die Argumente aus dem Material dar.', 'Stelle die Argumente aus dem Material dar.'],
+          ['Diskutieren Sie die Streitfrage.', 'Diskutiere die Streitfrage.'],
+          ['Beurteilen Sie, welche Handlungsmöglichkeit Sie für vertretbar halten.', 'Beurteile, welche Handlungsmöglichkeit du für vertretbar hältst.']
+        ], { title: 'Arbeitsaufträge' }),
+        tab(['Pro', 'Contra'], 4, 'sehrhoch'),
+        PH(['Bewerten'])
+      ]; break;
+    case 'b-klausur':
+      sh.meta.title = du ? 'Klassenarbeit' : 'Klausur'; sh.meta.mode = 'klausur';
+      sh.meta.exam = { ...sh.meta.exam, label: du ? 'Klassenarbeit' : 'Klausur' };
+      sh.blocks = [
+        mat('Material einfügen und Quelle ergänzen.'),
+        B('image', { mk: 'a', caption: 'Abbildung: …' }),
+        tasks([
+          { text: T('Beschreiben Sie … .', 'Beschreibe … .'), pts: '30 %' },
+          { text: T('Erklären Sie … .', 'Erkläre … .'), pts: '40 %' },
+          { text: T('Beurteilen Sie … .', 'Beurteile … .'), pts: '30 %' }
+        ])
+      ]; break;
   }
   return sh;
 }
@@ -2586,13 +2772,13 @@ function newDlgHTML() {
   const defTitle = d.tpl === 'leer' ? '' : d.tpl === 'copy' ? '' : (isK && kl.anrede === 'du' ? 'Klassenarbeit' : t.title || t.label);
   return `<h2 id="dlg-t">Neues Arbeitsblatt</h2>
     <div class="nw-g">
-      <div class="f"><span>Klasse</span><div class="nw-kl">${KLASSEN.map(k => `<button type="button" class="nw-k" data-act="nw-kl" data-v="${k.id}" aria-pressed="${k.id === kl.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}</button>`).join('')}</div>
+      <div class="f"><span>Klasse</span><div class="nw-kl">${KLASSEN.filter(k => k.fach === kl.fach).map(k => `<button type="button" class="nw-k" data-act="nw-kl" data-v="${k.id}" aria-pressed="${k.id === kl.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}</button>`).join('')}</div>
         <small>${esc(FAECHER[kl.fach].label)}${kl.course && kl.course !== FAECHER[kl.fach].label ? ' · ' + esc(kl.course) : ''}${kl.school ? ' · ' + esc(kl.school) : ''} · Aufgaben in der ${kl.anrede === 'du' ? 'du' : 'Sie'}-Form</small></div>
       <div class="f"><span>Vorlage</span><div class="tpl-grid nw-tpl">${tpls.map(x => `<button type="button" class="tpl" data-act="nw-tpl" data-k="${x.k}" aria-pressed="${x.k === d.tpl}" title="${esc(x.d)}"><i class="add-ic">${x.ic === 'dup' ? I.dup : typeIcon(x.ic)}</i><span><b>${x.label}</b><span>${x.d}</span></span></button>`).join('')}</div></div>
       ${d.tpl === 'copy' ? `<label class="f"><span>Grundlage</span><select id="nw-src">${list.map(x => `<option value="${esc(x.id)}"${x.id === d.src ? ' selected' : ''}>${x.nr ? 'AB ' + esc(x.nr) + ' · ' : ''}${esc(x.title)}</option>`).join('')}</select></label>` : ''}
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input class="inp" id="nw-nr" value="${esc(d.nr)}" placeholder="7"></label>
         <label class="f" style="flex:1"><span>Titel</span><input class="inp" id="nw-title" value="${esc(d.titleSet ? d.title : defTitle)}" placeholder="${d.tpl === 'copy' ? 'leer = Titel der Grundlage' : 'Worum geht es?'}" maxlength="140"></label></div>
-      ${isK ? '' : `<label class="f"><span>Thema / Unterzeile <em class="opt">optional</em></span><input class="inp" id="nw-topic" value="${esc(d.topic)}" placeholder="${kl.fach === 'gp' ? 'z. B. Die Weimarer Republik zwischen Krise und Stabilität' : 'z. B. Sprache der Distanz im literarischen Text'}" maxlength="200"></label>`}
+      ${isK ? '' : `<label class="f"><span>Thema / Unterzeile <em class="opt">optional</em></span><input class="inp" id="nw-topic" value="${esc(d.topic)}" placeholder="${({ gp: 'z. B. Die Weimarer Republik zwischen Krise und Stabilität', bio: 'z. B. Fotosynthese: Licht als Energiequelle' })[kl.fach] || 'z. B. Sprache der Distanz im literarischen Text'}" maxlength="200"></label>`}
       <div class="row nw-row"><div class="f"><span>Papier</span><div class="seg sm" role="group">${[['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, l]) => `<button type="button" data-act="nw-paper" data-v="${v}" aria-pressed="${d.paper === v}">${l}</button>`).join('')}</div></div>
         ${fs.length ? `<label class="f" style="flex:1"><span>Ordner</span><select id="nw-f"><option value="">Ohne Ordner</option>${fs.map(f => `<option value="${esc(f.id)}"${f.id === d.folder ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>` : ''}</div>
     </div>
@@ -2707,10 +2893,10 @@ const isNarrow = () => window.matchMedia('(max-width: 899px)').matches;
 const canPrint = location.protocol === 'file:' || (!isFramed && !window.claude);
 
 /* ================= Blatt setzen (Messen + Umbrechen) ================= */
-const MK_LETTER = { m: 'M', q: 'Q', d: 'D' };
+const MK_LETTER = { m: 'M', q: 'Q', d: 'D', a: 'Abb.' };
 const matLetter = b => b.type === 'material' ? (MK_LETTER[b.mk] || 'M') : (b.type === 'image' && MK_LETTER[b.mk] ? MK_LETTER[b.mk] : '');
 // Nummern je Art: M1, M2 …, Q1, Q2 …, D1 … in der Reihenfolge auf dem Blatt
-function matTags(blocks) { const c = {}, map = {}; for (const b of blocks) { const L = matLetter(b); if (!L) continue; c[L] = (c[L] || 0) + 1; map[b.id] = L + c[L]; } return map; }
+function matTags(blocks) { const c = {}, map = {}; for (const b of blocks) { const L = matLetter(b); if (!L) continue; c[L] = (c[L] || 0) + 1; map[b.id] = L + (L.endsWith('.') ? ' ' : '') + c[L]; } return map; }
 const matTitle = b => b.type === 'image' ? b.caption : b.title;
 function numbering(sheet) {
   const map = {}; let m = 0, t = 0; const tags = matTags(sheet.blocks);
@@ -2774,6 +2960,7 @@ function buildBlock(b, ctx) {
     }
     case 'lines': {
       const n = Math.max(1, Math.min(40, Number(b.count) || 1));
+      if (b.style === 'rahmen') return { type: 'lines', el: put(`<div class="blk blk-lines"><div class="frame-area" style="height:${Math.min(n, 26) * 9}mm"></div></div>`) };
       if (b.style === 'kaestchen') {
         const h = Math.round(n * 9 / 5) * 5;
         return { type: 'lines', el: put(`<div class="blk blk-lines"><div class="grid-area" style="height:${h}mm;background-image:url(${gridTile()})"></div></div>`) };
@@ -3478,7 +3665,16 @@ const PHRASE_SETS_GP = [
   { head: 'Statistik auswerten', lines: ['Die Statistik von … zeigt …', 'Dargestellt ist der Zeitraum von … bis …', 'Die Angaben sind in … (Prozent, absolute Zahlen).', 'Auffällig ist, dass …', 'Von … bis … stieg der Anteil von … auf …'] },
   { head: 'Sach- und Werturteil', lines: ['Aus der Sicht der damaligen Zeit war …, weil …', 'Gemessen an … (Kriterium) ist … als … einzuschätzen.', 'Aus heutiger Sicht ist …, da …', 'Abschließend komme ich zu dem Urteil, dass …'] }
 ];
-const phraseSets = () => fachKey() === 'gp' ? [...PHRASE_SETS_GP, ...PHRASE_SETS.filter(p => p.head === 'Argumentieren' || p.head === 'Vergleichen')] : PHRASE_SETS;
+const PHRASE_SETS_BIO = [
+  { head: 'Hypothese formulieren', lines: ['Ich vermute, dass …, weil …', 'Wenn …, dann …', 'Je mehr …, desto …'] },
+  { head: 'Beobachtung beschreiben', lines: ['Zu beobachten ist, dass …', 'Nach … Minuten zeigt sich …', 'Im Vergleich zum Kontrollansatz …', 'Es fällt auf, dass …'] },
+  { head: 'Diagramm beschreiben', lines: ['Das Diagramm zeigt … in Abhängigkeit von …', 'Auf der x-Achse ist … in … aufgetragen, auf der y-Achse …', 'Die Kurve steigt von … bis … an.', 'Das Maximum liegt bei …', 'Ab … bleibt der Wert annähernd gleich.'] },
+  { head: 'Erklären (Ursache und Wirkung)', lines: ['Das liegt daran, dass …', 'Dadurch kommt es zu …', 'Die Ursache dafür ist …', 'Daraus folgt, dass …'] },
+  { head: 'Ergebnis und Fehlerbetrachtung', lines: ['Die Hypothese wird bestätigt, weil …', 'Die Hypothese wird verworfen, weil …', 'Mögliche Fehlerquellen sind …', 'Um das Ergebnis abzusichern, müsste man …'] },
+  { head: 'Bewerten', lines: ['Für … spricht, dass …', 'Dagegen spricht, dass …', 'Betroffen ist dabei der Wert …', 'Ich halte … für vertretbar, weil …'] }
+];
+const phraseSets = () => fachKey() === 'gp' ? [...PHRASE_SETS_GP, ...PHRASE_SETS.filter(p => p.head === 'Argumentieren' || p.head === 'Vergleichen')]
+  : fachKey() === 'bio' ? [...PHRASE_SETS_BIO, ...PHRASE_SETS.filter(p => p.head === 'Vergleichen')] : PHRASE_SETS;
 const PHRASE_SETS = [
   { head: 'Einleitung', lines: ['In dem Text „…“ von … (…) geht es um …', 'Der Text „…“ wurde … veröffentlicht und thematisiert …', 'Im Mittelpunkt steht …', 'Die Kernaussage lautet, dass …'] },
   { head: 'Sprachliche Mittel deuten', lines: ['Auffällig ist die Verwendung von …', 'Durch die Metapher „…“ (Z. …) wird verdeutlicht, dass …', 'Die Wiederholung von … unterstreicht …', 'Der Satzbau wirkt …, weil …', 'Dies lässt sich so deuten, dass …'] },
@@ -3520,7 +3716,7 @@ function summary(b, num) {
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
     case 'phrases': { const n = phrGroups(b).reduce((a, g) => a + g.lines.length, 0); return `${plainText(b.title || 'Formulierungshilfen')} · ${n} ${n === 1 ? 'Wendung' : 'Wendungen'}`; }
-    case 'lines': return `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
+    case 'lines': return b.style === 'rahmen' ? `freie Fläche · ${Math.min(+b.count || 1, 26) * 9} mm` : `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
     case 'heading': return b.text || 'leer';
     case 'text': return (plainText(b.text) || 'leer').slice(0, 60);
     case 'quote': return (plainText(b.text) || 'leer').slice(0, 60);
@@ -3544,7 +3740,7 @@ function bodyFor(b, num) {
       ${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
       <div class="row" style="gap:8px 18px"><div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>
-      ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
+      ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       ${glossRows(b)}
@@ -3606,7 +3802,7 @@ function bodyFor(b, num) {
         <div class="chks">${fCheck('cellLines', 'Schreiblinien in leeren Zellen', b.cellLines)}${fCheck('rowEach', 'Höhe je Zeile einzeln', each)}${fCheck('firstBold', 'Erste Spalte fett', b.firstBold)}</div>
         <p class="hint" style="margin:0">Leere Zellen bleiben zum Ausfüllen frei.${each ? ' Ein leeres Höhenfeld übernimmt den Schreibplatz von oben.' : ''} Sehr hohe Zeilen beginnen auf der nächsten Seite.</p>`;
     }
-    case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)']])}
+    case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['rahmen', 'Freie Fläche (Rahmen)'], ['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)']])}
       <label class="f narrow"><span>Zeilen</span><input type="number" min="1" max="40" data-k="count" value="${esc(b.count)}"></label></div>`;
     case 'qr': return `${fText('url', 'Link', b.url, 'https://…')}<div data-qrw>${qrWarn(b)}</div>
       ${fText('title', 'Titel', b.title, 'z. B. CORRECTIV: Desinformation erkennen (Video)')}
@@ -3614,7 +3810,7 @@ function bodyFor(b, num) {
       <div class="row">${fSelect('size', 'Größe', b.size || 'M', [['S', 'klein (22 mm)'], ['M', 'mittel (30 mm)'], ['L', 'groß (40 mm)']])}</div>`;
     case 'image': return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
-      <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachKey() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)' }[v]}">${l}</button>`).join('')}</div></div>
+      <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachKey() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachKey() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
       <div class="row">${fSelect('width', 'Breite', b.width, [[40, '40 %'], [60, '60 %'], [80, '80 %'], [100, 'volle Breite']])}</div>`;
     default: return '<p class="hint" style="margin:0">Alles danach beginnt auf einer neuen Seite.</p>';
@@ -4020,10 +4216,33 @@ function setKlColor() {
   if (dark) { r.setProperty('--kl-l', mixHex(a.c, .45)); r.setProperty('--kl-t', 'var(--kl-dk)'); }
 }
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.sheet) setKlColor(); }); } catch {}
+const LS_FACHKL = 'abw.fachkl';
+const FACH_DOT = { deutsch: '#2741B5', gp: '#7A4E1D', bio: '#2E6B3A' };
+function fachPopHTML() {
+  const cur = fachKey(state.klasse);
+  const row = ([k, f]) => { const n = KLASSEN.filter(x => x.fach === k).length; return `<button type="button" class="fp-i" data-fach="${k}" aria-pressed="${k === cur}"><i style="background:${FACH_DOT[k]}"></i><b>${f.label}</b><small>${n ? n + (n === 1 ? ' Klasse' : ' Klassen') : 'Klasse anlegen'}</small></button>`; };
+  return `<div class="fp-h">Fach wechseln</div>${Object.entries(FAECHER).map(row).join('')}<div class="fp-sep"></div><button type="button" class="fp-i fp-kl" data-fach-act="klassen">Klassen und Fächer verwalten …</button>`;
+}
+function toggleFachPop(open) {
+  const p = $('#fach-pop'), b = $('#btn-fach'); if (!p) return;
+  const on = open === undefined ? p.hidden : open;
+  if (on) { p.innerHTML = fachPopHTML(); const br = b.getBoundingClientRect(), pr = p.parentElement.getBoundingClientRect(); const w = Math.min(310, window.innerWidth - 24); p.style.left = Math.max(8 - pr.left, Math.min(br.left - pr.left, window.innerWidth - 12 - w - pr.left)) + 'px'; p.style.width = w + 'px'; }
+  p.hidden = !on; b.setAttribute('aria-expanded', String(on));
+  if (on) { const f = p.querySelector('[aria-pressed="true"]') || p.querySelector('.fp-i'); if (f) f.focus(); }
+}
+function chooseFach(k) {
+  toggleFachPop(false);
+  if (k === fachKey(state.klasse)) return;
+  const list = KLASSEN.filter(x => x.fach === k);
+  if (!list.length) { openKlassen(false, k); return; }
+  const last = (lsGet(LS_FACHKL) || {})[k];
+  switchKlasse((list.find(x => x.id === last) || list[0]).id);
+}
 function renderTabs() {
-  setKlColor(); const bn = document.querySelector('.brand span'); if (bn) bn.textContent = fachInfo(state.klasse).label;
+  setKlColor(); const fk = fachKey(state.klasse); const bn = document.querySelector('#btn-fach span'); if (bn) bn.textContent = FAECHER[fk].label; document.documentElement.dataset.fach = fk;
+  const fm = lsGet(LS_FACHKL) || {}; if (fm[fk] !== state.klasse) { fm[fk] = state.klasse; lsSet(LS_FACHKL, fm); }
   const counts = {}; state.lib.forEach(d => { counts[d.klasse] = (counts[d.klasse] || 0) + 1; });
-  $('#reiter').innerHTML = KLASSEN.map(k => `<button type="button" role="tab" class="rt" data-k="${k.id}" aria-selected="${state.klasse === k.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}${counts[k.id] ? `<span>${counts[k.id]}</span>` : ''}</button>`).join('') + `<button type="button" class="rt rt-edit" data-kl="edit" title="Klassen anlegen und bearbeiten" aria-label="Klassen anlegen und bearbeiten"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3.5v9M3.5 8h9"/></svg><span class="l-long">Klassen</span></button>`;
+  $('#reiter').innerHTML = KLASSEN.filter(k => k.fach === fk).map(k => `<button type="button" role="tab" class="rt" data-k="${k.id}" aria-selected="${state.klasse === k.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}${counts[k.id] ? `<span>${counts[k.id]}</span>` : ''}</button>`).join('') + `<button type="button" class="rt rt-edit" data-kl="edit" title="Klassen anlegen und bearbeiten" aria-label="Klassen anlegen und bearbeiten"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3.5v9M3.5 8h9"/></svg><span class="l-long">Klassen</span></button>`;
 }
 
 /* ---------- Zwischenspeicher für Änderungen, die online noch fehlen ---------- */
@@ -4281,10 +4500,12 @@ function applyKlassen() {
 }
 // Ohne Anmeldung, aber mit Online-Ablage: erst anmelden lassen (die Einrichtung folgt nur für neue Konten)
 function maybeSetup(afterLogin) { if (!state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
-function openKlassen(setup) {
+function openKlassen(setup, addFach) {
   const rows = (setup ? [] : KLASSEN).map(k => ({ ...k }));
+  if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol' })[addFach], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
   if (setup) rows.push(normKlasse({ id: 'k1', label: '', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0));
-  state.dlg = { mode: 'klassen', setup: !!setup, rows, school: setup ? '' : null };
+  if (addFach) rows[rows.length - 1].label = '';
+  state.dlg = { mode: 'klassen', setup: !!setup, rows, school: setup ? '' : null, wantFach: addFach || null };
   renderDlg();
 }
 function klassenHTML() {
@@ -4301,7 +4522,7 @@ function klassenHTML() {
         <div class="f"><span>Farbe</span><div class="kl-sw">${Object.entries(ACCENTS).map(([a, x]) => `<button type="button" class="kl-c" data-act="kl-set" data-f="accent" data-v="${a}" data-i="${i}" aria-pressed="${k.accent === a}" title="${x.name}" style="background:${x.c}"></button>`).join('')}</div></div>
       </div></div>`;
   return `<h2 id="dlg-t">${d.setup ? 'Willkommen in der AB-Werkstatt' : 'Klassen'}</h2>
-    <p>${d.setup ? 'Legen Sie Ihre Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
+    ${d.wantFach ? `<p class="kl-want">Neue Klasse für <b>${FAECHER[d.wantFach].label}</b>: unten Namen eintragen.</p>` : ''}<p>${d.setup ? 'Legen Sie Ihre Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
     ${d.setup ? `<label class="f"><span>Ihre Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
@@ -4314,13 +4535,14 @@ function klassenSave() {
   if (!rows.length) { dlgMsg('Bitte mindestens einer Klasse einen Namen geben.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
   const used = new Set();
   const ks = rows.map((k, i) => { let id = k.id && !used.has(k.id) ? k.id : 'k-' + uid(); used.add(id); return normKlasse({ ...k, id, school: d.setup ? school : k.school, course: k.course || k.label }, i); });
-  const setup = d.setup; state.prefs.klassen = ks; state.dlg = null; renderDlg();
+  const setup = d.setup; const curF = fachKey(state.klasse); const oldIds = new Set(KLASSEN.map(k => k.id)); state.prefs.klassen = ks; state.dlg = null; renderDlg();
   KLASSEN = ks; lsSet(LS_KLCACHE, ks); state.needSetup = false; savePrefs();
   state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
   if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
   renderTabs(); renderEditor(); if (state.libOpen) renderLib();
   if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neues Blatt“ oben gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
-  else toast('Klassen gespeichert');
+  else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
+  if (!setup && d.wantFach) { const k = KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
 }
 
 /* ---------- Ordner in „Meine Blätter“ ---------- */
@@ -4616,9 +4838,11 @@ const HELP = [
     ['Strg+Umschalt+H', 'Textmarker'],
     ['„- “ oder „1. “ am Zeilenanfang', 'beginnt eine Liste; ___ wird eine Lücke zum Ausfüllen.']]],
   ['Fächer', [
-    ['Fach einer Klasse', '„+ Klassen“ neben den Reitern: Deutsch oder Geschichte/Politik. Danach passen Operatoren, Vorlagen und Formulierungshilfen zum Fach.'],
+    ['Fach wechseln', 'Auf die rote Randnotiz neben „AB-Werkstatt“ klicken: Deutsch, Geschichte/Politik oder Biologie. Die Reiter zeigen dann die Klassen dieses Fachs, die Seite bekommt die Farbe des Fachs.'],
+    ['Fach einer Klasse', '„+ Klassen“ neben den Reitern. Operatoren, Vorlagen und Formulierungshilfen richten sich nach dem Fach.'],
     ['Quelle, Darstellung', 'In Geschichte/Politik wird ein Material zur Quelle (Q1) oder Darstellung (D1). Bilder bekommen auf Wunsch eine Nummer (M, Q, D) mit Titel.'],
-    ['Operatorenübersicht', 'Unten unter „Aus der Sammlung“: für Deutsch der IQB-Grundstock, für Geschichte/Politik die KMK-Liste mit Erläuterungen.']]],
+    ['Biologie', 'Bilder als Abbildung nummerieren (Abb. 1), freie Fläche für Zeichnungen und Skizzen (Baustein Schreibfläche, Art „Freie Fläche“).'],
+    ['Operatorenübersicht', 'Unten unter „Aus der Sammlung“: für Deutsch der IQB-Grundstock, für Geschichte/Politik und Biologie die KMK-Listen mit Erläuterungen.']]],
   ['Aufgaben', [
     ['Operatoren', 'werden erkannt und fett gesetzt; dazu der Anforderungsbereich.'],
     ['Erwartung', 'steht nur in der Lehrerfassung und im Erwartungshorizont (.md).'],
@@ -4740,7 +4964,7 @@ function saveAsHTML() {
     <form id="dlg-form" data-mode="saveas" novalidate>
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" id="sa-nr" value="${esc(m.nr || '')}" placeholder="7"></label>
         <label class="f" style="flex:1"><span>Titel</span><input type="text" id="sa-title" value="${esc(title)}" placeholder="Titel des Arbeitsblatts"></label></div>
-      <div class="row"><label class="f" style="flex:1"><span>Reiter</span><select id="sa-kl">${KLASSEN.map(k => `<option value="${k.id}"${k.id === sh.klasse ? ' selected' : ''}>${esc(k.label)}</option>`).join('')}</select></label>
+      <div class="row"><label class="f" style="flex:1"><span>Reiter</span><select id="sa-kl">${Object.entries(FAECHER).filter(([fk]) => KLASSEN.some(k => k.fach === fk)).map(([fk, f]) => `<optgroup label="${f.label}">${KLASSEN.filter(k => k.fach === fk).map(k => `<option value="${k.id}"${k.id === sh.klasse ? ' selected' : ''}>${esc(k.label)}</option>`).join('')}</optgroup>`).join('')}</select></label>
         <label class="f" style="flex:1"><span>Ordner</span><select id="sa-f">${saFolderOpts(sh.klasse, folderOf(sh.id, sh.klasse))}</select></label></div>
       ${dirty ? `<label class="chk sa-keep"><input type="checkbox" id="sa-keep" checked><span>Das bisherige Blatt „${esc(was)}“ so lassen, wie es beim Öffnen war</span></label>
         <small class="sa-hint">Ihre Änderungen seit dem Öffnen stehen dann nur im neuen Blatt. Ohne Haken behält auch das bisherige Blatt die Änderungen.</small>` : ''}
@@ -4860,7 +5084,7 @@ async function onDlgClick(e) {
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
   if (state.dlg.mode === 'klassen') {
     const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
-    if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
+    if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
     if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach }, n)); d.rows[n].label = ''; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
     if (act === 'kl-del') { d.rows.splice(i, 1); renderDlg(); return; }
     if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
@@ -4868,7 +5092,7 @@ async function onDlgClick(e) {
   }
   if (state.dlg.mode === 'new') {
     const d = state.dlg; newDlgRead();
-    if (act === 'nw-kl') { d.kl = a.dataset.v; if (!d.nrSet) d.nr = nextNr(d.kl); d.folder = ''; d.src = ''; if (d.tpl === 'copy' && !state.lib.some(x => x.klasse === d.kl)) d.tpl = 'leer'; if (d.tpl !== 'copy' && !tplsFor(d.kl).some(x => x.k === d.tpl)) d.tpl = isKlausurTpl(d.tpl) ? (fachKey(d.kl) === 'gp' ? 'g-klausur' : 'klausur') : 'leer'; renderDlg(); return; }
+    if (act === 'nw-kl') { d.kl = a.dataset.v; if (!d.nrSet) d.nr = nextNr(d.kl); d.folder = ''; d.src = ''; if (d.tpl === 'copy' && !state.lib.some(x => x.klasse === d.kl)) d.tpl = 'leer'; if (d.tpl !== 'copy' && !tplsFor(d.kl).some(x => x.k === d.tpl)) d.tpl = isKlausurTpl(d.tpl) ? (({ gp: 'g-klausur', bio: 'b-klausur' })[fachKey(d.kl)] || 'klausur') : 'leer'; renderDlg(); return; }
     if (act === 'nw-tpl') { d.tpl = a.dataset.k; renderDlg(); return; }
     if (act === 'nw-paper') { d.paper = a.dataset.v; renderDlg(); return; }
     if (act === 'nw-go') { newGo(); return; }
@@ -5245,7 +5469,10 @@ async function exportDOCX() {
         case 'lines': {
           const cnt = Math.max(1, Math.min(40, Number(b.count) || 1));
           const emptyP = '<w:p><w:pPr><w:suppressLineNumbers/><w:spacing w:before="0" w:after="0" w:line="20" w:lineRule="exact"/><w:rPr><w:sz w:val="2"/></w:rPr></w:pPr></w:p>';
-          if (b.style === 'kaestchen') {
+          if (b.style === 'rahmen') {
+            const bd = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, RULE)).join('') + NIL('insideH') + NIL('insideV');
+            parts.push(xtbl([CW], xtr(xtc(emptyP, { w: CW }), { h: TW(Math.min(cnt, 26) * 9), rule: 'exact', cant: 1 }), bd));
+          } else if (b.style === 'kaestchen') {
             const cols = Math.floor(174 / 5), rowsN = Math.round(cnt * 9 / 5); const cw = TW(5);
             const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => LINE(s, 2, 'C6CBD5')).join('');
             const row = xtr(Array.from({ length: cols }, () => xtc(emptyP, { w: cw })).join(''), { h: cw, rule: 'exact' });
@@ -5389,6 +5616,10 @@ function boot() {
   });
   $('#dlg-root').addEventListener('change', e => { if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, ''); });
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
+  $('#btn-fach').addEventListener('click', e => { e.stopPropagation(); toggleFachPop(); });
+  $('#fach-pop').addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('[data-fach]'); if (b) { chooseFach(b.dataset.fach); return; } if (e.target.closest('[data-fach-act="klassen"]')) { toggleFachPop(false); openKlassen(false); } });
+  $('#fach-pop').addEventListener('keydown', e => { const items = [...$('#fach-pop').querySelectorAll('.fp-i')]; const i = items.indexOf(document.activeElement); if (e.key === 'ArrowDown') { e.preventDefault(); (items[i + 1] || items[0]).focus(); } else if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] || items[items.length - 1]).focus(); } });
+  document.addEventListener('click', e => { const p = $('#fach-pop'); if (p && !p.hidden && !e.target.closest('#fach-pop, #btn-fach')) toggleFachPop(false); });
   $('#reiter').addEventListener('click', e => { if (e.target.closest('[data-kl]')) { openKlassen(false); return; } const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
   const edEl = $('#editor');
@@ -5510,6 +5741,7 @@ function boot() {
   document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && !e.altKey && (e.key === 's' || e.key === 'S')) { e.preventDefault(); if (!state.dlg) openSaveAs(); return; }
     if (e.key !== 'Escape') return;
+    if (!$('#fach-pop').hidden) { toggleFachPop(false); $('#btn-fach').focus(); return; }
     if (menu.open) { closeMenu(); return; }
     if (zl.open) { closeZl(); return; }
     if (gl.open) { closeGloss(); return; }
