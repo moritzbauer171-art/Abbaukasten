@@ -162,8 +162,30 @@ button,input,select,textarea{font:inherit;color:inherit}
 .link{border:0;background:none;color:var(--tinte);font-weight:700;font-size:13px;cursor:pointer;padding:2px 0;text-align:left}
 .link.danger{color:#C2410C}
 .tbl-ed{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
-.tbl-ed table{border-collapse:collapse;min-width:100%}
-.tbl-ed td{border:1px solid var(--line);padding:0;min-width:110px}
+.tbl-ed td.ck-td{background:color-mix(in srgb,var(--tinte-soft) 45%,transparent)}
+.cw-f>span{display:flex;align-items:baseline;gap:12px}
+.cw-f>span .link{font-size:12px}
+.cw-bar{position:relative;display:flex;height:42px;border:1px solid var(--line-strong);border-radius:8px;background:var(--field);user-select:none;-webkit-user-select:none;touch-action:none}
+.cw-seg{display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0;padding:0 8px;border-right:1px solid var(--line);overflow:hidden;line-height:1.2}
+.cw-seg.last{border-right:0}
+.cw-seg b{font-size:11.5px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cw-seg small{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cw-h{position:absolute;top:-6px;bottom:-6px;width:22px;margin-left:-11px;border:0;background:transparent;padding:0;cursor:col-resize;touch-action:none}
+.cw-h::before{content:"";position:absolute;left:9px;top:3px;bottom:3px;width:4px;border-radius:3px;background:var(--tinte);box-shadow:0 0 0 2px var(--field)}
+.cw-h::after{content:"";position:absolute;left:5px;top:50%;width:12px;height:16px;margin-top:-8px;border-radius:4px;background:var(--tinte);box-shadow:0 0 0 2px var(--field)}
+.cw-h:hover::after,.cw-h.drag::after,.cw-h:focus-visible::after{transform:scale(1.15)}
+.cw-h:focus-visible{outline:none}
+.cw-h:focus-visible::before{box-shadow:0 0 0 2px var(--field),0 0 0 4px var(--tinte-soft)}
+body.cw-dragging,body.cw-dragging *{cursor:col-resize!important}
+.ck-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ck-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:var(--field);border-radius:14px;padding:3px 10px 3px 7px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.ck-chip .cbx{width:12px;height:12px;border:1.5px solid currentColor;border-radius:3px;position:relative;flex:0 0 auto}
+.ck-chip[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
+.ck-chip[aria-pressed="true"] .cbx{background:currentColor}
+.ck-chip[aria-pressed="true"] .cbx::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid var(--field);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+.ck-f small{font-size:11.5px;color:var(--faint)}
+.tbl-ed table{border-collapse:collapse;width:100%;table-layout:fixed}
+.tbl-ed td{border:1px solid var(--line);padding:0;min-width:0}
 .tbl-ed tr:first-child td{background:var(--tinte-soft)}
 .tbl-ed input{width:100%;border:0;background:transparent;padding:6px 8px;font-size:13px}
 .tbl-ed tr:first-child input{font-weight:700}
@@ -763,6 +785,10 @@ body{transition:background-color .3s,border-color .25s}
 .tb td{border:.25mm solid var(--paper-rule);padding:1.6mm 2mm;vertical-align:top}
 .tb.h-normal td{height:8mm}.tb.h-hoch td{height:16mm}.tb.h-sehrhoch td{height:28mm}
 .tb.fb td:first-child{font-weight:700}
+.tb th.ckc,.tb td.ckc{text-align:center}
+.tb td.ckc{vertical-align:middle}
+.tb svg.ck{display:inline-block;width:3.8mm;height:3.8mm;vertical-align:-.7mm}
+.tb td.ckc:not(:has(*:not(svg.ck))){padding-block:1mm}
 .tb td.lc{position:relative}
 .tb-eh{margin-top:.6mm;background:#F1F2F4;border-left:.7mm solid #9AA0AA;border-radius:0 .6mm .6mm 0;padding:.8mm 1.8mm 1mm;font-size:8.6pt;line-height:1.35;color:#2A2D35;font-weight:400}
 .tb td>.tb-eh:first-child{margin-top:0}
@@ -1187,14 +1213,14 @@ const PALETTE = {
     PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
     PAL('tasks'), PAL('info'), PAL('phrases'), PAL('table'),
-    PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal' } }),
+    PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal', cw: [16, 44, 40] } }),
     PAL('lines'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('image', { desc: 'Grafik, Schaubild, Karte' }), PAL('pagebreak')
   ],
   bio: [
     PAL('material', { desc: 'Fachtext mit Zeilennummern (M1)' }),
     PAL('image', { k: 'abbildung', label: 'Abbildung', desc: 'Foto, Schema, Diagramm (Abb. 1)', pre: { mk: 'a' } }),
     PAL('tasks'), PAL('info'), PAL('phrases'), PAL('table'),
-    PAL('table', { k: 'protokoll', label: 'Versuchsprotokoll', desc: 'Frage, Hypothese, Durchführung, Auswertung', ic: 'protokoll', pre: { cols: ['Versuchsprotokoll', 'Notizen'], rows: ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'].map(x => [x, '']), rowHeight: 'hoch', firstBold: true } }),
+    PAL('table', { k: 'protokoll', label: 'Versuchsprotokoll', desc: 'Frage, Hypothese, Durchführung, Auswertung', ic: 'protokoll', pre: { cols: ['Versuchsprotokoll', 'Notizen'], rows: ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'].map(x => [x, '']), rowHeight: 'hoch', firstBold: true, cw: [28, 72] } }),
     PAL('lines', { k: 'zeichnung', label: 'Zeichenfläche', desc: 'Rahmen für Zeichnung oder Skizze', ic: 'zeichnung', pre: { style: 'rahmen', count: 12 } }),
     PAL('lines', { desc: 'Linien oder Kästchen' }), PAL('heading'), PAL('text'), PAL('qr'), PAL('pagebreak')
   ]
@@ -2211,13 +2237,51 @@ function kkWarn(c, kk, i) {
 const LS_SNIP = 'abw.snips';
 const userSnips = () => { const s = lsGet(LS_SNIP); return Array.isArray(s) ? s.filter(x => x && x.block && TYPES[x.block.type]) : []; };
 function opsTableBlock() {
-  if (fachKey() === 'bio') return { ...newBlock('table'), title: 'Operatoren Biologie (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_BIO_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true };
-  if (fachKey() === 'gp') return { ...newBlock('table'), title: 'Operatoren Geschichte (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_GP_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true };
+  if (fachKey() === 'bio') return { ...newBlock('table'), title: 'Operatoren Biologie (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_BIO_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
+  if (fachKey() === 'gp') return { ...newBlock('table'), title: 'Operatoren Geschichte (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_GP_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
   return { ...newBlock('table'), title: 'Operatoren (IQB-Grundstock Deutsch)', cols: ['Operator', 'Anforderungsbereich'], rows: OPS.filter(o => o.iqb).map(o => [o.op, 'AFB ' + afbLabel(o.afb)]), rowHeight: 'normal', firstBold: true };
 }
-function allSnips() { return [{ id: 'builtin-ops', name: ({ gp: 'Operatorenübersicht (KMK Geschichte)', bio: 'Operatorenübersicht (KMK Biologie)' })[fachKey()] || 'Operatorenübersicht (IQB-Grundstock)', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
+function allSnips() { return [{ id: 'builtin-self', name: 'Selbsteinschätzung zum Ankreuzen', type: 'table', builtin: true }, { id: 'builtin-ops', name: ({ gp: 'Operatorenübersicht (KMK Geschichte)', bio: 'Operatorenübersicht (KMK Biologie)' })[fachKey()] || 'Operatorenübersicht (IQB-Grundstock)', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
+/* Tabellen: Spaltenbreiten in Prozent (b.cw), Ankreuzspalten (b.ck), Kästchen [ ] und [x] in Zellen */
+const CW_MIN = 6;
+function tbWidths(b) {
+  const n = b.cols.length; const ok = Array.isArray(b.cw) && b.cw.length === n && b.cw.every(x => +x > 0);
+  const a = ok ? b.cw.map(Number) : Array(n).fill(100 / n); const sum = a.reduce((x, y) => x + y, 0) || 1;
+  return a.map(x => x * 100 / sum);
+}
+function cwSet(b, i, pos) {
+  const w = tbWidths(b); const left = w.slice(0, i).reduce((a, x) => a + x, 0); const right = left + w[i] + w[i + 1];
+  const p = Math.round(Math.max(left + CW_MIN, Math.min(right - CW_MIN, pos)));
+  w[i] = p - left; w[i + 1] = right - p; b.cw = w.map(x => Math.round(x * 10) / 10);
+}
+// Editor: jede Spalte mindestens 80 px breit, sonst waagerecht scrollen (Verhältnis bleibt wie auf dem Blatt)
+const tbEdMin = (b, each) => Math.round(Math.max(...tbWidths(b).map(p => 80 * 100 / p)) * (each ? 1 : 1)) + (each ? 72 : 0);
+const tbCk = (b, i) => !!(Array.isArray(b.ck) && b.ck[i]);
+const CK_SVG = x => `<svg class="ck${x ? ' x' : ''}" viewBox="0 0 12 12" aria-hidden="true"><rect x=".7" y=".7" width="10.6" height="10.6" rx="1.2" fill="none" stroke="#1C1F27" stroke-width="1"/>${x ? '<path d="M3 3l6 6M9 3l-6 6" stroke="#1C1F27" stroke-width="1.2" stroke-linecap="round"/>' : ''}</svg>`;
+const ckCellHTML = c => inlineHTML(c).replace(/\[ ?\]/g, CK_SVG(false)).replace(/\[[xX]\]/g, CK_SVG(true));
+const ckCellWord = c => String(c || '').replace(/\[ ?\]/g, '☐').replace(/\[[xX]\]/g, '☒');
+function cwBarHTML(b) {
+  const w = tbWidths(b); let cum = 0;
+  const lab = (c, i) => plainText(c || '').trim().slice(0, 24) || `Spalte ${i + 1}`;
+  const segs = w.map((p, i) => `<div class="cw-seg${i === w.length - 1 ? ' last' : ''}" style="width:${p}%"><b>${esc(lab(b.cols[i], i))}</b><small>${Math.round(p)} %</small></div>`).join('');
+  const hs = w.slice(0, -1).map((p, i) => { cum += p; return `<button type="button" class="cw-h" role="slider" data-i="${i}" style="left:${cum}%" aria-label="Grenze zwischen Spalte ${i + 1} und ${i + 2}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(cum)}" aria-valuetext="Spalte ${i + 1}: ${Math.round(p)} %, Spalte ${i + 2}: ${Math.round(w[i + 1])} %" title="Ziehen oder Pfeiltasten"></button>`; }).join('');
+  return `<div class="f cw-f"><span>Spaltenbreite <button class="link" type="button" data-act="cw-reset"${Array.isArray(b.cw) ? '' : ' disabled'}>gleich breit</button></span><div class="cw-bar" data-cwbar>${segs}${hs}</div></div>`;
+}
+function cwPaint(card, b) {
+  const w = tbWidths(b); const bar = card.querySelector('[data-cwbar]'); if (!bar) return; let cum = 0;
+  bar.querySelectorAll('.cw-seg').forEach((sg, i) => { sg.style.width = w[i] + '%'; const sm = sg.querySelector('small'); if (sm) sm.textContent = Math.round(w[i]) + ' %'; });
+  bar.querySelectorAll('.cw-h').forEach((h, i) => { cum += w[i]; h.style.left = cum + '%'; h.setAttribute('aria-valuenow', Math.round(cum)); h.setAttribute('aria-valuetext', `Spalte ${i + 1}: ${Math.round(w[i])} %, Spalte ${i + 2}: ${Math.round(w[i + 1])} %`); });
+  card.querySelectorAll('.tbl-ed col[data-ci]').forEach(c => { c.style.width = w[+c.dataset.ci] + '%'; });
+  const et = card.querySelector('.tbl-ed table'); if (et) et.style.minWidth = tbEdMin(b, !!b.rowEach) + 'px';
+  const rs = card.querySelector('[data-act="cw-reset"]'); if (rs) rs.disabled = false;
+}
+function ckRowHTML(b) {
+  return `<div class="f ck-f"><span>Ankreuzfelder</span><div class="ck-chips">${b.cols.map((c, i) => `<button type="button" class="ck-chip" data-act="tb-ck" data-i="${i}" aria-pressed="${tbCk(b, i)}" title="Leere Zellen dieser Spalte bekommen ein Kästchen"><span class="cbx" aria-hidden="true"></span>${esc(plainText(c || '').trim().slice(0, 20) || 'Spalte ' + (i + 1))}</button>`).join('')}</div><small>Leere Zellen der gewählten Spalten bekommen ein Kästchen zum Ankreuzen. Einzelne Kästchen: in eine Zelle <b>[ ]</b> schreiben, angekreuzt <b>[x]</b>.</small></div>`;
+}
+const selfCheckBlock = () => ({ ...newBlock('table'), title: 'Selbsteinschätzung', cols: ['Ich kann …', 'sicher', 'teilweise', 'noch nicht'], rows: Array.from({ length: 4 }, () => ['…', '', '', '']), ck: [false, true, true, true], cw: [58, 14, 14, 14], rowHeight: 'normal', firstBold: false });
 function snipBlock(id) {
   if (id === 'builtin-ops') return opsTableBlock();
+  if (id === 'builtin-self') return selfCheckBlock();
   const s = userSnips().find(x => x.id === id); if (!s) return null;
   const b = clone(s.block); b.id = 'b' + uid(); delete b.group; migrateMatNl(b); return b;
 }
@@ -2532,7 +2596,7 @@ function tplSheet(key, kl) {
   const B = (type, o) => Object.assign(newBlock(type), o);
   const tasks = (list, o = {}) => B('tasks', { title: o.title || '', items: list.map(x => ({ text: Array.isArray(x) ? T(x[0], x[1]) : x.text, tag: '', ...(x.pts ? { pts: x.pts } : {}) })) });
   const PH = heads => B('phrases', { groups: heads.map(h => { const p = [...PHRASE_SETS_GP, ...PHRASE_SETS_BIO, ...PHRASE_SETS].find(x => x.head === h); return { head: p.head, text: p.lines.join('\n') }; }) });
-  const rowsOf = (cols, first, h) => B('table', { cols, rows: first.map(f => [f, ...cols.slice(1).map(() => '')]), rowHeight: h || 'hoch', firstBold: true });
+  const rowsOf = (cols, first, h) => B('table', { cols, rows: first.map(f => [f, ...cols.slice(1).map(() => '')]), rowHeight: h || 'hoch', firstBold: true, cw: cols.length === 2 ? [32, 68] : cols.length === 3 ? [12, 38, 50] : undefined });
   const merke = (title, text) => B('info', { kind: 'Merke', title, text });
   const mat = (memo, o = {}) => B(o.poem ? 'poem' : 'material', { memo, ...o.extra });
   const tab = (cols, n, h) => B('table', { cols, rows: Array.from({ length: n }, () => cols.map(() => '')), rowHeight: h || 'hoch', firstBold: false });
@@ -2681,7 +2745,7 @@ function tplSheet(key, kl) {
           ['Ordnen Sie die Ereignisse in zeitlicher Reihenfolge in die Tabelle ein.', 'Ordne die Ereignisse in zeitlicher Reihenfolge in die Tabelle ein.'],
           ['Erläutern Sie an zwei Ereignissen, welche Bedeutung sie für die weitere Entwicklung hatten.', 'Erläutere an zwei Ereignissen, welche Bedeutung sie für die weitere Entwicklung hatten.']
         ], { title: 'Arbeitsaufträge' }),
-        tab(['Datum', 'Ereignis', 'Bedeutung'], 8, 'normal')
+        Object.assign(tab(['Datum', 'Ereignis', 'Bedeutung'], 8, 'normal'), { cw: [16, 44, 40] })
       ]; break;
     case 'g-klausur':
       sh.meta.title = du ? 'Klassenarbeit' : 'Klausur'; sh.meta.mode = 'klausur';
@@ -3018,13 +3082,15 @@ function buildBlock(b, ctx) {
     }
     case 'table': {
       const cols = b.cols.length;
-      const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map(c => `<th>${inlineHTML(c)}</th>`).join('')}</tr></thead>` : '';
+      const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map((c, i) => `<th${tbCk(b, i) ? ' class="ckc"' : ''}>${ckCellHTML(c)}</th>`).join('')}</tr></thead>` : '';
+      const colg = `<colgroup>${tbWidths(b).map(p => `<col style="width:${p.toFixed(2)}%">`).join('')}</colgroup>`;
       const rows = b.rows.map((r, ri) => { const h = tbRowMM(b, ri), N = tbLines(h); return `<tr>${Array.from({ length: cols }, (_, i) => {
         const c = r[i] || ''; const eh = ctx.view && ctx.view.lehrer ? tbEh(b, ri, i) : [];
         const ehH = eh.length ? `<div class="tb-eh">${eh.length > 1 ? `<ul>${eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : inlineHTML(eh[0])}</div>` : '';
-        const ln = !eh.length && b.cellLines && !String(c).trim() && N > 1 ? Array.from({ length: N - 1 }, (_, j) => `<i class="cl" style="top:${((j + 1) * h / N).toFixed(2)}mm"></i>`).join('') : '';
-        return `<td style="height:${h}mm"${ln ? ' class="lc"' : ''}>${inlineHTML(c)}${ehH}${ln}</td>`; }).join('')}</tr>`; }).join('');
-      const n = put(`<div class="blk blk-table">${b.title ? `<div class="tb-title">${inlineHTML(b.title)}</div>` : ''}<table class="tb${b.firstBold ? ' fb' : ''}">${head}<tbody>${rows}</tbody></table></div>`);
+        const ckc = tbCk(b, i); if (ckc && !eh.length && !String(c).trim()) return `<td class="ckc" style="height:${h}mm">${CK_SVG(false)}</td>`;
+        const ln = !ckc && !eh.length && b.cellLines && !String(c).trim() && N > 1 ? Array.from({ length: N - 1 }, (_, j) => `<i class="cl" style="top:${((j + 1) * h / N).toFixed(2)}mm"></i>`).join('') : '';
+        return `<td style="height:${h}mm"${ln ? ' class="lc"' : ckc ? ' class="ckc"' : ''}>${ckCellHTML(c)}${ehH}${ln}</td>`; }).join('')}</tr>`; }).join('');
+      const n = put(`<div class="blk blk-table">${b.title ? `<div class="tb-title">${inlineHTML(b.title)}</div>` : ''}<table class="tb${b.firstBold ? ' fb' : ''}">${colg}${head}<tbody>${rows}</tbody></table></div>`);
       const atoms = [...n.querySelectorAll('tbody tr')];
       return {
         type: 'table', el: n, atoms, keepFirst: 2, keepLast: 1,
@@ -3033,6 +3099,7 @@ function buildBlock(b, ctx) {
           const w = n.cloneNode(false);
           if (s === 0 && n.querySelector('.tb-title')) w.appendChild(n.querySelector('.tb-title').cloneNode(true));
           const t = n.querySelector('table').cloneNode(false);
+          const cg = n.querySelector('colgroup'); if (cg) t.appendChild(cg.cloneNode(true));
           const th = n.querySelector('thead'); if (th) t.appendChild(th.cloneNode(true));
           const tb = document.createElement('tbody'); atoms.slice(s, e).forEach(a => tb.appendChild(a.cloneNode(true)));
           t.appendChild(tb); w.appendChild(t); return w;
@@ -3822,11 +3889,12 @@ function bodyFor(b, num) {
       const ehMode = state.tbEh.has(b.id); const nEh = tbEhCount(b);
       return `${fText('title', 'Titel (optional)', b.title, '')}
         <div class="f"><span>Eintragen</span><div class="seg sm" role="group" aria-label="Eintragen"><button type="button" data-act="tb-mode" data-v="" aria-pressed="${!ehMode}">Inhalt</button><button type="button" data-act="tb-mode" data-v="eh" aria-pressed="${ehMode}">Erwartung${nEh ? ` · ${nEh}` : ''}</button></div>${ehMode ? '<small>Die Erwartungen stehen nur in der Lehrerfassung in den Zellen. Eine Zeile = ein Punkt.</small>' : ''}</div>
-        <div class="tbl-ed"><table>
+        ${cols > 1 ? cwBarHTML(b) : ''}
+        <div class="tbl-ed"><table style="min-width:${tbEdMin(b, each)}px"><colgroup>${tbWidths(b).map((p, ci) => `<col data-ci="${ci}" style="width:${p}%">`).join('')}${each ? '<col style="width:72px">' : ''}</colgroup>
           <tr>${b.cols.map((c, ci) => `<td>${rtField(`cols.${ci}`, c, { mode: 'line', ph: `Kopf ${ci + 1}`, aria: `Spaltenkopf ${ci + 1}` })}</td>`).join('')}${each ? '<td class="rh-c rh-h">Höhe<br>in mm</td>' : ''}</tr>
           ${b.rows.map((r, ri) => `<tr>${Array.from({ length: cols }, (_, ci) => ehMode
             ? `<td class="eh-td">${String(r[ci] || '').trim() ? `<div class="tb-ehv">${inlineHTML(r[ci])}</div>` : ''}${rtField(`eh.${ri}.${ci}`, b.eh[ri][ci], { mode: 'inline', rows: 1, ph: 'Erwartung', aria: `Erwartung Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`
-            : `<td>${rtField(`rows.${ri}.${ci}`, r[ci] || '', { mode: 'line', ph: 'leer', aria: `Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`).join('')}${each ? `<td class="rh-c"><input type="number" min="5" max="250" step="1" data-k="rowH.${ri}" value="${esc(b.rowH[ri] || '')}" placeholder="${tbBaseMM(b)}" aria-label="Höhe von Zeile ${ri + 1} in mm" title="leer = wie unten eingestellt"></td>` : ''}</tr>`).join('')}
+            : `<td${tbCk(b, ci) ? ' class="ck-td"' : ''}>${rtField(`rows.${ri}.${ci}`, r[ci] || '', { mode: 'line', ph: tbCk(b, ci) ? '☐ Kästchen' : 'leer', aria: `Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`).join('')}${each ? `<td class="rh-c"><input type="number" min="5" max="250" step="1" data-k="rowH.${ri}" value="${esc(b.rowH[ri] || '')}" placeholder="${tbBaseMM(b)}" aria-label="Höhe von Zeile ${ri + 1} in mm" title="leer = wie unten eingestellt"></td>` : ''}</tr>`).join('')}
         </table></div>
         <div class="row" style="gap:16px">
           <button class="link" type="button" data-act="row-add">+ Zeile</button>
@@ -3836,6 +3904,7 @@ function bodyFor(b, num) {
         </div>
         <div class="f"><span>Schreibplatz je Zeile</span><div class="seg sm" role="group" aria-label="Schreibplatz je Zeile">${[['normal', '8 mm'], ['hoch', '16 mm'], ['sehrhoch', '28 mm'], ['gross', '40 mm'], ['eigen', 'eigene Höhe']].map(([v, l]) => `<button type="button" data-act="tb-h" data-v="${v}" aria-pressed="${(b.rowHeight || 'normal') === v}">${l}</button>`).join('')}</div></div>
         ${b.rowHeight === 'eigen' ? `<label class="f narrow"><span>Höhe in mm</span><input type="number" min="5" max="250" step="1" data-k="rowMM" value="${esc(b.rowMM || 50)}"></label>` : ''}
+        ${ckRowHTML(b)}
         <div class="chks">${fCheck('cellLines', 'Schreiblinien in leeren Zellen', b.cellLines)}${fCheck('rowEach', 'Höhe je Zeile einzeln', each)}${fCheck('firstBold', 'Erste Spalte fett', b.firstBold)}</div>
         <p class="hint" style="margin:0">Leere Zellen bleiben zum Ausfüllen frei.${each ? ' Ein leeres Höhenfeld übernimmt den Schreibplatz von oben.' : ''} Sehr hohe Zeilen beginnen auf der nächsten Seite.</p>`;
     }
@@ -4071,8 +4140,10 @@ function onClick(e) {
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
     case 'row-add': b.rows.push(Array(b.cols.length).fill('')); changed(true); return;
     case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); if (Array.isArray(b.eh)) b.eh.length = Math.min(b.eh.length, b.rows.length); changed(true); } return;
-    case 'col-add': if (b.cols.length < 6) { b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
-    case 'col-del': if (b.cols.length > 1) { b.cols.pop(); b.rows.forEach(r => r.pop()); if (Array.isArray(b.eh)) b.eh.forEach(r => { if (Array.isArray(r) && r.length > b.cols.length) r.length = b.cols.length; }); changed(true); } return;
+    case 'col-add': if (b.cols.length < 6) { const n = b.cols.length; if (Array.isArray(b.cw) && b.cw.length === n) b.cw = [...tbWidths(b).map(x => x * n / (n + 1)), 100 / (n + 1)].map(x => Math.round(x * 10) / 10); if (Array.isArray(b.ck)) b.ck.push(false); b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
+    case 'cw-reset': delete b.cw; changed(true); return;
+    case 'tb-ck': { const i = +a.dataset.i; b.ck = b.cols.map((_, j) => j === i ? !tbCk(b, j) : tbCk(b, j)); if (!b.ck.some(Boolean)) delete b.ck; changed(true); return; }
+    case 'col-del': if (b.cols.length > 1) { if (Array.isArray(b.cw) && b.cw.length === b.cols.length) { const w = tbWidths(b); w.pop(); const sm = w.reduce((x, y) => x + y, 0); b.cw = w.map(x => Math.round(x * 1000 / sm) / 10); } if (Array.isArray(b.ck)) { b.ck.length = b.cols.length - 1; if (!b.ck.some(Boolean)) delete b.ck; } b.cols.pop(); b.rows.forEach(r => r.pop()); if (Array.isArray(b.eh)) b.eh.forEach(r => { if (Array.isArray(r) && r.length > b.cols.length) r.length = b.cols.length; }); changed(true); } return;
     case 'accent': state.sheet.meta.accent = a.dataset.v; changed(true); return;
     case 'paper': state.sheet.meta.paper = a.dataset.v; changed(true); renderOut(); return;
     case 'design': state.sheet.meta.design = a.dataset.v; loadDesignFonts(a.dataset.v); changed(true); return;
@@ -4862,6 +4933,8 @@ const HELP = [
     ['Kopfzeile einer Karte anklicken', 'öffnet die Karte und schließt die anderen. Mehrere offen lassen: Haken bei „Eine Karte offen“ herausnehmen.'],
     ['Kopfzeile einer Karte ziehen', 'sortiert die Bausteine um. Tipp: vorher „Alle zuklappen“.'],
     ['⋯ an einer Karte', 'Duplizieren, Löschen, Gruppe A/B, in die Sammlung speichern.'],
+    ['Tabelle: Spaltenbreite', 'Die Griffe auf dem Lineal über der Tabelle ziehen, oder einen Griff anklicken und die Pfeiltasten nutzen (mit Umschalt in 5er-Schritten). „gleich breit“ setzt zurück.'],
+    ['Tabelle: Ankreuzfelder', 'Unter „Ankreuzfelder“ Spalten wählen: leere Zellen bekommen ein Kästchen. Einzelne Kästchen mit [ ] in einer Zelle, angekreuzt mit [x]. Eine fertige Selbsteinschätzung liegt in der Sammlung.'],
     ['Baustein in der Vorschau anklicken', 'springt zur passenden Karte.']]],
   ['Material und Gedicht', [
     ['Wort in der Vorschau anklicken', 'legt eine Worterklärung an (Fußnote unter dem Material).'],
@@ -5485,19 +5558,20 @@ async function exportDOCX() {
         }
         case 'table': {
           if (b.title) parts.push(xp(xrInline(b.title, { b: 1, sz: 20 }), { keepNext: true, after: 80 }));
-          const n = b.cols.length; const w = Math.floor(CW / n); const widths = Array(n).fill(w);
+          const n = b.cols.length; const widths = tbWidths(b).map(p => Math.round(CW * p / 100)); widths[n - 1] += CW - widths.reduce((a, x) => a + x, 0);
           const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => LINE(s, 4, RULE)).join('');
           const hasHead = b.cols.some(c => c.trim());
-          const head = hasHead ? xtr(b.cols.map(c => xtc(xp(xrInline(c, { b: 1, sz: 19 })), { w, shd: AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
+          const head = hasHead ? xtr(b.cols.map((c, i) => xtc(xp(xrInline(ckCellWord(c), { b: 1, sz: 19 }), tbCk(b, i) ? { jc: 'center' } : {}), { w: widths[i], shd: AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
           const lineBdr = '<w:pBdr><w:bottom w:val="single" w:sz="2" w:space="0" w:color="C8CCD5"/></w:pBdr>';
           const rows = b.rows.map((r, ri) => {
             const hmm = tbRowMM(b, ri), N = tbLines(hmm);
             return xtr(Array.from({ length: n }, (_, i) => {
-              const c = r[i] || '';
+              const c = ckCellWord(r[i] || ''); const w = widths[i];
               const eh = v.lehrer ? tbEh(b, ri, i) : [];
+              if (!eh.length && tbCk(b, i) && !String(c).trim()) return xtc(xp(xr('☐', { sz: 28 }), { jc: 'center' }), { w, v: 'center' });
               if (eh.length) return xtc((String(c).trim() ? xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })) : '') + eh.map(x => xp(xr(eh.length > 1 ? '– ' : '', { sz: 17, color: '2A2D35' }) + xrInline(x, { sz: 17, color: '2A2D35' }), { bdr: '<w:pBdr><w:left w:val="single" w:sz="12" w:space="4" w:color="9AA0AA"/></w:pBdr>', before: 20 })).join(''), { w });
               if (b.cellLines && !String(c).trim() && N > 1) return xtc(Array.from({ length: N - 1 }, (_, j) => xp('', { line: TW(j ? hmm / N : Math.max(2, hmm / N - 1.6)), rule: 'exact', bdr: lineBdr, mark: 2 })).join(''), { w });
-              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })), { w });
+              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 }), tbCk(b, i) ? { jc: 'center' } : {}), { w, ...(tbCk(b, i) ? { v: 'center' } : {}) });
             }).join(''), { h: TW(hmm), cant: 1 });
           }).join('');
           parts.push(xtbl(widths, head + rows, bd, `<w:top w:w="${TW(1.6)}" w:type="dxa"/><w:left w:w="${TW(2)}" w:type="dxa"/><w:bottom w:w="${TW(1.6)}" w:type="dxa"/><w:right w:w="${TW(2)}" w:type="dxa"/>`));
@@ -5660,6 +5734,27 @@ function boot() {
   $('#reiter').addEventListener('click', e => { if (e.target.closest('[data-kl]')) { openKlassen(false); return; } const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
   const edEl = $('#editor');
+  // Spaltenbreite: Griffe auf dem Lineal ziehen oder mit Pfeiltasten verschieben
+  let cwDrag = null;
+  edEl.addEventListener('pointerdown', e => {
+    const h = e.target.closest && e.target.closest('.cw-h'); if (!h) return;
+    const card = h.closest('[data-bid]'); const b = card && target(card.dataset.bid); if (!b) return;
+    e.preventDefault(); h.focus({ preventScroll: true }); cwDrag = { h, card, b, i: +h.dataset.i, bar: h.parentElement };
+    try { h.setPointerCapture(e.pointerId); } catch {} h.classList.add('drag'); document.body.classList.add('cw-dragging');
+  });
+  edEl.addEventListener('pointermove', e => {
+    if (!cwDrag) return; const r = cwDrag.bar.getBoundingClientRect(); if (!r.width) return;
+    const before = JSON.stringify(cwDrag.b.cw || null); cwSet(cwDrag.b, cwDrag.i, (e.clientX - r.left) / r.width * 100);
+    if (JSON.stringify(cwDrag.b.cw) !== before) { cwPaint(cwDrag.card, cwDrag.b); changed(false); }
+  });
+  const cwEnd = () => { if (!cwDrag) return; cwDrag.h.classList.remove('drag'); document.body.classList.remove('cw-dragging'); cwDrag = null; };
+  edEl.addEventListener('pointerup', cwEnd); edEl.addEventListener('pointercancel', cwEnd); edEl.addEventListener('lostpointercapture', cwEnd);
+  edEl.addEventListener('keydown', e => {
+    const h = e.target.closest && e.target.closest('.cw-h'); if (!h || !['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
+    const card = h.closest('[data-bid]'); const b = card && target(card.dataset.bid); if (!b) return; e.preventDefault();
+    const i = +h.dataset.i; const w = tbWidths(b); const cum = w.slice(0, i + 1).reduce((a, x) => a + x, 0);
+    cwSet(b, i, cum + (e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : 1) * (e.shiftKey ? 5 : 1)); cwPaint(card, b); changed(false);
+  });
   edEl.addEventListener('dragstart', e => {
     const h = e.target.closest && e.target.closest('.card-h[draggable="true"]'); if (!h) return;
     const c = h.closest('.card'); edDrag = c.dataset.bid;
