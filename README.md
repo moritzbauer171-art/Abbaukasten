@@ -45,6 +45,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 - **Klausur:** Im Kopf „Klausur“ wählen. Die erste Seite wird zum Deckblatt (ohne Thema-Feld und Hinweiskasten), die Gewichtung steht bei den Aufgaben.
 - **Sammlung:** Bausteine über ⋯ speichern und in jedes Blatt einfügen (unten unter „Aus der Sammlung“); eine Operatorenübersicht ist vorbereitet.
 - **Zeilenangaben:** In der Vorschau auf eine Zeilennummer klicken (für einen Bereich danach auf die letzte Zeile) und die Angabe in das zuletzt benutzte Aufgaben- oder Erwartungsfeld einfügen.
+- **Emojis:** Emojis erscheinen in allen Texten, Materialien, Aufgaben und Tabellen farbig, auch in PDF und Word (dort in der Schrift Segoe UI Emoji). Beim Einfügen von Posts aus X/Twitter, Facebook oder WhatsApp Web, wo Emojis als kleine Bilder im Text stehen, werden sie zu echten Emojis. Eingeben: Windows-Taste + Punkt, Mac: Ctrl + Cmd + Leertaste, Tablet und Handy: Emoji-Tastatur.
 - **Einfügen aus PDFs:** Trennstriche am Zeilenende und mitkopierte Zeilennummern werden beim Einfügen entfernt.
 - **Genderzeichen:** Hinweis bei Sternchen, Doppelpunkt, Unterstrich oder Binnen-I in eigenen Texten, mit Vorschlag zum Ausschreiben.
 - **A5 als Buch:** In der Karte „Seite“ (oder beim Ausgeben) unter Papier „A5 als Buch“ wählen. Das Blatt wird in A5 gesetzt, und je zwei aufeinanderfolgende Seiten stehen nebeneinander auf A4 quer, wie in einem aufgeschlagenen Buch (Seite 1 und 2, dann 3 und 4). Gut für längere literarische Texte. Seitenzahlen stehen außen, Falzmarken in der Mitte.
