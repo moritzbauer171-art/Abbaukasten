@@ -264,6 +264,19 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
     padding:14px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
 }
 
+/* ---------- Lesbarkeit ---------- */
+.sub-s.rd-ok{color:#2E7D4F}.sub-s.rd-mid{color:var(--warn)}.sub-s.rd-hard{color:var(--rot)}
+.rd .rd-k{margin:0;font-size:12.5px;color:var(--ink)}
+.rd-scale{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin:4px 0 8px}
+.rd-scale span{font-size:10.5px;text-align:center;padding:3px 0;background:var(--line);color:var(--muted);border-radius:4px}
+.rd-scale span:nth-child(1){background:#DCEFE2}.rd-scale span:nth-child(2){background:#E8F2D8}.rd-scale span:nth-child(3){background:#F7EDCF}.rd-scale span:nth-child(4){background:#F7DCCB}.rd-scale span:nth-child(5){background:#F2CFCB}
+.rd-scale span.on{color:#1C1F27;font-weight:700;box-shadow:inset 0 0 0 1.5px #1C1F27}
+.rd-scale i{position:absolute;bottom:-6px;width:0;height:0;border:5px solid transparent;border-bottom-color:var(--ink);transform:translateX(-5px)}
+.rd-long{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.rd-long li{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}
+.rd-long li span{color:var(--muted);white-space:nowrap}
+.rd-long .link{text-align:left;font-weight:400}
+.rd-sugg{display:flex;flex-wrap:wrap;gap:6px}
 /* ---------- Formatierung (Unterbereich in der Materialkarte) ---------- */
 .sub{border:1px solid var(--line);border-radius:9px;background:var(--panel)}
 .sub-h{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;padding:9px 10px;cursor:pointer;text-align:left;min-width:0;border-radius:9px}
@@ -1828,6 +1841,52 @@ function fmtSummary(b) {
   return [poem ? 'Verse' : f.align === 'left' ? 'Linksbündig' : 'Blocksatz', f.font === 'sans' ? 'ohne Serifen' : 'mit Serifen',
     String(FMT_SIZE[f.size]).replace('.', ',') + ' pt', 'Zeilenabstand ' + f.lh,
     f.cols === 2 ? 'zweispaltig' : '', f.margin ? 'Notizrand' : '', b.lineNumbers === false ? (poem ? 'ohne Verszählung' : 'ohne Zeilennummern') : ''].filter(Boolean).join(' · ');
+}
+/* ---------- Lesbarkeit: LIX, lange Sätze, Vorschläge für Worterklärungen ---------- */
+// Häufige Wörter (Grundwortschatz, gekürzt). Was nicht darin steht und lang ist, wird als Worterklärung vorgeschlagen.
+const CORE_DE = new Set('der die das den dem des ein eine einen einem einer eines kein keine keinen keinem keiner keines ich du er sie es wir ihr mich dich sich uns euch mir dir ihm ihn ihnen mein meine meinen meinem meiner meines dein deine deinen deinem deiner sein seine seinen seinem seiner seines ihr ihre ihren ihrem ihrer ihres unser unsere unseren unserem unserer euer eure euren dieser diese dieses diesen diesem jener jene jenes jenen jedem jeder jede jedes jeden alle allen aller alles manche manchen mancher viele vielen vieler wenige wenigen einige einigen beide beiden andere anderen anderer anderes anderem selbst selber man jemand niemand nichts etwas welche welcher welches welchen welchem und oder aber denn sondern doch als wie wenn weil dass daß ob obwohl obgleich damit während bevor nachdem seit seitdem sobald solange indem ohne um statt sowie also deshalb deswegen daher darum trotzdem dennoch zwar sowohl weder noch entweder in im ins an am ans auf aus bei beim mit nach von vom zu zum zur für gegen durch über unter vor hinter neben zwischen bis ab außer innerhalb außerhalb wegen trotz laut gegenüber entlang samt seit nicht auch nur noch schon sehr so ja nein mal dann da dort hier jetzt nun heute gestern morgen immer nie oft manchmal wieder bald gleich gern gerne mehr weniger viel wenig ganz fast kaum etwa genau eben einfach wirklich vielleicht sicher bereits erst später früher zuerst endlich plötzlich sofort lange dabei dafür dagegen dazu davon darauf darin daran damals deshalb allein zusammen weiter wohl schließlich überhaupt außerdem jedoch besonders ebenfalls natürlich eigentlich trotzdem sogar irgendwie überall nirgends hin her heraus herein hinaus voran zurück weg los sein bin bist ist sind seid war warst waren wart gewesen wäre wären haben habe hast hat habt hatte hattest hatten gehabt hätte hätten werden werde wirst wird werdet wurde wurden geworden würde würden worden können kann kannst könnt konnte konnten gekonnt könnte könnten müssen muss musst müsst musste mussten müsste muß mußte sollen soll sollst sollt sollte sollten wollen will willst wollt wollte wollten dürfen darf darfst durfte durften dürfte mögen mag magst mochte möchte möchten machen macht machte gemacht gehen geht ging gingen gegangen kommen kommt kam kamen gekommen sehen sieht sah sahen gesehen sagen sagt sagte sagten gesagt geben gibt gab gaben gegeben nehmen nimmt nahm genommen stehen steht stand standen gestanden liegen liegt lag lagen gelegen finden findet fand fanden gefunden bleiben bleibt blieb blieben geblieben heißen heißt hieß lassen lässt ließ gelassen stellen stellt stellte gestellt bringen bringt brachte gebracht denken denkt dachte gedacht wissen weiß wusste wußte gewusst glauben glaubt glaubte halten hält hielt gehalten nennen nennt nannte genannt zeigen zeigt zeigte gezeigt führen führt führte geführt sprechen spricht sprach gesprochen fragen fragt fragte gefragt spielen spielt spielte leben lebt lebte gelebt arbeiten arbeitet arbeitete schreiben schreibt schrieb geschrieben lesen liest las gelesen hören hört hörte gehört laufen läuft lief fahren fährt fuhr gefahren essen isst aß trinken trinkt trank schlafen schläft schlief wohnen wohnt kaufen kauft kaufte brauchen braucht brauchte suchen sucht suchte versuchen versucht versuchte beginnen beginnt begann begonnen erklären erklärt erzählen erzählt erzählte verstehen versteht verstand verstanden bekommen bekommt bekam fühlen fühlt fühlte lernen lernt lernte setzen setzt setzte sitzen sitzt saß tragen trägt trug ziehen zieht zog fallen fällt fiel helfen hilft half warten wartet wartete öffnen öffnet schließen schließt schloss verlieren verliert verlor gewinnen gewinnt gewann zahlen zahlt bezahlen erreichen erreicht entstehen entsteht entstand entwickeln entwickelt erinnern erinnert erinnerte folgen folgt folgte gehören gehört handeln handelt bedeuten bedeutet beschreiben beschreibt bilden bildet entscheiden entscheidet erhalten erhält erkennen erkennt ändern ändert verändern verändert nutzen nutzt benutzen leiten treffen trifft traf gelten gilt galt scheinen scheint schien sterben stirbt starb wachsen wächst wuchs werfen wirft warf rufen ruft rief schauen schaut lachen lacht lachte weinen weint freuen freut fehlen fehlt passieren passiert passierte vergessen vergisst vergaß verbinden zählen zählt meinen meint meinte hoffen hofft hoffte lieben liebt liebte mögen danken dankt kennen kennt kannte gekannt mensch menschen mann männer frau frauen kind kinder leute person personen junge mädchen eltern vater mutter sohn tochter bruder schwester familie freund freunde freundin lehrer lehrerin schüler schülerin schülerinnen zeit jahr jahre jahren tag tage tagen woche monat stunde minute uhr abend morgen nacht leben welt land länder stadt dorf haus häuser schule klasse raum zimmer tür fenster tisch stuhl buch bücher text texte seite wort wörter satz sätze frage fragen antwort sprache geschichte arbeit beispiel teil art weise sache ding dinge problem grund recht ende anfang mitte weg wege ort orte platz straße wasser feuer erde luft licht sonne baum bäume tier tiere hand hände kopf auge augen herz körper name namen zahl geld bild bilder gesellschaft staat politik krieg frieden macht volk regierung partei gesetz kultur natur thema idee meinung gefühl liebe angst glück wahrheit möglichkeit entwicklung bedeutung beziehung rolle gruppe form ergebnis ziel wirkung ursache folge situation information system prozess unterschied fall ende kraft gut gute guten guter gutes besser beste schlecht groß große großen großer kleine klein kleinen alt alte alten neu neue neuen neuer jung junge lang lange langen kurz kurze hoch hohe hohen tief schön schöne schnell langsam leicht schwer einfach wichtig wichtige richtig falsch klar möglich unmöglich nötig gleich gleiche ähnlich anders verschieden ganze ganzen ganzer erste ersten erster zweite dritte letzte letzten nächste nächsten eigene eigenen weitere weiteren bestimmte bestimmten allgemein besonders bekannt bekannte frei freie offen sicher stark starke schwach warm kalt heiß hell dunkel rot blau grün weiß schwarz deutsch deutsche deutschen politisch politische sozial soziale wirtschaftlich öffentlich persönlich menschlich historisch genau typisch wahr real echt voll leer reich arm froh traurig müde krank gesund ruhig laut leise eins zwei drei vier fünf sechs sieben acht neun zehn elf zwölf zwanzig hundert tausend jahrhundert jahrhunderts jahrhunderte beschäftigen beschäftigt beschäftigte erinnerung minuten sekunde'.split(' '));
+const isCore = w => { const x = w.toLowerCase(); if (CORE_DE.has(x)) return true; for (const e of ['en', 'em', 'er', 'es', 'e', 'n', 's', 'st', 't', 'te', 'ten', 'et', 'est']) if (x.length > e.length + 2 && x.endsWith(e) && CORE_DE.has(x.slice(0, -e.length))) return true; return false; };
+const FOREIGN_RE = /(ismus|ität|tion|sion|ieren|iert|ologie|ik|iv|ell|anz|enz|ös|abel|ibel|ur|ie)(en|e|s|n)?$/i;
+function readStats(b) {
+  const t = plainText(String(b.text || '')).replace(/\u00AD/g, ''); const words = t.match(/[\p{L}][\p{L}'’-]*/gu) || [];
+  if (words.length < 20) return null;
+  const sents = t.split(/(?<=[.!?…])\s+(?=[„"»(]?[\p{Lu}0-9])|\n\s*\n/u).map(x => x.trim()).filter(x => /\p{L}/u.test(x));
+  const S = Math.max(1, sents.length); const W = words.length; const L = words.filter(w => w.replace(/[^\p{L}]/gu, '').length > 6).length;
+  const lix = Math.round(W / S + 100 * L / W);
+  const cat = lix < 30 ? 'sehr leicht' : lix < 40 ? 'leicht' : lix < 50 ? 'mittel' : lix < 60 ? 'schwer' : 'sehr schwer';
+  const long = sents.map(x => ({ x, n: (x.match(/[\p{L}][\p{L}'’-]*/gu) || []).length })).filter(o => o.n > 25).sort((a, c) => c.n - a.n);
+  const glossed = new Set((b.glossary || []).map(g => normTerm(g.term).toLowerCase())); const seen = new Map();
+  words.forEach(w => { const k = w.replace(/[’']s?$/, ''); const lk = k.toLowerCase(); if (k.length < 6 || isCore(k) || glossed.has(lk)) return; const o = seen.get(lk) || { w: k, c: 0, sc: 0 }; o.c++; o.sc = k.length + (FOREIGN_RE.test(k) ? 4 : 0) + (/[A-ZÄÖÜ]/.test(k[0]) ? 0 : 1); seen.set(lk, o); });
+  const sugg = [...seen.values()].sort((a, c) => c.sc - a.sc || a.w.localeCompare(c.w, 'de')).slice(0, 10);
+  return { W, S, L, lix, cat, avg: Math.round(W / S * 10) / 10, pL: Math.round(100 * L / W), long, sugg };
+}
+function readEditor(b) {
+  if (b.form === 'gedicht') return '';
+  const r = readStats(b); const key = 'read:' + b.id; const open = state.fmtOpen.has(key);
+  const sumT = r ? `LIX ${r.lix} · ${r.cat}${r.long.length ? ` · ${r.long.length} lange ${r.long.length === 1 ? 'Satz' : 'Sätze'}` : ''}` : 'ab 20 Wörtern';
+  const lvlC = r ? (r.lix < 40 ? 'ok' : r.lix < 50 ? 'mid' : 'hard') : '';
+  return `<div class="sub${open ? ' open' : ''}" data-rd>
+    <button type="button" class="sub-h" data-act="sub-toggle" data-key="${key}" aria-expanded="${open}"><span class="sub-t">Lesbarkeit</span><span class="sub-s rd-${lvlC}">${esc(sumT)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
+    ${open && r ? `<div class="sub-b rd">
+      <div class="rd-scale" aria-hidden="true">${[['sehr leicht', 0, 30], ['leicht', 30, 40], ['mittel', 40, 50], ['schwer', 50, 60], ['sehr schwer', 60, 80]].map(([l, a, z]) => `<span class="${r.lix >= a && (r.lix < z || z === 80) ? 'on' : ''}">${l}</span>`).join('')}<i style="left:${Math.max(0, Math.min(100, (r.lix - 15) / 60 * 100))}%"></i></div>
+      <p class="rd-k">${r.W} Wörter · ${r.S} ${r.S === 1 ? 'Satz' : 'Sätze'} · im Schnitt ${String(r.avg).replace('.', ',')} Wörter je Satz · ${r.pL} % lange Wörter (über 6 Buchstaben)</p>
+      <small class="hint">LIX = Wörter je Satz + Anteil langer Wörter. Unter 40 eher leicht (Jugendbuch), 40–50 mittel (Sachtext), ab 50 schwer (Fachtext), ab 60 sehr schwer.</small>
+      ${r.long.length ? `<div class="f"><span>Lange Sätze (über 25 Wörter)</span><ul class="rd-long">${r.long.slice(0, 6).map((o, i) => `<li><button type="button" class="link" data-act="rd-show" data-i="${i}" title="Im Text markieren">„${esc(o.x.split(/\s+/).slice(0, 7).join(' '))} …“</button><span>${o.n} Wörter</span></li>`).join('')}</ul></div>` : '<p class="rd-k">Keine Sätze über 25 Wörter.</p>'}
+      ${r.sugg.length ? `<div class="f"><span>Vorschläge für Worterklärungen</span><div class="rd-sugg">${r.sugg.map(o => `<button type="button" class="ck-chip" data-act="rd-gl" data-t="${esc(o.w)}" title="Worterklärung anlegen">+ ${esc(o.w)}</button>`).join('')}</div><small class="hint">Seltene oder lange Wörter aus dem Text. Klicken legt eine Worterklärung an.</small></div>` : ''}
+    </div>` : open ? '<div class="sub-b"><p class="rd-k">Die Werte erscheinen ab 20 Wörtern.</p></div>' : ''}
+  </div>`;
+}
+// Markiert eine Stelle im Textfeld, auch über Formatierungen hinweg
+function rtSelectPlain(el, str) {
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); const nodes = []; let n, all = '';
+  while ((n = w.nextNode())) { nodes.push([n, all.length]); all += n.nodeValue; }
+  const norm = x => x.replace(/\s+/g, ' '); const i = norm(all).indexOf(norm(str).slice(0, 80)); if (i < 0) return false;
+  // Position im unnormalisierten Text wiederfinden
+  let pos = 0, k = 0; while (k < all.length && pos < i) { if (/\s/.test(all[k])) { while (k + 1 < all.length && /\s/.test(all[k + 1])) k++; } pos++; k++; }
+  const at = off => { for (let j = nodes.length - 1; j >= 0; j--) if (nodes[j][1] <= off) return [nodes[j][0], Math.min(off - nodes[j][1], nodes[j][0].nodeValue.length)]; return [nodes[0][0], 0]; };
+  const [sn, so] = at(k), [en, eo] = at(Math.min(all.length, k + str.length));
+  const rg = document.createRange(); rg.setStart(sn, so); rg.setEnd(en, eo); const s = getSelection(); s.removeAllRanges(); s.addRange(rg);
+  (sn.parentElement || el).scrollIntoView({ block: 'center', behavior: 'smooth' }); return true;
 }
 function fmtEditor(b) {
   const f = matFmt(b); const open = state.fmtOpen.has(b.id);
@@ -3933,7 +3992,7 @@ function bodyFor(b, num) {
         : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
-      ${fmtEditor(b)}
+      ${fmtEditor(b)}${readEditor(b)}
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`; }
     case 'tasks': {
       const start = num[b.id].from;
@@ -4139,7 +4198,7 @@ function onInput(e) {
   setPath(target(card.dataset.bid), k, v);
   const m = k.match(/^items\.(\d+)\.text$/);
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
-  if (k === 'text') { const blk = target(card.dataset.bid); const box = card.querySelector('[data-gl]'); if (blk && blk.type === 'material' && box) box.outerHTML = glossRows(blk); }
+  if (k === 'text') { const blk = target(card.dataset.bid); const box = card.querySelector('[data-gl]'); if (blk && blk.type === 'material' && box) box.outerHTML = glossRows(blk); const rd = card.querySelector('[data-rd]'); if (blk && blk.type === 'material' && rd) { clearTimeout(rd._t); const fresh = readEditor(blk); if (fresh) rd.outerHTML = fresh; } }
   const gn = document.querySelector(`#editor [data-gn="${card.dataset.bid}"]`); if (gn) gn.outerHTML = gNote(card.dataset.bid);
   const kw = k.match(/^cards\.(\d+)\.(points|term)$/); if (kw) { const box = document.querySelector(`#editor [data-kw="${kw[1]}"]`); if (box) box.innerHTML = kkWarn(state.sheet.cards[+kw[1]], kkOf(state.sheet.meta), +kw[1]); }
   if (k === 'url') { const qw = card.querySelector('[data-qrw]'); if (qw) qw.innerHTML = qrWarn(target(card.dataset.bid)); }
@@ -4268,6 +4327,8 @@ function onClick(e) {
     case 'unfold-all': state.allOpen = true; state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
+    case 'rd-show': { const r = readStats(b); const o = r && r.long[+a.dataset.i]; const f = $(`#editor [data-bid="${bid}"] .rtx[data-k="text"]`); if (o && f) { f.focus({ preventScroll: true }); if (!rtSelectPlain(f, o.x)) toast('Die Stelle wurde nicht gefunden.'); } return; }
+    case 'rd-gl': openGlossFor(b, a.dataset.t, 0, rectOf(a)); return;
     case 'fmt-toggle': if (state.fmtOpen.has(bid)) state.fmtOpen.delete(bid); else state.fmtOpen.add(bid); renderEditor(); return;
     case 'fmt-reset': b.fmt = {}; b.lineNumbers = true; changed(true); return;
     case 'fmt-all': {
@@ -5863,6 +5924,8 @@ function boot() {
   $('#reiter').addEventListener('click', e => { if (e.target.closest('[data-kl]')) { openKlassen(false); return; } const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
   $('#outsw').addEventListener('click', e => { const b = e.target.closest('[data-out]'); if (b) setOut(b.dataset.out); });
   const edEl = $('#editor');
+  // Lesbarkeit: Klick auf Vorschlag oder „markieren“ soll das Textfeld nicht verlassen (sonst baut sich die Karte neu auf)
+  edEl.addEventListener('mousedown', e => { if (e.target.closest && e.target.closest('.rd-sugg button, [data-act="rd-show"]')) e.preventDefault(); });
   // Spaltenbreite: Griffe auf dem Lineal ziehen oder mit Pfeiltasten verschieben
   let cwDrag = null;
   edEl.addEventListener('pointerdown', e => {
