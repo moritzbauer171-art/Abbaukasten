@@ -625,6 +625,12 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .tpl-copy{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line);padding-top:10px}
 .dlg.dlg-out{width:min(520px,calc(100% - 32px))}
 .dlg.dlg-rlp{width:min(720px,calc(100% - 32px))}
+.dlg.dlg-mappe{width:min(560px,calc(100% - 32px))}
+.mp-row{gap:10px;align-items:flex-start}.mp-row .f{flex:1;min-width:0}
+.dlg-mappe .f{margin-bottom:12px}
+.mp-list{display:flex;flex-direction:column;gap:2px;max-height:min(32vh,260px);overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--field)}
+.mp-list .chk{padding:3px 0}
+.mp-list .chk b{color:var(--tinte);font-weight:700;margin-right:2px}
 .rlp-stat{color:var(--muted);margin:-2px 0 10px;font-size:13px}
 .rlp-dtools{gap:8px;flex-wrap:wrap}
 .rlp-ov{max-height:min(54vh,560px);overflow:auto;margin:10px 0 14px;border:1px solid var(--line);border-radius:10px;padding:0 0 4px}
@@ -982,6 +988,31 @@ body{transition:background-color .3s,border-color .25s}
 .task-eh>span{display:block;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";font-size:6.8pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6A707C}
 .task-eh ul{margin:.4mm 0 0;padding-left:4mm}
 .task-eh ul+span{margin-top:1.4mm}
+/* Reihenmappe: Deckblatt und Inhalt */
+.page.mp-cover{display:flex;flex-direction:column;padding:22mm 22mm 18mm}
+.mp-c-top{display:flex;justify-content:space-between;gap:6mm;font-size:8pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-muted);border-bottom:.6mm solid var(--acc);padding-bottom:2mm}
+.mp-c-mid{margin-top:64mm}
+.mp-c-kick{font-size:9pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)}
+.mp-cover h1{font-family:var(--f-disp,var(--f-text));font-weight:600;font-size:32pt;line-height:1.1;margin:4mm 0 0;letter-spacing:-.01em;overflow-wrap:break-word}
+.mp-c-mid p{font-size:13pt;line-height:1.35;color:var(--paper-muted);margin:4mm 0 0}
+.mp-c-rule{width:30mm;height:1.6mm;background:var(--acc);margin-top:10mm;border-radius:.8mm}
+.mp-c-name{margin-top:auto;display:flex;align-items:flex-end;gap:3mm;font-size:10pt;color:var(--paper-muted)}
+.mp-c-name i{flex:1;max-width:110mm;border-bottom:.25mm solid var(--paper-rule);height:6mm}
+.mp-c-foot{margin-top:8mm;display:flex;justify-content:space-between;font-size:8pt;color:var(--paper-muted)}
+.mp-cover:has(.mp-c-name) .mp-c-foot{margin-top:8mm}.mp-cover:not(:has(.mp-c-name)) .mp-c-foot{margin-top:auto}
+.mp-t-h{display:flex;justify-content:space-between;align-items:baseline;gap:6mm;border-bottom:.6mm solid var(--acc);padding-bottom:2mm;margin-bottom:3mm}
+.mp-t-h h2{font-family:var(--f-disp,var(--f-text));font-weight:600;font-size:19pt;line-height:1.2;margin:0}
+.mp-t-h span{font-size:9pt;color:var(--paper-muted)}
+.mp-t-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3.4mm}
+.mp-t-list li{display:flex;align-items:flex-end;gap:3mm;font-size:10.5pt;line-height:1.3}
+.mp-t-list .nr{flex:0 0 17mm;align-self:flex-start;margin-top:.4mm;font-size:8pt;font-weight:700;color:var(--paper);background:var(--acc);border-radius:.8mm;text-align:center;padding:.5mm 0;white-space:nowrap;overflow:hidden}
+.mp-t-list .nr:empty{background:transparent}
+.mp-t-list .tt{display:flex;flex-direction:column;min-width:0;flex:0 1 auto}
+.mp-t-list .tt b{font-weight:700}
+.mp-t-list .tt small{font-size:8.5pt;color:var(--paper-muted)}
+.mp-t-list .tt small.std{color:var(--acc)}
+.mp-t-list .dots{flex:1 1 8mm;min-width:8mm;border-bottom:.35mm dotted var(--paper-rule);margin-bottom:1.2mm}
+.mp-t-list .pn{flex:0 0 auto;font-weight:700;font-variant-numeric:tabular-nums}
 .task-eh .eh-rlp{font-size:8.4pt;color:#3A3F4A;list-style:none;padding-left:0}
 .task-eh .eh-rlp b{color:#2A2D35;margin-right:1.2mm}
 .task-afb b{color:var(--paper-ink);font-size:8.5pt}
@@ -3885,7 +3916,7 @@ function layout() {
     const pb = document.createElement('div'); pb.className = 'pg-body'; pg.appendChild(pb);
     p.list.forEach(pl => pb.appendChild(pl.whole ? pl.it.el.cloneNode(true) : pl.it.assemble(pl.s, pl.e)));
     const left = [meta.school, meta.course].filter(Boolean).map(esc).join(' · ');
-    const right = [tag, meta.mode !== 'klausur' && meta.nr ? 'AB ' + esc(meta.nr) : '', pages.length > 1 ? `${designOf(meta) === 'akte' ? 'Blatt' : 'Seite'} ${i + 1} von ${pages.length}` : ''].filter(Boolean).join(' · ');
+    const right = [tag, meta.mode !== 'klausur' && meta.nr ? 'AB ' + esc(meta.nr) : '', pages.length > 1 ? `<span class="pg-no">${designOf(meta) === 'akte' ? 'Blatt' : 'Seite'} ${i + 1} von ${pages.length}</span>` : ''].filter(Boolean).join(' · ');
     pg.appendChild(el(`<div class="pg-foot"><span>${left}</span><span>${right}</span></div>`));
     if (v.lehrer) pg.appendChild(el('<div class="pg-badge">Lehrerfassung</div>'));
     return { pg, over: !!p.over };
@@ -3907,7 +3938,9 @@ function layout() {
 
 let renderTimer = null;
 function scheduleRender(ms = 220) { clearTimeout(renderTimer); renderTimer = setTimeout(renderPreview, ms); }
+let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
+  if (MAPPE_LOCK) return;
   let out;
   try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
@@ -5317,7 +5350,7 @@ function libListHTML(k, q) {
       <div class="lib-f" data-fid="${esc(f.id)}" draggable="${edit ? 'false' : 'true'}">${edit
         ? `<input class="inp lib-fren" type="text" value="${esc(f.name)}" maxlength="60" aria-label="Name des Ordners"><button class="btn primary" type="button" data-act="lib-fren-ok">OK</button>`
         : `<button type="button" class="lib-fh" data-act="lib-ftoggle" aria-expanded="${open}" title="${open ? 'Zuklappen' : 'Aufklappen'}">${CHEV_SVG}${FOLDER_SVG}<span class="fn">${esc(f.name)}</span><span class="fc">${total}</span></button><button type="button" class="ib" data-act="lib-fmenu" title="Ordner bearbeiten" aria-expanded="${state.fMenu === f.id}">${I.more}</button>`}</div>
-      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-frlp">Standards der Reihe</button><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
+      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-fmappe">Als Mappe ausgeben</button><button class="link" type="button" data-act="lib-frlp">Standards der Reihe</button><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
       ${state.fDel === f.id ? `<div class="lib-fmenu warnrow"><span>Ordner „${esc(f.name)}“ löschen?${total === 1 ? ' Das Blatt darin bleibt erhalten und liegt danach ohne Ordner.' : total ? ` Die ${total} Blätter darin bleiben erhalten und liegen danach ohne Ordner.` : ''}</span><button class="link danger" type="button" data-act="lib-fdel-yes">Löschen</button><button class="link" type="button" data-act="lib-fdel-no">Abbrechen</button></div>` : ''}
       ${open ? `<div class="lib-fb" data-fid="${esc(f.id)}">${its.length ? its.map(item).join('') : `<div class="lib-fe">Leer · Blätter hierher ziehen oder bei einem Blatt „Ordner“ wählen</div>`}</div>` : ''}
     </section>`;
@@ -5416,6 +5449,7 @@ async function onLibClick(e) {
     case 'lib-fmenu': state.fMenu = state.fMenu === fid ? null : fid; state.fDel = null; renderLib(); break;
     case 'lib-fren': state.fEdit = fid; state.fMenu = null; renderLib(); break;
     case 'lib-frlp': state.fMenu = null; renderLib(); openRlpDlg('folder', fid); break;
+    case 'lib-fmappe': state.fMenu = null; renderLib(); openMappeDlg(fid); break;
     case 'lib-krlp': openRlpDlg('klasse'); break;
     case 'lib-fren-ok': { const i = a.parentNode.querySelector('.lib-fren'); const f = state.prefs.folders.find(x => x.id === fid); const v = i ? i.value.trim().slice(0, 60) : ''; if (f && v) { f.name = v; savePrefs(); } state.fEdit = null; renderLib(); break; }
     case 'lib-fup': stepFolder(fid, -1); break;
@@ -5548,6 +5582,7 @@ const HELP = [
     ['Ordner', 'Blätter auf einen Ordner ziehen; ohne Maus bei einem Blatt „Ordner“ wählen.'],
     ['Sortierung', 'zuletzt geändert, nach Nummer, nach Titel oder eigene Reihenfolge (zwischen zwei Blätter ziehen).'],
     ['Suche', 'findet auch Wörter aus Materialtiteln, Aufgaben und Infokästen.'],
+    ['Mappe', '⋯ am Ordner → „Als Mappe ausgeben“: alle Blätter des Ordners in einem PDF, mit Deckblatt, Inhaltsverzeichnis und durchgehenden Seitenzahlen.'],
     ['Standards der Reihe', '⋯ am Ordner zeigt, welche Standards die Blätter darin abdecken und wo Lücken sind. „Standards der Klasse“ unten fasst alle Blätter einer Klasse zusammen.'],
     ['Sicherung', '„Alle Blätter sichern“ lädt alles als Datei herunter, „Sicherung oder Datei laden“ spielt sie wieder ein.']]],
   ['Tastenkürzel', [
@@ -5797,7 +5832,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -5813,6 +5848,7 @@ function renderDlg() {
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`;
   if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
   if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
+  if (d.mode === 'mappe') { r.querySelector('.dlg').classList.add('dlg-mappe'); return; }
   if (d.mode === 'rlp') { r.querySelector('.dlg').classList.add('dlg-rlp'); const g = r.querySelector('[data-act="dlg-close"]'); if (g) g.focus({ preventScroll: true }); return; }
   if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
   if (d.mode === 'klassen') { r.querySelector('.dlg').classList.add('dlg-kl'); if (d.setup) r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.setup ? '#kl-school' : '[data-kf="label"]'); if (f && d.setup) f.focus(); return; }
@@ -5866,6 +5902,11 @@ async function onDlgClick(e) {
     if (act === 'nw-go') { newGo(); return; }
   }
   if (act === 'tips-again') { closeDlg(); showTip(0); return; }
+  if (state.dlg.mode === 'mappe') {
+    const d = state.dlg;
+    if (act === 'mp-set') { mappeRead(); d[a.dataset.f] = a.dataset.v; renderDlg(); return; }
+    if (act === 'mp-go') { await mappeGo(); return; }
+  }
   if (state.dlg.mode === 'rlp') {
     const d = state.dlg;
     if (act === 'rlp-show') { d.show = a.dataset.v; renderDlg(); return; }
@@ -5947,7 +5988,7 @@ async function deliver(name, blob) {
   }
   toast('Dateien lassen sich in dieser Ansicht nicht speichern. Öffnen Sie die Seite in claude.ai.');
 }
-async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || []); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
+async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || [], EXTRA_FONTS); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
 const outSuffix = () => state.out === 'tipps' ? '_Tippkarten' : state.out === 'karten' ? '_Tafelkarten'
   : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.levelsOn && state.lvl && state.lvl !== 'all' ? '_' + LV[state.lvl].name : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : state.sheet.meta.paper === 'buch' ? '_A5-Buch' : '');
@@ -5957,17 +5998,21 @@ async function exportPDF() {
   const pages = [...document.querySelectorAll('#pages .pout')];
   if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : 'Es gibt noch keine Tafelkarten.'); return; }
   busy = true;
+  try { await pagesToPdf(pages, fileBase() + outSuffix() + '.pdf', { title: (state.sheet.meta.nr ? 'AB ' + state.sheet.meta.nr + ' – ' : '') + (state.sheet.meta.title || ''), subject: state.sheet.meta.topic || '' }); }
+  finally { busy = false; }
+}
+async function pagesToPdf(pages, name, props) {
   if (window.abDesktop) {
     try {
       overlay('PDF wird erstellt …'); await fontsIn(document);
-      const info = preparePrint(); if (!info) return;
+      const info = preparePrint(); if (!info) return; info.name = name;
       const r = await window.abDesktop.pdf(info);
       overlay('');
       if (r && r.ok) toast(`${r.name} gespeichert`, 'Öffnen', () => window.abDesktop.open(r.path));
       else if (r && r.canceled) toast('Speichern abgebrochen');
       else toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.');
     } catch (err) { console.error(err); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
-    finally { overlay(''); busy = false; }
+    finally { overlay(''); }
     return;
   }
   try {
@@ -5999,12 +6044,123 @@ async function exportPDF() {
       if (!pdf) pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: orient, compress: true }); else pdf.addPage('a4', orient);
       pdf.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
     }
-    pdf.setProperties({ title: (state.sheet.meta.nr ? 'AB ' + state.sheet.meta.nr + ' – ' : '') + (state.sheet.meta.title || ''), subject: state.sheet.meta.topic || '', creator: 'AB-Werkstatt' });
+    pdf.setProperties({ title: props.title || '', subject: props.subject || '', creator: 'AB-Werkstatt' });
     overlay('');
-    await deliver(fileBase() + outSuffix() + '.pdf', pdf.output('blob'));
+    await deliver(name, pdf.output('blob'));
   } catch (err) { console.error(err); overlay(''); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
-  finally { overlay(''); busy = false; }
+  finally { overlay(''); }
 }
+
+/* ================= Reihenmappe: alle Blätter eines Ordners in einer Datei ================= */
+const LS_MPFMT = 'abw.mappefmt';
+const MP_TOC_ROWS = 20;
+function openMappeDlg(fid) {
+  const f = state.prefs.folders.find(x => x.id === fid); if (!f) return;
+  const kl = f.klasse; const order = libSort() === 'neu' ? 'nr' : libSort();
+  const list = sortLibList(state.lib.filter(x => x.klasse === kl && folderOf(x.id, kl) === fid), fid, kl, order).map(x => ({ id: x.id, nr: x.nr, title: x.title }));
+  const cur = state.sheet;
+  if (cur && KL(cur.klasse).id === kl && folderOf(cur.id, kl) === fid) { const e = list.find(x => x.id === cur.id); if (e) { e.nr = String(cur.meta.nr || ''); e.title = cur.meta.title || 'Ohne Titel'; } else list.unshift({ id: cur.id, nr: String(cur.meta.nr || ''), title: cur.meta.title || 'Ohne Titel' }); }
+  if (!list.length) { toast('Der Ordner ist noch leer.'); return; }
+  state.dlg = { mode: 'mappe', fid, kl, list, off: new Set(), title: f.name, sub: '', fassung: 'schueler', cover: true, toc: true, fmt: lsGet(LS_MPFMT) === 'print' && canPrint ? 'print' : 'pdf' };
+  renderDlg();
+}
+function mappeHTML() {
+  const d = state.dlg; const n = d.list.length - d.off.size;
+  const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t]) => `<button type="button" data-act="mp-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}">${t}</button>`).join('')}</div>`;
+  return `<h2 id="dlg-t">Als Mappe ausgeben</h2>
+    <p class="rlp-stat">Die Blätter des Ordners hintereinander in einer Datei, mit Deckblatt, Inhaltsverzeichnis und durchgehenden Seitenzahlen.</p>
+    <div class="row mp-row"><label class="f"><span>Titel</span><input class="inp" id="mp-title" type="text" maxlength="80" value="${esc(d.title)}"></label><label class="f"><span>Unterzeile</span><input class="inp" id="mp-sub" type="text" maxlength="100" value="${esc(d.sub)}" placeholder="z. B. 1. Kurshalbjahr"></label></div>
+    <div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], d.fassung)}</div>
+    <div class="f"><div class="chks"><label class="chk"><input type="checkbox" id="mp-cover"${d.cover ? ' checked' : ''}>Deckblatt</label><label class="chk"><input type="checkbox" id="mp-toc"${d.toc ? ' checked' : ''}>Inhaltsverzeichnis</label></div></div>
+    <div class="f"><span id="mp-n">Blätter: ${n} von ${d.list.length}</span><div class="mp-list">${d.list.map(x => `<label class="chk"><input type="checkbox" data-mpid="${esc(x.id)}"${d.off.has(x.id) ? '' : ' checked'}><span>${x.nr ? `<b>AB ${esc(x.nr)}</b> ` : ''}${esc(x.title || 'Ohne Titel')}</span></label>`).join('')}</div><small>Reihenfolge wie im Ordner. Umstellen: in „Meine Blätter“ ziehen.</small></div>
+    ${canPrint ? `<div class="f"><span>Als</span>${seg('fmt', [['pdf', 'PDF'], ['print', 'Drucken']], d.fmt)}</div>` : ''}
+    <div class="row"><button class="btn primary" type="button" data-act="mp-go"${n ? '' : ' disabled'}>${d.fmt === 'print' ? 'Drucken' : 'PDF erstellen'}</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+}
+function mappeRead() {
+  const d = state.dlg; if (!d || d.mode !== 'mappe') return;
+  const t = $('#mp-title'), u = $('#mp-sub'), c = $('#mp-cover'), o = $('#mp-toc');
+  if (t) d.title = t.value; if (u) d.sub = u.value; if (c) d.cover = c.checked; if (o) d.toc = o.checked;
+  document.querySelectorAll('#dlg-root [data-mpid]').forEach(x => { if (x.checked) d.off.delete(x.dataset.mpid); else d.off.add(x.dataset.mpid); });
+}
+function mpPage(meta) { const pg = document.createElement('div'); pg.className = 'page mp'; setAccent(pg, meta); pg.dataset.w = 210; pg.dataset.h = 297; return pg; }
+function mpNumber(pg, n, total) {
+  const f = pg.querySelector(':scope > .pg-foot'); const r = f && f.lastElementChild; if (!r) return;
+  const lab = `Seite ${n} von ${total}`; const x = r.querySelector('.pg-no');
+  if (x) x.textContent = lab; else r.insertAdjacentHTML('beforeend', (r.textContent.trim() ? ' · ' : '') + `<span class="pg-no">${lab}</span>`);
+}
+function mpEntry(sh) {
+  const m = sh.meta; const isK = m.mode === 'klausur';
+  return { nr: isK ? ((m.exam && m.exam.label) || 'Klausur') : (m.nr ? 'AB ' + m.nr : ''), title: m.title || 'Ohne Titel', topic: isK ? '' : String(m.topic || '').trim(), std: rlpSheetIds(sh).map(id => { const x = rlpInfo(id); return x.own ? 'eigen' : x.code; }) };
+}
+function mappeAssemble(parts, opt) {
+  const meta0 = parts[0].sh.meta, K = KL(parts[0].sh.klasse), lehrer = opt.fassung === 'lehrer';
+  const school = meta0.school || K.school || '', course = meta0.course || K.course || '';
+  const nToc = opt.toc ? Math.ceil(parts.length / MP_TOC_ROWS) : 0;
+  // Seitengruppen: eine Nummer je Seite, bei „A5 doppelt“ tragen beide Kopien dieselbe
+  const groups = parts.map(p => p.units.flatMap(u => !u.classList.contains('bogen') ? [[u]] : u.classList.contains('buch') ? [...u.querySelectorAll(':scope > .page')].map(x => [x]) : [[...u.querySelectorAll(':scope > .page')]]));
+  const before = (opt.cover ? 1 : 0) + nToc; const total = before + groups.reduce((a, g) => a + g.length, 0);
+  let no = before; const starts = groups.map(g => { const st = no + 1; g.forEach(gr => { no++; gr.forEach(pg => mpNumber(pg, no, total)); }); return st; });
+  const out = [];
+  if (opt.cover) {
+    const pg = mpPage(meta0); pg.classList.add('mp-cover');
+    pg.innerHTML = `<div class="mp-c-top"><span>${esc(school)}</span><span>${esc(course)}</span></div>
+      <div class="mp-c-mid"><div class="mp-c-kick">Mappe · ${parts.length} ${parts.length === 1 ? 'Blatt' : 'Blätter'}</div><h1>${esc(opt.title || 'Reihe')}</h1>${String(opt.sub || '').trim() ? `<p>${esc(opt.sub.trim())}</p>` : ''}<div class="mp-c-rule"></div></div>
+      ${lehrer ? '' : '<div class="mp-c-name"><span>Name</span><i></i></div>'}
+      <div class="mp-c-foot"><span>${lehrer ? 'Lehrerfassung' : ''}</span><span>${esc(new Date().toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }))}</span></div>`;
+    if (lehrer) pg.appendChild(el('<div class="pg-badge">Lehrerfassung</div>'));
+    out.push(pg);
+  }
+  const left = [school, course].filter(Boolean).map(esc).join(' · ');
+  for (let t = 0; t < nToc; t++) {
+    const pg = mpPage(meta0); pg.classList.add('mp-toc'); const a = t * MP_TOC_ROWS;
+    const rows = parts.slice(a, a + MP_TOC_ROWS).map((p, j) => ({ ...mpEntry(p.sh), page: starts[a + j] }));
+    pg.innerHTML = `<div class="pg-body"><div class="mp-t-h"><h2>Inhalt${t ? ' (Fortsetzung)' : ''}</h2><span>${esc(opt.title || '')}</span></div>
+      <ol class="mp-t-list">${rows.map(r => `<li><span class="nr">${esc(r.nr)}</span><span class="tt"><b>${esc(r.title)}</b>${r.topic ? `<small>${esc(r.topic)}</small>` : ''}${lehrer && r.std.length ? `<small class="std">Standards: ${esc(r.std.join(' · '))}</small>` : ''}</span><span class="dots"></span><span class="pn">${r.page}</span></li>`).join('')}</ol></div>
+      <div class="pg-foot"><span>${left}</span><span>${lehrer ? 'Lehrerfassung · ' : ''}<span class="pg-no">Seite ${(opt.cover ? 2 : 1) + t} von ${total}</span></span></div>`;
+    if (lehrer) pg.appendChild(el('<div class="pg-badge">Lehrerfassung</div>'));
+    out.push(pg);
+  }
+  parts.forEach(p => out.push(...p.units));
+  return { units: out, total };
+}
+async function mappeGo() {
+  mappeRead(); const d = state.dlg; if (!d || busy) return;
+  const ids = d.list.filter(x => !d.off.has(x.id)).map(x => x.id); if (!ids.length) return;
+  lsSet(LS_MPFMT, d.fmt); const opt = { ...d }; state.dlg = null; renderDlg();
+  if (state.libOpen) { state.libOpen = false; renderLib(); }
+  busy = true; const orig = state.sheet; const keep = { fassung: state.fassung, grp: state.grp, lvl: state.lvl, out: state.out, bookPages: state.bookPages };
+  let res = null;
+  try {
+    const sheets = [];
+    for (let j = 0; j < ids.length; j++) {
+      overlay(`Mappe: Blätter werden geladen … ${j + 1} von ${ids.length}`);
+      if (ids[j] === orig.id) { sheets.push(orig); continue; }
+      try { const sh = backend ? await backend.load(ids[j]) : null; if (sh) sheets.push(normalizeSheet(sh)); } catch (err) { console.error(err); }
+    }
+    if (!sheets.length) throw new Error('Keine Blätter geladen');
+    overlay('Mappe wird gesetzt …');
+    const designs = [...new Set(sheets.map(sh => designOf(sh.meta)))];
+    EXTRA_FONTS = designs.flatMap(dg => DESIGN_FONTS[dg] || []);
+    try { await Promise.race([Promise.all(FONT_SPECS.concat(EXTRA_FONTS).map(f => document.fonts.load(f))), wait(3500)]); } catch {}
+    MAPPE_LOCK = true; clearTimeout(renderTimer);
+    state.out = 'blatt'; state.fassung = opt.fassung; state.grp = 'all'; state.lvl = 'all';
+    const parts = [];
+    try { for (const sh of sheets) { state.sheet = sh; parts.push({ sh, units: layout().map(o => o.pg) }); } }
+    finally { state.sheet = orig; Object.assign(state, keep); }
+    res = mappeAssemble(parts, opt);
+    if (sheets.length < ids.length) toast(`${ids.length - sheets.length} ${ids.length - sheets.length === 1 ? 'Blatt ließ' : 'Blätter ließen'} sich nicht laden und fehlen in der Mappe.`);
+  } catch (err) { console.error(err); MAPPE_LOCK = false; EXTRA_FONTS = []; overlay(''); busy = false; renderPreview(); toast('Die Mappe konnte nicht erstellt werden. Bitte erneut versuchen.'); return; }
+  // Die Seiten kommen kurz in die Vorschau; PDF und Druck verarbeiten sie dort wie gewohnt
+  const host = $('#pages'); host.innerHTML = '';
+  res.units.forEach(u => { u.classList.add('pout'); const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(u); host.appendChild(slot); });
+  applyScale(); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
+  const name = 'Mappe_' + slug(opt.title || 'Reihe') + (opt.fassung === 'lehrer' ? '_Lehrerfassung' : '') + '.pdf';
+  try {
+    if (opt.fmt === 'print') { overlay(''); await fontsIn(document); doPrint(); }
+    else await pagesToPdf([...host.querySelectorAll('.pout')], name, { title: 'Mappe: ' + (opt.title || ''), subject: opt.sub || '' });
+  } finally { MAPPE_LOCK = false; EXTRA_FONTS = []; busy = false; overlay(''); renderPreview(); }
+}
+
 let busy = false;
 
 /* ---------- Word (.docx), selbst gebautes OOXML ---------- */
@@ -6416,7 +6572,10 @@ function boot() {
     // Kurs automatisch vorschlagen, solange er dem Namen folgt
     if (t.dataset.kf === 'label' && d.setup) { const c = r.querySelector('[data-kf="course"]'); if (c && (!row.course || row.course === 'Deutsch' || row.course === 'Deutsch ' + prevLabel)) { row.course = t.value ? 'Deutsch ' + t.value : 'Deutsch'; c.value = row.course; } }
   });
-  $('#dlg-root').addEventListener('change', e => { if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, ''); });
+  $('#dlg-root').addEventListener('change', e => {
+    if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, '');
+    if (e.target.dataset && e.target.dataset.mpid != null && state.dlg && state.dlg.mode === 'mappe') { mappeRead(); const d = state.dlg, n = d.list.length - d.off.size; $('#mp-n').textContent = `Blätter: ${n} von ${d.list.length}`; const g = $('#dlg-root [data-act="mp-go"]'); if (g) g.disabled = !n; }
+  });
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
   $('#btn-fach').addEventListener('click', e => { e.stopPropagation(); toggleFachPop(); });
   $('#fach-pop').addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('[data-fach]'); if (b) { chooseFach(b.dataset.fach); return; } if (e.target.closest('[data-fach-act="klassen"]')) { toggleFachPop(false); openKlassen(false); } });
