@@ -188,6 +188,41 @@ body.cw-dragging,body.cw-dragging *{cursor:col-resize!important}
 .ck-chip[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
 .ck-chip[aria-pressed="true"] .cbx{background:currentColor}
 .ck-chip[aria-pressed="true"] .cbx::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid var(--field);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+/* Standards aus dem Rahmenlehrplan */
+.rlp-f{gap:8px}
+.rlp-chosen{display:flex;flex-wrap:wrap;gap:6px}
+.rlp-chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;border:1px solid var(--tinte);background:var(--tinte-soft);color:var(--ink);border-radius:14px;padding:2px 3px 2px 9px;font-size:12px;line-height:1.3}
+.rlp-chip>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.rlp-chip code,.rlp-it code,.rlp-orow code{font:inherit;font-weight:700;color:var(--tinte);white-space:nowrap}
+.rlp-chip.own code{color:var(--muted)}
+.rlp-chip .x{border:0;background:transparent;color:var(--muted);font-size:15px;line-height:1;width:20px;height:20px;border-radius:50%;cursor:pointer;flex:0 0 auto;padding:0}
+.rlp-chip .x:hover{background:var(--line);color:var(--ink)}
+.rlp-sugg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.rlp-sugg button{display:inline-flex;gap:5px;align-items:center;max-width:100%;border:1px dashed var(--tinte);background:transparent;color:var(--ink);border-radius:14px;padding:2px 10px 2px 8px;font-size:12px;cursor:pointer}
+.rlp-sugg button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:260px}
+.rlp-sugg button b{color:var(--tinte)}
+.rlp-sugg button:hover{background:var(--tinte-soft)}
+.rlp-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rlp-tools input{flex:1;min-width:150px}
+.rlp-list{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:8px;background:var(--field);padding:0 0 4px}
+.rlp-gh{position:sticky;top:0;background:var(--field);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px;z-index:1;border-bottom:1px solid var(--line)}
+.rlp-row{display:flex;align-items:flex-start}
+.rlp-row[hidden],.rlp-g[hidden]{display:none}
+.rlp-it{flex:1;display:grid;grid-template-columns:14px auto 1fr auto;gap:2px 8px;align-items:start;min-width:0;text-align:left;border:0;background:transparent;padding:5px 10px;font-size:12.5px;line-height:1.38;color:var(--ink);cursor:pointer;font-family:inherit}
+.rlp-it:hover{background:var(--tinte-soft)}
+.rlp-it .cbx{width:12px;height:12px;border:1.5px solid var(--line-strong);border-radius:3px;position:relative;margin-top:2px}
+.rlp-it[aria-pressed="true"] .cbx{background:var(--tinte);border-color:var(--tinte)}
+.rlp-it[aria-pressed="true"] .cbx::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid var(--field);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+.rlp-it[aria-pressed="true"] .t{font-weight:600}
+.rlp-it em,.rlp-orow em.lk{font-style:normal;font-size:9.5px;font-weight:700;border:1px solid var(--line-strong);border-radius:4px;padding:0 4px;color:var(--muted);align-self:center}
+.rlp-row .ib{width:26px;height:26px;margin:2px 6px 0 0}
+.rlp-add{display:flex;gap:8px;padding:8px 10px 4px;align-items:flex-start}
+.rlp-add textarea{flex:1;min-height:34px;resize:vertical;font-size:12.5px}
+.rlp-none{padding:8px 10px;font-size:12.5px;color:var(--muted)}
+.rlp-sum .rlp-codes{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.rlp-codes code{font:inherit;font-size:12px;font-weight:700;color:var(--tinte);background:var(--tinte-soft);border-radius:4px;padding:1px 6px;cursor:help}
+.rlp-codes small{color:var(--muted)}
+.rlp-codes .link{margin-left:4px}
 .ck-f small{font-size:11.5px;color:var(--faint)}
 .tbl-ed table{border-collapse:collapse;width:100%;table-layout:fixed}
 .tbl-ed td{border:1px solid var(--line);padding:0;min-width:0}
@@ -589,6 +624,23 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .tpl>span>span{font-size:11.5px;color:var(--muted);line-height:1.3}
 .tpl-copy{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line);padding-top:10px}
 .dlg.dlg-out{width:min(520px,calc(100% - 32px))}
+.dlg.dlg-rlp{width:min(720px,calc(100% - 32px))}
+.rlp-stat{color:var(--muted);margin:-2px 0 10px;font-size:13px}
+.rlp-dtools{gap:8px;flex-wrap:wrap}
+.rlp-ov{max-height:min(54vh,560px);overflow:auto;margin:10px 0 14px;border:1px solid var(--line);border-radius:10px;padding:0 0 4px}
+.rlp-ov .rlp-gh{background:var(--panel)}
+.rlp-orow{display:grid;grid-template-columns:64px 1fr auto;gap:2px 10px;padding:6px 12px;font-size:13px;line-height:1.4;border-bottom:1px solid var(--line)}
+.rlp-orow:last-child{border-bottom:0}
+.rlp-orow.off{color:var(--muted)}
+.rlp-orow.off code{color:var(--muted);font-weight:400}
+.rlp-orow>b{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rlp-orow.off>b{font-weight:400}
+.rlp-orow .by{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.rlp-orow .by .chip{font-size:11.5px;padding:1px 8px}
+.rlp-orow .by span{font-size:12px;color:var(--muted)}
+.rlp-bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin:0 0 10px}
+.rlp-bar i{display:block;height:100%;background:var(--tinte);border-radius:3px}
+@media (max-width:560px){.rlp-orow{grid-template-columns:1fr auto}.rlp-orow>code{grid-column:1 / -1}}
 .out-g{display:flex;flex-direction:column;gap:10px}
 .out-fmts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
 .out-fmt{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;border:1.5px solid var(--line);background:var(--field);border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--ink)}
@@ -929,6 +981,9 @@ body{transition:background-color .3s,border-color .25s}
 .task-eh{grid-column:2 / -1;margin-top:1.2mm;background:#F1F2F4;border-left:.8mm solid #9AA0AA;border-radius:0 .8mm .8mm 0;padding:1.4mm 2.6mm 1.6mm;font-size:9.5pt;line-height:1.38;color:#2A2D35}
 .task-eh>span{display:block;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";font-size:6.8pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6A707C}
 .task-eh ul{margin:.4mm 0 0;padding-left:4mm}
+.task-eh ul+span{margin-top:1.4mm}
+.task-eh .eh-rlp{font-size:8.4pt;color:#3A3F4A;list-style:none;padding-left:0}
+.task-eh .eh-rlp b{color:#2A2D35;margin-right:1.2mm}
 .task-afb b{color:var(--paper-ink);font-size:8.5pt}
 .pg-badge{position:absolute;top:5.5mm;right:18mm;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";font-size:7pt;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B3261E;border:.3mm solid #B3261E;border-radius:.8mm;padding:.3mm 1.6mm}
 .grp-badge{display:flex;align-items:baseline;gap:2.4mm;font-size:9pt;color:var(--paper-muted)}
@@ -2185,6 +2240,249 @@ const GEO = { a4: { avail: 264 }, a5: { avail: 182 } };
 const BOT_GAP = { a4: { '': 9, m: 17, l: 27 }, a5: { '': 6, m: 11, l: 18 } };
 function sheetView() { return { lehrer: state.fassung === 'lehrer', grp: state.sheet.meta.groupsOn ? state.grp : 'all', lvl: state.sheet.meta.levelsOn ? (state.lvl || 'all') : 'all' }; }
 const LV = { b: { name: 'Basis', sym: '★' }, s: { name: 'Standard', sym: '★★' }, e: { name: 'Experte', sym: '★★★' } };
+/* ================= Rahmenlehrplan Deutsch, gymnasiale Oberstufe (Teil C) =================
+   q = abschlussorientierte Standards (3.2), e = Eingangsvoraussetzungen (3.1). lk0: ab dieser Nummer nur Leistungskurs. */
+const RLP_DE = {
+  q: { name: 'Qualifikationsphase', full: 'Abschlussorientierte Standards', groups: [
+    { k: 'SZ', code: 'SZ', name: 'Sprechen und Zuhören', items: [
+      'in ihren Gesprächen auf Verständigung zielen und respektvolles Gesprächsverhalten zeigen',
+      'in verschiedenen Gesprächsformen und in unterschiedlichen Rollen kommunikativ handeln und dabei nonverbale sowie stimmliche Mittel bewusst nutzen',
+      'zur Analyse mündlicher Kommunikationssituationen exemplarisch auditive und audiovisuelle Aufzeichnungen sowie Mitschriften nutzen',
+      'den Verlauf fachlich anspruchsvoller monologischer und dialogischer Gesprächsformen konzentriert verfolgen, um Argumentation und Intention der Gesprächspartner wiederzugeben bzw. zusammenzufassen sowie ihr Verständnis durch Mitschriften und Notizen zu sichern'] },
+    { k: 'SZd', code: 'SZ-d', name: 'Mit anderen sprechen (dialogisch)', items: [
+      'während des Zuhörens parallel eigene Äußerungen planen und diese in ihrer Wirkung einschätzen',
+      'sich in eigenen Gesprächsbeiträgen explizit und zielführend auf andere beziehen',
+      'in Kontroversen Strittiges identifizieren und eigene Positionen vertreten',
+      'auf konstruktive Weise eigenes und fremdes Gesprächsverhalten beobachten, reflektieren und besprechen',
+      'nach Geboten der Fairness kommunizieren und Strategien unfairer Kommunikation erkennen',
+      'Diskussionen, Debatten und Präsentationen selbstständig moderieren',
+      'in Simulationen von Prüfungs- und Bewerbungsgesprächen angemessen verbal und nonverbal handeln'] },
+    { k: 'SZm', code: 'SZ-m', name: 'Vor anderen sprechen (monologisch)', items: [
+      'anspruchsvolle Fachinhalte Verständnis fördernd referieren, auch unter Verwendung selbst verfasster stützender Texte',
+      'literarische und pragmatische Texte sinngebend und der Form entsprechend vortragen',
+      'einzeln und gemeinsam mit anderen argumentierende und erklärende Beiträge präsentieren',
+      'kontextangemessen, funktional, kreativ verschiedene Medien und Präsentationstechniken einsetzen und das eigene Vorgehen erläutern',
+      'umfangreiche Redebeiträge zu komplexen Sachverhalten selbstständig und adressatengerecht präsentieren'] },
+    { k: 'Sstr', code: 'S-str', name: 'Schreibstrategien anwenden', items: [
+      'Texte orthografisch und grammatisch korrekt sowie fachsprachlich präzise, prägnant und stilistisch angemessen verfassen',
+      'anspruchsvolle Aufgabenstellungen in konkrete Schreibziele und Schreibpläne überführen und komplexe Texte unter Beachtung von Textkonventionen eigenständig oder kooperativ strukturieren und dabei auch digitale Werkzeuge einsetzen',
+      'aus selbst recherchierten Informationsquellen Relevantes für die eigene Textproduktion auswählen und in geeigneter Form aufbereiten',
+      'Textbelege und andere Quellen korrekt zitieren bzw. paraphrasieren',
+      'Texte hinsichtlich inhaltlicher, funktionaler und stilistischer Kriterien ergebnisorientiert und im Hinblick auf die Geschlossenheit der Darstellung überarbeiten',
+      'die Stadien ihrer Schreibprozesse und Kompetenzentwicklung dokumentieren und reflektieren'] },
+    { k: 'Sinf', code: 'S-inf', name: 'Informierend schreiben', items: [
+      'eigenes Wissen über literarische, sprachliche und andere Sachverhalte geordnet und differenziert darstellen',
+      'Aufbau, inhaltlichen Zusammenhang und sprachlich-stilistische Merkmale eines Textes selbstständig fachgerecht beschreiben',
+      'Inhalte und Argumentationen komplexer Texte zusammenfassen, exzerpieren und referieren'] },
+    { k: 'Sarg', code: 'S-arg', name: 'Erklärend und argumentierend schreiben', items: [
+      'zu einem gegebenen komplexen Sachverhalt eine Untersuchungsfrage formulieren, die Auswahl der Untersuchungsaspekte begründen und den Untersuchungsgang skizzieren',
+      'Schlussfolgerungen aus ihren Analysen, Vergleichen oder Diskussionen von Sachverhalten und Texten ziehen und die Ergebnisse in kohärenter Weise darstellen',
+      'eigene Interpretationsansätze zu literarischen Texten entwickeln und diese argumentativ-erklärend darstellen, auch unter Berücksichtigung von Ideengehalt, gattungs- und epochenspezifischen Merkmalen sowie literaturtheoretischen Ansätzen',
+      'bei der Auseinandersetzung mit Texten deren historische, kulturelle, philosophische, politische oder weltanschauliche Bezüge, auch in ihrer Relevanz für die Arbeitswelt, verdeutlichen',
+      'zu fachlich strittigen Sachverhalten und Texten differenzierte Argumentationen entwerfen, diese strukturiert entfalten und die Prämissen ihrer Argumentationen reflektieren',
+      'in Anlehnung an journalistische, populärwissenschaftliche oder medienspezifische Textformen eigene Texte schreiben',
+      'wissenschaftspropädeutische Texte, zum Beispiel Fach- oder Seminararbeiten, planen, strukturieren, verfassen und überarbeiten'] },
+    { k: 'Sgest', code: 'S-gest', name: 'Gestaltend schreiben', items: [
+      'nach literarischen oder nicht-literarischen Vorlagen Texte neu, um- oder weiterschreiben, die Korrespondenz von Vorlage und eigenem Text beachten und dabei ein ästhetisches Ausdrucksvermögen entfalten',
+      'ästhetische, epistemische, reflexive Textformen wie Essay, Tagebuch, Gedicht, Brief zur Selbstreflexion, Wissensbildung und Entfaltung des ästhetischen Ausdrucksvermögens in literarischen oder pragmatischen Zusammenhängen verwenden',
+      'Texte für unterschiedliche Medien gestaltend schreiben'] },
+    { k: 'L', code: 'L', name: 'Lesen', items: [
+      'den komplexen Zusammenhang zwischen Teilaspekten und dem Textganzen erschließen',
+      'aus anspruchsvollen Aufgabenstellungen angemessene Leseziele ableiten und diese für die Textrezeption nutzen',
+      'im Leseprozess ihre auf unterschiedlichen Interpretations- und Analyseverfahren beruhenden Verstehensentwürfe überprüfen',
+      'die Einsicht in die Vorläufigkeit ihrer Verstehensentwürfe zur kontinuierlichen Überarbeitung ihrer Hypothesen nutzen',
+      'Verstehensbarrieren identifizieren und sie zum Anlass eines textnahen Lesens nehmen',
+      'Kontextwissen heranziehen, um Verstehensbarrieren zu überwinden',
+      'Rückschlüsse aus der medialen Präsentation und Verbreitungsform eines Textes ziehen',
+      'Geltungsansprüche von Texten reflektieren und das Ergebnis in das Textverstehen einbeziehen',
+      'die Qualität von Textinformationen vor dem Hintergrund ihres fachlichen Wissens prüfen und beurteilen',
+      'ihr Fach- und Weltwissen flexibel einsetzen, um das Textverständnis zu vertiefen und die Relevanz des Gelesenen einzuschätzen',
+      'sich in der Anschlusskommunikation über eigene und fremde Verstehensvoraussetzungen verständigen',
+      'im Leseprozess ihr fachliches Wissen selbstständig zur Erschließung und Nutzung voraussetzungsreicher Texte heranziehen'] },
+    { k: 'Tlit', code: 'T-lit', name: 'Sich mit literarischen Texten auseinandersetzen', lk0: 12, items: [
+      'Inhalt, Aufbau und sprachliche Gestaltung literarischer Texte analysieren, Sinnzusammenhänge zwischen einzelnen Einheiten dieser Texte herstellen und sie als Geflechte innerer Bezüge und Abhängigkeiten erfassen',
+      'eigenständig ein Textverständnis formulieren, in das sie persönliche Leseerfahrungen und alternative Lesarten des Textes einbeziehen, und auf der Basis eigener Analyseergebnisse begründen',
+      'ihr Textverständnis argumentativ durch gattungspoetologische und literaturgeschichtliche Kenntnisse über die Literaturepochen von der Aufklärung bis zur Gegenwart stützen',
+      'relevante Motive, Themen und Strukturen literarischer Schriften, die auch über Barock und Mittelalter bis in die Antike zurückreichen können, vergleichen und in ihre Texterschließung einbeziehen',
+      'Mehrdeutigkeit als konstitutives Merkmal literarischer Texte nachweisen',
+      'literarische Texte aller Gattungen als Produkte künstlerischer Gestaltung erschließen',
+      'die besondere ästhetische Qualität eines literarischen Produktes aufgrund eines breit angelegten literarischen Vorwissens erfassen und ihre Befunde in das Textverständnis einbeziehen',
+      'diachrone und synchrone Zusammenhänge zwischen literarischen Texten ermitteln und Bezüge zu weiteren Kontexten herstellen',
+      'die in literarischen Werken enthaltenen Herausforderungen und Fremdheitserfahrungen kritisch zu eigenen Wertvorstellungen, Welt- und Selbstkonzepten in Beziehung setzen',
+      'literarische Texte auf der Basis von nachvollziehbaren, sachlich fundierten Kriterien bewerten und dabei auch textexterne Bezüge wie Produktions-, Rezeptions- und Wirkungsbedingungen berücksichtigen',
+      'kreativ Texte im Sinne literarischen Probehandelns gestalten',
+      'den besonderen poetischen Anspruch und die ästhetische Qualität literarischer Texte vor dem Hintergrund ihrer Kenntnisse in den Bereichen Poetologie und Ästhetik erläutern',
+      'Kenntnisse wissenschaftlicher Sekundärtexte, philosophischer Schriften und historischer Abhandlungen in die Kontextualisierung literarischer Werke einbeziehen',
+      'in ihre Erörterung der in literarischen Werken enthaltenen Herausforderungen und Fremdheitserfahrungen geistes-, kultur- und sozialgeschichtliche Entwicklungen einbeziehen',
+      'ihre literarischen Wertungen differenziert begründen und dabei auf ihr größeres und komplexeres Kontextwissen zurückgreifen'] },
+    { k: 'Tprag', code: 'T-prag', name: 'Sich mit pragmatischen Texten auseinandersetzen', lk0: 10, items: [
+      'den inhaltlichen Zusammenhang voraussetzungsreicher Texte sichern und diese Texte terminologisch präzise und sachgerecht zusammenfassen',
+      'ein umfassendes, Textfunktionen, Situationen und Adressaten beachtendes Textverständnis formulieren',
+      'die in pragmatischen Texten enthaltenen sprachlichen Handlungen ermitteln',
+      'die Funktionen eines pragmatischen Textes bestimmen und dessen mögliche Wirkungsabsichten beurteilen',
+      'die sprachlich-stilistische Gestaltung eines pragmatischen Textes fachgerecht beschreiben und deren Wirkungsweise erläutern',
+      'Elemente der Textgestaltung einschließlich nichtsprachlicher Bestandteile in ihrer Funktion analysieren',
+      'zielgerichtet Zusammenhänge zu weiteren ihnen bekannten Texten herstellen und hierfür passende Wissensbestände aktivieren',
+      'themengleiche Texte methodisch fachgerecht vergleichen',
+      'sich mittels pragmatischer Texte mit den eigenen Welt- und Wertvorstellungen, auch in einer interkulturellen Perspektive, auseinandersetzen',
+      'die Zuordnung von Texten zu Textformen und Textsorten reflektieren',
+      'die in argumentativen Texten enthaltenen Argumentationsstrukturen theoriegestützt analysieren',
+      'die Beziehung zwischen pragmatischen Texten und ihren Produktionsbedingungen ermitteln'] },
+    { k: 'Tmed', code: 'T-med', name: 'Texte unterschiedlicher medialer Form und Theaterinszenierungen', lk0: 5, items: [
+      'Theaterinszenierungen und Literaturverfilmungen als Textinterpretationen erfassen und beurteilen',
+      'Theaterinszenierungen, Hörtexte und Filme sachgerecht analysieren',
+      'eigene Hörtexte, Filme oder andere audiovisuelle Präsentationsformen erstellen bzw. Textvorlagen szenisch umsetzen',
+      'sich bei der Rezeption oder Produktion von Hörtexten und Filmen und bei der Rezeption von Theaterinszenierungen mit den eigenen Welt- und Wertvorstellungen, auch in einer interkulturellen Perspektive, auseinandersetzen',
+      'die ästhetische Qualität von Theaterinszenierungen, Hörtexten oder Filmen beurteilen, auch vor dem Hintergrund ihrer kulturellen und historischen Dimension',
+      'sich mit Filmkritik und Aspekten der Filmtheorie auseinandersetzen'] },
+    { k: 'Spr', code: 'Spr', name: 'Sprache und Sprachgebrauch reflektieren', lk0: 12, items: [
+      'ein grundlegendes Verständnis der kognitiven und kommunikativen Funktion von Sprache formulieren',
+      'sprachliche Äußerungen kriterienorientiert analysieren und ihre Einsichten in der Auseinandersetzung mit Texten und Sachverhalten dokumentieren',
+      'sprachliche Strukturen und Bedeutungen auf der Basis eines gesicherten Grammatikwissens und semantischer Kategorien erläutern',
+      'Strukturen und Funktionen von Sprachvarietäten beschreiben',
+      'Bedingungen gelingender Kommunikation analysieren, auch auf der Basis theoretischer Modelle',
+      'verbale, paraverbale und nonverbale Gestaltungsmittel in unterschiedlichen kommunikativen Zusammenhängen analysieren, ihre Funktion beschreiben und ihre Angemessenheit bewerten',
+      'verbale, paraverbale und nonverbale Signale für Macht- und Dominanzverhältnisse identifizieren',
+      'sprachliche Handlungen kriterienorientiert in authentischen und fiktiven Kommunikationssituationen bewerten',
+      'Auswirkungen der Sprachenvielfalt und der Mehrsprachigkeit analysieren',
+      'auf der Grundlage sprachkritischer Texte Entwicklungstendenzen der Gegenwartssprache beschreiben und bewerten',
+      'persuasive und manipulative Strategien in öffentlichen Bereichen analysieren und sie kritisch bewerten',
+      'sprachphilosophische Positionen zur Analyse von Sprache und Kommunikation heranziehen',
+      'sprachliche Handlungen in authentischen und fiktiven Kommunikationssituationen theoriegestützt beschreiben',
+      'Phänomene des Sprachwandels und des Spracherwerbs theoriegestützt beschreiben',
+      'in geeigneten Nutzungszusammenhängen mit grammatischen und semantischen Kategorien argumentieren'] }] },
+  e: { name: 'Einführungsphase', full: 'Eingangsvoraussetzungen', groups: [
+    { k: 'SZ', code: 'SZ', name: 'Sprechen und Zuhören', items: [
+      'verschiedene Formen der sprachlichen Darstellung unterscheiden',
+      'sich artikuliert, sach- und situationsangemessen äußern',
+      'Vorträgen und Gesprächsbeiträgen wesentliche Informationen entnehmen und diese wiedergeben'] },
+    { k: 'SZd', code: 'SZ-d', name: 'Mit anderen sprechen (dialogisch)', items: [
+      'Gespräche und Diskussionen leiten, moderieren und reflektieren',
+      'Grundfaktoren sprachlicher Kommunikation beachten',
+      'sich konstruktiv an Gesprächen beteiligen, eigene Meinungen begründet und nachvollziehbar vertreten',
+      'eigenes und fremdes Gesprächsverhalten reflektieren und bewerten'] },
+    { k: 'SZm', code: 'SZ-m', name: 'Vor anderen sprechen (monologisch)', items: [
+      'literarische und pragmatische Texte sinngebend und hörerwirksam vortragen, szenisch lesen und gestalten',
+      'verschiedene Rede- und Vortragsformen sachgerecht vorbereiten und unterschiedliche Präsentationsformen adressatengerecht nutzen'] },
+    { k: 'Sstr', code: 'S-str', name: 'Schreibstrategien anwenden', items: [
+      'die Grundregeln der Rechtschreibung und Zeichensetzung sicher anwenden und eigene Fehlerschwerpunkte identifizieren',
+      'zielgerichtet und adressatenbezogen eigene Schreibprozesse planen',
+      'unterschiedliche Methoden und Materialien der Informationsbeschaffung und -darstellung nutzen',
+      'ausgewählte Methoden zur Präsentation linearer und nichtlinearer Texte nutzen',
+      'Formen prozessorientierter Leistungsdokumentation (z. B. Portfolio, Arbeitsjournal) anwenden',
+      'Arbeitsformen des kooperativen Schreibens zur Planung, Gestaltung und Überarbeitung von Texten einsetzen',
+      'eigene und fremde Texte selbstständig gestalten und überarbeiten und deren sprachliche Richtigkeit und Angemessenheit anhand transparenter Kriterien prüfen'] },
+    { k: 'Stf', code: 'S-tf', name: 'In unterschiedlichen Textformen schreiben', items: [
+      'Schreibstrategien für die Produktion informierender, erklärender und argumentierender sowie gestaltender Textformen aufgabenbezogen anwenden'] },
+    { k: 'L', code: 'L', name: 'Lesen', items: [
+      'den inhaltlichen Zusammenhang von Teilaspekten und dem Textganzen erschließen',
+      'in Texten zwischen Information und Wertung unterscheiden',
+      'Verstehensbarrieren identifizieren',
+      'Strategien zum Textverstehen vor dem Lesen, während des Lesens und nach dem Lesen zielgerichtet und selbstständig anwenden',
+      'verschiedene Lesetechniken zielgerichtet einsetzen'] },
+    { k: 'T', code: 'T', name: 'Sich mit Texten und Medien auseinandersetzen', items: [
+      'literarische und pragmatische Texte unterschiedlicher medialer Form analysieren',
+      'die mögliche Wirkung ausgewählter Gestaltungsmittel erklären',
+      'selbstständig ein Textverständnis entwickeln und ihre Deutungen belegen',
+      'Positionen zu Deutungsangeboten literarischer und pragmatischer Texte entwickeln'] },
+    { k: 'Spr', code: 'Spr', name: 'Sprache und Sprachgebrauch reflektieren', items: [
+      'ausgewählte Sprachvarietäten (z. B. Dialekte, Soziolekte, Fachsprache) unterscheiden',
+      'ausgewählte Erscheinungsformen des Sprachwandels (z. B. Bedeutungswandel, fremdsprachliche Einflüsse) reflektieren',
+      'orthographische und grammatische Phänomene (z. B. Wortarten und Satzstrukturen) identifizieren und erklären'] }] } };
+const RLP_BY = { deutsch: RLP_DE };
+// Suchwörter je Bereich, damit „Lyrik“ oder „Erörterung“ die passenden Standards findet
+const RLP_KW = { SZ: 'gespräch zuhören mündlich', SZd: 'diskussion debatte gespräch moderation streitgespräch', SZm: 'referat präsentation vortrag rede vortragen', Sstr: 'schreibprozess zitieren überarbeiten recherche rechtschreibung',
+  Sinf: 'zusammenfassung inhaltsangabe beschreibung', Sarg: 'erörterung argumentation interpretation stellungnahme essay', Sgest: 'kreativ produktiv tagebuch brief innerer monolog umschreiben',
+  L: 'lesestrategie textverständnis', Tlit: 'lyrik gedicht epik roman novelle erzählung kurzgeschichte drama dramatik szene literatur epoche', Tprag: 'sachtext rede kommentar essay zeitung argumentation rhetorik',
+  Tmed: 'film theater hörspiel podcast medien inszenierung', Spr: 'grammatik kommunikation sprachwandel rhetorik varietät', T: 'lyrik epik drama sachtext analyse', Stf: 'erörterung kreativ schreiben' };
+const RLP_PH = [['q', 'Qualifikationsphase'], ['e', 'Einführungsphase'], ['own', 'Nur eigene']];
+const LS_RLPPH = 'abw.rlpph';
+let RLP_MAP = null;
+function rlpMap() {
+  if (RLP_MAP) return RLP_MAP; RLP_MAP = {}; let o = 0;
+  Object.entries(RLP_BY).forEach(([fach, cat]) => Object.entries(cat).forEach(([ph, P]) => P.groups.forEach(g => g.items.forEach((t, j) => {
+    const n = j + 1, id = `${ph}:${g.k}${n}`;
+    RLP_MAP[id] = { id, ph, g, n, o: o++, fach, t, code: (ph === 'e' ? 'E-' : '') + g.code + ' ' + n, lk: !!g.lk0 && n >= g.lk0 };
+  }))));
+  return RLP_MAP;
+}
+const rlpOf = it => Array.isArray(it && it.rlp) ? it.rlp.filter(x => typeof x === 'string' && x.trim()) : [];
+function rlpInfo(id) {
+  if (id[0] === '~') return { id, own: true, code: 'eigen', t: id.slice(1).trim(), o: 1e6 };
+  return rlpMap()[id] || { id, unk: true, code: id, t: 'Standard nicht im Katalog', o: 2e6 };
+}
+const rlpCmp = (a, b) => { const x = rlpInfo(a), y = rlpInfo(b); return x.o - y.o || (x.t < y.t ? -1 : x.t > y.t ? 1 : 0); };
+const rlpShort = (t, n = 64) => { t = String(t || ''); if (t.length <= n) return t; const c = t.lastIndexOf(' ', n); return t.slice(0, c > n * .6 ? c : n).replace(/[,;:]$/, '') + ' …'; };
+const rlpOwnList = fach => ((state.prefs && state.prefs.rlpOwn) || {})[fach] || [];
+const rlpClean = t => String(t || '').replace(/^\s*(?:[−–•*·-]|\d+[.)])\s*/, '').replace(/\s+/g, ' ').trim().slice(0, 300);
+function rlpPhase(kl) { kl = KL(kl || state.sheet.klasse).id; const cat = RLP_BY[fachKey(kl)]; const v = (lsGet(LS_RLPPH) || {})[kl]; return !cat ? 'own' : v === 'e' || v === 'own' ? v : 'q'; }
+function rlpPhaseSet(kl, v) { const o = lsGet(LS_RLPPH) || {}; o[KL(kl).id] = v; lsSet(LS_RLPPH, o); }
+function rlpSheetIds(sh) { const S = new Set(); (sh.blocks || []).forEach(b => { if (b.type === 'tasks') b.items.forEach(it => rlpOf(it).forEach(id => S.add(id))); }); return [...S].sort(rlpCmp); }
+// Vorschläge aus dem Aufgabentext: [Muster, zusätzliches Muster, Standard Q-Phase, Standard E-Phase]
+const RLP_SUGG = [
+  [/(gedicht|lyri|roman|novelle|erzählung|drama|dramen|szene|kurzgeschichte|parabel|ballade|fabel|märchen|figur|erzähler|literarisch|strophe)/, /(analys|untersuch|erschließ|charakterisier)/, 'q:Tlit1', 'e:T1'],
+  [/(interpret|deuten sie|deute |deutung)/, null, 'q:Tlit2', 'e:T3'],
+  [/(epoche|aufklärung|sturm und drang|klassik|romantik|biedermeier|vormärz|realismus|naturalismus|expressionismus|neue sachlichkeit|exilliteratur|nachkriegsliteratur)/, null, 'q:Tlit3', null],
+  [/vergleich/, /(gedicht|roman|novelle|erzählung|drama|szene|figur|literarisch)/, 'q:Tlit8', null],
+  [/(sachtext|rede\b|kommentar|essay|artikel|zeitung|glosse|leitartikel|reportage|interview|pragmatisch|rezension|blog|beitrag)/, /(analys|untersuch)/, 'q:Tprag5', 'e:T1'],
+  [/(absicht|intention|funktion des textes)/, null, 'q:Tprag4', 'e:T2'],
+  [/wirkung/, /(gestaltungsmittel|stilmittel|sprachliche mittel|rhetorische mittel|bildsprache)/, 'q:Tprag5', 'e:T2'],
+  [/vergleich/, /(sachtext|rede\b|kommentar|artikel|position|texte)/, 'q:Tprag8', null],
+  [/(argumentationsstruktur|argumentationsweise|argumentationsgang)/, null, 'q:Tprag11', null],
+  [/(erörter|stellung|beurteil|bewert|setz\w* sich .*auseinander|setz\w* dich .*auseinander)/, null, 'q:Sarg5', 'e:Stf1'],
+  [/(zusammenfass|fass\w* .*zusammen|gib .*wieder|geben sie .*wieder|wiedergeb|exzerpier)/, null, 'q:Sinf3', 'e:L1'],
+  [/(inneren? monolog|tagebuch|brief|umschreib|weiterschreib|fortsetzung|paralleltext|perspektivwechsel|gestalte\b|gestalten sie|verfass\w* (sie )?(einen|eine|ein) )/, null, 'q:Sgest1', 'e:Stf1'],
+  [/(film|verfilmung|inszenierung|hörspiel|hörtext|theater|podcast)/, null, 'q:Tmed2', 'e:T1'],
+  [/(sprachwandel|anglizism|jugendsprache|sprachkriti)/, null, 'q:Spr10', 'e:Spr2'],
+  [/(varietät|dialekt|soziolekt|fachsprache|ethnolekt)/, null, 'q:Spr4', 'e:Spr1'],
+  [/(mehrsprachig|sprachenvielfalt)/, null, 'q:Spr9', null],
+  [/(kommunikationsmodell|schulz von thun|watzlawick|gesprächsanalyse|kommunikationssituation)/, null, 'q:Spr5', 'e:SZd2'],
+  [/(manipul|persuasi|werbung|propaganda|rhetori)/, null, 'q:Spr11', null],
+  [/(diskutier|diskussion|debatt|streitgespräch|fishbowl)/, null, 'q:SZd3', 'e:SZd3'],
+  [/(referat|präsentier|präsentation|vortrag|kurzvortrag)/, null, 'q:SZm3', 'e:SZm2'],
+  [/(zitier|textbeleg|belegen sie|belege )/, null, 'q:Sstr4', 'e:T3'],
+  [/überarbeit/, null, 'q:Sstr5', 'e:Sstr7'],
+  [/recherch/, null, 'q:Sstr3', 'e:Sstr3'],
+  [/beschreib/, /(aufbau|struktur|merkmal)/, 'q:Sinf2', null]];
+function rlpSuggest(it, ph) {
+  if (ph === 'own') return [];
+  const t = plainText(it.text || '').toLowerCase(); if (!t.trim()) return [];
+  const have = new Set(rlpOf(it)); const out = [];
+  RLP_SUGG.forEach(([a, b2, q, e]) => { const id = ph === 'e' ? e : q; if (!id || have.has(id) || out.includes(id)) return; if (a.test(t) && (!b2 || b2.test(t))) out.push(id); });
+  return out.slice(0, 3);
+}
+const rlpHit = (q, s) => !q || q.split(/\s+/).every(w => s.includes(w));
+function rlpPanel(b, i, it) {
+  const kl = state.sheet.klasse, fach = fachKey(kl), cat = RLP_BY[fach], ph = rlpPhase(kl);
+  const cur = rlpOf(it), has = new Set(cur), q = String(state.rlpQ || '').trim().toLowerCase();
+  const chip = id => { const x = rlpInfo(id); return `<span class="rlp-chip${x.own ? ' own' : ''}" title="${esc(x.t)}"><code>${esc(x.code)}</code><span>${esc(x.t)}</span><button type="button" class="x" data-act="rlp-tog" data-i="${i}" data-v="${esc(id)}" aria-label="Standard entfernen" title="Entfernen">×</button></span>`; };
+  const rs = x => (x.code + ' ' + x.t).toLowerCase(); let direct = false;
+  const ok = (x, gq) => !q || (direct ? rlpHit(q, rs(x)) : rlpHit(q, rs(x) + ' ' + gq));
+  const row = (id, x, gq, del) => `<div class="rlp-row"${ok(x, gq) ? '' : ' hidden'}><button type="button" class="rlp-it" data-act="rlp-tog" data-i="${i}" data-v="${esc(id)}" aria-pressed="${has.has(id)}" data-q="${esc((x.code + ' ' + x.t).toLowerCase())}"><span class="cbx" aria-hidden="true"></span><code>${esc(x.own ? '' : x.code)}</code><span class="t">${esc(x.t)}</span>${x.lk ? '<em title="nur Leistungskurs">LK</em>' : ''}</button>${del ? `<button type="button" class="ib" data-act="rlp-own-del" data-i="${i}" data-v="${esc(x.t)}" title="Aus der Liste entfernen" aria-label="Aus der Liste entfernen">${I.x}</button>` : ''}</div>`;
+  const grp = ({ head, rows, kw }) => { const gq = (head + ' ' + (kw || '')).toLowerCase(); const html = rows.map(([id, x, del]) => row(id, x, gq, del)).join(''); const any = rows.some(([, x]) => ok(x, gq)); return `<div class="rlp-g" data-q="${esc(gq)}"${any ? '' : ' hidden'}><div class="rlp-gh">${esc(head)}</div>${html}</div>`; };
+  const GR = [];
+  if (cat && ph !== 'own') { const M = rlpMap(); cat[ph].groups.forEach(g => GR.push({ head: `${g.code} · ${g.name}`, kw: RLP_KW[g.k], rows: g.items.map((_, j) => { const id = `${ph}:${g.k}${j + 1}`; return [id, M[id], false]; }) })); }
+  const own = rlpOwnList(fach); if (own.length) GR.push({ head: 'Eigene Standards', rows: own.map(t => ['~' + t, rlpInfo('~' + t), true]) });
+  direct = !!q && GR.some(g => g.rows.some(([, x]) => rlpHit(q, rs(x))));
+  let list = GR.map(grp).join('');
+  list += own.length ? '' : (cat && ph !== 'own' ? '' : '<div class="rlp-none">Noch keine eigenen Standards. Tragen Sie unten welche ein, zum Beispiel aus Ihrem Fachlehrplan. Mehrere auf einmal: einen pro Zeile.</div>');
+  const sugg = rlpSuggest(it, ph);
+  return `<div class="f tx-f rlp-f"><span>Standards${cat ? ' aus dem Rahmenlehrplan' : ''}</span>
+    ${cur.length ? `<div class="rlp-chosen">${cur.map(chip).join('')}</div>` : ''}
+    ${sugg.length ? `<div class="rlp-sugg"><span>Passt vielleicht:</span>${sugg.map(id => { const x = rlpInfo(id); return `<button type="button" data-act="rlp-tog" data-i="${i}" data-v="${esc(id)}" title="${esc(x.t)}"><b>+ ${esc(x.code)}</b><span>${esc(rlpShort(x.t, 46))}</span></button>`; }).join('')}</div>` : ''}
+    <div class="rlp-tools"><input class="inp" type="search" data-rlpq="${i}" value="${esc(state.rlpQ || '')}" placeholder="Suchen, z. B. Lyrik, zitieren, T-lit" aria-label="Standards durchsuchen">${cat ? `<div class="seg sm" role="group" aria-label="Katalog">${RLP_PH.map(([v, t]) => `<button type="button" data-act="rlp-ph" data-i="${i}" data-v="${v}" aria-pressed="${ph === v}">${t}</button>`).join('')}</div>` : ''}</div>
+    <div class="rlp-list" data-i="${i}">${list}<div class="rlp-add"><textarea class="inp" rows="1" data-rlpnew="${i}" placeholder="Eigener Standard, z. B. aus dem schulinternen Curriculum" aria-label="Eigenen Standard eintragen"></textarea><button type="button" class="btn sm" data-act="rlp-own-add" data-i="${i}">Anlegen</button></div></div>
+    ${cat ? '' : `<small class="hint">Für ${esc(FAECHER[fach].label)} ist kein Rahmenlehrplan hinterlegt. Eigene Standards gelten für alle Klassen dieses Fachs.</small>`}</div>`;
+}
+function rlpFilter(root) {
+  if (!root) return; const q = String(state.rlpQ || '').trim().toLowerCase();
+  const direct = !!q && [...root.querySelectorAll('.rlp-it')].some(it => rlpHit(q, it.dataset.q || ''));
+  root.querySelectorAll('.rlp-g').forEach(g => { let any = false; g.querySelectorAll('.rlp-row').forEach(r => { const it = r.querySelector('.rlp-it'); const ok = !q || rlpHit(q, (it.dataset.q || '') + (direct ? '' : ' ' + (g.dataset.q || ''))); r.hidden = !ok; any = any || ok; }); g.hidden = !any; });
+}
+function rlpKeep(bid, i, fn, toEnd) {
+  const sel = `#editor [data-bid="${bid}"] .rlp-list[data-i="${i}"]`; const l = $(sel); const st = l ? l.scrollTop : 0;
+  fn(); const n = $(sel); if (n) n.scrollTop = toEnd ? n.scrollHeight : st;
+}
 const lvOk = (x, v) => !v || !v.lvl || v.lvl === 'all' || !Array.isArray(x.lv) || x.lv.includes(v.lvl);
 const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v);
 // Aufgaben der gewählten Stufe: nur die Aufgaben dieser Stufe, mit dem Text für Basis oder Experte, wenn einer eingetragen ist
@@ -2200,8 +2498,8 @@ function taskRight(it, r, meta, v) {
   return out.join('<br>');
 }
 function taskEH(it, v) {
-  const lines = ehLines(it); if (!v || !v.lehrer || !lines.length) return '';
-  return `<div class="task-eh"><span>Erwartung</span><ul>${lines.map(s => `<li>${inlineHTML(s)}</li>`).join('')}</ul></div>`;
+  if (!v || !v.lehrer) return ''; const lines = ehLines(it), rl = rlpOf(it); if (!lines.length && !rl.length) return '';
+  return `<div class="task-eh">${lines.length ? `<span>Erwartung</span><ul>${lines.map(s => `<li>${inlineHTML(s)}</li>`).join('')}</ul>` : ''}${rl.length ? `<span>Standards</span><ul class="eh-rlp">${rl.map(id => { const x = rlpInfo(id); return `<li>${x.own ? '' : `<b>${esc(x.code)}</b>`}${esc(rlpShort(x.t, 120))}</li>`; }).join('')}</ul>` : ''}</div>`;
 }
 function buildCover(meta, sh, v, body) {
   const ex = meta.exam || {};
@@ -2541,12 +2839,13 @@ function taskExtras(b, i, it) {
   const open = w => state.taskOpen.has(taskKey(b.id, i, w));
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
-  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}</div>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}</div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
   if (open('lv') && state.sheet.meta.levelsOn) h += `<div class="f tx-f"><span>Erscheint in</span><div class="ck-chips">${Object.entries(LV).map(([k, x]) => `<button type="button" class="ck-chip" data-act="it-lv" data-i="${i}" data-v="${k}" aria-pressed="${!Array.isArray(it.lv) || it.lv.includes(k)}"><span class="cbx" aria-hidden="true"></span>${x.sym} ${x.name}</button>`).join('')}</div></div>
     <div class="f tx-f"><span>★ Basis-Fassung (leer = wie oben)</span>${rtField(`items.${i}.lvb`, it.lvb || '', { mode: 'inline', rows: 2, ph: 'z. B. kleinschrittiger, mit Hilfen', aria: 'Basis-Fassung' })}</div>
     <div class="f tx-f"><span>★★★ Experten-Fassung (leer = wie oben)</span>${rtField(`items.${i}.lve`, it.lve || '', { mode: 'inline', rows: 2, ph: 'z. B. offener, mit Zusatzaspekt', aria: 'Experten-Fassung' })}</div>`;
+  if (open('rlp')) h += rlpPanel(b, i, it);
   if (open('tag')) h += `<label class="f tx-f"><span>Etikett</span><input type="text" data-k="items.${i}.tag" value="${esc(it.tag || '')}" placeholder="z. B. Zusatz, Wahlaufgabe"></label>`;
   return h;
 }
@@ -2698,11 +2997,14 @@ function ehMarkdown() {
       L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', (plainMd(it.text) || '–').split('\n').map(l => '> ' + l).join('\n'), '');
       const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
+      const rl = rlpOf(it); if (rl.length) L.push('**Standards**', '', ...rl.map(id => { const x = rlpInfo(id); return `- ${x.own ? '' : x.code + ': '}${x.t}`; }), '');
       const eh = ehLines(it);
       L.push('**Erwartung**', '', ...(eh.length ? eh.map(s => `- ${plainMd(s)}`) : ['- (noch offen)']));
       const tips = tipsOf(it); if (tips.length) L.push('', '**Gestufte Hilfen**', '', ...tips.map((s, j) => `${j + 1}. ${plainMd(s)}`));
     });
   });
+  const C = rlpCoverage([sh]); const ids = Object.keys(C.cov).sort(rlpCmp);
+  if (ids.length) { L.push('', '## Bezug zum Rahmenlehrplan', '', `${C.nTagged} von ${C.nTasks} Aufgaben sind Standards zugeordnet.`, ''); ids.forEach(id => { const x = rlpInfo(id); L.push(`- ${x.own ? '(eigen) ' : '**' + x.code + '** '}${x.t} · Aufgabe ${C.cov[id].by[0].t.join(', ')}`); }); }
   return L.join('\n') + '\n';
 }
 async function exportEH() { await deliver(fileBase() + '_Erwartungshorizont.md', new Blob([ehMarkdown()], { type: 'text/markdown' })); }
@@ -4180,6 +4482,7 @@ function metaCard() {
         <div class="row">${fText('exam.datum', 'Datum', ex.datum, 'leer = zum Ausfüllen')}${fText('exam.zeit', 'Bearbeitungszeit', ex.zeit, 'z. B. 135 Minuten')}</div>
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
+      ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
       <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
         ${more ? `<div class="sub-b">
       <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
@@ -4280,6 +4583,7 @@ function snapshot() { undoSnap = clone(state.sheet); }
 
 function onInput(e) {
   const t = e.target; const isRt = !!(t.classList && t.classList.contains('rtx'));
+  if (t.dataset && t.dataset.rlpq != null) { state.rlpQ = t.value; rlpFilter(t.closest('.rlp-f')); return; }
   if (isRt && rtAuto(e, t)) return;
   const k = t.dataset.k; if (!k) return;
   if (t.type === 'checkbox' || t.tagName === 'SELECT' || t.type === 'file') return;
@@ -4388,6 +4692,21 @@ function onClick(e) {
     case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); if (Array.isArray(b.eh)) b.eh.length = Math.min(b.eh.length, b.rows.length); changed(true); } return;
     case 'col-add': if (b.cols.length < 6) { const n = b.cols.length; if (Array.isArray(b.cw) && b.cw.length === n) b.cw = [...tbWidths(b).map(x => x * n / (n + 1)), 100 / (n + 1)].map(x => Math.round(x * 10) / 10); if (Array.isArray(b.ck)) b.ck.push(false); b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
     case 'cw-reset': delete b.cw; changed(true); return;
+    case 'rlp-tog': { const i = +a.dataset.i; const it = b && b.items[i]; if (!it) return; const v = a.dataset.v; const cur = rlpOf(it);
+      it.rlp = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v].sort(rlpCmp); if (!it.rlp.length) delete it.rlp;
+      rlpKeep(bid, i, () => changed(true)); return; }
+    case 'rlp-ph': { const i = +a.dataset.i; rlpPhaseSet(state.sheet.klasse, a.dataset.v); rlpKeep(bid, i, () => renderEditor()); const n = $(`#editor [data-bid="${bid}"] .rlp-list[data-i="${i}"]`); if (n) n.scrollTop = 0; return; }
+    case 'rlp-own-add': { const i = +a.dataset.i; const it = b && b.items[i]; const inp = a.parentNode.querySelector('[data-rlpnew]');
+      const ls = [...new Set(String(inp ? inp.value : '').split('\n').map(rlpClean).filter(Boolean))]; if (!ls.length) { if (inp) inp.focus(); return; }
+      const fach = fachKey(state.sheet.klasse); if (!state.prefs.rlpOwn) state.prefs.rlpOwn = {}; const L = state.prefs.rlpOwn[fach] || (state.prefs.rlpOwn[fach] = []);
+      ls.forEach(t => { if (!L.includes(t)) L.push(t); }); savePrefs();
+      if (ls.length === 1 && it) { const id = '~' + ls[0]; const cur = rlpOf(it); if (!cur.includes(id)) it.rlp = [...cur, id]; }
+      state.rlpQ = ''; rlpKeep(bid, i, () => changed(true), true);
+      toast(ls.length === 1 ? 'Eigener Standard angelegt und zugeordnet' : `${ls.length} eigene Standards in Ihre Liste übernommen`); return; }
+    case 'rlp-own-del': { const i = +a.dataset.i; const fach = fachKey(state.sheet.klasse); const L = rlpOwnList(fach); const t = a.dataset.v; const j = L.indexOf(t); if (j < 0) return;
+      L.splice(j, 1); savePrefs(); rlpKeep(bid, i, () => renderEditor());
+      toast('Aus Ihrer Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
+    case 'rlp-sheet': openRlpDlg('sheet'); return;
     case 'it-lv': { const it = b.items[+a.dataset.i]; if (!it) return; const k = a.dataset.v; const cur = Array.isArray(it.lv) ? it.lv : Object.keys(LV); const nx = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; if (!nx.length) { toast('Eine Aufgabe braucht mindestens eine Stufe.'); return; } if (nx.length === 3) delete it.lv; else it.lv = Object.keys(LV).filter(x => nx.includes(x)); changed(true); return; }
     case 'mt-mode': { const du = state.sheet.meta.anrede === 'du'; const D = { linien: du ? 'Verbinde, was zusammengehört.' : 'Verbinden Sie, was zusammengehört.', buchstaben: du ? 'Ordne zu: Trage den passenden Buchstaben in das Kästchen ein.' : 'Ordnen Sie zu: Tragen Sie den passenden Buchstaben in das Kästchen ein.' };
       if (!String(b.title || '').trim() || Object.values(D).includes(b.title)) b.title = D[a.dataset.v] || b.title; b.mode = a.dataset.v; changed(true); return; }
@@ -4437,7 +4756,7 @@ function onClick(e) {
     case 'tx': {
       const i = +a.dataset.i, w = a.dataset.w, key = taskKey(bid, i, w);
       if (state.taskOpen.has(key)) state.taskOpen.delete(key);
-      else { state.taskOpen.add(key); const it = b.items[i]; if (w === 'tips' && !Array.isArray(it.tips)) it.tips = tipsOf(it).concat(['', '', '']).slice(0, 3); }
+      else { state.taskOpen.add(key); const it = b.items[i]; if (w === 'rlp') state.rlpQ = ''; if (w === 'tips' && !Array.isArray(it.tips)) it.tips = tipsOf(it).concat(['', '', '']).slice(0, 3); }
       renderEditor();
       if (state.taskOpen.has(key)) { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${i}.${w === 'tips' ? 'tips.0' : w}"]`); if (f) f.focus({ preventScroll: true }); }
       return;
@@ -4926,7 +5245,8 @@ function normPrefs(p) {
   const folders = (Array.isArray(p.folders) ? p.folders : []).filter(f => f && typeof f.id === 'string' && String(f.name || '').trim())
     .map(f => ({ id: f.id, klasse: KL(f.klasse).id, name: String(f.name).trim().slice(0, 60) }));
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, ...(klassen ? { klassen } : {}) };
+  const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
 const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
@@ -4997,7 +5317,7 @@ function libListHTML(k, q) {
       <div class="lib-f" data-fid="${esc(f.id)}" draggable="${edit ? 'false' : 'true'}">${edit
         ? `<input class="inp lib-fren" type="text" value="${esc(f.name)}" maxlength="60" aria-label="Name des Ordners"><button class="btn primary" type="button" data-act="lib-fren-ok">OK</button>`
         : `<button type="button" class="lib-fh" data-act="lib-ftoggle" aria-expanded="${open}" title="${open ? 'Zuklappen' : 'Aufklappen'}">${CHEV_SVG}${FOLDER_SVG}<span class="fn">${esc(f.name)}</span><span class="fc">${total}</span></button><button type="button" class="ib" data-act="lib-fmenu" title="Ordner bearbeiten" aria-expanded="${state.fMenu === f.id}">${I.more}</button>`}</div>
-      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
+      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-frlp">Standards der Reihe</button><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
       ${state.fDel === f.id ? `<div class="lib-fmenu warnrow"><span>Ordner „${esc(f.name)}“ löschen?${total === 1 ? ' Das Blatt darin bleibt erhalten und liegt danach ohne Ordner.' : total ? ` Die ${total} Blätter darin bleiben erhalten und liegen danach ohne Ordner.` : ''}</span><button class="link danger" type="button" data-act="lib-fdel-yes">Löschen</button><button class="link" type="button" data-act="lib-fdel-no">Abbrechen</button></div>` : ''}
       ${open ? `<div class="lib-fb" data-fid="${esc(f.id)}">${its.length ? its.map(item).join('') : `<div class="lib-fe">Leer · Blätter hierher ziehen oder bei einem Blatt „Ordner“ wählen</div>`}</div>` : ''}
     </section>`;
@@ -5077,7 +5397,7 @@ function renderLib() {
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>
-    <div class="drawer-foot"><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
+    <div class="drawer-foot"><button class="link" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
   const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   else if (state.fNew) { const i = $('#lib-fnew'); if (i) i.focus(); }
@@ -5095,6 +5415,8 @@ async function onLibClick(e) {
     case 'lib-ftoggle': if (fClosed.has(fid)) fClosed.delete(fid); else fClosed.add(fid); saveFClosed(); renderLib(); break;
     case 'lib-fmenu': state.fMenu = state.fMenu === fid ? null : fid; state.fDel = null; renderLib(); break;
     case 'lib-fren': state.fEdit = fid; state.fMenu = null; renderLib(); break;
+    case 'lib-frlp': state.fMenu = null; renderLib(); openRlpDlg('folder', fid); break;
+    case 'lib-krlp': openRlpDlg('klasse'); break;
     case 'lib-fren-ok': { const i = a.parentNode.querySelector('.lib-fren'); const f = state.prefs.folders.find(x => x.id === fid); const v = i ? i.value.trim().slice(0, 60) : ''; if (f && v) { f.name = v; savePrefs(); } state.fEdit = null; renderLib(); break; }
     case 'lib-fup': stepFolder(fid, -1); break;
     case 'lib-fdown': stepFolder(fid, 1); break;
@@ -5220,11 +5542,13 @@ const HELP = [
   ['Aufgaben', [
     ['Operatoren', 'werden erkannt und fett gesetzt; dazu der Anforderungsbereich.'],
     ['Erwartung', 'steht nur in der Lehrerfassung und im Erwartungshorizont (.md).'],
-    ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten.']]],
+    ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten.'],
+    ['Standards', 'unter jeder Aufgabe: Standards aus dem Rahmenlehrplan (Deutsch, gymnasiale Oberstufe) oder eigene zuordnen. Sie stehen in der Lehrerfassung und im Erwartungshorizont.']]],
   ['Meine Blätter', [
     ['Ordner', 'Blätter auf einen Ordner ziehen; ohne Maus bei einem Blatt „Ordner“ wählen.'],
     ['Sortierung', 'zuletzt geändert, nach Nummer, nach Titel oder eigene Reihenfolge (zwischen zwei Blätter ziehen).'],
     ['Suche', 'findet auch Wörter aus Materialtiteln, Aufgaben und Infokästen.'],
+    ['Standards der Reihe', '⋯ am Ordner zeigt, welche Standards die Blätter darin abdecken und wo Lücken sind. „Standards der Klasse“ unten fasst alle Blätter einer Klasse zusammen.'],
     ['Sicherung', '„Alle Blätter sichern“ lädt alles als Datei herunter, „Sicherung oder Datei laden“ spielt sie wieder ein.']]],
   ['Tastenkürzel', [
     ['Strg+Z · Strg+Y', 'Rückgängig · Wiederholen (außerhalb von Textfeldern für das ganze Blatt)'],
@@ -5232,6 +5556,72 @@ const HELP = [
     ['Esc', 'schließt Fenster, Menüs und „Meine Blätter“'],
     ['In der Windows-App', 'Strg+N Neues Blatt · Strg+E Ausgeben · Strg+P Drucken · Strg+O Meine Blätter']]]
 ];
+/* ================= Standards: Übersicht für Blatt, Reihe (Ordner) oder Klasse ================= */
+const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.nr : (m.title || 'Ohne Titel'); };
+function rlpCoverage(sheets) {
+  const cov = {}; let nTasks = 0, nTagged = 0;
+  sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (b.restart) t = 0; (b.items || []).forEach(it => {
+    t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
+    ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!e.t.includes(t)) e.t.push(t); });
+  }); }); });
+  return { cov, nTasks, nTagged };
+}
+async function openRlpDlg(scope, fid) {
+  let kl = KL(state.sheet.klasse).id, title = '', list = [];
+  const order = libSort() === 'neu' ? 'nr' : libSort();
+  if (scope === 'folder') { const f = state.prefs.folders.find(x => x.id === fid); if (!f) return; kl = f.klasse; title = f.name; list = sortLibList(state.lib.filter(x => x.klasse === kl && folderOf(x.id, kl) === fid), fid, kl, order); }
+  if (scope === 'klasse') { kl = KL(state.klasse).id; title = KL(kl).label; list = sortLibList(state.lib.filter(x => x.klasse === kl), '', kl, order === 'eigen' ? 'nr' : order); }
+  const ph = rlpPhase(kl);
+  const d = { mode: 'rlp', scope, fid, kl, title, sheets: scope === 'sheet' ? [state.sheet] : null, show: 'cov', ph: ph === 'own' ? 'q' : ph, prog: '' };
+  state.dlg = d; renderDlg(); if (scope === 'sheet') return;
+  const cur = state.sheet;
+  if (cur && KL(cur.klasse).id === kl && (scope === 'klasse' || folderOf(cur.id, kl) === fid) && !list.some(x => x.id === cur.id)) list = [{ id: cur.id }, ...list];
+  const out = new Array(list.length).fill(null); let done = 0, next = 0;
+  const work = async () => { while (next < list.length) { const j = next++; const e = list[j];
+    if (e.id === cur.id) out[j] = cur; else { try { const sh = backend ? await backend.load(e.id) : null; if (sh) out[j] = normalizeSheet(sh); } catch {} }
+    done++; if (state.dlg === d && !d.sheets) { d.prog = `${done} von ${list.length}`; const pr = $('#rlp-prog'); if (pr) pr.textContent = d.prog; } } };
+  await Promise.all([0, 1, 2, 3].map(work));
+  if (state.dlg !== d) return; d.sheets = out.filter(Boolean); renderDlg();
+}
+function rlpDlgGroups(d) {
+  const fach = fachKey(d.kl), cat = RLP_BY[fach], C = rlpCoverage(d.sheets), ids = Object.keys(C.cov), M = rlpMap(); const G = [];
+  if (cat && d.show === 'all') cat[d.ph].groups.forEach(g => G.push({ h: `${g.code} · ${g.name}`, rows: g.items.map((_, j) => `${d.ph}:${g.k}${j + 1}`) }));
+  else if (cat) Object.entries(cat).forEach(([ph, P]) => P.groups.forEach(g => { const rows = g.items.map((_, j) => `${ph}:${g.k}${j + 1}`).filter(id => C.cov[id]); if (rows.length) G.push({ h: (ph === 'e' ? P.name + ' · ' : '') + `${g.code} · ${g.name}`, rows }); }));
+  const own = [...new Set([...ids.filter(id => id[0] === '~').sort(rlpCmp), ...(d.show === 'all' ? rlpOwnList(fach).map(t => '~' + t) : [])])];
+  if (own.length) G.push({ h: 'Eigene Standards', rows: own });
+  const unk = ids.filter(id => id[0] !== '~' && !M[id]); if (unk.length) G.push({ h: 'Nicht im Katalog', rows: unk });
+  const total = cat && d.show === 'all' ? cat[d.ph].groups.reduce((a, g) => a + g.items.length, 0) : 0;
+  const nPh = total ? ids.filter(id => id.startsWith(d.ph + ':')).length : 0;
+  return { fach, cat, C, ids, G, total, nPh };
+}
+function rlpDlgHead(d) { return d.scope === 'sheet' ? 'Standards auf diesem Blatt' : d.scope === 'folder' ? `Standards der Reihe „${d.title}“` : `Standards in ${d.title}`; }
+function rlpDlgHTML() {
+  const d = state.dlg; const head = esc(rlpDlgHead(d));
+  if (!d.sheets) return `<h2 id="dlg-t">${head}</h2><p class="rlp-stat">Die Blätter werden geladen … <span id="rlp-prog">${esc(d.prog)}</span></p><div class="row"><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+  const { fach, cat, C, ids, G, total, nPh } = rlpDlgGroups(d); const multi = d.scope !== 'sheet';
+  const by = c => c.by.map(e => multi ? `<button type="button" class="chip" data-act="rlp-go" data-id="${esc(e.sh.id)}" title="Blatt öffnen">${esc(rlpSheetLabel(e.sh))} · A ${e.t.join(', ')}</button>` : `<span>Aufgabe ${e.t.join(', ')}</span>`).join('');
+  const row = id => { const x = rlpInfo(id), c = C.cov[id]; return `<div class="rlp-orow${c ? '' : ' off'}"><code>${esc(x.own ? 'eigen' : x.code)}</code><div><div>${esc(x.t)}${x.lk ? ' <em class="lk" title="nur Leistungskurs">LK</em>' : ''}</div>${c ? `<div class="by">${by(c)}</div>` : ''}</div><b>${c ? c.n + '×' : '–'}</b></div>`; };
+  const stat = [multi ? `${d.sheets.length} ${d.sheets.length === 1 ? 'Blatt' : 'Blätter'}` : '', `${C.nTagged} von ${C.nTasks} Aufgaben zugeordnet`, total ? `${nPh} von ${total} Standards der ${RLP_DE[d.ph].name} abgedeckt` : `${ids.length} ${ids.length === 1 ? 'Standard' : 'Standards'} abgedeckt`].filter(Boolean).join(' · ');
+  const body = G.length ? G.map(g => `<div class="rlp-gh">${esc(g.h)}</div>${g.rows.map(row).join('')}`).join('')
+    : `<div class="rlp-none">${!C.nTasks ? 'Hier gibt es noch keine Aufgaben.' : 'Noch keine Aufgabe hat einen Standard. Öffnen Sie dazu unter einer Aufgabe „Standards“.'}</div>`;
+  return `<h2 id="dlg-t">${head}</h2><p class="rlp-stat">${esc(stat)}</p>${total ? `<div class="rlp-bar" title="${Math.round(nPh / total * 100)} %"><i style="width:${Math.round(nPh / total * 100)}%"></i></div>` : ''}
+    <div class="row rlp-dtools"><div class="seg sm" role="group" aria-label="Anzeige"><button type="button" data-act="rlp-show" data-v="cov" aria-pressed="${d.show !== 'all'}">Abgedeckt</button><button type="button" data-act="rlp-show" data-v="all" aria-pressed="${d.show === 'all'}">${cat ? 'Alle, mit Lücken' : 'Alle eigenen'}</button></div>${cat && d.show === 'all' ? `<div class="seg sm" role="group" aria-label="Phase">${RLP_PH.filter(([v]) => v !== 'own').map(([v, t]) => `<button type="button" data-act="rlp-dph" data-v="${v}" aria-pressed="${d.ph === v}">${t}</button>`).join('')}</div>` : ''}</div>
+    <div class="rlp-ov">${body}</div>
+    ${cat ? '' : `<p class="hint">Für ${esc(FAECHER[fach].label)} ist kein Rahmenlehrplan hinterlegt. Eigene Standards legen Sie bei einer Aufgabe unter „Standards“ an.</p>`}
+    <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="btn" type="button" data-act="rlp-copy">Als Text kopieren</button></div>`;
+}
+function rlpDlgText(d) {
+  const { C, G, total, nPh } = rlpDlgGroups(d); const multi = d.scope !== 'sheet'; const L = [];
+  L.push(`${rlpDlgHead(d)}${d.scope === 'sheet' ? ': ' + (state.sheet.meta.title || 'Ohne Titel') : ''} (Stand ${new Date().toLocaleDateString('de-DE')})`);
+  L.push([multi ? `${d.sheets.length} Blätter` : '', `${C.nTagged} von ${C.nTasks} Aufgaben zugeordnet`, total ? `${nPh} von ${total} Standards abgedeckt` : ''].filter(Boolean).join(' · '));
+  G.forEach(g => { L.push('', g.h); g.rows.forEach(id => { const x = rlpInfo(id), c = C.cov[id]; L.push(`  ${x.own ? 'eigen' : x.code}  ${x.t}${c ? '' : '  (noch nicht abgedeckt)'}`); if (c) L.push('      ' + c.by.map(e => (multi ? rlpSheetLabel(e.sh) + ': ' : '') + 'Aufgabe ' + e.t.join(', ')).join(' · ')); }); });
+  return L.join('\n') + '\n';
+}
+function rlpCopy() {
+  const txt = rlpDlgText(state.dlg); const ok = () => toast('Übersicht kopiert');
+  const fb = () => { const ta = document.createElement('textarea'); ta.value = txt; ta.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(ta); ta.select(); let r = false; try { r = document.execCommand('copy'); } catch {} ta.remove(); if (r) ok(); else toast('Kopieren war nicht möglich.'); };
+  try { navigator.clipboard.writeText(txt).then(ok, fb); } catch { fb(); }
+}
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
     <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
@@ -5407,7 +5797,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -5423,6 +5813,7 @@ function renderDlg() {
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`;
   if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
   if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
+  if (d.mode === 'rlp') { r.querySelector('.dlg').classList.add('dlg-rlp'); const g = r.querySelector('[data-act="dlg-close"]'); if (g) g.focus({ preventScroll: true }); return; }
   if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
   if (d.mode === 'klassen') { r.querySelector('.dlg').classList.add('dlg-kl'); if (d.setup) r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.setup ? '#kl-school' : '[data-kf="label"]'); if (f && d.setup) f.focus(); return; }
   if (d.mode === 'new') { r.querySelector('.dlg').classList.add('dlg-new'); const f = r.querySelector('#nw-title'); if (f && !d.focused) { d.focused = true; f.focus(); } return; }
@@ -5475,6 +5866,13 @@ async function onDlgClick(e) {
     if (act === 'nw-go') { newGo(); return; }
   }
   if (act === 'tips-again') { closeDlg(); showTip(0); return; }
+  if (state.dlg.mode === 'rlp') {
+    const d = state.dlg;
+    if (act === 'rlp-show') { d.show = a.dataset.v; renderDlg(); return; }
+    if (act === 'rlp-dph') { d.ph = a.dataset.v; renderDlg(); return; }
+    if (act === 'rlp-copy') { rlpCopy(); return; }
+    if (act === 'rlp-go') { const id = a.dataset.id; closeDlg(); if (state.libOpen) { state.libOpen = false; renderLib(); } if (id !== state.sheet.id) await openById(id); return; }
+  }
   if (state.dlg.mode === 'out') {
     if (act === 'out-set') {
       const f = a.dataset.f, v = a.dataset.v; const o = outState();
@@ -5818,9 +6216,10 @@ async function exportDOCX() {
               + xtc((() => { const tt = taskText(it, m); const tagR = it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; const tp = lvTipOf(it, v, m); const tipP = tp ? xp(xr('Tipp: ', { b: 1, sz: 17, color: A }) + xrInline(tp, { sz: 17, color: GREY }), { before: 40 }) : ''; return (/\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 }))) + tipP; })(), { w: tW })
               + (afbW ? xtc(rt.map(([t, bold]) => xp(xr(t, { sz: bold ? 18 : 15, b: bold, color: bold ? '1C1F27' : GREY }), { jc: 'right' })).join('') || xp(''), { w: afbW }) : '');
             let row = xtr(cells, { cant: 1 });
-            const eh = v.lehrer ? ehLines(it) : [];
-            if (eh.length) {
-              const ehCell = xp(xr('ERWARTUNG', { b: 1, sz: 13, color: '6A707C', sp: 10 })) + eh.map(q => xp(xr('– ', { sz: 19 }) + xrInline(q, { sz: 19 }), { ind: `<w:ind w:left="${TW(3)}" w:hanging="${TW(3)}"/>` })).join('');
+            const eh = v.lehrer ? ehLines(it) : []; const rl = v.lehrer ? rlpOf(it) : [];
+            if (eh.length || rl.length) {
+              const ehCell = (eh.length ? xp(xr('ERWARTUNG', { b: 1, sz: 13, color: '6A707C', sp: 10 })) + eh.map(q => xp(xr('– ', { sz: 19 }) + xrInline(q, { sz: 19 }), { ind: `<w:ind w:left="${TW(3)}" w:hanging="${TW(3)}"/>` })).join('') : '')
+                + (rl.length ? xp(xr('STANDARDS', { b: 1, sz: 13, color: '6A707C', sp: 10 }), { before: eh.length ? 80 : 0 }) + rl.map(id => { const x = rlpInfo(id); return xp((x.own ? '' : xr(x.code + '  ', { b: 1, sz: 16 })) + xr(rlpShort(x.t, 120), { sz: 16, color: '3A3F4A' })); }).join('') : '');
               row += xtr(xtc('', { w: nW }) + (sW ? xtc('', { w: sW }) : '') + xtc(ehCell, { w: tW + afbW, span: afbW ? 2 : 0, shd: 'F1F2F4', mar: `<w:top w:w="${TW(1.2)}" w:type="dxa"/><w:left w:w="${TW(2.4)}" w:type="dxa"/><w:bottom w:w="${TW(1.4)}" w:type="dxa"/><w:right w:w="${TW(2.4)}" w:type="dxa"/>` }), { cant: 1 });
             }
             return row;
@@ -6044,6 +6443,8 @@ function boot() {
   const cwEnd = () => { if (!cwDrag) return; cwDrag.h.classList.remove('drag'); document.body.classList.remove('cw-dragging'); cwDrag = null; };
   edEl.addEventListener('pointerup', cwEnd); edEl.addEventListener('pointercancel', cwEnd); edEl.addEventListener('lostpointercapture', cwEnd);
   edEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey && e.target.dataset && e.target.dataset.rlpnew != null) { e.preventDefault(); const bt = e.target.parentNode.querySelector('[data-act="rlp-own-add"]'); if (bt) bt.click(); return; }
+    if (e.key === 'Enter' && e.target.dataset && e.target.dataset.rlpq != null) { e.preventDefault(); return; }
     const h = e.target.closest && e.target.closest('.cw-h'); if (!h || !['ArrowLeft', 'ArrowRight', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
     const card = h.closest('[data-bid]'); const b = card && target(card.dataset.bid); if (!b) return; e.preventDefault();
     const i = +h.dataset.i; const w = tbWidths(b); const cum = w.slice(0, i + 1).reduce((a, x) => a + x, 0);
