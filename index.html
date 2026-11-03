@@ -771,6 +771,15 @@ body{transition:background-color .3s,border-color .25s}
 #preview .page .mat-body .w:hover{background:var(--acc-tint)}
 #preview .page .mat-body .w.glw{text-decoration-line:underline;text-decoration-style:dotted;text-decoration-color:var(--acc);text-decoration-thickness:.35mm;text-underline-offset:.9mm}
 .mat-tail{padding:2mm 0 0 10mm}
+.gapb{display:inline-block;width:22mm;height:1em;border-bottom:.3mm solid var(--paper-ink);vertical-align:-.18em}
+.gapl{color:var(--acc);text-decoration:underline;text-decoration-thickness:.3mm;text-underline-offset:.8mm;font-weight:600}
+.gap-bank{display:flex;gap:2.5mm;align-items:baseline;flex-wrap:wrap;border:.3mm solid var(--paper-rule);border-radius:1.2mm;padding:1.6mm 2.6mm;margin:0 0 2mm;font-size:9.5pt;max-width:150mm}
+.gap-bank b{font-size:7.5pt;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.gap-bank span{display:flex;flex-wrap:wrap;gap:1mm 2.4mm}
+.gap-bank i{font-style:normal;color:var(--paper-hair)}
+#preview .page .gap-edit .w{cursor:cell}
+#preview .page .gap-edit .w:hover{background:var(--acc-tint);outline:.3mm dashed var(--acc)}
+#preview .page .gap-edit .gapw .gapl{background:var(--acc-tint)}
 .notes{border-top:.2mm solid var(--paper-hair);padding-top:1mm;font-size:8pt;line-height:1.4;max-width:120mm}
 .notes div{padding-left:3mm;text-indent:-3mm}
 .src{font-size:7.5pt;color:var(--paper-muted);margin-top:1.2mm;line-height:1.35}
@@ -1655,7 +1664,12 @@ const EMO_TEST = new RegExp(EMO_SRC, 'u'); const EMO_SPLIT = new RegExp('(' + EM
 const emojiAlt = img => { const a = String(img.getAttribute('alt') || '').trim(); return a && a.length <= 24 && /\p{Extended_Pictographic}|\p{Regional_Indicator}/u.test(a) ? a : ''; };
 const GM_RE = /(\d+)/g;
 // Setzt unsichtbare Marken hinter die erklärten Wörter und nummeriert in Textreihenfolge
-function glossMarks(b) {
+function gapList(b) {
+  const text = String(b.text || ''); const out = [];
+  (b.gaps || []).forEach(g => { const o = occurrences(text, g.term)[g.n || 0]; if (o && !out.some(x => x.start < o.end && o.start < x.end)) out.push({ g, start: o.start, end: o.end, w: text.slice(o.start, o.end) }); });
+  return out.sort((a, c) => a.start - c.start);
+}
+function glossMarks(b, opt) {
   const text = String(b.text || ''); const list = []; const missing = [];
   (b.glossary || []).forEach(g => {
     const o = occurrences(text, g.term)[g.n || 0];
@@ -1665,19 +1679,29 @@ function glossMarks(b) {
   list.sort((a, c) => a.start - c.start || a.end - c.end);
   list.forEach((x, i) => { x.no = i + 1; });
   let out = text;
-  [...list].sort((a, c) => c.end - a.end || c.no - a.no).forEach(x => { out = out.slice(0, x.end) + '' + x.no + '' + out.slice(x.end); });
+  const ins = list.map(x => ({ pos: x.end, s: '' + x.no + '', pri: 0 }));
+  if (opt && opt.gaps) gapList(b).forEach(x => { ins.push({ pos: x.end, s: '', pri: 1 }, { pos: x.start, s: '', pri: 2 }); });
+  ins.sort((a, c) => c.pos - a.pos || a.pri - c.pri).forEach(x => { out = out.slice(0, x.pos) + x.s + out.slice(x.pos); });
   return { text: out, list, missing };
 }
 // Wörter für das Setzen: HTML mit Fußnotenzahl + reiner Text (für die Klick-Zuordnung)
-function toWordsM(text) {
-  const words = []; let h = '', t = '', gl = false;
-  const push = () => { if (h) words.push({ h, t, gl }); h = ''; t = ''; gl = false; };
+function toWordsM(text, gapShow, gapW) {
+  const words = []; let h = '', t = '', gl = false, gp = false;
+  const push = () => { if (h) words.push({ h, t, gl, gp }); h = ''; t = ''; gl = false; gp = false; };
   for (const k of inlineTokens(text)) {
     if (k.sup || k.gap) { h += tokHTML(k); continue; }
     for (const p of k.t.split(/(\s+)/)) {
       if (!p) continue;
       if (/^\s+$/.test(p)) { push(); continue; }
       if (/\d+/.test(p)) gl = true;
+      if (//.test(p) || //.test(p)) {
+        gp = true;
+        p.split(/([^]*)/).forEach(q => { if (!q) return;
+          const m = q.match(/^([^]*)$/);
+          if (m) { h += gapShow ? `<span class="gapl">${tokHTML({ ...k, t: m[1] })}</span>` : `<span class="gapb"${gapW === 'wort' ? ` style="width:${Math.max(10, m[1].length * 2.6).toFixed(1)}mm"` : ''}></span>`; t += m[1]; }
+          else { const qq = q.replace(/[]/g, ''); h += tokHTML({ ...k, t: qq }).replace(GM_RE, '<sup class="gl">$1</sup>'); t += qq.replace(GM_RE, ''); } });
+        continue;
+      }
       h += tokHTML({ ...k, t: p }).replace(GM_RE, '<sup class="gl">$1</sup>');
       t += p.replace(GM_RE, '');
     }
@@ -1745,6 +1769,18 @@ function glossFromTextarea(card, b, anchor) {
   openGloss({ bid: b.id, free: true, term: '', n: 0, count: 0, idx: -1, rect });
 }
 // Aus einem Klick (ein Wort) oder einer Markierung (mehrere Wörter) in der Vorschau
+function gapToggle(bid, w) {
+  const b = target(bid); if (!b || b.type !== 'material') return;
+  const spans = [...document.querySelectorAll(`#pages [data-bid="${bid}"] .mat-body .w`)];
+  const words = spans.map(s => s.dataset.t || ''); const offs = []; let off = 0; words.forEach(x => { offs.push(off); off += x.length + 1; });
+  const plain = words.join(' '); const i0 = spans.indexOf(w); if (i0 < 0) return;
+  let s = offs[i0], e = s + words[i0].length; while (s < e && !isWordChar(plain[s])) s++; while (e > s && !isWordChar(plain[e - 1])) e--; if (e <= s) return;
+  const term = normTerm(plain.slice(s, e)); const occ = occurrences(plain, term); let n = occ.findIndex(o => o.start === s); if (n < 0) n = occ.filter(o => o.start < s).length;
+  if (!occurrences(b.text, term)[n]) { toast('Dieses Wort lässt sich hier nicht als Lücke setzen.'); return; }
+  const gs = Array.isArray(b.gaps) ? b.gaps : (b.gaps = []); const j = gs.findIndex(g => normTerm(g.term) === term && (g.n || 0) === n);
+  if (j >= 0) gs.splice(j, 1); else gs.push({ term, n }); if (!gs.length) delete b.gaps;
+  changed(true);
+}
 function glossFromSpans(bid, picked, rect) {
   const b = target(bid); if (!b || b.type !== 'material' || !String(b.text || '').trim()) return;
   if (picked.length === 1) {
@@ -1887,6 +1923,22 @@ function rtSelectPlain(el, str) {
   const [sn, so] = at(k), [en, eo] = at(Math.min(all.length, k + str.length));
   const rg = document.createRange(); rg.setStart(sn, so); rg.setEnd(en, eo); const s = getSelection(); s.removeAllRanges(); s.addRange(rg);
   (sn.parentElement || el).scrollIntoView({ block: 'center', behavior: 'smooth' }); return true;
+}
+function gapEditor(b) {
+  if (b.form === 'gedicht' && !(b.gaps || []).length) { /* Gedichte gehen auch */ }
+  const key = 'gap:' + b.id; const open = state.fmtOpen.has(key) || state.gapEdit === b.id; const gs = gapList(b); const on = state.gapEdit === b.id;
+  const sumT = gs.length ? `${gs.length} ${gs.length === 1 ? 'Lücke' : 'Lücken'}${b.gapBank !== false ? ' · Wortspeicher' : ''}` : 'aus';
+  return `<div class="sub${open ? ' open' : ''}">
+    <button type="button" class="sub-h" data-act="sub-toggle" data-key="${key}" aria-expanded="${open}"><span class="sub-t">Lückentext</span><span class="sub-s">${esc(sumT)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
+    ${open ? `<div class="sub-b">
+      <button type="button" class="btn${on ? ' primary' : ''}" data-act="gap-edit" aria-pressed="${on}">${on ? 'Fertig mit Lücken setzen' : 'Lücken setzen'}</button>
+      <small class="hint">${on ? 'Jetzt Wörter in der Vorschau anklicken: Das Wort wird zur Lücke. Noch einmal anklicken nimmt die Lücke zurück. Worterklärungen sind solange aus.' : 'Wörter in der Vorschau anklicken, um sie zu Lücken zu machen. In der Lehrerfassung stehen die Wörter in den Lücken.'}</small>
+      ${gs.length ? `<div class="rd-sugg">${gs.map((x, i) => `<button type="button" class="ck-chip" data-act="gap-del" data-i="${b.gaps.indexOf(x.g)}" title="Lücke entfernen">${esc(normTerm(x.w))} ×</button>`).join('')}</div>` : ''}
+      <div class="row" style="gap:8px 18px"><div class="f"><span>Lückenbreite</span><div class="seg sm" role="group" aria-label="Lückenbreite">${[['', 'alle gleich lang'], ['wort', 'wie das Wort']].map(([v, l]) => `<button type="button" data-act="gap-w" data-v="${v}" aria-pressed="${(b.gapW || '') === v}">${l}</button>`).join('')}</div></div></div>
+      <div class="chks">${fCheck('gapBank', 'Wortspeicher unter dem Text', b.gapBank !== false)}</div>
+      ${gs.length ? '<button class="link danger" type="button" data-act="gap-clear">Alle Lücken entfernen</button>' : ''}
+    </div>` : ''}
+  </div>`;
 }
 function fmtEditor(b) {
   const f = matFmt(b); const open = state.fmtOpen.has(b.id);
@@ -2604,6 +2656,7 @@ function ehMarkdown() {
         L.push(`- **${ci === 0 ? `Zeile ${ri + 1}` : row}** · ${col}: ${eh.map(plainMd).join('; ')}`); }));
       return;
     }
+    if (b.type === 'material' && gapList(b).length) { L.push('', `### Lückentext${b.title ? ': ' + plainMd(b.title) : ''}`, '', gapList(b).map((x, i) => `${i + 1}. ${plainMd(x.w)}`).join(' · ')); }
     if (b.type === 'match') { const M = mtLayout(b); const ok = M.sol.filter(x => x.rk >= 0); if (ok.length) { L.push('', `### Zuordnen${b.title ? ': ' + plainMd(b.title) : ''}`, ''); ok.forEach(x => L.push(`- ${b.mode === 'buchstaben' ? x.L + ' – ' + x.R + ': ' : ''}${plainMd(M.left[x.li].a)} → ${plainMd(M.right[x.rk].b)}`)); } return; }
     if (b.type !== 'tasks') return; if (b.restart) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
     itemsFor(b, vEH).forEach(it => {
@@ -3247,14 +3300,16 @@ function buildBlock(b, ctx) {
     }
     case 'material': {
       const no = ++ctx.m; const step = Number(meta.lineStep) || 5; const matLab = (designOf(meta) === 'akte' ? 'Anlage ' : '') + ((ctx.mt && ctx.mt[b.id]) || 'M' + no);
-      const gm = glossMarks(b); const fm = matFmt(b); const notes = gm.list;
-      const tailFor = (list, src) => (list.length || src) ? `<div class="mat-tail">${list.length ? `<div class="notes">${list.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${src ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
-      const tail = tailFor(notes, !!b.source);
+      const gm = glossMarks(b, { gaps: true }); const fm = matFmt(b); const notes = gm.list;
+      const gapShow = !!(ctx.view && ctx.view.lehrer) || state.gapEdit === b.id; const gaps = gapList(b);
+      const bankH = gaps.length && b.gapBank !== false ? `<div class="gap-bank"><b>Wortspeicher</b><span>${[...new Set(gaps.map(x => normTerm(x.w)))].sort((a, c) => a.localeCompare(c, 'de', { sensitivity: 'base' })).map(w => esc(w)).join('<i>·</i>')}</span></div>` : '';
+      const tailFor = (list, src, bank) => (list.length || src || (bank && bankH)) ? `<div class="mat-tail">${bank ? bankH : ''}${list.length ? `<div class="notes">${list.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${src ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
+      const tail = tailFor(notes, !!b.source, true);
       const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
       const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}`;
       const two = fm.cols === 2;
-      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : [['Materialtext']]).map((p, i) => p.map((seg, j) => `<p class="${i && !j ? 'ind' : ''}${j ? ' br' : ''}">${toWordsM(seg).map(w => `<span class="w${w.gl ? ' glw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')).join('')}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : [['Materialtext']]).map((p, i) => p.map((seg, j) => `<p class="${i && !j ? 'ind' : ''}${j ? ' br' : ''}">${toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')).join('')}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
@@ -3278,7 +3333,7 @@ function buildBlock(b, ctx) {
       const atoms = [head, ...lineEls, ...(tailEl ? [tailEl] : [])];
       // Worterklärungen stehen auf der Seite, auf der das Wort steht: jeder Teil eines langen Materials bekommt die Erklärungen seiner Zeilen, der letzte dazu die Quelle
       const lineNos = new Map(lineEls.map(l => [l, [...l.querySelectorAll('sup.gl')].map(x => +x.textContent)]));
-      const tailOf = (ls, last) => { const nos = new Set(ls.flatMap(a => lineNos.get(a) || [])); const h = tailFor(notes.filter(x => nos.has(x.no)), last && !!b.source); return h ? el(h) : null; };
+      const tailOf = (ls, last) => { const nos = new Set(ls.flatMap(a => lineNos.get(a) || [])); const h = tailFor(notes.filter(x => nos.has(x.no)), last && !!b.source, last); return h ? el(h) : null; };
       if (two) return matTwoCols({ n, b, ctx, head, tailEl, bodyEl, lineEls, atoms, matLab, poem, tailOf });
       const assemble = (s, e) => {
         const w = n.cloneNode(false);
@@ -3992,7 +4047,7 @@ function bodyFor(b, num) {
         : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
-      ${fmtEditor(b)}${readEditor(b)}
+      ${fmtEditor(b)}${gapEditor(b)}${readEditor(b)}
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`; }
     case 'tasks': {
       const start = num[b.id].from;
@@ -4232,7 +4287,7 @@ function onChange(e) {
   setPath(target(card.dataset.bid), k, v);
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede');
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede');
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;
@@ -4329,6 +4384,10 @@ function onClick(e) {
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
     case 'rd-show': { const r = readStats(b); const o = r && r.long[+a.dataset.i]; const f = $(`#editor [data-bid="${bid}"] .rtx[data-k="text"]`); if (o && f) { f.focus({ preventScroll: true }); if (!rtSelectPlain(f, o.x)) toast('Die Stelle wurde nicht gefunden.'); } return; }
     case 'rd-gl': openGlossFor(b, a.dataset.t, 0, rectOf(a)); return;
+    case 'gap-edit': state.gapEdit = state.gapEdit === bid ? null : bid; if (state.gapEdit) state.fmtOpen.add('gap:' + bid); renderEditor(); clearTimeout(renderTimer); renderPreview(); if (state.gapEdit) toast('Wörter in der Vorschau anklicken, um Lücken zu setzen.'); return;
+    case 'gap-del': { const i = +a.dataset.i; if (Array.isArray(b.gaps) && b.gaps[i]) { b.gaps.splice(i, 1); if (!b.gaps.length) delete b.gaps; changed(true); } return; }
+    case 'gap-clear': snapshot(); delete b.gaps; changed(true); toast('Alle Lücken entfernt', 'Rückgängig', histUndo); return;
+    case 'gap-w': if (a.dataset.v) b.gapW = a.dataset.v; else delete b.gapW; changed(true); return;
     case 'fmt-toggle': if (state.fmtOpen.has(bid)) state.fmtOpen.delete(bid); else state.fmtOpen.add(bid); renderEditor(); return;
     case 'fmt-reset': b.fmt = {}; b.lineNumbers = true; changed(true); return;
     case 'fmt-all': {
@@ -4576,6 +4635,7 @@ async function doSave(b, snap) {
 
 /* ---------- Öffnen, Reiter wechseln ---------- */
 function openSheet(sh) {
+  state.gapEdit = null;
   closeGloss(); closeZl(); closeMenu();
   if (savePending) saveNow();
   state.sheet = normalizeSheet(sh); state.sel = null; state.closed = loadClosed(state.sheet.id) || defaultClosed(); state.allOpen = false; state.taskOpen = new Set(); undoSnap = null; state.touched = false;
@@ -5167,6 +5227,7 @@ function outApply(o) {
   clearTimeout(renderTimer); renderPreview();
 }
 function openOut() {
+  if (state.gapEdit) { state.gapEdit = null; renderEditor(); clearTimeout(renderTimer); renderPreview(); }
   closeGloss(); closeZl(); closeMenu();
   clearTimeout(renderTimer); renderPreview();
   const f = lsGet(LS_OUTFMT); const fmt = ['pdf', 'docx', 'print'].includes(f) && (f !== 'print' || canPrint) ? f : 'pdf';
@@ -5650,7 +5711,7 @@ async function exportDOCX() {
         parts.push(spacer());
         parts.push(xp(xr(tagsW[b.id] || 'M' + mNo, { b: 1, sz: 17, color: A }) + xr('   ') + xrInline(b.title || '', { b: 1, sz: 20 }), { keepNext: true, after: 100 }));
         if (two) closeSect(false);
-        const gmD = glossMarks(b);
+        const gmD = glossMarks(b, { gaps: true }); gmD.text = gmD.text.replace(/\ue002([^\ue003]*)\ue003/g, (m0, w) => v.lehrer ? '++' + w + '++' : '___');
         // Läuft das Material über mehrere Seiten, werden die Worterklärungen echte Fußnoten: Word setzt sie unten auf die Seite des Wortes
         const fnMap = new Map(); if (gmD.list.length && SPLIT_MATS.has(b.id)) gmD.list.forEach(x => { const id = foot.length + 1; fnMap.set(String(x.no), id); foot.push({ id, no: String(x.no), term: normTerm(x.g.term), text: x.g.text }); });
         const fn = fnMap.size ? (k => fnMap.get(k)) : null;
@@ -5661,6 +5722,7 @@ async function exportDOCX() {
         if (two) closeSect(ln, true);
         const notes = fn ? [] : gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
         if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
+        { const gsW = gapList(b); if (gsW.length && b.gapBank !== false) parts.push(xp(xr('WORTSPEICHER   ', { b: 1, sz: 14, color: A, sp: 10 }) + xrInline([...new Set(gsW.map(x => normTerm(x.w)))].sort((x1, x2) => x1.localeCompare(x2, 'de', { sensitivity: 'base' })).join('  ·  '), { sz: 19 }), { before: 80, after: 40, bdr: ['top', 'left', 'bottom', 'right'].map(x => `<w:${x} w:val="single" w:sz="4" w:space="4" w:color="8E95A3"/>`).join('').replace(/^/, '<w:pBdr>') + '</w:pBdr>', ind: `<w:ind w:left="${TW(1.5)}" w:right="${TW(30)}"/>` })); }
         if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { before: 60 }));
         if (two) secOpen = true; else if (ln) closeSect(true); else secOpen = true;
         continue;
@@ -6121,7 +6183,7 @@ function boot() {
     const sel = window.getSelection(); if (!sel || sel.isCollapsed || !sel.rangeCount) return;
     const r = sel.getRangeAt(0); const sc = r.startContainer;
     const blk = (sc.nodeType === 1 ? sc : sc.parentElement).closest('.blk-mat'); if (!blk) return;
-    const bid = blk.dataset.bid;
+    const bid = blk.dataset.bid; if (state.gapEdit === bid) return;
     const picked = [...document.querySelectorAll(`#pages [data-bid="${bid}"] .mat-body .w`)].filter(w => r.intersectsNode(w));
     if (!picked.length) return;
     const rect = rectOf(r); sel.removeAllRanges();
@@ -6136,6 +6198,7 @@ function boot() {
       if (blk) { const lab = blk.querySelector('.mat-no, .mat-cont'); const mNo = lab ? ((lab.textContent.match(/\b([MQD]\d+)/) || [])[1] || '') : ''; selectQuiet(blk.dataset.bid); openZl(blk.dataset.bid, +lnno.dataset.n, mNo, rectOf(lnno)); return; }
     }
     const w = e.target.closest('.mat-body .w'); const wb = w && w.closest('.blk-mat');
+    if (wb && state.gapEdit === wb.dataset.bid) { selectQuiet(wb.dataset.bid); gapToggle(wb.dataset.bid, w); return; }
     if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;
     const bid = n.dataset.bid; state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed();
