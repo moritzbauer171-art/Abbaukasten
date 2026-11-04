@@ -168,6 +168,15 @@ button,input,select,textarea{font:inherit;color:inherit}
 .mt-ed-h span{font-size:11.5px;font-weight:700;color:var(--muted)}
 .mt-ed-x{color:var(--faint);text-align:center}
 .mt-ed .rtx{min-height:34px}
+.mt-ed-h2{font-size:11.5px;font-weight:700;color:var(--muted);margin-top:6px}
+.mt-ed-c{display:grid;grid-template-columns:24px minmax(0,1fr) 28px;gap:6px;align-items:center}
+.mt-ed-n{display:grid;place-items:center;height:22px;border-radius:5px;background:var(--tinte);color:var(--tinte-ink,#fff);font-size:11.5px;font-weight:700}
+.mt-ed-w{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,42%) 28px;gap:6px;align-items:center}
+.mt-ed-w select{min-width:0;font-size:12.5px;padding:5px 6px}
+.mt-ed-w.dist .rtx{border-style:dashed}
+.mt-bulk{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px dashed var(--line-strong);border-radius:10px}
+.mt-bulk textarea{min-height:64px;font-size:13px}
+.mt-bulk .row{gap:8px;align-items:center;flex-wrap:wrap}
 .cw-f>span{display:flex;align-items:baseline;gap:12px}
 .cw-f>span .link{font-size:12px}
 .cw-bar{position:relative;display:flex;height:42px;border:1px solid var(--line-strong);border-radius:8px;background:var(--field);user-select:none;-webkit-user-select:none;touch-action:none}
@@ -1096,6 +1105,8 @@ body{transition:background-color .3s,border-color .25s}
 .mt-n{flex:0 0 auto;font-weight:700;font-size:8.5pt;color:var(--paper);background:var(--acc);border-radius:.8mm;padding:.3mm 1.4mm;line-height:1.3}
 .mt-box{flex:0 0 auto;width:7mm;height:7mm;border:.3mm solid var(--paper-ink);border-radius:.8mm;display:grid;place-items:center;font-weight:700;color:var(--acc);font-size:11pt}
 .mt-sol{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.m-sort .mt-cat{align-self:center;font-weight:700}
+.m-sort.m-abc .mt-r .mt-box{order:-1}
 .blk-qr img{flex:0 0 auto;image-rendering:pixelated}
 .qr-t{display:flex;flex-direction:column;gap:1mm;min-width:0}
 .qr-t b{font-size:10.5pt}
@@ -1394,21 +1405,22 @@ const TYPES = {
 /* Bausteinliste je Fach. Ein Eintrag ist eine Bausteinart mit Voreinstellungen (pre). Gedichte gibt es nur in Deutsch. */
 const PAL_POST = () => PAL('material', { k: 'post', label: 'Post', desc: 'Beitrag aus sozialen Netzwerken, mit Zeilennummern', ic: 'post', pre: { post: { pf: 'x', name: '', handle: '', date: '', re: '', rp: '', li: '', fiktiv: true }, fmt: { font: 'sans', align: 'left', indent: false } } });
 const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
+const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'info', 'phrases', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : PAL(t)),
+  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Textquelle mit Zeilennummern (Q1)', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
     PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
-    PAL('tasks'), PAL('match'), PAL('info'), PAL('phrases'), PAL('table'),
+    PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('table'),
     PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal', cw: [16, 44, 40] } }),
     PAL('lines'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('image', { desc: 'Grafik, Schaubild, Karte' }), PAL('pagebreak')
   ],
   bio: [
     PAL('material', { desc: 'Fachtext mit Zeilennummern (M1)' }),
     PAL('image', { k: 'abbildung', label: 'Abbildung', desc: 'Foto, Schema, Diagramm (Abb. 1)', pre: { mk: 'a' } }),
-    PAL('tasks'), PAL('match', { desc: 'Begriffe und Erklärungen verbinden' }), PAL('info'), PAL('phrases'), PAL('table'),
+    PAL('tasks'), PAL('match', { desc: 'Begriffe und Erklärungen verbinden' }), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('table'),
     PAL('table', { k: 'protokoll', label: 'Versuchsprotokoll', desc: 'Frage, Hypothese, Durchführung, Auswertung', ic: 'protokoll', pre: { cols: ['Versuchsprotokoll', 'Notizen'], rows: ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'].map(x => [x, '']), rowHeight: 'hoch', firstBold: true, cw: [28, 72] } }),
     PAL('lines', { k: 'zeichnung', label: 'Zeichenfläche', desc: 'Rahmen für Zeichnung oder Skizze', ic: 'zeichnung', pre: { style: 'rahmen', count: 12 } }),
     PAL('lines', { desc: 'Linien oder Kästchen' }), PAL('heading'), PAL('text'), PAL('qr'), PAL('pagebreak')
@@ -1419,6 +1431,7 @@ function paletteBlock(k, type) {
   const e = paletteFor().find(x => x.k === k) || Object.values(PALETTE).flat().find(x => x.k === k);
   const nb = newBlock(e ? e.type : type);
   if (e && e.pre) Object.assign(nb, JSON.parse(JSON.stringify(e.pre)));
+  if (nb.type === 'match' && nb.sort) { nb.title = MT_DEF(true, nb.mode, state.sheet && state.sheet.meta && state.sheet.meta.anrede === 'du'); nb.cats.forEach(c => { const o = c.id; c.id = mtCid(); nb.words.forEach(w => { if (w.c === o) w.c = c.id; }); }); }
   return nb;
 }
 /* Infokasten-Arten je Fach */
@@ -2831,7 +2844,31 @@ function postHeadHTML(b) { const p = b.post || {}; const who = esc(String(p.name
 function postFootHTML(b) { const p = b.post || {}; const it = k => String(p[k] || '').trim() ? `<span><svg viewBox="0 0 24 24" aria-hidden="true">${POST_IC[k]}</svg>${esc(p[k])}</span>` : ''; const r = it('re') + it('rp') + it('li'); return `<div class="post-f">${r || '<span></span>'}${p.fiktiv !== false ? '<em>fiktiver Beitrag</em>' : ''}</div>`; }
 /* Zuordnen: links in eingegebener Reihenfolge, rechts gemischt (fest über seed, damit Vorschau, PDF und Word gleich sind) */
 function mtRand(seed) { let a = (seed >>> 0) || 1; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const MT_DEF = (sort, mode, du) => sort
+  ? (mode === 'buchstaben' ? (du ? 'Trage bei jedem Wort die Nummer des passenden Oberbegriffs ein.' : 'Tragen Sie bei jedem Wort die Nummer des passenden Oberbegriffs ein.') : (du ? 'Verbinde jedes Wort mit dem passenden Oberbegriff.' : 'Verbinden Sie jedes Wort mit dem passenden Oberbegriff.'))
+  : (mode === 'buchstaben' ? (du ? 'Ordne zu: Trage den passenden Buchstaben in das Kästchen ein.' : 'Ordnen Sie zu: Tragen Sie den passenden Buchstaben in das Kästchen ein.') : (du ? 'Verbinde, was zusammengehört.' : 'Verbinden Sie, was zusammengehört.'));
+const mtIsDef = t => !String(t || '').trim() || [true, false].some(so => ['linien', 'buchstaben'].some(md => [true, false].some(du => MT_DEF(so, md, du) === t)));
+const mtCid = () => 'c' + Math.random().toString(36).slice(2, 8);
+// Beim ersten Umschalten aufs Sortieren: Paare werden zu Oberbegriffen und Wörtern
+function mtToSort(b) {
+  if (Array.isArray(b.cats) && b.cats.length) return;
+  const P = (b.pairs || []).filter(p => String(p.a || '').trim() || String(p.b || '').trim());
+  b.cats = []; b.words = [];
+  P.forEach(p => { let id = ''; if (String(p.a || '').trim()) { id = mtCid(); b.cats.push({ id, t: p.a }); } if (String(p.b || '').trim()) b.words.push({ t: p.b, c: id }); });
+  if (!b.cats.length) b.cats = [{ id: mtCid(), t: '' }, { id: mtCid(), t: '' }];
+  if (!b.words.length) b.words = [{ t: '', c: b.cats[0].id }, { t: '', c: b.cats[0].id }, { t: '', c: (b.cats[1] || b.cats[0]).id }];
+}
 function mtLayout(b) {
+  if (b.sort) {
+    const cats = (b.cats || []).map((c, i) => ({ i, id: c.id, a: String(c.t || '').trim() })).filter(c => c.a);
+    const W = (b.words || []).map((w, i) => ({ i, b: String(w.t || '').trim(), c: w.c || '' })).filter(w => w.b);
+    const r = mtRand(b.seed || 7); const o = W.map((_, i) => i); for (let i = o.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; }
+    const right = o.map(k => W[k]); const letter = k => String.fromCharCode(65 + k);
+    const sol = []; right.forEach((w, rk) => { const li = cats.findIndex(c => c.id === w.c); if (li >= 0) sol.push({ li, rk, L: String(li + 1), R: letter(rk) }); });
+    const rows = Math.max(cats.length, right.length);
+    const span = cats.map((_, i) => [Math.floor(i * rows / cats.length), Math.max(Math.floor(i * rows / cats.length) + 1, Math.floor((i + 1) * rows / cats.length))]);
+    return { sort: true, left: cats, right, letter, sol, rows, span };
+  }
   const P = (b.pairs || []).map((p, i) => ({ i, a: String(p.a || '').trim(), b: String(p.b || '').trim() }));
   const left = P.filter(p => p.a), right = P.filter(p => p.b);
   // Mischen ohne waagerechte Treffer: möglichst kein Partner in derselben Zeile wie sein Begriff
@@ -3294,7 +3331,7 @@ function gTargets(bid) {
     case 'heading': case 'text': return [[b, 'text']];
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
     case 'qr': return [[b, 'title'], [b, 'note']];
-    case 'match': return [[b, 'title'], ...(b.pairs || []).flatMap(p => [[p, 'a'], [p, 'b']])];
+    case 'match': return [[b, 'title'], ...(b.sort ? [...(b.cats || []).map(c => [c, 't']), ...(b.words || []).map(w => [w, 't'])] : (b.pairs || []).flatMap(p => [[p, 'a'], [p, 'b']]))];
     case 'image': return [[b, 'caption']];
     default: return [];
   }
@@ -3324,6 +3361,7 @@ function ehMarkdown() {
       return;
     }
     if (b.type === 'material' && gapList(b).length) { L.push('', `### Lückentext${b.title ? ': ' + plainMd(b.title) : ''}`, '', gapList(b).map((x, i) => `${i + 1}. ${plainMd(x.w)}`).join(' · ')); }
+    if (b.type === 'match' && b.sort) { const M = mtLayout(b); if (M.sol.length) { L.push('', `### Sortieren${b.title ? ': ' + plainMd(b.title) : ''}`, ''); M.left.forEach((c, li) => { const ws = M.sol.filter(x => x.li === li).map(x => plainMd(M.right[x.rk].b)); L.push(`- ${b.mode === 'buchstaben' ? (li + 1) + ' – ' : ''}${plainMd(c.a)}: ${ws.join(', ') || '–'}`); }); const dist = M.right.filter((_, rk) => !M.sol.some(x => x.rk === rk)); if (dist.length) L.push(`- Ablenker: ${dist.map(w => plainMd(w.b)).join(', ')}`); } return; }
     if (b.type === 'match') { const M = mtLayout(b); const ok = M.sol.filter(x => x.rk >= 0); if (ok.length) { L.push('', `### Zuordnen${b.title ? ': ' + plainMd(b.title) : ''}`, ''); ok.forEach(x => L.push(`- ${b.mode === 'buchstaben' ? x.L + ' – ' + x.R + ': ' : ''}${plainMd(M.left[x.li].a)} → ${plainMd(M.right[x.rk].b)}`)); } return; }
     if (b.type !== 'tasks') return; if (b.restart) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
     itemsFor(b, vEH).forEach(it => {
@@ -3893,6 +3931,19 @@ function buildBlock(b, ctx) {
     }
     case 'match': {
       const L = mtLayout(b); const lin = b.mode !== 'buchstaben'; const teach = !!(ctx.view && ctx.view.lehrer);
+      if (L.sort) {
+        let grid = L.left.map((x, i) => `<div class="mt-i mt-l mt-cat" style="grid-column:1;grid-row:${L.span[i][0] + 1} / ${L.span[i][1] + 1}">${lin ? '' : `<span class="mt-n">${i + 1}</span>`}<span class="mt-t">${inlineHTML(x.a)}</span>${lin ? '<i class="mt-dot"></i>' : ''}</div>`).join('')
+          + L.right.map((x, k) => { const so = L.sol.find(z => z.rk === k); return `<div class="mt-i mt-r" style="grid-column:3;grid-row:${k + 1}">${lin ? '<i class="mt-dot"></i>' : `<span class="mt-box">${teach && so ? so.L : ''}</span>`}<span class="mt-t">${inlineHTML(x.b)}</span></div>`; }).join('');
+        if (!L.rows) grid = `<div class="mt-i mt-l"><span class="mt-t" style="color:var(--paper-hair)">Oberbegriff</span><i class="mt-dot"></i></div><div class="mt-g"></div><div class="mt-i mt-r"><span class="mt-t" style="color:var(--paper-hair)">Wort</span><i class="mt-dot"></i></div>`;
+        const n = put(`<div class="blk blk-match ${lin ? 'm-lin' : 'm-abc'} m-sort">${b.title ? `<div class="mt-h">${inlineHTML(b.title)}</div>` : ''}<div class="mt-grid">${grid}</div></div>`);
+        if (lin && teach && L.sol.length) {
+          const r0 = n.getBoundingClientRect(); const ls = [...n.querySelectorAll('.mt-l .mt-dot')], rs = [...n.querySelectorAll('.mt-r .mt-dot')];
+          const c = d => { const r = d.getBoundingClientRect(); return [r.left + r.width / 2 - r0.left, r.top + r.height / 2 - r0.top]; };
+          const lines = L.sol.filter(x => ls[x.li] && rs[x.rk]).map(x => { const [x1, y1] = c(ls[x.li]), [x2, y2] = c(rs[x.rk]); return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`; }).join('');
+          n.insertAdjacentHTML('beforeend', `<svg class="mt-sol" width="${r0.width.toFixed(1)}" height="${r0.height.toFixed(1)}" viewBox="0 0 ${r0.width.toFixed(1)} ${r0.height.toFixed(1)}" aria-hidden="true" stroke="${ctx.acc}" stroke-width="1.8" stroke-linecap="round">${lines}</svg>`);
+        }
+        return { type: 'match', el: n };
+      }
       const cell = (x, side, k) => {
         if (!x) return '<div class="mt-e"></div>';
         if (lin) return `<div class="mt-i mt-${side}"><span class="mt-t">${inlineHTML(x[side === 'l' ? 'a' : 'b'])}</span><i class="mt-dot"></i></div>`;
@@ -4698,7 +4749,7 @@ function summary(b, num) {
     case 'quote': return (plainText(b.text) || 'leer').slice(0, 60);
     case 'image': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (b.src ? (b.caption || 'Bild') : 'noch kein Bild');
     case 'qr': return b.title || b.url || 'noch kein Link';
-    case 'match': { const L = mtLayout(b); return L.sol.length ? `${L.sol.length} ${L.sol.length === 1 ? 'Paar' : 'Paare'}${L.right.length > L.sol.length ? ` · ${L.right.length - L.sol.filter(x => x.rk >= 0).length} Ablenker` : ''} · ${b.mode === 'buchstaben' ? 'Buchstaben' : 'Linien'}` : 'noch keine Paare'; }
+    case 'match': { const L = mtLayout(b); if (L.sort) { const nd = L.right.length - L.sol.length; return L.left.length ? `Sortieren · ${L.left.length} ${L.left.length === 1 ? 'Oberbegriff' : 'Oberbegriffe'} · ${L.right.length} ${L.right.length === 1 ? 'Wort' : 'Wörter'}${nd ? ` (${nd} Ablenker)` : ''} · ${b.mode === 'buchstaben' ? 'Nummern' : 'Linien'}` : 'noch keine Oberbegriffe'; } return L.sol.length ? `${L.sol.length} ${L.sol.length === 1 ? 'Paar' : 'Paare'}${L.right.length > L.sol.length ? ` · ${L.right.length - L.sol.filter(x => x.rk >= 0).length} Ablenker` : ''} · ${b.mode === 'buchstaben' ? 'Buchstaben' : 'Linien'}` : 'noch keine Paare'; }
     default: return 'Rest beginnt auf neuer Seite';
   }
 }
@@ -4787,8 +4838,25 @@ function bodyFor(b, num) {
     case 'match': {
       if (!Array.isArray(b.pairs) || !b.pairs.length) b.pairs = [{ a: '', b: '' }];
       const du = state.sheet.meta.anrede === 'du';
-      return `${fText('title', 'Arbeitsanweisung (optional)', b.title, du ? 'Verbinde, was zusammengehört.' : 'Verbinden Sie, was zusammengehört.')}
-        <div class="f"><span>Bearbeitung</span><div class="seg sm" role="group" aria-label="Bearbeitung">${[['linien', 'Linien ziehen'], ['buchstaben', 'Buchstaben eintragen']].map(([v, l]) => `<button type="button" data-act="mt-mode" data-v="${v}" aria-pressed="${(b.mode || 'linien') === v}">${l}</button>`).join('')}</div></div>
+      const head = `${fText('title', 'Arbeitsanweisung (optional)', b.title, MT_DEF(!!b.sort, b.mode, du))}
+        <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art der Zuordnung"><button type="button" data-act="mt-sort" data-v="0" aria-pressed="${!b.sort}" title="Jeder Begriff hat genau einen Partner">Paare</button><button type="button" data-act="mt-sort" data-v="1" aria-pressed="${!!b.sort}" title="Mehrere Wörter gehören zum selben Oberbegriff">Sortieren</button></div><small>${b.sort ? 'Wenige Oberbegriffe links, beliebig viele Wörter rechts.' : 'Jeder Begriff links hat genau einen Partner rechts.'}</small></div>
+        <div class="f"><span>Bearbeitung</span><div class="seg sm" role="group" aria-label="Bearbeitung">${[['linien', 'Linien ziehen'], ['buchstaben', b.sort ? 'Nummern eintragen' : 'Buchstaben eintragen']].map(([v, l]) => `<button type="button" data-act="mt-mode" data-v="${v}" aria-pressed="${(b.mode || 'linien') === v}">${l}</button>`).join('')}</div></div>`;
+      if (b.sort) {
+        if (!Array.isArray(b.cats) || !b.cats.length) mtToSort(b);
+        const cats = b.cats, words = b.words || (b.words = []); const bulk = state.fmtOpen.has('mtbulk:' + b.id);
+        const catOpts = sel => cats.map((c, j) => `<option value="${esc(c.id)}"${sel === c.id ? ' selected' : ''}>${j + 1} · ${esc(plainText(c.t || '').trim() || 'Oberbegriff ' + (j + 1))}</option>`).join('');
+        return head + `<div class="mt-ed">
+          <div class="mt-ed-h2">Oberbegriffe (links)</div>
+          ${cats.map((c, i) => `<div class="mt-ed-c"><span class="mt-ed-n">${i + 1}</span>${rtField(`cats.${i}.t`, c.t || '', { mode: 'line', ph: i ? 'z. B. Verben' : 'z. B. Nomen', aria: `Oberbegriff ${i + 1}` })}<button class="ib" type="button" data-act="mt-cdel" data-i="${i}" title="Oberbegriff entfernen"${cats.length < 2 ? ' disabled' : ''}>${I.x}</button></div>`).join('')}
+          <div class="row"><button class="link" type="button" data-act="mt-cadd">+ Oberbegriff</button></div>
+          <div class="mt-ed-h2">Wörter (rechts, werden gemischt) und wohin sie gehören</div>
+          ${words.map((w, i) => `<div class="mt-ed-w${w.c ? '' : ' dist'}">${rtField(`words.${i}.t`, w.t || '', { mode: 'line', ph: 'Wort oder Ausdruck', aria: `Wort ${i + 1}` })}<select class="inp" data-k="words.${i}.c" aria-label="Wort ${i + 1} gehört zu">${catOpts(w.c)}<option value=""${w.c ? '' : ' selected'}>Ablenker: passt nirgends</option></select><button class="ib" type="button" data-act="mt-wdel" data-i="${i}" title="Wort entfernen"${words.length < 2 ? ' disabled' : ''}>${I.x}</button></div>`).join('')}
+          ${bulk ? `<div class="mt-bulk"><textarea class="inp" data-mtbulk="1" placeholder="Mehrere Wörter: eins pro Zeile oder durch Komma getrennt" aria-label="Mehrere Wörter"></textarea><div class="row"><label class="f" style="flex-direction:row;align-items:center;gap:8px"><span>gehören zu</span><select class="inp" data-mtbulkc="1">${catOpts((words[words.length - 1] || {}).c || (cats[0] || {}).id)}<option value="">Ablenker</option></select></label><button class="btn sm primary" type="button" data-act="mt-bulkgo">Hinzufügen</button><button class="link" type="button" data-act="mt-bulk">Schließen</button></div></div>` : ''}
+        </div>
+        <div class="row" style="gap:16px"><button class="link" type="button" data-act="mt-wadd">+ Wort</button>${bulk ? '' : '<button class="link" type="button" data-act="mt-bulk">Mehrere Wörter auf einmal</button>'}<button class="link" type="button" data-act="mt-shuffle">Rechts neu mischen</button></div>
+        <p class="hint" style="margin:0">Links stehen die Oberbegriffe, rechts beliebig viele Wörter in gemischter Reihenfolge. Jedes Wort gehört zu einem Oberbegriff oder ist ein Ablenker. Die Lösung steht in der Lehrerfassung${b.mode === 'buchstaben' ? ' (Nummern in den Kästchen)' : ' (eingezeichnete Linien)'} und im Erwartungshorizont.</p>`;
+      }
+      return head + `
         <div class="mt-ed"><div class="mt-ed-h"><span>Links</span><span></span><span>Passt zu (rechts, wird gemischt)</span><span></span></div>
         ${b.pairs.map((p, i) => `<div class="mt-ed-r">${rtField(`pairs.${i}.a`, p.a || '', { mode: 'line', ph: p.b && !p.a ? 'leer = Ablenker rechts' : 'Begriff oder Satzanfang', aria: `Links ${i + 1}` })}<span class="mt-ed-x" aria-hidden="true">↔</span>${rtField(`pairs.${i}.b`, p.b || '', { mode: 'line', ph: 'passende Ergänzung', aria: `Rechts ${i + 1}` })}<button class="ib" type="button" data-act="mt-del" data-i="${i}" title="Zeile entfernen"${b.pairs.length < 2 ? ' disabled' : ''}>${I.x}</button></div>`).join('')}</div>
         <div class="row" style="gap:16px"><button class="link" type="button" data-act="mt-add">+ Paar</button><button class="link" type="button" data-act="mt-extra">+ Ablenker rechts</button><button class="link" type="button" data-act="mt-shuffle">Rechts neu mischen</button></div>
@@ -4933,6 +5001,7 @@ function onInput(e) {
   if (m) { const c = card.querySelector(`[data-chips="${m[1]}"]`); if (c) c.innerHTML = chipsHTML(v); }
   if (k === 'text') { const blk = target(card.dataset.bid); const box = card.querySelector('[data-gl]'); if (blk && blk.type === 'material' && box) box.outerHTML = glossRows(blk); const rd = card.querySelector('[data-rd]'); if (blk && blk.type === 'material' && rd) { clearTimeout(rd._t); const fresh = readEditor(blk); if (fresh) rd.outerHTML = fresh; } }
   const gn = document.querySelector(`#editor [data-gn="${card.dataset.bid}"]`); if (gn) gn.outerHTML = gNote(card.dataset.bid);
+  const mc = k.match(/^cats\.(\d+)\.t$/); if (mc) { const blk = target(card.dataset.bid); const c = blk && blk.cats && blk.cats[+mc[1]]; if (c) card.querySelectorAll(`select option[value="${c.id}"]`).forEach(o => { o.textContent = `${+mc[1] + 1} · ${plainText(v).trim() || 'Oberbegriff ' + (+mc[1] + 1)}`; }); }
   const kw = k.match(/^cards\.(\d+)\.(points|term)$/); if (kw) { const box = document.querySelector(`#editor [data-kw="${kw[1]}"]`); if (box) box.innerHTML = kkWarn(state.sheet.cards[+kw[1]], kkOf(state.sheet.meta), +kw[1]); }
   if (k === 'url') { const qw = card.querySelector('[data-qrw]'); if (qw) qw.innerHTML = qrWarn(target(card.dataset.bid)); }
   changed(false);
@@ -4963,6 +5032,7 @@ function onChange(e) {
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
   setPath(target(card.dataset.bid), k, v);
+  if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (k === 'levelsOn' && !v) state.lvl = 'all';
   changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede');
@@ -5058,8 +5128,20 @@ function onClick(e) {
       toast('Aus Ihrer Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
     case 'rlp-sheet': openRlpDlg('sheet'); return;
     case 'it-lv': { const it = b.items[+a.dataset.i]; if (!it) return; const k = a.dataset.v; const cur = Array.isArray(it.lv) ? it.lv : Object.keys(LV); const nx = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; if (!nx.length) { toast('Eine Aufgabe braucht mindestens eine Stufe.'); return; } if (nx.length === 3) delete it.lv; else it.lv = Object.keys(LV).filter(x => nx.includes(x)); changed(true); return; }
-    case 'mt-mode': { const du = state.sheet.meta.anrede === 'du'; const D = { linien: du ? 'Verbinde, was zusammengehört.' : 'Verbinden Sie, was zusammengehört.', buchstaben: du ? 'Ordne zu: Trage den passenden Buchstaben in das Kästchen ein.' : 'Ordnen Sie zu: Tragen Sie den passenden Buchstaben in das Kästchen ein.' };
-      if (!String(b.title || '').trim() || Object.values(D).includes(b.title)) b.title = D[a.dataset.v] || b.title; b.mode = a.dataset.v; changed(true); return; }
+    case 'mt-mode': { const du = state.sheet.meta.anrede === 'du';
+      if (mtIsDef(b.title)) b.title = MT_DEF(!!b.sort, a.dataset.v, du); b.mode = a.dataset.v; changed(true); return; }
+    case 'mt-sort': { const on = a.dataset.v === '1'; if (!!b.sort === on) return; const du = state.sheet.meta.anrede === 'du';
+      if (on) { mtToSort(b); b.sort = true; } else { delete b.sort; if (!(b.pairs || []).some(p => String(p.a || '').trim() || String(p.b || '').trim())) { const P = []; (b.cats || []).forEach(c => { const ws = (b.words || []).filter(w => w.c === c.id); P.push({ a: c.t, b: ws.length ? ws[0].t : '' }); }); (b.words || []).forEach(w => { if (!P.some(p => p.b === w.t)) P.push({ a: '', b: w.t }); }); if (P.length) b.pairs = P; } }
+      if (mtIsDef(b.title)) b.title = MT_DEF(on, b.mode, du); changed(true); return; }
+    case 'mt-cadd': { const id = mtCid(); b.cats.push({ id, t: '' }); changed(true); const f = $(`#editor [data-bid="${bid}"] [data-k="cats.${b.cats.length - 1}.t"]`); if (f) f.focus(); return; }
+    case 'mt-cdel': { const i = +a.dataset.i; const c = b.cats[i]; if (!c || b.cats.length < 2) return; snapshot(); b.cats.splice(i, 1); (b.words || []).forEach(w => { if (w.c === c.id) w.c = ''; }); changed(true); toast('Oberbegriff entfernt; seine Wörter sind jetzt Ablenker.', 'Rückgängig', histUndo); return; }
+    case 'mt-wadd': { const last = b.words[b.words.length - 1]; b.words.push({ t: '', c: last ? last.c : (b.cats[0] || {}).id || '' }); changed(true); const f = $(`#editor [data-bid="${bid}"] [data-k="words.${b.words.length - 1}.t"]`); if (f) f.focus(); return; }
+    case 'mt-wdel': { const i = +a.dataset.i; if (b.words.length < 2) return; snapshot(); b.words.splice(i, 1); changed(true); toast('Wort entfernt', 'Rückgängig', histUndo); return; }
+    case 'mt-bulk': { const k = 'mtbulk:' + bid; if (state.fmtOpen.has(k)) state.fmtOpen.delete(k); else state.fmtOpen.add(k); renderEditor(); const t = $(`#editor [data-bid="${bid}"] [data-mtbulk]`); if (t) t.focus(); return; }
+    case 'mt-bulkgo': { const card2 = a.closest('[data-bid]'); const t = card2.querySelector('[data-mtbulk]'), c = card2.querySelector('[data-mtbulkc]');
+      const ws = String(t ? t.value : '').split(/\n|[,;]/).map(x => x.trim()).filter(Boolean); if (!ws.length) { if (t) t.focus(); return; }
+      b.words = (b.words || []).filter(w => String(w.t || '').trim()); ws.forEach(x => b.words.push({ t: x, c: c ? c.value : '' })); changed(true);
+      toast(`${ws.length} ${ws.length === 1 ? 'Wort' : 'Wörter'} hinzugefügt`); const t2 = $(`#editor [data-bid="${bid}"] [data-mtbulk]`); if (t2) t2.focus(); return; }
     case 'mt-add': b.pairs.push({ a: '', b: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="pairs.${b.pairs.length - 1}.a"]`); if (f) f.focus(); } return;
     case 'mt-extra': b.pairs.push({ a: '', b: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="pairs.${b.pairs.length - 1}.b"]`); if (f) f.focus(); } return;
     case 'mt-del': { const i = +a.dataset.i; snapshot(); b.pairs.splice(i, 1); if (!b.pairs.length) b.pairs.push({ a: '', b: '' }); changed(true); toast('Zeile entfernt', 'Rückgängig', histUndo); return; }
@@ -5176,7 +5258,7 @@ function searchText(sh) {
     if (b.type === 'material') { add(String(b.text || '').slice(0, 400)); (b.glossary || []).forEach(g => add(g.term)); }
     if (b.type === 'table') (b.cols || []).forEach(add);
     if (b.type === 'phrases') (b.groups || []).forEach(g => add(g.head));
-    if (b.type === 'match') (b.pairs || []).forEach(p => { add(p.a); add(p.b); });
+    if (b.type === 'match') { if (b.sort) { (b.cats || []).forEach(c => add(c.t)); (b.words || []).forEach(w => add(w.t)); } else (b.pairs || []).forEach(p => { add(p.a); add(p.b); }); }
   });
   return out.join(' ').replace(/[*+=_\\]+/g, '').replace(/\s+/g, ' ').trim().slice(0, 4000);
 }
@@ -5899,6 +5981,7 @@ const HELP = [
   ['Aufgaben', [
     ['Operatoren', 'werden erkannt und fett gesetzt; dazu der Anforderungsbereich.'],
     ['Erwartung', 'steht nur in der Lehrerfassung und im Erwartungshorizont (.md).'],
+    ['Zuordnen und Sortieren', 'Baustein „Zuordnen“: Paare eins zu eins verbinden. Mit „Sortieren“ stehen links wenige Oberbegriffe und rechts beliebig viele Wörter; mehrere Wörter gehören zum selben Begriff, Ablenker zu keinem. „Mehrere Wörter auf einmal“ nimmt eine ganze Liste.'],
     ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten. Unter „Tipps“ steht ein Vorschlag passend zum Operator und zum Material, dazu Satzanfänge und, bei Niveaustufen, Schritte für die Basis-Fassung. ⋯ am Aufgabenblock schlägt Tipps für alle Aufgaben vor.'],
     ['Zeilenangaben', 'In der Vorschau auf eine Zeilennummer klicken (für einen Bereich danach auf die letzte Zeile), dann „Einfügen“. Eingefügte Angaben wandern mit, wenn sich Text, Schrift oder Papier ändern.'],
     ['Standards', 'unter jeder Aufgabe: Standards aus dem Rahmenlehrplan (Deutsch, gymnasiale Oberstufe) oder eigene zuordnen. Sie stehen in der Lehrerfassung und im Erwartungshorizont.']]],
@@ -6041,7 +6124,7 @@ function outChecks() {
       if (b.type === 'tasks') itemsFor(b, v).forEach(it => { tno++; if (!String(it.text || '').trim()) warn(`Aufgabe ${tno} ist leer.`); });
       if (b.type === 'heading' && !String(b.text || '').trim()) note('Eine Überschrift ist leer.');
       if (b.type === 'image' && !b.src) warn('Ein Bild-Baustein hat noch kein Bild.');
-      if (b.type === 'match' && !mtLayout(b).sol.some(x => x.rk >= 0)) warn('Ein Zuordnen-Baustein hat noch keine vollständigen Paare.');
+      if (b.type === 'match' && !mtLayout(b).sol.some(x => x.rk >= 0)) warn(b.sort ? 'Ein Sortieren-Baustein hat noch kein Wort mit Oberbegriff.' : 'Ein Zuordnen-Baustein hat noch keine vollständigen Paare.');
       if (b.type === 'qr' && !String(b.url || '').trim()) warn('Ein QR-Code hat noch keinen Link.');
     });
     (sh.zrefs || []).filter(r => r.lost).forEach(r => { const fb = sh.blocks.find(x => x.id === r.f); warn(`${fb ? fieldLabel(fb, r.k) : 'Aufgabe'}: Die Angabe ${r.lab} stimmt vielleicht nicht mehr, ${r.lost === 'gone' ? 'das Material wurde gelöscht' : 'die Textstelle im Material wurde geändert'}. Bitte prüfen oder neu einfügen.`); });
@@ -6578,7 +6661,7 @@ function dgRuntime(K) {
     $$('.gap', root).forEach(g => { const k = 'f' + (fi++); const inp = mk('input', 'gap dg-free'); inp.dataset.k = k; inp.value = d.f[k] || ''; g.replaceWith(inp); });
     $$('.blk-match', root).forEach(b => {
       const bid = b.dataset.bid, M = K.match[bid]; if (!M) return;
-      if (M.mode === 'abc') { $$('.mt-l .mt-box', b).forEach((bx, k) => { const inp = mk('input', 'dg-abc'); inp.maxLength = 2; inp.dataset.k = bid + ':' + k; inp.value = d.a[inp.dataset.k] || ''; inp.setAttribute('autocapitalize', 'characters'); inp.setAttribute('aria-label', 'Buchstabe zu ' + (k + 1)); bx.textContent = ''; bx.appendChild(inp); }); return; }
+      if (M.mode === 'abc') { $$('.mt-box', b).forEach((bx, k) => { const inp = mk('input', 'dg-abc'); inp.maxLength = 2; inp.dataset.k = bid + ':' + k; inp.value = d.a[inp.dataset.k] || ''; inp.setAttribute('autocapitalize', 'characters'); inp.setAttribute('aria-label', 'Buchstabe zu ' + (k + 1)); bx.textContent = ''; bx.appendChild(inp); }); return; }
       b.classList.add('dg-lin'); b.insertAdjacentHTML('beforeend', '<svg class="dg-lines" aria-hidden="true"></svg>');
       $$('.mt-l', b).forEach((el, i) => { el.dataset.i = i; el.tabIndex = 0; el.setAttribute('role', 'button'); });
       $$('.mt-r', b).forEach((el, i) => { el.dataset.i = i; el.tabIndex = 0; el.setAttribute('role', 'button'); });
@@ -6602,8 +6685,10 @@ function dgRuntime(K) {
     const sv = $('.dg-lines', b); if (!sv) return; const bid = b.dataset.bid, M = K.match[bid], map = D().m[bid] || {};
     const L = $$('.mt-l', b), R = $$('.mt-r', b); sv.setAttribute('viewBox', `0 0 ${b.offsetWidth} ${b.offsetHeight}`); sv.setAttribute('width', b.offsetWidth); sv.setAttribute('height', b.offsetHeight);
     const line = (li, rk, cls) => { if (!L[li] || !R[rk]) return ''; const [x1, y1] = dotXY(b, L[li]), [x2, y2] = dotXY(b, R[rk]); return `<line class="${cls}" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`; };
-    const pairs = b.dataset.show === '1' ? Object.entries(M.sol) : Object.entries(map);
-    sv.innerHTML = pairs.map(([li, rk]) => line(+li, +rk, b.dataset.show === '1' ? 'sol' : b.dataset.chk === '1' ? (+M.sol[li] === +rk && M.sol[li] != null ? 'ok' : 'no') : '')).join('');
+    const flip = e => e.map(([x, y]) => [y, x]);
+    const pairs = b.dataset.show === '1' ? (M.many ? flip(Object.entries(M.sol)) : Object.entries(M.sol)) : (M.many ? flip(Object.entries(map)) : Object.entries(map));
+    const good = (li, rk) => M.many ? M.sol[rk] != null && +M.sol[rk] === +li : M.sol[li] != null && +M.sol[li] === +rk;
+    sv.innerHTML = pairs.map(([li, rk]) => line(+li, +rk, b.dataset.show === '1' ? 'sol' : b.dataset.chk === '1' ? (good(li, rk) ? 'ok' : 'no') : '')).join('');
     const on = new Set(pairs.map(([li]) => 'l' + li).concat(pairs.map(([, rk]) => 'r' + rk)));
     L.forEach((el, i) => el.classList.toggle('dg-con', on.has('l' + i))); R.forEach((el, i) => el.classList.toggle('dg-con', on.has('r' + i)));
   }
@@ -6612,8 +6697,9 @@ function dgRuntime(K) {
     delete b.dataset.chk; const sel = b.dataset.sel || ''; const clear = () => { delete b.dataset.sel; $$('.dg-sel', b).forEach(x => x.classList.remove('dg-sel')); };
     if (!sel) { b.dataset.sel = side + ':' + i; it.classList.add('dg-sel'); return; }
     const [ss, si] = sel.split(':'); clear();
-    if (ss === side) { if (+si === i) { if (side === 'l') delete map[i]; else Object.keys(map).forEach(k => { if (+map[k] === i) delete map[k]; }); } else { b.dataset.sel = side + ':' + i; it.classList.add('dg-sel'); return; } }
-    else { const li = side === 'l' ? i : +si, rk = side === 'r' ? i : +si; Object.keys(map).forEach(k => { if (+map[k] === rk) delete map[k]; }); map[li] = rk; }
+    const many = !!(K.match[bid] && K.match[bid].many);
+    if (ss === side) { if (+si === i) { const own = many ? side === 'r' : side === 'l'; if (own) delete map[i]; else Object.keys(map).forEach(k => { if (+map[k] === i) delete map[k]; }); } else { b.dataset.sel = side + ':' + i; it.classList.add('dg-sel'); return; } }
+    else { const li = side === 'l' ? i : +si, rk = side === 'r' ? i : +si; if (many) map[rk] = li; else { Object.keys(map).forEach(k => { if (+map[k] === rk) delete map[k]; }); map[li] = rk; } }
     draw(b); save();
   }
   function check() {
@@ -6621,7 +6707,7 @@ function dgRuntime(K) {
     $$('.dg-gap', root).forEach(inp => { const [bid, i] = inp.dataset.k.split(':'); const so = (K.gaps[bid] || [])[+i]; if (so == null) return; all++; const g = norm(inp.value) === norm(so); if (g) ok++; inp.classList.toggle('ok', g); inp.classList.toggle('no', !g); });
     $$('.blk-match', root).forEach(b => { const M = K.match[b.dataset.bid]; if (!M) return;
       if (M.mode === 'abc') { $$('.dg-abc', b).forEach(inp => { const so = M.sol[+inp.dataset.k.split(':')[1]]; if (!so) return; all++; const g = inp.value.trim().toUpperCase() === String(so).toUpperCase(); if (g) ok++; inp.classList.toggle('ok', g); inp.classList.toggle('no', !g); }); }
-      else { const map = d.m[b.dataset.bid] || {}; Object.keys(M.sol).forEach(li => { all++; if (map[li] != null && +map[li] === +M.sol[li]) ok++; }); b.dataset.chk = '1'; draw(b); } });
+      else { const map = d.m[b.dataset.bid] || {}; Object.keys(M.sol).forEach(k => { all++; if (map[k] != null && +map[k] === +M.sol[k]) ok++; }); b.dataset.chk = '1'; draw(b); } });
     res.hidden = false; res.classList.toggle('full', all > 0 && ok === all);
     res.textContent = all ? `${ok} von ${all} richtig${ok === all ? ' · alles richtig' : ''}` : 'Auf diesem Blatt gibt es nichts, was sich automatisch prüfen lässt.';
   }
@@ -6772,7 +6858,9 @@ async function dgBuild(opt) {
     }
   } finally { Object.assign(state, keep); MAPPE_LOCK = false; renderPreview(); }
   sh.blocks.forEach(b => { if (b.type !== 'match') return; const L = mtLayout(b);
-    K.match[b.id] = b.mode === 'buchstaben' ? { mode: 'abc', sol: L.sol.map(x => (x && x.R) || '') } : { mode: 'lin', sol: Object.fromEntries(L.sol.filter(x => x && x.rk >= 0).map(x => [x.li, x.rk])) }; });
+    K.match[b.id] = L.sort
+      ? (b.mode === 'buchstaben' ? { mode: 'abc', sol: L.right.map((_, rk) => { const z = L.sol.find(x => x.rk === rk); return z ? z.L : ''; }) } : { mode: 'lin', many: true, sol: Object.fromEntries(L.sol.map(x => [x.rk, x.li])) })
+      : (b.mode === 'buchstaben' ? { mode: 'abc', sol: L.sol.map(x => (x && x.R) || '') } : { mode: 'lin', sol: Object.fromEntries(L.sol.filter(x => x && x.rk >= 0).map(x => [x.li, x.rk])) }); });
   K.hasCheck = Object.values(K.gaps).some(L => L.length) || Object.keys(K.match).length > 0;
   if (!K.hasCheck) K.sol = false;
   return K;
@@ -7218,6 +7306,23 @@ async function exportDOCX() {
         case 'match': {
           const M = mtLayout(b); if (!M.rows) break; const lin = b.mode !== 'buchstaben';
           if (b.title) parts.push(xp(xrInline(b.title, { b: 1, sz: 20 }), { keepNext: true, after: 80 }));
+          if (M.sort) {
+            const BXs = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, RULE)).join(''); const NOs = ['top', 'left', 'bottom', 'right'].map(x => NIL(x)).join('');
+            const Ws = (lin ? [0.43, 0.04, 0.06, 0.04, 0.43] : [0.06, 0.37, 0.06, 0.07, 0.44]).map(f => Math.round(CW * f)); Ws[Ws.length - 1] += CW - Ws.reduce((a2, x) => a2 + x, 0);
+            const ts = (x, o = {}) => xp(xrInline(x || '', { sz: 19, ...o }));
+            const mid = M.span.map(([s0, s1]) => Math.floor((s0 + s1 - 1) / 2)); const rowsS = [];
+            for (let k = 0; k < M.rows; k++) {
+              const li = mid.indexOf(k), l = li >= 0 ? M.left[li] : null, r = M.right[k], so = M.sol.find(z => z.rk === k);
+              const cells = lin
+                ? [xtc(l ? ts(l.a, { b: 1 }) : '', { w: Ws[0], borders: l ? BXs : NOs, v: 'center' }), xtc(l ? xp(xr('●', { sz: 18 }), { jc: 'right' }) : '', { w: Ws[1], borders: NOs, v: 'center' }), xtc('', { w: Ws[2], borders: NOs }), xtc(r ? xp(xr('●', { sz: 18 })) : '', { w: Ws[3], borders: NOs, v: 'center' }), xtc(r ? ts(r.b) : '', { w: Ws[4], borders: r ? BXs : NOs, v: 'center' })]
+                : [xtc(l ? xp(xr(String(li + 1), { b: 1, sz: 18, color: A })) : '', { w: Ws[0], borders: NOs, v: 'center' }), xtc(l ? ts(l.a, { b: 1 }) : '', { w: Ws[1], borders: l ? BXs : NOs, v: 'center' }), xtc('', { w: Ws[2], borders: NOs }), xtc(r ? xp(xr(v.lehrer && so ? so.L : ' ', { b: 1, sz: 22, color: A }), { jc: 'center' }) : '', { w: Ws[3], borders: r ? BXs : NOs, v: 'center' }), xtc(r ? ts(r.b) : '', { w: Ws[4], borders: r ? BXs : NOs, v: 'center' })];
+              rowsS.push(xtr(cells.join(''), { cant: 1, h: TW(8) }));
+              if (k < M.rows - 1) rowsS.push(xtr(Ws.map(w => xtc('', { w, borders: NOs })).join(''), { h: TW(2.4), rule: 'exact', cant: 1 }));
+            }
+            parts.push(xtbl(Ws, rowsS.join(''), NIL('top') + NIL('left') + NIL('bottom') + NIL('right') + NIL('insideH') + NIL('insideV'), `<w:top w:w="${TW(1.2)}" w:type="dxa"/><w:left w:w="${TW(2)}" w:type="dxa"/><w:bottom w:w="${TW(1.2)}" w:type="dxa"/><w:right w:w="${TW(2)}" w:type="dxa"/>`));
+            if (v.lehrer && lin && M.sol.length) parts.push(xp(xr('Lösung: ', { b: 1, sz: 17, color: GREY }) + M.left.map((c, li) => xrInline((li ? '; ' : '') + c.a + ': ' + (M.sol.filter(z => z.li === li).map(z => M.right[z.rk].b).join(', ') || '–'), { sz: 17, color: GREY })).join(''), { before: 80 }));
+            break;
+          }
           const BX = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, RULE)).join(''); const NO = ['top', 'left', 'bottom', 'right'].map(x => NIL(x)).join('');
           const W = lin ? [0.43, 0.04, 0.06, 0.04, 0.43].map(f => Math.round(CW * f)) : [0.06, 0.36, 0.07, 0.04, 0.06, 0.41].map(f => Math.round(CW * f));
           W[W.length - 1] += CW - W.reduce((a, x) => a + x, 0);
