@@ -196,6 +196,8 @@ body.cw-dragging,body.cw-dragging *{cursor:col-resize!important}
 .ck-chip .cbx{width:12px;height:12px;border:1.5px solid currentColor;border-radius:3px;position:relative;flex:0 0 auto}
 .ck-chip[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
 .ck-chip[aria-pressed="true"] .cbx{background:currentColor}
+.tx-row .tx-dg{font-size:12px;font-weight:700;padding:3px 10px 3px 7px;border-radius:999px;margin-left:auto}
+.tx-row .tx-dg[aria-pressed="false"]{color:var(--muted);border-style:dashed;background:transparent}
 .ck-chip[aria-pressed="true"] .cbx::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid var(--field);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
 /* Hilfen je Operator */
 .oph{border:1px solid var(--tinte);background:var(--tinte-soft);border-radius:10px;padding:10px 12px 11px;font-size:12.5px;line-height:1.42;color:var(--ink)}
@@ -2955,7 +2957,7 @@ function taskExtras(b, i, it) {
   const open = w => state.taskOpen.has(taskKey(b.id, i, w));
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
-  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}</div>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}<button type="button" class="ck-chip tx-dg" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button></div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
   if (open('tips')) h += ophBox(b, i, it, nT);
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
@@ -5127,6 +5129,7 @@ function onClick(e) {
       L.splice(j, 1); savePrefs(); rlpKeep(bid, i, () => renderEditor());
       toast('Aus Ihrer Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
     case 'rlp-sheet': openRlpDlg('sheet'); return;
+    case 'it-dg': { const it = b.items[+a.dataset.i]; if (!it) return; if (it.noDg) delete it.noDg; else it.noDg = true; changed(true); return; }
     case 'it-lv': { const it = b.items[+a.dataset.i]; if (!it) return; const k = a.dataset.v; const cur = Array.isArray(it.lv) ? it.lv : Object.keys(LV); const nx = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; if (!nx.length) { toast('Eine Aufgabe braucht mindestens eine Stufe.'); return; } if (nx.length === 3) delete it.lv; else it.lv = Object.keys(LV).filter(x => nx.includes(x)); changed(true); return; }
     case 'mt-mode': { const du = state.sheet.meta.anrede === 'du';
       if (mtIsDef(b.title)) b.title = MT_DEF(!!b.sort, a.dataset.v, du); b.mode = a.dataset.v; changed(true); return; }
@@ -6706,7 +6709,7 @@ function dgRuntime(K) {
       const n = ti[bid] || 0; ti[bid] = n + 1; const k = bid + ':' + n; t.dataset.k = k;
       const tips = K.tipsOn ? (K.tips[lv + '|' + k] || []) : []; let h = '';
       if (tips.length) h += `<button type="button" class="dg-ic" data-a="tip" title="Tipp" aria-label="Tipp">?</button>`;
-      if (K.ans) h += `<button type="button" class="dg-ic${textOf(d.ans[k]) ? ' on' : ''}" data-a="ans" title="Antwort schreiben" aria-label="Antwort schreiben">✎</button>`;
+      if (ansOn(k)) h += `<button type="button" class="dg-ic${textOf(d.ans[k]) ? ' on' : ''}" data-a="ans" title="Antwort schreiben" aria-label="Antwort schreiben">✎</button>`;
       if (h) t.insertAdjacentHTML('beforeend', `<span class="dg-tt">${h}</span>`);
     }); });
     nameFill(); showSol = false; const sb = $('#dg-sol'); if (sb) { sb.textContent = 'Lösung'; sb.setAttribute('aria-pressed', 'false'); }
@@ -6752,20 +6755,21 @@ function dgRuntime(K) {
       else { if (on) b.dataset.show = '1'; else delete b.dataset.show; delete b.dataset.chk; draw(b); } });
     const sb = $('#dg-sol'); if (sb) { sb.textContent = on ? (K.du ? 'Meine Antworten' : 'Eigene Antworten') : 'Lösung'; sb.setAttribute('aria-pressed', String(on)); }
   }
+  function ansOn(k) { return !!K.ans && !(K.off && K.off[lv + '|' + k]); }
   function openTask(t, mode) {
     const k = t.dataset.k, d = D(); const tips = K.tipsOn ? (K.tips[lv + '|' + k] || []) : []; const no = (t.querySelector('.task-no') || {}).textContent || '';
     let shown = d.tip[k] || 0; if (mode === 'tip' && !shown && tips.length) { shown = d.tip[k] = 1; save(); }
     const body = t.querySelector('.task-body').cloneNode(true); body.querySelectorAll('.dg-tt').forEach(x => x.remove());
     panel.innerHTML = `<div class="dg-ph"><b>Aufgabe ${esc(no)}</b><button type="button" class="dg-x" data-a="close" aria-label="Schließen">×</button></div><div class="dg-pt"></div>`
       + (tips.length ? `<div class="dg-tips">${tips.slice(0, shown).map((h, i) => `<div class="dg-tipc"><b>Tipp ${i + 1}:</b> ${h}</div>`).join('')}${shown < tips.length ? `<button type="button" class="dg-btn" data-a="more">${shown ? 'Noch ein Tipp' : 'Tipp anzeigen'}</button>` : ''}</div>` : '')
-      + (K.ans ? wordHTML() : '');
+      + (ansOn(k) ? wordHTML() : '');
     panel.querySelector('.dg-pt').appendChild(body); const ta = panel.querySelector('.dg-wp'); if (ta) { ta.innerHTML = ansHTML(d.ans[k]); const n = ((ta.innerText || '').match(/\S+/g) || []).length; const wc = $('.dg-wc', panel); if (wc) wc.textContent = n === 1 ? '1 Wort' : n + ' Wörter'; }
     panel.dataset.k = k; panel.hidden = false; document.body.classList.add('dg-open');
     if (ta && mode === 'ans') { ta.focus(); try { const r = document.createRange(); r.selectNodeContents(ta); r.collapse(false); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); } catch (e) {} }
   }
   function closePanel() { panel.hidden = true; document.body.classList.remove('dg-open'); }
   function ansPage() {
-    const d = D(); const ts = $$('.task', root).filter(t => textOf(d.ans[t.dataset.k])); if (!ts.length) return null;
+    const d = D(); const ts = $$('.task', root).filter(t => ansOn(t.dataset.k) && textOf(d.ans[t.dataset.k])); if (!ts.length) return null;
     const pg = document.createElement('div'); pg.className = 'pout dg-anspage';
     pg.innerHTML = `<h2>${K.du ? 'Meine Antworten' : 'Antworten'}</h2><p class="dg-ap">${esc(K.title)}${S.name ? ' · ' + esc(S.name) : ''}</p>` + ts.map(t => `<section><b>Aufgabe ${esc((t.querySelector('.task-no') || {}).textContent || '')}</b><div class="dg-at">${ansHTML(d.ans[t.dataset.k])}</div></section>`).join('');
     root.appendChild(pg); return pg;
@@ -6946,7 +6950,7 @@ async function dgBuild(opt) {
   const lvs = m.levelsOn ? (opt.lvl === 'wahl' ? ['b', 's', 'e'] : [LV[opt.lvl] ? opt.lvl : 's']) : ['all'];
   try { await fontsIn(document); } catch {}
   const K = { id: opt.id, title: (m.mode === 'klausur' ? ((m.exam && m.exam.label) || 'Klausur') + ' · ' : m.nr ? 'AB ' + m.nr + ' · ' : '') + (m.title || 'Arbeitsblatt'), du: m.anrede === 'du',
-    ans: !!opt.ans, tipsOn: !!opt.tips, sol: !!opt.sol, vars: {}, def: lvs.length > 1 ? 's' : lvs[0], lvs: lvs.length > 1 ? lvs.map(k => [k, LV[k].sym + ' ' + LV[k].name]) : [], gaps: {}, match: {}, tips: {} };
+    ans: !!opt.ans, tipsOn: !!opt.tips, sol: !!opt.sol, vars: {}, def: lvs.length > 1 ? 's' : lvs[0], lvs: lvs.length > 1 ? lvs.map(k => [k, LV[k].sym + ' ' + LV[k].name]) : [], gaps: {}, match: {}, tips: {}, off: {} };
   MAPPE_LOCK = true; clearTimeout(renderTimer);
   try {
     state.out = 'blatt'; state.grp = 'all'; state.gapEdit = null;
@@ -6956,7 +6960,7 @@ async function dgBuild(opt) {
       const tmp = {}; box.querySelectorAll('.blk-mat[data-bid]').forEach(el => el.querySelectorAll('.gapl').forEach(g => (tmp[el.dataset.bid] = tmp[el.dataset.bid] || []).push(g.textContent.trim())));
       Object.entries(tmp).forEach(([bid, L]) => { if (!K.gaps[bid]) K.gaps[bid] = L; });
       state.fassung = 'schueler'; const v = sheetView(); const pages = layout().map(o => o.pg);
-      sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; itemsFor(b, v).forEach((it, k) => { const t = tipsOf(it); if (t.length) K.tips[lv + '|' + b.id + ':' + k] = t.map(x => inlineHTML(x)); }); });
+      sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; itemsFor(b, v).forEach((it, k) => { const t = tipsOf(it); if (t.length) K.tips[lv + '|' + b.id + ':' + k] = t.map(x => inlineHTML(x)); if (it.noDg) K.off[lv + '|' + b.id + ':' + k] = 1; }); });
       K.vars[lv] = pages.map(p => { p.classList.add('pout'); p.style.setProperty('page', +p.dataset.w > +p.dataset.h ? 'quer' : 'hoch'); return p.outerHTML; }).join('');
     }
   } finally { Object.assign(state, keep); MAPPE_LOCK = false; renderPreview(); }
@@ -6991,11 +6995,12 @@ function dgHTML() {
   if (d.step === 'qr' && pub) { const link = dgLink(pub);
     return `<h2 id="dlg-t">Die digitale Fassung ist online</h2><div class="dg-qr"><img src="${QR.dataURL(link, 8)}" alt="QR-Code zur digitalen Fassung"><div><p>Mit der Kamera scannen oder den Link teilen. Antworten bleiben auf dem jeweiligen Gerät; nach Änderungen am Blatt einfach „Online aktualisieren“, Link und QR-Code bleiben gleich.</p><input class="inp" id="dg-link" readonly value="${esc(link)}"><div class="row"><button class="btn" type="button" data-act="dg-copy">Link kopieren</button><button class="btn" type="button" data-act="dg-qrblk">QR-Code aufs Blatt</button><button class="btn" type="button" data-act="dg-qrsave">QR als Bild</button></div></div></div>
       <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Fertig</button><button class="btn" type="button" data-act="dg-big">Groß zeigen (Beamer)</button><button class="link danger" type="button" data-act="dg-off">Offline nehmen</button></div>`; }
+  const nOff = state.sheet.blocks.reduce((a, b) => a + (b.type === 'tasks' && Array.isArray(b.items) ? b.items.filter(it => it && it.noDg).length : 0), 0);
   const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t]) => `<button type="button" data-act="dg-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}">${t}</button>`).join('')}</div>`;
   return `<h2 id="dlg-t">Digitale Fassung</h2>
     <p class="rlp-stat">Zum Ausfüllen am Tablet oder Laptop: Lücken, Zuordnen, Ankreuzfelder, Tabellen und Schreibflächen direkt auf dem Blatt, „Prüfen“ zeigt, was stimmt. Die Zeilennummern sind dieselben wie auf dem Papier.</p>
     ${m.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['wahl', 'Schüler wählen'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], d.lvl)}</div>` : ''}
-    <div class="f"><div class="chks"><label class="chk"><input type="checkbox" id="dg-sol"${d.sol ? ' checked' : ''}>Lösung abrufbar</label><label class="chk"><input type="checkbox" id="dg-tips"${d.tips ? ' checked' : ''}>Tipps abrufbar</label><label class="chk"><input type="checkbox" id="dg-ans"${d.ans ? ' checked' : ''}>Antwortfeld zu jeder Aufgabe</label></div></div>
+    <div class="f"><div class="chks"><label class="chk"><input type="checkbox" id="dg-sol"${d.sol ? ' checked' : ''}>Lösung abrufbar</label><label class="chk"><input type="checkbox" id="dg-tips"${d.tips ? ' checked' : ''}>Tipps abrufbar</label><label class="chk"><input type="checkbox" id="dg-ans"${d.ans ? ' checked' : ''}>${nOff ? `Antwortfeld zu den Aufgaben (außer ${nOff} abgewählten)` : 'Antwortfeld zu jeder Aufgabe'}</label></div></div>
     ${pub ? `<div class="dg-on"><span>Dieses Blatt ist online${m.dg.at ? ' seit ' + new Date(m.dg.at).toLocaleDateString('de-DE') : ''}.</span><button class="link" type="button" data-act="dg-showqr">Link und QR-Code zeigen</button></div>` : ''}
     ${on ? '' : '<p class="hint">Zum Online-Stellen mit QR-Code bitte anmelden („Meine Blätter“ → Anmelden). Als Datei geht es auch so.</p>'}
     ${d.busy ? '<p class="hint">Wird vorbereitet …</p>' : ''}<div class="err" role="alert">${esc(d.err || '')}</div>
