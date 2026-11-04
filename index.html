@@ -6672,7 +6672,15 @@ function dgRuntime(K) {
   const WT = [['bold', '<b>F</b>', 'Fett (Strg+B)'], ['italic', '<i>K</i>', 'Kursiv (Strg+I)'], ['underline', '<u>U</u>', 'Unterstrichen (Strg+U)'], ['strikeThrough', '<s>S</s>', 'Durchgestrichen'], '|',
     ['insertUnorderedList', '•&#8202;≡', 'Aufzählung'], ['insertOrderedList', '1.≡', 'Nummerierung'], ['outdent', '⇤', 'Einzug verkleinern'], ['indent', '⇥', 'Einzug vergrößern'], '|',
     ['hilite', '<span class="dg-mk">ab</span>', 'Textmarker'], ['removeFormat', 'A<sub>×</sub>', 'Formatierung entfernen'], '|', ['undo', '↶', 'Rückgängig (Strg+Z)'], ['redo', '↷', 'Wiederholen (Strg+Y)']];
-  const wordHTML = () => `<div class="dg-word"><div class="dg-wh">${K.du ? 'Deine Antwort' : 'Ihre Antwort'}</div><div class="dg-wt" role="toolbar" aria-label="Formatierung">${WT.map(x => x === '|' ? '<span class="dg-sep"></span>' : `<button type="button" data-c="${x[0]}" title="${x[2]}" aria-label="${x[2]}"${/^(bold|italic|underline|strikeThrough|insert)/.test(x[0]) ? ' aria-pressed="false"' : ''}>${x[1]}</button>`).join('')}</div>
+  const BIG_SVG = ['<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4v4M6 14H2v-4M14 2 9.5 6.5M2 14l4.5-4.5"/></svg>', '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 6.5h-4v-4M2.5 9.5h4v4M9.5 6.5 14 2M6.5 9.5 2 14"/></svg>'];
+  const bigBtn = () => `<button type="button" class="dg-wbig" data-a="big" aria-pressed="${!!S.wbig}" title="${S.wbig ? 'Antwortfeld verkleinern (Esc)' : 'Antwortfeld groß machen'}">${BIG_SVG[S.wbig ? 1 : 0]}<span>${S.wbig ? 'Verkleinern' : 'Vergrößern'}</span></button>`;
+  function setBig(on) {
+    S.wbig = !!on; save(); panel.classList.toggle('dg-wmax', S.wbig); document.body.classList.toggle('dg-wmax-on', S.wbig && !panel.hidden);
+    const ed = $('.dg-wp', panel); const had = ed && document.activeElement === ed;
+    const b = $('.dg-wbig', panel); if (b) b.outerHTML = bigBtn();
+    if (had) ed.focus({ preventScroll: true });
+  }
+  const wordHTML = () => `<div class="dg-word"><div class="dg-wh"><span>${K.du ? 'Deine Antwort' : 'Ihre Antwort'}</span>${bigBtn()}</div><div class="dg-wt" role="toolbar" aria-label="Formatierung">${WT.map(x => x === '|' ? '<span class="dg-sep"></span>' : `<button type="button" data-c="${x[0]}" title="${x[2]}" aria-label="${x[2]}"${/^(bold|italic|underline|strikeThrough|insert)/.test(x[0]) ? ' aria-pressed="false"' : ''}>${x[1]}</button>`).join('')}</div>
     <div class="dg-wpg"><div class="dg-wp" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${K.du ? 'Deine Antwort' : 'Ihre Antwort'}" data-ph="${K.du ? 'Hier schreiben …' : 'Hier schreiben …'}" spellcheck="true" lang="de"></div></div>
     <div class="dg-ws"><span class="dg-wc">0 Wörter</span><span>wird automatisch gespeichert</span></div></div>`;
   function wState() { const ed = $('.dg-wp', panel); if (!ed) return; const sel = getSelection(); const inside = sel && sel.rangeCount && ed.contains(sel.anchorNode);
@@ -6765,9 +6773,10 @@ function dgRuntime(K) {
       + (ansOn(k) ? wordHTML() : '');
     panel.querySelector('.dg-pt').appendChild(body); const ta = panel.querySelector('.dg-wp'); if (ta) { ta.innerHTML = ansHTML(d.ans[k]); const n = ((ta.innerText || '').match(/\S+/g) || []).length; const wc = $('.dg-wc', panel); if (wc) wc.textContent = n === 1 ? '1 Wort' : n + ' Wörter'; }
     panel.dataset.k = k; panel.hidden = false; document.body.classList.add('dg-open');
+    const big = !!S.wbig && !!ta; panel.classList.toggle('dg-wmax', big); document.body.classList.toggle('dg-wmax-on', big);
     if (ta && mode === 'ans') { ta.focus(); try { const r = document.createRange(); r.selectNodeContents(ta); r.collapse(false); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); } catch (e) {} }
   }
-  function closePanel() { panel.hidden = true; document.body.classList.remove('dg-open'); }
+  function closePanel() { panel.hidden = true; panel.classList.remove('dg-wmax'); document.body.classList.remove('dg-open', 'dg-wmax-on'); }
   function ansPage() {
     const d = D(); const ts = $$('.task', root).filter(t => ansOn(t.dataset.k) && textOf(d.ans[t.dataset.k])); if (!ts.length) return null;
     const pg = document.createElement('div'); pg.className = 'pout dg-anspage';
@@ -6786,15 +6795,15 @@ function dgRuntime(K) {
     const it = t.closest('.dg-lin .mt-l, .dg-lin .mt-r'); if (it && !showSol) pick(it);
   });
   root.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('svg.ck, .dg-lin .mt-l, .dg-lin .mt-r')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
-  panel.addEventListener('click', e => { const a = e.target.closest('[data-a]'); if (!a) return; if (a.dataset.a === 'close') closePanel(); if (a.dataset.a === 'more') { const k = panel.dataset.k; const d = D(); d.tip[k] = (d.tip[k] || 0) + 1; save(); openTask($(`.task[data-k="${k}"]`, root), 'x'); } });
+  panel.addEventListener('click', e => { const a = e.target.closest('[data-a]'); if (!a) return; if (a.dataset.a === 'close') closePanel(); if (a.dataset.a === 'big') setBig(!S.wbig); if (a.dataset.a === 'more') { const k = panel.dataset.k; const d = D(); d.tip[k] = (d.tip[k] || 0) + 1; save(); openTask($(`.task[data-k="${k}"]`, root), 'x'); } });
   panel.addEventListener('input', e => { if (e.target.closest && e.target.closest('.dg-wp')) wSave(); });
-  panel.addEventListener('mousedown', e => { if (e.target.closest('.dg-wt button')) e.preventDefault(); });
+  panel.addEventListener('mousedown', e => { if (e.target.closest('.dg-wt button, .dg-wbig')) e.preventDefault(); });
   panel.addEventListener('click', e => { const c = e.target.closest('.dg-wt [data-c]'); if (c) wCmd(c.dataset.c); });
   panel.addEventListener('paste', e => { const ed = e.target.closest && e.target.closest('.dg-wp'); if (!ed) return; e.preventDefault(); const cd = e.clipboardData; const h = cd && cd.getData('text/html'); const t = cd ? cd.getData('text/plain') : '';
     try { if (h) document.execCommand('insertHTML', false, clean(h)); else document.execCommand('insertText', false, t); } catch (er) {} wSave(); });
   panel.addEventListener('keydown', e => { if (!(e.target.closest && e.target.closest('.dg-wp'))) return; if (e.key === 'Tab') { e.preventDefault(); wCmd(e.shiftKey ? 'outdent' : 'indent'); } });
   document.addEventListener('selectionchange', () => { if (!panel.hidden) wState(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) closePanel(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { if (panel.classList.contains('dg-wmax')) setBig(false); else closePanel(); } });
   const nm = $('#dg-name'); if (nm) { nm.value = S.name || ''; nm.addEventListener('input', () => { S.name = nm.value; save(); nameFill(); }); }
   const on = (id, fn) => { const x = $('#' + id); if (x) x.addEventListener('click', fn); };
   on('dg-check', () => { if (showSol) sol(false); check(); });
@@ -6905,7 +6914,16 @@ svg.ck{cursor:pointer}
 .dg-tips{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;align-items:flex-start}
 .dg-tipc{background:#FFF8E1;border-radius:8px;padding:7px 10px;width:100%}
 .dg-word{border:1px solid #C8CCD5;border-radius:10px;overflow:hidden;background:#F3F4F7;box-shadow:0 1px 3px rgba(20,30,50,.08)}
-.dg-wh{background:#2741B5;color:#fff;font-size:12.5px;font-weight:700;padding:5px 12px;letter-spacing:.02em}
+.dg-wh{background:#2741B5;color:#fff;font-size:12.5px;font-weight:700;padding:3px 6px 3px 12px;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:30px}
+.dg-wbig{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.55);background:transparent;color:#fff;border-radius:6px;padding:3px 9px;font:700 12px/1.2 "Atkinson Hyperlegible",system-ui,sans-serif;cursor:pointer}
+.dg-wbig:hover,.dg-wbig:focus-visible{background:rgba(255,255,255,.16);outline:none}
+.dg-panel.dg-wmax{left:0;top:0;bottom:0;right:0;transform:none;width:auto;max-height:none;border-radius:0;display:flex;flex-direction:column;padding:12px max(16px,calc((100vw - 980px)/2)) 14px;z-index:40}
+.dg-panel.dg-wmax .dg-pt{max-height:22vh;overflow:auto;flex:0 0 auto}
+.dg-panel.dg-wmax .dg-tips{max-height:18vh;overflow:auto;flex:0 0 auto}
+.dg-panel.dg-wmax .dg-word{flex:1 1 auto;min-height:0;display:flex;flex-direction:column}
+.dg-panel.dg-wmax .dg-wpg{flex:1 1 auto;min-height:0;display:flex;padding:16px}
+.dg-panel.dg-wmax .dg-wp{flex:1 1 auto;max-height:none;min-height:0;width:100%;max-width:820px;margin:0 auto;padding:24px 28px;font-size:16px}
+body.dg-wmax-on{overflow:hidden}
 .dg-wt{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:5px 6px;background:#F7F8FA;border-bottom:1px solid #DDE1E8}
 .dg-wt button{min-width:32px;height:32px;border:1px solid transparent;border-radius:6px;background:transparent;font:600 14px/1 "Segoe UI",system-ui,sans-serif;color:#1C1F27;cursor:pointer;padding:0 7px;display:inline-grid;place-items:center}
 .dg-wt button:hover{background:#E6EAF2}
