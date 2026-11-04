@@ -6849,7 +6849,11 @@ function dgRuntime(K) {
     } finally { root.style.zoom = z; if (ap) ap.remove(); btn.disabled = false; btn.textContent = label; }
   }
   on('dg-pdf', savePdf);
-  on('dg-print', () => { if (showSol) sol(false); closePanel(); const pg = ansPage(); const z = root.style.zoom; root.style.zoom = '1'; setTimeout(() => { window.print(); root.style.zoom = z; if (pg) pg.remove(); }, 50); });
+  let prPg = null, prZ = '';
+  const prOn = () => { if (prPg !== null) return; if (showSol) sol(false); closePanel(); prPg = ansPage() || false; prZ = root.style.zoom; root.style.zoom = '1'; };
+  const prOff = () => { if (prPg === null) return; root.style.zoom = prZ; if (prPg) prPg.remove(); prPg = null; };
+  window.addEventListener('beforeprint', prOn); window.addEventListener('afterprint', prOff);
+  on('dg-print', () => { prOn(); setTimeout(() => { try { window.print(); } catch (e) { console.error(e); } setTimeout(() => document.addEventListener('pointerdown', prOff, { once: true }), 300); }, 50); });
   $$('[data-lv]').forEach(x => x.addEventListener('click', () => { lv = x.dataset.lv; S.lv = lv; save(); closePanel(); mount(); }));
   window.addEventListener('resize', () => { clearTimeout(window.__dgFit); window.__dgFit = setTimeout(fit, 120); });
   mount(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
@@ -6954,7 +6958,7 @@ body.dg-open .dg-main{padding-bottom:62vh}
 @media print{
   body.dg{background:#fff}
   .dg-bar,.dg-res,.dg-panel,.dg-tt{display:none!important}
-  .dg-main{padding:0}
+  body.dg>main.dg-main:not(#dg-x){display:block!important;padding:0}
   #printroot{zoom:1!important;width:auto}
   #printroot>.pout{margin:0;box-shadow:none}
   input.gapb,input.gap,input.ok,input.no{background:transparent!important}
