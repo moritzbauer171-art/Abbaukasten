@@ -6648,6 +6648,39 @@ function dgRuntime(K) {
   const norm = t => String(t || '').toLowerCase().replace(/[„“”"‚‘’'«»().,;:!?…–—-]/g, '').replace(/\s+/g, ' ').trim();
   const mk = (tag, cls) => { const e = document.createElement(tag); e.className = cls; if (tag === 'input') { e.type = 'text'; e.autocomplete = 'off'; e.spellcheck = false; e.setAttribute('autocapitalize', 'off'); e.setAttribute('autocorrect', 'off'); } return e; };
   const XP = '<path d="M3 3l6 6M9 3l-6 6" stroke="#1C1F27" stroke-width="1.2" stroke-linecap="round"/>';
+  // Antworten mit Formatierung: nur einfache, sichere Auszeichnungen bleiben erhalten
+  const TAGS = { B: 'b', STRONG: 'b', I: 'i', EM: 'i', U: 'u', S: 's', STRIKE: 's', DEL: 's', UL: 'ul', OL: 'ol', LI: 'li', BR: 'br', P: 'p', DIV: 'div', BLOCKQUOTE: 'blockquote', MARK: 'mark' };
+  function clean(html) {
+    // DOMParser: fremdes HTML wird nur gelesen, nie ausgeführt oder geladen
+    const box = new DOMParser().parseFromString('<body>' + (html || '') + '</body>', 'text/html').body;
+    const walk = n => [...n.childNodes].map(c => {
+      if (c.nodeType === 3) return esc(c.nodeValue); if (c.nodeType !== 1) return '';
+      const t = c.tagName; if (/^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|IFRAME|OBJECT|EMBED|SVG|MATH|HEAD|TITLE|META|LINK|XML)$/.test(t)) return ''; const inner = walk(c);
+      if (t === 'SPAN' || t === 'FONT') { const st = c.getAttribute('style') || ''; let h = inner;
+        if (/background(-color)?\s*:\s*(?!transparent|rgba\(0,\s*0,\s*0,\s*0\)|initial|inherit)[^;]+/i.test(st)) h = `<mark>${h}</mark>`;
+        if (/font-weight\s*:\s*(bold|[6-9]00)/i.test(st)) h = `<b>${h}</b>`; if (/font-style\s*:\s*italic/i.test(st)) h = `<i>${h}</i>`;
+        if (/text-decoration[^;]*underline/i.test(st)) h = `<u>${h}</u>`; if (/text-decoration[^;]*line-through/i.test(st)) h = `<s>${h}</s>`; return h; }
+      const m = TAGS[t]; if (!m) return inner; return m === 'br' ? '<br>' : `<${m}>${inner}</${m}>`;
+    }).join('');
+    return walk(box).replace(/(<br>)+$/, '');
+  }
+  const ansHTML = v => /<(b|i|u|s|br|div|p|ul|ol|li|mark|blockquote)\b/i.test(v || '') ? clean(v) : esc(v || '').replace(/\n/g, '<br>');
+  const textOf = v => { const x = document.createElement('div'); x.innerHTML = ansHTML(v); return (x.textContent || '').trim(); };
+  const WT = [['bold', '<b>F</b>', 'Fett (Strg+B)'], ['italic', '<i>K</i>', 'Kursiv (Strg+I)'], ['underline', '<u>U</u>', 'Unterstrichen (Strg+U)'], ['strikeThrough', '<s>S</s>', 'Durchgestrichen'], '|',
+    ['insertUnorderedList', '•&#8202;≡', 'Aufzählung'], ['insertOrderedList', '1.≡', 'Nummerierung'], ['outdent', '⇤', 'Einzug verkleinern'], ['indent', '⇥', 'Einzug vergrößern'], '|',
+    ['hilite', '<span class="dg-mk">ab</span>', 'Textmarker'], ['removeFormat', 'A<sub>×</sub>', 'Formatierung entfernen'], '|', ['undo', '↶', 'Rückgängig (Strg+Z)'], ['redo', '↷', 'Wiederholen (Strg+Y)']];
+  const wordHTML = () => `<div class="dg-word"><div class="dg-wh">${K.du ? 'Deine Antwort' : 'Ihre Antwort'}</div><div class="dg-wt" role="toolbar" aria-label="Formatierung">${WT.map(x => x === '|' ? '<span class="dg-sep"></span>' : `<button type="button" data-c="${x[0]}" title="${x[2]}" aria-label="${x[2]}"${/^(bold|italic|underline|strikeThrough|insert)/.test(x[0]) ? ' aria-pressed="false"' : ''}>${x[1]}</button>`).join('')}</div>
+    <div class="dg-wpg"><div class="dg-wp" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${K.du ? 'Deine Antwort' : 'Ihre Antwort'}" data-ph="${K.du ? 'Hier schreiben …' : 'Hier schreiben …'}" spellcheck="true" lang="de"></div></div>
+    <div class="dg-ws"><span class="dg-wc">0 Wörter</span><span>wird automatisch gespeichert</span></div></div>`;
+  function wState() { const ed = $('.dg-wp', panel); if (!ed) return; const sel = getSelection(); const inside = sel && sel.rangeCount && ed.contains(sel.anchorNode);
+    $$('.dg-wt [aria-pressed]', panel).forEach(bt => { let on = false; try { on = !!(inside && document.queryCommandState(bt.dataset.c)); } catch (e) {} bt.setAttribute('aria-pressed', String(on)); }); }
+  function wSave() { const ed = $('.dg-wp', panel); if (!ed) return; const k = panel.dataset.k; const v = clean(ed.innerHTML); const txt = (ed.innerText || '').trim(); D().ans[k] = txt ? v : ''; save();
+    const wc = $('.dg-wc', panel); if (wc) { const n = (txt.match(/\S+/g) || []).length; wc.textContent = n === 1 ? '1 Wort' : n + ' Wörter'; }
+    const ic = $(`.task[data-k="${k}"] .dg-ic[data-a="ans"]`, root); if (ic) ic.classList.toggle('on', !!txt); }
+  function wCmd(c) { const ed = $('.dg-wp', panel); if (!ed) return; ed.focus();
+    try { if (c === 'hilite') { document.execCommand('styleWithCSS', false, true); const on = document.queryCommandValue('hiliteColor'); const has = on && !/transparent|rgba\(0, 0, 0, 0\)|^$/.test(on); document.execCommand('hiliteColor', false, has ? 'transparent' : '#FFF0A0'); document.execCommand('styleWithCSS', false, false); }
+      else { document.execCommand('styleWithCSS', false, false); document.execCommand(c, false, null); } } catch (e) {}
+    wSave(); wState(); }
   function setCk(sv, on) { sv.classList.toggle('x', on); const p = sv.querySelector('path'); if (on && !p) sv.insertAdjacentHTML('beforeend', XP); if (!on && p) p.remove(); sv.setAttribute('aria-checked', String(on)); }
   function fit() {
     const ps = $$('.pout', root); if (!ps.length) return;
@@ -6673,7 +6706,7 @@ function dgRuntime(K) {
       const n = ti[bid] || 0; ti[bid] = n + 1; const k = bid + ':' + n; t.dataset.k = k;
       const tips = K.tipsOn ? (K.tips[lv + '|' + k] || []) : []; let h = '';
       if (tips.length) h += `<button type="button" class="dg-ic" data-a="tip" title="Tipp" aria-label="Tipp">?</button>`;
-      if (K.ans) h += `<button type="button" class="dg-ic${(d.ans[k] || '').trim() ? ' on' : ''}" data-a="ans" title="Antwort schreiben" aria-label="Antwort schreiben">✎</button>`;
+      if (K.ans) h += `<button type="button" class="dg-ic${textOf(d.ans[k]) ? ' on' : ''}" data-a="ans" title="Antwort schreiben" aria-label="Antwort schreiben">✎</button>`;
       if (h) t.insertAdjacentHTML('beforeend', `<span class="dg-tt">${h}</span>`);
     }); });
     nameFill(); showSol = false; const sb = $('#dg-sol'); if (sb) { sb.textContent = 'Lösung'; sb.setAttribute('aria-pressed', 'false'); }
@@ -6725,15 +6758,16 @@ function dgRuntime(K) {
     const body = t.querySelector('.task-body').cloneNode(true); body.querySelectorAll('.dg-tt').forEach(x => x.remove());
     panel.innerHTML = `<div class="dg-ph"><b>Aufgabe ${esc(no)}</b><button type="button" class="dg-x" data-a="close" aria-label="Schließen">×</button></div><div class="dg-pt"></div>`
       + (tips.length ? `<div class="dg-tips">${tips.slice(0, shown).map((h, i) => `<div class="dg-tipc"><b>Tipp ${i + 1}:</b> ${h}</div>`).join('')}${shown < tips.length ? `<button type="button" class="dg-btn" data-a="more">${shown ? 'Noch ein Tipp' : 'Tipp anzeigen'}</button>` : ''}</div>` : '')
-      + (K.ans ? `<label class="dg-al"><span>${K.du ? 'Deine Antwort' : 'Ihre Antwort'}</span><textarea class="dg-ans" rows="7"></textarea></label>` : '');
-    panel.querySelector('.dg-pt').appendChild(body); const ta = panel.querySelector('.dg-ans'); if (ta) ta.value = d.ans[k] || '';
-    panel.dataset.k = k; panel.hidden = false; document.body.classList.add('dg-open'); if (ta && mode === 'ans') ta.focus();
+      + (K.ans ? wordHTML() : '');
+    panel.querySelector('.dg-pt').appendChild(body); const ta = panel.querySelector('.dg-wp'); if (ta) { ta.innerHTML = ansHTML(d.ans[k]); const n = ((ta.innerText || '').match(/\S+/g) || []).length; const wc = $('.dg-wc', panel); if (wc) wc.textContent = n === 1 ? '1 Wort' : n + ' Wörter'; }
+    panel.dataset.k = k; panel.hidden = false; document.body.classList.add('dg-open');
+    if (ta && mode === 'ans') { ta.focus(); try { const r = document.createRange(); r.selectNodeContents(ta); r.collapse(false); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); } catch (e) {} }
   }
   function closePanel() { panel.hidden = true; document.body.classList.remove('dg-open'); }
   function ansPage() {
-    const d = D(); const ts = $$('.task', root).filter(t => (d.ans[t.dataset.k] || '').trim()); if (!ts.length) return null;
+    const d = D(); const ts = $$('.task', root).filter(t => textOf(d.ans[t.dataset.k])); if (!ts.length) return null;
     const pg = document.createElement('div'); pg.className = 'pout dg-anspage';
-    pg.innerHTML = `<h2>${K.du ? 'Meine Antworten' : 'Antworten'}</h2><p class="dg-ap">${esc(K.title)}${S.name ? ' · ' + esc(S.name) : ''}</p>` + ts.map(t => `<section><b>Aufgabe ${esc((t.querySelector('.task-no') || {}).textContent || '')}</b><p>${esc(d.ans[t.dataset.k]).replace(/\n/g, '<br>')}</p></section>`).join('');
+    pg.innerHTML = `<h2>${K.du ? 'Meine Antworten' : 'Antworten'}</h2><p class="dg-ap">${esc(K.title)}${S.name ? ' · ' + esc(S.name) : ''}</p>` + ts.map(t => `<section><b>Aufgabe ${esc((t.querySelector('.task-no') || {}).textContent || '')}</b><div class="dg-at">${ansHTML(d.ans[t.dataset.k])}</div></section>`).join('');
     root.appendChild(pg); return pg;
   }
   root.addEventListener('input', e => {
@@ -6749,13 +6783,59 @@ function dgRuntime(K) {
   });
   root.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('svg.ck, .dg-lin .mt-l, .dg-lin .mt-r')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
   panel.addEventListener('click', e => { const a = e.target.closest('[data-a]'); if (!a) return; if (a.dataset.a === 'close') closePanel(); if (a.dataset.a === 'more') { const k = panel.dataset.k; const d = D(); d.tip[k] = (d.tip[k] || 0) + 1; save(); openTask($(`.task[data-k="${k}"]`, root), 'x'); } });
-  panel.addEventListener('input', e => { if (!e.target.classList.contains('dg-ans')) return; const k = panel.dataset.k; D().ans[k] = e.target.value; save(); const ic = $(`.task[data-k="${k}"] .dg-ic[data-a="ans"]`, root); if (ic) ic.classList.toggle('on', !!e.target.value.trim()); });
+  panel.addEventListener('input', e => { if (e.target.closest && e.target.closest('.dg-wp')) wSave(); });
+  panel.addEventListener('mousedown', e => { if (e.target.closest('.dg-wt button')) e.preventDefault(); });
+  panel.addEventListener('click', e => { const c = e.target.closest('.dg-wt [data-c]'); if (c) wCmd(c.dataset.c); });
+  panel.addEventListener('paste', e => { const ed = e.target.closest && e.target.closest('.dg-wp'); if (!ed) return; e.preventDefault(); const cd = e.clipboardData; const h = cd && cd.getData('text/html'); const t = cd ? cd.getData('text/plain') : '';
+    try { if (h) document.execCommand('insertHTML', false, clean(h)); else document.execCommand('insertText', false, t); } catch (er) {} wSave(); });
+  panel.addEventListener('keydown', e => { if (!(e.target.closest && e.target.closest('.dg-wp'))) return; if (e.key === 'Tab') { e.preventDefault(); wCmd(e.shiftKey ? 'outdent' : 'indent'); } });
+  document.addEventListener('selectionchange', () => { if (!panel.hidden) wState(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) closePanel(); });
   const nm = $('#dg-name'); if (nm) { nm.value = S.name || ''; nm.addEventListener('input', () => { S.name = nm.value; save(); nameFill(); }); }
   const on = (id, fn) => { const x = $('#' + id); if (x) x.addEventListener('click', fn); };
   on('dg-check', () => { if (showSol) sol(false); check(); });
   on('dg-sol', () => sol(!showSol));
   on('dg-reset', () => { if (!confirm(K.du ? 'Alle deine Eingaben auf diesem Blatt löschen?' : 'Alle Eingaben auf diesem Blatt löschen?')) return; S[lv] = undefined; save(); mount(); });
+  // PDF zum Herunterladen: jede Seite als Bild (wie beim Drucken), Eingaben werden dafür in Text verwandelt
+  const LIB = { h2c: 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js', pdf: 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js' };
+  const loadS = (src, ok) => new Promise((res, rej) => { if (ok()) return res(); const sc = document.createElement('script'); sc.src = src; sc.onload = () => res(); sc.onerror = () => rej(new Error('Bibliothek fehlt')); document.head.appendChild(sc); });
+  const fileName = () => ((K.title || 'Arbeitsblatt') + (S.name ? ' ' + S.name : '')).normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 80) + '.pdf';
+  async function savePdf() {
+    const btn = $('#dg-pdf'); if (!btn || btn.disabled) return; const label = btn.textContent; btn.disabled = true; btn.textContent = 'PDF wird erstellt …';
+    if (showSol) sol(false); closePanel(); const ap = ansPage(); const z = root.style.zoom; root.style.zoom = '1';
+    try {
+      await Promise.all([loadS(LIB.h2c, () => !!window.html2canvas), loadS(LIB.pdf, () => !!(window.jspdf && window.jspdf.jsPDF))]);
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const pages = $$('#printroot > .pout'); let doc = null;
+      for (let i = 0; i < pages.length; i++) {
+        btn.textContent = `PDF … ${i + 1} von ${pages.length}`;
+        const pg = pages[i]; const PX = 96 / 25.4; const wmm = +pg.dataset.w || 210; const hmm = +pg.dataset.h || Math.max(297, Math.round(pg.offsetHeight / PX));
+        const ins = $$('input, textarea', pg);
+        pg.setAttribute('data-snap', '1');
+        let c;
+        try {
+          c = await window.html2canvas(pg, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false, windowWidth: Math.max(1200, pg.offsetWidth + 40),
+            onclone: d => {
+              const e = d.querySelector('[data-snap="1"]'); if (!e) return;
+              d.querySelectorAll('.dg-tt,.dg-bar,.dg-res,.dg-panel').forEach(x => x.remove());
+              const r2 = d.getElementById('printroot'); if (r2) r2.style.zoom = '1';
+              [...e.querySelectorAll('input, textarea')].forEach((x, k) => { const o = ins[k]; const sp = d.createElement(x.tagName === 'TEXTAREA' ? 'div' : 'span'); sp.className = x.className + ' dg-snap'; sp.style.cssText = x.style.cssText; sp.textContent = o ? o.value : x.value; x.replaceWith(sp); });
+            } });
+        } finally { pg.removeAttribute('data-snap'); }
+        const ori = wmm > hmm ? 'landscape' : 'portrait';
+        if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: hmm > 297 ? [210, hmm] : 'a4', orientation: ori, compress: true }); else doc.addPage(hmm > 297 && wmm <= 210 ? [210, hmm] : 'a4', ori);
+        doc.addImage(c.toDataURL('image/jpeg', .9), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
+      }
+      doc.setProperties({ title: K.title || 'Arbeitsblatt', author: S.name || '', creator: 'AB-Werkstatt' });
+      const blob = doc.output('blob'); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName();
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
+      res.hidden = false; res.classList.add('full'); res.textContent = 'PDF gespeichert: ' + a.download;
+    } catch (err) {
+      console.error(err); res.hidden = false; res.classList.remove('full');
+      res.textContent = 'Das PDF ließ sich nicht erstellen. Dafür braucht es eine Internetverbindung. Alternativ „Drucken“ wählen und dort „Als PDF sichern“.';
+    } finally { root.style.zoom = z; if (ap) ap.remove(); btn.disabled = false; btn.textContent = label; }
+  }
+  on('dg-pdf', savePdf);
   on('dg-print', () => { if (showSol) sol(false); closePanel(); const pg = ansPage(); const z = root.style.zoom; root.style.zoom = '1'; setTimeout(() => { window.print(); root.style.zoom = z; if (pg) pg.remove(); }, 50); });
   $$('[data-lv]').forEach(x => x.addEventListener('click', () => { lv = x.dataset.lv; S.lv = lv; save(); closePanel(); mount(); }));
   window.addEventListener('resize', () => { clearTimeout(window.__dgFit); window.__dgFit = setTimeout(fit, 120); });
@@ -6820,12 +6900,35 @@ svg.ck{cursor:pointer}
 .dg-pt p{margin:0}.dg-pt .task-tag{display:none}
 .dg-tips{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;align-items:flex-start}
 .dg-tipc{background:#FFF8E1;border-radius:8px;padding:7px 10px;width:100%}
-.dg-al{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:#5A606E}
-.dg-ans{font:inherit;font-size:15px;font-weight:400;color:#1C1F27;border:1px solid #C8CCD5;border-radius:10px;padding:9px 11px;resize:vertical;min-height:130px}
+.dg-word{border:1px solid #C8CCD5;border-radius:10px;overflow:hidden;background:#F3F4F7;box-shadow:0 1px 3px rgba(20,30,50,.08)}
+.dg-wh{background:#2741B5;color:#fff;font-size:12.5px;font-weight:700;padding:5px 12px;letter-spacing:.02em}
+.dg-wt{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:5px 6px;background:#F7F8FA;border-bottom:1px solid #DDE1E8}
+.dg-wt button{min-width:32px;height:32px;border:1px solid transparent;border-radius:6px;background:transparent;font:600 14px/1 "Segoe UI",system-ui,sans-serif;color:#1C1F27;cursor:pointer;padding:0 7px;display:inline-grid;place-items:center}
+.dg-wt button:hover{background:#E6EAF2}
+.dg-wt button[aria-pressed="true"]{background:#DCE3F7;border-color:#9DB0E8}
+.dg-wt b,.dg-wt i,.dg-wt u,.dg-wt s{font-family:Georgia,serif;font-size:15px}
+.dg-wt sub{font-size:9px;color:#C2410C;margin-left:1px}
+.dg-mk{background:#FFF0A0;padding:0 3px;border-bottom:3px solid #F2C200;font-size:13px}
+.dg-sep{width:1px;height:22px;background:#D5DAE3;margin:0 4px}
+.dg-wpg{background:#E9ECF1;padding:12px}
+.dg-wp{min-height:170px;max-height:42vh;overflow:auto;background:#fff;padding:16px 18px;border:1px solid #DDE1E8;box-shadow:0 1px 4px rgba(20,30,50,.10);font:15px/1.55 Aptos,Calibri,"Segoe UI","Atkinson Hyperlegible",system-ui,sans-serif;color:#1C1F27;outline:none;word-wrap:break-word}
+.dg-wp:focus{border-color:#9DB0E8}
+.dg-wp:empty::before{content:attr(data-ph);color:#9AA0AA}
+.dg-wp ul,.dg-wp ol,.dg-at ul,.dg-at ol{margin:.3em 0;padding-left:1.7em}
+.dg-wp blockquote,.dg-at blockquote{margin:0 0 0 1.7em}
+.dg-wp p,.dg-wp div{margin:0}
+.dg-wp mark,.dg-at mark{background:#FFF0A0;color:inherit}
+.dg-ws{display:flex;justify-content:space-between;gap:10px;padding:5px 12px 6px;font-size:12px;color:#5A606E;background:#F7F8FA;border-top:1px solid #DDE1E8}
+.dg-at{margin-top:1mm}.dg-at p,.dg-at div{margin:0}
 body.dg-open .dg-main{padding-bottom:62vh}
+.dg-btn:disabled{opacity:.6;cursor:progress}
+.dg-snap{color:var(--acc,#2741B5);font-weight:600;text-align:center;white-space:nowrap;overflow:hidden;line-height:1.05}
+.dg-snap.dg-area{white-space:pre-wrap;text-align:left;line-height:9mm;overflow:hidden}
+.dg-snap.dg-area.grid{line-height:5mm}
+.dg-snap.ok{color:#1E6B34}.dg-snap.no{color:#9A2F08}
 .dg-anspage{width:210mm;min-height:297mm;background:#fff;padding:18mm;font:11pt/1.5 "Atkinson Hyperlegible",sans-serif}
 .dg-anspage h2{margin:0 0 2mm;font-size:16pt}.dg-ap{color:#5A606E;margin:0 0 6mm}
-.dg-anspage section{margin-bottom:5mm}.dg-anspage section p{margin:1mm 0 0}
+.dg-anspage section{margin-bottom:5mm}
 @media print{
   body.dg{background:#fff}
   .dg-bar,.dg-res,.dg-panel,.dg-tt{display:none!important}
@@ -6873,7 +6976,7 @@ function dgDoc(K) {
   return '<!doctype html><html lang="de" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
     + `<title>${esc(K.title)}</title><link rel="preconnect" href="${'https://' + 'fonts.gstatic.com'}" crossorigin><link rel="stylesheet" href="${esc(fonts)}"><style>${css}</style><style>${DG_CSS}</style></head>`
     + `<body class="dg"><header class="dg-bar"><div class="dg-t">${esc(K.title)}</div><label class="dg-nm"><span>Name</span><input id="dg-name" type="text" autocomplete="off" placeholder="${K.du ? 'Dein Name' : 'Ihr Name'}"></label>${lvB}`
-    + `<div class="dg-acts">${K.hasCheck ? `<button type="button" class="dg-btn pri" id="dg-check">Prüfen</button>${K.sol ? '<button type="button" class="dg-btn" id="dg-sol" aria-pressed="false">Lösung</button>' : ''}` : ''}<button type="button" class="dg-btn" id="dg-reset">Leeren</button><button type="button" class="dg-btn" id="dg-print">Drucken</button></div></header>`
+    + `<div class="dg-acts">${K.hasCheck ? `<button type="button" class="dg-btn pri" id="dg-check">Prüfen</button>${K.sol ? '<button type="button" class="dg-btn" id="dg-sol" aria-pressed="false">Lösung</button>' : ''}` : ''}<button type="button" class="dg-btn" id="dg-reset">Leeren</button><button type="button" class="dg-btn" id="dg-print">Drucken</button><button type="button" class="dg-btn" id="dg-pdf">PDF speichern</button></div></header>`
     + `<div id="dg-res" class="dg-res" role="status" hidden></div><main class="dg-main"><div id="printroot"></div></main><aside id="dg-panel" class="dg-panel" hidden></aside>`
     + `<script>(${dgRuntime.toString()})(${data});<\/script></body></html>`;
 }
