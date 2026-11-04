@@ -188,6 +188,13 @@ body.cw-dragging,body.cw-dragging *{cursor:col-resize!important}
 .ck-chip[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
 .ck-chip[aria-pressed="true"] .cbx{background:currentColor}
 .ck-chip[aria-pressed="true"] .cbx::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid var(--field);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+/* Hilfen je Operator */
+.oph{border:1px solid var(--tinte);background:var(--tinte-soft);border-radius:10px;padding:10px 12px 11px;font-size:12.5px;line-height:1.42;color:var(--ink)}
+.oph-h{font-weight:700;margin-bottom:5px}.oph-h span{font-weight:400;color:var(--muted)}
+.oph ol{margin:0 0 9px;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+.oph-a{display:flex;flex-wrap:wrap;gap:6px}
+.oph-mini{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:12px;color:var(--muted)}
+.lv-sugg{display:flex;justify-content:flex-end;margin-top:-2px}
 /* Standards aus dem Rahmenlehrplan */
 .rlp-f{gap:8px}
 .rlp-chosen{display:flex;flex-wrap:wrap;gap:6px}
@@ -626,6 +633,24 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .dlg.dlg-out{width:min(520px,calc(100% - 32px))}
 .dlg.dlg-rlp{width:min(720px,calc(100% - 32px))}
 .dlg.dlg-mappe{width:min(560px,calc(100% - 32px))}
+.dlg.dlg-ocr{width:min(640px,calc(100% - 32px))}
+.ocr-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;min-height:170px;border:2px dashed var(--line-strong);border-radius:12px;background:var(--field);padding:18px;cursor:pointer;margin:4px 0 12px;color:var(--muted);font-size:13px}
+.ocr-drop svg{width:34px;height:34px;color:var(--tinte)}
+.ocr-drop b{color:var(--ink);font-size:15px}
+.ocr-drop:hover,.ocr-drop.over{border-color:var(--tinte);background:var(--tinte-soft)}
+.ocr-prev{display:flex;align-items:center;justify-content:center;height:min(42vh,340px);background:var(--field);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:4px 0 8px}
+.ocr-prev img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .2s}
+.ocr-prev img.q{max-width:min(42vh,340px);max-height:100%}
+.ocr-tools{gap:10px;align-items:center;margin-bottom:10px}
+.ocr-pdf{margin:4px 0 10px;font-size:13.5px}
+.ocr-run{display:flex;flex-direction:column;gap:8px;margin:18px 0 16px;font-size:13.5px;color:var(--muted)}
+.ocr-bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.ocr-bar i{display:block;height:100%;width:0;background:var(--tinte);border-radius:4px;transition:width .25s}
+.ocr-t{width:100%;min-height:260px;font-family:var(--f-text,Georgia,serif);font-size:14px;line-height:1.5;resize:vertical}
+.dlg-ocr .chk{margin:2px 0 8px}
+.ocr-link{display:flex;justify-content:flex-end;margin-top:-4px}
+.ocr-link .link{display:inline-flex;align-items:center;gap:6px}
+.ocr-link svg{width:16px;height:16px}
 .mp-row{gap:10px;align-items:flex-start}.mp-row .f{flex:1;min-width:0}
 .dlg-mappe .f{margin-bottom:12px}
 .mp-list{display:flex;flex-direction:column;gap:2px;max-height:min(32vh,260px);overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--field)}
@@ -1254,6 +1279,7 @@ body{transition:background-color .3s,border-color .25s}
 
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
+let ZL_MAP = {};                 // je Material: Wörter und ihre Zeilen- bzw. Versnummer aus dem letzten Satz
 let SPLIT_MATS = new Set();      // Materialien, die in der Vorschau über mehrere Seiten laufen (für die Fußnoten in Word)
 let AVAIL = 264 * MMPX;          // nutzbare Höhe je Seite (mm → px)
 const GAP = 5 * MMPX;              // Abstand zwischen Bausteinen
@@ -2840,6 +2866,7 @@ function renderMenu() {
   const gOn = state.sheet.meta.groupsOn; const g = b.group || '';
   root.innerHTML = `<div class="mn" id="mn" role="menu">
     <button type="button" role="menuitem" data-mn="dup">Duplizieren</button>
+    ${b.type === 'tasks' ? '<button type="button" role="menuitem" data-mn="oph-all">Tipps zu allen Aufgaben vorschlagen</button>' : ''}
     ${b.type === 'pagebreak' ? '' : '<button type="button" role="menuitem" data-mn="snip">In der Sammlung speichern</button>'}
     ${state.sheet.meta.levelsOn && b.type !== 'pagebreak' ? `<hr><small>Niveau</small>${Object.entries(LV).map(([k, x]) => `<button type="button" role="menuitemcheckbox" aria-checked="${!Array.isArray(b.lv) || b.lv.includes(k)}" data-mn="lv" data-v="${k}">${x.sym} ${x.name}</button>`).join('')}` : ''}
     ${gOn ? `<hr><small>Gilt für</small>${[['', 'Beide Gruppen'], ['A', 'Nur Gruppe A'], ['B', 'Nur Gruppe B']].map(([v, l]) => `<button type="button" role="menuitemradio" aria-checked="${g === v}" data-mn="grp" data-v="${v}">${l}</button>`).join('')}` : ''}
@@ -2855,7 +2882,11 @@ function onMenuClick(e) {
   const bid = menu.open.bid; closeMenu();
   const blocks = state.sheet.blocks; const idx = blocks.findIndex(x => x.id === bid); const b = blocks[idx]; if (!b) return;
   switch (a.dataset.mn) {
-    case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); break; }
+    case 'dup': { const c = clone(b); c.id = 'b' + uid(); zlCloneFor(b.id, c.id); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); break; }
+    case 'oph-all': { const du = state.sheet.meta.anrede === 'du'; let n = 0, none = 0;
+      b.items.forEach((it, i) => { if (tipsOf(it).length) return; const S = ophFor(it); if (!S) { none++; return; } it.tips = S.H.tips.slice(0, 3).map(x => duSie(x, du)).concat(['', '', '']).slice(0, 3); state.taskOpen.add(taskKey(b.id, i, 'tips')); n++; });
+      if (!n) { toast(none ? 'Bei den übrigen Aufgaben wurde kein Operator erkannt.' : 'Alle Aufgaben haben schon Tipps.'); break; }
+      changed(true); toast(`Tipps für ${n} ${n === 1 ? 'Aufgabe' : 'Aufgaben'} vorgeschlagen${none ? `, ${none} ohne erkannten Operator` : ''}`, 'Rückgängig', histUndo); break; }
     case 'snip': saveSnip(b); renderEditor(); break;
     case 'grp': b.group = a.dataset.v || ''; changed(true); break;
     case 'lv': { const k = a.dataset.v; const cur = Array.isArray(b.lv) ? b.lv : Object.keys(LV); const nx = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; if (!nx.length) { toast('Ein Baustein braucht mindestens eine Stufe.'); break; } if (nx.length === 3) delete b.lv; else b.lv = Object.keys(LV).filter(x => nx.includes(x)); changed(true); break; }
@@ -2872,13 +2903,214 @@ function taskExtras(b, i, it) {
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
   let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}</div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
+  if (open('tips')) h += ophBox(b, i, it, nT);
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
   if (open('lv') && state.sheet.meta.levelsOn) h += `<div class="f tx-f"><span>Erscheint in</span><div class="ck-chips">${Object.entries(LV).map(([k, x]) => `<button type="button" class="ck-chip" data-act="it-lv" data-i="${i}" data-v="${k}" aria-pressed="${!Array.isArray(it.lv) || it.lv.includes(k)}"><span class="cbx" aria-hidden="true"></span>${x.sym} ${x.name}</button>`).join('')}</div></div>
-    <div class="f tx-f"><span>★ Basis-Fassung (leer = wie oben)</span>${rtField(`items.${i}.lvb`, it.lvb || '', { mode: 'inline', rows: 2, ph: 'z. B. kleinschrittiger, mit Hilfen', aria: 'Basis-Fassung' })}</div>
-    <div class="f tx-f"><span>★★★ Experten-Fassung (leer = wie oben)</span>${rtField(`items.${i}.lve`, it.lve || '', { mode: 'inline', rows: 2, ph: 'z. B. offener, mit Zusatzaspekt', aria: 'Experten-Fassung' })}</div>`;
+    <div class="f tx-f"><span>★ Basis-Fassung (leer = wie oben)</span>${rtField(`items.${i}.lvb`, it.lvb || '', { rows: 2, ph: 'z. B. kleinschrittiger, mit Hilfen', aria: 'Basis-Fassung' })}${ophFor(it) ? `<div class="lv-sugg"><button class="link" type="button" data-act="oph-basis" data-i="${i}">Schritte zu „${esc(ophFor(it).op)}“ einsetzen</button></div>` : ''}</div>
+    <div class="f tx-f"><span>★★★ Experten-Fassung (leer = wie oben)</span>${rtField(`items.${i}.lve`, it.lve || '', { rows: 2, ph: 'z. B. offener, mit Zusatzaspekt', aria: 'Experten-Fassung' })}</div>`;
   if (open('rlp')) h += rlpPanel(b, i, it);
   if (open('tag')) h += `<label class="f tx-f"><span>Etikett</span><input type="text" data-k="items.${i}.tag" value="${esc(it.tag || '')}" placeholder="z. B. Zusatz, Wahlaufgabe"></label>`;
   return h;
+}
+
+/* ================= Hilfen je Operator: gestufte Tipps, Schritte für die Basis-Fassung, Satzanfänge =================
+   {du-Form|Sie-Form} wird je nach Anrede des Blatts aufgelöst. ph: Formulierungshilfen-Vorlagen (Überschriften), starts: eigene Satzanfänge. */
+const duSie = (s, du) => String(s).replace(/\{([^|{}]*)\|([^{}]*)\}/g, (m, a, b) => (du ? a : b));
+const OPH_FAM = { wiedergeben: 'wieder', zusammenfassen: 'wieder', skizzieren: 'wieder', nennen: 'nennen', benennen: 'nennen',
+  beschreiben: 'beschreib', darstellen: 'beschreib', aufzeigen: 'beschreib',
+  analysieren: 'analyse', untersuchen: 'analyse', erschließen: 'analyse', herausarbeiten: 'analyse',
+  interpretieren: 'interpret', deuten: 'interpret', charakterisieren: 'charakter',
+  vergleichen: 'vergleich', gegenüberstellen: 'vergleich', 'in Beziehung setzen': 'vergleich',
+  erläutern: 'erlaeutern', erklären: 'erlaeutern', begründen: 'erlaeutern', belegen: 'erlaeutern', nachweisen: 'erlaeutern',
+  erörtern: 'eroertern', diskutieren: 'eroertern', abwägen: 'eroertern', 'sich auseinandersetzen': 'eroertern',
+  beurteilen: 'urteil', bewerten: 'urteil', 'Stellung nehmen': 'urteil', überprüfen: 'urteil', prüfen: 'urteil',
+  gestalten: 'gestalt', verfassen: 'gestalt', entwerfen: 'gestalt', entwickeln: 'gestalt', einordnen: 'einordnen', zuordnen: 'einordnen',
+  'Hypothesen aufstellen': 'hypo', formulieren: 'hypo', planen: 'planen', protokollieren: 'protokoll', dokumentieren: 'protokoll',
+  zeichnen: 'zeichnen', beschriften: 'zeichnen', erstellen: 'zeichnen', auswerten: 'auswerten',
+  ableiten: 'ableiten', herleiten: 'ableiten', verallgemeinern: 'ableiten', beweisen: 'ableiten', anwenden: 'ableiten',
+  berechnen: 'rechnen', abschätzen: 'rechnen', bestimmen: 'rechnen', klassifizieren: 'ordnen', ordnen: 'ordnen' };
+const OPH = {
+  wieder: { tips: ['{Lies|Lesen Sie} den Text abschnittsweise und {notiere|notieren Sie} zu jedem Abschnitt ein Stichwort.', '{Beginne|Beginnen Sie} mit einem Einleitungssatz (Verfasser, Titel, Textsorte, Thema) und {gib|geben Sie} dann den Inhalt in eigenen Worten im Präsens wieder.', '{Bleibe|Bleiben Sie} sachlich: keine Zitate, keine Wertung, nur das Wichtigste in der Reihenfolge des Textes.'],
+    steps: ['{Lies|Lesen Sie} den Text und {markiere|markieren Sie} die wichtigsten Aussagen.', '{Teile|Teilen Sie} den Text in Abschnitte ein und {notiere|notieren Sie} zu jedem ein Stichwort.', '{Schreibe|Schreiben Sie} einen Einleitungssatz: Verfasser, Titel, Textsorte, Thema.', '{Schreibe|Schreiben Sie} zu jedem Abschnitt ein bis zwei Sätze im Präsens.'],
+    ph: ['Einleitung', 'Aussagen wiedergeben', 'Darstellung wiedergeben'], sh: 'Zusammenfassen', starts: ['In dem Text „…“ von … geht es um …', 'Zu Beginn …', 'Anschließend …', 'Abschließend …', 'Der Verfasser vertritt die Auffassung, dass …'] },
+  nennen: { tips: ['{Suche|Suchen Sie} im Material die passenden Stellen und {markiere|markieren Sie} sie.', 'Stichworte genügen; eine Erklärung ist nicht verlangt.'],
+    steps: ['{Unterstreiche|Unterstreichen Sie} in der Aufgabe, wonach gefragt ist.', '{Markiere|Markieren Sie} die passenden Stellen im Material.', '{Schreibe|Schreiben Sie} sie als Stichworte auf.'] },
+  beschreib: { tips: ['{Schau|Schauen Sie} genau hin und {notiere|notieren Sie} in Stichworten, was auffällt.', '{Ordne|Ordnen Sie} die Stichworte sinnvoll, zum Beispiel in der Reihenfolge des Textes oder vom Allgemeinen zum Besonderen.', '{Schreibe|Schreiben Sie} sachlich im Präsens und mit Fachbegriffen; gedeutet wird noch nicht.'],
+    steps: ['{Markiere|Markieren Sie} in der Aufgabe, worum es gehen soll.', '{Notiere|Notieren Sie} die wichtigsten Merkmale in Stichworten.', '{Bringe|Bringen Sie} die Stichworte in eine sinnvolle Reihenfolge.', '{Schreibe|Schreiben Sie} sachlich in ganzen Sätzen im Präsens.'],
+    sh: 'Beschreiben', starts: ['Auffällig ist …', 'Der Text ist in … Abschnitte gegliedert.', 'Zu Beginn …, danach …', 'Es fällt auf, dass …'] },
+  analyse: { tips: ['{Kläre|Klären Sie} zuerst, worum es geht und unter welchem Gesichtspunkt {du den Text untersuchen sollst|Sie den Text untersuchen sollen}.', '{Suche|Suchen Sie} drei bis vier auffällige Stellen und {notiere|notieren Sie} jeweils: Was steht da? Welches Mittel? Welche Wirkung?', '{Verbinde|Verbinden Sie} immer Beobachtung, Beleg und Deutung: „Durch … (Z. …) wird deutlich, dass …“'],
+    steps: ['{Lies|Lesen Sie} den Text zweimal und {markiere|markieren Sie} auffällige Stellen.', '{Notiere|Notieren Sie} zu drei Stellen: Was steht da? Welches Mittel? Welche Wirkung?', '{Schreibe|Schreiben Sie} zu jeder Stelle einen Satz mit Beobachtung, Zeilenangabe und Deutung.', '{Halte|Halten Sie} am Ende in zwei Sätzen fest, was der Text insgesamt zeigt.'],
+    ph: ['Sprachliche Mittel deuten', 'Zitieren und Belegen'] },
+  analyse_lyrik: { name: 'Gedicht', tips: ['{Lies|Lesen Sie} das Gedicht zweimal, gern halblaut, und {halte|halten Sie} {deinen|Ihren} ersten Eindruck fest: Worum geht es, welche Stimmung entsteht?', '{Untersuche|Untersuchen Sie} die Form: Strophen, Verse, Reimschema, Metrum. {Frage dich|Fragen Sie sich}, ob die Form zum Inhalt passt.', '{Suche|Suchen Sie} sprachliche Bilder wie Metapher, Vergleich oder Personifikation und {deute|deuten Sie} sie mit Versangabe: „Die Metapher … (V. …) zeigt …“'],
+    steps: ['{Lies|Lesen Sie} das Gedicht zweimal und {notiere|notieren Sie} {deinen|Ihren} ersten Eindruck in einem Satz.', '{Zähle|Zählen Sie} Strophen und Verse und {notiere|notieren Sie} das Reimschema.', '{Markiere|Markieren Sie} drei sprachliche Bilder und {schreibe|schreiben Sie} dazu, welches Stilmittel es ist.', '{Schreibe|Schreiben Sie} zu jedem Bild: Was steht da (V. …)? Was bedeutet es?', '{Halte|Halten Sie} in zwei Sätzen fest, was das Gedicht aussagt.'],
+    ph: ['Einleitung', 'Sprachliche Mittel deuten', 'Zitieren und Belegen'] },
+  analyse_drama: { name: 'Szene', tips: ['{Ordne|Ordnen Sie} die Szene ein: Was ist vorher passiert, was folgt danach?', '{Untersuche|Untersuchen Sie} das Gesprächsverhalten: Wer spricht wie viel, wer bestimmt das Thema, wie reagieren die Figuren aufeinander?', '{Achte|Achten Sie} auf Regieanweisungen, Satzbau und Wortwahl und {deute|deuten Sie} sie mit Zeilenangabe.'],
+    steps: ['{Schreibe|Schreiben Sie} in zwei Sätzen auf, was vor der Szene geschieht.', '{Notiere|Notieren Sie} für jede Figur: Was will sie? Wie spricht sie?', '{Markiere|Markieren Sie} zwei Stellen, an denen sich das Gespräch wendet.', '{Schreibe|Schreiben Sie} mit Zeilenangaben auf, was diese Stellen über die Figuren zeigen.'],
+    ph: ['Einleitung', 'Zitieren und Belegen'], sh: 'Gesprächsverhalten', starts: ['… ergreift zuerst das Wort und …', '… reagiert auf … mit …', 'Die Regieanweisung „…“ (Z. …) zeigt, dass …', 'Das Gespräch wendet sich, als …'] },
+  analyse_epik: { name: 'Erzähltext', tips: ['{Kläre|Klären Sie} die Erzählsituation: Wer erzählt, aus welcher Sicht, wie viel weiß die Erzählinstanz?', '{Untersuche|Untersuchen Sie}, wie Zeit und Raum gestaltet sind und wie die Figuren dargestellt werden.', '{Belege|Belegen Sie} jede Beobachtung mit einer Textstelle und {erkläre|erklären Sie} ihre Funktion für die Aussage des Textes.'],
+    steps: ['{Schreibe|Schreiben Sie} die Handlung in drei Sätzen auf.', '{Kläre|Klären Sie}, wer erzählt und aus welcher Sicht.', '{Markiere|Markieren Sie} drei Stellen, die eine Figur oder die Stimmung zeigen.', '{Schreibe|Schreiben Sie} zu jeder Stelle mit Zeilenangabe auf, was sie bewirkt.'],
+    ph: ['Einleitung', 'Zitieren und Belegen'] },
+  analyse_prag: { name: 'Sachtext', tips: ['{Bestimme|Bestimmen Sie} Thema, Textsorte und Adressaten: Wer schreibt für wen und mit welcher Absicht?', '{Gliedere|Gliedern Sie} die Argumentation: These, Argumente, Beispiele, Schluss, jeweils mit Zeilen.', '{Untersuche|Untersuchen Sie} sprachliche Mittel wie rhetorische Fragen, Wortwahl oder Anaphern und {erkläre|erklären Sie}, wie sie die Absicht stützen.'],
+    steps: ['{Notiere|Notieren Sie} Verfasser, Textsorte, Thema und Adressaten.', '{Unterstreiche|Unterstreichen Sie} die Hauptthese und {nummeriere|nummerieren Sie} die Argumente.', '{Markiere|Markieren Sie} drei auffällige sprachliche Mittel.', '{Schreibe|Schreiben Sie} zu jedem Mittel mit Zeilenangabe auf, welche Wirkung es haben soll.'],
+    ph: ['Einleitung', 'Argumentieren', 'Sprachliche Mittel deuten'] },
+  interpret: { tips: ['{Formuliere|Formulieren Sie} nach dem ersten Lesen eine Deutungshypothese: Worum geht es eigentlich?', '{Prüfe|Prüfen Sie} die Hypothese am Text: Welche Stellen stützen sie, welche sprechen dagegen?', '{Beziehe|Beziehen Sie} Form, Sprache und Kontext (Epoche, Autor, Entstehungszeit) ein und {kehre|kehren Sie} am Schluss zur Hypothese zurück.'],
+    steps: ['{Schreibe|Schreiben Sie} {deinen|Ihren} ersten Eindruck in einem Satz auf.', '{Mache|Machen Sie} daraus eine Deutungshypothese.', '{Suche|Suchen Sie} drei Textstellen, die die Hypothese stützen, und {schreibe|schreiben Sie} zu jeder einen Satz.', '{Schau|Schauen Sie} am Schluss, ob die Hypothese noch stimmt, und {ergänze|ergänzen Sie} sie, wenn nötig.'],
+    ph: ['Zitieren und Belegen'], sh: 'Deuten', starts: ['Der Text lässt sich als … verstehen.', 'Meine Deutungshypothese lautet: …', 'Dafür spricht die Stelle „…“ (Z. …).', 'Gestützt wird diese Deutung durch …', 'Insgesamt bestätigt sich, dass …'] },
+  charakter: { tips: ['{Sammle|Sammeln Sie} Informationen zur Figur: äußere Merkmale, Lebenssituation, Verhalten, Sprache.', '{Unterscheide|Unterscheiden Sie}, was direkt über die Figur gesagt wird und was ihr Verhalten indirekt zeigt.', '{Fasse|Fassen Sie} die Eigenschaften zu einem Gesamtbild zusammen und {belege|belegen Sie} jede mit einer Textstelle.'],
+    steps: ['{Notiere|Notieren Sie} äußere Merkmale und die Lebenssituation der Figur.', '{Markiere|Markieren Sie} drei Stellen, an denen ihr Verhalten etwas über sie verrät.', '{Schreibe|Schreiben Sie} zu jeder Stelle eine Eigenschaft auf.', '{Schreibe|Schreiben Sie} ein Gesamtbild der Figur mit Zeilenangaben.'],
+    sh: 'Charakterisieren', starts: ['… wird als … dargestellt.', 'Ihr Verhalten zeigt, dass …', 'An der Stelle „…“ (Z. …) wird deutlich, dass …', 'Insgesamt wirkt die Figur …'] },
+  vergleich: { tips: ['{Lege|Legen Sie} Vergleichspunkte fest, zum Beispiel Thema, Haltung, Sprache oder Form.', '{Lege|Legen Sie} eine Tabelle an (Vergleichspunkt, Text 1, Text 2) und {trage|tragen Sie} Gemeinsamkeiten und Unterschiede ein.', '{Schreibe|Schreiben Sie} Punkt für Punkt, nicht erst alles zu einem Text, und {ziehe|ziehen Sie} am Ende ein Fazit.'],
+    steps: ['{Lege|Legen Sie} drei Vergleichspunkte fest.', '{Trage|Tragen Sie} zu jedem Punkt in eine Tabelle ein, was in beiden Texten steht.', '{Markiere|Markieren Sie} Gemeinsamkeiten und Unterschiede farbig.', '{Schreibe|Schreiben Sie} zu jedem Punkt einen Absatz und {ziehe|ziehen Sie} ein Fazit.'],
+    ph: ['Vergleichen'] },
+  erlaeutern: { tips: ['{Kläre|Klären Sie}, was genau erläutert werden soll, und {notiere|notieren Sie} die Kernaussage in einem Satz.', '{Begründe|Begründen Sie} die Aussage: Warum ist das so? {Nutze|Nutzen Sie} {dein|Ihr} Wissen aus dem Unterricht.', '{Mache|Machen Sie} es an einem Beispiel oder einer Textstelle anschaulich: „Das zeigt sich etwa an …“'],
+    steps: ['{Schreibe|Schreiben Sie} die Aussage, um die es geht, in einem Satz auf.', '{Schreibe|Schreiben Sie} auf, warum das so ist.', '{Füge|Fügen Sie} ein Beispiel oder eine Textstelle hinzu.', '{Schließe|Schließen Sie} mit einem Satz, der alles bündelt.'],
+    sh: 'Erläutern', starts: ['Damit ist gemeint, dass …', 'Das lässt sich dadurch erklären, dass …', 'Ein Beispiel dafür ist …', 'Das zeigt sich etwa an …', 'Daraus folgt, dass …'] },
+  eroertern: { tips: ['{Formuliere|Formulieren Sie} die Streitfrage als Frage und {sammle|sammeln Sie} in einer Tabelle Argumente dafür und dagegen.', '{Ordne|Ordnen Sie} die Argumente nach Gewicht, das stärkste zuletzt. Jedes Argument braucht Behauptung, Begründung und Beispiel.', '{Baue|Bauen Sie} den Text so auf: Einleitung mit Hinführung, Hauptteil (erst die Gegenseite, dann die eigene Seite), Schluss mit begründetem Urteil.'],
+    steps: ['{Schreibe|Schreiben Sie} die Streitfrage als Frage auf.', '{Sammle|Sammeln Sie} in einer Tabelle je drei Argumente dafür und dagegen.', '{Ergänze|Ergänzen Sie} zu jedem Argument eine Begründung und ein Beispiel.', '{Entscheide dich|Entscheiden Sie sich} und {schreibe|schreiben Sie} im Schluss, warum.'],
+    ph: ['Argumentieren', 'Urteilen und Schluss'] },
+  urteil: { tips: ['{Kläre|Klären Sie} die Kriterien: Woran {misst du dein|messen Sie Ihr} Urteil, etwa Überzeugungskraft, Wirkung oder Angemessenheit?', '{Wäge|Wägen Sie} ab, was dafür und was dagegen spricht, und {belege|belegen Sie} beides.', '{Formuliere|Formulieren Sie} ein eigenes, begründetes Urteil: „Insgesamt überzeugt …, weil …“'],
+    steps: ['{Lege|Legen Sie} fest, nach welchem Kriterium {du urteilst|Sie urteilen}.', '{Notiere|Notieren Sie}, was dafür und was dagegen spricht.', '{Schreibe|Schreiben Sie} {dein|Ihr} Urteil in einem Satz auf.', '{Stütze|Stützen Sie} es mit mindestens zwei Argumenten.'],
+    ph: ['Urteilen und Schluss', 'Bewerten'], sh: 'Urteilen', starts: ['Meiner Ansicht nach …, weil …', 'Überzeugend ist …, da …', 'Weniger überzeugend ist …', 'Insgesamt komme ich zu dem Urteil, dass …'] },
+  gestalt: { tips: ['{Kläre|Klären Sie} Textsorte, Situation und Perspektive: Wer schreibt an wen, wann und warum?', '{Sammle|Sammeln Sie} Anknüpfungspunkte im Ausgangstext: Was weiß die Figur, was fühlt sie, wie spricht sie?', '{Achte|Achten Sie} auf die Merkmale der Textsorte und {bleibe|bleiben Sie} nah am Ausgangstext.'],
+    steps: ['{Kläre|Klären Sie}: Wer schreibt, an wen, in welcher Situation?', '{Notiere|Notieren Sie} drei Gedanken oder Gefühle der Figur mit passender Textstelle.', '{Schreibe|Schreiben Sie} in der passenden Form.', '{Lies|Lesen Sie} {deinen|Ihren} Text noch einmal: Passt er zur Figur und zur Situation?'] },
+  gestalt_monolog: { name: 'innerer Monolog', tips: ['{Kläre|Klären Sie} die Situation: An welcher Stelle der Handlung denkt die Figur, und was ist gerade passiert?', '{Sammle|Sammeln Sie} im Text, was die Figur weiß, fühlt und befürchtet.', '{Schreibe|Schreiben Sie} in der Ich-Form und im Präsens, mit Fragen, Ausrufen und Gedankensprüngen, und {bleibe|bleiben Sie} nah am Text.'],
+    steps: ['{Kläre|Klären Sie}, in welcher Situation die Figur gerade ist.', '{Notiere|Notieren Sie} drei Gedanken oder Gefühle der Figur mit Textstelle.', '{Schreibe|Schreiben Sie} in der Ich-Form und im Präsens.', '{Lies|Lesen Sie} noch einmal: Passt alles zu dem, was die Figur im Text weiß?'],
+    sh: 'Innerer Monolog', starts: ['Ich kann nicht glauben, dass …', 'Warum nur …?', 'Eigentlich wollte ich …', 'Vielleicht sollte ich …', 'Was, wenn …?'] },
+  gestalt_brief: { name: 'Brief', tips: ['{Kläre|Klären Sie}, wer an wen schreibt und aus welchem Anlass.', '{Sammle|Sammeln Sie} im Text, was die schreibende Figur weiß und was sie bewegt.', '{Achte|Achten Sie} auf die Briefform (Ort und Datum, Anrede, Schlussformel) und {wähle|wählen Sie} einen Ton, der zur Figur passt.'],
+    steps: ['{Notiere|Notieren Sie}, wer an wen und warum schreibt.', '{Sammle|Sammeln Sie} drei Dinge, die die Figur sagen will, mit Textstelle.', '{Schreibe|Schreiben Sie} den Brief mit Ort, Datum, Anrede und Gruß.', '{Lies|Lesen Sie} den Brief noch einmal: Passt der Ton zur Figur?'],
+    sh: 'Brief', starts: ['Liebe …, lieber …,', 'ich schreibe dir, weil …', 'Seit … geht mir nicht aus dem Kopf, dass …', 'Bitte versteh, dass …', 'Viele Grüße'] },
+  argumente: { name: 'Argumente', tips: ['{Lies|Lesen Sie} das Material und {markiere|markieren Sie} Argumente dafür und dagegen in zwei Farben.', '{Notiere|Notieren Sie} jedes Argument in einem eigenen Satz mit Zeilenangabe.', '{Ordne|Ordnen Sie} die Argumente in einer Tabelle nach Pro und Contra und {achte|achten Sie} darauf, wer sie vertritt.'],
+    steps: ['{Markiere|Markieren Sie} Argumente dafür grün und dagegen rot.', '{Schreibe|Schreiben Sie} jedes Argument in einem Satz mit Zeilenangabe auf.', '{Trage|Tragen Sie} sie in eine Tabelle mit Pro und Contra ein.'],
+    ph: ['Argumentieren'] },
+  einordnen_handlung: { name: 'Handlung', tips: ['{Rufe|Rufen Sie} {dir|sich} in Erinnerung, was unmittelbar vor der Stelle geschieht.', '{Überlege|Überlegen Sie}, was danach folgt und was sich durch die Stelle verändert.', '{Erläutere|Erläutern Sie} die Funktion der Stelle für den Fortgang der Handlung oder für die Figurenkonstellation.'],
+    steps: ['{Schreibe|Schreiben Sie} in zwei Sätzen auf, was vorher geschieht.', '{Schreibe|Schreiben Sie} in einem Satz auf, was danach folgt.', '{Halte|Halten Sie} fest, was sich durch die Stelle ändert.'] },
+  einordnen: { tips: ['{Rufe|Rufen Sie} {dir|sich} in Erinnerung, was {du|Sie} über Epoche, Autor oder Zusammenhang {weißt|wissen}.', '{Suche|Suchen Sie} im Text Merkmale, die dazu passen, und {notiere|notieren Sie} sie mit Zeilenangabe.', '{Stelle|Stellen Sie} den Zusammenhang her: „Typisch für … ist …; das zeigt sich hier in …“'],
+    steps: ['{Notiere|Notieren Sie} drei Merkmale der Epoche oder des Zusammenhangs.', '{Suche|Suchen Sie} zu jedem Merkmal eine passende Textstelle.', '{Schreibe|Schreiben Sie} dazu, warum die Stelle typisch ist.'],
+    ph: ['Historisch einordnen'], sh: 'Einordnen', starts: ['Der Text lässt sich … zuordnen, weil …', 'Typisch für … ist …', 'Das zeigt sich hier an …'] },
+  // Geschichte und Politik
+  gp_quelle: { name: 'Quelle', tips: ['{Kläre|Klären Sie} die formalen Merkmale: Verfasser, Entstehungszeit, Adressat, Quellengattung.', '{Gib|Geben Sie} den Inhalt gegliedert wieder und {arbeite|arbeiten Sie} die Position des Verfassers heraus.', '{Ordne|Ordnen Sie} die Quelle in den historischen Zusammenhang ein und {prüfe|prüfen Sie}, welche Absicht und Perspektive sie erkennen lässt.'],
+    steps: ['{Notiere|Notieren Sie} Verfasser, Zeit, Adressat und Quellengattung.', '{Unterstreiche|Unterstreichen Sie} die wichtigsten Aussagen des Verfassers.', '{Schreibe|Schreiben Sie} sie in eigenen Worten mit Zeilenangaben auf.', '{Schreibe|Schreiben Sie} auf, was der Verfasser erreichen wollte.'],
+    ph: ['Quelle einleiten', 'Aussagen wiedergeben', 'Historisch einordnen'] },
+  gp_bild: { name: 'Bildquelle', tips: ['{Beschreibe|Beschreiben Sie} zuerst genau, was zu sehen ist: Personen, Gegenstände, Text, Bildaufbau.', '{Deute|Deuten Sie} die Bildelemente: Wofür stehen Personen, Symbole und Größenverhältnisse?', '{Ordne|Ordnen Sie} das Bild in den Zusammenhang ein und {formuliere|formulieren Sie} die Aussage des Zeichners oder der Zeichnerin.'],
+    steps: ['{Notiere|Notieren Sie}, wer das Bild wann und wo veröffentlicht hat.', '{Schreibe|Schreiben Sie} auf, was im Vordergrund und im Hintergrund zu sehen ist.', '{Schreibe|Schreiben Sie} zu zwei Symbolen, wofür sie stehen.', '{Schreibe|Schreiben Sie} die Aussage des Bildes in einem Satz auf.'],
+    ph: ['Karikatur beschreiben', 'Karikatur deuten'] },
+  gp_stat: { name: 'Statistik', tips: ['{Kläre|Klären Sie} Thema, Quelle, Zeitraum und Einheiten der Darstellung.', '{Beschreibe|Beschreiben Sie} die wichtigsten Entwicklungen: Höchst- und Tiefstwerte, Trends, Brüche.', '{Erkläre|Erklären Sie} die Entwicklung mit {deinem|Ihrem} Wissen und {prüfe|prüfen Sie}, was die Darstellung nicht zeigt.'],
+    steps: ['{Notiere|Notieren Sie} Thema, Zeitraum und Einheit.', '{Markiere|Markieren Sie} den höchsten und den niedrigsten Wert.', '{Schreibe|Schreiben Sie} die Entwicklung in drei Sätzen auf.', '{Schreibe|Schreiben Sie} eine mögliche Ursache dazu.'],
+    ph: ['Statistik auswerten'] },
+  gp_sach: { name: 'Sachurteil', tips: ['{Kläre|Klären Sie}, worum es im Urteil geht, und {lege|legen Sie} Kriterien fest, etwa Ziele, Mittel und Folgen.', '{Prüfe|Prüfen Sie} die Sache am Material und an {deinem|Ihrem} Wissen: Was spricht dafür, was dagegen?', '{Formuliere|Formulieren Sie} ein Sachurteil aus der damaligen Zeit heraus, ohne heutige Werte anzulegen.'],
+    steps: ['{Lege|Legen Sie} ein Kriterium fest, etwa: Wurde das Ziel erreicht?', '{Notiere|Notieren Sie} aus dem Material, was dafür und was dagegen spricht.', '{Schreibe|Schreiben Sie} {dein|Ihr} Urteil in einem Satz auf.', '{Stütze|Stützen Sie} es mit zwei Argumenten aus dem Material.'],
+    ph: ['Sach- und Werturteil'] },
+  gp_wert: { name: 'Werturteil', tips: ['{Kläre|Klären Sie} zuerst die Sache: Was ist geschehen, wer war beteiligt, mit welchen Folgen?', '{Lege|Legen Sie} offen, welche Werte {du anlegst|Sie anlegen}, etwa Menschenwürde, Freiheit oder Gerechtigkeit.', '{Formuliere|Formulieren Sie} ein begründetes Werturteil aus heutiger Sicht und {nimm|nehmen Sie} eine Gegenposition auf.'],
+    steps: ['{Schreibe|Schreiben Sie} in zwei Sätzen auf, worum es geht.', '{Schreibe|Schreiben Sie} auf, nach welchem Wert {du urteilst|Sie urteilen}.', '{Schreibe|Schreiben Sie} {dein|Ihr} Urteil auf und {stütze|stützen Sie} es mit Argumenten.', '{Greife|Greifen Sie} eine andere Sicht auf und {antworte|antworten Sie} darauf.'],
+    ph: ['Sach- und Werturteil', 'Argumentieren'] },
+  gp_einordnen: { name: 'historisch', tips: ['{Rufe|Rufen Sie} {dir|sich} den historischen Zusammenhang in Erinnerung: Was geschah vorher, was danach?', '{Verknüpfe|Verknüpfen Sie} Aussagen des Materials mit diesem Wissen.', '{Erkläre|Erklären Sie}, was das Material vor diesem Hintergrund verständlich macht.'],
+    steps: ['{Schreibe|Schreiben Sie} auf, was {du|Sie} über die Zeit {weißt|wissen}.', '{Markiere|Markieren Sie} im Material Stellen, die dazu passen.', '{Schreibe|Schreiben Sie} auf, was das Material vor diesem Hintergrund verständlich macht.'],
+    ph: ['Historisch einordnen'] },
+  // Biologie
+  bio_auswerten: { name: 'Daten und Versuch', tips: ['{Beschreibe|Beschreiben Sie} zuerst die Ergebnisse: Welche Werte, welche Tendenz?', '{Vergleiche|Vergleichen Sie} Versuchs- und Kontrollansatz oder die Messreihen miteinander.', '{Ziehe|Ziehen Sie} eine Schlussfolgerung und {prüfe|prüfen Sie}, ob sie die Hypothese bestätigt oder widerlegt.'],
+    steps: ['{Schreibe|Schreiben Sie} die Ergebnisse mit Werten auf.', '{Lege|Legen Sie} die Werte neben die des Kontrollansatzes.', '{Schreibe|Schreiben Sie} auf, wie sich das Ergebnis biologisch erklären lässt.', '{Entscheide|Entscheiden Sie}, ob die Hypothese stimmt.'],
+    ph: ['Diagramm beschreiben', 'Ergebnis und Fehlerbetrachtung'] },
+  bio_diagramm: { name: 'Diagramm', tips: ['{Kläre|Klären Sie} zuerst, was auf den Achsen dargestellt ist und in welchen Einheiten.', '{Beschreibe|Beschreiben Sie} den Verlauf abschnittsweise mit Werten: Anstieg, Maximum, Abfall.', '{Bleibe|Bleiben Sie} bei dem, was das Diagramm zeigt; erklärt wird erst danach.'],
+    steps: ['{Notiere|Notieren Sie}, was auf der x-Achse und auf der y-Achse steht.', '{Markiere|Markieren Sie} den höchsten und den niedrigsten Wert.', '{Schreibe|Schreiben Sie} den Verlauf in drei Sätzen mit Werten auf.'],
+    ph: ['Diagramm beschreiben'] },
+  bio_beobachten: { name: 'Beobachtung', tips: ['{Notiere|Notieren Sie} genau, was sich zeigt: Farbe, Form, Menge, Messwerte.', '{Trenne|Trennen Sie} Beobachtung und Deutung: erst beschreiben, dann erklären.', '{Vergleiche|Vergleichen Sie} mit dem Kontrollansatz.'],
+    steps: ['{Schau|Schauen Sie} genau hin und {notiere|notieren Sie}, was sich verändert.', '{Halte|Halten Sie} Messwerte in einer Tabelle fest.', '{Schreibe|Schreiben Sie} nur auf, was zu sehen ist, noch ohne Erklärung.'],
+    ph: ['Beobachtung beschreiben'] },
+  bio_erklaeren: { tips: ['{Nenne|Nennen Sie} zuerst den Sachverhalt, der erklärt werden soll.', '{Führe|Führen Sie} ihn auf biologische Ursachen oder Prinzipien zurück, etwa Struktur und Funktion oder das Schlüssel-Schloss-Prinzip.', '{Verknüpfe|Verknüpfen Sie} Ursache und Wirkung in ganzen Sätzen: „…, weil …, sodass …“'],
+    steps: ['{Schreibe|Schreiben Sie} auf, was erklärt werden soll.', '{Schreibe|Schreiben Sie} die biologische Ursache dazu.', '{Verbinde|Verbinden Sie} Ursache und Wirkung mit „weil“ oder „dadurch“.'],
+    ph: ['Erklären (Ursache und Wirkung)'] },
+  hypo: { tips: ['{Formuliere|Formulieren Sie} die Fragestellung: Was soll herausgefunden werden?', '{Stelle|Stellen Sie} eine begründete Vermutung auf: „Wenn …, dann …, weil …“', '{Überlege|Überlegen Sie}, mit welchem Versuch sich die Hypothese prüfen lässt.'],
+    steps: ['{Schreibe|Schreiben Sie} die Frage auf, die geklärt werden soll.', '{Schreibe|Schreiben Sie} {deine|Ihre} Vermutung als Wenn-dann-Satz.', '{Ergänze|Ergänzen Sie} mit „weil …“, warum {du das vermutest|Sie das vermuten}.'],
+    ph: ['Hypothese formulieren'] },
+  planen: { tips: ['{Lege|Legen Sie} fest, welche Größe {du veränderst|Sie verändern} und was {du misst|Sie messen}.', '{Halte|Halten Sie} alle anderen Bedingungen gleich und {plane|planen Sie} einen Kontrollansatz.', '{Beschreibe|Beschreiben Sie} Material, Durchführung und erwartete Ergebnisse so, dass jemand anderes den Versuch nachmachen kann.'],
+    steps: ['{Schreibe|Schreiben Sie} auf, was {du veränderst|Sie verändern} und was {du misst|Sie messen}.', '{Lege|Legen Sie} fest, was gleich bleiben muss.', '{Überlege dir|Überlegen Sie sich} einen Kontrollansatz.', '{Liste|Listen Sie} Material und Arbeitsschritte auf.'],
+    ph: ['Hypothese formulieren'] },
+  protokoll: { tips: ['{Gliedere|Gliedern Sie} das Protokoll: Frage, Hypothese, Material, Durchführung, Beobachtung, Auswertung.', '{Trenne|Trennen Sie} streng, was {du beobachtest|Sie beobachten}, von der Deutung.', '{Halte|Halten Sie} Messwerte in einer Tabelle fest und {schreibe|schreiben Sie} sachlich im Präsens.'],
+    steps: ['{Schreibe|Schreiben Sie} Frage und Hypothese auf.', '{Liste|Listen Sie} Material und Durchführung auf.', '{Trage|Tragen Sie} die Messwerte in eine Tabelle ein.', '{Halte|Halten Sie} getrennt davon fest, wie {du die Ergebnisse deutest|Sie die Ergebnisse deuten}.'],
+    ph: ['Beobachtung beschreiben', 'Ergebnis und Fehlerbetrachtung'] },
+  zeichnen: { tips: ['{Zeichne|Zeichnen Sie} mit Bleistift, groß und ohne Schattierungen.', '{Beschrifte|Beschriften Sie} mit geraden Linien ohne Pfeilspitzen, die Begriffe waagerecht am Rand.', '{Ergänze|Ergänzen Sie} Überschrift und Vergrößerung oder Maßstab.'],
+    steps: ['{Nimm|Nehmen Sie} einen spitzen Bleistift und {nutze|nutzen Sie} die ganze Fläche.', '{Ziehe|Ziehen Sie} klare Linien ohne Schattierungen.', '{Setze|Setzen Sie} die Begriffe waagerecht an den Rand und {verbinde|verbinden Sie} sie mit geraden Linien.', '{Ergänze|Ergänzen Sie} Überschrift und Vergrößerung.'] },
+  bio_bewerten: { tips: ['{Stelle|Stellen Sie} die Sachinformationen zusammen: Was ist biologisch gesichert?', '{Benenne|Benennen Sie} die berührten Werte, etwa Gesundheit, Tierwohl oder Naturschutz, und die Sicht der Beteiligten.', '{Wäge|Wägen Sie} die Handlungsmöglichkeiten ab und {formuliere|formulieren Sie} ein begründetes Urteil.'],
+    steps: ['{Schreibe|Schreiben Sie} die wichtigsten Fakten aus dem Material auf.', '{Notiere|Notieren Sie}, welche Werte berührt sind und wer betroffen ist.', '{Sammle|Sammeln Sie} Gründe für und gegen jede Handlungsmöglichkeit.', '{Entscheide dich|Entscheiden Sie sich} und {schreibe|schreiben Sie} auf, warum.'],
+    ph: ['Bewerten'] },
+  bio_vergleich: { tips: ['{Lege|Legen Sie} Vergleichskriterien fest, etwa Bau, Funktion oder Lebensraum.', '{Stelle|Stellen Sie} Gemeinsamkeiten und Unterschiede in einer Tabelle gegenüber.', '{Ziehe|Ziehen Sie} ein Fazit: Was folgt aus dem Vergleich?'],
+    steps: ['{Lege|Legen Sie} drei Merkmale fest, auf die {du achtest|Sie achten}.', '{Trage|Tragen Sie} sie in eine Tabelle ein.', '{Markiere|Markieren Sie} Gemeinsamkeiten und Unterschiede.', '{Schreibe|Schreiben Sie} ein Fazit in einem Satz.'],
+    ph: ['Vergleichen'] },
+  ableiten: { tips: ['{Gehe|Gehen Sie} vom Material aus: Was ist gegeben?', '{Wende|Wenden Sie} eine bekannte Regel oder Gesetzmäßigkeit darauf an.', '{Formuliere|Formulieren Sie} die Schlussfolgerung: „Daraus folgt, dass …“'],
+    steps: ['{Schreibe|Schreiben Sie} auf, was im Material gegeben ist.', '{Suche|Suchen Sie} eine passende Regel aus dem Unterricht.', '{Schreibe|Schreiben Sie} auf, was daraus folgt.'],
+    ph: ['Erklären (Ursache und Wirkung)'] },
+  rechnen: { tips: ['{Notiere|Notieren Sie} die gegebenen Größen mit Einheiten.', '{Wähle|Wählen Sie} den passenden Rechenweg oder die Formel.', '{Rechne|Rechnen Sie} mit Einheiten und {prüfe|prüfen Sie}, ob das Ergebnis plausibel ist.'],
+    steps: ['{Schreibe|Schreiben Sie} die gegebenen Größen mit Einheiten auf.', '{Suche|Suchen Sie} die passende Formel.', '{Setze|Setzen Sie} die Werte mit Einheiten ein.', '{Schau|Schauen Sie}, ob das Ergebnis plausibel ist.'] },
+  ordnen: { tips: ['{Lege|Legen Sie} das Ordnungskriterium fest.', '{Ordne|Ordnen Sie} jedes Element zu und {begründe|begründen Sie} kurz.'],
+    steps: ['{Lege|Legen Sie} fest, wonach sortiert wird.', '{Gehe|Gehen Sie} die Elemente einzeln durch.', '{Schreibe|Schreiben Sie} zu jedem kurz, warum es dorthin gehört.'] } };
+// Worauf sich die Aufgabe bezieht: genanntes Material (M1, Q2 …) oder das einzige Material des Blatts
+function ophCtx(it) {
+  const sh = state.sheet, tags = matTags(sh.blocks), txt = plainText(it.text || '');
+  const byTag = Object.entries(tags).map(([id, t]) => [t, sh.blocks.find(x => x.id === id)]).filter(([, x]) => x);
+  let refs = byTag.filter(([t]) => new RegExp('(^|[^\\p{L}\\d])' + escRe(t) + '(?!\\d)', 'u').test(txt)).map(([, x]) => x);
+  if (!refs.length) { const mats = sh.blocks.filter(x => x.type === 'material'); refs = mats.length === 1 ? mats : []; refs = refs.concat(sh.blocks.filter(x => (x.type === 'image' || x.type === 'table') && !refs.includes(x))); }
+  return refs.map(x => [x.type === 'image' ? 'bild' : '', x.form === 'gedicht' ? 'gedicht' : '', x.post ? 'beitrag' : '', x.mk === 'q' ? 'quelle' : x.mk === 'd' ? 'darstellung' : '', plainText(x.title || ''), plainText(x.caption || '')].join(' ')).join(' ');
+}
+function ophFor(it) {
+  const ops = detectOps(it.text || ''); let op = ops.length ? ops[0].op : '';
+  // Ohne erkannten Operator: typische Aufgaben trotzdem erkennen
+  let lab = op;
+  if (!op) { const p = plainText(it.text || '').toLowerCase(); [op, lab] = /deutungshypothese/.test(p) ? ['deuten', 'Deutungshypothese'] : /hypothese/.test(p) ? ['Hypothesen aufstellen', 'Hypothese'] : /stellung|meinung/.test(p) ? ['Stellung nehmen', 'Stellungnahme'] : ['', '']; }
+  if (!op) return null; let fam = OPH_FAM[op]; if (!fam) return null;
+  const fach = fachKey(); const t = (plainText(it.text || '') + ' ' + ophCtx(it)).toLowerCase();
+  if (op === 'formulieren') fam = /hypothes|vermut/.test(t) ? 'hypo' : 'erlaeutern';
+  let key = fam;
+  if (fam === 'analyse') key = /gedicht|lyri|strophe|vers\b|verse/.test(t) ? 'analyse_lyrik' : /szene|drama|dramen|dialog|regieanweis/.test(t) ? 'analyse_drama'
+    : /erzähl|roman|novelle|kurzgeschichte|parabel|fabel|märchen/.test(t) ? 'analyse_epik' : /sachtext|rede\b|kommentar|artikel|essay|beitrag|zeitung|glosse|interview|reportage|argumentation|these\b/.test(t) ? 'analyse_prag' : 'analyse';
+  if (fam === 'einordnen' && /handlung|szene|figurenkonstellation|kapitel|akt\b/.test(t)) key = 'einordnen_handlung';
+  if (op === 'darstellen' && /position|these|aussage|standpunkt/.test(t)) key = 'wieder';
+  if (['analyse', 'beschreib', 'wieder'].includes(fam) && /\bargumente\b|pro und contra|für und gegen/.test(t)) key = 'argumente';
+  if (fam === 'gestalt') key = /monolog|tagebuch|gedanken/.test(t) ? 'gestalt_monolog' : /brief/.test(t) ? 'gestalt_brief' : 'gestalt';
+  if (fach === 'gp') {
+    const gpKind = /karikatur|plakat|foto|gemälde|bildelement|bildquelle|zeichner/.test(t) ? 'gp_bild' : /statistik|diagramm|grafik|schaubild|entwicklung/.test(t) ? 'gp_stat' : /quelle|verfasser/.test(t) ? 'gp_quelle' : '';
+    if ((fam === 'analyse' || fam === 'interpret') && key !== 'argumente') key = gpKind || 'gp_quelle';
+    if ((fam === 'beschreib' || fam === 'wieder') && gpKind && key !== 'argumente') key = gpKind;
+    if (fam === 'erlaeutern' && gpKind === 'gp_bild') key = gpKind;
+    if (fam === 'urteil') key = ['beurteilen', 'überprüfen', 'prüfen'].includes(op) ? 'gp_sach' : 'gp_wert';
+    if (fam === 'einordnen') key = 'gp_einordnen';
+  }
+  if (fach === 'bio') {
+    if (['analyse', 'interpret', 'auswerten'].includes(fam)) key = 'bio_auswerten';
+    if (fam === 'erlaeutern') key = 'bio_erklaeren';
+    if ((fam === 'beschreib' || fam === 'wieder') && key !== 'argumente') key = /diagramm|grafik|kurve|messwert|tabelle/.test(t) ? 'bio_diagramm' : /versuch|beobacht|experiment/.test(t) ? 'bio_beobachten' : key;
+    if (fam === 'urteil' || fam === 'eroertern') key = 'bio_bewerten';
+    if (fam === 'vergleich') key = 'bio_vergleich';
+  }
+  const H = OPH[key] || OPH[fam]; return H ? { op: lab, key, H } : null;
+}
+function ophStarts(H) {
+  const sets = phraseSets(); const found = (H.ph || []).map(h => sets.find(p => p.head === h)).filter(Boolean);
+  if (found.length) return found.map(p => ({ head: p.head, text: p.lines.join('\n') }));
+  return H.starts ? [{ head: H.sh || 'Satzanfänge', text: H.starts.join('\n') }] : [];
+}
+function ophBasis(it, H) {
+  const du = state.sheet.meta.anrede === 'du';
+  return String(it.text || '').trim() + '\n' + (du ? 'So gehst du vor:' : 'So gehen Sie vor:') + '\n' + (H.steps || H.tips).map((x, j) => `${j + 1}. ${duSie(x, du)}`).join('\n');
+}
+function ophBox(b, i, it, nT) {
+  const S = ophFor(it); if (!S) return '';
+  const du = state.sheet.meta.anrede === 'du'; const key = `oph:${b.id}:${i}`;
+  const head = `<b>Hilfen zu „${esc(S.op)}“</b>${S.H.name ? `<span> · ${esc(S.H.name)}</span>` : ''}`;
+  if (nT && !state.fmtOpen.has(key)) return `<div class="oph-mini">${head}<button class="link" type="button" data-act="oph-peek" data-i="${i}">Vorschlag ansehen</button></div>`;
+  const hasSt = ophStarts(S.H).length > 0;
+  return `<div class="oph"><div class="oph-h">${head}</div><ol>${S.H.tips.map(x => `<li>${esc(duSie(x, du))}</li>`).join('')}</ol>
+    <div class="oph-a"><button class="btn sm primary" type="button" data-act="oph-tips" data-i="${i}">${nT ? 'Tipps ersetzen' : 'Als Tipps übernehmen'}</button>${hasSt ? `<button class="btn sm" type="button" data-act="oph-starts" data-i="${i}">Satzanfänge als Baustein</button>` : ''}${state.sheet.meta.levelsOn ? `<button class="btn sm" type="button" data-act="oph-basis" data-i="${i}">Basis-Fassung daraus</button>` : ''}</div></div>`;
+}
+function ophInsertStarts(bid, groups) {
+  const blocks = state.sheet.blocks; const idx = blocks.findIndex(x => x.id === bid); if (idx < 0 || !groups.length) return 0;
+  const nx = blocks[idx + 1]; let added = 0;
+  if (nx && nx.type === 'phrases') {
+    const gs = Array.isArray(nx.groups) ? nx.groups : (nx.groups = []);
+    if (gs.length === 1 && !String(gs[0].head || '').trim() && !String(gs[0].text || '').trim()) gs.length = 0;
+    groups.forEach(g => { if (!gs.some(x => x.head === g.head)) { gs.push(g); added++; } });
+    return added;
+  }
+  const nb = newBlock('phrases'); nb.groups = groups; blocks.splice(idx + 1, 0, nb); return groups.length;
 }
 
 /* ================= Zeilenangaben per Klick ================= */
@@ -2893,11 +3125,64 @@ function fieldTarget() {
   if (!lastField.bid) return null; const b = state.sheet.blocks.find(x => x.id === lastField.bid);
   if (!b || b.type === 'material') return null; return { ...lastField, label: fieldLabel(b, lastField.k) };
 }
-function zlText() {
-  const o = zl.open; const lo = Math.min(o.a, o.b), hi = Math.max(o.a, o.b);
+function zlFmt(bid, lo, hi, tag) {
   const many = state.sheet.blocks.filter(x => x.type === 'material').length > 1;
-  const bl = state.sheet.blocks.find(x => x.id === o.bid); const zv = bl && bl.form === 'gedicht' ? 'V.' : 'Z.';
-  return `(${many && o.mNo ? `${/^\d+$/.test(String(o.mNo)) ? 'M' + o.mNo : o.mNo}, ` : ''}${zv} ${lo === hi ? lo : lo + '–' + hi})`;
+  const bl = state.sheet.blocks.find(x => x.id === bid); const zv = bl && bl.form === 'gedicht' ? 'V.' : 'Z.';
+  return `(${many && tag ? `${/^\d+$/.test(String(tag)) ? 'M' + tag : tag}, ` : ''}${zv} ${lo === hi ? lo : lo + '–' + hi})`;
+}
+function zlText() { const o = zl.open; return zlFmt(o.bid, Math.min(o.a, o.b), Math.max(o.a, o.b), o.mNo); }
+/* ---------- Zeilenangaben, die mitwandern ----------
+   Eine eingefügte Angabe merkt sich die Wörter am Anfang und Ende der Stelle. Nach jedem Satz der Vorschau
+   werden die Zeilen neu bestimmt und die Angabe im Aufgabentext angepasst, auch wenn sich Schrift, Papier oder Text ändern. */
+const zlSnip = (W, i, dir, n = 8) => (dir > 0 ? W.slice(i, i + n) : W.slice(Math.max(0, i - n + 1), i + 1)).join(' ');
+function zlFind(Z, i, snip, dir) {
+  // Erst die ganze gemerkte Wortfolge (acht Wörter), dann kürzere Stücke davon; bei mehreren Treffern der nächste zur alten Stelle
+  const W = Z.words; const sw = snip.split(' '); const tries = [[snip, sw.length]];
+  [4, 2].forEach(n => { if (sw.length > n) tries.push([(dir > 0 ? sw.slice(0, n) : sw.slice(-n)).join(' '), n]); });
+  for (const [sn, n] of tries) {
+    if (i >= 0 && i < W.length && zlSnip(W, i, dir, n) === sn) return i;
+    const key = dir > 0 ? sn.split(' ')[0] : sn.split(' ').pop(); let best = -1, bd = Infinity;
+    for (let j = 0; j < W.length; j++) if (W[j] === key && zlSnip(W, j, dir, n) === sn && Math.abs(j - i) < bd) { best = j; bd = Math.abs(j - i); }
+    if (best >= 0) return best;
+  }
+  return -1;
+}
+const zlGet = (o, k) => k.split('.').reduce((x, p) => (x == null ? x : x[p]), o);
+function zlAnchor(o, f, lab, pos) {
+  const Z = ZL_MAP[o.bid]; if (!Z) return; const lo = Math.min(o.a, o.b), hi = Math.max(o.a, o.b);
+  const wa = Z.lineOf.indexOf(lo), wb = Z.lineOf.lastIndexOf(hi); if (wa < 0 || wb < 0 || wb < wa) return;
+  const sh = state.sheet; if (!Array.isArray(sh.zrefs)) sh.zrefs = [];
+  sh.zrefs.push({ id: uid(), mat: o.bid, wa, wb, ta: zlSnip(Z.words, wa, 1), tb: zlSnip(Z.words, wb, -1), f: f.bid, k: f.k, lab, pos });
+}
+function zlCloneFor(oldId, newId) { const sh = state.sheet; if (!Array.isArray(sh.zrefs)) return; sh.zrefs.filter(r => r.f === oldId).forEach(r => sh.zrefs.push({ ...r, id: uid(), f: newId })); }
+function zlSync() {
+  const sh = state.sheet; if (!Array.isArray(sh.zrefs) || !sh.zrefs.length || !fontsOK) return false;
+  const v = sheetView(); if (state.out !== 'blatt' || v.grp !== 'all' || v.lvl !== 'all' || state.gapEdit) return false;
+  const byField = new Map(); sh.zrefs.forEach(r => { const k = r.f + '|' + r.k; if (!byField.has(k)) byField.set(k, []); byField.get(k).push(r); });
+  const fa = document.activeElement, drop = new Set(); let any = false;
+  byField.forEach(list => {
+    const r0 = list[0]; const blk = target(r0.f); let raw = blk ? zlGet(blk, r0.k) : null;
+    if (typeof raw !== 'string') { list.forEach(r => drop.add(r)); return; }
+    const fieldEl = document.querySelector(`#editor [data-bid="${r0.f}"] [data-k="${r0.k}"]`);
+    if (fieldEl && fieldEl === fa) return; // beim Tippen nicht dazwischenfunken, nach dem Verlassen des Felds geht es weiter
+    let mod = false;
+    list.sort((a, b) => (a.pos || 0) - (b.pos || 0)).forEach(r => {
+      const occ = []; for (let j = raw.indexOf(r.lab); j >= 0; j = raw.indexOf(r.lab, j + 1)) occ.push(j);
+      if (!occ.length) { drop.add(r); return; } // Angabe gelöscht oder von Hand geändert: nicht mehr verfolgen
+      const at = occ.reduce((a, x) => (Math.abs(x - (r.pos || 0)) < Math.abs(a - (r.pos || 0)) ? x : a), occ[0]); r.pos = at;
+      if (!sh.blocks.some(x => x.id === r.mat && x.type === 'material')) { r.lost = 'gone'; return; }
+      const Z = ZL_MAP[r.mat]; if (!Z || (v.lehrer && Z.gaps)) return;
+      const wa = zlFind(Z, r.wa, r.ta, 1), wb = zlFind(Z, r.wb, r.tb, -1);
+      if (wa < 0 || wb < 0 || wb < wa) { r.lost = 'text'; return; }
+      delete r.lost; r.wa = wa; r.wb = wb; r.ta = zlSnip(Z.words, wa, 1); r.tb = zlSnip(Z.words, wb, -1);
+      const lab = zlFmt(r.mat, Z.lineOf[wa], Z.lineOf[wb], Z.tag);
+      if (lab !== r.lab) { raw = raw.slice(0, at) + lab + raw.slice(at + r.lab.length); const d = lab.length - r.lab.length; list.forEach(x => { if (x !== r && (x.pos || 0) > at) x.pos += d; }); r.lab = lab; mod = true; }
+    });
+    if (mod) { setPath(blk, r0.k, raw); any = true; if (fieldEl) { if (fieldEl.classList.contains('rtx')) { fieldEl.innerHTML = richHTML(raw, fieldEl.dataset.rt); fieldEl.classList.toggle('is-empty', !raw.trim()); } else fieldEl.value = raw; } }
+  });
+  if (drop.size) sh.zrefs = sh.zrefs.filter(r => !drop.has(r));
+  if (any) scheduleSave();
+  return any;
 }
 function openZl(bid, n, mNo, rect) {
   if (zl.open && zl.open.bid === bid) { zl.open.b = n; zl.open.rect = rect; } else zl.open = { bid, a: n, b: n, mNo, rect };
@@ -2938,6 +3223,7 @@ function zlInsert() {
   const before = val.slice(0, p), after = val.slice(e);
   const ins = (before && !/\s$/.test(before) ? ' ' : '') + txt + (after && !/^[\s.,;:)]/.test(after) ? ' ' : '');
   const np = (before + ins).length;
+  if (zl.open) zlAnchor(zl.open, f, txt, before.length + (ins[0] === ' ' ? 1 : 0));
   if (isRt) { rtSetRaw(x, before + ins + after, np); x.dispatchEvent(new Event('input', { bubbles: true })); }
   else {
     x.value = before + ins + after;
@@ -2945,7 +3231,7 @@ function zlInsert() {
     try { x.focus({ preventScroll: true }); x.setSelectionRange(np, np); } catch {}
   }
   lastField.pos = lastField.end = np;
-  closeZl(); toast(`${txt} eingefügt in ${f.label}`);
+  closeZl(); toast(`${txt} eingefügt in ${f.label}. Die Angabe wandert mit, wenn sich die Zeilen verschieben.`);
 }
 function zlCopy() {
   const txt = zlText(); closeZl();
@@ -3680,17 +3966,18 @@ function buildBlock(b, ctx) {
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
-      const lines = [];
+      const lines = []; const zw = [], zn = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
         let top = null, cur = [], first = true;
         const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0 && !p.classList.contains('br'), pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st') }); first = false; cur = []; } };
         [...p.querySelectorAll('.w')].forEach(w => {
           const t = w.getBoundingClientRect().top;
           if (top === null || t > top + lh * .5) { flush(false); top = t; }
-          cur.push(w.outerHTML);
+          cur.push(w.outerHTML); zw.push(w.dataset.t || ''); zn.push(poem ? pi + 1 : lines.length + 1);
         });
         flush(true);
       });
+      ZL_MAP[b.id] = { words: zw, lineOf: zn, tag: (ctx.mt && ctx.mt[b.id]) || 'M' + no, gaps: gaps.length > 0 };
       bodyEl.innerHTML = poem
         ? lines.map(L => `<div class="ln vs${L.st ? ' st' : ''}${L.cont ? ' vc' : ''}"><span class="ln-no" data-n="${L.v}">${b.lineNumbers !== false && !L.cont && L.v % step === 0 ? L.v : ''}</span><span class="ln-t">${L.html}</span></div>`).join('')
         : lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no" data-n="${i + 1}">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
@@ -3898,7 +4185,7 @@ let fontsOK = false;
 function layout() {
   const sh = state.sheet, meta = sh.meta; const v = sheetView();
   const buch = meta.paper === 'buch'; const a5 = meta.paper === 'a5x2' || buch; AVAIL = (GEO[a5 ? 'a5' : 'a4'].avail - (BOT_GAP[a5 ? 'a5' : 'a4'][meta.botGap] ?? BOT_GAP[a5 ? 'a5' : 'a4'][''])) * MMPX;
-  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5);
+  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5); ZL_MAP = {};
   const body = mp.querySelector('.pg-body'); body.innerHTML = '';
   const ctx = { m: 0, t: 0, meta, body, acc: pageAcc(meta).c, bg: pageBg(meta), view: v, mt: matTags(sh.blocks.filter(b => blockVisible(b, v))) };
   const items = [];
@@ -3942,7 +4229,7 @@ let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
   if (MAPPE_LOCK) return;
   let out;
-  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : layout(); } catch (err) { console.error(err); return; }
+  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
   if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
@@ -4416,6 +4703,7 @@ function bodyFor(b, num) {
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
+      <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button></div>
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${b.post ? postEditor(b) : ''}${fmtEditor(b)}${gapEditor(b)}${readEditor(b)}
@@ -4701,7 +4989,7 @@ function onClick(e) {
       return;
     }
     case 'up': case 'down': { const j = act === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); return; }
-    case 'dup': { const c = clone(b); c.id = 'b' + uid(); blocks.splice(idx + 1, 0, c); state.sel = c.id; openOnly(c.id); changed(true); return; }
+    case 'dup': { const c = clone(b); c.id = 'b' + uid(); zlCloneFor(b.id, c.id); blocks.splice(idx + 1, 0, c); state.sel = c.id; openOnly(c.id); changed(true); return; }
     case 'del': { snapshot(); blocks.splice(idx, 1); state.sel = null; changed(true); toast(`${typeLabel(b)} gelöscht`, 'Rückgängig', histUndo); return; }
     case 'ins-open': state.insAt = +a.dataset.at; renderEditor(); { const p = $('#editor .ins-pal'); if (p) p.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } return;
     case 'ins-close': state.insAt = null; renderEditor(); return;
@@ -4725,6 +5013,18 @@ function onClick(e) {
     case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); if (Array.isArray(b.eh)) b.eh.length = Math.min(b.eh.length, b.rows.length); changed(true); } return;
     case 'col-add': if (b.cols.length < 6) { const n = b.cols.length; if (Array.isArray(b.cw) && b.cw.length === n) b.cw = [...tbWidths(b).map(x => x * n / (n + 1)), 100 / (n + 1)].map(x => Math.round(x * 10) / 10); if (Array.isArray(b.ck)) b.ck.push(false); b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
     case 'cw-reset': delete b.cw; changed(true); return;
+    case 'ocr-open': openOcr(bid); return;
+    case 'oph-peek': state.fmtOpen.add(`oph:${bid}:${a.dataset.i}`); renderEditor(); return;
+    case 'oph-tips': { const i = +a.dataset.i; const it = b && b.items[i]; const S = it && ophFor(it); if (!S) return; const du = state.sheet.meta.anrede === 'du';
+      const had = tipsOf(it).length; it.tips = S.H.tips.slice(0, 3).map(x => duSie(x, du)).concat(['', '', '']).slice(0, 3); state.fmtOpen.delete(`oph:${bid}:${i}`);
+      changed(true); toast(had ? 'Tipps ersetzt' : 'Tipps eingesetzt: Sie lassen sich frei bearbeiten', 'Rückgängig', histUndo); return; }
+    case 'oph-starts': { const i = +a.dataset.i; const it = b && b.items[i]; const S = it && ophFor(it); if (!S) return;
+      const n = ophInsertStarts(bid, ophStarts(S.H)); if (!n) { toast('Diese Satzanfänge stehen schon im Baustein darunter.'); return; }
+      changed(true); toast(`Formulierungshilfen unter die Aufgaben gesetzt (${n} ${n === 1 ? 'Gruppe' : 'Gruppen'})`, 'Rückgängig', histUndo); return; }
+    case 'oph-basis': { const i = +a.dataset.i; const it = b && b.items[i]; const S = it && ophFor(it); if (!S) return;
+      if (!state.sheet.meta.levelsOn) state.sheet.meta.levelsOn = true;
+      const had = String(it.lvb || '').trim(); it.lvb = ophBasis(it, S.H); state.taskOpen.add(taskKey(bid, i, 'lv'));
+      changed(true); toast(had ? 'Basis-Fassung ersetzt' : 'Basis-Fassung mit Schritten angelegt', 'Rückgängig', histUndo); return; }
     case 'rlp-tog': { const i = +a.dataset.i; const it = b && b.items[i]; if (!it) return; const v = a.dataset.v; const cur = rlpOf(it);
       it.rlp = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v].sort(rlpCmp); if (!it.rlp.length) delete it.rlp;
       rlpKeep(bid, i, () => changed(true)); return; }
@@ -5506,7 +5806,7 @@ function authMsg(err) {
   return 'Das hat nicht geklappt: ' + m;
 }
 function openDlg(mode) { if (!store.sb) return; state.dlg = { mode, email: (state.dlg && state.dlg.email) || '' }; renderDlg(); }
-function closeDlg() { const d = state.dlg; if (d && d.mode === 'klassen' && d.setup) return; if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); if (d && d.mode === 'login') setTimeout(() => maybeSetup(true), 0); }
+function closeDlg() { const d = state.dlg; if (d && d.mode === 'klassen' && d.setup) return; if (d && d.mode === 'ocr') { ocrRun++; ocrStop(); if (d.url) URL.revokeObjectURL(d.url); } if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); if (d && d.mode === 'login') setTimeout(() => maybeSetup(true), 0); }
 /* ---------- Geändert auf einem anderen Gerät ---------- */
 function conflictHTML() {
   const t = new Date(state.dlg.remote).toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -5567,6 +5867,9 @@ const HELP = [
     ['Emojis', 'Windows: Windows-Taste + Punkt · Mac: Ctrl + Cmd + Leertaste · Tablet und Handy: Emoji-Tastatur. Emojis aus Posts (X, Instagram, WhatsApp Web) bleiben beim Einfügen erhalten.'],
     ['Strg+Umschalt+H', 'Textmarker'],
     ['„- “ oder „1. “ am Zeilenanfang', 'beginnt eine Liste; ___ wird eine Lücke zum Ausfüllen.']]],
+  ['Texterkennung', [
+    ['Foto oder PDF', 'In der Materialkarte „Text aus Foto oder PDF übernehmen“: Foto einer Buchseite, Screenshot oder PDF wählen, hineinziehen oder einfügen. Der Text kommt bereinigt ins Material (Trennstriche und Zeilennummern entfernt). Ein Bild direkt ins Textfeld einfügen startet die Erkennung ebenfalls.'],
+    ['Gut zu wissen', 'Beim ersten Mal wird das deutsche Sprachpaket geladen (einige MB, dafür braucht es Internet). Danach geht es schneller. Bitte den Text immer gegenlesen.']]],
   ['Fächer', [
     ['Fach wechseln', 'Auf die rote Randnotiz neben „AB-Werkstatt“ klicken: Deutsch, Geschichte/Politik oder Biologie. Die Reiter zeigen dann die Klassen dieses Fachs, die Seite bekommt die Farbe des Fachs.'],
     ['Fach einer Klasse', '„+ Klassen“ neben den Reitern. Operatoren, Vorlagen und Formulierungshilfen richten sich nach dem Fach.'],
@@ -5576,7 +5879,8 @@ const HELP = [
   ['Aufgaben', [
     ['Operatoren', 'werden erkannt und fett gesetzt; dazu der Anforderungsbereich.'],
     ['Erwartung', 'steht nur in der Lehrerfassung und im Erwartungshorizont (.md).'],
-    ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten.'],
+    ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten. Unter „Tipps“ steht ein Vorschlag passend zum Operator und zum Material, dazu Satzanfänge und, bei Niveaustufen, Schritte für die Basis-Fassung. ⋯ am Aufgabenblock schlägt Tipps für alle Aufgaben vor.'],
+    ['Zeilenangaben', 'In der Vorschau auf eine Zeilennummer klicken (für einen Bereich danach auf die letzte Zeile), dann „Einfügen“. Eingefügte Angaben wandern mit, wenn sich Text, Schrift oder Papier ändern.'],
     ['Standards', 'unter jeder Aufgabe: Standards aus dem Rahmenlehrplan (Deutsch, gymnasiale Oberstufe) oder eigene zuordnen. Sie stehen in der Lehrerfassung und im Erwartungshorizont.']]],
   ['Meine Blätter', [
     ['Ordner', 'Blätter auf einen Ordner ziehen; ohne Maus bei einem Blatt „Ordner“ wählen.'],
@@ -5720,6 +6024,7 @@ function outChecks() {
       if (b.type === 'match' && !mtLayout(b).sol.some(x => x.rk >= 0)) warn('Ein Zuordnen-Baustein hat noch keine vollständigen Paare.');
       if (b.type === 'qr' && !String(b.url || '').trim()) warn('Ein QR-Code hat noch keinen Link.');
     });
+    (sh.zrefs || []).filter(r => r.lost).forEach(r => { const fb = sh.blocks.find(x => x.id === r.f); warn(`${fb ? fieldLabel(fb, r.k) : 'Aufgabe'}: Die Angabe ${r.lab} stimmt vielleicht nicht mehr, ${r.lost === 'gone' ? 'das Material wurde gelöscht' : 'die Textstelle im Material wurde geändert'}. Bitte prüfen oder neu einfügen.`); });
     const g = genderHits(['meta', ...sh.blocks.map(b => b.id)].flatMap(id => gTargets(id).map(([o, k]) => o[k])));
     if (g.length) note(`Genderzeichen: ${g.slice(0, 3).map(h => '„' + h.m.replace(/\\/g, '') + '“').join(', ')}${g.length > 3 ? ' …' : ''} (Schulvorgabe: ausschreiben)`);
   }
@@ -5832,7 +6137,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -5849,6 +6154,7 @@ function renderDlg() {
   if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
   if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
   if (d.mode === 'mappe') { r.querySelector('.dlg').classList.add('dlg-mappe'); return; }
+  if (d.mode === 'ocr') { r.querySelector('.dlg').classList.add('dlg-ocr'); if (d.step === 'run') r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.step === 'done' ? '#ocr-t' : d.step === 'prep' ? '[data-act="ocr-go"]' : '#ocr-drop'); if (f && d.step !== 'done') f.focus({ preventScroll: true }); return; }
   if (d.mode === 'rlp') { r.querySelector('.dlg').classList.add('dlg-rlp'); const g = r.querySelector('[data-act="dlg-close"]'); if (g) g.focus({ preventScroll: true }); return; }
   if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
   if (d.mode === 'klassen') { r.querySelector('.dlg').classList.add('dlg-kl'); if (d.setup) r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.setup ? '#kl-school' : '[data-kf="label"]'); if (f && d.setup) f.focus(); return; }
@@ -5902,6 +6208,14 @@ async function onDlgClick(e) {
     if (act === 'nw-go') { newGo(); return; }
   }
   if (act === 'tips-again') { closeDlg(); showTip(0); return; }
+  if (state.dlg.mode === 'ocr') {
+    const d = state.dlg;
+    if (act === 'ocr-rot') { ocrRead(); d.rot = (d.rot + 90) % 360; renderDlg(); return; }
+    if (act === 'ocr-other') { ocrRead(); d.step = 'pick'; d.err = ''; renderDlg(); return; }
+    if (act === 'ocr-go') { await ocrGo(); return; }
+    if (act === 'ocr-cancel') { ocrRun++; ocrStop(); d.step = 'prep'; renderDlg(); return; }
+    if (act === 'ocr-apply') { ocrApply(a.dataset.v); return; }
+  }
   if (state.dlg.mode === 'mappe') {
     const d = state.dlg;
     if (act === 'mp-set') { mappeRead(); d[a.dataset.f] = a.dataset.v; renderDlg(); return; }
@@ -6049,6 +6363,147 @@ async function pagesToPdf(pages, name, props) {
     await deliver(name, pdf.output('blob'));
   } catch (err) { console.error(err); overlay(''); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
   finally { overlay(''); }
+}
+
+/* ================= Texterkennung: Material aus Foto oder PDF =================
+   Fotos und gescannte Seiten erkennt Tesseract (Sprachpaket Deutsch, wird beim ersten Mal geladen und im Browser zwischengespeichert).
+   PDFs mit Textebene liest pdf.js direkt aus. Danach dieselbe Aufbereitung wie beim Einfügen: Trennstriche, Zeilennummern, Absätze. */
+const OCR_LIBS = { tess: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js', pdf: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', pdfw: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js' };
+const CAM_SVG = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 6.5h3l1.5-2h6l1.5 2h3v9.5h-15z"/><circle cx="10" cy="11" r="3"/></svg>';
+const OCR_ST = { 'loading tesseract core': 'Texterkennung wird geladen …', 'initializing tesseract': 'Texterkennung startet …', 'loading language traineddata': 'Deutsches Sprachpaket wird geladen (beim ersten Mal einige MB) …', 'loading language traineddata (from cache)': 'Sprachpaket wird geladen …', 'initializing api': 'Texterkennung startet …', 'recognizing text': 'Text wird erkannt …' };
+let ocrW = null, ocrRun = 0;
+function ocrProg(msg, p) {
+  const d = state.dlg; if (!d || d.mode !== 'ocr') return; d.msg = msg; if (p != null) d.p = p;
+  const m = $('#ocr-msg'), b = $('#ocr-bar'); if (m) m.textContent = msg; if (b) b.style.width = Math.round((d.p || 0) * 100) + '%';
+}
+async function ocrWorker() {
+  if (ocrW) return ocrW;
+  await loadScript(OCR_LIBS.tess);
+  if (!window.Tesseract || !window.Tesseract.createWorker) throw new Error('Tesseract fehlt');
+  ocrW = await window.Tesseract.createWorker('deu', 1, { logger: m => { if (m && m.status) ocrProg(OCR_ST[m.status] || 'Texterkennung …', m.progress); } });
+  return ocrW;
+}
+function ocrStop() { const w = ocrW; ocrW = null; if (w) { try { w.terminate(); } catch {} } }
+function openOcr(bid, file) {
+  const b = target(bid); if (!b || b.type !== 'material') return;
+  state.dlg = { mode: 'ocr', bid, step: 'pick', poem: b.form === 'gedicht', rot: 0, pages: '', err: '' };
+  renderDlg(); if (file) ocrTake(file);
+}
+function ocrRead() {
+  const d = state.dlg; if (!d || d.mode !== 'ocr') return;
+  const p = $('#ocr-poem'), g = $('#ocr-pages'), t = $('#ocr-t'); if (p) d.poem = p.checked; if (g) d.pages = g.value; if (t) d.text = t.value;
+}
+function ocrTake(file) {
+  const d = state.dlg; if (!d || d.mode !== 'ocr' || !file) return; ocrRead();
+  const pdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+  if (!pdf && !/^image\/(png|jpe?g|webp|gif|bmp)/i.test(file.type || '')) { d.err = 'Bitte ein Foto (JPG oder PNG) oder ein PDF wählen.'; renderDlg(); return; }
+  if (d.url) URL.revokeObjectURL(d.url);
+  Object.assign(d, { file, kind: pdf ? 'pdf' : 'img', url: pdf ? '' : URL.createObjectURL(file), rot: 0, err: '', step: 'prep', npages: 0 });
+  renderDlg();
+  if (pdf) (async () => { try { const doc = await ocrPdfDoc(file); if (state.dlg === d) { d.npages = doc.numPages; if (d.step === 'prep') renderDlg(); } } catch (err) { console.error(err); } })();
+}
+async function ocrPdfDoc(file) {
+  await loadScript(OCR_LIBS.pdf); await loadScript(OCR_LIBS.pdfw); // Worker-Skript im Hauptfenster: läuft auch dort, wo fremde Worker gesperrt sind
+  const L = window.pdfjsLib; if (!L) throw new Error('pdf.js fehlt'); L.GlobalWorkerOptions.workerSrc = OCR_LIBS.pdfw;
+  return L.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false }).promise;
+}
+const ocrPages = (spec, n) => {
+  const s = String(spec || '').trim(); if (!s) return Array.from({ length: Math.min(n, 12) }, (_, i) => i + 1);
+  const out = []; s.split(/[,;]+/).forEach(p => { const m = p.trim().match(/^(\d+)\s*(?:[-–]\s*(\d+))?$/); if (!m) return; const a = +m[1], b = m[2] ? +m[2] : a; for (let i = Math.max(1, Math.min(a, b)); i <= Math.min(n, Math.max(a, b)); i++) if (!out.includes(i)) out.push(i); });
+  return out.slice(0, 30);
+};
+// Textebene eines PDFs: Zeilen nach Höhe sammeln, große Abstände werden Absätze
+function pdfItemsText(items) {
+  const rows = [];
+  items.forEach(it => {
+    const s = it.str || ''; if (!s) return; const tr = it.transform || [1, 0, 0, 1, 0, 0]; const x = tr[4], y = tr[5]; const h = Math.abs(it.height || tr[3]) || 10;
+    let r = rows[rows.length - 1];
+    if (!r || Math.abs(r.y - y) > h * .6) { r = { y, h, t: '', x2: x }; rows.push(r); }
+    if (r.t && !/\s$/.test(r.t) && !/^\s/.test(s) && x - r.x2 > h * .2) r.t += ' ';
+    r.t += s; r.x2 = x + (it.width || 0);
+  });
+  const L = rows.filter(r => r.t.trim()); if (!L.length) return '';
+  const gaps = L.slice(1).map((r, i) => L[i].y - r.y).filter(g => g > 0).sort((a, b) => a - b); const med = gaps.length ? gaps[Math.floor(gaps.length / 2)] : 0;
+  let out = L[0].t.trim();
+  for (let i = 1; i < L.length; i++) { const g = L[i - 1].y - L[i].y; out += (med && (g > med * 1.45 || g < 0) ? '\n\n' : '\n') + L[i].t.trim(); }
+  return out;
+}
+async function ocrCanvas(url, rot) {
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('Bild nicht lesbar')); i.src = url; });
+  let w = img.naturalWidth, h = img.naturalHeight; const long = Math.max(w, h);
+  const sc = long > 2600 ? 2600 / long : long < 1400 ? Math.min(2, 1400 / long) : 1; w = Math.round(w * sc); h = Math.round(h * sc);
+  const q = rot % 180 !== 0; const c = document.createElement('canvas'); c.width = q ? h : w; c.height = q ? w : h;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+  x.translate(c.width / 2, c.height / 2); x.rotate(rot * Math.PI / 180); try { x.filter = 'grayscale(1) contrast(1.15)'; } catch {}
+  x.drawImage(img, -w / 2, -h / 2, w, h); return c;
+}
+async function ocrPdf(file, spec, run) {
+  ocrProg('PDF wird geöffnet …', 0);
+  const doc = await ocrPdfDoc(file); const list = ocrPages(spec, doc.numPages); const parts = []; let ocr = 0, txt = 0;
+  for (let k = 0; k < list.length; k++) {
+    if (run !== ocrRun) return { text: '', ocr, txt };
+    ocrProg(`Seite ${list[k]} von ${doc.numPages} …`, k / list.length);
+    const page = await doc.getPage(list[k]); const t = pdfItemsText((await page.getTextContent()).items);
+    if (t.replace(/\s/g, '').length >= 30) { parts.push(t); txt++; continue; }
+    const vp = page.getViewport({ scale: 2.2 }); const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height); await page.render({ canvasContext: cx, viewport: vp }).promise;
+    const w = await ocrWorker(); if (run !== ocrRun) return { text: '', ocr, txt };
+    const { data } = await w.recognize(c); parts.push(data.text || ''); ocr++;
+  }
+  return { text: parts.join('\n\n'), ocr, txt };
+}
+function ocrClean(raw, poem) {
+  let t = String(raw || '').replace(/\r/g, '').replace(/ﬁ/g, 'fi').replace(/ﬂ/g, 'fl').replace(/ﬀ/g, 'ff').replace(/[|]/g, 'I')
+    .replace(/[ \t]+$/gm, '').replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  // Zeilen, die nur aus einer Zahl bestehen (Zeilen- oder Seitenzahlen am Rand), und Trennungen über eine Leerzeile hinweg
+  let solo = 0, hy0 = 0; t = t.split('\n').filter(l => { if (/^\s*\d{1,3}\s*$/.test(l)) { solo++; return false; } return true; }).join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (!poem) t = t.replace(/(\p{L})-[ \t]*\n[ \t]*\n[ \t]*(\p{Ll})/gu, (m, a, b) => { hy0++; return a + b; });
+  const notes = []; const r = cleanPdf(t, poem); t = r.t; const hy = r.hy + hy0, ln = r.ln + solo;
+  if (hy) notes.push(`${hy} ${hy === 1 ? 'Trennstrich' : 'Trennstriche'} zusammengefügt`); if (ln) notes.push(`${ln} ${poem ? (ln === 1 ? 'Versnummer' : 'Versnummern') : (ln === 1 ? 'Zeilennummer' : 'Zeilennummern')} entfernt`);
+  if (!poem) { const g = guessParas(t); t = g !== t ? g : joinLines(t); }
+  return { t: deQuoteStr(t).trim(), notes };
+}
+async function ocrGo() {
+  const d = state.dlg; if (!d || d.mode !== 'ocr' || !d.file) return; ocrRead();
+  const run = ++ocrRun; Object.assign(d, { step: 'run', msg: 'Wird vorbereitet …', p: 0, err: '' }); renderDlg(); const t0 = Date.now();
+  try {
+    let raw = ''; const note = [];
+    if (d.kind === 'pdf') { const r = await ocrPdf(d.file, d.pages, run); raw = r.text; if (r.txt) note.push(`${r.txt} ${r.txt === 1 ? 'Seite' : 'Seiten'} aus der Textebene`); if (r.ocr) note.push(`${r.ocr} ${r.ocr === 1 ? 'Seite' : 'Seiten'} per Texterkennung`); }
+    else { const c = await ocrCanvas(d.url, d.rot); if (run !== ocrRun) return; const w = await ocrWorker(); if (run !== ocrRun) return; ocrProg('Text wird erkannt …', 0); const { data } = await w.recognize(c); raw = data.text || ''; if (data.confidence != null) note.push(`Sicherheit ${Math.round(data.confidence)} %`); }
+    if (run !== ocrRun || state.dlg !== d) return;
+    if (!raw.replace(/\s/g, '')) { Object.assign(d, { step: 'prep', err: 'Hier wurde kein Text gefunden. Ein gerades, scharfes Foto bei gutem Licht hilft, eventuell erst drehen.' }); renderDlg(); return; }
+    const cl = ocrClean(raw, d.poem); Object.assign(d, { text: cl.t, step: 'done', info: [...note, ...cl.notes, `${Math.max(1, Math.round((Date.now() - t0) / 1000))} s`].join(' · ') }); renderDlg();
+  } catch (err) {
+    console.error(err); if (run !== ocrRun || state.dlg !== d) return; ocrStop();
+    Object.assign(d, { step: 'prep', err: 'Die Texterkennung ließ sich nicht starten. Beim ersten Mal braucht sie eine Internetverbindung, um das Sprachpaket zu laden. Bitte erneut versuchen.' }); renderDlg();
+  }
+}
+function ocrApply(how) {
+  ocrRead(); const d = state.dlg; const b = d && target(d.bid); const t = String(d && d.text || '').trim(); if (!b || !t) return;
+  if (d.poem && b.form !== 'gedicht') b.form = 'gedicht'; if (!d.poem && b.form === 'gedicht' && how === 'set') delete b.form;
+  const old = String(b.text || '').trim();
+  b.text = how === 'add' && old ? old + '\n\n' + t : t; b.nl = 1;
+  closeDlg(); state.closed.delete(b.id); changed(true);
+  toast('Text übernommen. Bitte einmal gegenlesen, die Erkennung irrt sich gelegentlich.', 'Rückgängig', histUndo);
+}
+function ocrHTML() {
+  const d = state.dlg; const b = target(d.bid) || {}; const err = d.err ? `<div class="err" role="alert">${esc(d.err)}</div>` : '';
+  const poemCk = `<label class="chk"><input type="checkbox" id="ocr-poem"${d.poem ? ' checked' : ''}>Gedicht: Verse und Strophen beibehalten</label>`;
+  let body = '';
+  if (d.step === 'pick') body = `<label class="ocr-drop" id="ocr-drop"><input type="file" id="ocr-file" accept="image/png,image/jpeg,image/webp,application/pdf,.pdf" hidden>${CAM_SVG}<b>Foto oder PDF wählen</b><span>oder hierher ziehen oder einfügen (Strg+V). Auf dem Handy geht auch die Kamera.</span></label>${poemCk}
+    <p class="hint">Am besten gelingt ein gerades, scharfes Foto bei gutem Licht, auf dem nur der Text zu sehen ist. Aus PDFs mit Textebene wird der Text direkt übernommen.</p>`;
+  if (d.step === 'prep') body = d.kind === 'img'
+    ? `<div class="ocr-prev"><img src="${d.url}" alt="Vorschau"${d.rot % 180 ? ' class="q"' : ''} style="transform:rotate(${d.rot}deg)"></div><div class="row ocr-tools"><button class="btn sm" type="button" data-act="ocr-rot">↻ Drehen</button><button class="link" type="button" data-act="ocr-other">Anderes Bild</button></div>${poemCk}`
+    : `<div class="ocr-pdf">PDF: <b>${esc(d.file.name || 'Dokument')}</b>${d.npages ? ` · ${d.npages} ${d.npages === 1 ? 'Seite' : 'Seiten'}` : ''}</div><label class="f"><span>Seiten</span><input class="inp" id="ocr-pages" type="text" value="${esc(d.pages)}" placeholder="leer = alle (bis 12), sonst z. B. 2–3"></label><div class="row ocr-tools"><button class="link" type="button" data-act="ocr-other">Andere Datei</button></div>${poemCk}`;
+  if (d.step === 'run') body = `<div class="ocr-run"><div class="ocr-bar"><i id="ocr-bar" style="width:${Math.round((d.p || 0) * 100)}%"></i></div><span id="ocr-msg">${esc(d.msg || '…')}</span></div>`;
+  if (d.step === 'done') body = `<label class="f"><span>Erkannter Text: bitte gegenlesen und bei Bedarf korrigieren</span><textarea class="inp ocr-t" id="ocr-t" rows="14" spellcheck="true" lang="de">${esc(d.text)}</textarea></label><small class="hint">${esc(d.info || '')}</small>`;
+  const empty = !String(b.text || '').trim();
+  const close = '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>';
+  const btns = d.step === 'prep' ? `<button class="btn primary" type="button" data-act="ocr-go">${d.kind === 'pdf' ? 'Text holen' : 'Text erkennen'}</button>${close}`
+    : d.step === 'run' ? '<button class="btn" type="button" data-act="ocr-cancel">Abbrechen</button>'
+    : d.step === 'done' ? (empty ? '<button class="btn primary" type="button" data-act="ocr-apply" data-v="set">Ins Material übernehmen</button>' : '<button class="btn primary" type="button" data-act="ocr-apply" data-v="set">Text ersetzen</button><button class="btn" type="button" data-act="ocr-apply" data-v="add">Anhängen</button>') + close
+    : close;
+  return `<h2 id="dlg-t">Text aus Foto oder PDF</h2>${body}${err}<div class="row">${btns}</div>`;
 }
 
 /* ================= Reihenmappe: alle Blätter eines Ordners in einer Datei ================= */
@@ -6535,6 +6990,7 @@ function preparePrint() {
 /* ================= Start ================= */
 function boot() {
   const ed = $('#editor');
+  ed.addEventListener('focusout', e => { const k = e.target && e.target.dataset && e.target.dataset.k; const c = k && e.target.closest('[data-bid]'); if (c && (state.sheet.zrefs || []).some(r => r.f === c.dataset.bid && r.k === k)) scheduleRender(60); });
   ed.addEventListener('input', onInput); ed.addEventListener('change', onChange); ed.addEventListener('click', onClick);
   $('#lib-root').addEventListener('click', onLibClick);
   $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } });
@@ -6562,6 +7018,12 @@ function boot() {
   });
   $('#lib-root').addEventListener('dragend', () => { libDrag = null; libClearDrop(); document.querySelectorAll('#lib-root .dragging').forEach(n => n.classList.remove('dragging')); });
   $('#dlg-root').addEventListener('click', onDlgClick);
+  // Texterkennung: Datei hineinziehen oder Bild einfügen
+  const ocrOk = () => state.dlg && state.dlg.mode === 'ocr' && (state.dlg.step === 'pick' || state.dlg.step === 'prep');
+  $('#dlg-root').addEventListener('dragover', e => { if (!ocrOk()) return; e.preventDefault(); const z = $('#ocr-drop'); if (z) z.classList.add('over'); });
+  $('#dlg-root').addEventListener('dragleave', e => { const z = $('#ocr-drop'); if (z && !z.contains(e.relatedTarget)) z.classList.remove('over'); });
+  $('#dlg-root').addEventListener('drop', e => { if (!ocrOk()) return; e.preventDefault(); const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) ocrTake(f); });
+  document.addEventListener('paste', e => { if (!ocrOk()) return; const f = [...((e.clipboardData && e.clipboardData.files) || [])].find(x => /^image\//.test(x.type)); if (f) { e.preventDefault(); ocrTake(f); } });
   $('#dlg-root').addEventListener('submit', onDlgSubmit);
   $('#dlg-root').addEventListener('keydown', e => { if (e.key === 'Enter' && state.dlg && state.dlg.mode === 'new' && e.target.tagName === 'INPUT') { e.preventDefault(); newGo(); } });
   $('#dlg-root').addEventListener('input', e => {
@@ -6573,6 +7035,7 @@ function boot() {
     if (t.dataset.kf === 'label' && d.setup) { const c = r.querySelector('[data-kf="course"]'); if (c && (!row.course || row.course === 'Deutsch' || row.course === 'Deutsch ' + prevLabel)) { row.course = t.value ? 'Deutsch ' + t.value : 'Deutsch'; c.value = row.course; } }
   });
   $('#dlg-root').addEventListener('change', e => {
+    if (e.target.id === 'ocr-file' && e.target.files && e.target.files[0]) { ocrTake(e.target.files[0]); return; }
     if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, '');
     if (e.target.dataset && e.target.dataset.mpid != null && state.dlg && state.dlg.mode === 'mappe') { mappeRead(); const d = state.dlg, n = d.list.length - d.off.size; $('#mp-n').textContent = `Blätter: ${n} von ${d.list.length}`; const g = $('#dlg-root [data-act="mp-go"]'); if (g) g.disabled = !n; }
   });
@@ -6695,6 +7158,7 @@ function boot() {
       const cd = e.clipboardData; if (!cd) return;
       const card = rt.closest('[data-bid]'); const blk = card && target(card.dataset.bid); const mode = rt.dataset.rt;
       const isMat = !!(blk && blk.type === 'material' && rt.dataset.k === 'text'); const poem = isMat && blk.form === 'gedicht';
+      if (isMat && !(cd.getData('text/plain') || '').trim()) { const img = [...(cd.files || [])].find(x => /^image\//.test(x.type)); if (img) { openOcr(blk.id, img); return; } }
       const html = Date.now() < plainPasteUntil ? '' : (cd.getData('text/html') || '');
       let raw = '', note = '';
       if (/<[a-z][^>]*>/i.test(html)) { try { raw = htmlToRaw(html, mode, { poem }); } catch (err) { console.error(err); raw = ''; } if (raw.trim() && mode !== 'line') note = 'Mit Formatierung und Absätzen eingefügt · Strg+Umschalt+V fügt nur den Text ein'; }
