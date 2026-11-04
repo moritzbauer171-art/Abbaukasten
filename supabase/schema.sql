@@ -51,3 +51,30 @@ create policy "AB: eigene Einstellungen ändern"  on public.ab_einstellungen for
 create policy "AB: eigene Einstellungen löschen" on public.ab_einstellungen for delete to authenticated using ((select auth.uid()) = user_id);
 revoke all on public.ab_einstellungen from anon;
 grant select, insert, update, delete on public.ab_einstellungen to authenticated;
+
+-- ---------- Digitale Fassungen zum Teilen per Link und QR-Code ----------
+-- Lehrkräfte legen ihre eigenen Fassungen an (RLS). Schülerinnen und Schüler lesen ein Blatt nur über
+-- ab_digital_get mit der ID aus dem Link; eine Auflistung aller Blätter ist für sie nicht möglich.
+create table if not exists public.ab_digital (
+  id          text primary key check (id ~ '^[A-Za-z0-9]{8,24}$'),
+  user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  sheet_id    text,
+  title       text not null default '',
+  html        text not null,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+create index if not exists ab_digital_user_idx on public.ab_digital (user_id, updated_at desc);
+alter table public.ab_digital enable row level security;
+drop policy if exists "AB digital: eigene lesen"   on public.ab_digital;
+drop policy if exists "AB digital: eigene anlegen" on public.ab_digital;
+drop policy if exists "AB digital: eigene ändern"  on public.ab_digital;
+drop policy if exists "AB digital: eigene löschen" on public.ab_digital;
+create policy "AB digital: eigene lesen"   on public.ab_digital for select to authenticated using ((select auth.uid()) = user_id);
+create policy "AB digital: eigene anlegen" on public.ab_digital for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "AB digital: eigene ändern"  on public.ab_digital for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy "AB digital: eigene löschen" on public.ab_digital for delete to authenticated using ((select auth.uid()) = user_id);
+create or replace function public.ab_digital_get(p_id text)
+returns text language sql stable security definer set search_path = ''
+as $$ select d.html from public.ab_digital d where d.id = p_id $$;
+grant execute on function public.ab_digital_get(text) to anon, authenticated;
