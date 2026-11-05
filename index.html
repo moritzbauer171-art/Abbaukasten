@@ -1109,6 +1109,12 @@ body{transition:background-color .3s,border-color .25s}
 .tf-page .tf-frame{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tf-page .tf-frame>.tf{width:100%}
 .tf-page .tf-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.6mm;margin-top:3mm}
+.pr-pick{max-height:220px;overflow:auto;border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:3px;background:var(--field)}
+.pr-pick .chk{font-size:13px;align-items:flex-start}
+.pr-pick .chk span{min-width:0}
+.pr-pick .chk.pk-sub{padding-left:18px}
+.pr-pick-a{display:flex;gap:16px;margin-top:4px}
+.pr-pick-f>span small{font-weight:600;color:var(--muted);margin-left:6px}
 .pr{position:fixed;inset:0;z-index:96;background:#20242C;display:flex;flex-direction:column;outline:none}
 .pr-stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;cursor:pointer}
 .pr-slide{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center;background:#fff;color:#1C1F27;font-family:var(--f-ui);display:flex;flex-direction:column;padding:62px 84px 64px;box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden}
@@ -2707,12 +2713,14 @@ function presChunks(L, poem) {
 }
 function presSlides() {
   const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false };
-  const mats = presCollect(); const S = [{ k: 'title' }]; let t = 0;
+  const off = new Set(Array.isArray(m.presOff) ? m.presOff : []);
+  const mats = presCollect(); const S = off.has('title') ? [] : [{ k: 'title' }]; let t = 0;
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
+    if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (lvOk(it, v) ? i : -1)).filter(i => i >= 0); its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) S.push({ k: 'task', no: t, it }); }); return; }
+    if (off.has(b.id)) return;
     const M = mats[b.id];
     if (M && M.lines.length) { const poem = b.form === 'gedicht'; const parts = presChunks(M.lines, poem); parts.forEach((p, i) => S.push({ k: 'mat', b, tag: M.tag || 'M', lines: p, part: i + 1, of: parts.length, poem })); return; }
-    if (b.type === 'tasks') { if (b.restart) t = 0; itemsFor(b, v).forEach(it => { t++; if (tfStr(it.text).trim()) S.push({ k: 'task', no: t, it }); }); return; }
     if (b.type === 'tafel') { tfNorm(b); if (tfHas(b, tfTpl(b))) S.push({ k: 'tafel', b }); return; }
     if (b.type === 'info' && (plainText(b.text || '').trim() || tfStr(b.title).trim())) S.push({ k: 'info', b });
     else if (b.type === 'quote' && plainText(b.text || '').trim()) S.push({ k: 'quote', b });
@@ -2721,8 +2729,38 @@ function presSlides() {
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
   });
-  if (m.dg && m.dg.id) S.push({ k: 'qr', link: dgLink(m.dg.id) });
+  if (m.dg && m.dg.id && !off.has('qr')) S.push({ k: 'qr', link: dgLink(m.dg.id) });
   return S;
+}
+// Auswahlliste für „Ausgeben → PowerPoint“: eine Zeile je Baustein bzw. je Aufgabe
+function presPick() {
+  const sh = state.sheet, m = sh.meta; const num = numbering(sh); const L = [{ key: 'title', label: 'Titelfolie' }]; let t = 0;
+  const short = (x, n) => { const p = plainText(x || '').replace(/\s+/g, ' ').trim(); return p.length > n ? p.slice(0, n - 1).replace(/\s+\S*$/, '') + ' …' : p; };
+  sh.blocks.forEach(b => {
+    if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
+    else if (b.type === 'tasks') { if (b.restart) t = 0; b.items.forEach((it, i) => { t++; if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + t} · ${short(it.text, 64)}`, task: true }); }); }
+    else if (b.type === 'tafel') L.push({ key: b.id, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
+    else if (b.type === 'info') L.push({ key: b.id, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
+    else if (b.type === 'quote') L.push({ key: b.id, label: 'Zitat · ' + short(b.text, 50) });
+    else if (b.type === 'image' && b.src) L.push({ key: b.id, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
+    else if (b.type === 'table') L.push({ key: b.id, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
+    else if (b.type === 'phrases') L.push({ key: b.id, label: short(b.title || 'Formulierungshilfen', 60) });
+    else if (b.type === 'match') L.push({ key: b.id, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });
+  });
+  if (m.dg && m.dg.id) L.push({ key: 'qr', label: 'QR-Code zur digitalen Fassung' });
+  return L;
+}
+function presPickHTML() {
+  const L = presPick(); const off = new Set(state.sheet.meta.presOff || []); const on = L.filter(x => !off.has(x.key)).length;
+  return `<div class="f pr-pick-f"><span>Folien <small id="pr-pick-n">${on} von ${L.length} ausgewählt</small></span>
+    <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${off.has(x.key) ? '' : ' checked'}><span>${esc(x.label)}</span></label>`).join('')}</div>
+    <div class="pr-pick-a"><button class="link" type="button" data-act="pr-pick" data-v="all">Alle</button><button class="link" type="button" data-act="pr-pick" data-v="tasks">Nur Aufgaben</button><button class="link" type="button" data-act="pr-pick" data-v="none">Keine</button></div>
+    <small class="hint">Die Auswahl wird im Blatt gespeichert und gilt auch für „Präsentieren“.</small></div>`;
+}
+function presPickSet(v) {
+  const m = state.sheet.meta; const L = presPick();
+  m.presOff = v === 'all' ? [] : v === 'none' ? L.map(x => x.key) : L.filter(x => !x.task).map(x => x.key);
+  changed(false); renderDlg();
 }
 const presHead = (lab, title, chips) => `<div class="pr-top">${lab ? `<span class="pr-lab">${lab}</span>` : ''}<span class="pr-ttl">${title || ''}</span>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`;
 const prCk = c => String(c == null ? '' : c).replace(/^\s*\[\s*\]\s*$/, '☐').replace(/^\s*\[[xX]\]\s*$/, '☒');
@@ -2755,6 +2793,7 @@ function presSlideHTML(s) {
 }
 function openPres(start) {
   let S; try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
+  if (!S.length) { toast('Es ist keine Folie ausgewählt. Unter „Ausgeben → PowerPoint“ lassen sich Folien wählen.'); return; }
   const m = state.sheet.meta; const foot = esc([m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
   const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
@@ -2855,8 +2894,8 @@ async function tfImage(b) {
 async function exportPPTX() {
   if (busy) return; busy = true; overlay('PowerPoint wird erstellt …');
   try {
-    await loadScript(LIBS.pptx); if (!window.PptxGenJS) throw new Error('PptxGenJS fehlt');
-    const S = presSlides(); const m = state.sheet.meta; const A = pageAcc(m);
+    const S = presSlides(); if (!S.length) { overlay(''); toast('Es ist keine Folie ausgewählt.'); return; }
+    await loadScript(LIBS.pptx); if (!window.PptxGenJS) throw new Error('PptxGenJS fehlt'); const m = state.sheet.meta; const A = pageAcc(m);
     const hex = (x, d) => (/^#[0-9a-f]{6}$/i.test(x || '') ? x.slice(1).toUpperCase() : d);
     const ACC = hex(A.c, '1F4FA0'), TINT = hex(A.t, 'E9EEF8'), INK = '1C1F27', GREY = '6B7280', F = 'Calibri', FT = 'Georgia';
     const pptx = new window.PptxGenJS(); pptx.layout = 'LAYOUT_WIDE';
@@ -6944,6 +6983,7 @@ function outHTML() {
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
       <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
     ${state.out === 'tafel' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung)}</div>` : ''}</div>
+    ${d.fmt === 'pptx' && state.out === 'blatt' ? presPickHTML() : ''}
     <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>
     <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && state.out === 'blatt' ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div>`;
@@ -7149,6 +7189,7 @@ async function onDlgClick(e) {
     }
     if (act === 'out-go') { outGo(); return; }
     if (act === 'out-pres') { state.dlg = null; renderDlg(); openPres(0); return; }
+    if (act === 'pr-pick') { presPickSet(a.dataset.v); return; }
     if (act === 'out-eh') { exportEH(); return; }
   }
   const email = dlgVal('#dlg-email'); const pw = ($('#dlg-pw') || {}).value || '';
@@ -8443,6 +8484,11 @@ function boot() {
     if (t.dataset.kf === 'label' && d.setup) { const c = r.querySelector('[data-kf="course"]'); if (c && (!row.course || row.course === 'Deutsch' || row.course === 'Deutsch ' + prevLabel)) { row.course = t.value ? 'Deutsch ' + t.value : 'Deutsch'; c.value = row.course; } }
   });
   $('#dlg-root').addEventListener('change', e => {
+    if (e.target.dataset && e.target.dataset.prk != null) {
+      const m = state.sheet.meta; const k = e.target.dataset.prk; const off = new Set(Array.isArray(m.presOff) ? m.presOff : []);
+      if (e.target.checked) off.delete(k); else off.add(k); m.presOff = [...off]; changed(false);
+      const L = presPick(), nEl = $('#pr-pick-n'); if (nEl) nEl.textContent = `${L.filter(x => !off.has(x.key)).length} von ${L.length} ausgewählt`; return;
+    }
     if (e.target.id === 'ocr-file' && e.target.files && e.target.files[0]) { ocrTake(e.target.files[0]); return; }
     if (e.target.id === 'sa-kl' && $('#sa-f')) $('#sa-f').innerHTML = saFolderOpts(e.target.value, '');
     if (e.target.dataset && e.target.dataset.mpid != null && state.dlg && state.dlg.mode === 'mappe') { mappeRead(); const d = state.dlg, n = d.list.length - d.off.size; $('#mp-n').textContent = `Blätter: ${n} von ${d.list.length}`; const g = $('#dlg-root [data-act="mp-go"]'); if (g) g.disabled = !n; }
