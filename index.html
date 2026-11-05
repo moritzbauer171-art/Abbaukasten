@@ -380,6 +380,8 @@ body.basis .x-pro:not(.used){display:none!important}
 .umfang button{min-width:0;padding-left:9px;padding-right:9px}
 .ph-ctl{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
 .grp-sel{margin-left:auto;max-width:150px}
+.tm-row{align-items:flex-end}
+.tm-row .f:last-child{flex:1 1 auto}
 .grp-sel+.ph-ctl{margin-left:0}
 .grp-sel.on{border-style:solid;border-color:var(--tinte);color:var(--ink);box-shadow:inset 3px 0 0 var(--tinte)}
 .grp-ed-row{display:grid;grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) 30px;gap:6px;align-items:center;margin-bottom:6px}
@@ -1301,7 +1303,12 @@ body{transition:background-color .3s,border-color .25s}
 .pr-eh{background:#EAF2EC;border-left:8px solid #1E7A46}.pr-eh ul{margin:6px 0 0;padding-left:1.1em}
 .pr-chip.pr-timer{font-variant-numeric:tabular-nums;min-width:4.6em;justify-content:center}
 .pr-chip.pr-timer::before{content:'';flex:0 0 auto;width:20px;height:20px;border:3px solid currentColor;border-radius:50%;box-sizing:border-box;background:linear-gradient(currentColor,currentColor) 50% 22%/3px 7px no-repeat}
+.pr-chip.pr-timer{cursor:pointer}
 .pr-chip.pr-timer.run{background:var(--acc);color:#fff}
+.pr-tbar{position:absolute;left:16px;right:0;top:0;height:10px;background:var(--acc-tint);z-index:2}
+.pr-tbar i{display:block;height:100%;width:100%;background:var(--acc);opacity:.35;transition:width .3s linear}
+.pr-tbar.run i{opacity:1}
+.pr-tbar.end{background:#F6D5D2}.pr-tbar.end i{width:0}
 .pr-chip.pr-timer.end{background:#B3261E;color:#fff;animation:pr-bl 1s steps(2) infinite}
 @keyframes pr-bl{50%{opacity:.25}}
 .pr-slide .tf{font-size:1em}
@@ -2644,7 +2651,11 @@ const itPh = it => (it && PHASEN[it.ph] ? it.ph : '');
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
   const rows = []; let t = 0; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '' }); return; } if (b.type !== 'tasks') return; if (b.restart) t = 0; (b.items || []).forEach(it => { t++; rows.push({ no: t, it, b, ph: itPh(it), min: itMin(it), g: itGrp(b, it, m) }); }); });
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '' }); return; } if (b.type !== 'tasks') return; if (b.restart) t = 0; const its = b.items || []; const n0 = t + 1; t += its.length; if (!its.length) return;
+    const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
+    // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
+    const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });
+    rows.push({ no: n0, it: b, b, ph, min: itMin(b), g: gs.length === 1 ? gs[0] : '', split: Object.keys(cnt).length > 1 ? cnt : null }); });
   // Aufeinanderfolgende Aufgaben verschiedener Gruppen laufen parallel: gezählt wird nur die längste Gruppe
   for (let i = 0; i < rows.length;) {
     if (!rows[i].g) { i++; continue; }
@@ -2653,25 +2664,43 @@ function ablaufOf(sh) {
     i = j;
   }
   const by = {}; Object.keys(PHASEN).forEach(k => (by[k] = 0)); let open = 0, none = 0;
-  rows.forEach(r => { const mn = r.par ? 0 : r.min; if (r.ph) by[r.ph] += mn; else open += mn; if (!r.min && r.ph !== 'ha') none++; });
+  rows.forEach(r => { const mn = r.par ? 0 : r.min; if (r.split) { const n = Object.values(r.split).reduce((a, x) => a + x, 0); Object.entries(r.split).forEach(([k, x]) => { if (k) by[k] += mn * x / n; else open += mn * x / n; }); } else if (r.ph) by[r.ph] += mn; else open += mn; if (!r.min && r.ph !== 'ha') none++; });
   const total = rows.reduce((a, r) => a + (r.ph === 'ha' || r.par ? 0 : r.min), 0);
   return { rows, by, open, none, total, any: rows.some(r => r.ph || r.min) };
 }
 function ablaufHTML() {
   const sh = state.sheet, m = sh.meta; const A = ablaufOf(sh); if (!A.any) return '';
   const L = Number(m.lesson) || 45; const base = Math.max(L, A.total) || 1;
-  const segs = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<i style="width:${(A.by[k] / base * 100).toFixed(2)}%;background:${x.c}" title="${x.label}: ${A.by[k]} Min."></i>`).join('')
-    + (A.open ? `<i style="width:${(A.open / base * 100).toFixed(2)}%;background:#B7BCC6" title="ohne Phase: ${A.open} Min."></i>` : '');
-  const parts = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<span><b style="background:${x.c}"></b>${x.label} ${A.by[k]}</span>`);
-  if (A.open) parts.push(`<span><b style="background:#B7BCC6"></b>ohne Phase ${A.open}</span>`);
+  const segs = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<i style="width:${(A.by[k] / base * 100).toFixed(2)}%;background:${x.c}" title="${x.label}: ${Math.round(A.by[k])} Min."></i>`).join('')
+    + (A.open ? `<i style="width:${(A.open / base * 100).toFixed(2)}%;background:#B7BCC6" title="ohne Phase: ${Math.round(A.open)} Min."></i>` : '');
+  const parts = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<span><b style="background:${x.c}"></b>${x.label} ${Math.round(A.by[k])}</span>`);
+  if (A.open) parts.push(`<span><b style="background:#B7BCC6"></b>ohne Phase ${Math.round(A.open)}</span>`);
   const diff = A.total - L;
   const st = diff > 0 ? `<em class="warn">${diff} Min. zu viel</em>` : diff < 0 ? `<em>${-diff} Min. frei</em>` : '<em class="ok">passt genau</em>';
   return `<div class="f abl-sum x-pro"><span>Stundenablauf</span>
     <div class="abl-bar" style="--fill:${Math.min(100, L / base * 100).toFixed(2)}%">${segs}</div>
     <div class="abl-leg">${parts.join('')}</div>
-    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Aufgabe' : 'Aufgaben'} ohne Zeit</small>` : ''}<button class="link" type="button" data-act="vp-open" style="margin-left:auto">Verlaufsplan</button></div></div>`;
+    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Baustein' : 'Bausteine'} ohne Zeit</small>` : ''}<button class="link" type="button" data-act="vp-open" style="margin-left:auto">Verlaufsplan</button></div></div>`;
 }
-const phCtl = (i, it) => { const p = itPh(it); return `<span class="ph-ctl x-pro${p || itMin(it) ? ' used' : ''}"><select data-k="items.${i}.ph" aria-label="Phase der Stunde" class="ph-sel${p ? ' on' : ''}"${p ? ` style="--phc:${PHASEN[p].c}"` : ''}><option value="">Phase …</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${p === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select><label class="ph-min" title="Bearbeitungszeit in Minuten"><input type="text" inputmode="numeric" maxlength="3" data-k="items.${i}.min" value="${esc(itMin(it) || '')}" placeholder="–" aria-label="Minuten"><span>Min.</span></label></span>`; };
+// Zeit gilt für den ganzen Aufgaben-Baustein (b.min); Timer beim Präsentieren: b.timer = '' | 'klick' | 'auto'
+const TIMER_OPTS = [['', 'aus'], ['klick', 'Start per Klick'], ['auto', 'startet mit der Folie']];
+const timeCtl = (b, label) => `<div class="row tm-row"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div></div>`;
+// Ältere Blätter: Minuten je Aufgabe werden einmalig zur Zeit des Bausteins (parallele Gruppen zählen einmal, Hausaufgaben nur, wenn alles Hausaufgabe ist)
+function minMigrate(blocks) {
+  (blocks || []).forEach(b => {
+    if (!b || b.type !== 'tasks' || !Array.isArray(b.items) || !b.items.some(it => it && it.min != null && String(it.min).trim() !== '')) return;
+    if (!itMin(b)) {
+      const allHa = b.items.every(it => itPh(it) === 'ha'); const its = b.items.filter(it => it && (allHa || itPh(it) !== 'ha')); let sum = 0;
+      for (let i = 0; i < its.length;) {
+        if (its[i].grp) { let j = i; const acc = {}; while (j < its.length && its[j].grp) { acc[its[j].grp] = (acc[its[j].grp] || 0) + itMin(its[j]); j++; } sum += Math.max(0, ...Object.values(acc)); i = j; }
+        else { sum += itMin(its[i]); i++; }
+      }
+      if (sum) b.min = String(sum);
+    }
+    b.items.forEach(it => { if (it) delete it.min; });
+  });
+}
+const phCtl = (i, it) => { const p = itPh(it); return `<span class="ph-ctl x-pro${p ? ' used' : ''}"><select data-k="items.${i}.ph" aria-label="Phase der Stunde" class="ph-sel${p ? ' on' : ''}"${p ? ` style="--phc:${PHASEN[p].c}"` : ''}><option value="">Phase …</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${p === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></span>`; };
 /* ================= Gruppen: eigene Namen, Zuordnung je Baustein (⋯) oder je Aufgabe =================
    meta.groups = [{ k: 'A', name: 'Wandseite', add: 'Szene 3' }, …] gilt für die ganze Stunde; b.group bzw. it.grp verweisen auf k. */
 const GRP_KEYS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -2741,7 +2770,8 @@ function stepEditor(b) {
   return `<div class="memo-flag">Steht nicht auf dem Arbeitsblatt. Der Schritt zählt im Stundenablauf, steht im Verlaufsplan und wird beim Präsentieren zur Folie.</div>
     <div class="f"><span>Vorlage</span><div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-tpl" data-v="frei" aria-pressed="${b.tpl === 'frei'}">Eigener Schritt</button></div></div></div></div>
     ${fText('title', 'Bezeichnung im Verlaufsplan', b.title, 'z. B. Stummer Impuls')}
-    <div class="row st-row"><label class="f"><span>Phase</span><select data-k="ph"><option value="">–</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${itPh(b) === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label><label class="f narrow"><span>Minuten</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><label class="f"><span>Sozialform</span><select data-k="soz"><option value="">–</option>${Object.entries(SOZ).map(([k, x]) => `<option value="${k}"${b.soz === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label></div>
+    <div class="row st-row"><label class="f"><span>Phase</span><select data-k="ph"><option value="">–</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${itPh(b) === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label><label class="f"><span>Sozialform</span><select data-k="soz"><option value="">–</option>${Object.entries(SOZ).map(([k, x]) => `<option value="${k}"${b.soz === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label></div>
+    ${timeCtl(b, 'Zeit (Min.)')}
     <div class="f"><span>Folie</span><div class="seg sm" role="group" aria-label="Folie">${STEP_FOL.map(([v, l]) => `<button type="button" data-act="st-fol" data-v="${v}" aria-pressed="${fol === v}">${l}</button>`).join('')}</div></div>
     ${fol === 'text' || fol === 'frage' ? fText('head', 'Überschrift auf der Folie', b.head, stepHeadDef(b)) : ''}
     ${fol === 'frage' ? `<label class="f"><span>Stundenfrage (gilt für die ganze Stunde)</span><textarea data-sf rows="2" placeholder="z. B. Wie erzeugen Politikerinnen und Politiker in sozialen Medien Nähe?">${esc(tfStr(m.frage))}</textarea><small class="hint">Dieselbe Frage steht im Kopf und im Verlaufsplan. Ein Schritt am Ende mit der Folie „Stundenfrage“ zeigt sie wieder.</small></label>` : ''}
@@ -3147,7 +3177,7 @@ function presSlidesAB(off, lab, abId) {
   const mats = presCollect(true); const S = []; let t = 0;
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
-    if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: t, it, g: itGrp(b, it, m) }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
+    if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: t, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
     if (b.type === 'step') { const f = stepSlideFol(b); if (f) S.push({ k: 'step', b, fol: f }); return; }
     const M = mats[b.id];
@@ -3350,7 +3380,9 @@ const prImp = x => (/^\*\*/.test(x) ? x : x.replace(/^([„"]?)(\p{Lu}[\p{Ll}-]+
 const prStepsOf = (it, m) => taskSteps(taskText(it, m)).map(x => prRefs(prSie(inlineHTML(prImp(x)))));
 const prTaskHTML = (it, m) => { const st = prStepsOf(it, m); return st.length > 1 ? `<ul class="pr-steps">${st.map(x => `<li>${x}</li>`).join('')}</ul>` : st.length ? `<p>${st[0]}</p>` : ''; };
 // Zeit einer Aufgabenfolie: Zeilen nacheinander, Gruppenspalten parallel (längste Gruppe)
-const tsMin = s => s.segs.reduce((a, g) => a + (g.t === 'rows' ? g.items.reduce((b, x) => b + itMin(x.it), 0) : Math.max(0, ...g.cols.map(c => c.items.reduce((b, x) => b + itMin(x.it), 0)))), 0);
+// Zeit einer Aufgabenfolie = Zeit des Bausteins; nebeneinanderstehende Gruppen-Bausteine laufen parallel (längster zählt)
+const tsMin = s => { const by = {}; s.items.forEach(x => { by[x.bid] = x.bmin || 0; }); const v = Object.values(by); return v.length > 1 ? Math.max(0, ...v) : (v[0] || 0); };
+const tsTimer = s => ((s.items.find(x => x.btimer) || {}).btimer || '');
 const prMin = s => (s.k === 'tasks' ? tsMin(s) : s.k === 'step' ? itMin(s.b) : 0);
 const tsHaAll = s => s.items.every(x => itPh(x.it) === 'ha');
 const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k => SOZ[k]))]; return z.length === 1 && s.items.every(x => x.it.soz === z[0]) ? z[0] : ''; };
@@ -3365,7 +3397,7 @@ const tsHead = s => (tsHaAll(s) ? 'Hausaufgabe' : s.items.length > 1 ? 'Arbeitsa
 function tsMeta(x, s, m, col) {
   if (s.items.length < 2) return '';
   const sozU = tsSoz(s); const phD = (s.phs || []).length > 1;
-  return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : '', itMin(x.it) ? itMin(x.it) + ' Min.' : ''].filter(Boolean).join(' · ');
+  return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
 const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + x.no) : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
 const presBarHTML = (bar, cur) => (bar && bar.length ? `<div class="pr-phb" aria-label="Phasen der Stunde">${bar.map((k, i) => `<span class="${i ? '' : 'first'}${(Array.isArray(cur) ? cur.includes(k) : k === cur) ? ' on' : ''}" style="--phc:${PHASEN[k].c}">${PHASEN[k].label}</span>`).join('')}</div>` : '');
@@ -3377,7 +3409,7 @@ function presSlideHTML(s, bar) {
   const m = state.sheet.meta; const acc = pageAcc(m).c; const barOn = !!(bar && bar.length);
   const sozChip = it => (it && SOZ[it.soz] ? `<span class="pr-chip"><img src="${sozURI(it.soz, acc, pageAcc(m).t || '#fff')}" alt="">${SOZ[it.soz].label}</span>` : '');
   const phChip = ph => (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
-  const minChip = mn => (mn ? `<span class="pr-chip pr-timer" data-min="${mn}" title="Zeit: ${mn} Min. · Timer mit T starten">${mn}:00</span>` : '');
+  const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn}:00</span>` : `<span class="pr-chip">${mn} Min.</span>`);
   switch (s.k) {
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
@@ -3392,12 +3424,12 @@ function presSlideHTML(s, bar) {
       const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map(x => item(x)).join('')}</div>`
         : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map(x => item(x, c)).join('')}</div>`).join('')}</div>`; })()).join('');
       const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));
-      return presHead(esc(tsKick(s, m)), tsHead(s), (sz ? sozChip({ soz: sz }) : '') + phChip(s.ph) + minChip(mn))
+      return presHead(esc(tsKick(s, m)), tsHead(s), (sz ? sozChip({ soz: sz }) : '') + phChip(s.ph) + minChip(mn, tsTimer(s)))
         + `<div class="pr-body"><div class="pr-fit pr-tset${multi ? ' multi' : ''}">${body}</div></div>`
         + prPops(tips, s.items.map(x => [tsLab(x, s, m), ehLines(x.it)]));
     }
     case 'step': {
-      const b = s.b, ph = itPh(b), mn = itMin(b); const chips = sozChip(b) + phChip(ph) + minChip(mn); const pops = prPops([], [['', ehLines(b)]]);
+      const b = s.b, ph = itPh(b), mn = itMin(b); const chips = sozChip(b) + phChip(ph) + minChip(mn, b.timer); const pops = prPops([], [['', ehLines(b)]]);
       const qr = tfStr(b.link).trim() ? `<div class="pr-st-qr"><img src="${QR.dataURL(tfStr(b.link).trim(), 8)}" alt="QR-Code"><span>${esc(linkShort(b.link))}</span></div>` : ''; const hq = qr ? ' has-qr' : '';
       const head = tfStr(b.head).trim() ? inlineHTML(b.head) : esc(stepHeadDef(b));
       if (s.fol === 'zitat') return `<div class="pr-body st-zitat${hq}"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(b.quote)}</div>${b.author ? `<div class="pr-auth">${inlineHTML(b.author)}</div>` : ''}</div>${qr}</div>` + pops;
@@ -3431,7 +3463,8 @@ function vpRows() {
       if (b.type === 'step') { if (blockVisible(b, v)) rows.push(stepRow(b, tafel)); return; }
       if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; if (firstTask < 0) firstTask = bi;
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
-      itemsFor(b, v).forEach((it, k) => {
+      const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
+      ITb.forEach((it, k) => {
         t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
         const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
         const media = [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
@@ -3440,8 +3473,9 @@ function vpRows() {
         if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
         if (m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
         const g = itGrp(b, it, m);
-        rows.push({ no: t, abLab, it, ph, min: itMin(it), soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g, gName: g ? grpName(m, g) : '' });
+        bRows.push({ no: t, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: bg, gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
       });
+      if (bRows.length) { bRows[0].min = itMin(b); bRows[0].span = bRows.length; bRows.slice(1).forEach(r => { r.cont = true; r.head = bRows[0]; }); bRows.forEach(r => rows.push(r)); }
     });
     if (A.k === 0 && !imp) imp = sh.blocks.find((b, bi) => (b.type === 'quote' && plainText(b.text || '').trim() || b.type === 'image' && b.src) && (firstTask < 0 || bi < firstTask)) || null;
   }));
@@ -3449,24 +3483,26 @@ function vpRows() {
   if (!rows.some(r => r.ph === 'ein') && imp) rows.unshift({ auto: true, ph: 'ein', min: 0, soz: 'Plenum', task: imp.type === 'quote' ? `Impuls: Zitat „${plainText(imp.text).slice(0, 120)}“${imp.author ? ' (' + plainText(imp.author) + ')' : ''}; Schülerinnen und Schüler äußern erste Eindrücke.` : `Impuls: ${plainText(imp.caption || 'Bild')}; Schülerinnen und Schüler beschreiben und deuten.`, eh: [], media: [imp.type === 'quote' ? 'Zitat (Beamer oder Tafel)' : 'Bild (Beamer)'] });
   // Sicherung am Tafelbild, wenn keine Aufgabe dafür vorgesehen ist
   if (tafel.length && !rows.some(r => r.ph === 'sich')) rows.push({ auto: true, ph: 'sich', min: 0, soz: 'Plenum', task: 'Ergebnisse werden im Unterrichtsgespräch gesichert.', eh: [], media: tafel.map(x => 'Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')) });
-  const main = rows.filter(r => r.ph !== 'ha'), ha = rows.filter(r => r.ph === 'ha');
+  const isHa = r => (r.blk ? r.isHa : r.ph === 'ha'); const main = rows.filter(r => !isHa(r)), ha = rows.filter(isHa);
   let c = 0, run = null; const start = vpOf().start;
   // Aufgaben verschiedener Gruppen direkt nacheinander laufen parallel und beginnen gleichzeitig
   main.forEach((r, i) => {
+    if (r.cont) { r.from = r.head.from; r.to = r.head.to; r.clock = r.head.clock; r.par = r.head.par; return; }
     if (r.g) {
       if (!run) run = { start: c, acc: {}, end: c, rows: [] };
       r.from = run.start + (run.acc[r.g] || 0); r.to = r.from + (r.min || 0); run.acc[r.g] = r.to - run.start; run.end = Math.max(run.end, r.to); run.rows.push(r);
-      const nx = main[i + 1]; if (!nx || !nx.g) { if (Object.keys(run.acc).length > 1) run.rows.forEach(x => { x.par = true; }); c = run.end; run = null; }
+      let jn = i + 1; while (jn < main.length && main[jn].cont) jn++; const nx = main[jn]; if (!nx || !nx.g) { if (Object.keys(run.acc).length > 1) run.rows.forEach(x => { x.par = true; }); c = run.end; run = null; }
     } else { r.from = c; c += r.min || 0; r.to = c; }
     r.clock = vpClock(start, r.from) ? `${vpClock(start, r.from)}–${vpClock(start, r.to)}` : '';
   });
   return { rows: main.concat(ha), total: c, len: Number(state.sheet.meta.lesson) || 45 };
 }
-const vpTime = r => r.ph === 'ha' ? 'HA' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
+const vpHa = r => (r.blk ? r.isHa : r.ph === 'ha');
+const vpTime = r => vpHa(r) ? 'HA' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
 function vpTableHTML() {
   const R = vpRows(); if (!R.rows.length) return '<p class="hint">Noch keine Aufgaben. Der Verlaufsplan entsteht aus den Aufgaben des Blatts.</p>';
-  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}"><td><b>${esc(vpTime(r))}</b>${r.min && r.ph !== 'ha' ? `<small>${r.min} Min.${r.par ? ' · parallel' : ''}</small>` : ''}</td><td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>${r.abLab ? esc(r.abLab) + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.step ? `<b>${esc(r.label)}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
-    <p class="vp-sum">${R.total} von ${R.len} Minuten verplant${R.total > R.len ? ` · <b class="warn">${R.total - R.len} Min. zu viel</b>` : ''}${R.rows.some(r => r.ph !== 'ha' && !r.min) ? ' · nicht alle Schritte haben eine Zeit' : ''}${R.rows.some(r => r.auto) ? ' · kursive Zeilen sind ergänzt' : ''}</p>`;
+  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}">${r.cont ? '' : `<td${r.span > 1 ? ` rowspan="${r.span}"` : ''}><b>${esc(vpTime(r))}</b>${r.min && !vpHa(r) ? `<small>${r.min} Min.${r.par ? ' · parallel' : ''}${r.span > 1 ? ` · ${r.span} Aufgaben` : ''}</small>` : ''}</td>`}<td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>${r.abLab ? esc(r.abLab) + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.step ? `<b>${esc(r.label)}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+    <p class="vp-sum">${R.total} von ${R.len} Minuten verplant${R.total > R.len ? ` · <b class="warn">${R.total - R.len} Min. zu viel</b>` : ''}${R.rows.some(r => !r.cont && !vpHa(r) && !r.min) ? ' · nicht alle Schritte haben eine Zeit' : ''}${R.rows.some(r => r.auto) ? ' · kursive Zeilen sind ergänzt' : ''}</p>`;
 }
 function vpHTML() {
   const m = state.sheet.meta, vp = vpOf();
@@ -3505,13 +3541,13 @@ async function exportVP() {
     const head = xtr(hd.map((h, i) => cell(P(xr(h, { b: 1, sz: 18, color: 'FFFFFF' })), ws[i], { shd: A })).join(''), { header: 1, cant: 1 });
     const body = R.rows.map(r => {
       const ital = r.auto ? { i: 1 } : {};
-      const c0 = P(xr(vpTime(r), { b: 1, sz: 18 })) + (r.min && r.ph !== 'ha' ? P(xr(r.min + ' Min.' + (r.par ? ' · parallel' : ''), { sz: 16, color: GREY })) : '');
+      const c0 = r.cont ? P('') : P(xr(vpTime(r), { b: 1, sz: 18 })) + (r.min && !vpHa(r) ? P(xr(r.min + ' Min.' + (r.par ? ' · parallel' : '') + (r.span > 1 ? ` · ${r.span} Aufgaben` : ''), { sz: 16, color: GREY })) : '');
       const c1 = P(xr(r.ph ? PHASEN[r.ph].label : 'ohne Phase', { b: 1, sz: 18, color: r.ph ? PHASEN[r.ph].c.slice(1) : GREY }));
       const c2 = P((r.no ? xr(`${r.abLab ? r.abLab + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + r.gName : ''}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : r.step ? xr(r.label + ': ', { b: 1, sz: 18 }) : '') + xrInline(tfStr(r.task).replace(/\n+/g, ' '), { sz: 18, ...ital }));
       const c3 = r.eh.length ? r.eh.map(x => P(xr('–', { sz: 18, color: A }) + '<w:r><w:tab/></w:r>' + xrInline(x, { sz: 18 }), { ind: `<w:ind w:left="${TW(3.5)}" w:hanging="${TW(3.5)}"/>`, after: 20 })).join('') : P('');
       const c4 = P(xr(r.soz || ' ', { sz: 18 }));
       const c5 = r.media.map(x => P(xr(x, { sz: 17 }), { after: 10 })).join('') || P('');
-      return xtr([c0, c1, c2, c3, c4, c5].map((x, i) => cell(x, ws[i], i === 1 && r.ph ? { shd: mixHex(PHASEN[r.ph].c, .88).slice(1) } : {})).join(''), { cant: 1 });
+      return xtr([c0, c1, c2, c3, c4, c5].map((x, i) => cell(x, ws[i], { ...(i === 1 && r.ph ? { shd: mixHex(PHASEN[r.ph].c, .88).slice(1) } : {}), ...(i === 0 && r.span > 1 ? { vm: 'restart' } : i === 0 && r.cont ? { vm: 'cont' } : {}) })).join(''), { cant: 1 });
     }).join('');
     const sum = xtr(cell(P(xr(`${R.total} von ${R.len} Minuten verplant` + (R.total > R.len ? ` (${R.total - R.len} Min. zu viel)` : ''), { sz: 17, color: GREY })), PW, { span: 6 }), { cant: 1 });
     parts.push(xtbl(ws, head + body + sum, bd));
@@ -3562,6 +3598,7 @@ function openPres(start) {
   const tmShow = () => {
     const el2 = slide.querySelector('.pr-timer'); const mine = T.slide === P.i;
     if (el2) { const sec = mine ? T.left : +el2.dataset.min * 60; el2.textContent = fmt(sec); el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); }
+    const tb = slide.querySelector('.pr-tbar'); if (tb) { const f = mine && T.full ? T.left / T.full : 1; tb.firstChild.style.width = (f * 100).toFixed(2) + '%'; tb.classList.toggle('end', mine && T.left <= 0 && T.full > 0); tb.classList.toggle('run', mine && T.run); }
     $p('.pr-tm').hidden = !el2 && !T.run;
     $p('[data-p="timer"]').textContent = T.run ? 'Timer anhalten' : (mine && T.left > 0 && T.left < T.full ? 'Timer fortsetzen' : 'Timer starten');
     $p('[data-p="timer"]').disabled = !el2 && !T.run;
@@ -3570,6 +3607,9 @@ function openPres(start) {
   const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000)); if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
   const tmToggle = () => {
     if (T.run) { clearInterval(T.id); T.run = false; tick(); T.run = false; tmShow(); return; }
+    tmStart();
+  };
+  const tmStart = () => {
     const el2 = slide.querySelector('.pr-timer'); if (!el2) return;
     if (T.slide !== P.i || T.left <= 0) { T.slide = P.i; T.full = T.left = +el2.dataset.min * 60; }
     T.end = Date.now() + T.left * 1000; T.run = true; clearInterval(T.id); T.id = setInterval(tick, 250); tmShow();
@@ -3580,8 +3620,10 @@ function openPres(start) {
     const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
     slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.phs && sl.phs.length ? sl.phs : sl.ph) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
+    if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
     fit();
+    if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmStart();
   };
   const next = () => { if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
   const prev = () => { if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
@@ -3599,6 +3641,7 @@ function openPres(start) {
     else if (k === 'Escape') { stop(); if (!document.fullscreenElement) close(); }
   };
   ov.addEventListener('click', e => {
+    if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
@@ -4207,14 +4250,14 @@ const itemsFor = (b, v) => { const l = v && v.lvl; const its = b.items.filter(it
 const lvTipOf = (it, v, meta) => v && v.lvl === 'b' && meta.lvTip !== false ? (tipsOf(it)[0] || '') : '';
 var tipsOf = it => (Array.isArray(it.tips) ? it.tips : (it.tips && typeof it.tips === 'object' ? [0, 1, 2].map(j => it.tips[j]) : [])).map(s => String(s || '').trim()).filter(Boolean);
 const ehLines = it => String(it.eh || '').split('\n').map(s => s.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
-function taskRight(it, r, meta, v) {
+function taskRight(it, r, meta, v, bi) {
   const out = []; const isK = meta.mode === 'klausur';
   if (isK && String(it.pts || '').trim()) out.push(`<b>${esc(it.pts)}</b>`);
   if ((meta.showAFB || (v && v.lehrer)) && r) out.push('AFB ' + afbLabel(r));
   const n = tipsOf(it).length; if (n && !isK) out.push(`Tipps: ${n}`);
-  const mn = itMin(it), ph = itPh(it);
-  if (v && v.lehrer && (ph || mn)) out.push(`<span class="t-ph">${ph ? PHASEN[ph].label : ''}${ph && mn ? ' · ' : ''}${mn ? mn + ' Min.' : ''}</span>`);
-  else if (meta.showMin && mn) out.push(`<span class="t-min">ca. ${mn} Min.</span>`);
+  const ph = itPh(it); const tm = bi && bi.min ? `${bi.min} Min.${bi.n > 1 ? `<br><small>für ${bi.from}–${bi.to}</small>` : ''}` : '';
+  if (v && v.lehrer && (ph || tm)) out.push(`<span class="t-ph">${ph ? PHASEN[ph].label : ''}${ph && tm ? '<br>' : ''}${tm}</span>`);
+  else if (meta.showMin && tm) out.push(`<span class="t-min">ca. ${tm}</span>`);
   return out.join('<br>');
 }
 function taskEH(it, v) {
@@ -5000,10 +5043,11 @@ function ehMarkdown() {
     if (b.type === 'match' && b.sort) { const M = mtLayout(b); if (M.sol.length) { L.push('', `### Sortieren${b.title ? ': ' + plainMd(b.title) : ''}`, ''); M.left.forEach((c, li) => { const ws = M.sol.filter(x => x.li === li).map(x => plainMd(M.right[x.rk].b)); L.push(`- ${b.mode === 'buchstaben' ? (li + 1) + ' – ' : ''}${plainMd(c.a)}: ${ws.join(', ') || '–'}`); }); const dist = M.right.filter((_, rk) => !M.sol.some(x => x.rk === rk)); if (dist.length) L.push(`- Ablenker: ${dist.map(w => plainMd(w.b)).join(', ')}`); } return; }
     if (b.type === 'match') { const M = mtLayout(b); const ok = M.sol.filter(x => x.rk >= 0); if (ok.length) { L.push('', `### Zuordnen${b.title ? ': ' + plainMd(b.title) : ''}`, ''); ok.forEach(x => L.push(`- ${b.mode === 'buchstaben' ? x.L + ' – ' + x.R + ': ' : ''}${plainMd(M.left[x.li].a)} → ${plainMd(M.right[x.rk].b)}`)); } return; }
     if (b.type !== 'tasks') return; if (b.restart) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
-    itemsFor(b, vEH).forEach(it => {
+    const itsEH = itemsFor(b, vEH); if (itMin(b) && itsEH.length) L.push('', `_Bearbeitungszeit: ${itMin(b)} Min.${itsEH.length > 1 ? ` für die Aufgaben ${t + 1}–${t + itsEH.length}` : ''}_`);
+    itsEH.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
       L.push('', `### Aufgabe ${t}${itGrp(b, it, m) ? ` (${grpName(m, itGrp(b, it, m))})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', (plainMd(it.text) || '–').split('\n').map(l => '> ' + l).join('\n'), '');
-      const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', itPh(it) ? 'Phase: ' + PHASEN[itPh(it)].label : '', itMin(it) ? itMin(it) + ' Min.' : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
+      const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', itPh(it) ? 'Phase: ' + PHASEN[itPh(it)].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
       const rl = rlpOf(it); if (rl.length) L.push('**Standards**', '', ...rl.map(id => { const x = rlpInfo(id); return `- ${x.own ? '' : x.code + ': '}${x.t}`; }), '');
       const eh = ehLines(it);
@@ -5486,6 +5530,7 @@ function normalizeSheet(sh) {
   sh.meta.exam = { ...defaultMeta('', sh.klasse).exam, ...(sh.meta.exam || {}) };
   sh.meta.kk = kkOf(sh.meta);
   abNorm(sh);
+  minMigrate(sh.blocks); (sh.abs || []).forEach(a => { if (a && Array.isArray(a.blocks)) minMigrate(a.blocks); });
   return sh;
 }
 
@@ -5643,7 +5688,7 @@ function buildBlock(b, ctx) {
       const items = ITS.map((it, i) => {
         const r = opsRange(detectOps(it.text));
         const soz = hasSoz ? `<span class="task-soz">${SOZ[it.soz] ? `<img src="${sozURI(it.soz, ctx.acc, ctx.bg)}" alt="${SOZ[it.soz].label}" title="${SOZ[it.soz].label}">` : ''}</span>` : '';
-        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${ctx.view && ctx.view.grp === 'all' && meta.groupsOn && it.grp ? `<span class="task-tag grp">${esc(grpName(meta, it.grp))}</span>` : ''}${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}${(() => { const tp = lvTipOf(it, ctx.view, meta); return tp ? `<div class="task-tip"><b>Tipp:</b> ${inlineHTML(tp)}</div>` : ''; })()}${ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(it.lv) ? `<span class="lv-tag">${it.lv.map(x => LV[x].sym).join(' · ')}</span>` : ''}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view)}</span>${taskEH(it, ctx.view)}</div>`;
+        return `<div class="task"><span class="task-no">${ctx.t + i + 1}</span>${soz}<div class="task-body">${ctx.view && ctx.view.grp === 'all' && meta.groupsOn && it.grp ? `<span class="task-tag grp">${esc(grpName(meta, it.grp))}</span>` : ''}${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}${(() => { const tp = lvTipOf(it, ctx.view, meta); return tp ? `<div class="task-tip"><b>Tipp:</b> ${inlineHTML(tp)}</div>` : ''; })()}${ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(it.lv) ? `<span class="lv-tag">${it.lv.map(x => LV[x].sym).join(' · ')}</span>` : ''}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view, i === 0 && itMin(b) ? { min: itMin(b), n: ITS.length, from: ctx.t + 1, to: ctx.t + ITS.length } : null)}</span>${taskEH(it, ctx.view)}</div>`;
       }).join('');
       ctx.t += ITS.length;
       const n = put(`<div class="blk blk-tasks${hasSoz ? ' has-soz' : ''}">${b.title ? `<div class="tasks-title">${esc(b.title)}</div>` : ''}${items}</div>`);
@@ -6395,7 +6440,7 @@ function progressionHTML() {
 function summary(b, num) {
   switch (b.type) {
     case 'material': return `${num[b.id].tag || 'M' + num[b.id].m} · ${b.title || 'ohne Titel'}`;
-    case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : '') + (() => { const mn = (b.items || []).reduce((a, it) => a + (itPh(it) === 'ha' ? 0 : itMin(it)), 0); return mn ? ` · ${mn} Min.` : ''; })(); }
+    case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : '') + (itMin(b) ? ` · ${itMin(b)} Min.` : '') + (itMin(b) && b.timer ? ' · Timer' : ''); }
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
     case 'step': return `${itPh(b) ? PHASEN[itPh(b)].label + ' · ' : ''}${stepLabel(b)}${itMin(b) ? ' · ' + itMin(b) + ' Min.' : ''} · nicht auf dem Blatt`;
@@ -6438,6 +6483,7 @@ function bodyFor(b, num) {
     case 'tasks': {
       const start = num[b.id].from;
       return `${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
+        ${timeCtl(b, 'Zeit (Min.)')}
         ${b.items.map((it, i) => `<div class="task-ed">
           <div class="task-ed-h"><span class="no">${start + i}</span>${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
@@ -6699,13 +6745,13 @@ function onChange(e) {
   if (k === 'klasse') { moveKlasse(t.value); return; }
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
-  if (/^items\.\d+\.min$/.test(k)) { const n = parseInt(String(v).replace(/\D/g, ''), 10); v = n > 0 ? String(Math.min(n, 999)) : ''; t.value = v; }
+  if (/^items\.\d+\.min$/.test(k) || k === 'min') { const n = parseInt(String(v).replace(/\D/g, ''), 10); v = n > 0 ? String(Math.min(n, 999)) : ''; t.value = v; }
   setPath(target(card.dataset.bid), k, v);
   if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && target(card.dataset.bid).type === 'step'));
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;
@@ -6806,6 +6852,7 @@ function onClick(e) {
     case 'st-fol': if (b) { b.fol = a.dataset.v; changed(true); } return;
     case 'st-img-del': if (b) { b.src = ''; delete b.w; delete b.h; delete b.assetId; changed(true); } return;
     case 'st-exit-show': setOut('exit'); return;
+    case 'tm-set': if (b) { b.timer = a.dataset.v || ''; if (!b.timer) delete b.timer; changed(true); } return;
     case 'grp-add': { const m = state.sheet.meta; const L = grpList(m); if (L.length >= GRP_KEYS.length) return; m.groups = L.concat([{ k: GRP_KEYS[L.length], name: '', add: '' }]); changed(true); const inp = $(`#editor [data-k="groups.${L.length}.name"]`); if (inp) inp.focus(); return; }
     case 'grp-del': grpRemove(+a.dataset.i); return;
     case 'a3-add': { a3Norm(b); const w = a.dataset.w; const lim = { sections: 6, cols: 4, aspects: 10, experts: 6 }[w] || 8; if (Array.isArray(b[w]) && b[w].length < lim) b[w].push(''); changed(true); return; }
@@ -9001,7 +9048,7 @@ function xp(runs, o = {}) {
 const NIL = s => `<w:${s} w:val="nil"/>`;
 const LINE = (s, sz, col) => `<w:${s} w:val="single" w:sz="${sz}" w:space="0" w:color="${col}"/>`;
 function xtc(content, o = {}) {
-  return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.span ? `<w:gridSpan w:val="${o.span}"/>` : ''}${o.borders ? `<w:tcBorders>${o.borders}</w:tcBorders>` : ''}${o.shd ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>` : ''}${o.mar ? `<w:tcMar>${o.mar}</w:tcMar>` : ''}${o.v ? `<w:vAlign w:val="${o.v}"/>` : ''}</w:tcPr>${content || '<w:p><w:pPr><w:suppressLineNumbers/></w:pPr></w:p>'}</w:tc>`;
+  return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.span ? `<w:gridSpan w:val="${o.span}"/>` : ''}${o.vm ? `<w:vMerge${o.vm === 'restart' ? ' w:val="restart"' : ''}/>` : ''}${o.borders ? `<w:tcBorders>${o.borders}</w:tcBorders>` : ''}${o.shd ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>` : ''}${o.mar ? `<w:tcMar>${o.mar}</w:tcMar>` : ''}${o.v ? `<w:vAlign w:val="${o.v}"/>` : ''}</w:tcPr>${content || '<w:p><w:pPr><w:suppressLineNumbers/></w:pPr></w:p>'}</w:tc>`;
 }
 function xtbl(widths, rowsXml, borders, mar) {
   return `<w:tbl><w:tblPr><w:tblW w:w="${widths.reduce((a, b) => a + b, 0)}" w:type="dxa"/><w:tblBorders>${borders}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar>${mar || '<w:top w:w="0" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="85" w:type="dxa"/>'}</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rowsXml}</w:tbl>`;
@@ -9179,13 +9226,13 @@ async function exportDOCX() {
           if (b.title) parts.push(xp(xr(b.title, { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { keepNext: true, after: 60 }));
           const ITW = itemsFor(b, v); const sW = ITW.some(it => sozRel[it.soz]) ? TW(10) : 0;
           const showA = m.showAFB || v.lehrer; const anyPts = isK && ITW.some(it => String(it.pts || '').trim());
-          const anyMin = ITW.some(it => (v.lehrer && (itPh(it) || itMin(it))) || (m.showMin && itMin(it)));
+          const bmW = itMin(b); const anyMin = ITW.some(it => v.lehrer && itPh(it)) || ((v.lehrer || m.showMin) && bmW && ITW.length);
           const afbW = (showA || anyPts || anyMin) ? TW(20) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
-          const rows = ITW.map(it => {
+          const rows = ITW.map((it, ii) => {
             tNo++;
             const r = opsRange(detectOps(it.text));
-            const mnW = itMin(it), phW = itPh(it);
-            const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null, v.lehrer && (phW || mnW) ? [[phW ? PHASEN[phW].label : '', mnW ? mnW + ' Min.' : ''].filter(Boolean).join(' · '), 0] : m.showMin && mnW ? ['ca. ' + mnW + ' Min.', 0] : null].filter(Boolean);
+            const mnW = ii === 0 && bmW ? bmW + ' Min.' + (ITW.length > 1 ? ` (für ${tNo}–${tNo + ITW.length - 1})` : '') : '', phW = itPh(it);
+            const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null, v.lehrer && phW ? [PHASEN[phW].label, 0] : null, v.lehrer && mnW ? [mnW, 0] : !v.lehrer && m.showMin && mnW ? ['ca. ' + mnW, 0] : null].filter(Boolean);
             const cells = xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp(sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : ''), { w: sW }) : '')
               + xtc((() => { const tt = taskText(it, m); const tagS = [v.grp === 'all' && m.groupsOn && it.grp ? grpName(m, it.grp) : '', it.tag || ''].filter(Boolean).join(' · '); const tagR = tagS ? xr(tagS.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; const tp = lvTipOf(it, v, m); const tipP = tp ? xp(xr('Tipp: ', { b: 1, sz: 17, color: A }) + xrInline(tp, { sz: 17, color: GREY }), { before: 40 }) : ''; return (/\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 }))) + tipP; })(), { w: tW })
