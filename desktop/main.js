@@ -80,7 +80,7 @@ async function firstRun() {
 // ---------- Brücke zur Seite (preload.js) ----------
 ipcMain.handle('ab:save', async (e, name, bytes) => {
   const ext = path.extname(name).slice(1).toLowerCase();
-  const kinds = { pdf: 'PDF-Dokument', docx: 'Word-Dokument', json: 'Sicherung', md: 'Markdown-Datei', png: 'Bild' };
+  const kinds = { pdf: 'PDF-Dokument', docx: 'Word-Dokument', pptx: 'PowerPoint-Präsentation', json: 'Sicherung', md: 'Markdown-Datei', png: 'Bild', html: 'Webseite' };
   const r = await dialog.showSaveDialog(win, { title: 'Speichern unter', defaultPath: path.join(app.getPath('documents'), safeName(name)), filters: ext ? [{ name: kinds[ext] || ext.toUpperCase(), extensions: [ext] }] : [] });
   if (r.canceled || !r.filePath) return { canceled: true };
   fs.writeFileSync(r.filePath, Buffer.from(bytes));

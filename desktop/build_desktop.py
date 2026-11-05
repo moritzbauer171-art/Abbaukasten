@@ -6,7 +6,7 @@ Ergebnis: out/AB-Werkstatt-<Version>-Windows-x64.zip  (mit --linux zusätzlich o
 Grundlage ist ../index.html. Schriften und Bibliotheken werden lokal gebündelt, damit die App
 ohne Internet läuft. Benötigt: Python 3 mit Pillow, git, unzip. Alles Weitere lädt das Skript
 beim ersten Lauf nach .cache/ (Electron von GitHub, Schriften aus google/fonts, jsPDF, JSZip,
-html2canvas, pefile).
+html2canvas, PptxGenJS, pefile).
 """
 import json, os, pathlib, re, shutil, struct, subprocess, sys, urllib.request, zipfile
 
@@ -32,9 +32,10 @@ if '--linux' in sys.argv: get(f'https://github.com/electron/electron/releases/do
 get('https://github.com/niklasvh/html2canvas/releases/download/v1.4.1/html2canvas.min.js', DL / 'html2canvas.min.js')
 sparse('https://github.com/parallax/jsPDF', DL / 'jspdf', ['dist'], 'v2.5.1')
 sparse('https://github.com/Stuk/jszip', DL / 'jszip', ['dist'], 'v3.10.1')
+sparse('https://github.com/gitbrent/PptxGenJS', DL / 'pptxgenjs', ['dist'], 'v3.12.0')
 sparse('https://github.com/google/fonts', DL / 'gfonts', ['ofl/atkinsonhyperlegible', 'ofl/literata', 'apache/specialelite', 'ofl/courierprime', 'ofl/playfairdisplay', 'ofl/unifrakturmaguntia', 'ofl/caveat'])
 if not (DL / 'pefile-src').exists(): subprocess.run(['git', 'clone', '-q', '--depth', '1', 'https://github.com/erocarrera/pefile', str(DL / 'pefile-src')], check=True)
-for f, src in (('jspdf.umd.min.js', DL / 'jspdf' / 'dist' / 'jspdf.umd.min.js'), ('jszip.min.js', DL / 'jszip' / 'dist' / 'jszip.min.js')):
+for f, src in (('jspdf.umd.min.js', DL / 'jspdf' / 'dist' / 'jspdf.umd.min.js'), ('jszip.min.js', DL / 'jszip' / 'dist' / 'jszip.min.js'), ('pptxgen.bundle.js', DL / 'pptxgenjs' / 'dist' / 'pptxgen.bundle.js')):
     if not (DL / f).exists(): shutil.copy(src, DL / f)
 
 # ---------- 1. Seite ohne Internet-Abhängigkeiten ----------
@@ -53,11 +54,12 @@ assert n == 1, 'Font-Link fehlt'
 must("'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'", "'lib/html2canvas.min.js'")
 must("'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'", "'lib/jspdf.umd.min.js'")
 must("'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js'", "'lib/jszip.min.js'")
+must("'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js'", "'lib/pptxgen.bundle.js'")
 h = h.replace('in diesem Browser', 'auf diesem Computer').replace('im Browser', 'auf diesem Computer')
 leftover = re.findall(r'https://(?:fonts\.|cdnjs\.)[^\s"\')]+', h)
 assert not leftover, leftover
 (app / 'index.html').write_text(h)
-for f in ('html2canvas.min.js', 'jspdf.umd.min.js', 'jszip.min.js'): shutil.copy(DL / f, app / 'lib' / f)
+for f in ('html2canvas.min.js', 'jspdf.umd.min.js', 'jszip.min.js', 'pptxgen.bundle.js'): shutil.copy(DL / f, app / 'lib' / f)
 
 G = DL / 'gfonts' / 'ofl'; GA = DL / 'gfonts' / 'apache'
 FONTS = [  # (Familie, Datei, Zieldatei, Gewicht, Stil)

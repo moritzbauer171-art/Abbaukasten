@@ -1061,7 +1061,8 @@ body{transition:background-color .3s,border-color .25s}
 .blk-tafel{border:.3mm solid var(--paper-hair,#C9CDD6);border-radius:1.6mm;padding:3mm 3.5mm 3.5mm;margin:1mm 0 3mm}
 .tf-t{font-weight:700;font-size:1.22em;text-align:center;margin-bottom:.65em;color:var(--tf-line)}
 .tf-sol{color:var(--acc,#2741B5);font-weight:600}
-.tf-ge{display:block;min-height:calc(var(--l,1) * 1.45em);background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(1.45em - .07em),var(--tf-ink) calc(1.45em - .07em),var(--tf-ink) 1.45em);opacity:.6}
+.tf-ge{display:block;min-width:4em}
+.tf-ge i{display:block;height:1.4em;border-bottom:.07em solid var(--tf-ink);opacity:.55}
 .tf .tf-gw{display:inline-block;height:1em;border-bottom:.07em solid var(--tf-ink);vertical-align:-.22em;margin:0 .15em}
 .tf-grid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr))}
 .tf-h{font-weight:700;text-align:center;padding:.2em .5em .35em;border-bottom:.13em solid var(--tf-line);color:var(--tf-line)}
@@ -1108,6 +1109,68 @@ body{transition:background-color .3s,border-color .25s}
 .tf-page .tf-frame{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tf-page .tf-frame>.tf{width:100%}
 .tf-page .tf-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.6mm;margin-top:3mm}
+.pr{position:fixed;inset:0;z-index:96;background:#20242C;display:flex;flex-direction:column;outline:none}
+.pr-stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;cursor:pointer}
+.pr-slide{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center;background:#fff;color:#1C1F27;font-family:var(--f-ui);display:flex;flex-direction:column;padding:62px 84px 64px;box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden}
+.pr-accent{position:absolute;left:0;top:0;right:0;height:12px;background:var(--acc)}
+.pr-top{display:flex;align-items:center;gap:22px;margin-bottom:30px;flex:0 0 auto;min-height:56px}
+.pr-lab{background:var(--acc);color:#fff;font-weight:700;font-size:30px;padding:6px 18px;border-radius:9px;white-space:nowrap}
+.pr-ttl{font-size:34px;font-weight:700;color:var(--acc);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-ttl small{font-size:.7em;color:#8A909C;font-weight:600}
+.pr-chips{margin-left:auto;display:flex;gap:12px;flex:0 0 auto}
+.pr-chip{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--acc);color:var(--acc);border-radius:999px;padding:4px 16px;font-size:22px;font-weight:700}
+.pr-chip img{height:24px}
+.pr-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.pr-fit{width:100%}
+.pr-foot{position:absolute;left:84px;right:84px;bottom:22px;display:flex;justify-content:space-between;font-size:17px;color:#8A909C}
+.pr-src{position:absolute;left:84px;right:84px;bottom:52px;font-size:18px;color:#6B7280}
+.pr-tbody{align-items:flex-start;justify-content:center}
+.pr-nr{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:var(--acc);color:#fff;width:120px;height:120px;border-radius:12px;margin-bottom:34px}
+.pr-nr small{font-size:22px;font-weight:700}.pr-nr b{font-size:52px;line-height:1}
+.pr-h1{font-size:84px;font-weight:700;line-height:1.08;max-width:100%}
+.pr-sub{font-size:40px;color:#5A606E;margin-top:22px}
+.pr-course{font-size:26px;color:#8A909C;margin-top:56px}
+.pr-lines{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.9em;font-family:var(--f-text);line-height:1.48;white-space:nowrap}
+.pr-ln{color:#9AA0AA;font-size:.7em;text-align:right;font-family:var(--f-ui);align-self:center}
+.pr-gap{height:.55em}
+.pr-task{line-height:1.3}
+.pr-task p{margin:0 0 .4em}
+.pr-pops{position:absolute;left:84px;right:84px;bottom:64px;max-height:56%;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;pointer-events:none}
+.pr-pop{position:relative;flex:0 1 auto;min-height:0;pointer-events:auto;overflow:auto;font-size:28px;line-height:1.35;border-radius:14px;padding:18px 26px;box-shadow:0 6px 24px rgba(0,0,0,.12);cursor:default}
+.pr-slide.has-timer .pr-pops{right:330px}
+.pr-tips{background:#FFF6D6}.pr-tips>div+div{margin-top:8px}
+.pr-eh{background:#EAF2EC;border-left:8px solid #1E7A46}.pr-eh ul{margin:6px 0 0;padding-left:1.1em}
+.pr-timer{position:absolute;right:84px;bottom:66px;font-size:56px;font-weight:700;font-variant-numeric:tabular-nums;color:#B7BCC6}
+.pr-timer.run{color:var(--acc)}
+.pr-timer.end{color:#B3261E;animation:pr-bl 1s steps(2) infinite}
+@keyframes pr-bl{50%{opacity:.25}}
+.pr-slide .tf{font-size:1em}
+.pr-slide .tf-fg{padding-top:0;height:520px}
+.pr-info{border-left:12px solid var(--acc);background:var(--acc-tint);padding:.6em .9em;border-radius:0 16px 16px 0;line-height:1.35}
+.pr-info p{margin:0 0 .4em}
+.pr-k-quote .pr-body{align-items:center}
+.pr-quote{text-align:center;font-family:var(--f-text);font-style:italic;line-height:1.3}
+.pr-quote p{margin:0 0 .3em}.pr-auth{font-style:normal;font-family:var(--f-ui);font-size:.55em;color:#5A606E;margin-top:.8em;text-align:right}
+.pr-imgb{align-items:center}.pr-img{max-width:100%;max-height:100%;object-fit:contain}
+.pr-tbl{border-collapse:collapse;width:100%;line-height:1.3}
+.pr-tbl th,.pr-tbl td{border:2px solid #C9CED8;padding:.35em .55em;text-align:left;vertical-align:top}
+.pr-tbl th{background:var(--acc-tint);color:var(--acc)}
+.pr-phr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4em 1.4em;line-height:1.3}
+.pr-phr b{color:var(--acc)}.pr-phr ul{margin:.2em 0 .5em;padding-left:1.1em}
+.pr-match{display:grid;grid-template-columns:1fr 1fr;gap:1.4em;line-height:1.3}
+.pr-match ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.45em}
+.pr-match li{display:flex;gap:.6em;border:2px solid #C9CED8;border-radius:.4em;padding:.25em .5em}
+.pr-match li b{color:var(--acc);min-width:1em}
+.pr-qrb{align-items:center;gap:20px;font-size:24px;color:#5A606E}.pr-qrb img{width:420px;height:420px;image-rendering:pixelated}
+.pr-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;padding:8px 12px;background:#2B303A}
+.pr-bar button{border:1px solid #4A5160;background:#363C48;color:#F1F3F6;border-radius:8px;padding:6px 12px;font:600 14px/1.2 var(--f-ui);cursor:pointer}
+.pr-bar button[data-p="prev"],.pr-bar button[data-p="next"]{font-size:20px;padding:2px 14px}
+.pr-bar button[aria-pressed="true"]{background:#4C5A86;border-color:#7083C4}
+.pr-bar button:disabled{opacity:.35;cursor:default}
+.pr-bar [hidden]{display:none!important}
+.pr-n{min-width:9em;text-align:center;font:600 13px/1.2 var(--f-ui);color:#C5CAD3}
+.pr-tm{display:inline-flex;align-items:center;gap:6px}.pr-tl{font:700 14px/1 var(--f-ui);color:#F5D46B}
+.pr-bar .sep{width:1px;height:22px;background:#4A5160;margin:0 4px}
 .tf-beam{position:fixed;inset:0;z-index:95;background:#fff;display:flex;flex-direction:column;outline:none}
 .tf-bm-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:4vh 5vw;overflow:hidden;cursor:pointer}
 .tf-bm-stage>.tf{width:100%;font-family:var(--f-ui)}
@@ -1426,6 +1489,7 @@ const LIBS = {
   h2c: 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
   pdf: 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
   zip: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+  pptx: 'https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js',
   supa: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4'
 };
 const FONT_SPECS = ['400 11pt "Atkinson Hyperlegible"','700 11pt "Atkinson Hyperlegible"','italic 400 11pt "Atkinson Hyperlegible"',
@@ -2383,7 +2447,7 @@ function tfEntry(x, o, ex) {
   const t = tfStr(x); if (!t.trim()) return '';
   const word = o.mode === 'wort';
   if (o.gaps && !ex) {
-    if (!word) return `<span class="tf-ge" style="--l:${Math.min(4, Math.max(1, Math.ceil(tfStrip(t).length / 34)))}"></span>`;
+    if (!word) { const nl = Math.min(4, Math.max(1, Math.ceil(tfStrip(t).length / 34))); return `<span class="tf-ge" style="--l:${nl}">${'<i></i>'.repeat(nl)}</span>`; }
     return t.split(/(\[[^\[\]]*\])/).map(p => /^\[[^\[\]]*\]$/.test(p) ? `<span class="gap tf-gw" style="width:${Math.max(3, Math.min(14, (p.length - 2) * .58 + 1.6)).toFixed(1)}em"></span>` : inlineHTML(p)).join('');
   }
   if (o.sol && !ex) return word ? t.split(/(\[[^\[\]]*\])/).map(p => /^\[[^\[\]]*\]$/.test(p) ? `<span class="tf-sol">${inlineHTML(p.slice(1, -1))}</span>` : inlineHTML(p)).join('') : `<span class="tf-sol">${inlineHTML(tfStrip(t))}</span>`;
@@ -2447,6 +2511,11 @@ function tfDraw(root) {
     svg.innerHTML = [...cl.querySelectorAll('.tf-br')].map(br => { const r = box(br); const left = r.x + r.w / 2 < cx; const x = left ? r.x + r.w : r.x, y = r.y + r.h / 2; const sx = left ? c.x : c.x + c.w; const mx = (sx + x) / 2;
       return `<path d="M${sx.toFixed(1)} ${cy.toFixed(1)} C${mx.toFixed(1)} ${cy.toFixed(1)} ${mx.toFixed(1)} ${y.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}"${br.dataset.st ? ` data-st="${br.dataset.st}"` : ''}/>`; }).join('');
   });
+  tfBake(root);
+}
+function tfBake(root) {
+  if (!root || !root.querySelectorAll) return;
+  root.querySelectorAll('.tf svg path, .tf svg line').forEach(p => { const cs = getComputedStyle(p); ['stroke', 'fill', 'stroke-width', 'opacity', 'stroke-linecap', 'stroke-linejoin', 'vector-effect'].forEach(k => { const v = cs.getPropertyValue(k); if (v && v !== 'normal') p.setAttribute(k, v); }); });
 }
 // Inhalt als Gruppen (Überschrift + Einträge), zum Umwandeln zwischen Vorlagen
 function tfGroups(b) {
@@ -2599,6 +2668,279 @@ function tafelEditor(b) {
     ${on === 'luecke' ? `<div class="f"><span>Lücken</span><div class="seg sm" role="group" aria-label="Lücken">${[['eintrag', 'Ganze Einträge'], ['wort', 'Nur markierte Wörter']].map(([v, l]) => `<button type="button" data-act="tf-gm" data-v="${v}" aria-pressed="${gm === v}">${l}</button>`).join('')}</div></div>
       ${gm === 'eintrag' ? `<div class="chks">${fCheck('keepFirst', 'Erster Eintrag bleibt als Beispiel stehen', b.keepFirst)}</div>` : ''}
       <small class="hint">${gm === 'wort' ? 'Setzen Sie die Wörter, die zur Lücke werden, in eckige Klammern, etwa: Der Politiker [duzt] seine Follower.' : 'Überschriften und Begriffe bleiben stehen, die Einträge werden zu Schreibzeilen.'} In der Lehrerfassung stehen die Lösungen farbig.</small>` : ''}`;
+}
+
+/* ================= Präsentation: Folien aus dem Arbeitsblatt (im Browser und als PowerPoint) =================
+   Material mit denselben Zeilen und Zeilennummern wie auf dem Blatt, je Aufgabe eine Folie, Erwartung und Tipps für die Lehrkraft. */
+const PR_MAX = { task: 62, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
+function presCollect() {
+  const keep = { fassung: state.fassung, out: state.out, gapEdit: state.gapEdit, bookPages: state.bookPages };
+  const mats = {}; let pages = [];
+  MAPPE_LOCK = true; clearTimeout(renderTimer);
+  try {
+    state.out = 'blatt'; state.fassung = 'schueler'; state.gapEdit = null; pages = layout().map(o => o.pg);
+    Object.entries(ZL_MAP).forEach(([bid, z]) => { mats[bid] = { tag: z.tag, lines: [] }; });
+  } finally { Object.assign(state, keep); MAPPE_LOCK = false; }
+  pages.forEach(pg => pg.querySelectorAll('.blk-mat[data-bid]').forEach(el => {
+    const M = mats[el.dataset.bid] || (mats[el.dataset.bid] = { tag: '', lines: [] });
+    el.querySelectorAll('.ln').forEach(ln => {
+      const t = ln.querySelector('.ln-t'); if (!t) return; const c = t.cloneNode(true);
+      c.querySelectorAll('sup').forEach(x => x.remove()); c.querySelectorAll('.gapb,.gap').forEach(x => x.replaceWith(document.createTextNode(' _______ ')));
+      const no = ln.querySelector('.ln-no');
+      M.lines.push({ num: no && no.style.visibility !== 'hidden' ? no.textContent.trim() : '', t: c.textContent.replace(/\s+/g, ' ').trim(), st: ln.classList.contains('st') });
+    });
+  }));
+  renderPreview();
+  return mats;
+}
+function presChunks(L, poem) {
+  const max = poem ? 18 : 16; if (L.length <= max) return [L];
+  if (poem) {
+    const st = []; L.forEach((l, i) => { if (!i || l.st) st.push([]); st[st.length - 1].push(l); });
+    const out = []; let cur = [];
+    st.forEach(z => { if (cur.length && cur.length + z.length > max) { out.push(cur); cur = []; } for (let i = 0; i < z.length; i += max) { const part = z.slice(i, i + max); if (cur.length && cur.length + part.length > max) { out.push(cur); cur = []; } cur = cur.concat(part); } });
+    if (cur.length) out.push(cur); return out;
+  }
+  const k = Math.ceil(L.length / max), per = Math.ceil(L.length / k); const out = [];
+  for (let i = 0; i < L.length; i += per) out.push(L.slice(i, i + per));
+  return out;
+}
+function presSlides() {
+  const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false };
+  const mats = presCollect(); const S = [{ k: 'title' }]; let t = 0;
+  sh.blocks.forEach(b => {
+    if (!blockVisible(b, v)) return;
+    const M = mats[b.id];
+    if (M && M.lines.length) { const poem = b.form === 'gedicht'; const parts = presChunks(M.lines, poem); parts.forEach((p, i) => S.push({ k: 'mat', b, tag: M.tag || 'M', lines: p, part: i + 1, of: parts.length, poem })); return; }
+    if (b.type === 'tasks') { if (b.restart) t = 0; itemsFor(b, v).forEach(it => { t++; if (tfStr(it.text).trim()) S.push({ k: 'task', no: t, it }); }); return; }
+    if (b.type === 'tafel') { tfNorm(b); if (tfHas(b, tfTpl(b))) S.push({ k: 'tafel', b }); return; }
+    if (b.type === 'info' && (plainText(b.text || '').trim() || tfStr(b.title).trim())) S.push({ k: 'info', b });
+    else if (b.type === 'quote' && plainText(b.text || '').trim()) S.push({ k: 'quote', b });
+    else if (b.type === 'image' && b.src) S.push({ k: 'image', b });
+    else if (b.type === 'table' && Array.isArray(b.cols) && b.cols.length) S.push({ k: 'table', b });
+    else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
+    else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
+  });
+  if (m.dg && m.dg.id) S.push({ k: 'qr', link: dgLink(m.dg.id) });
+  return S;
+}
+const presHead = (lab, title, chips) => `<div class="pr-top">${lab ? `<span class="pr-lab">${lab}</span>` : ''}<span class="pr-ttl">${title || ''}</span>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`;
+const prCk = c => String(c == null ? '' : c).replace(/^\s*\[\s*\]\s*$/, '☐').replace(/^\s*\[[xX]\]\s*$/, '☒');
+function presSlideHTML(s) {
+  const m = state.sheet.meta; const acc = pageAcc(m).c;
+  switch (s.k) {
+    case 'title': return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
+    case 'mat': {
+      let h = ''; s.lines.forEach((l, i) => { if (i && l.st) h += '<span class="pr-gap"></span><span class="pr-gap"></span>'; h += `<span class="pr-ln">${esc(l.num)}</span><span class="pr-lt">${esc(l.t)}</span>`; });
+      return presHead(esc(s.tag), inlineHTML(matTitle(s.b) || '') + (s.of > 1 ? ` <small>${s.part}/${s.of}</small>` : ''), '') + `<div class="pr-body"><div class="pr-fit pr-lines${s.poem ? ' poem' : ''}">${h}</div></div>${s.part === s.of && s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
+    }
+    case 'task': {
+      const it = s.it, ph = itPh(it), mn = itMin(it); const tt = taskText(it, m); const tips = tipsOf(it), eh = ehLines(it);
+      const chips = [SOZ[it.soz] ? `<span class="pr-chip"><img src="${sozURI(it.soz, acc, '#fff')}" alt="">${SOZ[it.soz].label}</span>` : '', ph ? `<span class="pr-chip">${PHASEN[ph].label}</span>` : '', mn ? `<span class="pr-chip">${mn} Min.</span>` : ''].join('');
+      return presHead(ph === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + s.no, it.tag ? esc(it.tag) : '', chips) + `<div class="pr-body"><div class="pr-fit pr-task">${/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)}</div></div><div class="pr-pops">`
+        + (tips.length ? `<div class="pr-pop pr-tips" hidden>${tips.map((x, j) => `<div hidden><b>Tipp ${j + 1}:</b> ${inlineHTML(x)}</div>`).join('')}</div>` : '')
+        + (eh.length ? `<div class="pr-pop pr-eh" hidden><b>Erwartung</b><ul>${eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul></div>` : '') + '</div>'
+        + (mn ? `<div class="pr-timer" data-min="${mn}">${mn}:00</div>` : '');
+    }
+    case 'tafel': return presHead('Tafelbild', '', '') + `<div class="pr-body"><div class="pr-fit pr-tafel">${tafelHTML(s.b, { gaps: false, steps: true })}</div></div>`;
+    case 'info': return presHead(esc(s.b.kind || 'Info'), inlineHTML(s.b.title || ''), '') + `<div class="pr-body"><div class="pr-fit pr-info">${parasHTML(s.b.text || '')}</div></div>`;
+    case 'quote': return `<div class="pr-body"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(s.b.text || '')}</div>${s.b.author ? `<div class="pr-auth">${inlineHTML(s.b.author)}</div>` : ''}</div></div>`;
+    case 'image': return presHead('', inlineHTML(s.b.caption || ''), '') + `<div class="pr-body pr-imgb"><img class="pr-img" src="${esc(s.b.src)}" alt="${esc(plainText(s.b.caption || 'Bild'))}"></div>${s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
+    case 'table': { const b = s.b; return presHead('', esc(b.title || ''), '') + `<div class="pr-body"><div class="pr-fit"><table class="pr-tbl">${b.cols.some(c => String(c).trim()) ? `<tr>${b.cols.map(c => `<th>${inlineHTML(prCk(c))}</th>`).join('')}</tr>` : ''}${(b.rows || []).map(r => `<tr>${b.cols.map((_, i) => `<td>${inlineHTML(prCk(r[i]))}</td>`).join('')}</tr>`).join('')}</table></div></div>`; }
+    case 'phr': return presHead('', inlineHTML(s.b.title || 'Formulierungshilfen'), '') + `<div class="pr-body"><div class="pr-fit pr-phr">${phrGroups(s.b).map(g => `<div>${g.head ? `<b>${inlineHTML(g.head)}</b>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`;
+    case 'match': { const M = s.M; return presHead('', inlineHTML(s.b.title || ''), '') + `<div class="pr-body"><div class="pr-fit pr-match"><ul>${M.left.map((x, i) => `<li><b>${i + 1}</b>${inlineHTML(x.a)}</li>`).join('')}</ul><ul>${M.right.map((x, i) => `<li><b>${String.fromCharCode(65 + i)}</b>${inlineHTML(x.b)}</li>`).join('')}</ul></div></div>`; }
+    case 'qr': return presHead('', 'Digitale Fassung', '') + `<div class="pr-body pr-qrb"><img src="${QR.dataURL(s.link, 10)}" alt="QR-Code zur digitalen Fassung"><div>${esc(s.link)}</div></div>`;
+  }
+  return '';
+}
+function openPres(start) {
+  let S; try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
+  const m = state.sheet.meta; const foot = esc([m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
+  const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
+    <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
+    <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
+    <span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
+    <button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div></div>`);
+  setAccent(ov, m); document.body.appendChild(ov);
+  const stage = ov.querySelector('.pr-stage'), slide = ov.querySelector('.pr-slide'), $p = q => ov.querySelector(q);
+  const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
+  const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1 };
+  const fmt = sec => `${Math.floor(sec / 60)}:${String(Math.max(0, sec) % 60).padStart(2, '0')}`;
+  const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = `translate(-50%,-50%) scale(${k})`; };
+  const apply = () => {
+    slide.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > P.cur));
+    $p('.pr-n').textContent = `${P.i + 1} / ${S.length}` + (P.max ? ` · Schritt ${P.cur} von ${P.max}` : '');
+    $p('[data-p="prev"]').disabled = !P.i && !P.cur; $p('[data-p="next"]').disabled = P.i >= S.length - 1 && P.cur >= P.max;
+    const tips = slide.querySelector('.pr-tips'); $p('[data-p="tip"]').hidden = !tips; if (tips) $p('[data-p="tip"]').disabled = !tips.querySelector('[hidden]');
+    const eh = slide.querySelector('.pr-eh'); $p('[data-p="eh"]').hidden = !eh; if (eh) $p('[data-p="eh"]').setAttribute('aria-pressed', String(!eh.hidden));
+    tmShow();
+  };
+  const tmShow = () => {
+    const el2 = slide.querySelector('.pr-timer'); const mine = T.slide === P.i;
+    if (el2) { const sec = mine ? T.left : +el2.dataset.min * 60; el2.textContent = fmt(sec); el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); }
+    $p('.pr-tm').hidden = !el2 && !T.run;
+    $p('[data-p="timer"]').textContent = T.run ? 'Timer anhalten' : (mine && T.left > 0 && T.left < T.full ? 'Timer fortsetzen' : 'Timer starten');
+    $p('[data-p="timer"]').disabled = !el2 && !T.run;
+    $p('.pr-tl').textContent = T.run && !mine ? '⏱ ' + fmt(T.left) : '';
+  };
+  const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000)); if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
+  const tmToggle = () => {
+    if (T.run) { clearInterval(T.id); T.run = false; tick(); T.run = false; tmShow(); return; }
+    const el2 = slide.querySelector('.pr-timer'); if (!el2) return;
+    if (T.slide !== P.i || T.left <= 0) { T.slide = P.i; T.full = T.left = +el2.dataset.min * 60; }
+    T.end = Date.now() + T.left * 1000; T.run = true; clearInterval(T.id); T.id = setInterval(tick, 250); tmShow();
+  };
+  const tmReset = () => { clearInterval(T.id); T.run = false; const el2 = slide.querySelector('.pr-timer'); T.slide = el2 ? P.i : -1; T.full = T.left = el2 ? +el2.dataset.min * 60 : 0; tmShow(); };
+  const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); apply(); };
+  const show = () => {
+    const sl = S[P.i]; slide.className = 'pr-slide pr-k-' + sl.k + (sl.k === 'task' && itMin(sl.it) ? ' has-timer' : '');
+    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl) + `<div class="pr-foot"><span>${foot}</span><span>${P.i + 1}</span></div>`;
+    P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
+    const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
+    fit();
+  };
+  const next = () => { if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
+  const prev = () => { if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
+  const tip = () => { const tp = slide.querySelector('.pr-tips'); if (!tp) return; const h = tp.querySelector('[hidden]'); tp.hidden = false; if (h) h.hidden = false; apply(); };
+  const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
+  const close = () => { clearInterval(T.id); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const key = e => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.pr-bar button')) return;
+    const k = e.key; const stop = () => { e.preventDefault(); e.stopPropagation(); };
+    if (k === 'ArrowRight' || k === ' ' || k === 'PageDown' || k === 'Enter') { stop(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
+    else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
+    else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
+    else if (k === 'Escape') { stop(); if (!document.fullscreenElement) close(); }
+  };
+  ov.addEventListener('click', e => {
+    const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
+    const k = b.dataset.p;
+    if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
+    else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset();
+    else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
+  });
+  document.addEventListener('keydown', key, true); window.addEventListener('resize', scale);
+  scale(); show(); ov.focus();
+}
+
+/* PowerPoint: dieselben Folien als bearbeitbare Textfelder und Tabellen (PptxGenJS); Erwartung und Tipps stehen in den Notizen */
+function htmlRuns(html, base = {}) {
+  const body = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html').body; const out = [];
+  const brk = () => { if (out.length) out[out.length - 1].options.breakLine = true; };
+  const walk = (n, st) => n.childNodes.forEach(c => {
+    if (c.nodeType === 3) { const t = c.nodeValue.replace(/\s+/g, ' '); if (t.trim() || (t && out.length && !out[out.length - 1].options.breakLine)) out.push({ text: t, options: { ...base, ...(st.b ? { bold: true } : {}), ...(st.i ? { italic: true } : {}), ...(st.u ? { underline: { style: 'sng' } } : {}) } }); return; }
+    if (c.nodeType !== 1) return; const tg = c.tagName;
+    if (tg === 'BR') { brk(); return; } if (tg === 'SUP' || tg === 'SCRIPT' || tg === 'STYLE') return;
+    walk(c, { b: st.b || tg === 'B' || tg === 'STRONG', i: st.i || tg === 'I' || tg === 'EM', u: st.u || tg === 'U' });
+    if (/^(P|DIV|LI|H\d)$/.test(tg)) brk();
+  });
+  walk(body, {});
+  if (out.length) { delete out[out.length - 1].options.breakLine; out[0].text = out[0].text.replace(/^\s+/, ''); }
+  return out.length ? out : [{ text: ' ', options: base }];
+}
+const imgSize = src => new Promise(res => { const im = new Image(); im.onload = () => res([im.naturalWidth || 4, im.naturalHeight || 3]); im.onerror = () => res([4, 3]); im.src = src; });
+async function tfImage(b) {
+  await loadScript(LIBS.h2c);
+  const bb = tfTpl(b) === 'cluster' && !tfStr(b.center).trim() ? b : { ...b, title: '' };
+  const box = el(`<div class="tf-cap" style="position:fixed;left:-20000px;top:0;width:1300px;padding:24px;background:#fff">${tafelHTML(bb, { gaps: false })}</div>`);
+  setAccent(box, state.sheet.meta); document.body.appendChild(box);
+  try {
+    box.querySelector('.tf').style.fontSize = '26px'; if (document.fonts && document.fonts.ready) await document.fonts.ready; tfDraw(box);
+    const c = await window.html2canvas(box, { scale: 2, backgroundColor: '#ffffff', logging: false });
+    return { data: c.toDataURL('image/png'), w: c.width, h: c.height };
+  } finally { box.remove(); }
+}
+async function exportPPTX() {
+  if (busy) return; busy = true; overlay('PowerPoint wird erstellt …');
+  try {
+    await loadScript(LIBS.pptx); if (!window.PptxGenJS) throw new Error('PptxGenJS fehlt');
+    const S = presSlides(); const m = state.sheet.meta; const A = pageAcc(m);
+    const hex = (x, d) => (/^#[0-9a-f]{6}$/i.test(x || '') ? x.slice(1).toUpperCase() : d);
+    const ACC = hex(A.c, '1F4FA0'), TINT = hex(A.t, 'E9EEF8'), INK = '1C1F27', GREY = '6B7280', F = 'Calibri', FT = 'Georgia';
+    const pptx = new window.PptxGenJS(); pptx.layout = 'LAYOUT_WIDE';
+    pptx.title = plainText(m.title || 'Arbeitsblatt'); pptx.subject = plainText(m.topic || ''); pptx.company = m.school || ''; pptx.author = m.course || '';
+    const W = 13.333, X = 0.6, CW = W - 1.2, Y0 = 1.35, BH = 5.45;
+    const foot = [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · ');
+    pptx.defineSlideMaster({ title: 'AB', background: { color: 'FFFFFF' }, objects: [{ rect: { x: 0, y: 0, w: W, h: 0.1, fill: { color: ACC } } }, { text: { text: foot, options: { x: X, y: 7.02, w: 10, h: 0.3, fontFace: F, fontSize: 10, color: '8A909C', margin: 0 } } }], slideNumber: { x: W - X - 0.6, y: 7.02, w: 0.6, h: 0.3, fontFace: F, fontSize: 10, color: '8A909C', align: 'right' } });
+    const head = (sl, lab, title, chips) => {
+      let x = X;
+      if (lab) { const w = Math.max(1.1, lab.length * 0.15 + 0.5); sl.addText(lab, { shape: 'roundRect', rectRadius: 0.08, x, y: 0.42, w, h: 0.56, fontFace: F, fontSize: 20, bold: true, color: 'FFFFFF', fill: { color: ACC }, align: 'center', valign: 'middle', margin: 0 }); x += w + 0.25; }
+      const cw = chips ? 4.4 : 0; if (title) sl.addText(title, { x, y: 0.42, w: W - X - x - cw, h: 0.56, fontFace: F, fontSize: 22, bold: true, color: ACC, valign: 'middle', margin: 0, fit: 'shrink' });
+      if (chips) sl.addText(chips, { x: W - X - cw, y: 0.42, w: cw, h: 0.56, fontFace: F, fontSize: 14, color: GREY, align: 'right', valign: 'middle', margin: 0 });
+    };
+    const imgIn = async (sl, data, path, bx, by, bw, bh) => { const [iw, ih] = await imgSize(data || path); const k = Math.min(bw / iw, bh / ih); const w = iw * k, h = ih * k; sl.addImage({ ...(data ? { data } : { path }), x: bx + (bw - w) / 2, y: by + (bh - h) / 2, w, h }); };
+    for (const s of S) {
+      const sl = pptx.addSlide({ masterName: 'AB' });
+      if (s.k === 'title') {
+        let x = X; if (m.nr) { sl.addText([{ text: 'AB', options: { fontSize: 13, breakLine: true } }, { text: String(m.nr), options: { fontSize: 34, bold: true } }], { x, y: 2.15, w: 1.2, h: 1.2, fontFace: F, color: 'FFFFFF', fill: { color: ACC }, align: 'center', valign: 'middle', margin: 0 }); x += 1.55; }
+        sl.addText(plainText(m.title || 'Arbeitsblatt'), { x, y: 2.0, w: W - X - x, h: 1.5, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
+        if (m.topic) sl.addText(plainText(deQuoteStr(m.topic)), { x, y: 3.55, w: W - X - x, h: 0.8, fontFace: F, fontSize: 24, color: GREY, valign: 'top', margin: 0 });
+        const c = [m.course, m.school].filter(Boolean).join(' · '); if (c) sl.addText(c, { x, y: 5.6, w: W - X - x, h: 0.5, fontFace: F, fontSize: 16, color: '8A909C', margin: 0 });
+      } else if (s.k === 'mat') {
+        head(sl, s.tag, plainText(matTitle(s.b) || '') + (s.of > 1 ? `  (${s.part}/${s.of})` : ''));
+        const L = []; s.lines.forEach((l, i) => { if (i && l.st) L.push({ num: '', t: '' }); L.push(l); });
+        const n = L.length, maxC = Math.max(12, ...L.map(l => l.t.length));
+        const fs = Math.max(11, Math.min(26, Math.floor(Math.min((BH - 0.3) * 72 / (n * 1.42), (CW - 0.95) * 72 / (maxC * 0.57)))));
+        const ls = Math.round(fs * 1.42), h = Math.min(BH, n * ls / 72 + 0.15);
+        const opt = { y: Y0 + 0.1, h, valign: 'top', margin: 0, lineSpacing: ls, paraSpaceBefore: 0, paraSpaceAfter: 0 };
+        sl.addText(L.map((l, i) => ({ text: l.num || ' ', options: { breakLine: i < n - 1 } })), { ...opt, x: X, w: 0.62, fontFace: F, fontSize: Math.max(9, Math.round(fs * .72)), color: '9AA0AA', align: 'right' });
+        sl.addText(L.map((l, i) => ({ text: l.t || ' ', options: { breakLine: i < n - 1 } })), { ...opt, x: X + 0.85, w: CW - 0.85, fontFace: FT, fontSize: fs, color: INK, wrap: false });
+        if (s.part === s.of && s.b.source) sl.addText(plainText(s.b.source), { x: X + 0.85, y: 6.6, w: CW - 0.85, h: 0.35, fontFace: F, fontSize: 11, color: '8A909C', margin: 0 });
+      } else if (s.k === 'task') {
+        const it = s.it, ph = itPh(it), mn = itMin(it); const tt = taskText(it, m);
+        head(sl, ph === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + s.no, it.tag || '', [SOZ[it.soz] ? SOZ[it.soz].label : '', ph ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · '));
+        const len = plainText(tt).length; const fs = len < 90 ? 36 : len < 170 ? 32 : len < 280 ? 28 : len < 420 ? 24 : 20;
+        sl.addText(htmlRuns(/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)), { x: X, y: Y0 + 0.2, w: CW, h: BH - 0.4, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, paraSpaceAfter: 10, lineSpacingMultiple: 1.12 });
+        const eh = ehLines(it), tips = tipsOf(it), rl = rlpOf(it);
+        const notes = [eh.length ? 'Erwartung:\n' + eh.map(x => '– ' + plainText(x)).join('\n') : '', tips.length ? 'Gestufte Hilfen:\n' + tips.map((x, j) => `${j + 1}. ${plainText(x)}`).join('\n') : '', ph || mn ? [ph ? 'Phase: ' + PHASEN[ph].label : '', mn ? 'Zeit: ' + mn + ' Min.' : ''].filter(Boolean).join(' · ') : '', rl.length ? 'Standards: ' + rl.map(id => { const x = rlpInfo(id); return x.own ? x.t : x.code; }).join(', ') : ''].filter(Boolean).join('\n\n');
+        if (notes) sl.addNotes(notes);
+      } else if (s.k === 'tafel') {
+        const b = s.b; head(sl, 'Tafelbild', plainText(tfStrip(b.title || '')));
+        if (tfRaster(b)) {
+          const rows = b.rows.filter(r => r.some(x => tfStr(x).trim())); const fs = rows.length <= 4 ? 22 : rows.length <= 7 ? 18 : 15;
+          sl.addTable([b.cols.map(c => ({ text: tfStrip(c), options: { bold: true, color: ACC, fill: { color: TINT }, align: 'center' } })), ...rows.map(r => b.cols.map((_, i) => ({ text: tfStrip(r[i] || '') })))], { x: X, y: Y0 + 0.15, w: CW, fontFace: F, fontSize: fs, color: INK, border: { type: 'solid', pt: 1, color: ACC }, valign: 'middle', margin: 0.08, autoPage: false });
+        } else { const im = await tfImage(b); await imgIn(sl, im.data, null, X, Y0, CW, BH); }
+        if ((b.onSheet || 'luecke') === 'luecke') sl.addNotes('Auf dem Arbeitsblatt steht dieses Tafelbild als Lückentafelbild.');
+      } else if (s.k === 'info') {
+        head(sl, s.b.kind || 'Info', plainText(s.b.title || ''));
+        const ilen = plainText(s.b.text || '').length, ipar = String(s.b.text || '').split(/\n\s*\n/).length;
+        sl.addText(htmlRuns(parasHTML(s.b.text || '')), { x: X, y: Y0 + 0.2, w: CW, h: Math.min(BH - 0.5, 0.55 + Math.ceil(ilen / 78) * 0.46 + ipar * 0.18), fontFace: F, fontSize: 24, color: INK, fill: { color: TINT }, valign: 'top', margin: 14, paraSpaceAfter: 8 });
+      } else if (s.k === 'quote') {
+        sl.addText(htmlRuns(parasHTML(s.b.text || ''), { italic: true }), { x: X + 0.6, y: 1.4, w: CW - 1.2, h: 3.9, fontFace: FT, fontSize: 32, color: INK, valign: 'middle', align: 'center', margin: 0, fit: 'shrink' });
+        if (s.b.author) sl.addText(plainText(s.b.author), { x: X + 0.6, y: 5.4, w: CW - 1.2, h: 0.5, fontFace: F, fontSize: 20, color: GREY, align: 'right', margin: 0 });
+      } else if (s.k === 'image') {
+        head(sl, '', plainText(s.b.caption || ''));
+        const src = s.b.src; await imgIn(sl, /^data:/.test(src) ? src : null, /^data:/.test(src) ? null : src, X, Y0, CW, BH - (s.b.source ? 0.4 : 0));
+        if (s.b.source) sl.addText(plainText(s.b.source), { x: X, y: 6.6, w: CW, h: 0.35, fontFace: F, fontSize: 11, color: '8A909C', margin: 0 });
+      } else if (s.k === 'table') {
+        const b = s.b; head(sl, '', plainText(b.title || ''));
+        const hasH = b.cols.some(c => String(c).trim()); const R = (b.rows || []).length; const fs = R <= 5 ? 18 : R <= 9 ? 15 : 12;
+        const data = [...(hasH ? [b.cols.map(c => ({ text: plainText(prCk(c)), options: { bold: true, color: ACC, fill: { color: TINT } } }))] : []), ...(b.rows || []).map(r => b.cols.map((_, i) => ({ text: plainText(prCk(r[i])) })))];
+        sl.addTable(data, { x: X, y: Y0 + 0.15, w: CW, fontFace: F, fontSize: fs, color: INK, border: { type: 'solid', pt: 1, color: 'B7BCC6' }, valign: 'middle', margin: 0.08, rowH: Math.min(0.9, (BH - 0.3) / Math.max(1, data.length)), autoPage: false });
+      } else if (s.k === 'phr') {
+        head(sl, '', plainText(s.b.title || 'Formulierungshilfen'));
+        const gs = phrGroups(s.b); const cols = gs.length > 1 ? 2 : 1; const w = (CW - (cols - 1) * 0.4) / cols; const per = Math.ceil(gs.length / cols);
+        for (let c = 0; c < cols; c++) { const part = gs.slice(c * per, c * per + per); const runs = []; part.forEach(g => { if (g.head) runs.push({ text: plainText(g.head), options: { bold: true, color: ACC, breakLine: true } }); g.lines.forEach(l => runs.push({ text: plainText(l), options: { bullet: true, breakLine: true } })); }); if (runs.length) { delete runs[runs.length - 1].options.breakLine; sl.addText(runs, { x: X + c * (w + 0.4), y: Y0 + 0.15, w, h: BH - 0.3, fontFace: F, fontSize: 18, color: INK, valign: 'top', margin: 0, paraSpaceAfter: 4, fit: 'shrink' }); } }
+      } else if (s.k === 'match') {
+        const M = s.M; head(sl, '', plainText(s.b.title || ''));
+        const list = (arr, lab, key) => arr.map((x, i) => [{ text: lab(i) + '   ', options: { bold: true, color: ACC } }, { text: plainText(x[key]), options: { breakLine: i < arr.length - 1 } }]).flat();
+        const fs = Math.max(14, Math.min(24, Math.floor((BH - 0.3) * 72 / (Math.max(M.left.length, M.right.length, 1) * 1.6))));
+        if (M.left.length) sl.addText(list(M.left, i => String(i + 1), 'a'), { x: X, y: Y0 + 0.15, w: CW / 2 - 0.3, h: BH - 0.3, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, paraSpaceAfter: 8 });
+        if (M.right.length) sl.addText(list(M.right, i => String.fromCharCode(65 + i), 'b'), { x: X + CW / 2 + 0.3, y: Y0 + 0.15, w: CW / 2 - 0.3, h: BH - 0.3, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, paraSpaceAfter: 8 });
+      } else if (s.k === 'qr') {
+        head(sl, '', 'Digitale Fassung');
+        sl.addImage({ data: QR.dataURL(s.link, 10), x: (W - 3.8) / 2, y: 1.5, w: 3.8, h: 3.8 });
+        sl.addText([{ text: s.link, options: { hyperlink: { url: s.link } } }], { x: X, y: 5.55, w: CW, h: 0.5, fontFace: F, fontSize: 16, color: ACC, align: 'center', margin: 0 });
+      }
+    }
+    const blob = await pptx.write({ outputType: 'blob' });
+    overlay(''); await deliver(fileBase() + '_Praesentation.pptx', blob);
+  } catch (err) {
+    console.error(err); overlay('');
+    toast('Die PowerPoint-Datei ließ sich nicht erstellen. Dafür braucht es eine Internetverbindung; „Präsentieren“ geht auch ohne.');
+  } finally { busy = false; overlay(''); }
 }
 // Piktogramm als SVG (32 × 24); c = Farbe, bg = Papierfarbe für die Trennkante
 function sozSVG(kind, c, bg) {
@@ -3812,6 +4154,7 @@ function renderOut() {
     if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp, 'Gruppe');
     if (sh.meta.levelsOn) h += segHTML('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all', 'Niveau');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
+    h += '<button class="btn sm" type="button" data-pv="pres" title="Folien aus diesem Blatt am Beamer zeigen">Präsentieren</button>';
   }
   if (state.out === 'tafel') { h += segHTML('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung, 'Fassung'); if (nTf) h += '<button class="btn sm" type="button" data-pv="tfbeam">Am Beamer zeigen</button>'; }
   $('#pv-opts').innerHTML = h;
@@ -6588,13 +6931,14 @@ function outHTML() {
   const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
     ['docx', 'Word', state.out === 'blatt' ? 'zum Weiterbearbeiten' : 'nur fürs Arbeitsblatt', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
     ...(canPrint ? [['print', 'Drucken', 'direkt an den Drucker', '<path d="M6 7V2.5h8V7"/><rect x="3" y="7" width="14" height="6.5" rx="1.2"/><path d="M6 11.5h8v6H6z"/>']] : []),
-    ['digital', 'Digital', state.out === 'blatt' ? 'zum Ausfüllen am Tablet, mit QR-Code' : 'nur fürs Arbeitsblatt', '<rect x="4" y="2.5" width="12" height="15" rx="1.8"/><path d="M7.5 7h5M7.5 10h3"/><path d="m8 13.2 1.3 1.3 2.7-2.7"/>']];
+    ['digital', 'Digital', state.out === 'blatt' ? 'zum Ausfüllen am Tablet, mit QR-Code' : 'nur fürs Arbeitsblatt', '<rect x="4" y="2.5" width="12" height="15" rx="1.8"/><path d="M7.5 7h5M7.5 10h3"/><path d="m8 13.2 1.3 1.3 2.7-2.7"/>'],
+    ['pptx', 'PowerPoint', state.out === 'blatt' ? 'Folien aus dem Blatt, bearbeitbar' : 'nur fürs Arbeitsblatt', '<rect x="2.5" y="3.5" width="15" height="10" rx="1.2"/><path d="M10 13.5v3M7 17.5h6"/><path d="M6 7h4M6 10h7"/>']];
   const pages = document.querySelectorAll('#pages .pout').length;
   const checks = outChecks();
-  const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung' }[d.fmt];
+  const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung', pptx: 'PowerPoint erstellen' }[d.fmt];
   return `<h2 id="dlg-t">Ausgeben</h2>
     <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf]], state.out)}</div>
-    <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${(v === 'docx' || v === 'digital') && state.out !== 'blatt' ? ' disabled' : ''}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
+    <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${(v === 'docx' || v === 'digital' || v === 'pptx') && state.out !== 'blatt' ? ' disabled' : ''}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
@@ -6602,12 +6946,13 @@ function outHTML() {
     ${state.out === 'tafel' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung)}</div>` : ''}</div>
     <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>
-    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && state.out === 'blatt' ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div>`;
 }
 async function outGo() {
   const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
   const fmt = d.fmt; state.dlg = null; renderDlg(); renderOut();
   if (fmt === 'digital') { openDg(); return; }
+  if (fmt === 'pptx') { await exportPPTX(); return; }
   if (fmt === 'docx') await exportDOCX(); else if (fmt === 'print') doPrint(); else await exportPDF();
 }
 
@@ -6803,6 +7148,7 @@ async function onDlgClick(e) {
       renderDlg(); return;
     }
     if (act === 'out-go') { outGo(); return; }
+    if (act === 'out-pres') { state.dlg = null; renderDlg(); openPres(0); return; }
     if (act === 'out-eh') { exportEH(); return; }
   }
   const email = dlgVal('#dlg-email'); const pw = ($('#dlg-pw') || {}).value || '';
@@ -8153,6 +8499,7 @@ function boot() {
     const b = e.target.closest('[data-pv]'); if (!b) return; const k = b.dataset.pv, v = b.dataset.v;
     if (k === 'ehmd') { exportEH(); return; }
     if (k === 'tfbeam') { tfBeamer(); return; }
+    if (k === 'pres') { openPres(0); return; }
     if (k === 'fassung') { state.fassung = v; if (v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); renderEditor(); }
     if (k === 'grp') state.grp = v;
     if (k === 'lvl') state.lvl = v;
