@@ -1109,6 +1109,71 @@ body{transition:background-color .3s,border-color .25s}
 .tf-page .tf-frame{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .tf-page .tf-frame>.tf{width:100%}
 .tf-page .tf-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.6mm;margin-top:3mm}
+.page.a3-page{padding:10mm 12mm 7mm;display:flex;flex-direction:column}
+.page.a3-page.quer{width:420mm;height:297mm}.page.a3-page.hoch{width:297mm;height:420mm}
+.a3-in{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:4mm}
+.a3-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.4mm;margin-top:3mm}
+.a3-h{display:flex;align-items:flex-end;gap:8mm;border-bottom:.5mm solid var(--acc);padding-bottom:2.5mm;flex:0 0 auto}
+.a3-ht{flex:1 1 auto;min-width:0}
+.a3-kind{font-size:8.5pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.a3-title{font-size:19pt;font-weight:700;line-height:1.15}
+.a3-title.big{font-size:30pt}
+.a3-blank{display:block;height:1.2em;border-bottom:.35mm solid #1C1F27;width:80%}
+.a3-name{display:flex;gap:3mm;align-items:flex-end;font-size:10pt;color:#5A606E;flex:0 0 auto}
+.a3-name i{display:inline-block;width:62mm;border-bottom:.3mm solid #1C1F27;height:1.2em}
+.a3-name.wide i{flex:1 1 auto;width:auto}
+.a3-legend{display:flex;gap:4mm;font-size:9.5pt;flex-wrap:wrap;justify-content:flex-end}
+.a3-legend span{display:inline-flex;align-items:center;gap:2mm}
+.a3-legend b{width:9mm;height:4.5mm;border-radius:1mm;display:inline-block;flex:0 0 auto}
+.a3-legend em{display:inline-block;width:26mm;border-bottom:.25mm solid #9AA0AA;height:1em}
+.a3-task{font-size:12pt;line-height:1.35;flex:0 0 auto}
+.a3-task p{margin:0 0 .3em}
+.a3-empty{flex:1;display:grid;place-items:center;color:#9AA0AA;font-size:14pt}
+.a3-annot{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 196mm minmax(0,1fr);gap:7mm}
+.a3-margin{border:.3mm dashed #B7BCC6;border-radius:2mm;padding:2mm 3mm;font-size:7.5pt;color:#9AA0AA;text-transform:uppercase;letter-spacing:.06em}
+.a3-text{font-family:var(--mff);font-size:var(--mfs);line-height:var(--alh);white-space:nowrap;overflow:hidden}
+.a3-mh{font-family:var(--f-ui);font-size:10pt;line-height:1.3;margin-bottom:2mm;white-space:normal}
+.a3-mh b{background:var(--acc);color:#fff;border-radius:1mm;padding:0 1.6mm;margin-right:2mm}
+.a3-mh small{color:#8A909C}
+.a3-ln{display:grid;grid-template-columns:8mm minmax(0,1fr);column-gap:3mm}
+.a3-ln .n{font-family:var(--f-ui);font-size:.72em;color:#9AA0AA;text-align:right}
+.a3-src{font-family:var(--f-ui);font-size:8pt;color:#6B7280;white-space:normal;margin-top:2mm;line-height:1.3}
+.a3-pm{position:relative;flex:1 1 auto;min-height:0}
+.a3-pm svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.a3-pm-c{position:absolute;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-align:center;padding:4mm 6mm;font-size:12pt;line-height:1.3;overflow:hidden}
+.a3-pm-c small{font-size:7.5pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:2mm}
+.a3-pm-c p{margin:0 0 .3em}
+.a3-pm-l{position:absolute;transform:translate(-50%,-50%) rotate(var(--r));font-size:10pt;font-weight:700;color:var(--acc);white-space:nowrap}
+.a3-rules{font-size:10pt;color:#5A606E;max-width:210mm;line-height:1.35;text-align:right}
+.a3-sg{flex:1 1 auto;min-height:0;border:.3mm dashed #B7BCC6;border-radius:3mm;display:flex;align-items:center;justify-content:center;padding:10mm}
+.a3-sg-i{max-width:175mm;border:.6mm solid var(--acc);border-radius:3mm;padding:6mm 9mm;font-size:16pt;line-height:1.35;text-align:center;background:#fff}
+.a3-sg-i p{margin:0 0 .3em}.a3-auth{font-size:11pt;color:#5A606E;text-align:right;margin-top:2mm}.a3-ph{color:#9AA0AA}
+.a3-plh{border-bottom-width:.8mm}
+.a3-pl{flex:1 1 auto;min-height:0;display:grid;gap:5mm;grid-template-columns:repeat(var(--c),minmax(0,1fr));grid-auto-rows:minmax(0,1fr)}
+.a3-box{border:.4mm solid var(--acc);border-radius:2.5mm;padding:2.5mm 4mm;display:flex;flex-direction:column;min-height:0}
+.a3-box h3{margin:0;font-size:12.5pt;color:var(--acc);line-height:1.25}
+.a3-vg{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:52mm repeat(var(--n),minmax(0,1fr));grid-template-rows:auto repeat(var(--r),minmax(0,1fr)) minmax(0,1.2fr);border:.4mm solid var(--acc);border-radius:2mm;overflow:hidden}
+.a3-vg>div{border-right:.25mm solid #C9CED8;border-bottom:.25mm solid #C9CED8;padding:2mm 3mm;font-size:11pt;line-height:1.3}
+.a3-vg>.hd{background:var(--acc-tint);color:var(--acc);font-weight:700}
+.a3-vg>.asp{font-weight:700}
+.a3-vg>.fz{grid-column:1 / -1;border-bottom:0}
+.a3-ex{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:42% minmax(0,1fr);gap:7mm}
+.a3-ex-l,.a3-ex-r{display:flex;flex-direction:column;gap:3.5mm;min-height:0}
+.a3-step{display:flex;align-items:center;gap:2.5mm;font-size:12pt;font-weight:700;color:var(--acc)}
+.a3-step b{display:inline-grid;place-items:center;width:7mm;height:7mm;border-radius:50%;background:var(--acc);color:#fff;font-size:10pt}
+.a3-box.grow{flex:1 1 auto}
+.a3-ex-g{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:3.5mm}
+.a3-box.res{flex:0 0 30%}
+.page.a3-half{padding:0;position:relative;overflow:hidden;background:#fff}
+.a3-win{position:absolute;overflow:hidden}
+.a3-win>.page{position:absolute;left:0;top:0;transform-origin:0 0;box-shadow:none;margin:0}
+.a3-cut{position:absolute;border:0 dashed #6B7280}
+.a3-cut.v{border-left-width:.35mm}.a3-cut.h{border-top-width:.35mm}
+.a3-edge{position:absolute;border:0 dotted #B7BCC6}.a3-edge.v{border-left-width:.3mm}.a3-edge.h{border-top-width:.3mm}
+.a3-cutl{position:absolute;font:600 7pt/1.2 var(--f-ui);color:#6B7280;white-space:nowrap;background:#fff;padding:0 1mm}
+.a3-partno{position:absolute;right:3mm;bottom:1.5mm;font:600 7pt/1 var(--f-ui);color:#9AA0AA}
+.a3-leg-ed{display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px;align-items:center}
+.a3-leg-ed b{width:22px;height:14px;border-radius:3px;display:block;border:1px solid rgba(0,0,0,.12)}
 .pr-pick{max-height:220px;overflow:auto;border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:3px;background:var(--field)}
 .pr-pick .chk{font-size:13px;align-items:flex-start}
 .pr-pick .chk span{min-width:0}
@@ -1538,6 +1603,7 @@ const TYPE_ICON = {
   tasks: '<rect x="3.5" y="4" width="6.5" height="6.5" rx="1.5"/><path d="m5.2 7.3 1.3 1.3 2-2.3"/><path d="M13 7.2h7.5"/><rect x="3.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M13 16.8h7.5"/>',
   info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.7v.2" stroke-width="2.6"/>',
   phrases: '<path d="M4 5h16v10.5H10.5L6 19v-3.5H4z"/><path d="M8 9h8M8 12h5"/>',
+  a3: '<rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="M7 15.5l2.2-6 2.2 6M7.8 13.5h2.8M14 9.5h2.4a1.4 1.4 0 0 1 0 2.8H15m0 0h1.6a1.6 1.6 0 0 1 0 3.2H14"/>',
   tafel: '<rect x="3" y="3.5" width="18" height="12.5" rx="1.2"/><path d="M8 20.5l2-4.5M16 20.5l-2-4.5M6.5 7.5h4.5M6.5 10.5h7M14.5 7.5h3"/>',
   table: '<rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/>',
   lines: '<path d="M3.5 9.5h9M3.5 14h17M3.5 18.5h17"/><path d="m14.5 10.3 5.2-5.2 1.9 1.9-5.2 5.2-2.6.7z"/>',
@@ -1575,6 +1641,7 @@ const TYPES = {
   info:     { label:'Infokasten',    desc:'Merke, Tipp, Definition' },
   phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge, Wendungen' },
   tafel:    { label:'Tafelbild',     desc:'Sicherung, auch als Lückentafelbild und am Beamer' },
+  a3:       { label:'A3-Vorlage',    desc:'Placemat, Annotationsbogen, Lernplakat …' },
   table:    { label:'Tabelle',       desc:'zum Ausfüllen' },
   lines:    { label:'Schreibfläche', desc:'Linien oder Kästchen' },
   heading:  { label:'Überschrift',   desc:'Zwischentitel' },
@@ -1590,20 +1657,20 @@ const PAL_POST = () => PAL('material', { k: 'post', label: 'Post', desc: 'Beitra
 const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
+  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Textquelle mit Zeilennummern (Q1)', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
     PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
-    PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('table'),
+    PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('a3'), PAL('table'),
     PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal', cw: [16, 44, 40] } }),
     PAL('lines'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('image', { desc: 'Grafik, Schaubild, Karte' }), PAL('pagebreak')
   ],
   bio: [
     PAL('material', { desc: 'Fachtext mit Zeilennummern (M1)' }),
     PAL('image', { k: 'abbildung', label: 'Abbildung', desc: 'Foto, Schema, Diagramm (Abb. 1)', pre: { mk: 'a' } }),
-    PAL('tasks'), PAL('match', { desc: 'Begriffe und Erklärungen verbinden' }), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('table'),
+    PAL('tasks'), PAL('match', { desc: 'Begriffe und Erklärungen verbinden' }), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('a3'), PAL('table'),
     PAL('table', { k: 'protokoll', label: 'Versuchsprotokoll', desc: 'Frage, Hypothese, Durchführung, Auswertung', ic: 'protokoll', pre: { cols: ['Versuchsprotokoll', 'Notizen'], rows: ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'].map(x => [x, '']), rowHeight: 'hoch', firstBold: true, cw: [28, 72] } }),
     PAL('lines', { k: 'zeichnung', label: 'Zeichenfläche', desc: 'Rahmen für Zeichnung oder Skizze', ic: 'zeichnung', pre: { style: 'rahmen', count: 12 } }),
     PAL('lines', { desc: 'Linien oder Kästchen' }), PAL('heading'), PAL('text'), PAL('qr'), PAL('pagebreak')
@@ -2679,7 +2746,7 @@ function tafelEditor(b) {
 /* ================= Präsentation: Folien aus dem Arbeitsblatt (im Browser und als PowerPoint) =================
    Material mit denselben Zeilen und Zeilennummern wie auf dem Blatt, je Aufgabe eine Folie, Erwartung und Tipps für die Lehrkraft. */
 const PR_MAX = { task: 62, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
-function presCollect() {
+function presCollect(quiet) {
   const keep = { fassung: state.fassung, out: state.out, gapEdit: state.gapEdit, bookPages: state.bookPages };
   const mats = {}; let pages = [];
   MAPPE_LOCK = true; clearTimeout(renderTimer);
@@ -2696,7 +2763,7 @@ function presCollect() {
       M.lines.push({ num: no && no.style.visibility !== 'hidden' ? no.textContent.trim() : '', t: c.textContent.replace(/\s+/g, ' ').trim(), st: ln.classList.contains('st') });
     });
   }));
-  renderPreview();
+  if (!quiet) renderPreview();
   return mats;
 }
 function presChunks(L, poem) {
@@ -2761,6 +2828,131 @@ function presPickSet(v) {
   const m = state.sheet.meta; const L = presPick();
   m.presOff = v === 'all' ? [] : v === 'none' ? L.map(x => x.key) : L.filter(x => !x.task).map(x => x.key);
   changed(false); renderDlg();
+}
+
+/* ================= A3-Methodenvorlagen =================
+   Baustein „A3-Vorlage“: steht nicht auf dem Arbeitsblatt, sondern in der Ausgabe „A3-Vorlagen“ (A3 oder zwei A4 zum Zusammenkleben). */
+const A3_TPL = {
+  annot: { label: 'Annotationsbogen', d: 'Text in der Mitte mit weitem Zeilenabstand, breiter Rand zum Markieren, Farblegende', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M9 4v16M15 4v16M10.5 8h3M10.5 11h3M10.5 14h3"/>' },
+  placemat: { label: 'Placemat', d: 'Felder für 3 bis 6 Personen, Aufgabe und gemeinsames Ergebnis in der Mitte', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><rect x="8.5" y="9" width="7" height="6" rx=".8"/><path d="M3 4l5.5 5M21 4l-5.5 5M3 20l5.5-5M21 20l-5.5-5"/>' },
+  schreib: { label: 'Schreibgespräch', d: 'Impuls in der Mitte, viel Platz für schriftliche Kommentare', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5" stroke-dasharray="2 2"/><rect x="8" y="9.5" width="8" height="5" rx="1"/><path d="M5 7l2.5 2M19 17l-2.5-2"/>' },
+  plakat: { label: 'Lernplakat', d: 'Für den Galeriegang: Thema, Gruppe und bis zu sechs Felder (A3 hoch)', o: 'h', ic: '<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><path d="M8 6h8M7.5 9.5h4v4h-4zM12.5 9.5h4v4h-4zM7.5 15h4v4h-4zM12.5 15h4v4h-4z"/>' },
+  vergleich: { label: 'Vergleichsraster', d: 'Zwei bis vier Texte oder Figuren nach Aspekten vergleichen, mit Fazit', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M8 4v16M14.5 4v16M3 8h18M3 12h18M3 16h18"/>' },
+  experte: { label: 'Expertenbogen', d: 'Gruppenpuzzle: Expertenphase, Stammgruppe und gemeinsames Ergebnis', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M11 4v16M13 8h3.5v3.5H13zM17.5 8H21M13 13h3.5v3.5H13zM5 8h4M5 11h4"/>' }
+};
+const A3_COLORS = [['#FFE45C', 'Gelb'], ['#9BE39B', 'Grün'], ['#8EC9FF', 'Blau'], ['#FFB3D1', 'Rosa']];
+const a3Tpl = b => (A3_TPL[b && b.tpl] ? b.tpl : 'placemat');
+const A3_RULES = du => du ? 'Schreibt schweigend. Antwortet auf Beiträge der anderen, stellt Fragen und verbindet Gedanken mit Pfeilen.' : 'Schreiben Sie schweigend. Antworten Sie auf Beiträge der anderen, stellen Sie Fragen und verbinden Sie Gedanken mit Pfeilen.';
+function a3Norm(b) {
+  if (!Array.isArray(b.legend)) b.legend = ['', '', '', ''];
+  if (!Array.isArray(b.sections) || !b.sections.length) b.sections = ['Worum geht es?', 'Unsere Ergebnisse', 'Belege aus dem Material', 'Offene Fragen'];
+  if (!Array.isArray(b.cols) || b.cols.length < 2) b.cols = ['', ''];
+  if (!Array.isArray(b.aspects) || !b.aspects.length) b.aspects = ['Thema', 'Sprecher oder Erzähler', 'Sprache und Stil', 'Wirkung'];
+  if (!Array.isArray(b.experts) || b.experts.length < 2) b.experts = ['Thema A', 'Thema B', 'Thema C', 'Thema D'];
+  if (!(+b.n >= 3 && +b.n <= 6)) b.n = 4;
+  return b;
+}
+function a3TaskList() {
+  const L = []; let t = 0;
+  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (b.restart) t = 0; b.items.forEach((it, i) => { t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `Aufgabe ${t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
+  return L;
+}
+function a3TaskHTML(b) {
+  if (b.taskRef) { const [bid, i] = String(b.taskRef).split(':'); const tb = state.sheet.blocks.find(x => x.id === bid); const it = tb && tb.items && tb.items[+i]; if (it) { const tt = taskText(it, state.sheet.meta); return /\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt); } }
+  return tfStr(b.task).trim() ? parasHTML(b.task) : '';
+}
+function a3MatList() { const num = numbering(state.sheet); return state.sheet.blocks.filter(b => b.type === 'material').map(b => { const z = num[b.id] || {}; return [b.id, `${z.tag || 'M' + (z.m || '')} · ${plainText(b.title || '') || 'ohne Titel'}`]; }); }
+function a3Page(b, inner, part) {
+  const m = state.sheet.meta, tpl = a3Tpl(b), q = A3_TPL[tpl].o === 'q';
+  const foot = esc([m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
+  const pg = el(`<div class="page a3-page a3-${tpl} ${q ? 'quer' : 'hoch'}" data-w="${q ? 420 : 297}" data-h="${q ? 297 : 420}"><div class="a3-in">${inner}</div><div class="a3-foot"><span>${foot}</span><span>${esc(A3_TPL[tpl].label)}${part ? ' · ' + part : ''}</span></div></div>`);
+  setAccent(pg, m); return pg;
+}
+const a3Head = (b, name, extra) => `<div class="a3-h"><div class="a3-ht"><span class="a3-kind">${esc(A3_TPL[a3Tpl(b)].label)}</span><div class="a3-title">${inlineHTML(tfStr(b.title).trim() || state.sheet.meta.title || '')}</div></div>${extra || ''}${name ? `<div class="a3-name"><span>${name}</span><i></i></div>` : ''}</div>`;
+const a3Lines = n => '<i></i>'.repeat(n);
+function a3Pages(b, mats) {
+  a3Norm(b); const tpl = a3Tpl(b), m = state.sheet.meta, acc = pageAcc(m).c; const task = a3TaskHTML(b);
+  const taskH = task ? `<div class="a3-task">${task}</div>` : '';
+  if (tpl === 'annot') {
+    const ids = Object.keys(mats); const id = mats[b.mat] ? b.mat : ids.find(k => mats[k].lines.length); const M = id && mats[id]; const mb = id && state.sheet.blocks.find(x => x.id === id);
+    const legend = `<div class="a3-legend">${b.legend.map((t, i) => `<span><b style="background:${A3_COLORS[i][0]}"></b>${tfStr(t).trim() ? esc(t) : '<em></em>'}</span>`).join('')}</div>`;
+    if (!M || !M.lines.length || !mb) return [a3Page(b, a3Head(b, 'Name', legend) + taskH + '<div class="a3-empty">Für den Annotationsbogen braucht das Blatt ein Material mit Text.</div>')];
+    const fm = matFmt(mb); const pt = FMT_SIZE[fm.size] || 10.5; const lh = 2; const lineMM = pt * lh * 0.3528;
+    const bodyMM = 297 - 20 - 24 - (task ? 16 : 0) - 9 - 12; const per = Math.max(8, Math.floor(bodyMM / lineMM));
+    const parts = []; for (let i = 0; i < M.lines.length; i += per) parts.push(M.lines.slice(i, i + per));
+    return parts.map((L, pi) => a3Page(b, a3Head(b, 'Name', legend) + taskH + `<div class="a3-annot"><div class="a3-margin">Randnotizen</div><div class="a3-text" style="--mfs:${pt}pt;--alh:${lh};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}"><div class="a3-mh"><b>${esc(M.tag || 'M')}</b>${inlineHTML(mb.title || '')}${parts.length > 1 ? ` <small>Teil ${pi + 1} von ${parts.length}</small>` : ''}</div>${L.map(l => `<div class="a3-ln"><span class="n">${esc(l.num)}</span><span class="t">${esc(l.t)}</span></div>`).join('')}${pi === parts.length - 1 && mb.source ? `<div class="a3-src">${inlineHTML(mb.source)}</div>` : ''}</div><div class="a3-margin">Randnotizen</div></div>`, parts.length > 1 ? `Seite ${pi + 1} von ${parts.length}` : ''));
+  }
+  if (tpl === 'placemat') {
+    const N = Math.min(6, Math.max(3, +b.n || 4)); const IW = 19, IH = 19;
+    const at = (deg, hw, hh) => { const r = deg * Math.PI / 180, c = Math.cos(r), sn = Math.sin(r); const k = 1 / Math.max(Math.abs(c), Math.abs(sn)); return [50 + c * hw * k, 50 + sn * hh * k]; };
+    const step = 360 / N; const lines = []; const labs = [];
+    for (let i = 0; i < N; i++) {
+      const phi = 90 + step * i, beta = phi + step / 2; const [x1, y1] = at(beta, IW, IH), [x2, y2] = at(beta, 50, 50);
+      lines.push(`<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${acc}" stroke-width="1.6" vector-effect="non-scaling-stroke"/>`);
+      const [lx, ly] = at(phi, 50 * .86, 50 * .86); labs.push(`<span class="a3-pm-l" style="left:${lx.toFixed(2)}%;top:${ly.toFixed(2)}%;--r:${(phi - 90).toFixed(1)}deg">Person ${i + 1}</span>`);
+    }
+    const svg = `<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="0.2" y="0.3" width="99.6" height="99.4" fill="none" stroke="${acc}" stroke-width="2" vector-effect="non-scaling-stroke"/><rect x="${50 - IW}" y="${50 - IH}" width="${2 * IW}" height="${2 * IH}" fill="#fff" stroke="${acc}" stroke-width="2" vector-effect="non-scaling-stroke"/>${lines.join('')}</svg>`;
+    return [a3Page(b, a3Head(b, 'Gruppe') + `<div class="a3-pm">${svg}${labs.join('')}<div class="a3-pm-c" style="left:${50 - IW}%;top:${50 - IH}%;width:${2 * IW}%;height:${2 * IH}%"><small>Aufgabe und gemeinsames Ergebnis</small><div class="a3-pm-t">${task || ''}</div></div></div>`)];
+  }
+  if (tpl === 'schreib') {
+    const q = state.sheet.blocks.find(x => x.type === 'quote' && plainText(x.text || '').trim());
+    const imp = tfStr(b.impulse).trim() ? parasHTML(b.impulse) : q ? parasHTML(q.text) + (q.author ? `<div class="a3-auth">${inlineHTML(q.author)}</div>` : '') : task || '<span class="a3-ph">Impuls: Zitat, Frage oder These</span>';
+    return [a3Page(b, a3Head(b, '', `<div class="a3-rules">${esc(tfStr(b.rules).trim() || A3_RULES(m.anrede === 'du'))}</div>`) + `<div class="a3-sg"><div class="a3-sg-i">${imp}</div></div>`)];
+  }
+  if (tpl === 'plakat') {
+    const S = b.sections.filter(x => tfStr(x).trim()).slice(0, 6); const n = Math.max(1, S.length); const c = n >= 4 ? 2 : 1;
+    return [a3Page(b, `<div class="a3-h a3-plh"><div class="a3-ht"><span class="a3-kind">Lernplakat · Thema</span><div class="a3-title big">${tfStr(b.title).trim() ? inlineHTML(b.title) : '<span class="a3-blank"></span>'}</div></div></div><div class="a3-name wide"><span>Gruppe</span><i></i></div>${taskH}<div class="a3-pl" style="--c:${c}">${(S.length ? S : ['']).map(x => `<div class="a3-box"><h3>${inlineHTML(x)}</h3></div>`).join('')}</div><div class="a3-name wide"><span>Quellen</span><i></i></div>`)];
+  }
+  if (tpl === 'vergleich') {
+    const mt = a3MatList(); const C = Math.min(4, Math.max(2, b.cols.length)); const heads = Array.from({ length: C }, (_, i) => tfStr(b.cols[i]).trim() || (mt[i] ? mt[i][1] : 'Text ' + String.fromCharCode(65 + i)));
+    const A = b.aspects.filter(x => tfStr(x).trim()).slice(0, 10);
+    return [a3Page(b, a3Head(b, 'Name') + taskH + `<div class="a3-vg" style="--n:${C};--r:${Math.max(1, A.length)}"><div class="hd asp">Aspekt</div>${heads.map(h => `<div class="hd">${inlineHTML(h)}</div>`).join('')}${(A.length ? A : ['']).map(a => `<div class="asp">${inlineHTML(a)}</div>${'<div></div>'.repeat(C)}`).join('')}<div class="fz"><b>Fazit:</b> Gemeinsamkeiten und Unterschiede</div></div>`)];
+  }
+  // Expertenbogen
+  const E = b.experts.filter(x => tfStr(x).trim()).slice(0, 6);
+  return [a3Page(b, a3Head(b, 'Name') + `<div class="a3-ex"><div class="a3-ex-l"><div class="a3-step"><b>1</b>Expertenphase</div><div class="a3-name"><span>Mein Thema</span><i></i></div>${taskH}<div class="a3-box grow"><h3>Notizen</h3></div></div>
+    <div class="a3-ex-r"><div class="a3-step"><b>2</b>Stammgruppe: Was berichten die anderen?</div><div class="a3-ex-g">${E.map(x => `<div class="a3-box"><h3>${inlineHTML(x)}</h3></div>`).join('')}</div><div class="a3-step"><b>3</b>Gemeinsames Ergebnis</div><div class="a3-box res"></div></div></div>`)];
+}
+// A3 auf zwei A4-Blätter verteilen: verkleinert, mit 10 mm Überlappung und Schnittlinie
+function a3Split(pg) {
+  const w = +pg.dataset.w, h = +pg.dataset.h, q = w > h; const M = 6, O = 10; const win = 210 - 2 * M; const k = (2 * win - O) / (q ? w : h);
+  const pw = q ? 210 : 297, ph = q ? 297 : 210; const winW = q ? win : w * k, winH = q ? h * k : win; const left = (pw - winW) / 2, top = (ph - winH) / 2;
+  return [0, 1].map(s => {
+    const half = el(`<div class="page a3-half" data-w="${pw}" data-h="${ph}"><div class="a3-win" style="left:${left}mm;top:${top}mm;width:${winW}mm;height:${winH}mm"></div><div class="a3-partno">Teil ${s + 1} von 2</div></div>`);
+    const c = pg.cloneNode(true); const sh = s ? win - O : 0; c.style.transform = `${q ? 'translateX' : 'translateY'}(-${sh}mm) scale(${k.toFixed(4)})`; half.firstChild.appendChild(c);
+    if (s) half.insertAdjacentHTML('beforeend', q ? `<div class="a3-cut v" style="left:${left + O}mm;top:${top - 4}mm;height:${winH + 8}mm"></div><div class="a3-cutl" style="left:${left + O + 1.5}mm;top:${Math.max(1, top - 5)}mm">✂ hier abschneiden, dann an Teil 1 anlegen und festkleben</div>`
+      : `<div class="a3-cut h" style="top:${top + O}mm;left:${left - 4}mm;width:${winW + 8}mm"></div><div class="a3-cutl" style="top:${top + O - 4.5}mm;left:${left}mm">✂ hier abschneiden, dann an Teil 1 anlegen und festkleben</div>`);
+    else half.insertAdjacentHTML('beforeend', q ? `<div class="a3-edge v" style="left:${left + winW}mm;top:${top - 4}mm;height:${winH + 8}mm"></div>` : `<div class="a3-edge h" style="top:${top + winH}mm;left:${left - 4}mm;width:${winW + 8}mm"></div>`);
+    return half;
+  });
+}
+function layoutA3() {
+  const v = sheetView(); const list = state.sheet.blocks.filter(b => b.type === 'a3' && blockVisible(b, v)); if (!list.length) return [];
+  const mats = list.some(b => a3Tpl(b) === 'annot') ? presCollect(true) : {};
+  const out = []; list.forEach(b => a3Pages(b, mats).forEach(pg => (state.a3p === 'a4x2' ? a3Split(pg) : [pg]).forEach(p => out.push({ pg: p, over: false }))));
+  return out;
+}
+function a3Editor(b) {
+  a3Norm(b); const tpl = a3Tpl(b); const T = a3TaskList();
+  const inp = (k, v, ph) => `<input type="text" data-k="${k}" value="${esc(tfStr(v))}" placeholder="${esc(ph || '')}">`;
+  const del = (w, i, dis) => `<button class="ib" type="button" data-act="a3-del" data-w="${w}" data-i="${i}" title="Entfernen" aria-label="Entfernen"${dis ? ' disabled' : ''}>${I.x}</button>`;
+  const add = (w, l, dis) => `<button class="link" type="button" data-act="a3-add" data-w="${w}"${dis ? ' disabled' : ''}>+ ${l}</button>`;
+  const list = (w, label, one, arr, ph, min, max) => `<div class="f"><span>${label}</span><div class="tf-ed-list">${arr.map((x, i) => `<div class="tf-ed-row two">${inp(`${w}.${i}`, x, ph(i))}${del(w, i, arr.length <= min)}</div>`).join('')}</div><div class="tf-ed-acts">${add(w, one, arr.length >= max)}</div></div>`;
+  let c = '';
+  const taskF = tpl === 'schreib' ? '' : `<label class="f"><span>Arbeitsauftrag</span><select data-k="taskRef"><option value="">${T.length ? 'Eigener Text …' : 'Eigener Text'}</option>${T.map(([k, l]) => `<option value="${k}"${b.taskRef === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>${b.taskRef ? '' : `<label class="f"><span class="sr">Eigener Arbeitsauftrag</span><textarea data-k="task" rows="2" placeholder="${tpl === 'placemat' ? 'Frage oder Aufgabe für die Mitte' : 'optional'}">${esc(tfStr(b.task))}</textarea></label>`}`;
+  if (tpl === 'annot') { const ML = a3MatList(); c = `<label class="f"><span>Material</span><select data-k="mat">${ML.length ? ML.map(([k, l]) => `<option value="${k}"${(b.mat || ML[0][0]) === k ? ' selected' : ''}>${esc(l)}</option>`).join('') : '<option value="">Noch kein Material</option>'}</select></label>
+      <div class="f"><span>Farblegende</span><div class="tf-ed-list">${b.legend.map((x, i) => `<div class="a3-leg-ed"><b style="background:${A3_COLORS[i][0]}" title="${A3_COLORS[i][1]}"></b>${inp(`legend.${i}`, x, [A3_COLORS[i][1] + ', z. B. Nähe-Signale', A3_COLORS[i][1] + ', z. B. Distanz', A3_COLORS[i][1], A3_COLORS[i][1]][i])}</div>`).join('')}</div><small class="hint">Leere Farben erscheinen mit einer Linie zum Selbst-Eintragen. Zeilen und Zeilennummern sind dieselben wie auf dem Arbeitsblatt, nur mit doppeltem Zeilenabstand.</small></div>`; }
+  else if (tpl === 'placemat') c = `<div class="f"><span>Personen</span><div class="seg sm" role="group" aria-label="Personen">${[3, 4, 5, 6].map(n => `<button type="button" data-act="a3-n" data-v="${n}" aria-pressed="${+b.n === n}">${n}</button>`).join('')}</div></div>`;
+  else if (tpl === 'schreib') c = `<label class="f"><span>Impuls in der Mitte</span><textarea data-k="impulse" rows="3" placeholder="leer = Zitat des Blatts oder Aufgabe">${esc(tfStr(b.impulse))}</textarea></label>${fText('rules', 'Regeln', b.rules, A3_RULES(state.sheet.meta.anrede === 'du'))}${taskF ? '' : ''}`;
+  else if (tpl === 'plakat') c = list('sections', 'Felder', 'Feld', b.sections, i => 'Feld ' + (i + 1), 1, 6);
+  else if (tpl === 'vergleich') { const mt = a3MatList(); c = list('cols', 'Spalten', 'Spalte', b.cols, i => mt[i] ? 'leer = ' + mt[i][1] : 'z. B. Text ' + String.fromCharCode(65 + i), 2, 4) + list('aspects', 'Aspekte', 'Aspekt', b.aspects, () => 'z. B. Sprache', 1, 10); }
+  else c = list('experts', 'Expertenthemen', 'Thema', b.experts, i => 'Thema ' + String.fromCharCode(65 + i), 2, 6);
+  return `<div class="f"><span>Vorlage</span><div class="tf-tpls" role="group" aria-label="Vorlage">${Object.entries(A3_TPL).map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}</div></div>
+    <small class="hint">${esc(A3_TPL[tpl].d)}. ${A3_TPL[tpl].o === 'q' ? 'A3 quer' : 'A3 hoch'}.</small>
+    ${fText('title', 'Überschrift', b.title, state.sheet.meta.title || 'Überschrift')}
+    ${taskF}
+    <div class="tf-ed">${c}</div>
+    <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="a3-show">A3-Vorlagen ansehen</button><small class="hint">Steht nicht auf dem Arbeitsblatt, sondern über der Vorschau unter „A3-Vorlagen“.</small></div>`;
 }
 const presHead = (lab, title, chips) => `<div class="pr-top">${lab ? `<span class="pr-lab">${lab}</span>` : ''}<span class="pr-ttl">${title || ''}</span>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`;
 const prCk = c => String(c == null ? '' : c).replace(/^\s*\[\s*\]\s*$/, '☐').replace(/^\s*\[[xX]\]\s*$/, '☒');
@@ -4117,6 +4309,7 @@ function gTargets(bid) {
     case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
     case 'info': return [[b, 'title'], [b, 'text']];
     case 'phrases': return [[b, 'title'], ...(b.groups || []).flatMap(g => [[g, 'head'], [g, 'text']])];
+    case 'a3': a3Norm(b); return [[b, 'title'], [b, 'task'], [b, 'impulse'], [b, 'rules'], ...['legend', 'sections', 'cols', 'aspects', 'experts'].flatMap(k => b[k].map((_, i) => [b[k], i]))];
     case 'tafel': tfNorm(b); return [[b, 'title'], [b, 'center'], ...b.cols.map((_, i) => [b.cols, i]), ...b.rows.flatMap(r => r.map((_, i) => [r, i])), ...b.branches.flatMap(x => [[x, 'h'], [x, 't']]), ...b.steps.flatMap(x => [[x, 'h'], [x, 't']]), [b.poles, 'l'], [b.poles, 'm'], [b.poles, 'r'], ...b.scale.map(x => [x, 't']), ...b.nodes.flatMap(x => [[x, 'n'], [x, 'd']]), ...b.rels.map(x => [x, 't'])];
     case 'heading': case 'text': return [[b, 'text']];
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
@@ -4184,8 +4377,8 @@ function segHTML(key, opts, cur, label) {
   return `<div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-pv="${key}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${l}</button>`).join('')}</div>`;
 }
 function renderOut() {
-  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const nTf = sh.blocks.filter(x => x.type === 'tafel').length;
-  $('#outsw').innerHTML = [['blatt', 'Arbeitsblatt', 0], ['tipps', 'Tippkarten', nT], ['karten', 'Tafelkarten', nK], ['tafel', 'Tafelbild', nTf]]
+  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const nTf = sh.blocks.filter(x => x.type === 'tafel').length; const nA3 = sh.blocks.filter(x => x.type === 'a3').length;
+  $('#outsw').innerHTML = [['blatt', 'Arbeitsblatt', 0], ['tipps', 'Tippkarten', nT], ['karten', 'Tafelkarten', nK], ['tafel', 'Tafelbild', nTf], ['a3', 'A3-Vorlagen', nA3]]
     .map(([k, l, n]) => `<button type="button" data-out="${k}" aria-pressed="${state.out === k}">${l}${n ? `<span>${n}</span>` : ''}</button>`).join('');
   let h = '';
   if (state.out === 'blatt') {
@@ -4195,6 +4388,7 @@ function renderOut() {
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
     h += '<button class="btn sm" type="button" data-pv="pres" title="Folien aus diesem Blatt am Beamer zeigen">Präsentieren</button>';
   }
+  if (state.out === 'a3') h += segHTML('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3', 'Papier');
   if (state.out === 'tafel') { h += segHTML('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung, 'Fassung'); if (nTf) h += '<button class="btn sm" type="button" data-pv="tfbeam">Am Beamer zeigen</button>'; }
   $('#pv-opts').innerHTML = h;
   const w = $('#btn-docx'); w.disabled = state.out !== 'blatt'; w.title = state.out === 'blatt' ? '' : 'Word gibt es nur für das Arbeitsblatt';
@@ -4229,6 +4423,7 @@ function newBlock(type) {
     case 'image': return { id, type, src: '', w: 0, h: 0, caption: '', source: '', width: 80 };
     case 'poem': return { ...newBlock('material'), form: 'gedicht' };
     case 'phrases': return { id, type, title: 'Formulierungshilfen', cols: 2, groups: [{ head: '', text: '' }] };
+    case 'a3': return a3Norm({ id, type, tpl: 'placemat', title: '', taskRef: '', task: '', mat: '', impulse: '', rules: A3_RULES(state.sheet && state.sheet.meta.anrede === 'du') });
     case 'tafel': return { id, type, tpl: 'gegen', title: '', onSheet: 'luecke', gapMode: 'eintrag', keepFirst: false, cols: ['', ''], rows: [['', ''], ['', ''], ['', '']], center: '', branches: [{ h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }], steps: [{ h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }], poles: { l: '', r: '', m: '' }, scale: [{ t: '', p: 2 }, { t: '', p: 4 }], nodes: [{ n: '', d: '' }, { n: '', d: '' }, { n: '', d: '' }], rels: [{ a: 0, b: 1, t: '' }] };
     default: return { id, type: 'pagebreak' };
   }
@@ -5066,7 +5261,7 @@ function layout() {
   if (meta.mode === 'klausur') items.push(buildCover(meta, sh, v, body), { type: 'pagebreak' }, buildRunHead(meta, body));
   else { items.push(buildHead(meta, body)); if (v.lvl !== 'all') { const hd = items[items.length - 1].el; if (hd) hd.insertAdjacentHTML('beforeend', `<span class="lv-mark" title="Niveau ${LV[v.lvl].name}">${LV[v.lvl].sym}</span>`); } }
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
-  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
+  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3') continue; if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
@@ -5103,9 +5298,9 @@ let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
   if (MAPPE_LOCK || DG_VIEW) return;
   let out;
-  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
+  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : state.out === 'a3' ? layoutA3() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
-  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'tafel' ? 'Noch kein Tafelbild. Fügen Sie links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
+  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'a3' ? 'Noch keine A3-Vorlage. Fügen Sie links unten bei den Bausteinen „A3-Vorlage“ hinzu.' : state.out === 'tafel' ? 'Noch kein Tafelbild. Fügen Sie links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
     pg.classList.add('pout');
     const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(pg);
@@ -5115,7 +5310,7 @@ function renderPreview() {
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
   const buch = state.out === 'blatt' && state.sheet.meta.paper === 'buch';
   const kH = state.out === 'karten' && state.kkHalf;
-  const [one, many, unit] = state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  const [one, many, unit] = state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
   const cnt = state.out === 'karten' ? (state.kkCount || 0) : out.length;
   const nB = state.bookPages || 0;
   $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`
@@ -5548,6 +5743,7 @@ function summary(b, num) {
     case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : '') + (() => { const mn = (b.items || []).reduce((a, it) => a + (itPh(it) === 'ha' ? 0 : itMin(it)), 0); return mn ? ` · ${mn} Min.` : ''; })(); }
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
+    case 'a3': return `${A3_TPL[a3Tpl(b)].label}${tfStr(b.title).trim() ? ' · ' + plainText(b.title) : ''} · ${A3_TPL[a3Tpl(b)].o === 'q' ? 'A3 quer' : 'A3 hoch'}`;
     case 'tafel': return `${TF_TPL[tfTpl(b)].label}${tfStr(b.title).trim() ? ' · ' + tfStrip(b.title) : ''}${(b.onSheet || 'luecke') === 'aus' ? ' · nur Tafel' : (b.onSheet || 'luecke') === 'luecke' ? ' · Lücken' : ''}`;
     case 'phrases': { const n = phrGroups(b).reduce((a, g) => a + g.lines.length, 0); return `${plainText(b.title || 'Formulierungshilfen')} · ${n} ${n === 1 ? 'Wendung' : 'Wendungen'}`; }
     case 'lines': return b.style === 'rahmen' ? `freie Fläche · ${Math.min(+b.count || 1, 26) * 9} mm` : `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
@@ -5674,6 +5870,7 @@ function bodyFor(b, num) {
       ${fText('note', 'Quelle / Hinweis', b.note, 'z. B. abgerufen am 28.10.2026')}
       <div class="row">${fSelect('size', 'Größe', b.size || 'M', [['S', 'klein (22 mm)'], ['M', 'mittel (30 mm)'], ['L', 'groß (40 mm)']])}</div>`;
     case 'tafel': return tafelEditor(b);
+    case 'a3': return a3Editor(b);
     case 'image': return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachKey() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachKey() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
@@ -5735,7 +5932,7 @@ function renderEditor(focusSel) {
   else {
     enforceOne();
     const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
-    const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Das Tafelbild entsteht aus dem Baustein „Tafelbild“. Rechts steht es auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt es Schritt für Schritt auf.</div>' : '';
+    const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'a3' ? '<div class="memo-flag">A3-Vorlagen entstehen aus dem Baustein „A3-Vorlage“ (unten bei den Bausteinen). Rechts sehen Sie sie in A3; „2 × A4 zum Kleben“ verteilt jede Seite auf zwei A4-Blätter mit Schnittlinie.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Das Tafelbild entsteht aus dem Baustein „Tafelbild“. Rechts steht es auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt es Schritt für Schritt auf.</div>' : '';
     const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
     ed.innerHTML = fold + intro + metaCard() + seiteCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
@@ -5845,7 +6042,7 @@ function onChange(e) {
   if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || /^items\.\d+\.(ph|min)$/.test(k));
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || /^items\.\d+\.(ph|min)$/.test(k));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;
@@ -5937,6 +6134,11 @@ function onClick(e) {
       L.splice(j, 1); savePrefs(); rlpKeep(bid, i, () => renderEditor());
       toast('Aus Ihrer Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
     case 'rlp-sheet': openRlpDlg('sheet'); return;
+    case 'a3-tpl': { if (!A3_TPL[a.dataset.v]) return; b.tpl = a.dataset.v; a3Norm(b); changed(true); return; }
+    case 'a3-n': b.n = +a.dataset.v; changed(true); return;
+    case 'a3-show': setOut('a3'); return;
+    case 'a3-add': { a3Norm(b); const w = a.dataset.w; const lim = { sections: 6, cols: 4, aspects: 10, experts: 6 }[w] || 8; if (Array.isArray(b[w]) && b[w].length < lim) b[w].push(''); changed(true); return; }
+    case 'a3-del': { a3Norm(b); const w = a.dataset.w; if (Array.isArray(b[w])) b[w].splice(+a.dataset.i, 1); a3Norm(b); changed(true); return; }
     case 'tf-tpl': { const nx = a.dataset.v; if (!TF_TPL[nx] || nx === tfTpl(b)) return; tfConvert(b, nx); b.tpl = nx; changed(true); return; }
     case 'tf-on': b.onSheet = a.dataset.v; changed(true); return;
     case 'tf-gm': b.gapMode = a.dataset.v; changed(true); return;
@@ -6917,10 +7119,10 @@ function showTip(i) {
 /* ---------- Ausgeben ---------- */
 // Ein Fenster für PDF, Word und Drucken. Die Auswahl wirkt sofort auf die Vorschau; Abbrechen stellt den alten Stand wieder her.
 const LS_OUTFMT = 'abw.outfmt';
-function outState() { return { out: state.out, fassung: state.fassung, grp: state.grp, lvl: state.lvl || 'all', paper: state.sheet.meta.paper || 'a4' }; }
+function outState() { return { out: state.out, fassung: state.fassung, grp: state.grp, lvl: state.lvl || 'all', paper: state.sheet.meta.paper || 'a4', a3p: state.a3p || 'a3' }; }
 function outApply(o) {
   if (o.out !== state.out) { state.out = o.out; renderEditor(); }
-  state.fassung = o.fassung; state.grp = o.grp; state.lvl = o.lvl || 'all';
+  state.fassung = o.fassung; state.grp = o.grp; state.lvl = o.lvl || 'all'; if (o.a3p !== state.a3p) { state.a3p = o.a3p; lsSet('abw.a3p', o.a3p); }
   if ((state.sheet.meta.paper || 'a4') !== o.paper) { state.sheet.meta.paper = o.paper; changed(true); }
   clearTimeout(renderTimer); renderPreview();
 }
@@ -6965,7 +7167,7 @@ function outChecks() {
   return L;
 }
 function outHTML() {
-  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, nTf = sh.blocks.filter(x => x.type === 'tafel').length;
+  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, nTf = sh.blocks.filter(x => x.type === 'tafel').length, nA3 = sh.blocks.filter(x => x.type === 'a3').length;
   const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t, dis]) => `<button type="button" data-act="out-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}"${dis ? ' disabled' : ''}>${t}</button>`).join('')}</div>`;
   const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
     ['docx', 'Word', state.out === 'blatt' ? 'zum Weiterbearbeiten' : 'nur fürs Arbeitsblatt', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
@@ -6976,12 +7178,13 @@ function outHTML() {
   const checks = outChecks();
   const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung', pptx: 'PowerPoint erstellen' }[d.fmt];
   return `<h2 id="dlg-t">Ausgeben</h2>
-    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf]], state.out)}</div>
+    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf], ['a3', `A3-Vorlagen${nA3 ? ' · ' + nA3 : ''}`, !nA3]], state.out)}</div>
     <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${(v === 'docx' || v === 'digital' || v === 'pptx') && state.out !== 'blatt' ? ' disabled' : ''}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
       <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
+    ${state.out === 'a3' ? `<div class="f"><span>Papier</span>${seg('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3')}</div>` : ''}
     ${state.out === 'tafel' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung)}</div>` : ''}</div>
     ${d.fmt === 'pptx' && state.out === 'blatt' ? presPickHTML() : ''}
     <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
@@ -7184,7 +7387,7 @@ async function onDlgClick(e) {
     if (act === 'out-set') {
       const f = a.dataset.f, v = a.dataset.v; const o = outState();
       if (f === 'fmt') state.dlg.fmt = v;
-      else { o[f] = v; if (f === 'out' && v !== 'blatt' && (state.dlg.fmt === 'docx' || state.dlg.fmt === 'digital')) state.dlg.fmt = 'pdf'; if (f === 'fassung' && v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); outApply(o); renderOut(); }
+      else { o[f] = v; if (f === 'out' && v !== 'blatt' && (state.dlg.fmt === 'docx' || state.dlg.fmt === 'digital' || state.dlg.fmt === 'pptx')) state.dlg.fmt = 'pdf'; if (f === 'fassung' && v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); outApply(o); renderOut(); }
       renderDlg(); return;
     }
     if (act === 'out-go') { outGo(); return; }
@@ -7258,13 +7461,13 @@ async function deliver(name, blob) {
 }
 async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || [], EXTRA_FONTS); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
-const outSuffix = () => state.out === 'tipps' ? '_Tippkarten' : state.out === 'tafel' ? (state.fassung === 'lehrer' ? '_Tafelbild' : '_Tafelbild_Lueckenfassung') : state.out === 'karten' ? '_Tafelkarten'
+const outSuffix = () => state.out === 'a3' ? (state.a3p === 'a4x2' ? '_A3-Vorlagen_2xA4' : '_A3-Vorlagen') : state.out === 'tipps' ? '_Tippkarten' : state.out === 'tafel' ? (state.fassung === 'lehrer' ? '_Tafelbild' : '_Tafelbild_Lueckenfassung') : state.out === 'karten' ? '_Tafelkarten'
   : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.levelsOn && state.lvl && state.lvl !== 'all' ? '_' + LV[state.lvl].name : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : state.sheet.meta.paper === 'buch' ? '_A5-Buch' : '');
 async function exportPDF() {
   if (busy) return;
   clearTimeout(renderTimer); renderPreview();
   const pages = [...document.querySelectorAll('#pages .pout')];
-  if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : state.out === 'tafel' ? 'Es gibt noch kein Tafelbild.' : 'Es gibt noch keine Tafelkarten.'); return; }
+  if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : state.out === 'tafel' ? 'Es gibt noch kein Tafelbild.' : state.out === 'a3' ? 'Es gibt noch keine A3-Vorlage.' : 'Es gibt noch keine Tafelkarten.'); return; }
   busy = true;
   try { await pagesToPdf(pages, fileBase() + outSuffix() + '.pdf', { title: (state.sheet.meta.nr ? 'AB ' + state.sheet.meta.nr + ' – ' : '') + (state.sheet.meta.title || ''), subject: state.sheet.meta.topic || '' }); }
   finally { busy = false; }
@@ -7294,8 +7497,8 @@ async function pagesToPdf(pages, name, props) {
       let canvas;
       try {
         canvas = await window.html2canvas(pg, {
-          scale: 2.5, backgroundColor: '#ffffff', useCORS: true, logging: false,
-          x: 0, y: 0, width: Math.round(wmm * MMPX), height: Math.round(hmm * MMPX), scrollX: 0, scrollY: 0, windowWidth: 1400, windowHeight: 1400,
+          scale: Math.max(wmm, hmm) > 300 ? 1.8 : 2.5, backgroundColor: '#ffffff', useCORS: true, logging: false,
+          x: 0, y: 0, width: Math.round(wmm * MMPX), height: Math.round(hmm * MMPX), scrollX: 0, scrollY: 0, windowWidth: Math.max(1400, Math.round(wmm * MMPX) + 40), windowHeight: Math.max(1400, Math.round(hmm * MMPX) + 40),
           onclone: async doc => {
             const c = doc.querySelector('[data-x="1"]');
             const host = doc.createElement('div'); host.style.cssText = 'position:absolute;left:0;top:0;margin:0;padding:0;background:#fff;z-index:9999';
@@ -7309,7 +7512,8 @@ async function pagesToPdf(pages, name, props) {
           }
         });
       } finally { pg.removeAttribute('data-x'); }
-      if (!pdf) pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: orient, compress: true }); else pdf.addPage('a4', orient);
+      const pf = Math.min(wmm, hmm) === 210 && Math.max(wmm, hmm) === 297 ? 'a4' : [Math.min(wmm, hmm), Math.max(wmm, hmm)];
+      if (!pdf) pdf = new jsPDF({ unit: 'mm', format: pf, orientation: orient, compress: true }); else pdf.addPage(pf, orient);
       pdf.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
     }
     pdf.setProperties({ title: props.title || '', subject: props.subject || '', creator: 'AB-Werkstatt' });
@@ -8427,17 +8631,17 @@ function preparePrint() {
   const pages = [...document.querySelectorAll('#pages .pout')]; if (!pages.length) { toast('Es gibt noch nichts zu drucken.'); return null; }
   const w = +pages[0].dataset.w || 210, h = +pages[0].dataset.h || 297;
   let st = document.getElementById('print-size'); if (!st) { st = document.createElement('style'); st.id = 'print-size'; document.head.appendChild(st); }
-  const ori = p => (+p.dataset.w || 210) > (+p.dataset.h || 297) ? 'quer' : 'hoch';
-  const mixed = new Set(pages.map(ori)).size > 1;
-  st.textContent = mixed ? '@media print{@page{margin:0}@page quer{size:297mm 210mm;margin:0}@page hoch{size:210mm 297mm;margin:0}}' : `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
-  pages.forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; if (mixed) c.style.setProperty('page', ori(p)); c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); pr.appendChild(c); });
-  return { mixed, landscape: !mixed && w > h, n: pages.length, name: fileBase() + outSuffix() + '.pdf' };
+  const key = p => `s${+p.dataset.w || 210}x${+p.dataset.h || 297}`; const keys = [...new Set(pages.map(key))];
+  const mixed = keys.length > 1;
+  st.textContent = mixed ? '@media print{@page{margin:0}' + keys.map(k => { const [a, z] = k.slice(1).split('x'); return `@page ${k}{size:${a}mm ${z}mm;margin:0}`; }).join('') + '}' : `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
+  pages.forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; if (mixed) c.style.setProperty('page', key(p)); c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); pr.appendChild(c); });
+  return { mixed, landscape: !mixed && w > h, size: Math.max(w, h) > 300 ? 'A3' : 'A4', n: pages.length, name: fileBase() + outSuffix() + '.pdf' };
 }
 
 /* ================= Start ================= */
 function boot() {
   if (DG_VIEW) { dgViewer(DG_VIEW); return; }
-  setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true);
+  setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true); state.a3p = lsGet('abw.a3p') === 'a4x2' ? 'a4x2' : 'a3';
   const ed = $('#editor');
   ed.addEventListener('focusout', e => { const k = e.target && e.target.dataset && e.target.dataset.k; const c = k && e.target.closest('[data-bid]'); if (c && (state.sheet.zrefs || []).some(r => r.f === c.dataset.bid && r.k === k)) scheduleRender(60); });
   ed.addEventListener('input', onInput); ed.addEventListener('change', onChange); ed.addEventListener('click', onClick);
@@ -8550,6 +8754,7 @@ function boot() {
     if (k === 'grp') state.grp = v;
     if (k === 'lvl') state.lvl = v;
     if (k === 'paper') { state.sheet.meta.paper = v; changed(false); }
+    if (k === 'a3p') { state.a3p = v; lsSet('abw.a3p', v); }
     closeZl(); renderPreview();
   });
   $('#menu-root').addEventListener('click', onMenuClick);

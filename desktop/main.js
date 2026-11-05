@@ -104,7 +104,7 @@ ipcMain.handle('ab:print', async (e, info) => {
     const p = path.join(os.tmpdir(), 'AB-Werkstatt-Druck-' + Date.now() + '.pdf');
     fs.writeFileSync(p, await makePdf()); shell.openPath(p); return 'pdf';
   }
-  return new Promise(res => win.webContents.print({ silent: false, printBackground: true, landscape: !!(info && info.landscape), pageSize: 'A4', margins: { marginType: 'none' } }, ok => res(ok ? 'ok' : 'abgebrochen')));
+  return new Promise(res => win.webContents.print({ silent: false, printBackground: true, landscape: !!(info && info.landscape), pageSize: (info && info.size) || 'A4', margins: { marginType: 'none' } }, ok => res(ok ? 'ok' : 'abgebrochen')));
 });
 ipcMain.handle('ab:open', (e, p) => shell.openPath(p));
 ipcMain.handle('ab:reveal', (e, p) => { shell.showItemInFolder(p); });
