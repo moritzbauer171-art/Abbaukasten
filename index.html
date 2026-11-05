@@ -3679,6 +3679,21 @@ async function tfImage(b) {
     return { data: c.toDataURL('image/png'), w: c.width, h: c.height };
   } finally { box.remove(); }
 }
+// PowerPoint-Timer ohne Makros: Animationen (Microsoft-Methode „Bildschirm-Timer“). Der Balken trägt Modus und Minuten im Namen.
+function pptxTiming(xml) {
+  const bar = /<p:cNvPr id="(\d+)" name="abwTimerBar-(klick|auto)-(\d+)"/.exec(xml); if (!bar || /<p:timing>/.test(xml)) return xml;
+  const barId = bar[1], auto = bar[2] === 'auto', N = +bar[3], ms = N * 60000; const ids = {};
+  xml.replace(/<p:cNvPr id="(\d+)" name="abwTimerM(\d+)"/g, (a, id, k) => { ids[k] = id; return a; });
+  let n = 4; const nid = () => ++n;
+  const hide = (spid, delay) => `<p:set><p:cBhvr><p:cTn id="${nid()}" dur="1" fill="hold"><p:stCondLst><p:cond delay="${delay}"/></p:stCondLst></p:cTn><p:tgtEl><p:spTgt spid="${spid}"/></p:tgtEl><p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="hidden"/></p:to></p:set>`;
+  const e1 = nid(), e1a = nid();
+  let eff = `<p:par><p:cTn id="${e1}" presetID="22" presetClass="exit" presetSubtype="2" fill="hold" grpId="0" nodeType="${auto ? 'withEffect' : 'clickEffect'}"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst><p:animEffect transition="out" filter="wipe(left)"><p:cBhvr><p:cTn id="${e1a}" dur="${ms}"/><p:tgtEl><p:spTgt spid="${barId}"/></p:tgtEl></p:cBhvr></p:animEffect>${hide(barId, ms - 1)}</p:childTnLst></p:cTn></p:par>`;
+  for (let k = N; k >= 1; k--) { if (!ids[k]) continue; const a = nid(); eff += `<p:par><p:cTn id="${a}" presetID="1" presetClass="exit" presetSubtype="0" fill="hold" grpId="0" nodeType="withEffect"><p:stCondLst><p:cond delay="${(N - k + 1) * 60000}"/></p:stCondLst><p:childTnLst>${hide(ids[k], 0)}</p:childTnLst></p:cTn></p:par>`; }
+  const start = auto ? '<p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond>' : '<p:cond delay="indefinite"/>';
+  const bld = [barId, ...Object.values(ids)].map(i => `<p:bldP spid="${i}" grpId="0" animBg="1"/>`).join('');
+  const timing = `<p:timing><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek"><p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst><p:par><p:cTn id="3" fill="hold"><p:stCondLst>${start}</p:stCondLst><p:childTnLst><p:par><p:cTn id="4" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>${eff}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn><p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst><p:bldLst>${bld}</p:bldLst></p:timing>`;
+  return /<\/p:clrMapOvr>/.test(xml) ? xml.replace('</p:clrMapOvr>', '</p:clrMapOvr>' + timing) : xml.replace('</p:cSld>', '</p:cSld>' + timing);
+}
 async function exportPPTX() {
   if (busy) return; busy = true; overlay('PowerPoint wird erstellt …');
   try {
@@ -3700,7 +3715,22 @@ async function exportPPTX() {
       if (!bar.length) return; const n = bar.length, ov = 0.12, y = 6.67, h = 0.45; const w = (CW + (n - 1) * ov) / n;
       bar.forEach((k, i) => { const on = Array.isArray(cur) ? cur.includes(k) : k === cur, c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: 13, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0 }); });
     };
-    const pills = (sl, chips) => { let x = W - RM; [...chips].reverse().forEach(c => { const w = c.t.length * 0.105 + 0.46; x -= w; sl.addText(c.t, { shape: 'roundRect', rectRadius: 0.19, x, y: 0.86, w, h: 0.38, fill: { color: c.fill || TINT }, fontFace: F, fontSize: 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0 }); x -= 0.12; }); return W - RM - x; };
+    const pills = (sl, chips) => {
+      let x = W - RM;
+      [...chips].reverse().forEach(c => {
+        const pill = (t, o = {}) => ({ shape: 'roundRect', rectRadius: 0.19, x, y: 0.86, w, h: 0.38, fill: { color: c.fill || TINT }, fontFace: F, fontSize: 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0, ...o });
+        const w = (c.timer ? ('noch ' + c.timer + ' Min.').length : c.t.length) * 0.105 + 0.46; x -= w;
+        if (c.timer) {
+          // Stapel: unten „Zeit um“, darüber noch 1 … n Min.; jede Minute verschwindet die oberste Angabe (Animation, siehe pptxTiming)
+          sl.addText('Zeit um', pill('Zeit um', { fill: { color: 'B3261E' }, color: 'FFFFFF', objectName: 'abwTimerEnd' }));
+          for (let k = 1; k <= c.timer; k++) sl.addText(`noch ${k} Min.`, pill('', { objectName: 'abwTimerM' + k }));
+          sl.addShape('rect', { x: 0.13, y: 0, w: W - 0.13, h: 0.085, fill: { color: TINT }, line: { color: TINT, width: 0 } });
+          sl.addShape('rect', { x: 0.13, y: 0, w: W - 0.13, h: 0.085, fill: { color: ACC }, line: { color: ACC, width: 0 }, objectName: `abwTimerBar-${c.mode === 'auto' ? 'auto' : 'klick'}-${c.timer}` });
+        } else sl.addText(c.t, pill(c.t));
+        x -= 0.12;
+      });
+      return W - RM - x;
+    };
     const head = (sl, kick, title, chips = []) => {
       if (!title) { title = kick; kick = ''; }
       const cw = chips.length ? pills(sl, chips) + 0.2 : 0;
@@ -3708,7 +3738,7 @@ async function exportPPTX() {
       if (title) sl.addText(String(title), { x: X, y: 0.74, w: CW - cw, h: 0.56, fontFace: F, fontSize: 29, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
       sl.addShape('line', { x: X, y: 1.4, w: CW, h: 0, line: { color: TINT, width: 2.5 } });
     };
-    const chipsOf = (it, ph, mn) => [it && SOZ[it.soz] ? { t: SOZ[it.soz].label } : null, ph && !bar.length ? { t: PHASEN[ph].label, fill: PHASEN[ph].c.slice(1).toUpperCase(), color: 'FFFFFF' } : null, mn ? { t: mn + ' Min.' } : null].filter(Boolean);
+    const chipsOf = (it, ph, mn, mode) => [it && SOZ[it.soz] ? { t: SOZ[it.soz].label } : null, ph && !bar.length ? { t: PHASEN[ph].label, fill: PHASEN[ph].c.slice(1).toUpperCase(), color: 'FFFFFF' } : null, mn ? { t: mn + ' Min.', ...(mode && mn <= 180 ? { timer: mn, mode } : {}) } : null].filter(Boolean);
     // Arbeitsauftrag: Schritte als Aufzählung, Operator und Anrede fett in der Akzentfarbe, Material- und Zeilenangaben hervorgehoben
     const HL = { b: ACC, ref: ACC };
     const stepPlain = it => taskSteps(taskText(it, m)).map(x => plainText(x).length);
@@ -3753,7 +3783,7 @@ async function exportPPTX() {
         if (src) sl.addText(plainText(s.b.source), { x: X + 0.85, y: BOT - 0.3, w: CW - 0.85, h: 0.3, fontFace: F, fontSize: 11, color: LIGHT, margin: 0 });
       } else if (s.k === 'tasks') {
         const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s); const BW = multi ? 0.62 : 0, gapR = 0.22, gapS = 0.32, gapC = 0.5, rg = 0.3, HH = 0.68;
-        head(sl, tsKick(s, m), tsHead(s), chipsOf(sz ? { soz: sz } : null, s.ph, mn));
+        head(sl, tsKick(s, m), tsHead(s), chipsOf(sz ? { soz: sz } : null, s.ph, mn, tsTimer(s)));
         const metaFs = fs => Math.max(11, Math.round(fs * 0.62));
         const itemH = (x, w, fs, col) => { const pl = stepPlain(x.it); return needH(pl, w - BW - (pl.length > 1 ? 0.45 : 0), fs) + (tsMeta(x, s, m, col) ? metaFs(fs) * 1.35 / 72 + 0.06 : 0); };
         const listH = (L, w, fs, col) => L.reduce((a, x) => a + itemH(x, w, fs, col), 0) + Math.max(0, L.length - 1) * gapR;
@@ -3796,17 +3826,17 @@ async function exportPPTX() {
           if (b.author) sl.addText(plainText(b.author), { x: X + 0.4, y: BOT - 0.75, w: tw - 0.8, h: 0.5, fontFace: F, fontSize: 20, color: GREY, align: 'right', margin: 0 });
           addQR(1.1, BOT - 1.1);
         } else if (s.fol === 'bild') {
-          const y = b.cap ? Y0 : 0.5; if (b.cap) head(sl, '', plainText(b.cap), chipsOf(b, ph, mn));
+          const y = b.cap ? Y0 : 0.5; if (b.cap) head(sl, '', plainText(b.cap), chipsOf(b, ph, mn, b.timer));
           await imgIn(sl, /^data:/.test(b.src) ? b.src : null, /^data:/.test(b.src) ? null : b.src, X, y, tw, BOT - y); addQR(y, BOT - y);
         } else if (s.fol === 'frage') {
-          head(sl, '', head1, chipsOf(b, ph, mn)); const q = plainText(m.frage || '').trim(); const qt = q || 'Stundenfrage noch nicht eingetragen';
+          head(sl, '', head1, chipsOf(b, ph, mn, b.timer)); const q = plainText(m.frage || '').trim(); const qt = q || 'Stundenfrage noch nicht eingetragen';
           const fs = qt.length < 60 ? 36 : qt.length < 120 ? 30 : 26; const hq = Math.min(3.2, needH([qt.length], tw - 0.7, fs) + 0.45); const y1 = tfStr(b.text).trim() ? Y0 + 0.15 : Y0 + Math.max(0.15, (BH - hq) / 2);
           sl.addText(qt, { x: X, y: y1, w: tw, h: hq, fontFace: F, fontSize: fs, bold: true, color: q ? INK : LIGHT, fill: { color: TINT }, valign: 'middle', margin: 18 });
           sl.addShape('rect', { x: X, y: y1, w: 0.12, h: hq, fill: { color: ACC } });
           if (tfStr(b.text).trim()) { const y2 = y1 + hq + 0.35; const pl = stepPlain(b); const fs2 = fitFs(pl, tw - 0.5, BOT - y2, [26, 24, 22, 20, 18]); sl.addText(stepRuns([b], fs2), { x: X, y: y2, w: tw, h: BOT - y2, fontFace: F, fontSize: fs2, color: INK, valign: 'top', margin: 0, lineSpacingMultiple: 1.1 }); }
           addQR(Y0, BH);
         } else {
-          head(sl, '', head1, chipsOf(b, ph, mn)); const xq = b.exit ? stepQs(b) : []; const pl = stepPlain(b).concat(xq.map(q => q.length * 0.8)); const fs = fitFs(pl, tw - (pl.length > 1 ? 0.5 : 0), BH - 0.25, [36, 32, 30, 28, 26, 24, 22, 20, 18]);
+          head(sl, '', head1, chipsOf(b, ph, mn, b.timer)); const xq = b.exit ? stepQs(b) : []; const pl = stepPlain(b).concat(xq.map(q => q.length * 0.8)); const fs = fitFs(pl, tw - (pl.length > 1 ? 0.5 : 0), BH - 0.25, [36, 32, 30, 28, 26, 24, 22, 20, 18]);
           const runs = stepRuns([b], fs); if (xq.length) { runs[runs.length - 1].options.breakLine = true; xq.forEach((q, i) => runs.push({ text: plainText(q), options: { bullet: { type: 'number', indent: Math.round(fs * 1.1) }, fontSize: Math.round(fs * 0.8), color: GREY, paraSpaceBefore: i ? 0 : Math.round(fs * 0.5), paraSpaceAfter: Math.round(fs * 0.25), ...(i < xq.length - 1 ? { breakLine: true } : {}) } })); }
           sl.addText(runs, { x: X, y: Y0 + 0.05, w: tw, h: BH - 0.15, fontFace: F, fontSize: fs, color: INK, valign: 'middle', margin: 0, lineSpacingMultiple: 1.12 }); addQR(Y0, BH);
         }
@@ -3857,7 +3887,7 @@ async function exportPPTX() {
     let blob = await pptx.write({ outputType: 'blob' });
     try {
       await loadScript(LIBS.zip); const z = await window.JSZip.loadAsync(blob); let fixed = 0;
-      for (const n of Object.keys(z.files).filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f))) { const x = await z.file(n).async('string'); const y = x.replace(/(<\/a:r>)<a:pPr\b[^>]*?(?:\/>|>[\s\S]*?<\/a:pPr>)/g, '$1'); if (y !== x) { z.file(n, y); fixed++; } }
+      for (const n of Object.keys(z.files).filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f))) { const x = await z.file(n).async('string'); const y = pptxTiming(x.replace(/(<\/a:r>)<a:pPr\b[^>]*?(?:\/>|>[\s\S]*?<\/a:pPr>)/g, '$1')); if (y !== x) { z.file(n, y); fixed++; } }
       if (fixed) blob = await z.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', compression: 'DEFLATE' });
     } catch (err) { console.warn('PowerPoint-Nachbearbeitung übersprungen', err); }
     overlay(''); await deliver((state.sheet.abs ? 'Stunde_' + slug(stTitle(state.sheet)) : fileBase()) + '_Praesentation.pptx', blob);
