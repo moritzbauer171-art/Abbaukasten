@@ -1186,6 +1186,21 @@ body{transition:background-color .3s,border-color .25s}
 .a3-partno{position:absolute;right:3mm;bottom:1.5mm;font:600 7pt/1 var(--f-ui);color:#9AA0AA}
 .a3-leg-ed{display:grid;grid-template-columns:22px minmax(0,1fr);gap:6px;align-items:center}
 .a3-leg-ed b{width:22px;height:14px;border-radius:3px;display:block;border:1px solid rgba(0,0,0,.12)}
+.ab-bar{display:flex;flex-direction:column;gap:6px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line-strong);border-radius:12px;background:var(--field)}
+.ab-st{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.ab-st input{flex:1 1 auto;min-width:0;border:1px solid var(--line-strong);border-radius:7px;padding:5px 8px;font-size:14px;font-weight:700;color:var(--ink);background:var(--paper,#fff)}
+.ab-tabs{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.ab-tab{display:flex;flex-direction:column;align-items:flex-start;gap:1px;min-width:0;max-width:190px;border:1px solid var(--line-strong);background:transparent;border-radius:9px;padding:5px 10px;cursor:pointer;color:var(--muted);text-align:left}
+.ab-tab b{font-size:12px;color:inherit}.ab-tab span{font-size:12px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ab-tab:hover{border-color:var(--tinte);color:var(--ink)}
+.ab-tab[aria-selected="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.ab-add{border:1px dashed var(--line-strong);background:transparent;border-radius:9px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.ab-add:hover{color:var(--tinte);border-color:var(--tinte)}
+.ab-acts{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:12.5px}
+.ab-acts .hint{margin:0}
+.pr-pick .chk.pk-head{font-weight:700;margin-top:4px}
+.pr-nr.ab{width:auto;height:auto;padding:12px 26px}.pr-nr.ab b{font-size:44px}
+.pr-h1.sm{font-size:64px}
 .pr-pick{max-height:220px;overflow:auto;border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;display:flex;flex-direction:column;gap:3px;background:var(--field)}
 .pr-pick .chk{font-size:13px;align-items:flex-start}
 .pr-pick .chk span{min-width:0}
@@ -1505,10 +1520,10 @@ body{transition:background-color .3s,border-color .25s}
       <div class="seg sm umfang" role="group" aria-label="Funktionsumfang" title="Basis: nur das Nötigste. Experte: alle Funktionen. Ihre Blätter ändern sich dadurch nicht."><button type="button" data-act="umfang" data-v="basis" aria-pressed="false">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="true">Experte</button></div>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
-      <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neues Arbeitsblatt anlegen">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg><span class="l-long">Neues Blatt</span><span class="l-short">Neu</span></button>
+      <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neue Stunde anlegen">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg><span class="l-long">Neue Stunde</span><span class="l-short">Neu</span></button>
       <button class="btn" type="button" id="btn-lib" data-act="lib-open">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span class="l-long">Meine Blätter</span><span class="l-short">Blätter</span></button>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span class="l-long">Meine Stunden</span><span class="l-short">Stunden</span></button>
       <button class="btn" type="button" id="btn-saveas" data-act="saveas" title="Speichern unter (Strg+Umschalt+S)">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 2.5h8.3l2.7 2.7v8.3h-11z"/><path d="M5.2 2.5v3.2h4.6V2.5"/><path d="M5 13.5V9.6h6v3.9"/></svg><span class="l-long">Speichern unter</span><span class="l-short">Speichern</span></button>
       <button class="btn primary" type="button" id="btn-out" data-act="out" title="PDF, Word oder Drucken">
@@ -2466,6 +2481,76 @@ function setUmfang(v, quiet) {
   if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
 }
 
+/* ================= Stunde: ein oder mehrere Arbeitsblätter =================
+   Das gespeicherte Dokument ist die Stunde. Das aktive AB liegt wie bisher in meta (nr, title, topic, dg, paper), blocks und zrefs;
+   weitere ABs liegen in abs[k] (aktives Fach: { id, active: true }). Kurs, Design, Anrede, Tafelkarten, Verlaufsplan usw. gelten für die ganze Stunde. */
+const AB_KEYS = ['nr', 'title', 'topic', 'dg', 'paper'];
+const stTitle = sh => (sh && sh.abs && sh.stunde && String(sh.stunde.title || '').trim()) || (sh && sh.meta && sh.meta.title) || 'Ohne Titel';
+const stNr = sh => (!sh.abs || !sh.abActive ? sh.meta.nr : ((sh.abs[0] && sh.abs[0].meta) || {}).nr) || '';
+function abNorm(sh) {
+  if (!sh) return sh;
+  if (!Array.isArray(sh.abs) || sh.abs.length < 2) { delete sh.abs; sh.abActive = 0; return sh; }
+  sh.abActive = Math.min(Math.max(0, +sh.abActive || 0), sh.abs.length - 1);
+  sh.abs = sh.abs.map((a, i) => { a = a && typeof a === 'object' ? a : {}; if (!a.id) a.id = 'ab' + uid(); if (i === sh.abActive) return { id: a.id, active: true }; if (!Array.isArray(a.blocks)) a.blocks = []; if (!a.meta || typeof a.meta !== 'object') a.meta = {}; if (!Array.isArray(a.zrefs)) a.zrefs = []; delete a.active; return a; });
+  if (!sh.stunde || typeof sh.stunde !== 'object') sh.stunde = { title: sh.meta.title || '' };
+  return sh;
+}
+const abPick = m => { const o = {}; AB_KEYS.forEach(k => { if (m[k] !== undefined) o[k] = m[k]; }); return o; };
+function abMeta(k) { const P = state.sheet; if (!P.abs || k === P.abActive) return P.meta; const base = { ...P.meta }; AB_KEYS.forEach(x => delete base[x]); return { ...base, ...(P.abs[k].meta || {}) }; }
+function abSwitch(k, quiet) {
+  const P = state.sheet; if (!P || !P.abs) return; k = Math.min(Math.max(0, k), P.abs.length - 1); if (k === P.abActive) return;
+  if (!quiet && hist.timer) histCommit();
+  const cur = P.abActive; P.abs[cur] = { id: P.abs[cur].id, meta: abPick(P.meta), blocks: P.blocks, zrefs: Array.isArray(P.zrefs) ? P.zrefs : [] };
+  const nx = P.abs[k]; P.blocks = Array.isArray(nx.blocks) ? nx.blocks : []; P.zrefs = Array.isArray(nx.zrefs) ? nx.zrefs : [];
+  AB_KEYS.forEach(x => { if (nx.meta && nx.meta[x] !== undefined) P.meta[x] = nx.meta[x]; else delete P.meta[x]; });
+  if (P.meta.title === undefined) P.meta.title = '';
+  P.abs[k] = { id: nx.id, active: true }; P.abActive = k;
+  if (!quiet) hist.last = histSig(P);
+}
+// fn läuft mit AB k als aktivem AB (synchron); danach ist alles wie vorher
+function withAB(k, fn) { const P = state.sheet; if (!P || !P.abs || k === P.abActive) return fn(); const cur = P.abActive; abSwitch(k, true); try { return fn(); } finally { abSwitch(cur, true); } }
+function stABs() { const P = state.sheet; if (!P.abs) return [{ k: 0, id: 'ab0', meta: P.meta, blocks: P.blocks }]; return P.abs.map((a, k) => (k === P.abActive ? { k, id: a.id, meta: P.meta, blocks: P.blocks } : { k, id: a.id, meta: abMeta(k), blocks: a.blocks || [] })); }
+const stBlocks = () => stABs().flatMap(x => x.blocks);
+const abLabel = (m, k) => (String(m.nr || '').trim() ? 'AB ' + m.nr : 'AB ' + (k + 1));
+function abBarHTML() {
+  const P = state.sheet; const A = stABs(); const multi = A.length > 1;
+  return `<div class="ab-bar">${multi ? `<label class="ab-st"><span>Stunde</span><input type="text" data-st="title" value="${esc(stTitle(P))}" placeholder="Titel der Stunde" aria-label="Titel der Stunde"></label>` : ''}
+    <div class="ab-tabs" role="tablist" aria-label="Arbeitsblätter dieser Stunde">${A.map(x => `<button type="button" role="tab" class="ab-tab" data-act="abx-go" data-abk="${x.k}" aria-selected="${x.k === (P.abActive || 0)}" title="${esc(plainText(x.meta.title || '') || 'ohne Titel')}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}</span></button>`).join('')}<button type="button" class="ab-add" data-act="abx-add" title="Weiteres Arbeitsblatt in dieser Stunde anlegen, z. B. Hausaufgabe oder Differenzierung">+ Arbeitsblatt</button></div>
+    <div class="ab-acts">${multi ? `<button class="link" type="button" data-act="abx-left"${P.abActive ? '' : ' disabled'}>← nach vorn</button><button class="link" type="button" data-act="abx-right"${P.abActive < A.length - 1 ? '' : ' disabled'}>nach hinten →</button><button class="link" type="button" data-act="abx-dup">Duplizieren</button><button class="link danger" type="button" data-act="abx-del">Dieses AB löschen</button>` : '<small class="hint">Eine Stunde kann mehrere Arbeitsblätter haben.</small>'}<button class="link" type="button" data-act="abx-out" style="margin-left:auto" title="Alle ABs, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde ausgeben</button></div></div>`;
+}
+function abGo(k) {
+  const P = state.sheet; if (!P.abs || k === P.abActive) return; abSwitch(k);
+  state.sel = null; state.closed = defaultClosed(); state.taskOpen = new Set(); closeGloss(); closeZl(); closeMenu();
+  renderEditor(); $('#editor').scrollTop = 0; clearTimeout(renderTimer); renderPreview();
+}
+function abAdd() {
+  const P = state.sheet; if (hist.timer) histCommit();
+  if (!P.abs) { P.abs = [{ id: 'ab' + uid(), active: true }]; P.abActive = 0; P.stunde = { title: P.meta.title || '' }; }
+  const n = P.abs.length + 1; const nr0 = String(abMeta(0).nr || '').trim();
+  const nr = /^\d+$/.test(nr0) ? nr0 + String.fromCharCode(96 + n) : '';
+  P.abs.push({ id: 'ab' + uid(), meta: { nr, title: 'Arbeitsblatt ' + n, topic: '' }, blocks: [newBlock('tasks')], zrefs: [] });
+  abSwitch(P.abs.length - 1, true); state.sel = 'meta'; state.closed = new Set(cardIds().filter(x => x !== 'meta')); state.taskOpen = new Set();
+  changed(true); clearTimeout(renderTimer); renderPreview(); toast(`${abLabel(P.meta, P.abActive)} angelegt · Titel und Nummer oben im Kopf`, 'Rückgängig', histUndo);
+}
+function abAct(act, a) {
+  const P = state.sheet;
+  if (act === 'abx-go') { abGo(+a.dataset.abk); return; }
+  if (act === 'abx-add') { abAdd(); return; }
+  if (act === 'abx-out') { exportStunde(); return; }
+  if (!P.abs) return; const k = P.abActive; if (hist.timer) histCommit();
+  if (act === 'abx-left' || act === 'abx-right') { const j = act === 'abx-left' ? k - 1 : k + 1; if (j < 0 || j >= P.abs.length) return; [P.abs[k], P.abs[j]] = [P.abs[j], P.abs[k]]; P.abActive = j; changed(true); clearTimeout(renderTimer); renderPreview(); return; }
+  if (act === 'abx-dup') {
+    const c = clone({ meta: abPick(P.meta), blocks: P.blocks }); c.id = 'ab' + uid(); c.zrefs = []; c.blocks.forEach(b => { b.id = 'b' + uid(); }); c.meta.title = (c.meta.title || 'Arbeitsblatt') + ' (Kopie)'; delete c.meta.dg;
+    P.abs.splice(k + 1, 0, c); abSwitch(k + 1, true); state.sel = null; changed(true); clearTimeout(renderTimer); renderPreview(); toast('Arbeitsblatt dupliziert', 'Rückgängig', histUndo); return;
+  }
+  if (act === 'abx-del') {
+    const lab = abLabel(P.meta, k);
+    abSwitch(k > 0 ? k - 1 : 1, true); const cur = P.abActive; P.abs.splice(k, 1); if (cur > k) P.abActive = cur - 1;
+    if (P.abs.length === 1) { delete P.abs; P.abActive = 0; delete P.stunde; }
+    state.sel = null; changed(true); clearTimeout(renderTimer); renderPreview(); toast(`${lab} gelöscht`, 'Rückgängig', histUndo);
+  }
+}
+
 /* ================= Phase und Zeit je Aufgabe (Phasierung nach Tilman von Brand) ================= */
 const PHASEN = {
   ein: { label: 'Einstieg', c: '#C2410C' },
@@ -2663,7 +2748,7 @@ function tfSuggest(b) {
 /* Ausgabe „Tafelbild“: je Baustein eine Seite A4 quer, vollständig (Lehrerfassung) oder als Lückenfassung */
 function layoutTafel() {
   const sh = state.sheet, m = sh.meta; const v = sheetView(); const host = $('#fit-host'); const full = state.fassung === 'lehrer'; const out = [];
-  const tbs = sh.blocks.filter(b => b.type === 'tafel' && blockVisible(b, v));
+  const tbs = stBlocks().filter(b => b.type === 'tafel' && blockVisible(b, v));
   tbs.forEach((b, i) => {
     const pg = el(`<div class="page tf-page" data-w="297" data-h="210"><div class="tf-frame">${tafelHTML(b, { gaps: !full })}</div><div class="tf-foot"><span>${esc([m.nr ? 'AB ' + m.nr : '', tfStrip(m.title)].filter(Boolean).join(' · '))}</span><span>${full ? 'Tafelbild' : 'Tafelbild · Lückenfassung'}${tbs.length > 1 ? ` · ${i + 1}/${tbs.length}` : ''}</span></div></div>`);
     setAccent(pg, m); host.appendChild(pg);
@@ -2675,7 +2760,7 @@ function layoutTafel() {
 
 /* Beamer: Tafelbild bildschirmfüllend, Schritt für Schritt aufdecken */
 function tfBeamer(bid) {
-  const v = sheetView(); const list = state.sheet.blocks.filter(x => x.type === 'tafel' && blockVisible(x, v));
+  const v = sheetView(); const list = stBlocks().filter(x => x.type === 'tafel' && blockVisible(x, v));
   if (!list.length) { toast('Es gibt noch kein Tafelbild. Fügen Sie unten bei den Bausteinen „Tafelbild“ hinzu.'); return; }
   const S = { k: Math.max(0, list.findIndex(x => x.id === bid)), cur: 0, max: 0, gaps: false, board: false };
   try { S.board = localStorage.getItem('abw.tfboard') === '1'; } catch {}
@@ -2791,9 +2876,15 @@ function presChunks(L, poem) {
   return out;
 }
 function presSlides() {
+  const P = state.sheet; const off = new Set(Array.isArray(P.meta.presOff) ? P.meta.presOff : []); const multi = !!P.abs;
+  const S = off.has('title') ? [] : [{ k: 'title' }];
+  stABs().forEach(A => withAB(A.k, () => { const m = state.sheet.meta; const lab = abLabel(m, A.k); if (multi && !off.has('ab:' + A.id)) S.push({ k: 'abhead', lab, title: m.title || '', topic: m.topic || '', ab: lab }); presSlidesAB(off, multi ? lab : '', multi ? A.id : '').forEach(x => S.push(x)); }));
+  renderPreview();
+  return S;
+}
+function presSlidesAB(off, lab, abId) {
   const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false };
-  const off = new Set(Array.isArray(m.presOff) ? m.presOff : []);
-  const mats = presCollect(); const S = off.has('title') ? [] : [{ k: 'title' }]; let t = 0;
+  const mats = presCollect(true); const S = []; let t = 0;
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
     if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (lvOk(it, v) ? i : -1)).filter(i => i >= 0); its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) S.push({ k: 'task', no: t, it }); }); return; }
@@ -2808,31 +2899,37 @@ function presSlides() {
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
   });
-  if (m.dg && m.dg.id && !off.has('qr')) S.push({ k: 'qr', link: dgLink(m.dg.id) });
+  const qk = abId ? 'qr:' + abId : 'qr';
+  if (m.dg && m.dg.id && !off.has(qk)) S.push({ k: 'qr', link: dgLink(m.dg.id) });
+  if (lab) S.forEach(x => { x.ab = lab; });
   return S;
 }
 // Auswahlliste für „Ausgeben → PowerPoint“: eine Zeile je Baustein bzw. je Aufgabe
 function presPick() {
-  const sh = state.sheet, m = sh.meta; const num = numbering(sh); const L = [{ key: 'title', label: 'Titelfolie' }]; let t = 0;
+  const P = state.sheet; const multi = !!P.abs; const L = [{ key: 'title', label: 'Titelfolie' }];
   const short = (x, n) => { const p = plainText(x || '').replace(/\s+/g, ' ').trim(); return p.length > n ? p.slice(0, n - 1).replace(/\s+\S*$/, '') + ' …' : p; };
-  sh.blocks.forEach(b => {
-    if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
-    else if (b.type === 'tasks') { if (b.restart) t = 0; b.items.forEach((it, i) => { t++; if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + t} · ${short(it.text, 64)}`, task: true }); }); }
-    else if (b.type === 'tafel') L.push({ key: b.id, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
-    else if (b.type === 'info') L.push({ key: b.id, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
-    else if (b.type === 'quote') L.push({ key: b.id, label: 'Zitat · ' + short(b.text, 50) });
-    else if (b.type === 'image' && b.src) L.push({ key: b.id, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
-    else if (b.type === 'table') L.push({ key: b.id, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
-    else if (b.type === 'phrases') L.push({ key: b.id, label: short(b.title || 'Formulierungshilfen', 60) });
-    else if (b.type === 'match') L.push({ key: b.id, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });
+  stABs().forEach(A => {
+    const m = A.meta; const num = numbering({ ...P, meta: m, blocks: A.blocks }); let t = 0;
+    if (multi) L.push({ key: 'ab:' + A.id, label: `${abLabel(m, A.k)} · ${short(m.title, 50) || 'ohne Titel'} (Zwischenfolie)`, head: true });
+    A.blocks.forEach(b => {
+      if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
+      else if (b.type === 'tasks') { if (b.restart) t = 0; b.items.forEach((it, i) => { t++; if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + t} · ${short(it.text, 64)}`, task: true }); }); }
+      else if (b.type === 'tafel') L.push({ key: b.id, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
+      else if (b.type === 'info') L.push({ key: b.id, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
+      else if (b.type === 'quote') L.push({ key: b.id, label: 'Zitat · ' + short(b.text, 50) });
+      else if (b.type === 'image' && b.src) L.push({ key: b.id, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
+      else if (b.type === 'table') L.push({ key: b.id, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
+      else if (b.type === 'phrases') L.push({ key: b.id, label: short(b.title || 'Formulierungshilfen', 60) });
+      else if (b.type === 'match') L.push({ key: b.id, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });
+    });
+    if (m.dg && m.dg.id) L.push({ key: multi ? 'qr:' + A.id : 'qr', label: 'QR-Code zur digitalen Fassung' });
   });
-  if (m.dg && m.dg.id) L.push({ key: 'qr', label: 'QR-Code zur digitalen Fassung' });
   return L;
 }
 function presPickHTML() {
   const L = presPick(); const off = new Set(state.sheet.meta.presOff || []); const on = L.filter(x => !off.has(x.key)).length;
   return `<div class="f pr-pick-f"><span>Folien <small id="pr-pick-n">${on} von ${L.length} ausgewählt</small></span>
-    <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${off.has(x.key) ? '' : ' checked'}><span>${esc(x.label)}</span></label>`).join('')}</div>
+    <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}${x.head ? ' pk-head' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${off.has(x.key) ? '' : ' checked'}><span>${esc(x.label)}</span></label>`).join('')}</div>
     <div class="pr-pick-a"><button class="link" type="button" data-act="pr-pick" data-v="all">Alle</button><button class="link" type="button" data-act="pr-pick" data-v="tasks">Nur Aufgaben</button><button class="link" type="button" data-act="pr-pick" data-v="none">Keine</button></div>
     <small class="hint">Die Auswahl wird im Blatt gespeichert und gilt auch für „Präsentieren“.</small></div>`;
 }
@@ -2939,9 +3036,11 @@ function a3Split(pg) {
   });
 }
 function layoutA3() {
-  const v = sheetView(); const list = state.sheet.blocks.filter(b => b.type === 'a3' && blockVisible(b, v)); if (!list.length) return [];
-  const mats = list.some(b => a3Tpl(b) === 'annot') ? presCollect(true) : {};
-  const out = []; list.forEach(b => a3Pages(b, mats).forEach(pg => (state.a3p === 'a4x2' ? a3Split(pg) : [pg]).forEach(p => out.push({ pg: p, over: false }))));
+  const v = sheetView(); const out = [];
+  stABs().forEach(A => {
+    const list = A.blocks.filter(b => b.type === 'a3' && blockVisible(b, v)); if (!list.length) return;
+    withAB(A.k, () => { const mats = list.some(b => a3Tpl(b) === 'annot') ? presCollect(true) : {}; list.forEach(b => a3Pages(b, mats).forEach(pg => (state.a3p === 'a4x2' ? a3Split(pg) : [pg]).forEach(p => out.push({ pg: p, over: false })))); });
+  });
   return out;
 }
 function a3Editor(b) {
@@ -2971,7 +3070,9 @@ const prCk = c => String(c == null ? '' : c).replace(/^\s*\[\s*\]\s*$/, '☐').r
 function presSlideHTML(s) {
   const m = state.sheet.meta; const acc = pageAcc(m).c;
   switch (s.k) {
-    case 'title': return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
+    case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
+    case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
+      return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
     case 'mat': {
       let h = ''; s.lines.forEach((l, i) => { if (i && l.st) h += '<span class="pr-gap"></span><span class="pr-gap"></span>'; h += `<span class="pr-ln">${esc(l.num)}</span><span class="pr-lt">${esc(l.t)}</span>`; });
       return presHead(esc(s.tag), inlineHTML(matTitle(s.b) || '') + (s.of > 1 ? ` <small>${s.part}/${s.of}</small>` : ''), '') + `<div class="pr-body"><div class="pr-fit pr-lines${s.poem ? ' poem' : ''}">${h}</div></div>${s.part === s.of && s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
@@ -2999,29 +3100,30 @@ function presSlideHTML(s) {
 const vpOf = () => { const m = state.sheet.meta; if (!m.vp || typeof m.vp !== 'object') m.vp = {}; return m.vp; };
 const vpClock = (start, min) => { const t = /^(\d{1,2})[:.](\d{2})$/.exec(String(start || '').trim()); if (!t) return null; const x = (+t[1]) * 60 + (+t[2]) + min; return `${String(Math.floor(x / 60) % 24).padStart(2, '0')}:${String(x % 60).padStart(2, '0')}`; };
 function vpRows() {
-  const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: true }; const tags = matTags(sh.blocks);
-  const mats = sh.blocks.filter(b => tags[b.id]); const ab = m.nr ? 'AB ' + m.nr : 'Arbeitsblatt';
-  const tafel = sh.blocks.filter(b => b.type === 'tafel' && blockVisible(b, v)); const a3 = sh.blocks.filter(b => b.type === 'a3');
-  const rows = []; let t = 0, firstTask = -1;
-  sh.blocks.forEach((b, bi) => {
-    if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; if (firstTask < 0) firstTask = bi;
-    const idx = b.items.map((it, i) => (lvOk(it, v) ? i : -1)).filter(i => i >= 0);
-    itemsFor(b, v).forEach((it, k) => {
-      t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
-      const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
-      const media = [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
-      if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
-      a3.filter(x => x.taskRef === b.id + ':' + idx[k]).forEach(x => media.push(A3_TPL[a3Tpl(x)].label + ' (A3)'));
-      if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
-      if (m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
-      rows.push({ no: t, it, ph, min: itMin(it), soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '' });
+  const P = state.sheet; const multi = !!P.abs; const v = { ...sheetView(), lehrer: true };
+  const SB = stBlocks(); const tafel = SB.filter(b => b.type === 'tafel' && blockVisible(b, v)); const a3 = SB.filter(b => b.type === 'a3');
+  const rows = []; let imp = null;
+  stABs().forEach(A => withAB(A.k, () => {
+    const sh = state.sheet, m = sh.meta; const tags = matTags(sh.blocks); const mats = sh.blocks.filter(b => tags[b.id]); const ab = abLabel(m, A.k); const abLab = multi ? ab : '';
+    let t = 0, firstTask = -1;
+    sh.blocks.forEach((b, bi) => {
+      if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; if (firstTask < 0) firstTask = bi;
+      const idx = b.items.map((it, i) => (lvOk(it, v) ? i : -1)).filter(i => i >= 0);
+      itemsFor(b, v).forEach((it, k) => {
+        t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
+        const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
+        const media = [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
+        if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
+        a3.filter(x => x.taskRef === b.id + ':' + idx[k]).forEach(x => media.push(A3_TPL[a3Tpl(x)].label + ' (A3)'));
+        if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
+        if (m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
+        rows.push({ no: t, abLab, it, ph, min: itMin(it), soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '' });
+      });
     });
-  });
+    if (A.k === 0 && !imp) imp = sh.blocks.find((b, bi) => (b.type === 'quote' && plainText(b.text || '').trim() || b.type === 'image' && b.src) && (firstTask < 0 || bi < firstTask)) || null;
+  }));
   // Einstieg mit Zitat oder Bild, wenn keine Aufgabe dafür vorgesehen ist
-  if (!rows.some(r => r.ph === 'ein')) {
-    const imp = sh.blocks.find((b, bi) => (b.type === 'quote' && plainText(b.text || '').trim() || b.type === 'image' && b.src) && (firstTask < 0 || bi < firstTask));
-    if (imp) rows.unshift({ auto: true, ph: 'ein', min: 0, soz: 'Plenum', task: imp.type === 'quote' ? `Impuls: Zitat „${plainText(imp.text).slice(0, 120)}“${imp.author ? ' (' + plainText(imp.author) + ')' : ''}; Schülerinnen und Schüler äußern erste Eindrücke.` : `Impuls: ${plainText(imp.caption || 'Bild')}; Schülerinnen und Schüler beschreiben und deuten.`, eh: [], media: [imp.type === 'quote' ? 'Zitat (Beamer oder Tafel)' : 'Bild (Beamer)'] });
-  }
+  if (!rows.some(r => r.ph === 'ein') && imp) rows.unshift({ auto: true, ph: 'ein', min: 0, soz: 'Plenum', task: imp.type === 'quote' ? `Impuls: Zitat „${plainText(imp.text).slice(0, 120)}“${imp.author ? ' (' + plainText(imp.author) + ')' : ''}; Schülerinnen und Schüler äußern erste Eindrücke.` : `Impuls: ${plainText(imp.caption || 'Bild')}; Schülerinnen und Schüler beschreiben und deuten.`, eh: [], media: [imp.type === 'quote' ? 'Zitat (Beamer oder Tafel)' : 'Bild (Beamer)'] });
   // Sicherung am Tafelbild, wenn keine Aufgabe dafür vorgesehen ist
   if (tafel.length && !rows.some(r => r.ph === 'sich')) rows.push({ auto: true, ph: 'sich', min: 0, soz: 'Plenum', task: 'Ergebnisse werden im Unterrichtsgespräch gesichert.', eh: [], media: tafel.map(x => 'Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')) });
   const main = rows.filter(r => r.ph !== 'ha'), ha = rows.filter(r => r.ph === 'ha');
@@ -3032,7 +3134,7 @@ function vpRows() {
 const vpTime = r => r.ph === 'ha' ? 'HA' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
 function vpTableHTML() {
   const R = vpRows(); if (!R.rows.length) return '<p class="hint">Noch keine Aufgaben. Der Verlaufsplan entsteht aus den Aufgaben des Blatts.</p>';
-  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}"><td><b>${esc(vpTime(r))}</b>${r.min && r.ph !== 'ha' ? `<small>${r.min} Min.</small>` : ''}</td><td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>Aufgabe ${r.no}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}"><td><b>${esc(vpTime(r))}</b>${r.min && r.ph !== 'ha' ? `<small>${r.min} Min.</small>` : ''}</td><td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>${r.abLab ? esc(r.abLab) + ', ' : ''}Aufgabe ${r.no}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
     <p class="vp-sum">${R.total} von ${R.len} Minuten verplant${R.total > R.len ? ` · <b class="warn">${R.total - R.len} Min. zu viel</b>` : ''}${R.rows.some(r => r.ph !== 'ha' && !r.min) ? ' · nicht alle Schritte haben eine Zeit' : ''}${R.rows.some(r => r.auto) ? ' · kursive Zeilen sind ergänzt' : ''}</p>`;
 }
 function vpHTML() {
@@ -3056,7 +3158,8 @@ async function exportVP() {
     const P = (runs, o = {}) => xp(runs, { line: 252, ...o });
     const parts = [];
     parts.push(P(xr('Unterrichtsverlaufsplan', { b: 1, sz: 30, color: A }), { after: 80 }));
-    const info = [['Thema der Stunde', [m.title, m.topic].filter(Boolean).map(x => plainText(x)).join(' – ')], ['Lerngruppe', [m.course, KL(sh.klasse).label].filter(Boolean).join(' · ')], ['Schule', m.school || ''], ['Datum', vp.datum || ''], ['Zeit', `${vp.start ? vp.start + ' Uhr, ' : ''}${R.len} Minuten`], ['Material', [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(': ')]];
+    const multiV = !!sh.abs; const abList = stABs().map(x => abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''));
+    const info = [['Thema der Stunde', multiV ? stTitle(sh) : [m.title, m.topic].filter(Boolean).map(x => plainText(x)).join(' – ')], ['Lerngruppe', [m.course, KL(sh.klasse).label].filter(Boolean).join(' · ')], ['Schule', m.school || ''], ['Datum', vp.datum || ''], ['Zeit', `${vp.start ? vp.start + ' Uhr, ' : ''}${R.len} Minuten`], ['Material', multiV ? abList.join('; ') : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(': ')]];
     const iw = [TW(45), PW - TW(45)];
     parts.push(xtbl(iw, info.map(([k, x]) => xtr(cell(P(xr(k, { b: 1, sz: 19, color: GREY })), iw[0]) + cell(P(xr(x || ' ', { sz: 19 })), iw[1]), { cant: 1 })).join(''), NOB));
     parts.push(P('', { after: 60 }));
@@ -3071,7 +3174,7 @@ async function exportVP() {
       const ital = r.auto ? { i: 1 } : {};
       const c0 = P(xr(vpTime(r), { b: 1, sz: 18 })) + (r.min && r.ph !== 'ha' ? P(xr(r.min + ' Min.', { sz: 16, color: GREY })) : '');
       const c1 = P(xr(r.ph ? PHASEN[r.ph].label : 'ohne Phase', { b: 1, sz: 18, color: r.ph ? PHASEN[r.ph].c.slice(1) : GREY }));
-      const c2 = P((r.no ? xr(`Aufgabe ${r.no}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : '') + xrInline(tfStr(r.task).replace(/\n+/g, ' '), { sz: 18, ...ital }));
+      const c2 = P((r.no ? xr(`${r.abLab ? r.abLab + ', ' : ''}Aufgabe ${r.no}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : '') + xrInline(tfStr(r.task).replace(/\n+/g, ' '), { sz: 18, ...ital }));
       const c3 = r.eh.length ? r.eh.map(x => P(xr('–', { sz: 18, color: A }) + '<w:r><w:tab/></w:r>' + xrInline(x, { sz: 18 }), { ind: `<w:ind w:left="${TW(3.5)}" w:hanging="${TW(3.5)}"/>`, after: 20 })).join('') : P('');
       const c4 = P(xr(r.soz || ' ', { sz: 18 }));
       const c5 = r.media.map(x => P(xr(x, { sz: 17 }), { after: 10 })).join('') || P('');
@@ -3079,8 +3182,8 @@ async function exportVP() {
     }).join('');
     const sum = xtr(cell(P(xr(`${R.total} von ${R.len} Minuten verplant` + (R.total > R.len ? ` (${R.total - R.len} Min. zu viel)` : ''), { sz: 17, color: GREY })), PW, { span: 6 }), { cant: 1 });
     parts.push(xtbl(ws, head + body + sum, bd));
-    const mats = sh.blocks.filter(b => b.type === 'material'); const tags = matTags(sh.blocks);
-    if (mats.length) { parts.push(P(xr('Materialien', { b: 1, sz: 21, color: A }), { before: 200, after: 30, keepNext: true })); mats.forEach(b => parts.push(P(xr((tags[b.id] || 'M') + '  ', { b: 1, sz: 18 }) + xrInline(b.title || 'ohne Titel', { sz: 18 }) + (b.source ? xr('  (' + plainText(b.source) + ')', { sz: 16, color: GREY }) : ''), { after: 20 }))); }
+    const ml = []; stABs().forEach(X => { const tags = matTags(X.blocks); X.blocks.filter(b => b.type === 'material').forEach(b => ml.push({ ab: multiV ? abLabel(X.meta, X.k) + ', ' : '', tag: tags[b.id] || 'M', b })); });
+    if (ml.length) { parts.push(P(xr('Materialien', { b: 1, sz: 21, color: A }), { before: 200, after: 30, keepNext: true })); ml.forEach(({ ab, tag, b }) => parts.push(P(xr(ab + tag + '  ', { b: 1, sz: 18 }) + xrInline(b.title || 'ohne Titel', { sz: 18 }) + (b.source ? xr('  (' + plainText(b.source) + ')', { sz: 16, color: GREY }) : ''), { after: 20 }))); }
     const sect = `<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="${TW(14)}" w:right="${TW(15)}" w:bottom="${TW(14)}" w:left="${TW(15)}" w:header="0" w:footer="${TW(8)}" w:gutter="0"/></w:sectPr>`;
     const NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
     const XH = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
@@ -3096,14 +3199,14 @@ async function exportVP() {
     zip.file('[Content_Types].xml', ct); zip.file('_rels/.rels', rootRels); zip.file('docProps/core.xml', core);
     zip.file('word/document.xml', documentXml); zip.file('word/styles.xml', stylesXml); zip.file('word/settings.xml', settingsXml); zip.file('word/_rels/document.xml.rels', rels);
     const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-    overlay(''); await deliver(fileBase() + '_Verlaufsplan.docx', blob);
+    overlay(''); await deliver((sh.abs ? 'Stunde_' + slug(stTitle(sh)) : fileBase()) + '_Verlaufsplan.docx', blob);
   } catch (err) { console.error(err); overlay(''); toast('Der Verlaufsplan ließ sich nicht erstellen. Bitte erneut versuchen.'); }
   finally { overlay(''); busy = false; }
 }
 function openPres(start) {
   let S; try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
   if (!S.length) { toast('Es ist keine Folie ausgewählt. Unter „Ausgeben → PowerPoint“ lassen sich Folien wählen.'); return; }
-  const m = state.sheet.meta; const foot = esc([m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
+  const m = state.sheet.meta; const foot = esc(state.sheet.abs ? stTitle(state.sheet) : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
   const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
@@ -3142,7 +3245,7 @@ function openPres(start) {
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); apply(); };
   const show = () => {
     const sl = S[P.i]; slide.className = 'pr-slide pr-k-' + sl.k + (sl.k === 'task' && itMin(sl.it) ? ' has-timer' : '');
-    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl) + `<div class="pr-foot"><span>${foot}</span><span>${P.i + 1}</span></div>`;
+    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
     fit();
@@ -3210,7 +3313,7 @@ async function exportPPTX() {
     const pptx = new window.PptxGenJS(); pptx.layout = 'LAYOUT_WIDE';
     pptx.title = plainText(m.title || 'Arbeitsblatt'); pptx.subject = plainText(m.topic || ''); pptx.company = m.school || ''; pptx.author = m.course || '';
     const W = 13.333, X = 0.6, CW = W - 1.2, Y0 = 1.35, BH = 5.45;
-    const foot = [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · ');
+    const multi = !!state.sheet.abs; const foot = multi ? stTitle(state.sheet) : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · ');
     pptx.defineSlideMaster({ title: 'AB', background: { color: 'FFFFFF' }, objects: [{ rect: { x: 0, y: 0, w: W, h: 0.1, fill: { color: ACC } } }, { text: { text: foot, options: { x: X, y: 7.02, w: 10, h: 0.3, fontFace: F, fontSize: 10, color: '8A909C', margin: 0 } } }], slideNumber: { x: W - X - 0.6, y: 7.02, w: 0.6, h: 0.3, fontFace: F, fontSize: 10, color: '8A909C', align: 'right' } });
     const head = (sl, lab, title, chips) => {
       let x = X;
@@ -3221,7 +3324,15 @@ async function exportPPTX() {
     const imgIn = async (sl, data, path, bx, by, bw, bh) => { const [iw, ih] = await imgSize(data || path); const k = Math.min(bw / iw, bh / ih); const w = iw * k, h = ih * k; sl.addImage({ ...(data ? { data } : { path }), x: bx + (bw - w) / 2, y: by + (bh - h) / 2, w, h }); };
     for (const s of S) {
       const sl = pptx.addSlide({ masterName: 'AB' });
-      if (s.k === 'title') {
+      if (s.k === 'abhead') {
+        sl.addText(s.lab, { shape: 'roundRect', rectRadius: 0.08, x: X, y: 2.3, w: Math.max(1.6, s.lab.length * 0.2 + 0.6), h: 0.8, fontFace: F, fontSize: 28, bold: true, color: 'FFFFFF', fill: { color: ACC }, align: 'center', valign: 'middle', margin: 0 });
+        sl.addText(plainText(s.title || ''), { x: X, y: 3.3, w: CW, h: 1.2, fontFace: F, fontSize: 40, bold: true, color: INK, valign: 'top', margin: 0, fit: 'shrink' });
+        if (s.topic) sl.addText(plainText(deQuoteStr(s.topic)), { x: X, y: 4.5, w: CW, h: 0.7, fontFace: F, fontSize: 22, color: GREY, margin: 0 });
+      } else if (s.k === 'title' && multi) {
+        sl.addText(stTitle(state.sheet), { x: X, y: 1.9, w: CW, h: 1.4, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
+        sl.addText(stABs().map((x, i, a) => ({ text: abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''), options: { breakLine: i < a.length - 1 } })), { x: X, y: 3.45, w: CW, h: 1.8, fontFace: F, fontSize: 22, color: GREY, valign: 'top', margin: 0 });
+        const c = [m.course, m.school].filter(Boolean).join(' · '); if (c) sl.addText(c, { x: X, y: 5.6, w: CW, h: 0.5, fontFace: F, fontSize: 16, color: '8A909C', margin: 0 });
+      } else if (s.k === 'title') {
         let x = X; if (m.nr) { sl.addText([{ text: 'AB', options: { fontSize: 13, breakLine: true } }, { text: String(m.nr), options: { fontSize: 34, bold: true } }], { x, y: 2.15, w: 1.2, h: 1.2, fontFace: F, color: 'FFFFFF', fill: { color: ACC }, align: 'center', valign: 'middle', margin: 0 }); x += 1.55; }
         sl.addText(plainText(m.title || 'Arbeitsblatt'), { x, y: 2.0, w: W - X - x, h: 1.5, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
         if (m.topic) sl.addText(plainText(deQuoteStr(m.topic)), { x, y: 3.55, w: W - X - x, h: 0.8, fontFace: F, fontSize: 24, color: GREY, valign: 'top', margin: 0 });
@@ -4494,7 +4605,7 @@ function segHTML(key, opts, cur, label) {
   return `<div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-pv="${key}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${l}</button>`).join('')}</div>`;
 }
 function renderOut() {
-  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const nTf = sh.blocks.filter(x => x.type === 'tafel').length; const nA3 = sh.blocks.filter(x => x.type === 'a3').length;
+  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const SB = stBlocks(); const nTf = SB.filter(x => x.type === 'tafel').length; const nA3 = SB.filter(x => x.type === 'a3').length;
   $('#outsw').innerHTML = [['blatt', 'Arbeitsblatt', 0], ['tipps', 'Tippkarten', nT], ['karten', 'Tafelkarten', nK], ['tafel', 'Tafelbild', nTf], ['a3', 'A3-Vorlagen', nA3]]
     .map(([k, l, n]) => `<button type="button" data-out="${k}" aria-pressed="${state.out === k}">${l}${n ? `<span>${n}</span>` : ''}</button>`).join('');
   let h = '';
@@ -4865,7 +4976,7 @@ function newDlgHTML() {
   const fs = libFolders(kl.id); const tpls = [...tplsFor(kl.id), ...(list.length ? [{ k: 'copy', label: 'Kopie eines Blatts', d: 'ein vorhandenes Blatt als Grundlage', ic: 'dup' }] : [])];
   const t = tpls.find(x => x.k === d.tpl) || tpls[0]; const isK = isKlausurTpl(d.tpl);
   const defTitle = d.tpl === 'leer' ? '' : d.tpl === 'copy' ? '' : (isK && kl.anrede === 'du' ? 'Klassenarbeit' : t.title || t.label);
-  return `<h2 id="dlg-t">Neues Arbeitsblatt</h2>
+  return `<h2 id="dlg-t">Neue Stunde</h2>
     <div class="nw-g">
       <div class="f"><span>Klasse</span><div class="nw-kl">${KLASSEN.filter(k => k.fach === kl.fach).map(k => `<button type="button" class="nw-k" data-act="nw-kl" data-v="${k.id}" aria-pressed="${k.id === kl.id}"><i style="background:${ACCENTS[k.accent].c}"></i>${esc(k.label)}</button>`).join('')}</div>
         <small>${esc(FAECHER[kl.fach].label)}${kl.course && kl.course !== FAECHER[kl.fach].label ? ' · ' + esc(kl.course) : ''}${kl.school ? ' · ' + esc(kl.school) : ''} · Aufgaben in der ${kl.anrede === 'du' ? 'du' : 'Sie'}-Form</small></div>
@@ -4907,7 +5018,7 @@ async function newGo() {
   const first = sh.blocks.find(b => b.type === 'material' || b.type === 'poem' || (b.type === 'image' && b.mk)) || sh.blocks.find(b => b.type !== 'pagebreak');
   setView('edit');
   if (first) { state.sel = first.id; openOnly(first.id); renderEditor(); const c = $(`#editor [data-bid="${first.id}"]`); if (c) { c.scrollIntoView({ block: 'start' }); const f = c.querySelector('.rtx,textarea,input[type=text]'); if (f) f.focus({ preventScroll: true }); } }
-  toast(d.tpl === 'leer' ? 'Neues Blatt angelegt' : d.tpl === 'copy' ? 'Kopie angelegt' : `Vorlage „${(tplsFor(d.kl).find(x => x.k === d.tpl) || {}).label}“ angelegt`);
+  toast(d.tpl === 'leer' ? 'Neue Stunde angelegt' : d.tpl === 'copy' ? 'Kopie angelegt' : `Vorlage „${(tplsFor(d.kl).find(x => x.k === d.tpl) || {}).label}“ angelegt`);
 }
 function exampleSheet() {
   const b = (type, o) => Object.assign(newBlock(type), o);
@@ -4948,6 +5059,7 @@ function normalizeSheet(sh) {
   if (!Array.isArray(sh.cards)) sh.cards = [];
   sh.meta.exam = { ...defaultMeta('', sh.klasse).exam, ...(sh.meta.exam || {}) };
   sh.meta.kk = kkOf(sh.meta);
+  abNorm(sh);
   return sh;
 }
 
@@ -6051,7 +6163,7 @@ function renderEditor(focusSel) {
     const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
     const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'a3' ? '<div class="memo-flag">A3-Vorlagen entstehen aus dem Baustein „A3-Vorlage“ (unten bei den Bausteinen). Rechts sehen Sie sie in A3; „2 × A4 zum Kleben“ verteilt jede Seite auf zwei A4-Blätter mit Schnittlinie.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Das Tafelbild entsteht aus dem Baustein „Tafelbild“. Rechts steht es auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt es Schritt für Schritt auf.</div>' : '';
     const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
-    ed.innerHTML = fold + intro + metaCard() + seiteCard() + blocks.map((b, i) => {
+    ed.innerHTML = fold + abBarHTML() + intro + metaCard() + seiteCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
       return insRow(i) + `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
         <div class="card-h" data-act="toggle" draggable="true" title="Zum Umsortieren ziehen"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">Gruppe ${b.group}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
@@ -6070,6 +6182,8 @@ function refreshSummaries() {
   state.sheet.blocks.forEach(b => { const s = document.querySelector(`#editor [data-bid="${b.id}"] [data-sum]`); if (s) s.textContent = summary(b, num); });
   const ms = document.querySelector('#editor [data-bid="meta"] .sum'); const m = state.sheet.meta;
   if (ms) ms.textContent = (m.nr ? 'AB ' + m.nr + ' · ' : '') + (m.title || 'Ohne Titel');
+  const tb = document.querySelector('#editor .ab-tab[aria-selected="true"] span'); if (tb) tb.textContent = plainText(m.title || '') || 'ohne Titel';
+  const tn = document.querySelector('#editor .ab-tab[aria-selected="true"] b'); if (tn) tn.textContent = abLabel(m, state.sheet.abActive || 0);
   document.querySelectorAll('#editor [data-prog]').forEach(p => p.innerHTML = progressionHTML());
 }
 
@@ -6112,6 +6226,7 @@ function snapshot() { undoSnap = clone(state.sheet); }
 
 function onInput(e) {
   const t = e.target; const isRt = !!(t.classList && t.classList.contains('rtx'));
+  if (t.dataset && t.dataset.st === 'title') { if (!state.sheet.stunde) state.sheet.stunde = {}; state.sheet.stunde.title = t.value; changed(false); return; }
   if (t.dataset && t.dataset.rlpq != null) { state.rlpQ = t.value; rlpFilter(t.closest('.rlp-f')); return; }
   if (isRt && rtAuto(e, t)) return;
   const k = t.dataset.k; if (!k) return;
@@ -6185,7 +6300,8 @@ function edDrop(id, ref, before) {
 function onClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
   if (hist.timer && !/^(toggle|undo|redo|ins-open|ins-close|sub-toggle|fmt-toggle)$/.test(a.dataset.act)) histCommit();
-  const act = a.dataset.act; const card = a.closest('[data-bid]'); const bid = card && card.dataset.bid;
+  const act = a.dataset.act; if (act.startsWith('abx-')) { abAct(act, a); return; }
+  const card = a.closest('[data-bid]'); const bid = card && card.dataset.bid;
   const blocks = state.sheet.blocks; const idx = blocks.findIndex(b => b.id === bid); const b = blocks[idx];
   switch (act) {
     case 'toggle': {
@@ -6400,7 +6516,8 @@ function localLib() { return lsGet(LS.lib) || {}; }
 function searchText(sh) {
   const out = []; const add = v => { if (v != null && String(v).trim()) out.push(String(v)); };
   const m = sh.meta || {}; add(m.topic); if (m.mode === 'klausur') add(m.exam && m.exam.label);
-  (sh.blocks || []).forEach(b => {
+  if (sh.abs) { add(sh.stunde && sh.stunde.title); sh.abs.forEach(a => { if (a && a.meta) { add(a.meta.title); add(a.meta.topic); } }); }
+  [...(sh.blocks || []), ...(sh.abs || []).flatMap(a => (a && a.blocks) || [])].forEach(b => {
     add(b.title); add(b.source); add(b.caption);
     if (b.type === 'tasks') (b.items || []).forEach(it => add(it.text));
     if (['info', 'heading', 'text', 'quote'].includes(b.type)) { add(b.text); add(b.author); }
@@ -6411,7 +6528,7 @@ function searchText(sh) {
   });
   return out.join(' ').replace(/[*+=_\\]+/g, '').replace(/\s+/g, ' ').trim().slice(0, 4000);
 }
-function entryOf(sh) { return { id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), updatedAt: sh.updatedAt || 0, q: searchText(sh) }; }
+function entryOf(sh) { return { id: sh.id, klasse: KL(sh.klasse).id, title: stTitle(sh), nr: String(stNr(sh)), abs: sh.abs ? sh.abs.length : 1, updatedAt: sh.updatedAt || 0, q: searchText(sh) }; }
 
 const localB = {
   kind: 'local', key: 'local',
@@ -6452,7 +6569,7 @@ function supaB(sb, user) {
       return rows.map(r => ({ id: r.id, kraw: r.klasse, klasse: KL(r.klasse).id, title: r.title || 'Ohne Titel', nr: r.nr || '', updatedAt: Date.parse(r.updated_at) || 0, q: r.suchtext || '' }));
     },
     async load(id) { const d = chk(await T().select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
-    async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: sh.meta.title || 'Ohne Titel', nr: String(sh.meta.nr || ''), data: sh, suchtext: searchText(sh), updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
+    async save(sh) { chk(await T().upsert({ user_id: user.id, id: sh.id, klasse: KL(sh.klasse).id, title: stTitle(sh), nr: String(stNr(sh)), data: sh, suchtext: searchText(sh), updated_at: new Date(sh.updatedAt || Date.now()).toISOString() }, { onConflict: 'user_id,id' })); },
     async remove(id) { chk(await T().delete().eq('id', id)); },
     async stamp(id) { const d = chk(await T().select('updated_at').eq('id', id).maybeSingle()); return d ? Date.parse(d.updated_at) || 0 : null; },
     async loadPrefs() { const d = chk(await sb.from('ab_einstellungen').select('data').maybeSingle()); return d ? d.data : null; },
@@ -6463,12 +6580,12 @@ function supaB(sb, user) {
 /* ---------- Status ---------- */
 const STATUS = {
   pending: 'Wird geladen …', saving: 'Speichert …',
-  supabase: 'Online gespeichert', claude: 'Gespeichert in „Meine Blätter“', local: 'Gespeichert in diesem Browser',
+  supabase: 'Online gespeichert', claude: 'Gespeichert in „Meine Stunden“', local: 'Gespeichert in diesem Browser',
   offline: 'Noch nicht online · lokal gesichert, wird nachgeholt', conflict: 'Nicht gespeichert · auf einem anderen Gerät geändert', error: 'Nicht gespeichert · nächste Änderung versucht es erneut',
   toolarge: 'Zu groß zum Speichern · Bilder verkleinern', quota: 'Browser-Speicher voll · Bilder verkleinern oder Blätter löschen'
 };
 function setStatus(s) {
-  const txt = s === 'example' ? (state.sheet && state.sheet.sample ? 'Beispielblatt' : 'Neues Blatt') + ' · wird beim Bearbeiten gespeichert' : (STATUS[s] || '');
+  const txt = s === 'example' ? (state.sheet && state.sheet.sample ? 'Beispielblatt' : 'Neue Stunde') + ' · wird beim Bearbeiten gespeichert' : (STATUS[s] || '');
   const n = $('#status'); n.dataset.s = s; n.querySelector('span').textContent = txt;
 }
 function idleStatus() { setStatus(state.sheet.example ? 'example' : (backend ? backend.kind : 'pending')); }
@@ -6811,12 +6928,12 @@ function klassenSave() {
   state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
   if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
   renderTabs(); renderEditor(); if (state.libOpen) renderLib();
-  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neues Blatt“ oben gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
+  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
   else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
   if (!setup && d.wantFach) { const k = KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
 }
 
-/* ---------- Ordner in „Meine Blätter“ ---------- */
+/* ---------- Ordner in „Meine Stunden“ ---------- */
 // Ordner gelten je Reiter. Gespeichert wird ein kleines Einstellungsdokument je Ablage: Ordner, Zuordnung der Blätter, eigene Reihenfolge.
 const LS_PREF = 'abw.ordner', LS_SORT = 'abw.sort', LS_FZU = 'abw.fzu';
 const LIB_SORT = [['neu', 'Zuletzt geändert'], ['nr', 'Nach AB-Nr.'], ['titel', 'Nach Titel'], ['eigen', 'Eigene Reihenfolge']];
@@ -6883,7 +7000,7 @@ function libListHTML(k, q) {
   const hit = d => { if (!words.length) return ''; const head = (d.title + ' ' + d.nr).toLowerCase(); const w = words.find(x => !head.includes(x)); if (!w) return ''; const t = d.q || ''; const i = t.toLowerCase().indexOf(w); if (i < 0) return ''; const a = Math.max(0, t.lastIndexOf(' ', Math.max(0, i - 28)) + 1), e = Math.min(t.length, i + w.length + 40); const sn = t.slice(a, e); const j = sn.toLowerCase().indexOf(w); return `<div class="m lib-hit">${a > 0 ? '… ' : ''}${esc(sn.slice(0, j))}<mark>${esc(sn.slice(j, j + w.length))}</mark>${esc(sn.slice(j + w.length))}${e < t.length ? ' …' : ''}</div>`; };
   const item = d => { const fid = folderOf(d.id, k.id); return `<div class="lib-item${d.id === state.sheet.id ? ' cur' : ''}" data-id="${esc(d.id)}" draggable="true">
       <div class="t" data-act="lib-open-sheet">${d.nr ? `<em>AB ${esc(d.nr)}</em>` : ''}<span>${esc(d.title)}</span>${GRIP_SVG}</div>
-      ${hit(d)}<div class="m">geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
+      ${hit(d)}<div class="m">${d.abs > 1 ? d.abs + ' Arbeitsblätter · ' : ''}geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
       <div class="a">${state.confirmDel === d.id
         ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
         : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-dup">Duplizieren</button>${fs.length ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id}">Ordner</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
@@ -6939,7 +7056,7 @@ function stepFolder(id, dir) {
   const kl = KL(state.klasse).id; const mine = libFolders(kl); const i = mine.findIndex(f => f.id === id); const t = mine[i + dir];
   if (t) moveFolder(id, t.id, dir < 0);
 }
-/* Ziehen und Ablegen in „Meine Blätter“ */
+/* Ziehen und Ablegen in „Meine Stunden“ */
 let libDrag = null;
 function libClearDrop() { document.querySelectorAll('#lib-root .drop-into,#lib-root .drop-before,#lib-root .drop-after').forEach(n => n.classList.remove('drop-into', 'drop-before', 'drop-after')); }
 function libTarget(e) {
@@ -6970,11 +7087,11 @@ function renderLib() {
   const nLocal = backend && backend.kind === 'supabase' ? Object.keys(localLib()).length : 0;
   const keep = document.activeElement && document.activeElement.id === 'lib-q';
   const oldList = root.querySelector('.lib-list'); const scroll = oldList ? oldList.scrollTop : 0;
-  root.innerHTML = `<div class="scrim" data-act="lib-close"></div><aside class="drawer" role="dialog" aria-label="Meine Blätter">
-    <div class="drawer-h"><div class="dh"><h2>Meine Blätter</h2><span>${esc(k.label)}</span></div><button class="ib" type="button" data-act="lib-close" title="Schließen">${I.x}</button></div>
+  root.innerHTML = `<div class="scrim" data-act="lib-close"></div><aside class="drawer" role="dialog" aria-label="Meine Stunden">
+    <div class="drawer-h"><div class="dh"><h2>Meine Stunden</h2><span>${esc(k.label)}</span></div><button class="ib" type="button" data-act="lib-close" title="Schließen">${I.x}</button></div>
     <div class="acct">${acct}</div>
     ${nLocal ? `<div class="notice"><span>${nLocal} ${nLocal === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser.</span><button class="link" type="button" data-act="lib-migrate">Online übernehmen</button></div>` : ''}
-    <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neues Blatt</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}<button class="btn lib-fadd" type="button" data-act="lib-fnew">${FOLDER_SVG}Neuer Ordner</button></div>
+    <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neue Stunde</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}<button class="btn lib-fadd" type="button" data-act="lib-fnew">${FOLDER_SVG}Neuer Ordner</button></div>
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>
@@ -7076,7 +7193,7 @@ async function conflictResolve(how) {
   }
   savePending = false; clearTimeout(saveTimer); state.conflict = null;
   if (theirs) openSheet(theirs); else idleStatus();
-  toast(how === 'both' ? 'Ihre Fassung liegt jetzt als Kopie in „Meine Blätter“.' : 'Die neuere Fassung ist geladen.');
+  toast(how === 'both' ? 'Ihre Fassung liegt jetzt als Kopie in „Meine Stunden“.' : 'Die neuere Fassung ist geladen.');
 }
 // Beim Zurückkehren zur Seite: neuere Fassung still übernehmen, wenn hier nichts Ungespeichertes ist
 let lastStampCheck = 0;
@@ -7095,7 +7212,7 @@ async function checkRemote() {
 /* ---------- Hilfe und Tipps ---------- */
 const HELP = [
   ['Bausteine', [
-    ['„+ Neues Blatt“ oben', 'fragt Klasse, Vorlage, Nummer, Titel, Thema, Papier und Ordner ab und öffnet danach gleich den ersten Text.'],
+    ['„+ Neue Stunde“ oben', 'fragt Klasse, Vorlage, Nummer, Titel, Thema, Papier und Ordner ab und öffnet danach gleich den ersten Text.'],
     ['„+“ zwischen zwei Karten', 'fügt einen Baustein genau dort ein.'],
     ['Kopfzeile einer Karte anklicken', 'öffnet die Karte und schließt die anderen. Mehrere offen lassen: Haken bei „Eine Karte offen“ herausnehmen.'],
     ['Kopfzeile einer Karte ziehen', 'sortiert die Bausteine um. Tipp: vorher „Alle zuklappen“.'],
@@ -7134,7 +7251,7 @@ const HELP = [
     ['Tipps', 'bis zu drei gestufte Hilfen je Aufgabe; daraus entstehen Tippkarten. Unter „Tipps“ steht ein Vorschlag passend zum Operator und zum Material, dazu Satzanfänge und, bei Niveaustufen, Schritte für die Basis-Fassung. ⋯ am Aufgabenblock schlägt Tipps für alle Aufgaben vor.'],
     ['Zeilenangaben', 'In der Vorschau auf eine Zeilennummer klicken (für einen Bereich danach auf die letzte Zeile), dann „Einfügen“. Eingefügte Angaben wandern mit, wenn sich Text, Schrift oder Papier ändern.'],
     ['Standards', 'unter jeder Aufgabe: Standards aus dem Rahmenlehrplan (Deutsch, gymnasiale Oberstufe) oder eigene zuordnen. Sie stehen in der Lehrerfassung und im Erwartungshorizont.']]],
-  ['Meine Blätter', [
+  ['Meine Stunden', [
     ['Ordner', 'Blätter auf einen Ordner ziehen; ohne Maus bei einem Blatt „Ordner“ wählen.'],
     ['Sortierung', 'zuletzt geändert, nach Nummer, nach Titel oder eigene Reihenfolge (zwischen zwei Blätter ziehen).'],
     ['Suche', 'findet auch Wörter aus Materialtiteln, Aufgaben und Infokästen.'],
@@ -7144,8 +7261,8 @@ const HELP = [
   ['Tastenkürzel', [
     ['Strg+Z · Strg+Y', 'Rückgängig · Wiederholen (außerhalb von Textfeldern für das ganze Blatt)'],
     ['Strg+Umschalt+S', 'Speichern unter'],
-    ['Esc', 'schließt Fenster, Menüs und „Meine Blätter“'],
-    ['In der Windows-App', 'Strg+N Neues Blatt · Strg+E Ausgeben · Strg+P Drucken · Strg+O Meine Blätter']]]
+    ['Esc', 'schließt Fenster, Menüs und „Meine Stunden“'],
+    ['In der Windows-App', 'Strg+N Neue Stunde · Strg+E Ausgeben · Strg+P Drucken · Strg+O Meine Stunden']]]
 ];
 /* ================= Standards: Übersicht für Blatt, Reihe (Ordner) oder Klasse ================= */
 const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.nr : (m.title || 'Ohne Titel'); };
@@ -7285,7 +7402,7 @@ function outChecks() {
   return L;
 }
 function outHTML() {
-  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, nTf = sh.blocks.filter(x => x.type === 'tafel').length, nA3 = sh.blocks.filter(x => x.type === 'a3').length;
+  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, SB = stBlocks(), nTf = SB.filter(x => x.type === 'tafel').length, nA3 = SB.filter(x => x.type === 'a3').length;
   const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t, dis]) => `<button type="button" data-act="out-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}"${dis ? ' disabled' : ''}>${t}</button>`).join('')}</div>`;
   const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
     ['docx', 'Word', state.out === 'blatt' ? 'zum Weiterbearbeiten' : 'nur fürs Arbeitsblatt', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
@@ -7307,7 +7424,7 @@ function outHTML() {
     ${d.fmt === 'pptx' && state.out === 'blatt' ? presPickHTML() : ''}
     <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>
-    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && state.out === 'blatt' ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && state.out === 'blatt' ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="out-stunde" title="Alle ABs als PDF und Word, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde als Ordner</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div>`;
 }
 async function outGo() {
   const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
@@ -7326,7 +7443,7 @@ function saveAsHTML() {
   const was = (m.nr ? (isK ? 'Nr. ' : 'AB ') + m.nr + ' · ' : '') + (m.title || 'Ohne Titel');
   const title = m.title && !(fresh && m.title === 'Neues Arbeitsblatt') ? m.title : '';
   return `<h2 id="dlg-t">Speichern unter</h2>
-    <p>${fresh ? 'Das Blatt wird unter diesem Namen in „Meine Blätter“ gespeichert.' : 'Es entsteht ein neues Blatt mit dem jetzigen Stand. Danach arbeiten Sie im neuen Blatt weiter.'}</p>
+    <p>${fresh ? 'Das Blatt wird unter diesem Namen in „Meine Stunden“ gespeichert.' : 'Es entsteht ein neues Blatt mit dem jetzigen Stand. Danach arbeiten Sie im neuen Blatt weiter.'}</p>
     <form id="dlg-form" data-mode="saveas" novalidate>
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" id="sa-nr" value="${esc(m.nr || '')}" placeholder="7"></label>
         <label class="f" style="flex:1"><span>Titel</span><input type="text" id="sa-title" value="${esc(title)}" placeholder="Titel des Arbeitsblatts"></label></div>
@@ -7336,7 +7453,7 @@ function saveAsHTML() {
         <small class="sa-hint">Ihre Änderungen seit dem Öffnen stehen dann nur im neuen Blatt. Ohne Haken behält auch das bisherige Blatt die Änderungen.</small>` : ''}
       <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
       <div class="row"><button class="btn primary" type="submit">Speichern</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>
-      <div class="sa-file"><div><b>Als Datei</b><span>Zum Ablegen in einem Ordner oder Weitergeben. Öffnen über „Meine Blätter“ → „Sicherung oder Datei laden“.</span></div>
+      <div class="sa-file"><div><b>Als Datei</b><span>Zum Ablegen in einem Ordner oder Weitergeben. Öffnen über „Meine Stunden“ → „Sicherung oder Datei laden“.</span></div>
         <button class="btn" type="button" data-act="sa-file">Als Datei speichern …</button></div>
     </form>`;
 }
@@ -7512,6 +7629,7 @@ async function onDlgClick(e) {
     }
     if (act === 'out-go') { outGo(); return; }
     if (act === 'out-pres') { state.dlg = null; renderDlg(); openPres(0); return; }
+    if (act === 'out-stunde') { state.dlg = null; renderDlg(); exportStunde(); return; }
     if (act === 'pr-pick') { presPickSet(a.dataset.v); return; }
     if (act === 'out-vp') { openVP(); return; }
     if (act === 'out-eh') { exportEH(); return; }
@@ -7555,7 +7673,56 @@ function loadScript(src) {
   return loaded[src] = new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => { delete loaded[src]; rej(new Error('Bibliothek nicht geladen')); }; document.head.appendChild(s); });
 }
 const fileBase = () => { const m = state.sheet.meta; return (m.nr ? 'AB' + slug(m.nr) + '_' : '') + slug(m.title); };
+/* Ganze Stunde in einen Ordner: im Browser als ZIP, in der Windows-App direkt in einen gewählten Ordner */
+let CAPTURE = null, stundeRun = false;
+async function exportStunde() {
+  if (stundeRun || busy) return; stundeRun = true;
+  const P = state.sheet; const keep = { out: state.out, fassung: state.fassung, grp: state.grp, lvl: state.lvl, a3p: state.a3p, ab: P.abActive || 0, sel: state.sel };
+  const files = []; let n = 0; const add = (name, blob, what) => files.push({ name: `${String(++n).padStart(2, '0')}_${name}`, blob, what });
+  const capture = async fn => { let got = null; CAPTURE = (blob, name) => { got = { blob, name }; }; try { await fn(); } catch (err) { console.error(err); } finally { CAPTURE = null; } return got; };
+  const show = (out, fassung) => { state.out = out; if (fassung) state.fassung = fassung; clearTimeout(renderTimer); renderPreview(); };
+  const notes = [];
+  try {
+    state.grp = 'all'; state.lvl = 'all';
+    for (const A of stABs()) {
+      if (P.abs) abSwitch(A.k, true);
+      const base = fileBase(); const lab = abLabel(P.meta, A.k) + ' ' + plainText(P.meta.title || '');
+      overlay(`Stunde wird zusammengestellt … ${lab}`);
+      for (const f of ['schueler', 'lehrer']) { show('blatt', f); const r = await capture(() => exportPDF()); if (r) add(`${base}${f === 'lehrer' ? '_Lehrerfassung' : ''}.pdf`, r.blob, `${lab}: ${f === 'lehrer' ? 'Lehrerfassung mit Erwartungen' : 'Schülerfassung'} (PDF)`); }
+      show('blatt', 'schueler'); { const r = await capture(() => exportDOCX()); if (r) add(`${base}.docx`, r.blob, `${lab}: Word-Datei zum Weiterbearbeiten`); }
+      add(`${base}_Erwartungshorizont.md`, new Blob([ehMarkdown()], { type: 'text/markdown' }), `${lab}: Erwartungshorizont`);
+      if (tipCards().length) { show('tipps'); const r = await capture(() => exportPDF()); if (r) add(`${base}_Tippkarten.pdf`, r.blob, `${lab}: Tippkarten`); show('blatt'); }
+      try { overlay(`Digitale Fassung … ${lab}`); const m = P.meta; const html = dgDoc(await dgBuild({ id: (m.dg && m.dg.id) || dgId(), ...dgOpts() })); add(`${base}_digital.html`, new Blob([html], { type: 'text/html' }), `${lab}: digitale Fassung zum Ausfüllen im Browser`); } catch (err) { console.error(err); notes.push(`${lab}: digitale Fassung ließ sich nicht erstellen.`); }
+    }
+    if (P.abs) abSwitch(keep.ab, true);
+    const stem = P.abs ? 'Stunde' : fileBase(); const SB = stBlocks();
+    if ((P.cards || []).length) { overlay('Tafelkarten …'); show('karten'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_Tafelkarten.pdf`, r.blob, 'Tafelkarten'); }
+    if (SB.some(b => b.type === 'tafel')) { overlay('Tafelbild …'); for (const f of ['lehrer', 'schueler']) { show('tafel', f); const r = await capture(() => exportPDF()); if (r) add(`${stem}_Tafelbild${f === 'schueler' ? '_Lueckenfassung' : ''}.pdf`, r.blob, f === 'schueler' ? 'Tafelbild als Lückenfassung' : 'Tafelbild vollständig (A4 quer)'); } }
+    if (SB.some(b => b.type === 'a3')) { overlay('A3-Vorlagen …'); for (const p of ['a3', 'a4x2']) { state.a3p = p; show('a3'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_A3-Vorlagen${p === 'a4x2' ? '_2xA4' : ''}.pdf`, r.blob, p === 'a4x2' ? 'A3-Vorlagen verteilt auf je zwei A4-Blätter zum Kleben' : 'A3-Vorlagen in A3'); } state.a3p = keep.a3p; }
+    show('blatt', 'schueler');
+    overlay('Präsentation …'); { const r = await capture(() => exportPPTX()); if (r) add(`${stem}_Praesentation.pptx`, r.blob, 'Präsentation (PowerPoint)'); else notes.push('Die PowerPoint-Datei fehlt: Dafür braucht der Browser Internet.'); }
+    overlay('Verlaufsplan …'); { const r = await capture(() => exportVP()); if (r) add(`${stem}_Verlaufsplan.docx`, r.blob, 'Verlaufsplan (Word, A4 quer)'); }
+    const title = stTitle(P); const folder = slug(title) ? (P.abs ? 'Stunde_' : (stNr(P) ? 'AB' + slug(String(stNr(P))) + '_' : '')) + slug(title) : 'Stunde';
+    const inhalt = [`Stunde: ${title}`, [P.meta.course, P.meta.school].filter(Boolean).join(' · '), `Zusammengestellt mit der AB-Werkstatt am ${new Date().toLocaleDateString('de-DE')}`, '', 'Inhalt:', ...files.map(f => `${f.name}  –  ${f.what}`), ...(notes.length ? ['', 'Hinweise:', ...notes] : [])].join('\r\n');
+    files.push({ name: '00_Inhalt.txt', blob: new Blob([inhalt], { type: 'text/plain' }) });
+    overlay('Ordner wird gespeichert …');
+    if (window.abDesktop && window.abDesktop.saveFolder) {
+      const list = []; for (const f of files) list.push({ name: f.name, bytes: new Uint8Array(await f.blob.arrayBuffer()) });
+      const r = await window.abDesktop.saveFolder(folder, list); overlay('');
+      if (r && r.ok) toast(`Stunde gespeichert: ${r.n} Dateien im Ordner „${folder}“`, 'Ordner öffnen', () => window.abDesktop.open(r.path)); else if (r && r.canceled) toast('Speichern abgebrochen'); else toast('Der Ordner ließ sich nicht speichern.');
+    } else {
+      await loadScript(LIBS.zip); const zip = new window.JSZip(); const dir = zip.folder(folder); files.forEach(f => dir.file(f.name, f.blob));
+      const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/zip' }); overlay('');
+      await deliver(folder + '.zip', blob);
+    }
+  } catch (err) { console.error(err); toast('Die Stunde ließ sich nicht vollständig ausgeben.'); }
+  finally {
+    CAPTURE = null; if (P.abs) abSwitch(keep.ab, true); Object.assign(state, { out: keep.out, fassung: keep.fassung, grp: keep.grp, lvl: keep.lvl, a3p: keep.a3p, sel: keep.sel });
+    stundeRun = false; overlay(''); renderEditor(); clearTimeout(renderTimer); renderPreview();
+  }
+}
 async function deliver(name, blob) {
+  if (CAPTURE) { CAPTURE(blob, name); return; }
   if (window.abDesktop) {
     try {
       const r = await window.abDesktop.save(name, new Uint8Array(await blob.arrayBuffer()));
@@ -7594,6 +7761,10 @@ async function exportPDF() {
   finally { busy = false; }
 }
 async function pagesToPdf(pages, name, props) {
+  if (window.abDesktop && CAPTURE && window.abDesktop.pdfData) {
+    try { await fontsIn(document); const info = preparePrint(); if (!info) return; const bytes = await window.abDesktop.pdfData(info); CAPTURE(new Blob([bytes], { type: 'application/pdf' }), name); } catch (err) { console.error(err); }
+    return;
+  }
   if (window.abDesktop) {
     try {
       overlay('PDF wird erstellt …'); await fontsIn(document);
@@ -8183,7 +8354,7 @@ function dgHTML() {
     ${m.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['wahl', 'Schüler wählen'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], d.lvl)}</div>` : ''}
     <div class="f"><div class="chks"><label class="chk"><input type="checkbox" id="dg-sol"${d.sol ? ' checked' : ''}>Lösung abrufbar</label><label class="chk"><input type="checkbox" id="dg-tips"${d.tips ? ' checked' : ''}>Tipps abrufbar</label><label class="chk"><input type="checkbox" id="dg-ans"${d.ans ? ' checked' : ''}>${nOff ? `Antwortfeld zu den Aufgaben (außer ${nOff} abgewählten)` : 'Antwortfeld zu jeder Aufgabe'}</label></div></div>
     ${pub ? `<div class="dg-on"><span>Dieses Blatt ist online${m.dg.at ? ' seit ' + new Date(m.dg.at).toLocaleDateString('de-DE') : ''}.</span><button class="link" type="button" data-act="dg-showqr">Link und QR-Code zeigen</button></div>` : ''}
-    ${on ? '' : '<p class="hint">Zum Online-Stellen mit QR-Code bitte anmelden („Meine Blätter“ → Anmelden). Als Datei geht es auch so.</p>'}
+    ${on ? '' : '<p class="hint">Zum Online-Stellen mit QR-Code bitte anmelden („Meine Stunden“ → Anmelden). Als Datei geht es auch so.</p>'}
     ${d.busy ? '<p class="hint">Wird vorbereitet …</p>' : ''}<div class="err" role="alert">${esc(d.err || '')}</div>
     <div class="row"><button class="btn primary" type="button" data-act="dg-pub"${on && !d.busy ? '' : ' disabled'}>${pub ? 'Online aktualisieren' : 'Online stellen mit QR-Code'}</button><button class="btn" type="button" data-act="dg-file"${d.busy ? ' disabled' : ''}>Als Datei (.html)</button><button class="btn" type="button" data-act="dg-try"${d.busy ? ' disabled' : ''}>Ausprobieren</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
 }
@@ -8243,7 +8414,7 @@ function mappeHTML() {
     <div class="row mp-row"><label class="f"><span>Titel</span><input class="inp" id="mp-title" type="text" maxlength="80" value="${esc(d.title)}"></label><label class="f"><span>Unterzeile</span><input class="inp" id="mp-sub" type="text" maxlength="100" value="${esc(d.sub)}" placeholder="z. B. 1. Kurshalbjahr"></label></div>
     <div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], d.fassung)}</div>
     <div class="f"><div class="chks"><label class="chk"><input type="checkbox" id="mp-cover"${d.cover ? ' checked' : ''}>Deckblatt</label><label class="chk"><input type="checkbox" id="mp-toc"${d.toc ? ' checked' : ''}>Inhaltsverzeichnis</label></div></div>
-    <div class="f"><span id="mp-n">Blätter: ${n} von ${d.list.length}</span><div class="mp-list">${d.list.map(x => `<label class="chk"><input type="checkbox" data-mpid="${esc(x.id)}"${d.off.has(x.id) ? '' : ' checked'}><span>${x.nr ? `<b>AB ${esc(x.nr)}</b> ` : ''}${esc(x.title || 'Ohne Titel')}</span></label>`).join('')}</div><small>Reihenfolge wie im Ordner. Umstellen: in „Meine Blätter“ ziehen.</small></div>
+    <div class="f"><span id="mp-n">Blätter: ${n} von ${d.list.length}</span><div class="mp-list">${d.list.map(x => `<label class="chk"><input type="checkbox" data-mpid="${esc(x.id)}"${d.off.has(x.id) ? '' : ' checked'}><span>${x.nr ? `<b>AB ${esc(x.nr)}</b> ` : ''}${esc(x.title || 'Ohne Titel')}</span></label>`).join('')}</div><small>Reihenfolge wie im Ordner. Umstellen: in „Meine Stunden“ ziehen.</small></div>
     ${canPrint ? `<div class="f"><span>Als</span>${seg('fmt', [['pdf', 'PDF'], ['print', 'Drucken']], d.fmt)}</div>` : ''}
     <div class="row"><button class="btn primary" type="button" data-act="mp-go"${n ? '' : ' disabled'}>${d.fmt === 'print' ? 'Drucken' : 'PDF erstellen'}</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
 }
@@ -8316,7 +8487,7 @@ async function mappeGo() {
     MAPPE_LOCK = true; clearTimeout(renderTimer);
     state.out = 'blatt'; state.fassung = opt.fassung; state.grp = 'all'; state.lvl = 'all';
     const parts = [];
-    try { for (const sh of sheets) { state.sheet = sh; parts.push({ sh, units: layout().map(o => o.pg) }); } }
+    try { for (const sh of sheets) { state.sheet = sh; abNorm(sh); (sh.abs ? sh.abs.map((_, k) => k) : [0]).forEach(k => withAB(k, () => parts.push({ sh: { ...sh, meta: { ...sh.meta }, blocks: sh.blocks.slice() }, units: layout().map(o => o.pg) }))); } }
     finally { state.sheet = orig; Object.assign(state, keep); }
     res = mappeAssemble(parts, opt);
     if (sheets.length < ids.length) toast(`${ids.length - sheets.length} ${ids.length - sheets.length === 1 ? 'Blatt ließ' : 'Blätter ließen'} sich nicht laden und fehlen in der Mappe.`);

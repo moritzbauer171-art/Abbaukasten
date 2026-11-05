@@ -98,6 +98,18 @@ ipcMain.handle('ab:pdf', async (e, info) => {
   return { ok: true, path: r.filePath, name: path.basename(r.filePath) };
 });
 
+// PDF als Daten (für „Ganze Stunde ausgeben“)
+ipcMain.handle('ab:pdfdata', async () => new Uint8Array(await makePdf()));
+// Mehrere Dateien in einen neuen Unterordner des gewählten Ordners schreiben
+ipcMain.handle('ab:savefolder', async (e, name, files) => {
+  const r = await dialog.showOpenDialog(win, { title: 'Wohin soll die Stunde?', defaultPath: app.getPath('documents'), buttonLabel: 'Hier speichern', properties: ['openDirectory', 'createDirectory'] });
+  if (r.canceled || !r.filePaths || !r.filePaths[0]) return { canceled: true };
+  const base = path.join(r.filePaths[0], safeName(name)); let dir = base, i = 2;
+  while (fs.existsSync(dir)) dir = `${base} (${i++})`;
+  fs.mkdirSync(dir, { recursive: true });
+  for (const f of files || []) fs.writeFileSync(path.join(dir, safeName(f.name)), Buffer.from(f.bytes));
+  return { ok: true, path: dir, n: (files || []).length };
+});
 ipcMain.handle('ab:print', async (e, info) => {
   // Gemischte Hoch- und Querseiten lassen sich nicht in einem Druckauftrag ausrichten: dann über das PDF
   if (info && info.mixed) {
@@ -115,8 +127,8 @@ function menu() {
   const isWin = process.platform === 'win32';
   const tpl = [
     { label: 'Datei', submenu: [
-      { label: 'Neues Blatt …', accelerator: 'CmdOrCtrl+N', click: click('#btn-new') },
-      { label: 'Meine Blätter', accelerator: 'CmdOrCtrl+O', click: click('#btn-lib') },
+      { label: 'Neue Stunde …', accelerator: 'CmdOrCtrl+N', click: click('#btn-new') },
+      { label: 'Meine Stunden', accelerator: 'CmdOrCtrl+O', click: click('#btn-lib') },
       { label: 'Speichern unter …', accelerator: 'CmdOrCtrl+Shift+S', click: click('#btn-saveas') },
       { label: 'Ausgeben …', accelerator: 'CmdOrCtrl+E', click: click('#btn-out') },
       { type: 'separator' },
