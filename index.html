@@ -3108,7 +3108,8 @@ function presPhases(S) {
     if (!p) for (let j = i - 1; j >= 0; j--) if (S[j].ph) { p = S[j].ph; break; }
     s.ph = p || '';
   });
-  const bar = Object.keys(PHASEN).filter(k => have.has(k));
+  // Die Leiste zeigt nur Phasen, die auf einer Folie vorkommen; Phasen ohne Folie (abgewählt, „keine Folie“, leer) würden nie hervorgehoben
+  const bar = Object.keys(PHASEN).filter(k => S.some(s => s.ph === k));
   S.bar = m.presPhase !== false && bar.length >= 2 ? bar : [];
   return S;
 }
