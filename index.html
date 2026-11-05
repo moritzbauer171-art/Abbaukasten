@@ -374,6 +374,26 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 
 /* ---------- Sozialformen im Editor ---------- */
 .soz{display:flex;flex-wrap:wrap;gap:6px}
+.soz-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+body.basis .x-pro:not(.used){display:none!important}
+.x-wrap.x-pro:not(.chks){display:contents}
+.umfang button{min-width:0;padding-left:9px;padding-right:9px}
+.ph-ctl{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
+.ph-sel{font-size:12px;font-weight:700;border:1px dashed var(--line-strong);background:transparent;color:var(--muted);border-radius:7px;padding:3px 6px;max-width:130px}
+.ph-sel.on{border-style:solid;border-color:var(--phc);color:var(--ink);box-shadow:inset 3px 0 0 var(--phc)}
+.ph-min{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.ph-min input{width:38px;text-align:center;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:3px 4px;font-size:12.5px}
+.abl-sum{gap:6px}
+.abl-bar{position:relative;display:flex;height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.abl-bar i{display:block;height:100%}
+.abl-bar::after{content:"";position:absolute;top:-2px;bottom:-2px;left:var(--fill);border-left:2px solid var(--ink);opacity:.55}
+.abl-leg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}
+.abl-leg span{display:inline-flex;align-items:center;gap:5px}
+.abl-leg b{width:9px;height:9px;border-radius:2px;display:inline-block}
+.abl-tot{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:12.5px}
+.abl-sum .abl-tot select{width:auto;flex:0 0 auto;min-width:0;font-size:12.5px;padding:1px 4px;border:1px solid var(--line-strong);border-radius:6px;background:var(--field)}
+.abl-tot em{font-style:normal;font-weight:700;color:var(--muted)}.abl-tot em.warn{color:#B3261E}.abl-tot em.ok{color:#1E7A46}
+.abl-tot small{color:var(--muted)}
 .soz button{--soz-bg:var(--field);display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:3px 8px 3px 5px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
 .soz button svg{width:22px;height:16.5px;flex:0 0 auto}
 .soz button:hover{color:var(--ink);border-color:var(--tinte)}
@@ -1035,6 +1055,94 @@ body{transition:background-color .3s,border-color .25s}
 .d-tagebuch .q-mark{font-family:var(--f-disp)}
 
 /* Lehrerfassung, Gruppen, Klausur */
+.t-ph,.t-min{white-space:nowrap}
+/* Tafelbild (em-basiert, damit es auf Blatt, A4 quer und Beamer mitwächst) */
+.tf{--tf-ink:var(--paper-ink,#1C1F27);--tf-line:var(--acc,#2741B5);--tf-bg:var(--paper,#fff);color:var(--tf-ink);font-size:10.5pt;line-height:1.3;position:relative}
+.blk-tafel{border:.3mm solid var(--paper-hair,#C9CDD6);border-radius:1.6mm;padding:3mm 3.5mm 3.5mm;margin:1mm 0 3mm}
+.tf-t{font-weight:700;font-size:1.22em;text-align:center;margin-bottom:.65em;color:var(--tf-line)}
+.tf-sol{color:var(--acc,#2741B5);font-weight:600}
+.tf-ge{display:block;min-height:calc(var(--l,1) * 1.45em);background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(1.45em - .07em),var(--tf-ink) calc(1.45em - .07em),var(--tf-ink) 1.45em);opacity:.6}
+.tf .tf-gw{display:inline-block;height:1em;border-bottom:.07em solid var(--tf-ink);vertical-align:-.22em;margin:0 .15em}
+.tf-grid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr))}
+.tf-h{font-weight:700;text-align:center;padding:.2em .5em .35em;border-bottom:.13em solid var(--tf-line);color:var(--tf-line)}
+.tf-c{padding:.35em .6em}
+.tf-raster .tf-h:not(.k0),.tf-raster .tf-c:not(.k0){border-left:.09em solid var(--tf-line)}
+.tf-drei .tf-c:not(.r0){border-top:.05em solid var(--paper-hair,#C9CDD6)}
+.tf-cl{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:0 2.4em;align-items:center}
+.tf-svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.tf-svg path{fill:none;stroke:var(--tf-line);stroke-width:.09em;opacity:.75}
+.tf-side{display:flex;flex-direction:column;gap:.8em;position:relative}
+.tf-mid{position:relative;display:flex;justify-content:center}
+.tf-cc{position:relative;background:var(--tf-line);color:var(--tf-bg);font-weight:700;font-size:1.15em;padding:.55em .9em;border-radius:.5em;text-align:center;max-width:11em}
+.tf-br{position:relative;background:var(--tf-bg);border:.08em solid var(--tf-line);border-radius:.4em;padding:.35em .6em .45em}
+.tf-bh{font-weight:700;color:var(--tf-line)}
+.tf-bl{margin:.15em 0 0;padding-left:1.1em}
+.tf-bl li{margin:.1em 0}
+.tf-ab{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:.5em .25em}
+.tf-st{flex:1 1 7.5em;max-width:14em;border:.08em solid var(--tf-line);border-radius:.4em;padding:.4em .6em .5em;background:var(--tf-bg)}
+.tf-sn{display:inline-grid;place-items:center;width:1.45em;height:1.45em;border-radius:50%;background:var(--tf-line);color:var(--tf-bg);font-weight:700;font-size:.8em;float:left;margin:0 .45em .1em 0}
+.tf-sh{font-weight:700;color:var(--tf-line)}
+.tf-sx{clear:none}
+.tf-ar{display:flex;align-items:center;flex:0 0 auto}
+.tf-ar svg{width:1.3em;height:1.3em;fill:none;stroke:var(--tf-line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tf-sk-cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45em;align-items:end}
+.tf-sk-col{display:flex;flex-direction:column;gap:.35em;justify-content:flex-end}
+.tf-si{border:.08em solid var(--tf-line);border-radius:.35em;padding:.25em .45em;text-align:center;background:var(--tf-bg)}
+.tf-sk-line{position:relative;height:.14em;background:var(--tf-line);margin:.75em .6em .35em}
+.tf-sk-line::before,.tf-sk-line::after{content:"";position:absolute;top:50%;width:0;height:0;border-top:.42em solid transparent;border-bottom:.42em solid transparent;transform:translateY(-50%)}
+.tf-sk-line::before{left:-.62em;border-right:.66em solid var(--tf-line)}
+.tf-sk-line::after{right:-.62em;border-left:.66em solid var(--tf-line)}
+.tf-sk-poles{display:flex;justify-content:space-between;gap:1em;font-weight:700;color:var(--tf-line)}
+.tf-sk-poles .r{text-align:right}
+.tf-fg{position:relative;width:100%;padding-top:50%}
+.tf-beam .tf-fg{padding-top:0;height:min(44vw,calc(100vh - 13em))}
+.tf-fg>svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.tf-fg line{stroke:var(--tf-line);stroke-width:.09em;vector-effect:non-scaling-stroke;opacity:.75}
+.tf-nd{position:absolute;transform:translate(-50%,-50%);width:23%;text-align:center;background:var(--tf-bg);border:.09em solid var(--tf-line);border-radius:.5em;padding:.3em .4em}
+.tf-nd.c{border-width:.16em}
+.tf-nn{font-weight:700;color:var(--tf-line)}
+.tf-nx{font-size:.85em}
+.tf-rl{position:absolute;transform:translate(-50%,-50%);background:var(--tf-bg);padding:.05em .35em;font-size:.88em;font-style:italic;max-width:26%;text-align:center;border-radius:.3em}
+.tf-hid{visibility:hidden}
+.page.tf-page{width:297mm;height:210mm;padding:12mm 15mm 9mm;display:flex;flex-direction:column}
+.tf-page .tf-frame{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tf-page .tf-frame>.tf{width:100%}
+.tf-page .tf-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.6mm;margin-top:3mm}
+.tf-beam{position:fixed;inset:0;z-index:95;background:#fff;display:flex;flex-direction:column;outline:none}
+.tf-bm-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:4vh 5vw;overflow:hidden;cursor:pointer}
+.tf-bm-stage>.tf{width:100%;font-family:var(--f-ui)}
+.tf-beam.board{background:#25392E}
+.tf-beam.board .tf{--tf-ink:#F2F0E6;--tf-line:#F2F0E6;--tf-bg:#25392E;--acc:#F5D46B;--paper-hair:rgba(242,240,230,.4)}
+.tf-bm-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;padding:8px 12px;background:#F1F3F6;border-top:1px solid #E1E4EA}
+.tf-beam.board .tf-bm-bar{background:#1C2C23;border-color:#16231C}
+.tf-bm-bar button{border:1px solid #C9CED8;background:#fff;color:#1C1F27;border-radius:8px;padding:6px 12px;font:600 14px/1.2 var(--f-ui);cursor:pointer}
+.tf-bm-bar button[data-b="prev"],.tf-bm-bar button[data-b="next"]{font-size:20px;padding:2px 14px}
+.tf-bm-bar button[aria-pressed="true"]{background:#DCE3F7;border-color:#9DB0E8}
+.tf-bm-bar button:disabled{opacity:.4;cursor:default}
+.tf-bm-n{min-width:9em;text-align:center;font:600 13px/1.2 var(--f-ui);color:#5A606E}
+.tf-beam.board .tf-bm-n{color:#C9D3CC}
+.tf-bm-bar .sep{width:1px;height:22px;background:#C9CED8;margin:0 4px}
+/* Tafelbild-Editor */
+.tf-tpls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tf-tp{display:flex;flex-direction:column;align-items:center;gap:4px;border:1px solid var(--line-strong);background:var(--field);border-radius:9px;padding:7px 4px 6px;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center;line-height:1.2}
+.tf-tp svg{width:26px;height:26px}
+.tf-tp:hover{color:var(--ink);border-color:var(--tinte)}
+.tf-tp[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
+.tf-ed{display:flex;flex-direction:column;gap:8px}
+.tf-ed input,.tf-ed textarea,.tf-ed select{width:100%;min-width:0;border:1px solid var(--line-strong);background:var(--field);border-radius:7px;padding:5px 7px;font-size:13px;color:var(--ink)}
+.tf-ed textarea{resize:vertical;min-height:44px;font:inherit;font-size:13px}
+.tf-ed .tf-hd{font-weight:700}
+.tf-ed-grid{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr)) 28px;gap:4px;align-items:center}
+.tf-ed-list{display:flex;flex-direction:column;gap:6px}
+.tf-ed-br{display:flex;flex-direction:column;gap:4px;border-left:3px solid var(--line-strong);padding-left:8px}
+.tf-ed-row{display:grid;gap:4px;align-items:center}
+.tf-ed-row.two{grid-template-columns:minmax(0,1fr) 28px}
+.tf-ed-row.ab{grid-template-columns:18px minmax(0,1fr) minmax(0,1.5fr) 28px}
+.tf-ed-row.sk{grid-template-columns:minmax(0,1fr) 112px 28px}
+.tf-ed-row.rel{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr) 28px}
+.tf-ed-n{font-size:12px;font-weight:700;color:var(--muted);text-align:center}
+.tf-ed-acts{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.tf-ed-acts.main{margin:2px 0}
 .task-eh{grid-column:2 / -1;margin-top:1.2mm;background:#F1F2F4;border-left:.8mm solid #9AA0AA;border-radius:0 .8mm .8mm 0;padding:1.4mm 2.6mm 1.6mm;font-size:9.5pt;line-height:1.38;color:#2A2D35}
 .task-eh>span{display:block;font-family:"Atkinson Hyperlegible","Segoe UI",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";font-size:6.8pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6A707C}
 .task-eh ul{margin:.4mm 0 0;padding-left:4mm}
@@ -1248,6 +1356,7 @@ body{transition:background-color .3s,border-color .25s}
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
+      <div class="seg sm umfang" role="group" aria-label="Funktionsumfang" title="Basis: nur das Nötigste. Experte: alle Funktionen. Ihre Blätter ändern sich dadurch nicht."><button type="button" data-act="umfang" data-v="basis" aria-pressed="false">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="true">Experte</button></div>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neues Arbeitsblatt anlegen">
@@ -1359,6 +1468,7 @@ const TYPE_ICON = {
   tasks: '<rect x="3.5" y="4" width="6.5" height="6.5" rx="1.5"/><path d="m5.2 7.3 1.3 1.3 2-2.3"/><path d="M13 7.2h7.5"/><rect x="3.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><path d="M13 16.8h7.5"/>',
   info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><path d="M12 7.7v.2" stroke-width="2.6"/>',
   phrases: '<path d="M4 5h16v10.5H10.5L6 19v-3.5H4z"/><path d="M8 9h8M8 12h5"/>',
+  tafel: '<rect x="3" y="3.5" width="18" height="12.5" rx="1.2"/><path d="M8 20.5l2-4.5M16 20.5l-2-4.5M6.5 7.5h4.5M6.5 10.5h7M14.5 7.5h3"/>',
   table: '<rect x="3.5" y="5" width="17" height="14" rx="1.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 5v14M15 5v14"/>',
   lines: '<path d="M3.5 9.5h9M3.5 14h17M3.5 18.5h17"/><path d="m14.5 10.3 5.2-5.2 1.9 1.9-5.2 5.2-2.6.7z"/>',
   heading: '<path d="M6 5v14M15 5v14M6 12h9"/><path d="M18.5 19h2.5"/>',
@@ -1394,6 +1504,7 @@ const TYPES = {
   match:    { label:'Zuordnen',      desc:'Wörter oder Sätze verbinden' },
   info:     { label:'Infokasten',    desc:'Merke, Tipp, Definition' },
   phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge, Wendungen' },
+  tafel:    { label:'Tafelbild',     desc:'Sicherung, auch als Lückentafelbild und am Beamer' },
   table:    { label:'Tabelle',       desc:'zum Ausfüllen' },
   lines:    { label:'Schreibfläche', desc:'Linien oder Kästchen' },
   heading:  { label:'Überschrift',   desc:'Zwischentitel' },
@@ -1409,20 +1520,20 @@ const PAL_POST = () => PAL('material', { k: 'post', label: 'Post', desc: 'Beitra
 const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
+  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Textquelle mit Zeilennummern (Q1)', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
     PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
-    PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('table'),
+    PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('table'),
     PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal', cw: [16, 44, 40] } }),
     PAL('lines'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('image', { desc: 'Grafik, Schaubild, Karte' }), PAL('pagebreak')
   ],
   bio: [
     PAL('material', { desc: 'Fachtext mit Zeilennummern (M1)' }),
     PAL('image', { k: 'abbildung', label: 'Abbildung', desc: 'Foto, Schema, Diagramm (Abb. 1)', pre: { mk: 'a' } }),
-    PAL('tasks'), PAL('match', { desc: 'Begriffe und Erklärungen verbinden' }), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('table'),
+    PAL('tasks'), PAL('match', { desc: 'Begriffe und Erklärungen verbinden' }), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('table'),
     PAL('table', { k: 'protokoll', label: 'Versuchsprotokoll', desc: 'Frage, Hypothese, Durchführung, Auswertung', ic: 'protokoll', pre: { cols: ['Versuchsprotokoll', 'Notizen'], rows: ['Fragestellung', 'Hypothese', 'Material', 'Durchführung', 'Beobachtung', 'Auswertung'].map(x => [x, '']), rowHeight: 'hoch', firstBold: true, cw: [28, 72] } }),
     PAL('lines', { k: 'zeichnung', label: 'Zeichenfläche', desc: 'Rahmen für Zeichnung oder Skizze', ic: 'zeichnung', pre: { style: 'rahmen', count: 12 } }),
     PAL('lines', { desc: 'Linien oder Kästchen' }), PAL('heading'), PAL('text'), PAL('qr'), PAL('pagebreak')
@@ -2197,6 +2308,298 @@ const SOZ = {
   ga: { label: 'Gruppenarbeit', short: 'GA' },
   pl: { label: 'Plenum', short: 'Plenum' }
 };
+
+/* ================= Funktionsumfang: Basis blendet selten gebrauchte Werkzeuge aus (.x-pro), solange sie nicht benutzt werden (.used) ================= */
+const LS_UMFANG = 'abw.umfang';
+function setUmfang(v, quiet) {
+  const basis = v === 'basis'; document.body.classList.toggle('basis', basis);
+  document.querySelectorAll('[data-act="umfang"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (basis ? 'basis' : 'experte'))));
+  if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
+}
+
+/* ================= Phase und Zeit je Aufgabe (Phasierung nach Tilman von Brand) ================= */
+const PHASEN = {
+  ein: { label: 'Einstieg', c: '#C2410C' },
+  era: { label: 'Erarbeitung', c: '#2741B5' },
+  sich: { label: 'Sicherung', c: '#1E7A46' },
+  vert: { label: 'Vertiefung', c: '#7B3FB0' },
+  ha: { label: 'Hausaufgabe', c: '#6B7280' }
+};
+const itMin = it => { const n = parseInt(String((it && it.min) || '').replace(/\D/g, ''), 10); return n > 0 && n < 1000 ? n : 0; };
+const itPh = it => (it && PHASEN[it.ph] ? it.ph : '');
+// Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
+function ablaufOf(sh) {
+  const rows = []; let t = 0;
+  (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (b.restart) t = 0; (b.items || []).forEach(it => { t++; rows.push({ no: t, it, b, ph: itPh(it), min: itMin(it) }); }); });
+  const by = {}; Object.keys(PHASEN).forEach(k => (by[k] = 0)); let open = 0, none = 0;
+  rows.forEach(r => { if (r.ph) by[r.ph] += r.min; else open += r.min; if (!r.min && r.ph !== 'ha') none++; });
+  const total = rows.reduce((a, r) => a + (r.ph === 'ha' ? 0 : r.min), 0);
+  return { rows, by, open, none, total, any: rows.some(r => r.ph || r.min) };
+}
+function ablaufHTML() {
+  const sh = state.sheet, m = sh.meta; const A = ablaufOf(sh); if (!A.any) return '';
+  const L = Number(m.lesson) || 45; const base = Math.max(L, A.total) || 1;
+  const segs = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<i style="width:${(A.by[k] / base * 100).toFixed(2)}%;background:${x.c}" title="${x.label}: ${A.by[k]} Min."></i>`).join('')
+    + (A.open ? `<i style="width:${(A.open / base * 100).toFixed(2)}%;background:#B7BCC6" title="ohne Phase: ${A.open} Min."></i>` : '');
+  const parts = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<span><b style="background:${x.c}"></b>${x.label} ${A.by[k]}</span>`);
+  if (A.open) parts.push(`<span><b style="background:#B7BCC6"></b>ohne Phase ${A.open}</span>`);
+  const diff = A.total - L;
+  const st = diff > 0 ? `<em class="warn">${diff} Min. zu viel</em>` : diff < 0 ? `<em>${-diff} Min. frei</em>` : '<em class="ok">passt genau</em>';
+  return `<div class="f abl-sum x-pro"><span>Stundenablauf</span>
+    <div class="abl-bar" style="--fill:${Math.min(100, L / base * 100).toFixed(2)}%">${segs}</div>
+    <div class="abl-leg">${parts.join('')}</div>
+    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Aufgabe' : 'Aufgaben'} ohne Zeit</small>` : ''}</div></div>`;
+}
+const phCtl = (i, it) => { const p = itPh(it); return `<span class="ph-ctl x-pro${p || itMin(it) ? ' used' : ''}"><select data-k="items.${i}.ph" aria-label="Phase der Stunde" class="ph-sel${p ? ' on' : ''}"${p ? ` style="--phc:${PHASEN[p].c}"` : ''}><option value="">Phase …</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${p === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select><label class="ph-min" title="Bearbeitungszeit in Minuten"><input type="text" inputmode="numeric" maxlength="3" data-k="items.${i}.min" value="${esc(itMin(it) || '')}" placeholder="–" aria-label="Minuten"><span>Min.</span></label></span>`; };
+
+/* ================= Tafelbild =================
+   Ein Baustein, drei Wege: auf dem Arbeitsblatt (vollständig oder als Lückentafelbild), als Ausgabe A4 quer, am Beamer zum Aufdecken.
+   [eckige Klammern] markieren Wörter, die in der Lückenfassung fehlen. */
+const TF_TPL = {
+  gegen: { label: 'Gegenüberstellung', d: 'Zwei bis vier Spalten, z. B. Pro und Contra oder Text A und Text B', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M12 4v16M3 8.5h18"/>' },
+  drei: { label: 'These – Argument – Beleg', d: 'Eine Zeile je Gedanke', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M9 4v16M15 4v16M3 8.5h18M3 14h18"/>' },
+  cluster: { label: 'Cluster', d: 'Begriff in der Mitte, Zweige ringsum', ic: '<rect x="8.5" y="10" width="7" height="4" rx="1"/><rect x="2" y="3" width="6" height="4" rx="1"/><rect x="16" y="3" width="6" height="4" rx="1"/><rect x="2" y="17" width="6" height="4" rx="1"/><rect x="16" y="17" width="6" height="4" rx="1"/><path d="M8 7l1.5 3M16 7l-1.5 3M8 17l1.5-3M16 17l-1.5-3"/>' },
+  ablauf: { label: 'Ablauf', d: 'Schritte mit Pfeilen, z. B. Handlung oder Argumentationsgang', ic: '<rect x="2" y="9" width="5" height="6" rx="1"/><rect x="9.5" y="9" width="5" height="6" rx="1"/><rect x="17" y="9" width="5" height="6" rx="1"/><path d="M7 12h2.5M14.5 12H17"/>' },
+  skala: { label: 'Skala', d: 'Einordnen zwischen zwei Polen, z. B. Nähe und Distanz', ic: '<path d="M3 17h18M3 17l2.5-2M3 17l2.5 2M21 17l-2.5-2M21 17l-2.5 2"/><rect x="4" y="7" width="6" height="4" rx="1"/><rect x="13" y="4" width="7" height="4" rx="1"/>' },
+  figuren: { label: 'Figurenkonstellation', d: 'Figuren und ihre Beziehungen', ic: '<circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="5" r="2.2"/><circle cx="19.5" cy="5" r="2.2"/><circle cx="12" cy="20.5" r="2"/><path d="M6.2 6.6l3.6 3.4M17.8 6.6l-3.6 3.4M12 15v3.5"/>' }
+};
+const TF_POS = ['ganz links', 'eher links', 'Mitte', 'eher rechts', 'ganz rechts'];
+const TF_DREI = ['These', 'Argument', 'Beleg (Z.)'];
+const tfTpl = b => (TF_TPL[b && b.tpl] ? b.tpl : 'gegen');
+const tfRaster = b => tfTpl(b) === 'gegen' || tfTpl(b) === 'drei';
+const tfStr = x => String(x == null ? '' : x);
+const tfStrip = x => tfStr(x).replace(/\[([^\[\]]*)\]/g, '$1');
+const tfLines = x => tfStr(x).split('\n').map(z => z.trim()).filter(Boolean);
+function tfNorm(b) {
+  if (!Array.isArray(b.cols) || b.cols.length < 1) b.cols = ['', ''];
+  if (!Array.isArray(b.rows)) b.rows = [];
+  b.rows = b.rows.map(r => (Array.isArray(r) ? r : []));
+  ['branches', 'steps', 'scale', 'nodes', 'rels'].forEach(k => { if (!Array.isArray(b[k])) b[k] = []; });
+  if (!b.poles || typeof b.poles !== 'object') b.poles = { l: '', r: '', m: '' };
+  return b;
+}
+// Eintrag: o.gaps = Lückenfassung, o.sol = Lösungsstellen farbig (Lehrerfassung), ex = bleibt als Beispiel stehen
+function tfEntry(x, o, ex) {
+  const t = tfStr(x); if (!t.trim()) return '';
+  const word = o.mode === 'wort';
+  if (o.gaps && !ex) {
+    if (!word) return `<span class="tf-ge" style="--l:${Math.min(4, Math.max(1, Math.ceil(tfStrip(t).length / 34)))}"></span>`;
+    return t.split(/(\[[^\[\]]*\])/).map(p => /^\[[^\[\]]*\]$/.test(p) ? `<span class="gap tf-gw" style="width:${Math.max(3, Math.min(14, (p.length - 2) * .58 + 1.6)).toFixed(1)}em"></span>` : inlineHTML(p)).join('');
+  }
+  if (o.sol && !ex) return word ? t.split(/(\[[^\[\]]*\])/).map(p => /^\[[^\[\]]*\]$/.test(p) ? `<span class="tf-sol">${inlineHTML(p.slice(1, -1))}</span>` : inlineHTML(p)).join('') : `<span class="tf-sol">${inlineHTML(tfStrip(t))}</span>`;
+  return inlineHTML(tfStrip(t));
+}
+const tfHead = (x, o) => (o.mode === 'wort' ? tfEntry(x, o, false) : inlineHTML(tfStrip(x)));
+// Lage der Figuren in % (x der Breite, y der Höhe)
+function tfFigPos(ns) {
+  const N = ns.length, pos = {};
+  if (N <= 3) ns.forEach((x, k) => (pos[x.i] = N === 1 ? [50, 50] : N === 2 ? [k ? 78 : 22, 50] : [[50, 17], [17, 80], [83, 80]][k]));
+  else { pos[ns[0].i] = [50, 50]; const R = ns.slice(1); R.forEach((x, k) => { const a = -Math.PI / 2 + k * 2 * Math.PI / R.length + (R.length % 2 ? 0 : Math.PI / R.length); pos[x.i] = [50 + 37 * Math.cos(a), 50 + 35 * Math.sin(a)]; }); }
+  // senkrecht auf die ganze Höhe verteilen
+  const ys = Object.values(pos).map(p => p[1]); const lo = Math.min(...ys), hi = Math.max(...ys);
+  if (N > 3 && hi - lo > 1) Object.values(pos).forEach(p => { p[1] = 13 + (p[1] - lo) / (hi - lo) * 74; });
+  return pos;
+}
+function tafelHTML(b, o = {}) {
+  tfNorm(b); const tpl = tfTpl(b); const mode = b.gapMode === 'wort' ? 'wort' : 'eintrag'; o = { ...o, mode };
+  const kf = !!b.keepFirst && mode === 'eintrag'; const st = n => (o.steps ? ` data-st="${n}"` : '');
+  const T = tfStr(b.title).trim(); let h = '', showT = !!T;
+  if (tfRaster(b)) {
+    const C = Math.max(1, Math.min(4, b.cols.length));
+    const rows = b.rows.filter(r => r.slice(0, C).some(c => tfStr(c).trim()));
+    h = `<div class="tf-grid" style="--n:${C}">${b.cols.slice(0, C).map((c, i) => `<div class="tf-h k${i}">${tfHead(c, o) || '&nbsp;'}</div>`).join('')}`
+      + rows.map((r, ri) => Array.from({ length: C }, (_, ci) => `<div class="tf-c k${ci}${ri ? '' : ' r0'}"${st(ri + 1)}>${tfEntry(r[ci], o, kf && ri === 0)}</div>`).join('')).join('') + '</div>';
+  } else if (tpl === 'cluster') {
+    const brs = b.branches.filter(x => tfStr(x.h).trim() || tfStr(x.t).trim());
+    const br = (x, i) => { const L = tfLines(x.t); return `<div class="tf-br"${st(i + 1)}>${tfStr(x.h).trim() ? `<div class="tf-bh">${tfHead(x.h, o)}</div>` : ''}${L.length ? `<ul class="tf-bl">${L.map((z, j) => `<li>${tfEntry(z, o, kf && j === 0)}</li>`).join('')}</ul>` : ''}</div>`; };
+    const left = [], right = []; brs.forEach((x, i) => (i % 2 ? right : left).push(br(x, i)));
+    const cc = tfStr(b.center).trim() ? tfHead(b.center, o) : T ? inlineHTML(tfStrip(T)) : '&nbsp;'; if (!tfStr(b.center).trim()) showT = false;
+    h = `<div class="tf-cl"><svg class="tf-svg" aria-hidden="true"></svg><div class="tf-side l">${left.join('')}</div><div class="tf-mid"><div class="tf-cc">${cc}</div></div><div class="tf-side r">${right.join('')}</div></div>`;
+  } else if (tpl === 'ablauf') {
+    const sts = b.steps.filter(x => tfStr(x.h).trim() || tfStr(x.t).trim());
+    h = `<div class="tf-ab">${sts.map((x, i) => `${i ? `<span class="tf-ar"${st(i + 1)} aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h16M13 6l6 6-6 6"/></svg></span>` : ''}<div class="tf-st"${st(i + 1)}><span class="tf-sn">${i + 1}</span>${tfStr(x.h).trim() ? `<div class="tf-sh">${tfHead(x.h, o)}</div>` : ''}${tfStr(x.t).trim() ? `<div class="tf-sx">${tfEntry(x.t, o, kf && i === 0)}</div>` : ''}</div>`).join('')}</div>`;
+  } else if (tpl === 'skala') {
+    const its = b.scale.map((x, i) => ({ x, i })).filter(z => tfStr(z.x.t).trim());
+    const col = p => its.filter(z => Math.min(5, Math.max(1, +z.x.p || 3)) === p);
+    h = `<div class="tf-sk"><div class="tf-sk-cols">${[1, 2, 3, 4, 5].map(p => `<div class="tf-sk-col">${col(p).map((z, k) => `<div class="tf-si"${st(its.indexOf(z) + 1)}>${tfEntry(z.x.t, o, kf && its.indexOf(z) === 0)}</div>`).join('')}</div>`).join('')}</div>
+      <div class="tf-sk-line"></div><div class="tf-sk-poles"><span>${tfHead(b.poles.l, o)}</span>${tfStr(b.poles.m).trim() ? `<span class="m">${tfHead(b.poles.m, o)}</span>` : ''}<span class="r">${tfHead(b.poles.r, o)}</span></div></div>`;
+  } else if (tpl === 'figuren') {
+    const ns = b.nodes.map((x, i) => ({ ...x, i })).filter(x => tfStr(x.n).trim());
+    const pos = tfFigPos(ns); const seen = {};
+    const rels = b.rels.filter(r => pos[+r.a] && pos[+r.b] && +r.a !== +r.b);
+    const lines = rels.map((r, j) => { const [x1, y1] = pos[+r.a], [x2, y2] = pos[+r.b]; return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${st(j + 1)}/>`; }).join('');
+    const labs = rels.map((r, j) => { if (!tfStr(r.t).trim()) return ''; const [x1, y1] = pos[+r.a], [x2, y2] = pos[+r.b]; const key = [+r.a, +r.b].sort().join('-'); const n = seen[key] = (seen[key] || 0) + 1; const off = n > 1 ? 7 : 0;
+      return `<span class="tf-rl"${st(j + 1)} style="left:${((x1 + x2) / 2).toFixed(2)}%;top:${((y1 + y2) / 2 + off).toFixed(2)}%">${tfEntry(r.t, o, kf && j === 0)}</span>`; }).join('');
+    h = `<div class="tf-fg"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>${labs}${ns.map((x, k) => `<div class="tf-nd${ns.length > 3 && !k ? ' c' : ''}" style="left:${pos[x.i][0].toFixed(2)}%;top:${pos[x.i][1].toFixed(2)}%"><div class="tf-nn">${tfHead(x.n, o)}</div>${tfStr(x.d).trim() ? `<div class="tf-nx">${tfEntry(x.d, o, false)}</div>` : ''}</div>`).join('')}</div>`;
+  }
+  return `<div class="tf tf-${tpl}${tfRaster(b) ? ' tf-raster' : ''}">${showT ? `<div class="tf-t">${inlineHTML(tfStrip(T))}</div>` : ''}${h}</div>`;
+}
+// Verbindungslinien im Cluster: erst messbar, wenn das Tafelbild im Dokument steht
+function tfDraw(root) {
+  if (!root) return;
+  const cls = root.classList && root.classList.contains('tf-cl') ? [root] : [...root.querySelectorAll('.tf-cl')];
+  cls.forEach(cl => {
+    const svg = cl.querySelector('.tf-svg'), cc = cl.querySelector('.tf-cc'); if (!svg || !cc) return;
+    const W = cl.offsetWidth, H = cl.offsetHeight; if (!W || !H) return;
+    const box = e => { let x = 0, y = 0, n = e; while (n && n !== cl) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return { x, y, w: e.offsetWidth, h: e.offsetHeight }; };
+    const c = box(cc); const cx = c.x + c.w / 2, cy = c.y + c.h / 2;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.innerHTML = [...cl.querySelectorAll('.tf-br')].map(br => { const r = box(br); const left = r.x + r.w / 2 < cx; const x = left ? r.x + r.w : r.x, y = r.y + r.h / 2; const sx = left ? c.x : c.x + c.w; const mx = (sx + x) / 2;
+      return `<path d="M${sx.toFixed(1)} ${cy.toFixed(1)} C${mx.toFixed(1)} ${cy.toFixed(1)} ${mx.toFixed(1)} ${y.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}"${br.dataset.st ? ` data-st="${br.dataset.st}"` : ''}/>`; }).join('');
+  });
+}
+// Inhalt als Gruppen (Überschrift + Einträge), zum Umwandeln zwischen Vorlagen
+function tfGroups(b) {
+  const tpl = tfTpl(b);
+  if (tfRaster(b)) return b.cols.map((h, ci) => ({ h: tfStr(h), items: b.rows.map(r => tfStr(r[ci])).filter(x => x.trim()) }));
+  if (tpl === 'cluster') return b.branches.map(x => ({ h: tfStr(x.h), items: tfLines(x.t) }));
+  if (tpl === 'ablauf') return b.steps.map(x => ({ h: tfStr(x.h), items: tfStr(x.t).trim() ? [tfStr(x.t)] : [] }));
+  if (tpl === 'skala') return [{ h: '', items: b.scale.map(x => tfStr(x.t)).filter(x => x.trim()) }];
+  return b.nodes.map(x => ({ h: tfStr(x.n), items: tfStr(x.d).trim() ? [tfStr(x.d)] : [] }));
+}
+function tfHas(b, tpl) {
+  const any = a => a.some(x => tfStr(x).trim());
+  if (tpl === 'gegen' || tpl === 'drei') return b.rows.some(r => any(r)) || (tpl === 'gegen' && any(b.cols));
+  if (tpl === 'cluster') return any([b.center]) || b.branches.some(x => any([x.h, x.t]));
+  if (tpl === 'ablauf') return b.steps.some(x => any([x.h, x.t]));
+  if (tpl === 'skala') return any([b.poles.l, b.poles.r]) || b.scale.some(x => any([x.t]));
+  return b.nodes.some(x => any([x.n, x.d]));
+}
+const tfSplit3 = line => { const p = tfStr(line).split(/\s+[–—]\s+|\s+-\s+|;\s+/).map(x => x.trim()).filter(Boolean); return p.length > 3 ? [p[0], p[1], p.slice(2).join('; ')] : [p[0] || '', p[1] || '', p[2] || '']; };
+function tfFill(b, tpl, gs) {
+  gs = gs.filter(g => tfStr(g.h).trim() || g.items.length);
+  if (tpl === 'gegen') {
+    const C = Math.min(4, Math.max(2, gs.length)); b.cols = Array.from({ length: C }, (_, i) => (gs[i] ? gs[i].h : ''));
+    const R = Math.max(2, ...gs.slice(0, C).map(g => g.items.length)); b.rows = Array.from({ length: R }, (_, r) => Array.from({ length: C }, (_, c) => (gs[c] && gs[c].items[r]) || ''));
+  } else if (tpl === 'drei') {
+    if (!b.cols.some(x => tfStr(x).trim()) || b.cols.length !== 3) b.cols = TF_DREI.slice();
+    const lines = gs.flatMap(g => g.items); b.rows = (lines.length ? lines : gs.map(g => g.h)).map(tfSplit3); if (!b.rows.length) b.rows = [['', '', '']];
+  } else if (tpl === 'cluster') b.branches = gs.length ? gs.slice(0, 8).map(g => ({ h: g.h, t: g.items.join('\n') })) : [{ h: '', t: '' }];
+  else if (tpl === 'ablauf') b.steps = (gs.length === 1 && gs[0].items.length > 1 ? gs[0].items.map(t => ({ h: '', t })) : gs.map(g => ({ h: g.h, t: g.items.join('; ') }))).slice(0, 8);
+  else if (tpl === 'skala') b.scale = gs.flatMap(g => g.items).slice(0, 16).map(t => ({ t, p: 3 }));
+  else if (tpl === 'figuren') b.nodes = gs.slice(0, 8).map(g => ({ n: g.h, d: g.items[0] || '' }));
+}
+function tfConvert(b, nx) {
+  tfNorm(b); const cur = tfTpl(b);
+  if (nx === 'drei' && cur === 'gegen' && !b.rows.some(r => r.some(x => tfStr(x).trim()))) { b.cols = TF_DREI.slice(); b.rows = b.rows.map(r => [r[0] || '', r[1] || '', r[2] || '']); return; }
+  if ((nx === 'gegen' || nx === 'drei') && (cur === 'gegen' || cur === 'drei')) { if (nx === 'drei' && b.cols.length !== 3) { b.cols = TF_DREI.slice(); b.rows = b.rows.map(r => [r[0] || '', r[1] || '', r[2] || '']); } return; }
+  if (!tfHas(b, nx) && tfHas(b, cur)) tfFill(b, nx, tfGroups(b));
+  if (nx === 'drei' && b.cols.length !== 3) { b.cols = TF_DREI.slice(); b.rows = b.rows.map(r => [r[0] || '', r[1] || '', r[2] || '']); }
+}
+// Kurzname einer Aufgabe: „Analysieren Sie den Anfang der Erzählung.“ → „Den Anfang der Erzählung“
+function tfLabel(it) {
+  const ops = detectOps(it.text || ''); const w = plainText(it.text || '').split('\n')[0].trim().split(/\s+/);
+  if (w.length && ops.some(o => w[0].toLowerCase().startsWith(String(o.op).slice(0, 4).toLowerCase()))) w.shift();
+  if (/^(sie|du|ihr)[,:]?$/i.test(w[0] || '')) w.shift();
+  let t = w.join(' ').replace(/\s*\([^)]*\)/g, '').replace(/[.!?:;,]+$/, '').trim();
+  if (t.length > 46) t = t.slice(0, 46).replace(/\s+\S*$/, '') + ' …';
+  return t ? t[0].toUpperCase() + t.slice(1) : 'Aufgabe';
+}
+function tfSuggest(b) {
+  tfNorm(b); const tpl = tfTpl(b); const sh = state.sheet, v = sheetView();
+  if (tpl === 'figuren') { toast('Für die Figurenkonstellation gibt es keinen automatischen Vorschlag. Tragen Sie die Figuren und Beziehungen ein.'); return -1; }
+  const gs = []; sh.blocks.forEach(x => { if (x.type !== 'tasks' || !blockVisible(x, v)) return; itemsFor(x, v).forEach(it => { const eh = ehLines(it); if (eh.length) gs.push({ h: tfLabel(it), items: eh.map(z => tfStr(z).trim()).filter(Boolean) }); }); });
+  if (!gs.length) { toast('Es gibt noch keine Erwartungen. Tragen Sie unter den Aufgaben bei „Erwartung“ die erwarteten Ergebnisse ein, dann entsteht daraus der Vorschlag.'); return -1; }
+  if (tpl === 'gegen') { b.cols = ['', '']; b.rows = []; } else if (tpl === 'drei') b.rows = []; else if (tpl === 'cluster') b.branches = []; else if (tpl === 'ablauf') b.steps = []; else if (tpl === 'skala') b.scale = [];
+  tfFill(b, tpl, gs);
+  if (!tfStr(b.title).trim()) b.title = tfStr(sh.meta.title).trim();
+  return gs.length;
+}
+
+/* Ausgabe „Tafelbild“: je Baustein eine Seite A4 quer, vollständig (Lehrerfassung) oder als Lückenfassung */
+function layoutTafel() {
+  const sh = state.sheet, m = sh.meta; const v = sheetView(); const host = $('#fit-host'); const full = state.fassung === 'lehrer'; const out = [];
+  const tbs = sh.blocks.filter(b => b.type === 'tafel' && blockVisible(b, v));
+  tbs.forEach((b, i) => {
+    const pg = el(`<div class="page tf-page" data-w="297" data-h="210"><div class="tf-frame">${tafelHTML(b, { gaps: !full })}</div><div class="tf-foot"><span>${esc([m.nr ? 'AB ' + m.nr : '', tfStrip(m.title)].filter(Boolean).join(' · '))}</span><span>${full ? 'Tafelbild' : 'Tafelbild · Lückenfassung'}${tbs.length > 1 ? ` · ${i + 1}/${tbs.length}` : ''}</span></div></div>`);
+    setAccent(pg, m); host.appendChild(pg);
+    const tf = pg.querySelector('.tf'); fitUp(tf, pg.querySelector('.tf-frame'), 44); tfDraw(pg);
+    host.removeChild(pg); out.push({ pg, over: false });
+  });
+  return out;
+}
+
+/* Beamer: Tafelbild bildschirmfüllend, Schritt für Schritt aufdecken */
+function tfBeamer(bid) {
+  const v = sheetView(); const list = state.sheet.blocks.filter(x => x.type === 'tafel' && blockVisible(x, v));
+  if (!list.length) { toast('Es gibt noch kein Tafelbild. Fügen Sie unten bei den Bausteinen „Tafelbild“ hinzu.'); return; }
+  const S = { k: Math.max(0, list.findIndex(x => x.id === bid)), cur: 0, max: 0, gaps: false, board: false };
+  try { S.board = localStorage.getItem('abw.tfboard') === '1'; } catch {}
+  const ov = el(`<div class="tf-beam${S.board ? ' board' : ''}" role="dialog" aria-label="Tafelbild am Beamer" tabindex="-1"><div class="tf-bm-stage"></div>
+    <div class="tf-bm-bar"><button type="button" data-b="prev" title="Zurück (Pfeil links)" aria-label="Zurück">‹</button><span class="tf-bm-n" aria-live="polite"></span><button type="button" data-b="next" title="Weiter (Pfeil rechts oder Leertaste)" aria-label="Weiter">›</button><span class="sep"></span>
+    <button type="button" data-b="all">Alles zeigen</button><button type="button" data-b="gaps" aria-pressed="false">Lückenfassung</button><button type="button" data-b="board" aria-pressed="${S.board}">Tafelgrün</button><button type="button" data-b="full">Vollbild</button><button type="button" data-b="close">Schließen</button></div></div>`);
+  setAccent(ov, state.sheet.meta); document.body.appendChild(ov);
+  const stage = ov.querySelector('.tf-bm-stage');
+  const apply = () => {
+    stage.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > S.cur));
+    const n = ov.querySelector('.tf-bm-n'); n.textContent = (list.length > 1 ? `Tafelbild ${S.k + 1} von ${list.length}` : '') + (list.length > 1 && S.max ? ' · ' : '') + (S.max ? `Schritt ${S.cur} von ${S.max}` : '');
+    ov.querySelector('[data-b="prev"]').disabled = !S.cur && !S.k; ov.querySelector('[data-b="next"]').disabled = S.cur >= S.max && S.k >= list.length - 1;
+    ov.querySelector('[data-b="all"]').disabled = S.cur >= S.max;
+  };
+  const fit = () => { const tf = stage.querySelector('.tf'); if (!tf) return; stage.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); fitUp(tf, stage, Math.max(18, Math.round(stage.clientHeight / 9))); tfDraw(stage); apply(); };
+  const show = () => { stage.innerHTML = tafelHTML(list[S.k], { gaps: S.gaps, steps: true }); const tf = stage.querySelector('.tf'); S.max = Math.max(0, ...[...tf.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); fit(); };
+  const next = () => { if (S.cur < S.max) { S.cur++; apply(); } else if (S.k < list.length - 1) { S.k++; S.cur = 0; show(); } };
+  const prev = () => { if (S.cur > 0) { S.cur--; apply(); } else if (S.k > 0) { S.k--; show(); S.cur = S.max; apply(); } };
+  const close = () => { document.removeEventListener('keydown', key, true); window.removeEventListener('resize', onRs); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const key = e => {
+    if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.tf-bm-bar button')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') { e.preventDefault(); e.stopPropagation(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); S.cur = 0; apply(); } else if (e.key === 'End') { e.preventDefault(); S.cur = S.max; apply(); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (!document.fullscreenElement) close(); }
+  };
+  let rt = 0; const onRs = () => { clearTimeout(rt); rt = setTimeout(fit, 120); };
+  ov.addEventListener('click', e => {
+    const bt = e.target.closest('[data-b]'); if (!bt) { if (e.target.closest('.tf-bm-stage')) next(); return; }
+    const k = bt.dataset.b;
+    if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'all') { S.cur = S.max; apply(); } else if (k === 'close') close();
+    else if (k === 'gaps') { S.gaps = !S.gaps; bt.setAttribute('aria-pressed', String(S.gaps)); const c = S.cur; show(); S.cur = Math.min(c, S.max); apply(); }
+    else if (k === 'board') { S.board = !S.board; ov.classList.toggle('board', S.board); bt.setAttribute('aria-pressed', String(S.board)); try { localStorage.setItem('abw.tfboard', S.board ? '1' : '0'); } catch {} }
+    else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
+  });
+  document.addEventListener('keydown', key, true); window.addEventListener('resize', onRs);
+  show(); ov.focus();
+}
+
+/* Editor des Bausteins */
+function tafelEditor(b) {
+  tfNorm(b); const tpl = tfTpl(b); const on = b.onSheet || 'luecke'; const gm = b.gapMode === 'wort' ? 'wort' : 'eintrag';
+  const inp = (k, v, ph, cls) => `<input type="text"${cls ? ` class="${cls}"` : ''} data-k="${k}" value="${esc(tfStr(v))}" placeholder="${esc(ph || '')}">`;
+  const del = (w, i, dis) => `<button class="ib" type="button" data-act="tf-del" data-w="${w}" data-i="${i}" title="Entfernen" aria-label="Entfernen"${dis ? ' disabled' : ''}>${I.x}</button>`;
+  const add = (w, l, dis) => `<button class="link" type="button" data-act="tf-add" data-w="${w}"${dis ? ' disabled' : ''}>+ ${l}</button>`;
+  let c = '';
+  if (tfRaster(b)) {
+    const C = b.cols.length;
+    c = `<div class="tf-ed-grid" style="--n:${C}">${b.cols.map((h, i) => inp(`cols.${i}`, h, tpl === 'drei' ? (TF_DREI[i] || 'Spalte') : ['Spalte 1, z. B. Pro', 'Spalte 2, z. B. Contra', 'Spalte 3', 'Spalte 4'][i], 'tf-hd')).join('')}<span></span>
+      ${b.rows.map((r, ri) => b.cols.map((_, ci) => inp(`rows.${ri}.${ci}`, r[ci], ri ? '' : 'Eintrag')).join('') + del('rows', ri, b.rows.length < 2)).join('')}</div>
+      <div class="tf-ed-acts">${add('rows', 'Zeile', b.rows.length >= 14)}${add('cols', 'Spalte', C >= 4)}${C > 2 ? `<button class="link" type="button" data-act="tf-del" data-w="cols" data-i="${C - 1}">− Spalte</button>` : ''}</div>`;
+  } else if (tpl === 'cluster') {
+    c = `${fText('center', 'Begriff in der Mitte', b.center, tfStr(b.title).trim() ? 'leer = Überschrift' : 'z. B. Nähe als Strategie')}
+      <div class="tf-ed-list">${b.branches.map((x, i) => `<div class="tf-ed-br"><div class="tf-ed-row two">${inp(`branches.${i}.h`, x.h, `Zweig ${i + 1}`, 'tf-hd')}${del('branches', i, b.branches.length < 2)}</div><textarea data-k="branches.${i}.t" rows="${Math.max(2, Math.min(6, tfLines(x.t).length + 1))}" placeholder="Einträge, einer je Zeile">${esc(tfStr(x.t))}</textarea></div>`).join('')}</div>
+      <div class="tf-ed-acts">${add('branches', 'Zweig', b.branches.length >= 8)}</div>`;
+  } else if (tpl === 'ablauf') {
+    c = `<div class="tf-ed-list">${b.steps.map((x, i) => `<div class="tf-ed-row ab"><span class="tf-ed-n">${i + 1}</span>${inp(`steps.${i}.h`, x.h, i ? 'Überschrift' : 'Überschrift, z. B. Ausgangslage', 'tf-hd')}${inp(`steps.${i}.t`, x.t, 'Inhalt')}${del('steps', i, b.steps.length < 2)}</div>`).join('')}</div>
+      <div class="tf-ed-acts">${add('steps', 'Schritt', b.steps.length >= 8)}</div>`;
+  } else if (tpl === 'skala') {
+    c = `<div class="row">${fText('poles.l', 'Pol links', b.poles.l, 'z. B. Nähe')}${fText('poles.m', 'Mitte (optional)', b.poles.m, '')}${fText('poles.r', 'Pol rechts', b.poles.r, 'z. B. Distanz')}</div>
+      <div class="tf-ed-list">${b.scale.map((x, i) => `<div class="tf-ed-row sk">${inp(`scale.${i}.t`, x.t, 'Eintrag, z. B. duzt die Follower')}<select data-k="scale.${i}.p" aria-label="Position auf der Skala">${TF_POS.map((l, k) => `<option value="${k + 1}"${(+x.p || 3) === k + 1 ? ' selected' : ''}>${l}</option>`).join('')}</select>${del('scale', i, b.scale.length < 2)}</div>`).join('')}</div>
+      <div class="tf-ed-acts">${add('scale', 'Eintrag', b.scale.length >= 16)}</div>`;
+  } else {
+    const nodeSel = (k, val) => `<select data-k="${k}" aria-label="Figur">${b.nodes.map((x, i) => `<option value="${i}"${+val === i ? ' selected' : ''}>${esc(tfStrip(x.n).trim() || 'Figur ' + (i + 1))}</option>`).join('')}</select>`;
+    c = `<div class="f"><span>Figuren (die erste steht in der Mitte)</span><div class="tf-ed-list">${b.nodes.map((x, i) => `<div class="tf-ed-row ab"><span class="tf-ed-n">${i + 1}</span>${inp(`nodes.${i}.n`, x.n, i ? 'Name' : 'Hauptfigur', 'tf-hd')}${inp(`nodes.${i}.d`, x.d, 'kurz: Rolle, Merkmal (optional)')}${del('nodes', i, b.nodes.length < 2)}</div>`).join('')}</div>
+      <div class="tf-ed-acts">${add('nodes', 'Figur', b.nodes.length >= 8)}</div></div>
+      <div class="f"><span>Beziehungen</span><div class="tf-ed-list">${b.rels.map((r, j) => `<div class="tf-ed-row rel">${nodeSel(`rels.${j}.a`, r.a)}${inp(`rels.${j}.t`, r.t, 'z. B. Vater von, liebt')}${nodeSel(`rels.${j}.b`, r.b)}${del('rels', j, false)}</div>`).join('')}</div>
+      <div class="tf-ed-acts">${add('rels', 'Beziehung', b.rels.length >= 16 || b.nodes.length < 2)}</div></div>`;
+  }
+  return `<div class="f"><span>Vorlage</span><div class="tf-tpls" role="group" aria-label="Vorlage">${Object.entries(TF_TPL).map(([k, x]) => `<button type="button" class="tf-tp" data-act="tf-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}</div></div>
+    ${fText('title', 'Überschrift', b.title, 'z. B. Nähe als Strategie')}
+    <div class="tf-ed">${c}</div>
+    <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="tf-sugg"${tpl === 'figuren' ? ' disabled title="Für die Figurenkonstellation gibt es keinen Vorschlag"' : ''}>Aus dem Erwartungshorizont vorschlagen</button><button class="btn sm" type="button" data-act="tf-beam">Am Beamer zeigen</button></div>
+    <div class="f"><span>Auf dem Arbeitsblatt</span><div class="seg sm" role="group" aria-label="Auf dem Arbeitsblatt">${[['luecke', 'Lückentafelbild'], ['voll', 'Vollständig'], ['aus', 'Nur Tafel und Beamer']].map(([v, l]) => `<button type="button" data-act="tf-on" data-v="${v}" aria-pressed="${on === v}">${l}</button>`).join('')}</div></div>
+    ${on === 'luecke' ? `<div class="f"><span>Lücken</span><div class="seg sm" role="group" aria-label="Lücken">${[['eintrag', 'Ganze Einträge'], ['wort', 'Nur markierte Wörter']].map(([v, l]) => `<button type="button" data-act="tf-gm" data-v="${v}" aria-pressed="${gm === v}">${l}</button>`).join('')}</div></div>
+      ${gm === 'eintrag' ? `<div class="chks">${fCheck('keepFirst', 'Erster Eintrag bleibt als Beispiel stehen', b.keepFirst)}</div>` : ''}
+      <small class="hint">${gm === 'wort' ? 'Setzen Sie die Wörter, die zur Lücke werden, in eckige Klammern, etwa: Der Politiker [duzt] seine Follower.' : 'Überschriften und Begriffe bleiben stehen, die Einträge werden zu Schreibzeilen.'} In der Lehrerfassung stehen die Lösungen farbig.</small>` : ''}`;
+}
 // Piktogramm als SVG (32 × 24); c = Farbe, bg = Papierfarbe für die Trennkante
 function sozSVG(kind, c, bg) {
   const P = (x, hy, r, by, w, h, halo) => `<circle cx="${x}" cy="${hy}" r="${r}"${halo}/><path d="M${x - w} ${by} a${w} ${h} 0 0 1 ${2 * w} 0 z"${halo}/>`;
@@ -2584,6 +2987,9 @@ function taskRight(it, r, meta, v) {
   if (isK && String(it.pts || '').trim()) out.push(`<b>${esc(it.pts)}</b>`);
   if ((meta.showAFB || (v && v.lehrer)) && r) out.push('AFB ' + afbLabel(r));
   const n = tipsOf(it).length; if (n && !isK) out.push(`Tipps: ${n}`);
+  const mn = itMin(it), ph = itPh(it);
+  if (v && v.lehrer && (ph || mn)) out.push(`<span class="t-ph">${ph ? PHASEN[ph].label : ''}${ph && mn ? ' · ' : ''}${mn ? mn + ' Min.' : ''}</span>`);
+  else if (meta.showMin && mn) out.push(`<span class="t-min">ca. ${mn} Min.</span>`);
   return out.join('<br>');
 }
 function taskEH(it, v) {
@@ -2956,8 +3362,8 @@ function taskExtras(b, i, it) {
   const isK = state.sheet.meta.mode === 'klausur';
   const open = w => state.taskOpen.has(taskKey(b.id, i, w));
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
-  const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
-  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}<button type="button" class="ck-chip tx-dg" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button></div>`;
+  const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}${w === 'tag' || w === 'rlp' ? ' x-pro' + (filled || open(w) ? ' used' : '') : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button></div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
   if (open('tips')) h += ophBox(b, i, it, nT);
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
@@ -3330,6 +3736,7 @@ function gTargets(bid) {
     case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
     case 'info': return [[b, 'title'], [b, 'text']];
     case 'phrases': return [[b, 'title'], ...(b.groups || []).flatMap(g => [[g, 'head'], [g, 'text']])];
+    case 'tafel': tfNorm(b); return [[b, 'title'], [b, 'center'], ...b.cols.map((_, i) => [b.cols, i]), ...b.rows.flatMap(r => r.map((_, i) => [r, i])), ...b.branches.flatMap(x => [[x, 'h'], [x, 't']]), ...b.steps.flatMap(x => [[x, 'h'], [x, 't']]), [b.poles, 'l'], [b.poles, 'm'], [b.poles, 'r'], ...b.scale.map(x => [x, 't']), ...b.nodes.flatMap(x => [[x, 'n'], [x, 'd']]), ...b.rels.map(x => [x, 't'])];
     case 'heading': case 'text': return [[b, 'text']];
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
     case 'qr': return [[b, 'title'], [b, 'note']];
@@ -3369,13 +3776,21 @@ function ehMarkdown() {
     itemsFor(b, vEH).forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
       L.push('', `### Aufgabe ${t}${m.groupsOn && b.group ? ` (Gruppe ${b.group})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', (plainMd(it.text) || '–').split('\n').map(l => '> ' + l).join('\n'), '');
-      const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
+      const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', itPh(it) ? 'Phase: ' + PHASEN[itPh(it)].label : '', itMin(it) ? itMin(it) + ' Min.' : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
       const rl = rlpOf(it); if (rl.length) L.push('**Standards**', '', ...rl.map(id => { const x = rlpInfo(id); return `- ${x.own ? '' : x.code + ': '}${x.t}`; }), '');
       const eh = ehLines(it);
       L.push('**Erwartung**', '', ...(eh.length ? eh.map(s => `- ${plainMd(s)}`) : ['- (noch offen)']));
       const tips = tipsOf(it); if (tips.length) L.push('', '**Gestufte Hilfen**', '', ...tips.map((s, j) => `${j + 1}. ${plainMd(s)}`));
     });
+  });
+  const tfs = sh.blocks.filter(b => b.type === 'tafel' && blockVisible(b, sheetView()));
+  tfs.forEach(b => { tfNorm(b); const tpl = tfTpl(b); const md = x => plainMd(tfStrip(x)); L.push('', `## Tafelbild${tfStr(b.title).trim() ? ': ' + md(b.title) : ''}`, '', `_${TF_TPL[tpl].label}_`, '');
+    if (tfRaster(b)) { const C = b.cols.length; L.push('| ' + b.cols.map(c => md(c) || ' ').join(' | ') + ' |', '|' + ' --- |'.repeat(C)); b.rows.filter(r => r.some(x => tfStr(x).trim())).forEach(r => L.push('| ' + b.cols.map((_, i) => md(r[i]) || ' ').join(' | ') + ' |')); }
+    else if (tpl === 'cluster') { L.push(`**${md(b.center || b.title) || 'Mitte'}**`, ''); b.branches.filter(x => tfStr(x.h).trim() || tfStr(x.t).trim()).forEach(x => { L.push(`- **${md(x.h) || '–'}**`); tfLines(x.t).forEach(z => L.push(`  - ${md(z)}`)); }); }
+    else if (tpl === 'ablauf') b.steps.filter(x => tfStr(x.h).trim() || tfStr(x.t).trim()).forEach((x, i) => L.push(`${i + 1}. ${tfStr(x.h).trim() ? `**${md(x.h)}**${tfStr(x.t).trim() ? ': ' : ''}` : ''}${md(x.t)}`));
+    else if (tpl === 'skala') { L.push(`${md(b.poles.l) || 'links'} ↔ ${md(b.poles.r) || 'rechts'}`, ''); b.scale.filter(x => tfStr(x.t).trim()).forEach(x => L.push(`- ${md(x.t)} (${TF_POS[(+x.p || 3) - 1]})`)); }
+    else { b.nodes.filter(x => tfStr(x.n).trim()).forEach(x => L.push(`- **${md(x.n)}**${tfStr(x.d).trim() ? ': ' + md(x.d) : ''}`)); L.push(''); b.rels.forEach(r => { const A = b.nodes[+r.a], B = b.nodes[+r.b]; if (A && B && +r.a !== +r.b) L.push(`- ${md(A.n)} → ${md(B.n)}${tfStr(r.t).trim() ? ': ' + md(r.t) : ''}`); }); }
   });
   const C = rlpCoverage([sh]); const ids = Object.keys(C.cov).sort(rlpCmp);
   if (ids.length) { L.push('', '## Bezug zum Rahmenlehrplan', '', `${C.nTagged} von ${C.nTasks} Aufgaben sind Standards zugeordnet.`, ''); ids.forEach(id => { const x = rlpInfo(id); L.push(`- ${x.own ? '(eigen) ' : '**' + x.code + '** '}${x.t} · Aufgabe ${C.cov[id].by[0].t.join(', ')}`); }); }
@@ -3388,8 +3803,8 @@ function segHTML(key, opts, cur, label) {
   return `<div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-pv="${key}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${l}</button>`).join('')}</div>`;
 }
 function renderOut() {
-  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length;
-  $('#outsw').innerHTML = [['blatt', 'Arbeitsblatt', 0], ['tipps', 'Tippkarten', nT], ['karten', 'Tafelkarten', nK]]
+  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const nTf = sh.blocks.filter(x => x.type === 'tafel').length;
+  $('#outsw').innerHTML = [['blatt', 'Arbeitsblatt', 0], ['tipps', 'Tippkarten', nT], ['karten', 'Tafelkarten', nK], ['tafel', 'Tafelbild', nTf]]
     .map(([k, l, n]) => `<button type="button" data-out="${k}" aria-pressed="${state.out === k}">${l}${n ? `<span>${n}</span>` : ''}</button>`).join('');
   let h = '';
   if (state.out === 'blatt') {
@@ -3398,6 +3813,7 @@ function renderOut() {
     if (sh.meta.levelsOn) h += segHTML('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all', 'Niveau');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
   }
+  if (state.out === 'tafel') { h += segHTML('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung, 'Fassung'); if (nTf) h += '<button class="btn sm" type="button" data-pv="tfbeam">Am Beamer zeigen</button>'; }
   $('#pv-opts').innerHTML = h;
   const w = $('#btn-docx'); w.disabled = state.out !== 'blatt'; w.title = state.out === 'blatt' ? '' : 'Word gibt es nur für das Arbeitsblatt';
 }
@@ -3431,6 +3847,7 @@ function newBlock(type) {
     case 'image': return { id, type, src: '', w: 0, h: 0, caption: '', source: '', width: 80 };
     case 'poem': return { ...newBlock('material'), form: 'gedicht' };
     case 'phrases': return { id, type, title: 'Formulierungshilfen', cols: 2, groups: [{ head: '', text: '' }] };
+    case 'tafel': return { id, type, tpl: 'gegen', title: '', onSheet: 'luecke', gapMode: 'eintrag', keepFirst: false, cols: ['', ''], rows: [['', ''], ['', ''], ['', '']], center: '', branches: [{ h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }], steps: [{ h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }], poles: { l: '', r: '', m: '' }, scale: [{ t: '', p: 2 }, { t: '', p: 4 }], nodes: [{ n: '', d: '' }, { n: '', d: '' }, { n: '', d: '' }], rels: [{ a: 0, b: 1, t: '' }] };
     default: return { id, type: 'pagebreak' };
   }
 }
@@ -3904,6 +4321,11 @@ function buildBlock(b, ctx) {
   const put = html => { const n = el(html); n.dataset.bid = b.id; const tg = [ctx.view && ctx.view.grp === 'all' && meta.groupsOn && b.group ? 'Gruppe ' + b.group : '', ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(b.lv) ? b.lv.map(x => LV[x].sym).join(' · ') : ''].filter(Boolean).join(' · '); if (tg) n.dataset.grp = tg; body.appendChild(n); return n; };
   switch (b.type) {
     case 'pagebreak': return { type: 'pagebreak' };
+    case 'tafel': {
+      const lehrer = !!(ctx.view && ctx.view.lehrer); const on = b.onSheet || 'luecke';
+      const n = put(`<div class="blk blk-tafel">${tafelHTML(b, { gaps: !lehrer && on === 'luecke', sol: lehrer && on === 'luecke' })}</div>`);
+      tfDraw(n); return { type: 'tafel', el: n };
+    }
     case 'heading': return { type: 'heading', el: put(`<div class="blk blk-h" style="${H_SP.top[b.padTop] ? `padding-top:${H_SP.top[b.padTop]}mm;` : ''}${H_SP.bot[b.padBot] ? `padding-bottom:${H_SP.bot[b.padBot]}mm;` : ''}"><h2>${inlineHTML(b.text || 'Überschrift')}</h2></div>`) };
     case 'text': {
       const n = put(`<div class="blk blk-text${b.stil ? ' st-' + b.stil : ''}">${parasHTML(b.text) || '<p style="color:var(--paper-hair)">Absatz</p>'}</div>`);
@@ -4262,7 +4684,7 @@ function layout() {
   if (meta.mode === 'klausur') items.push(buildCover(meta, sh, v, body), { type: 'pagebreak' }, buildRunHead(meta, body));
   else { items.push(buildHead(meta, body)); if (v.lvl !== 'all') { const hd = items[items.length - 1].el; if (hd) hd.insertAdjacentHTML('beforeend', `<span class="lv-mark" title="Niveau ${LV[v.lvl].name}">${LV[v.lvl].sym}</span>`); } }
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
-  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
+  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
@@ -4299,9 +4721,9 @@ let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
   if (MAPPE_LOCK || DG_VIEW) return;
   let out;
-  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
+  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
-  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
+  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'tafel' ? 'Noch kein Tafelbild. Fügen Sie links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
     pg.classList.add('pout');
     const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(pg);
@@ -4311,7 +4733,7 @@ function renderPreview() {
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
   const buch = state.out === 'blatt' && state.sheet.meta.paper === 'buch';
   const kH = state.out === 'karten' && state.kkHalf;
-  const [one, many, unit] = state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  const [one, many, unit] = state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
   const cnt = state.out === 'karten' ? (state.kkCount || 0) : out.length;
   const nB = state.bookPages || 0;
   $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`
@@ -4741,9 +5163,10 @@ function progressionHTML() {
 function summary(b, num) {
   switch (b.type) {
     case 'material': return `${num[b.id].tag || 'M' + num[b.id].m} · ${b.title || 'ohne Titel'}`;
-    case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : ''); }
+    case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : '') + (() => { const mn = (b.items || []).reduce((a, it) => a + (itPh(it) === 'ha' ? 0 : itMin(it)), 0); return mn ? ` · ${mn} Min.` : ''; })(); }
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
+    case 'tafel': return `${TF_TPL[tfTpl(b)].label}${tfStr(b.title).trim() ? ' · ' + tfStrip(b.title) : ''}${(b.onSheet || 'luecke') === 'aus' ? ' · nur Tafel' : (b.onSheet || 'luecke') === 'luecke' ? ' · Lücken' : ''}`;
     case 'phrases': { const n = phrGroups(b).reduce((a, g) => a + g.lines.length, 0); return `${plainText(b.title || 'Formulierungshilfen')} · ${n} ${n === 1 ? 'Wendung' : 'Wendungen'}`; }
     case 'lines': return b.style === 'rahmen' ? `freie Fläche · ${Math.min(+b.count || 1, 26) * 9} mm` : `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
     case 'heading': return b.text || 'leer';
@@ -4787,7 +5210,7 @@ function bodyFor(b, num) {
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
           ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: `Aufgabe ${start + i}` })}
           <div class="chips" data-chips="${i}">${chipsHTML(it.text)}</div>
-          <div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>
+          <div class="soz-row"><div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>${phCtl(i, it)}</div>
           ${taskExtras(b, i, it)}
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
@@ -4868,6 +5291,7 @@ function bodyFor(b, num) {
       ${fText('title', 'Titel', b.title, 'z. B. CORRECTIV: Desinformation erkennen (Video)')}
       ${fText('note', 'Quelle / Hinweis', b.note, 'z. B. abgerufen am 28.10.2026')}
       <div class="row">${fSelect('size', 'Größe', b.size || 'M', [['S', 'klein (22 mm)'], ['M', 'mittel (30 mm)'], ['L', 'groß (40 mm)']])}</div>`;
+    case 'tafel': return tafelEditor(b);
     case 'image': return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachKey() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachKey() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
@@ -4890,14 +5314,15 @@ function metaCard() {
         <div class="row">${fText('exam.datum', 'Datum', ex.datum, 'leer = zum Ausfüllen')}${fText('exam.zeit', 'Bearbeitungszeit', ex.zeit, 'z. B. 135 Minuten')}</div>
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
-      ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
+      ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum x-pro"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
+      ${ablaufHTML()}
       <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
         ${more ? `<div class="sub-b">
       <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
           <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
           <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
-          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
-          <div class="chks">${fCheck('groupsOn', 'Gruppenblätter A und B', m.groupsOn)}${fCheck('levelsOn', 'Niveaustufen ★ Basis · ★★ Standard · ★★★ Experte', m.levelsOn)}</div>
+          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
+          <div class="chks x-wrap x-pro${m.groupsOn || m.levelsOn ? ' used' : ''}">${fCheck('groupsOn', 'Gruppenblätter A und B', m.groupsOn)}${fCheck('levelsOn', 'Niveaustufen ★ Basis · ★★ Standard · ★★★ Experte', m.levelsOn)}</div>
           ${m.levelsOn ? `<div class="chks">${fCheck('lvTip', 'Im Basis-Blatt steht der erste Tipp direkt unter der Aufgabe', m.lvTip !== false)}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte den Stufen zu. Bei jeder Aufgabe gibt es unter „Niveaus“ eigene Fassungen für Basis und Experte. Über der Vorschau oder beim Ausgeben die Stufe wählen.</small>` : ''}
           ${m.groupsOn ? `<div class="row">${fText('groupA', 'Zusatz Gruppe A', m.groupA, '')}${fText('groupB', 'Zusatz Gruppe B', m.groupB, '')}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte einer Gruppe zu. Ohne Zuordnung stehen sie auf beiden Blättern.</small>` : ''}
         </div>` : ''}</div>
@@ -4928,7 +5353,7 @@ function renderEditor(focusSel) {
   else {
     enforceOne();
     const num = numbering(state.sheet); const blocks = state.sheet.blocks; const gOn = state.sheet.meta.groupsOn;
-    const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : '';
+    const intro = state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Das Tafelbild entsteht aus dem Baustein „Tafelbild“. Rechts steht es auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt es Schritt für Schritt auf.</div>' : '';
     const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
     ed.innerHTML = fold + intro + metaCard() + seiteCard() + blocks.map((b, i) => {
       const closed = state.closed.has(b.id);
@@ -5033,11 +5458,12 @@ function onChange(e) {
   if (k === 'klasse') { moveKlasse(t.value); return; }
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
+  if (/^items\.\d+\.min$/.test(k)) { const n = parseInt(String(v).replace(/\D/g, ''), 10); v = n > 0 ? String(Math.min(n, 999)) : ''; t.value = v; }
   setPath(target(card.dataset.bid), k, v);
   if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede');
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || /^items\.\d+\.(ph|min)$/.test(k));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;
@@ -5129,6 +5555,24 @@ function onClick(e) {
       L.splice(j, 1); savePrefs(); rlpKeep(bid, i, () => renderEditor());
       toast('Aus Ihrer Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
     case 'rlp-sheet': openRlpDlg('sheet'); return;
+    case 'tf-tpl': { const nx = a.dataset.v; if (!TF_TPL[nx] || nx === tfTpl(b)) return; tfConvert(b, nx); b.tpl = nx; changed(true); return; }
+    case 'tf-on': b.onSheet = a.dataset.v; changed(true); return;
+    case 'tf-gm': b.gapMode = a.dataset.v; changed(true); return;
+    case 'tf-add': { tfNorm(b); const w = a.dataset.w;
+      if (w === 'rows') b.rows.push(b.cols.map(() => ''));
+      else if (w === 'cols') { if (b.cols.length < 4) { b.cols.push(''); b.rows.forEach(r => { while (r.length < b.cols.length) r.push(''); }); } }
+      else if (w === 'branches' || w === 'steps') b[w].push({ h: '', t: '' });
+      else if (w === 'scale') b.scale.push({ t: '', p: 3 });
+      else if (w === 'nodes') b.nodes.push({ n: '', d: '' });
+      else if (w === 'rels') b.rels.push({ a: 0, b: Math.min(1, b.nodes.length - 1), t: '' });
+      changed(true); return; }
+    case 'tf-del': { tfNorm(b); const w = a.dataset.w, i = +a.dataset.i;
+      if (w === 'cols') { if (b.cols.length > 2) { b.cols.splice(i, 1); b.rows.forEach(r => r.splice(i, 1)); } }
+      else if (w === 'nodes') { b.nodes.splice(i, 1); b.rels = b.rels.filter(r => +r.a !== i && +r.b !== i).map(r => ({ ...r, a: +r.a > i ? +r.a - 1 : +r.a, b: +r.b > i ? +r.b - 1 : +r.b })); }
+      else if (Array.isArray(b[w])) b[w].splice(i, 1);
+      changed(true); return; }
+    case 'tf-sugg': { const n = tfSuggest(b); if (n < 0) return; changed(true); toast(`Tafelbild aus ${n} ${n === 1 ? 'Erwartung' : 'Erwartungen'} vorgeschlagen. Bitte kürzen und anpassen.`, 'Rückgängig', histUndo); return; }
+    case 'tf-beam': tfBeamer(b.id); return;
     case 'it-dg': { const it = b.items[+a.dataset.i]; if (!it) return; if (it.noDg) delete it.noDg; else it.noDg = true; changed(true); return; }
     case 'it-lv': { const it = b.items[+a.dataset.i]; if (!it) return; const k = a.dataset.v; const cur = Array.isArray(it.lv) ? it.lv : Object.keys(LV); const nx = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; if (!nx.length) { toast('Eine Aufgabe braucht mindestens eine Stufe.'); return; } if (nx.length === 3) delete it.lv; else it.lv = Object.keys(LV).filter(x => nx.includes(x)); changed(true); return; }
     case 'mt-mode': { const du = state.sheet.meta.anrede === 'du';
@@ -5752,7 +6196,7 @@ function libListHTML(k, q) {
       <div class="lib-f" data-fid="${esc(f.id)}" draggable="${edit ? 'false' : 'true'}">${edit
         ? `<input class="inp lib-fren" type="text" value="${esc(f.name)}" maxlength="60" aria-label="Name des Ordners"><button class="btn primary" type="button" data-act="lib-fren-ok">OK</button>`
         : `<button type="button" class="lib-fh" data-act="lib-ftoggle" aria-expanded="${open}" title="${open ? 'Zuklappen' : 'Aufklappen'}">${CHEV_SVG}${FOLDER_SVG}<span class="fn">${esc(f.name)}</span><span class="fc">${total}</span></button><button type="button" class="ib" data-act="lib-fmenu" title="Ordner bearbeiten" aria-expanded="${state.fMenu === f.id}">${I.more}</button>`}</div>
-      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-fmappe">Als Mappe ausgeben</button><button class="link" type="button" data-act="lib-frlp">Standards der Reihe</button><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
+      ${state.fMenu === f.id && !edit ? `<div class="lib-fmenu"><button class="link" type="button" data-act="lib-fmappe">Als Mappe ausgeben</button><button class="link x-pro" type="button" data-act="lib-frlp">Standards der Reihe</button><button class="link" type="button" data-act="lib-fren">Umbenennen</button><button class="link" type="button" data-act="lib-fup">Nach oben</button><button class="link" type="button" data-act="lib-fdown">Nach unten</button><button class="link danger" type="button" data-act="lib-fdel">Löschen</button></div>` : ''}
       ${state.fDel === f.id ? `<div class="lib-fmenu warnrow"><span>Ordner „${esc(f.name)}“ löschen?${total === 1 ? ' Das Blatt darin bleibt erhalten und liegt danach ohne Ordner.' : total ? ` Die ${total} Blätter darin bleiben erhalten und liegen danach ohne Ordner.` : ''}</span><button class="link danger" type="button" data-act="lib-fdel-yes">Löschen</button><button class="link" type="button" data-act="lib-fdel-no">Abbrechen</button></div>` : ''}
       ${open ? `<div class="lib-fb" data-fid="${esc(f.id)}">${its.length ? its.map(item).join('') : `<div class="lib-fe">Leer · Blätter hierher ziehen oder bei einem Blatt „Ordner“ wählen</div>`}</div>` : ''}
     </section>`;
@@ -5832,7 +6276,7 @@ function renderLib() {
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>
-    <div class="drawer-foot"><button class="link" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
+    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
   const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   else if (state.fNew) { const i = $('#lib-fnew'); if (i) i.focus(); }
@@ -6139,7 +6583,7 @@ function outChecks() {
   return L;
 }
 function outHTML() {
-  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length;
+  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, nTf = sh.blocks.filter(x => x.type === 'tafel').length;
   const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t, dis]) => `<button type="button" data-act="out-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}"${dis ? ' disabled' : ''}>${t}</button>`).join('')}</div>`;
   const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
     ['docx', 'Word', state.out === 'blatt' ? 'zum Weiterbearbeiten' : 'nur fürs Arbeitsblatt', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
@@ -6149,12 +6593,13 @@ function outHTML() {
   const checks = outChecks();
   const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung' }[d.fmt];
   return `<h2 id="dlg-t">Ausgeben</h2>
-    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK]], state.out)}</div>
+    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf]], state.out)}</div>
     <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${(v === 'docx' || v === 'digital') && state.out !== 'blatt' ? ' disabled' : ''}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
-      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}</div>
+      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
+    ${state.out === 'tafel' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung)}</div>` : ''}</div>
     <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>
     <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div>`;
@@ -6426,13 +6871,13 @@ async function deliver(name, blob) {
 }
 async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || [], EXTRA_FONTS); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
-const outSuffix = () => state.out === 'tipps' ? '_Tippkarten' : state.out === 'karten' ? '_Tafelkarten'
+const outSuffix = () => state.out === 'tipps' ? '_Tippkarten' : state.out === 'tafel' ? (state.fassung === 'lehrer' ? '_Tafelbild' : '_Tafelbild_Lueckenfassung') : state.out === 'karten' ? '_Tafelkarten'
   : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.levelsOn && state.lvl && state.lvl !== 'all' ? '_' + LV[state.lvl].name : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : state.sheet.meta.paper === 'buch' ? '_A5-Buch' : '');
 async function exportPDF() {
   if (busy) return;
   clearTimeout(renderTimer); renderPreview();
   const pages = [...document.querySelectorAll('#pages .pout')];
-  if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : 'Es gibt noch keine Tafelkarten.'); return; }
+  if (!pages.length) { toast(state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : state.out === 'tafel' ? 'Es gibt noch kein Tafelbild.' : 'Es gibt noch keine Tafelkarten.'); return; }
   busy = true;
   try { await pagesToPdf(pages, fileBase() + outSuffix() + '.pdf', { title: (state.sheet.meta.nr ? 'AB ' + state.sheet.meta.nr + ' – ' : '') + (state.sheet.meta.title || ''), subject: state.sheet.meta.topic || '' }); }
   finally { busy = false; }
@@ -6700,9 +7145,10 @@ function dgRuntime(K) {
   }
   function nameFill() { $$('.hd-fields span', root).forEach(sp => { if (/^\s*Name/.test(sp.textContent)) { const i = sp.querySelector('i'); if (i) { i.textContent = S.name || ''; i.classList.add('dg-nm-i'); } } }); }
   function mount() {
-    root.innerHTML = K.vars[lv]; const d = D(); const ci = {}, ti = {}; let fi = 0, ck = 0, wi = 0, ai = 0;
+    root.innerHTML = K.vars[lv]; const d = D(); const ci = {}, ti = {}; let fi = 0, ck = 0, wi = 0, ai = 0, ei = 0;
     $$('.blk-mat', root).forEach(m => { const bid = m.dataset.bid; $$('.gapb', m).forEach(g => { const n = ci[bid] || 0; ci[bid] = n + 1; const k = bid + ':' + n; const inp = mk('input', 'gapb dg-gap'); inp.style.cssText = g.style.cssText; inp.dataset.k = k; inp.value = d.g[k] || ''; inp.setAttribute('aria-label', 'Lücke ' + (n + 1)); g.replaceWith(inp); }); });
-    $$('.gap', root).forEach(g => { const k = 'f' + (fi++); const inp = mk('input', 'gap dg-free'); inp.dataset.k = k; inp.value = d.f[k] || ''; g.replaceWith(inp); });
+    $$('.gap', root).forEach(g => { const k = 'f' + (fi++); const inp = mk('input', 'gap dg-free'); inp.dataset.k = k; inp.value = d.f[k] || ''; if (g.style.width) inp.style.width = g.style.width; g.replaceWith(inp); });
+    $$('.tf-ge', root).forEach(g => { const k = 'e' + (ei++); const e = mk('div', 'dg-cell dg-tfe'); e.contentEditable = 'true'; e.dataset.k = k; e.textContent = d.w[k] || ''; e.setAttribute('style', g.getAttribute('style') || ''); e.setAttribute('aria-label', 'Eintrag im Tafelbild'); g.replaceWith(e); });
     $$('.blk-match', root).forEach(b => {
       const bid = b.dataset.bid, M = K.match[bid]; if (!M) return;
       if (M.mode === 'abc') { $$('.mt-box', b).forEach((bx, k) => { const inp = mk('input', 'dg-abc'); inp.maxLength = 2; inp.dataset.k = bid + ':' + k; inp.value = d.a[inp.dataset.k] || ''; inp.setAttribute('autocapitalize', 'characters'); inp.setAttribute('aria-label', 'Buchstabe zu ' + (k + 1)); bx.textContent = ''; bx.appendChild(inp); }); return; }
@@ -6905,6 +7351,7 @@ svg.ck{cursor:pointer}
 .tb td.dg-td{position:relative}
 .dg-cell{min-height:100%;position:absolute;inset:0;padding:1.6mm 2mm;outline:none;color:var(--acc,#2741B5);font-weight:600;white-space:pre-wrap;overflow:hidden}
 .dg-cell:focus{background:rgba(39,65,181,.06)}
+.dg-cell.dg-tfe{position:static;inset:auto;display:block;min-height:calc(var(--l,1) * 1.45em);padding:.05em .25em;border-bottom:.25mm solid var(--paper-ink,#1C1F27);background:rgba(39,65,181,.05);overflow:visible}
 .blk-lines{position:relative}
 .dg-area{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;resize:none;outline:none;font:600 12pt/9mm "Atkinson Hyperlegible",system-ui,sans-serif;color:var(--acc,#2741B5);padding:1.6mm 2mm 0;overflow:hidden}
 .dg-area.grid{line-height:5mm;padding-top:.6mm}
@@ -7352,6 +7799,43 @@ async function exportDOCX() {
           if (b.author) parts.push(xp(xrInline(b.author, { sz: 17, color: GREY }), { jc: 'right', before: 60 }));
           break;
         }
+        case 'tafel': {
+          const on = b.onSheet || 'luecke'; if (on === 'aus') break; tfNorm(b); const tpl = tfTpl(b);
+          const o = { gaps: !v.lehrer && on === 'luecke', sol: v.lehrer && on === 'luecke', mode: b.gapMode === 'wort' ? 'wort' : 'eintrag' }; const kf = !!b.keepFirst && o.mode === 'eintrag';
+          const wE = (x, ex, base = {}) => { const t = tfStr(x); if (!t.trim()) return '';
+            if (o.gaps && !ex) return o.mode === 'wort' ? t.split(/(\[[^\[\]]*\])/).map(p => /^\[[^\[\]]*\]$/.test(p) ? xr(' '.repeat(Math.max(8, p.length + 4)), { ...base, u: 1 }) : xrInline(p, base)).join('') : xr(' '.repeat(36), { ...base, u: 1 });
+            if (o.sol && !ex) return o.mode === 'wort' ? t.split(/(\[[^\[\]]*\])/).map(p => /^\[[^\[\]]*\]$/.test(p) ? xr(p.slice(1, -1), { ...base, b: 1, color: A }) : xrInline(p, base)).join('') : xrInline(tfStrip(t), { ...base, b: 1, color: A });
+            return xrInline(tfStrip(t), base); };
+          const wH = (x, base = {}) => (o.mode === 'wort' ? wE(x, false, { ...base, b: 1 }) : xrInline(tfStrip(x), { ...base, b: 1 }));
+          const bdAll = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(x => LINE(x, 6, DOCX_MARK)).join('');
+          const T = tfStr(b.title).trim(); if (T && !(tpl === 'cluster' && !tfStr(b.center).trim())) parts.push(xp(xr(tfStrip(T), { b: 1, sz: 22, color: A }), { keepNext: true, after: 60, jc: 'center' }));
+          if (tfRaster(b)) {
+            const C = b.cols.length, w = Math.floor(CW / C); const rows = b.rows.filter(r => r.some(x => tfStr(x).trim()));
+            const head = xtr(b.cols.map(c => xtc(xp(wH(c, { sz: 19, color: A }), { jc: 'center' }), { w })).join(''), { cant: 1, header: 1 });
+            parts.push(xtbl(Array(C).fill(w), head + rows.map((r, ri) => xtr(b.cols.map((_, ci) => xtc(xp(wE(r[ci], kf && ri === 0, { sz: 19 }), { before: 30, after: 30 }), { w })).join(''), { cant: 1 })).join(''), bdAll));
+          } else if (tpl === 'cluster') {
+            parts.push(xp(tfStr(b.center).trim() ? wH(b.center, { sz: 22, color: A }) : xr(tfStrip(T) || 'Mitte', { b: 1, sz: 22, color: A }), { jc: 'center', after: 80, keepNext: true }));
+            const gs = b.branches.filter(x => tfStr(x.h).trim() || tfStr(x.t).trim()); const w = Math.floor(CW / 2); const rows = [];
+            const cell = x => (tfStr(x.h).trim() ? xp(wH(x.h, { sz: 19, color: A }), { after: 20 }) : '') + tfLines(x.t).map((z, j) => xp(xr('–', { sz: 19, color: A }) + '<w:r><w:tab/></w:r>' + wE(z, kf && j === 0, { sz: 19 }), { ind: `<w:ind w:left="${TW(4)}" w:hanging="${TW(4)}"/>`, before: 20 })).join('') || xp('');
+            for (let i = 0; i < gs.length; i += 2) rows.push(xtr([gs[i], gs[i + 1]].map(x => xtc(x ? cell(x) : xp(''), { w })).join(''), { cant: 1 }));
+            if (rows.length) parts.push(xtbl([w, w], rows.join(''), bdAll));
+          } else if (tpl === 'ablauf') {
+            const sts = b.steps.filter(x => tfStr(x.h).trim() || tfStr(x.t).trim()); const w0 = TW(9), w1 = CW - w0;
+            parts.push(xtbl([w0, w1], sts.map((x, i) => xtr(xtc(xp(xr((i ? '↓ ' : '') + (i + 1), { b: 1, sz: 20, color: A }), { jc: 'center' }), { w: w0 }) + xtc((tfStr(x.h).trim() ? xp(wH(x.h, { sz: 19, color: A })) : '') + (tfStr(x.t).trim() ? xp(wE(x.t, kf && i === 0, { sz: 19 })) : '') || xp(''), { w: w1 }), { cant: 1 })).join(''), bdAll));
+          } else if (tpl === 'skala') {
+            const w = Math.floor(CW / 5); const its = b.scale.filter(x => tfStr(x.t).trim());
+            const cells = [1, 2, 3, 4, 5].map(p => xtc(its.filter(x => Math.min(5, Math.max(1, +x.p || 3)) === p).map(x => xp(wE(x.t, kf && its.indexOf(x) === 0, { sz: 18 }), { jc: 'center', after: 40 })).join('') || xp(''), { w })).join('');
+            const poles = xtc(xp(wH(b.poles.l, { sz: 19, color: A })), { w }) + xtc(xp(''), { w }) + xtc(xp(tfStr(b.poles.m).trim() ? wH(b.poles.m, { sz: 19, color: A }) : xr('↔', { b: 1, sz: 22, color: A }), { jc: 'center' }), { w }) + xtc(xp(''), { w }) + xtc(xp(wH(b.poles.r, { sz: 19, color: A }), { jc: 'right' }), { w });
+            parts.push(xtbl(Array(5).fill(w), xtr(cells, { cant: 1 }) + xtr(poles, { cant: 1 }), ['top', 'left', 'bottom', 'right', 'insideV'].map(x => LINE(x, 6, DOCX_MARK)).join('') + LINE('insideH', 18, A)));
+          } else {
+            const ns = b.nodes.filter(x => tfStr(x.n).trim());
+            ns.forEach(x => parts.push(xp(wH(x.n, { sz: 19, color: A }) + (tfStr(x.d).trim() ? xr(': ', { sz: 19 }) + wE(x.d, false, { sz: 19 }) : ''), { after: 20 })));
+            const rs = b.rels.filter(r => b.nodes[+r.a] && b.nodes[+r.b] && +r.a !== +r.b); const w = Math.floor(CW / 3);
+            if (rs.length) parts.push(xtbl([w, w, w], rs.map((r, j) => xtr(xtc(xp(wH(b.nodes[+r.a].n, { sz: 19 })), { w }) + xtc(xp(wE(r.t, kf && j === 0, { sz: 19, i: 1 }), { jc: 'center' }), { w }) + xtc(xp(wH(b.nodes[+r.b].n, { sz: 19 }), { jc: 'right' }), { w }), { cant: 1 })).join(''), bdAll));
+          }
+          parts.push(xp('', { after: 80 }));
+          break;
+        }
         case 'phrases': {
           const gs = phrGroups(b); if (!gs.length) break; const cols = (+b.cols || 2) === 1 ? 1 : 2; const w = Math.floor(CW / cols);
           parts.push(xp(xr(plainText(b.title || 'Formulierungshilfen'), { b: 1, caps: 1, sz: 15, color: A, sp: 14 }), { keepNext: true, after: 40 }));
@@ -7374,11 +7858,13 @@ async function exportDOCX() {
           if (b.title) parts.push(xp(xr(b.title, { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { keepNext: true, after: 60 }));
           const ITW = itemsFor(b, v); const sW = ITW.some(it => sozRel[it.soz]) ? TW(10) : 0;
           const showA = m.showAFB || v.lehrer; const anyPts = isK && ITW.some(it => String(it.pts || '').trim());
-          const afbW = (showA || anyPts) ? TW(20) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
+          const anyMin = ITW.some(it => (v.lehrer && (itPh(it) || itMin(it))) || (m.showMin && itMin(it)));
+          const afbW = (showA || anyPts || anyMin) ? TW(20) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
           const rows = ITW.map(it => {
             tNo++;
             const r = opsRange(detectOps(it.text));
-            const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null].filter(Boolean);
+            const mnW = itMin(it), phW = itPh(it);
+            const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null, v.lehrer && (phW || mnW) ? [[phW ? PHASEN[phW].label : '', mnW ? mnW + ' Min.' : ''].filter(Boolean).join(' · '), 0] : m.showMin && mnW ? ['ca. ' + mnW + ' Min.', 0] : null].filter(Boolean);
             const cells = xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp(sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : ''), { w: sW }) : '')
               + xtc((() => { const tt = taskText(it, m); const tagR = it.tag ? xr(it.tag.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; const tp = lvTipOf(it, v, m); const tipP = tp ? xp(xr('Tipp: ', { b: 1, sz: 17, color: A }) + xrInline(tp, { sz: 17, color: GREY }), { before: 40 }) : ''; return (/\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 }))) + tipP; })(), { w: tW })
@@ -7564,6 +8050,7 @@ function preparePrint() {
 /* ================= Start ================= */
 function boot() {
   if (DG_VIEW) { dgViewer(DG_VIEW); return; }
+  setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true);
   const ed = $('#editor');
   ed.addEventListener('focusout', e => { const k = e.target && e.target.dataset && e.target.dataset.k; const c = k && e.target.closest('[data-bid]'); if (c && (state.sheet.zrefs || []).some(r => r.f === c.dataset.bid && r.k === k)) scheduleRender(60); });
   ed.addEventListener('input', onInput); ed.addEventListener('change', onChange); ed.addEventListener('click', onClick);
@@ -7665,6 +8152,7 @@ function boot() {
   $('#pv-opts').addEventListener('click', e => {
     const b = e.target.closest('[data-pv]'); if (!b) return; const k = b.dataset.pv, v = b.dataset.v;
     if (k === 'ehmd') { exportEH(); return; }
+    if (k === 'tfbeam') { tfBeamer(); return; }
     if (k === 'fassung') { state.fassung = v; if (v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); renderEditor(); }
     if (k === 'grp') state.grp = v;
     if (k === 'lvl') state.lvl = v;
@@ -7787,6 +8275,7 @@ function boot() {
     if (act === 'out') openOut();
     if (act === 'new') openNew();
     if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
+    if (act === 'umfang') { setUmfang(a.dataset.v); toast(a.dataset.v === 'basis' ? 'Basis: Standards, Etikett, Phase und Zeit, Gruppen und Niveaus sind ausgeblendet, solange sie nicht benutzt werden.' : 'Experte: alle Funktionen sind sichtbar.'); }
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
     if (act === 'print') doPrint();
