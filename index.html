@@ -1266,8 +1266,12 @@ body{transition:background-color .3s,border-color .25s}
 .pr-steps li:last-child{margin-bottom:0}
 .pr-steps li::before{content:'';position:absolute;left:.08em;top:.46em;width:.42em;height:.42em;border-radius:.09em;background:var(--acc)}
 .pr-ref{white-space:nowrap;color:var(--acc);font-weight:700;background:var(--acc-tint);box-shadow:0 0 0 .08em var(--acc-tint);border-radius:.12em}
-.pr-k-par .pr-body{justify-content:flex-start}
-.pr-common{margin-bottom:.75em}
+.pr-tset>*+*{margin-top:.85em}
+.pr-it{display:flex;gap:.5em;align-items:flex-start}
+.pr-it+.pr-it{margin-top:.6em}
+.pr-itb{flex:1 1 auto;min-width:0}
+.pr-no{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:1.32em;height:1.32em;padding:0 .2em;margin-top:.16em;border-radius:.2em;background:var(--acc);color:#fff;font-weight:800;font-size:.74em;line-height:1}
+.pr-imeta{font-size:.56em;font-weight:700;color:#6B7280;margin-top:.3em;letter-spacing:.01em}
 .pr-cols{display:grid;grid-template-columns:repeat(var(--nc),minmax(0,1fr));gap:.8em 0}
 .pr-col{padding:0 .85em;border-left:3px solid #D5D9E0;min-width:0}
 .pr-cols.nc1 .pr-col,.pr-cols.nc2 .pr-col:nth-child(2n+1),.pr-cols.nc3 .pr-col:nth-child(3n+1){border-left:0;padding-left:0}
@@ -3047,7 +3051,7 @@ function tafelEditor(b) {
 
 /* ================= Präsentation: Folien aus dem Arbeitsblatt (im Browser und als PowerPoint) =================
    Material mit denselben Zeilen und Zeilennummern wie auf dem Blatt, je Aufgabe eine Folie, Erwartung und Tipps für die Lehrkraft. */
-const PR_MAX = { task: 60, par: 46, step: 60, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
+const PR_MAX = { tasks: 60, step: 60, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
 function presCollect(quiet) {
   const keep = { fassung: state.fassung, out: state.out, gapEdit: state.gapEdit, bookPages: state.bookPages, grp: state.grp };
   const mats = {}; let pages = [];
@@ -3093,8 +3097,8 @@ function presSlides() {
 function presPhases(S) {
   const m = state.sheet.meta; const have = new Set();
   stBlocks().forEach(b => { if (b.type === 'tasks') (b.items || []).forEach(it => { const p = itPh(it); if (p) have.add(p); }); else if (b.type === 'step' && itPh(b)) have.add(itPh(b)); });
-  const isT = s => s.k === 'task' || s.k === 'par' || s.k === 'step';
-  S.forEach(s => { if (s.k === 'step') s.ph = itPh(s.b); else if (s.k === 'task') s.ph = itPh(s.it); else if (s.k === 'par') s.ph = [s.common, ...s.cols.flatMap(c => c.items)].filter(Boolean).map(x => itPh(x.it)).find(Boolean) || ''; });
+  const isT = s => s.k === 'tasks' || s.k === 'step';
+  S.forEach(s => { if (s.k === 'step') s.ph = itPh(s.b); else if (s.k === 'tasks') { s.phs = [...new Set(s.items.map(x => itPh(x.it)).filter(Boolean))]; s.ph = s.phs[0] || ''; } });
   const first = S.findIndex(isT); const autoEin = !have.has('ein'); let usedEin = false, usedSich = false;
   S.forEach((s, i) => {
     if (isT(s) || s.k === 'title') return;
@@ -3109,28 +3113,33 @@ function presPhases(S) {
     s.ph = p || '';
   });
   // Die Leiste zeigt nur Phasen, die auf einer Folie vorkommen; Phasen ohne Folie (abgewählt, „keine Folie“, leer) würden nie hervorgehoben
-  const bar = Object.keys(PHASEN).filter(k => S.some(s => s.ph === k));
+  const bar = Object.keys(PHASEN).filter(k => S.some(s => s.ph === k || (s.phs && s.phs.includes(k))));
   S.bar = m.presPhase !== false && bar.length >= 2 ? bar : [];
   return S;
 }
-// Aufeinanderfolgende Aufgaben verschiedener Gruppen werden eine Folie mit Spalten; ein gemeinsamer Auftrag direkt davor steht darüber.
-function presPar(S, m) {
-  const R = []; const order = grpList(m).map(x => x.k);
-  for (let i = 0; i < S.length; i++) {
-    const s = S[i];
-    if (s.k === 'task' && s.g) {
-      let j = i; const run = []; while (j < S.length && S[j].k === 'task' && S[j].g) run.push(S[j++]);
+// Alle Aufgaben eines Bausteins stehen auf einer Folie. Aufeinanderfolgende Aufgaben verschiedener Gruppen werden darin Spalten,
+// die übrigen Aufgaben stehen als nummerierte Zeilen davor oder danach.
+function presTaskSlide(L, bid, m) {
+  const order = grpList(m).map(x => x.k); const segs = [];
+  for (let i = 0; i < L.length;) {
+    if (L[i].g) {
+      let j = i; const run = []; while (j < L.length && L[j].g) run.push(L[j++]);
       const by = {}; run.forEach(x => (by[x.g] = by[x.g] || []).push(x));
       const keys = order.filter(k => by[k]).concat(Object.keys(by).filter(k => !order.includes(k)));
-      if (keys.length > 1) {
-        const prev = R[R.length - 1]; const pp = prev && prev.k === 'task' ? itPh(prev.it) : ''; const p0 = itPh(run[0].it);
-        const common = prev && prev.k === 'task' && !prev.g && prev.bid === run[0].bid && pp !== 'ha' && (!pp || !p0 || pp === p0) ? R.pop() : null;
-        R.push({ k: 'par', common, cols: keys.map(g => ({ g, name: grpName(m, g), sub: tfStr(by[g][0].it.tag).trim() || grpAdd(m, g), items: by[g] })) });
-        i = j - 1; continue;
-      }
+      if (keys.length > 1) { segs.push({ t: 'cols', cols: keys.map(g => ({ g, name: grpName(m, g), sub: tfStr(by[g][0].it.tag).trim() || grpAdd(m, g), items: by[g] })) }); i = j; continue; }
     }
-    R.push(s);
+    const last = segs[segs.length - 1]; if (last && last.t === 'rows') last.items.push(L[i]); else segs.push({ t: 'rows', items: [L[i]] }); i++;
   }
+  return { k: 'tasks', bid, items: L, segs };
+}
+// Bausteine, die nur Aufgaben je einer anderen Gruppe enthalten (z. B. über ⋯ zugeordnet), laufen parallel und kommen auf eine Folie
+function presMerge(S, m) {
+  const R = [];
+  S.forEach(s => {
+    const prev = R[R.length - 1];
+    if (s.k === 'tasks' && prev && prev.k === 'tasks' && s.items.every(x => x.g) && prev.items.every(x => x.g) && !s.items.some(x => prev.items.some(y => y.g === x.g))) { R[R.length - 1] = presTaskSlide(prev.items.concat(s.items), prev.bid, m); return; }
+    R.push(s);
+  });
   return R;
 }
 function presSlidesAB(off, lab, abId) {
@@ -3138,7 +3147,7 @@ function presSlidesAB(off, lab, abId) {
   const mats = presCollect(true); const S = []; let t = 0;
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
-    if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) S.push({ k: 'task', no: t, it, bid: b.id, g: itGrp(b, it, m) }); }); return; }
+    if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: t, it, g: itGrp(b, it, m) }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
     if (b.type === 'step') { const f = stepSlideFol(b); if (f) S.push({ k: 'step', b, fol: f }); return; }
     const M = mats[b.id];
@@ -3151,7 +3160,7 @@ function presSlidesAB(off, lab, abId) {
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
   });
-  const R = m.groupsOn ? presPar(S, m) : S;
+  const R = m.groupsOn ? presMerge(S, m) : S;
   const qk = abId ? 'qr:' + abId : 'qr';
   if (m.dg && m.dg.id && !off.has(qk)) R.push({ k: 'qr', link: dgLink(m.dg.id) });
   if (lab) R.forEach(x => { x.ab = lab; });
@@ -3329,7 +3338,7 @@ function taskSteps(tt) {
   const out = []; let last = 0; const re = /[.!?][“”"»)]?(?=\s+[„"»(*_]*[A-ZÄÖÜ])/g; let mm;
   while ((mm = re.exec(s))) {
     const w = (s.slice(last, mm.index).match(/([\p{L}\d]+)$/u) || [])[1] || '';
-    if (s[mm.index] === '.' && mm[0].length === 1 && PR_ABBR.test(w)) continue;
+    if (s[mm.index] === '.' && mm[0].length === 1 && PR_ABBR.test(w) && !(/^\d+$/.test(w) && /^\s+\**\p{Lu}[\p{Ll}-]+\**\s+(?:Sie|du|ihr)\b/u.test(s.slice(mm.index + 1)))) continue;
     out.push(s.slice(last, mm.index + mm[0].length).trim()); last = mm.index + mm[0].length;
   }
   out.push(s.slice(last).trim());
@@ -3340,9 +3349,26 @@ const prRefs = h => h.split(/(<[^>]+>)/).map(x => (x.charAt(0) === '<' ? x : x.r
 const prImp = x => (/^\*\*/.test(x) ? x : x.replace(/^([„"]?)(\p{Lu}[\p{Ll}-]+)(\s+)(Sie|du|ihr)(?![\p{L}])/u, '$1**$2$3$4**'));
 const prStepsOf = (it, m) => taskSteps(taskText(it, m)).map(x => prRefs(prSie(inlineHTML(prImp(x)))));
 const prTaskHTML = (it, m) => { const st = prStepsOf(it, m); return st.length > 1 ? `<ul class="pr-steps">${st.map(x => `<li>${x}</li>`).join('')}</ul>` : st.length ? `<p>${st[0]}</p>` : ''; };
-const parMin = s => (s.common ? itMin(s.common.it) : 0) + Math.max(0, ...s.cols.map(c => c.items.reduce((a, x) => a + itMin(x.it), 0)));
-const prMin = s => (s.k === 'task' ? itMin(s.it) : s.k === 'par' ? parMin(s) : s.k === 'step' ? itMin(s.b) : 0);
-const presBarHTML = (bar, cur) => (bar && bar.length ? `<div class="pr-phb" aria-label="Phasen der Stunde">${bar.map((k, i) => `<span class="${i ? '' : 'first'}${k === cur ? ' on' : ''}" style="--phc:${PHASEN[k].c}">${PHASEN[k].label}</span>`).join('')}</div>` : '');
+// Zeit einer Aufgabenfolie: Zeilen nacheinander, Gruppenspalten parallel (längste Gruppe)
+const tsMin = s => s.segs.reduce((a, g) => a + (g.t === 'rows' ? g.items.reduce((b, x) => b + itMin(x.it), 0) : Math.max(0, ...g.cols.map(c => c.items.reduce((b, x) => b + itMin(x.it), 0)))), 0);
+const prMin = s => (s.k === 'tasks' ? tsMin(s) : s.k === 'step' ? itMin(s.b) : 0);
+const tsHaAll = s => s.items.every(x => itPh(x.it) === 'ha');
+const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k => SOZ[k]))]; return z.length === 1 && s.items.every(x => x.it.soz === z[0]) ? z[0] : ''; };
+const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols.length) : a), 0);
+function tsKick(s, m) {
+  const its = s.items; const nos = its.map(x => x.no); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
+  const num = tsHaAll(s) ? '' : one ? 'Aufgabe ' + one.no : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
+  return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
+}
+const tsHead = s => (tsHaAll(s) ? 'Hausaufgabe' : s.items.length > 1 ? 'Arbeitsaufträge' : 'Arbeitsauftrag');
+// Zusatzzeile je Aufgabe, wenn mehrere auf der Folie stehen: Gruppe, Etikett, Sozialform und Phase (wenn verschieden), Zeit
+function tsMeta(x, s, m, col) {
+  if (s.items.length < 2) return '';
+  const sozU = tsSoz(s); const phD = (s.phs || []).length > 1;
+  return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : '', itMin(x.it) ? itMin(x.it) + ' Min.' : ''].filter(Boolean).join(' · ');
+}
+const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + x.no) : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
+const presBarHTML = (bar, cur) => (bar && bar.length ? `<div class="pr-phb" aria-label="Phasen der Stunde">${bar.map((k, i) => `<span class="${i ? '' : 'first'}${(Array.isArray(cur) ? cur.includes(k) : k === cur) ? ' on' : ''}" style="--phc:${PHASEN[k].c}">${PHASEN[k].label}</span>`).join('')}</div>` : '');
 const prPops = (tips, eh) => '<div class="pr-pops">'
   + (tips.length ? `<div class="pr-pop pr-tips" hidden>${tips.map(([g, x, n]) => `<div hidden><b>Tipp ${n}${g ? ' · ' + esc(g) : ''}:</b> ${inlineHTML(x)}</div>`).join('')}</div>` : '')
   + (eh.some(e => e[1].length) ? `<div class="pr-pop pr-eh" hidden><b>Erwartung</b>${eh.filter(e => e[1].length).map(([g, L]) => `${g ? `<div class="pr-eh-g">${esc(g)}</div>` : ''}<ul>${L.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>`).join('')}</div>` : '') + '</div>';
@@ -3360,22 +3386,15 @@ function presSlideHTML(s, bar) {
       let h = ''; s.lines.forEach((l, i) => { if (i && l.st) h += '<span class="pr-gap"></span><span class="pr-gap"></span>'; h += `<span class="pr-ln">${esc(l.num)}</span><span class="pr-lt">${esc(l.t)}</span>`; });
       return presHead(esc(s.tag), inlineHTML(matTitle(s.b) || '') + (s.of > 1 ? ` <small>${s.part}/${s.of}</small>` : ''), '') + `<div class="pr-body"><div class="pr-fit pr-lines${s.poem ? ' poem' : ''}">${h}</div></div>${s.part === s.of && s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
     }
-    case 'task': {
-      const it = s.it, ph = itPh(it), mn = itMin(it);
-      const kick = [ph === 'ha' ? '' : 'Aufgabe ' + s.no, s.g ? esc(grpName(m, s.g)) : '', it.tag ? esc(it.tag) : ''].filter(Boolean).join(' · ');
-      return presHead(kick, ph === 'ha' ? 'Hausaufgabe' : 'Arbeitsauftrag', sozChip(it) + phChip(ph) + minChip(mn))
-        + `<div class="pr-body"><div class="pr-fit pr-task">${prTaskHTML(it, m)}</div></div>`
-        + prPops(tipsOf(it).map((x, j) => ['', x, j + 1]), [['', ehLines(it)]]);
-    }
-    case 'par': {
-      const c0 = s.common; const all = [c0, ...s.cols.flatMap(c => c.items)].filter(Boolean); const n = s.cols.length; const nc = n <= 3 ? n : n === 4 ? 2 : 3; const mn = parMin(s);
-      const kick = [c0 ? 'Aufgabe ' + c0.no : '', `${n} Gruppen parallel`].filter(Boolean).join(' · ');
-      const sozIt = all.map(x => x.it).find(x => SOZ[x.soz]); const ph = s.ph || '';
-      const cols = s.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map(x => `<div class="pr-task">${prTaskHTML(x.it, m)}</div>`).join('')}</div>`).join('');
-      const tips = []; all.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([x === c0 ? '' : grpName(m, x.g), t, j + 1])));
-      return presHead(kick, 'Arbeitsauftrag', sozChip(sozIt) + phChip(ph) + minChip(mn))
-        + `<div class="pr-body"><div class="pr-fit pr-par">${c0 ? `<div class="pr-task pr-common">${prTaskHTML(c0.it, m)}</div>` : ''}<div class="pr-cols nc${nc}" style="--nc:${nc}">${cols}</div></div></div>`
-        + prPops(tips, all.map(x => [x === c0 ? '' : grpName(m, x.g), ehLines(x.it)]));
+    case 'tasks': {
+      const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s);
+      const item = (x, col) => { const meta = tsMeta(x, s, m, col); return `<div class="pr-it">${multi ? `<span class="pr-no">${itPh(x.it) === 'ha' ? 'HA' : x.no}</span>` : ''}<div class="pr-itb pr-task">${prTaskHTML(x.it, m)}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
+      const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map(x => item(x)).join('')}</div>`
+        : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map(x => item(x, c)).join('')}</div>`).join('')}</div>`; })()).join('');
+      const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));
+      return presHead(esc(tsKick(s, m)), tsHead(s), (sz ? sozChip({ soz: sz }) : '') + phChip(s.ph) + minChip(mn))
+        + `<div class="pr-body"><div class="pr-fit pr-tset${multi ? ' multi' : ''}">${body}</div></div>`
+        + prPops(tips, s.items.map(x => [tsLab(x, s, m), ehLines(x.it)]));
     }
     case 'step': {
       const b = s.b, ph = itPh(b), mn = itMin(b); const chips = sozChip(b) + phChip(ph) + minChip(mn); const pops = prPops([], [['', ehLines(b)]]);
@@ -3559,7 +3578,7 @@ function openPres(start) {
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); apply(); };
   const show = () => {
     const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
-    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.ph) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
+    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.phs && sl.phs.length ? sl.phs : sl.ph) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
     fit();
@@ -3636,7 +3655,7 @@ async function exportPPTX() {
     // Phasenleiste: Phasen der Stunde, die aktuelle farbig
     const barAdd = (sl, cur, light) => {
       if (!bar.length) return; const n = bar.length, ov = 0.12, y = 6.67, h = 0.45; const w = (CW + (n - 1) * ov) / n;
-      bar.forEach((k, i) => { const on = k === cur, c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: 13, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0 }); });
+      bar.forEach((k, i) => { const on = Array.isArray(cur) ? cur.includes(k) : k === cur, c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: 13, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0 }); });
     };
     const pills = (sl, chips) => { let x = W - RM; [...chips].reverse().forEach(c => { const w = c.t.length * 0.105 + 0.46; x -= w; sl.addText(c.t, { shape: 'roundRect', rectRadius: 0.19, x, y: 0.86, w, h: 0.38, fill: { color: c.fill || TINT }, fontFace: F, fontSize: 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0 }); x -= 0.12; }); return W - RM - x; };
     const head = (sl, kick, title, chips = []) => {
@@ -3689,28 +3708,41 @@ async function exportPPTX() {
         sl.addText(L.map((l, i) => ({ text: l.num || ' ', options: { breakLine: i < n - 1 } })), { ...opt, x: X, w: 0.62, fontFace: F, fontSize: Math.max(9, Math.round(fs * .72)), color: '9AA0AA', align: 'right' });
         sl.addText(L.map((l, i) => ({ text: l.t || ' ', options: { breakLine: i < n - 1 } })), { ...opt, x: X + 0.85, w: CW - 0.85, fontFace: FT, fontSize: fs, color: INK, wrap: false });
         if (src) sl.addText(plainText(s.b.source), { x: X + 0.85, y: BOT - 0.3, w: CW - 0.85, h: 0.3, fontFace: F, fontSize: 11, color: LIGHT, margin: 0 });
-      } else if (s.k === 'task') {
-        const it = s.it, ph = itPh(it), mn = itMin(it);
-        head(sl, [ph === 'ha' ? '' : 'Aufgabe ' + s.no, s.g ? grpName(m, s.g) : '', it.tag || ''].filter(Boolean).join(' · '), ph === 'ha' ? 'Hausaufgabe' : 'Arbeitsauftrag', chipsOf(it, ph, mn));
-        const pl = stepPlain(it); const fs = fitFs(pl, CW - (pl.length > 1 ? 0.5 : 0), BH - 0.25, [36, 32, 30, 28, 26, 24, 22, 20, 18]);
-        sl.addText(stepRuns([it], fs), { x: X, y: Y0 + 0.05, w: CW, h: BH - 0.15, fontFace: F, fontSize: fs, color: INK, valign: 'middle', margin: 0, lineSpacingMultiple: 1.12 });
-        const nt = notesOf([['', it]]); if (ph || mn) nt.push([ph ? 'Phase: ' + PHASEN[ph].label : '', mn ? 'Zeit: ' + mn + ' Min.' : ''].filter(Boolean).join(' · '));
-        if (nt.length) sl.addNotes(nt.join('\n\n'));
-      } else if (s.k === 'par') {
-        const c0 = s.common; const all = [c0, ...s.cols.flatMap(c => c.items)].filter(Boolean); const n = s.cols.length; const nc = n <= 3 ? n : n === 4 ? 2 : 3; const nr = Math.ceil(n / nc); const mn = parMin(s);
-        head(sl, [c0 ? 'Aufgabe ' + c0.no : '', n + ' Gruppen parallel'].filter(Boolean).join(' · '), 'Arbeitsauftrag', chipsOf(all.map(x => x.it).find(x => SOZ[x.soz]), s.ph, mn));
-        let y = Y0 + 0.02;
-        if (c0) { const pl = stepPlain(c0.it); let fs = 28; while (fs > 16 && needH(pl, CW - 0.5, fs) > 1.9) fs -= 2; const h = Math.min(2.1, needH(pl, CW - 0.5, fs)); sl.addText(stepRuns([c0.it], fs), { x: X, y, w: CW, h, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, lineSpacingMultiple: 1.1 }); y += h + 0.3; }
-        const gap = 0.5, rg = 0.3; const cw = (CW - (nc - 1) * gap) / nc; const ch = (BOT - y - (nr - 1) * rg) / nr;
-        const fsC = Math.min(...s.cols.map(c => fitFs(c.items.flatMap(x => stepPlain(x.it)), cw - 0.45, ch - 0.68, [28, 26, 24, 22, 20, 18, 16, 14])));
-        s.cols.forEach((c, i) => {
-          const cx = X + (i % nc) * (cw + gap), cy = y + Math.floor(i / nc) * (ch + rg);
-          if (i % nc) sl.addShape('line', { x: cx - gap / 2, y: cy, w: 0, h: ch, line: { color: 'C9CED8', width: 2 } });
-          sl.addText([{ text: c.name, options: { bold: true, color: ACC } }, ...(c.sub ? [{ text: '  –  ' + c.sub, options: { color: GREY } }] : [])], { x: cx, y: cy, w: cw, h: 0.44, fontFace: F, fontSize: 19, valign: 'bottom', margin: 0, fit: 'shrink' });
-          sl.addShape('line', { x: cx, y: cy + 0.52, w: cw, h: 0, line: { color: TINT, width: 2.5 } });
-          sl.addText(stepRuns(c.items.map(x => x.it), fsC), { x: cx, y: cy + 0.66, w: cw, h: ch - 0.66, fontFace: F, fontSize: fsC, color: INK, valign: 'top', margin: 0, lineSpacingMultiple: 1.1 });
+      } else if (s.k === 'tasks') {
+        const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s); const BW = multi ? 0.62 : 0, gapR = 0.22, gapS = 0.32, gapC = 0.5, rg = 0.3, HH = 0.68;
+        head(sl, tsKick(s, m), tsHead(s), chipsOf(sz ? { soz: sz } : null, s.ph, mn));
+        const metaFs = fs => Math.max(11, Math.round(fs * 0.62));
+        const itemH = (x, w, fs, col) => { const pl = stepPlain(x.it); return needH(pl, w - BW - (pl.length > 1 ? 0.45 : 0), fs) + (tsMeta(x, s, m, col) ? metaFs(fs) * 1.35 / 72 + 0.06 : 0); };
+        const listH = (L, w, fs, col) => L.reduce((a, x) => a + itemH(x, w, fs, col), 0) + Math.max(0, L.length - 1) * gapR;
+        const grid = g => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return { nc, nr: Math.ceil(n / nc), cw: (CW - (nc - 1) * gapC) / nc }; };
+        const segH = (g, fs) => { if (g.t === 'rows') return listH(g.items, CW, fs); const G = grid(g); let h = 0; for (let r = 0; r < G.nr; r++) h += HH + Math.max(...g.cols.slice(r * G.nc, r * G.nc + G.nc).map(c => listH(c.items, G.cw, fs, c))); return h + (G.nr - 1) * rg; };
+        const total = fs => s.segs.reduce((a, g) => a + segH(g, fs), 0) + (s.segs.length - 1) * gapS;
+        const fs = [36, 32, 30, 28, 26, 24, 22, 20, 18, 16, 14].find(f => total(f) <= BH - 0.1) || 14;
+        const put = (x, ix, iy, w, col) => {
+          const meta = tsMeta(x, s, m, col); const h = itemH(x, w, fs, col);
+          if (multi) sl.addText(itPh(x.it) === 'ha' ? 'HA' : String(x.no), { shape: 'roundRect', rectRadius: 0.06, x: ix, y: iy + fs * 0.08 / 72, w: 0.4, h: 0.4, fill: { color: ACC }, fontFace: F, fontSize: itPh(x.it) === 'ha' ? 11 : 15, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle', margin: 0 });
+          const runs = stepRuns([x.it], fs); if (meta) { runs[runs.length - 1].options.breakLine = true; runs.push({ text: meta, options: { fontSize: metaFs(fs), color: '6B7280', bold: true, paraSpaceBefore: 2 } }); }
+          sl.addText(runs, { x: ix + BW, y: iy, w: w - BW, h, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, lineSpacingMultiple: 1.1 });
+          return h;
+        };
+        let y = Y0 + Math.max(0.05, (BH - total(fs)) / 2);
+        s.segs.forEach((g, gi) => {
+          if (gi) y += gapS;
+          if (g.t === 'rows') { g.items.forEach((x, i) => { if (i) y += gapR; y += put(x, X, y, CW); }); return; }
+          const G = grid(g);
+          for (let r = 0; r < G.nr; r++) {
+            const row = g.cols.slice(r * G.nc, r * G.nc + G.nc); const rh = HH + Math.max(...row.map(c => listH(c.items, G.cw, fs, c)));
+            row.forEach((c, i) => {
+              const cx = X + i * (G.cw + gapC);
+              if (i) sl.addShape('line', { x: cx - gapC / 2, y, w: 0, h: rh, line: { color: 'C9CED8', width: 2 } });
+              sl.addText([{ text: c.name, options: { bold: true, color: ACC } }, ...(c.sub ? [{ text: '  –  ' + c.sub, options: { color: GREY } }] : [])], { x: cx, y, w: G.cw, h: 0.44, fontFace: F, fontSize: Math.min(20, Math.max(14, fs - 4)), valign: 'bottom', margin: 0, fit: 'shrink' });
+              sl.addShape('line', { x: cx, y: y + 0.52, w: G.cw, h: 0, line: { color: TINT, width: 2.5 } });
+              let iy = y + HH; c.items.forEach((x, j) => { if (j) iy += gapR; iy += put(x, cx, iy, G.cw, c); });
+            });
+            y += rh + (r < G.nr - 1 ? rg : 0);
+          }
         });
-        const nt = notesOf(all.map(x => [x === c0 ? '' : grpName(m, x.g), x.it])); if (s.ph || mn) nt.push([s.ph ? 'Phase: ' + PHASEN[s.ph].label : '', mn ? 'Zeit: ' + mn + ' Min. (Gruppen parallel)' : ''].filter(Boolean).join(' · '));
+        const nt = notesOf(s.items.map(x => [tsLab(x, s, m), x.it])); const phs = s.phs || []; if (phs.length || mn) nt.push([phs.length ? 'Phase: ' + phs.map(k => PHASEN[k].label).join(', ') : '', mn ? 'Zeit: ' + mn + ' Min.' + (tsCols(s) ? ' (Gruppen parallel)' : '') : ''].filter(Boolean).join(' · '));
         if (nt.length) sl.addNotes(nt.join('\n\n'));
       } else if (s.k === 'step') {
         const b = s.b, ph = itPh(b), mn = itMin(b); const link = tfStr(b.link).trim(); const qrW = link ? 3.0 : 0; const tw = CW - (qrW ? qrW + 0.4 : 0);
@@ -3776,7 +3808,7 @@ async function exportPPTX() {
         sl.addImage({ data: QR.dataURL(s.link, 10), x: (W - 3.5) / 2, y: 1.65, w: 3.5, h: 3.5 });
         sl.addText([{ text: s.link, options: { hyperlink: { url: s.link } } }], { x: X, y: 5.3, w: CW, h: 0.45, fontFace: F, fontSize: 16, color: ACC, align: 'center', margin: 0 });
       }
-      barAdd(sl, s.ph, big);
+      barAdd(sl, s.phs && s.phs.length ? s.phs : s.ph, big);
     }
     // PptxGenJS schreibt bei Absätzen mit mehreren Läufen weitere <a:pPr> hinter die Läufe; PowerPoint verlangt sie nur am Absatzanfang
     let blob = await pptx.write({ outputType: 'blob' });
