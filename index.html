@@ -663,6 +663,18 @@ body.basis .x-pro:not(.used){display:none!important}
 .tpl-copy{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line);padding-top:10px}
 .dlg.dlg-out{width:min(520px,calc(100% - 32px))}
 .dlg.dlg-rlp{width:min(720px,calc(100% - 32px))}
+.dlg.dlg-vp{width:min(1060px,calc(100% - 32px))}
+.vp-meta .f.narrow{flex:0 0 110px}
+.vp-wrap{overflow:auto;max-height:46vh;border:1px solid var(--line-strong);border-radius:10px}
+.vp-tbl{border-collapse:collapse;width:100%;font-size:12.5px;line-height:1.35;min-width:760px}
+.vp-tbl th{position:sticky;top:0;background:var(--tinte);color:#fff;text-align:left;padding:6px 8px;font-size:12px;z-index:1}
+.vp-tbl td{border-top:1px solid var(--line);padding:6px 8px;vertical-align:top}
+.vp-tbl td small{display:block;color:var(--muted)}
+.vp-tbl td.ph{font-weight:700;color:var(--ink);box-shadow:inset 4px 0 0 var(--phc);white-space:nowrap}
+.vp-tbl ul{margin:0;padding-left:1.1em}
+.vp-tbl tr.auto td{font-style:italic;color:var(--muted)}
+.vp-tbl .miss{color:var(--muted);font-style:italic;font-weight:400}
+.vp-sum{font-size:12.5px;color:var(--muted);margin:6px 2px 0}.vp-sum .warn{color:#B3261E}
 .dlg.dlg-mappe{width:min(560px,calc(100% - 32px))}
 .dlg.dlg-ocr{width:min(640px,calc(100% - 32px))}
 .dlg.dlg-dg{width:min(600px,calc(100% - 32px))}
@@ -2485,7 +2497,7 @@ function ablaufHTML() {
   return `<div class="f abl-sum x-pro"><span>Stundenablauf</span>
     <div class="abl-bar" style="--fill:${Math.min(100, L / base * 100).toFixed(2)}%">${segs}</div>
     <div class="abl-leg">${parts.join('')}</div>
-    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Aufgabe' : 'Aufgaben'} ohne Zeit</small>` : ''}</div></div>`;
+    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Aufgabe' : 'Aufgaben'} ohne Zeit</small>` : ''}<button class="link" type="button" data-act="vp-open" style="margin-left:auto">Verlaufsplan</button></div></div>`;
 }
 const phCtl = (i, it) => { const p = itPh(it); return `<span class="ph-ctl x-pro${p || itMin(it) ? ' used' : ''}"><select data-k="items.${i}.ph" aria-label="Phase der Stunde" class="ph-sel${p ? ' on' : ''}"${p ? ` style="--phc:${PHASEN[p].c}"` : ''}><option value="">Phase …</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${p === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select><label class="ph-min" title="Bearbeitungszeit in Minuten"><input type="text" inputmode="numeric" maxlength="3" data-k="items.${i}.min" value="${esc(itMin(it) || '')}" placeholder="–" aria-label="Minuten"><span>Min.</span></label></span>`; };
 
@@ -2982,6 +2994,111 @@ function presSlideHTML(s) {
     case 'qr': return presHead('', 'Digitale Fassung', '') + `<div class="pr-body pr-qrb"><img src="${QR.dataURL(s.link, 10)}" alt="QR-Code zur digitalen Fassung"><div>${esc(s.link)}</div></div>`;
   }
   return '';
+}
+/* ================= Verlaufsplan: aus Phase, Zeit, Sozialform, Auftrag und Erwartung der Aufgaben ================= */
+const vpOf = () => { const m = state.sheet.meta; if (!m.vp || typeof m.vp !== 'object') m.vp = {}; return m.vp; };
+const vpClock = (start, min) => { const t = /^(\d{1,2})[:.](\d{2})$/.exec(String(start || '').trim()); if (!t) return null; const x = (+t[1]) * 60 + (+t[2]) + min; return `${String(Math.floor(x / 60) % 24).padStart(2, '0')}:${String(x % 60).padStart(2, '0')}`; };
+function vpRows() {
+  const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: true }; const tags = matTags(sh.blocks);
+  const mats = sh.blocks.filter(b => tags[b.id]); const ab = m.nr ? 'AB ' + m.nr : 'Arbeitsblatt';
+  const tafel = sh.blocks.filter(b => b.type === 'tafel' && blockVisible(b, v)); const a3 = sh.blocks.filter(b => b.type === 'a3');
+  const rows = []; let t = 0, firstTask = -1;
+  sh.blocks.forEach((b, bi) => {
+    if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; if (firstTask < 0) firstTask = bi;
+    const idx = b.items.map((it, i) => (lvOk(it, v) ? i : -1)).filter(i => i >= 0);
+    itemsFor(b, v).forEach((it, k) => {
+      t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
+      const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
+      const media = [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
+      if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
+      a3.filter(x => x.taskRef === b.id + ':' + idx[k]).forEach(x => media.push(A3_TPL[a3Tpl(x)].label + ' (A3)'));
+      if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
+      if (m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
+      rows.push({ no: t, it, ph, min: itMin(it), soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '' });
+    });
+  });
+  // Einstieg mit Zitat oder Bild, wenn keine Aufgabe dafür vorgesehen ist
+  if (!rows.some(r => r.ph === 'ein')) {
+    const imp = sh.blocks.find((b, bi) => (b.type === 'quote' && plainText(b.text || '').trim() || b.type === 'image' && b.src) && (firstTask < 0 || bi < firstTask));
+    if (imp) rows.unshift({ auto: true, ph: 'ein', min: 0, soz: 'Plenum', task: imp.type === 'quote' ? `Impuls: Zitat „${plainText(imp.text).slice(0, 120)}“${imp.author ? ' (' + plainText(imp.author) + ')' : ''}; Schülerinnen und Schüler äußern erste Eindrücke.` : `Impuls: ${plainText(imp.caption || 'Bild')}; Schülerinnen und Schüler beschreiben und deuten.`, eh: [], media: [imp.type === 'quote' ? 'Zitat (Beamer oder Tafel)' : 'Bild (Beamer)'] });
+  }
+  // Sicherung am Tafelbild, wenn keine Aufgabe dafür vorgesehen ist
+  if (tafel.length && !rows.some(r => r.ph === 'sich')) rows.push({ auto: true, ph: 'sich', min: 0, soz: 'Plenum', task: 'Ergebnisse werden im Unterrichtsgespräch gesichert.', eh: [], media: tafel.map(x => 'Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')) });
+  const main = rows.filter(r => r.ph !== 'ha'), ha = rows.filter(r => r.ph === 'ha');
+  let c = 0; const start = vpOf().start;
+  main.forEach(r => { r.from = c; c += r.min || 0; r.to = c; r.clock = vpClock(start, r.from) ? `${vpClock(start, r.from)}–${vpClock(start, r.to)}` : ''; });
+  return { rows: main.concat(ha), total: c, len: Number(state.sheet.meta.lesson) || 45 };
+}
+const vpTime = r => r.ph === 'ha' ? 'HA' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
+function vpTableHTML() {
+  const R = vpRows(); if (!R.rows.length) return '<p class="hint">Noch keine Aufgaben. Der Verlaufsplan entsteht aus den Aufgaben des Blatts.</p>';
+  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}"><td><b>${esc(vpTime(r))}</b>${r.min && r.ph !== 'ha' ? `<small>${r.min} Min.</small>` : ''}</td><td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>Aufgabe ${r.no}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+    <p class="vp-sum">${R.total} von ${R.len} Minuten verplant${R.total > R.len ? ` · <b class="warn">${R.total - R.len} Min. zu viel</b>` : ''}${R.rows.some(r => r.ph !== 'ha' && !r.min) ? ' · nicht alle Schritte haben eine Zeit' : ''}${R.rows.some(r => r.auto) ? ' · kursive Zeilen sind ergänzt' : ''}</p>`;
+}
+function vpHTML() {
+  const m = state.sheet.meta, vp = vpOf();
+  return `<h2 id="dlg-t">Verlaufsplan</h2>
+    <p class="rlp-stat">Entsteht aus Phase, Zeit, Sozialform, Arbeitsauftrag und Erwartung der Aufgaben. Phase und Zeit tragen Sie neben den Sozialformen jeder Aufgabe ein; in Word lässt sich alles weiter bearbeiten.</p>
+    <div class="row vp-meta"><label class="f"><span>Datum</span><input type="text" data-vp="datum" value="${esc(vp.datum || '')}" placeholder="z. B. 12.11.2026"></label><label class="f narrow"><span>Beginn</span><input type="text" data-vp="start" value="${esc(vp.start || '')}" placeholder="08:00"></label><label class="f narrow"><span>Länge</span><select data-vp="lesson">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === (Number(m.lesson) || 45) ? ' selected' : ''}>${n} Min.</option>`).join('')}</select></label></div>
+    <label class="f"><span>Stundenziel</span><textarea data-vp="ziel" rows="2" placeholder="Die Schülerinnen und Schüler …">${esc(vp.ziel || '')}</textarea></label>
+    <div id="vp-prev">${vpTableHTML()}</div>
+    <div class="row"><button class="btn primary" type="button" data-act="vp-docx">Als Word speichern</button><button class="btn" type="button" data-act="dlg-close">Schließen</button></div>`;
+}
+function openVP() { state.dlg = { mode: 'vp' }; renderDlg(); }
+async function exportVP() {
+  if (busy) return; busy = true;
+  try {
+    overlay('Verlaufsplan wird erstellt …'); await loadScript(LIBS.zip);
+    const sh = state.sheet, m = sh.meta, vp = vpOf(); const R = vpRows(); const acc = ACCENTS[m.accent] || ACCENTS.tinte; const A = acc.c.slice(1).toUpperCase(), GREY = '5A606E';
+    const PW = TW(267); const ws = [22, 27, 80, 72, 24, 42].map(TW);
+    const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(x => LINE(x, 4, 'B7BCC6')).join('');
+    const cell = (xml, w, o = {}) => xtc(xml || xp(''), { w, ...o });
+    const P = (runs, o = {}) => xp(runs, { line: 252, ...o });
+    const parts = [];
+    parts.push(P(xr('Unterrichtsverlaufsplan', { b: 1, sz: 30, color: A }), { after: 80 }));
+    const info = [['Thema der Stunde', [m.title, m.topic].filter(Boolean).map(x => plainText(x)).join(' – ')], ['Lerngruppe', [m.course, KL(sh.klasse).label].filter(Boolean).join(' · ')], ['Schule', m.school || ''], ['Datum', vp.datum || ''], ['Zeit', `${vp.start ? vp.start + ' Uhr, ' : ''}${R.len} Minuten`], ['Material', [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(': ')]];
+    const iw = [TW(45), PW - TW(45)];
+    parts.push(xtbl(iw, info.map(([k, x]) => xtr(cell(P(xr(k, { b: 1, sz: 19, color: GREY })), iw[0]) + cell(P(xr(x || ' ', { sz: 19 })), iw[1]), { cant: 1 })).join(''), NOB));
+    parts.push(P('', { after: 60 }));
+    parts.push(P(xr('Stundenziel', { b: 1, sz: 21, color: A }), { before: 60, after: 30, keepNext: true }));
+    parts.push(vp.ziel ? xpRich(vp.ziel, { sz: 20 }, { gap: 40 }) : P(xr(' '.repeat(120), { sz: 20, u: 1 })));
+    const ids = rlpSheetIds(sh);
+    if (ids.length) { parts.push(P(xr('Bezug zum Rahmenlehrplan', { b: 1, sz: 21, color: A }), { before: 120, after: 30, keepNext: true })); ids.forEach(id => { const x = rlpInfo(id); parts.push(P((x.own ? '' : xr(x.code + '  ', { b: 1, sz: 18 })) + xr(x.t, { sz: 18 }), { after: 20, ind: `<w:ind w:left="${TW(4)}" w:hanging="${TW(4)}"/>` })); }); }
+    parts.push(P('', { after: 80 }));
+    const hd = ['Zeit', 'Phase', 'Unterrichtsgeschehen', 'Erwartetes Schülerverhalten', 'Sozialform', 'Medien'];
+    const head = xtr(hd.map((h, i) => cell(P(xr(h, { b: 1, sz: 18, color: 'FFFFFF' })), ws[i], { shd: A })).join(''), { header: 1, cant: 1 });
+    const body = R.rows.map(r => {
+      const ital = r.auto ? { i: 1 } : {};
+      const c0 = P(xr(vpTime(r), { b: 1, sz: 18 })) + (r.min && r.ph !== 'ha' ? P(xr(r.min + ' Min.', { sz: 16, color: GREY })) : '');
+      const c1 = P(xr(r.ph ? PHASEN[r.ph].label : 'ohne Phase', { b: 1, sz: 18, color: r.ph ? PHASEN[r.ph].c.slice(1) : GREY }));
+      const c2 = P((r.no ? xr(`Aufgabe ${r.no}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : '') + xrInline(tfStr(r.task).replace(/\n+/g, ' '), { sz: 18, ...ital }));
+      const c3 = r.eh.length ? r.eh.map(x => P(xr('–', { sz: 18, color: A }) + '<w:r><w:tab/></w:r>' + xrInline(x, { sz: 18 }), { ind: `<w:ind w:left="${TW(3.5)}" w:hanging="${TW(3.5)}"/>`, after: 20 })).join('') : P('');
+      const c4 = P(xr(r.soz || ' ', { sz: 18 }));
+      const c5 = r.media.map(x => P(xr(x, { sz: 17 }), { after: 10 })).join('') || P('');
+      return xtr([c0, c1, c2, c3, c4, c5].map((x, i) => cell(x, ws[i], i === 1 && r.ph ? { shd: mixHex(PHASEN[r.ph].c, .88).slice(1) } : {})).join(''), { cant: 1 });
+    }).join('');
+    const sum = xtr(cell(P(xr(`${R.total} von ${R.len} Minuten verplant` + (R.total > R.len ? ` (${R.total - R.len} Min. zu viel)` : ''), { sz: 17, color: GREY })), PW, { span: 6 }), { cant: 1 });
+    parts.push(xtbl(ws, head + body + sum, bd));
+    const mats = sh.blocks.filter(b => b.type === 'material'); const tags = matTags(sh.blocks);
+    if (mats.length) { parts.push(P(xr('Materialien', { b: 1, sz: 21, color: A }), { before: 200, after: 30, keepNext: true })); mats.forEach(b => parts.push(P(xr((tags[b.id] || 'M') + '  ', { b: 1, sz: 18 }) + xrInline(b.title || 'ohne Titel', { sz: 18 }) + (b.source ? xr('  (' + plainText(b.source) + ')', { sz: 16, color: GREY }) : ''), { after: 20 }))); }
+    const sect = `<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="${TW(14)}" w:right="${TW(15)}" w:bottom="${TW(14)}" w:left="${TW(15)}" w:header="0" w:footer="${TW(8)}" w:gutter="0"/></w:sectPr>`;
+    const NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+    const XH = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+    const documentXml = `${XH}<w:document ${NS}><w:body>${parts.join('')}${sect}</w:body></w:document>`;
+    const stylesXml = `${XH}<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="${SANS}" w:eastAsia="${SANS}" w:hAnsi="${SANS}" w:cs="${SANS}"/><w:color w:val="1C1F27"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="de-DE"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="252" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Standard"><w:name w:val="Normal"/><w:qFormat/></w:style><w:style w:type="table" w:default="1" w:styleId="NormaleTabelle"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="57" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="57" w:type="dxa"/><w:right w:w="85" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style></w:styles>`;
+    const settingsXml = `${XH}<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:defaultTabStop w:val="708"/><w:characterSpacingControl w:val="doNotCompress"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`;
+    const rels = `${XH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/></Relationships>`;
+    const ct = `${XH}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
+    const now = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+    const core = `${XH}<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xesc('Verlaufsplan: ' + plainText(m.title || ''))}</dc:title><dc:creator>AB-Werkstatt</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
+    const rootRels = `${XH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
+    const zip = new window.JSZip();
+    zip.file('[Content_Types].xml', ct); zip.file('_rels/.rels', rootRels); zip.file('docProps/core.xml', core);
+    zip.file('word/document.xml', documentXml); zip.file('word/styles.xml', stylesXml); zip.file('word/settings.xml', settingsXml); zip.file('word/_rels/document.xml.rels', rels);
+    const blob = await zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    overlay(''); await deliver(fileBase() + '_Verlaufsplan.docx', blob);
+  } catch (err) { console.error(err); overlay(''); toast('Der Verlaufsplan ließ sich nicht erstellen. Bitte erneut versuchen.'); }
+  finally { overlay(''); busy = false; }
 }
 function openPres(start) {
   let S; try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
@@ -4385,7 +4502,7 @@ function renderOut() {
     h += segHTML('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung, 'Fassung');
     if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ['A', 'Gruppe A'], ['B', 'Gruppe B']], state.grp, 'Gruppe');
     if (sh.meta.levelsOn) h += segHTML('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all', 'Niveau');
-    if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
+    if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button><button class="btn sm" type="button" data-pv="vp">Verlaufsplan</button>';
     h += '<button class="btn sm" type="button" data-pv="pres" title="Folien aus diesem Blatt am Beamer zeigen">Präsentieren</button>';
   }
   if (state.out === 'a3') h += segHTML('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3', 'Papier');
@@ -6137,6 +6254,7 @@ function onClick(e) {
     case 'a3-tpl': { if (!A3_TPL[a.dataset.v]) return; b.tpl = a.dataset.v; a3Norm(b); changed(true); return; }
     case 'a3-n': b.n = +a.dataset.v; changed(true); return;
     case 'a3-show': setOut('a3'); return;
+    case 'vp-open': openVP(); return;
     case 'a3-add': { a3Norm(b); const w = a.dataset.w; const lim = { sections: 6, cols: 4, aspects: 10, experts: 6 }[w] || 8; if (Array.isArray(b[w]) && b[w].length < lim) b[w].push(''); changed(true); return; }
     case 'a3-del': { a3Norm(b); const w = a.dataset.w; if (Array.isArray(b[w])) b[w].splice(+a.dataset.i, 1); a3Norm(b); changed(true); return; }
     case 'tf-tpl': { const nx = a.dataset.v; if (!TF_TPL[nx] || nx === tfTpl(b)) return; tfConvert(b, nx); b.tpl = nx; changed(true); return; }
@@ -7189,7 +7307,7 @@ function outHTML() {
     ${d.fmt === 'pptx' && state.out === 'blatt' ? presPickHTML() : ''}
     <div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>
-    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && state.out === 'blatt' ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && state.out === 'blatt' ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div>`;
 }
 async function outGo() {
   const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
@@ -7278,7 +7396,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -7297,6 +7415,7 @@ function renderDlg() {
   if (d.mode === 'mappe') { r.querySelector('.dlg').classList.add('dlg-mappe'); return; }
   if (d.mode === 'dg') { r.querySelector('.dlg').classList.add('dlg-dg'); return; }
   if (d.mode === 'ocr') { r.querySelector('.dlg').classList.add('dlg-ocr'); if (d.step === 'run') r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.step === 'done' ? '#ocr-t' : d.step === 'prep' ? '[data-act="ocr-go"]' : '#ocr-drop'); if (f && d.step !== 'done') f.focus({ preventScroll: true }); return; }
+  if (d.mode === 'vp') r.querySelector('.dlg').classList.add('dlg-vp');
   if (d.mode === 'rlp') { r.querySelector('.dlg').classList.add('dlg-rlp'); const g = r.querySelector('[data-act="dlg-close"]'); if (g) g.focus({ preventScroll: true }); return; }
   if (d.mode === 'conflict') { r.querySelector('.dlg-scrim').removeAttribute('data-act'); return; }
   if (d.mode === 'klassen') { r.querySelector('.dlg').classList.add('dlg-kl'); if (d.setup) r.querySelector('.dlg-scrim').removeAttribute('data-act'); const f = r.querySelector(d.setup ? '#kl-school' : '[data-kf="label"]'); if (f && d.setup) f.focus(); return; }
@@ -7363,6 +7482,7 @@ async function onDlgClick(e) {
     if (act === 'dg-big') { const link = dgLink(m.dg.id); const ov = document.createElement('div'); ov.className = 'dg-big'; ov.title = 'Klicken zum Schließen'; ov.innerHTML = `<img src="${QR.dataURL(link, 16)}" alt="QR-Code"><div>${esc(link)}</div>`; ov.addEventListener('click', () => ov.remove()); document.body.appendChild(ov); return; }
     if (act === 'dg-off') { await dgOff(); return; }
   }
+  if (state.dlg.mode === 'vp' && act === 'vp-docx') { exportVP(); return; }
   if (state.dlg.mode === 'ocr') {
     const d = state.dlg;
     if (act === 'ocr-rot') { ocrRead(); d.rot = (d.rot + 90) % 360; renderDlg(); return; }
@@ -7393,6 +7513,7 @@ async function onDlgClick(e) {
     if (act === 'out-go') { outGo(); return; }
     if (act === 'out-pres') { state.dlg = null; renderDlg(); openPres(0); return; }
     if (act === 'pr-pick') { presPickSet(a.dataset.v); return; }
+    if (act === 'out-vp') { openVP(); return; }
     if (act === 'out-eh') { exportEH(); return; }
   }
   const email = dlgVal('#dlg-email'); const pw = ($('#dlg-pw') || {}).value || '';
@@ -8688,6 +8809,10 @@ function boot() {
     if (t.dataset.kf === 'label' && d.setup) { const c = r.querySelector('[data-kf="course"]'); if (c && (!row.course || row.course === 'Deutsch' || row.course === 'Deutsch ' + prevLabel)) { row.course = t.value ? 'Deutsch ' + t.value : 'Deutsch'; c.value = row.course; } }
   });
   $('#dlg-root').addEventListener('change', e => {
+    if (e.target.dataset && e.target.dataset.vp != null && state.dlg && state.dlg.mode === 'vp') {
+      const k = e.target.dataset.vp; if (k === 'lesson') state.sheet.meta.lesson = e.target.value; else vpOf()[k] = e.target.value.trim(); changed(false);
+      const pv = $('#vp-prev'); if (pv) pv.innerHTML = vpTableHTML(); return;
+    }
     if (e.target.dataset && e.target.dataset.prk != null) {
       const m = state.sheet.meta; const k = e.target.dataset.prk; const off = new Set(Array.isArray(m.presOff) ? m.presOff : []);
       if (e.target.checked) off.delete(k); else off.add(k); m.presOff = [...off]; changed(false);
@@ -8750,6 +8875,7 @@ function boot() {
     if (k === 'ehmd') { exportEH(); return; }
     if (k === 'tfbeam') { tfBeamer(); return; }
     if (k === 'pres') { openPres(0); return; }
+    if (k === 'vp') { openVP(); return; }
     if (k === 'fassung') { state.fassung = v; if (v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); renderEditor(); }
     if (k === 'grp') state.grp = v;
     if (k === 'lvl') state.lvl = v;
