@@ -124,7 +124,7 @@ def version_resource(ver):
     a, b, c = (int(x) for x in ver.split('.'))
     ms, ls = (a << 16) | b, (c << 16)
     ffi = struct.pack('<13I', 0xFEEF04BD, 0x00010000, ms, ls, ms, ls, 0x3F, 0, 0x40004, 1, 0, 0, 0)
-    strs = [('CompanyName', 'AB-Werkstatt'), ('FileDescription', 'AB-Werkstatt'), ('FileVersion', ver), ('InternalName', 'AB-Werkstatt'),
+    strs = [('CompanyName', 'Moritz Bauer'), ('FileDescription', 'AB-Werkstatt'), ('FileVersion', ver), ('InternalName', 'AB-Werkstatt'), ('LegalCopyright', '© 2026 Moritz Bauer'),
             ('OriginalFilename', 'AB-Werkstatt.exe'), ('ProductName', 'AB-Werkstatt'), ('ProductVersion', ver)]
     table = vnode('040904B0', children=[vnode(k, (v + '\0').encode('utf-16le')) for k, v in strs])
     sfi = vnode('StringFileInfo', children=[table])

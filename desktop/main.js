@@ -153,7 +153,7 @@ function menu() {
       { label: 'Datenordner öffnen', click: () => shell.openPath(app.getPath('userData')) },
       { type: 'separator' },
       { label: 'Über AB-Werkstatt', click: () => dialog.showMessageBox(win, { type: 'info', title: APP_NAME, icon: iconPath(), message: `${APP_NAME} ${app.getVersion()}`,
-        detail: `Arbeitsblätter, Tippkarten und Tafelkarten setzen und drucken.\n\nIhre Blätter liegen auf diesem Computer im Datenordner der App. Sichern Sie sie ab und zu über „Meine Blätter → Alle Blätter sichern“.\n\nElectron ${process.versions.electron} · Chromium ${process.versions.chrome}` }) }
+        detail: `Arbeitsblätter, Tippkarten und Tafelkarten setzen und drucken.\n\n© 2026 Moritz Bauer\n\nIhre Blätter liegen auf diesem Computer im Datenordner der App. Sichern Sie sie ab und zu über „Meine Blätter → Alle Blätter sichern“.\n\nElectron ${process.versions.electron} · Chromium ${process.versions.chrome}` }) }
     ] }
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(tpl));

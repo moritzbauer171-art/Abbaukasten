@@ -6,6 +6,7 @@
 <meta name="description" content="Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen und als PDF oder Word speichern.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.45 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>AB-Werkstatt Deutsch</title>
+<meta name="author" content="Moritz Bauer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400;1,7..72,600&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=UnifrakturMaguntia&family=Caveat:wght@500;700&display=swap">
@@ -827,6 +828,11 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 .slot>.pout{box-shadow:0 1px 2px rgba(22,30,52,.14),4px 5px 0 -1px var(--paper),4px 5px 0 0 var(--edge),0 14px 30px rgba(22,30,52,.13)}
 /* Fach wechseln: die Randnotiz ist ein Knopf */
 .brand{position:relative}
+.brand-t{display:flex;flex-direction:column;line-height:1.05;min-width:0}
+.brand-c{font-size:10.5px;font-weight:400;color:var(--muted);letter-spacing:.01em;margin-top:3px;white-space:nowrap}
+.copy-l{margin:14px 0 0;font-size:12px;color:var(--muted)}
+.drawer-foot .copy-s{margin-left:auto;font-size:12px;color:var(--muted);align-self:center}
+.ph-x{color:var(--muted);font-size:12px;white-space:nowrap}
 .fach-btn{display:inline-flex;align-items:center;gap:2px;border:0;background:transparent;padding:2px 6px 2px 4px;border-radius:8px;cursor:pointer;color:var(--rot)}
 .fach-btn svg{width:12px;height:12px;flex:0 0 auto;opacity:.75;transform:translateY(2px)}
 .fach-btn:hover{background:var(--rot-soft)}
@@ -1634,14 +1640,14 @@ body{transition:background-color .3s,border-color .25s}
 <body>
 <div id="app">
   <header class="bar">
-    <div class="brand"><b>AB-Werkstatt</b><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
+    <div class="brand"><div class="brand-t"><b>AB-Werkstatt</b><small class="brand-c">© 2026 Moritz Bauer</small></div><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
     <div class="tabs" role="group" aria-label="Ansicht">
       <button type="button" id="tab-edit" data-act="tab" data-v="edit" aria-pressed="true">Bearbeiten</button>
       <button type="button" id="tab-prev" data-act="tab" data-v="preview" aria-pressed="false">Vorschau</button>
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
-      <div class="seg sm umfang" role="group" aria-label="Funktionsumfang" title="Basis: nur das Nötigste. Experte: alle Funktionen. Ihre Blätter ändern sich dadurch nicht."><button type="button" data-act="umfang" data-v="basis" aria-pressed="false">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="true">Experte</button></div>
+      <div class="seg sm umfang" role="group" aria-label="Funktionsumfang" title="Basis: nur Arbeitsblätter erstellen. Experte: dazu Stundenplanung, Tafel, Druck-Extras und Präsentation. Ihre Blätter ändern sich dadurch nicht."><button type="button" data-act="umfang" data-v="basis" aria-pressed="false">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="true">Experte</button></div>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neue Stunde anlegen">
@@ -2605,6 +2611,14 @@ function setUmfang(v, quiet) {
   const basis = v === 'basis'; document.body.classList.toggle('basis', basis);
   document.querySelectorAll('[data-act="umfang"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (basis ? 'basis' : 'experte'))));
   if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
+  if (!quiet) { basisClamp(); state.insAt = null; closeGloss(); closeZl(); closeMenu(); renderEditor(); clearTimeout(renderTimer); renderPreview(); }
+}
+// Basis kennt nur Arbeitsblätter: Bereich „Arbeitsblätter“, Ausgaben Arbeitsblatt und Tippkarten
+const isBasis = () => document.body.classList.contains('basis');
+const BASIS_OUTS = ['blatt', 'tipps'];
+function basisClamp() {
+  if (!isBasis()) return;
+  state.area = 'blatt'; if (!BASIS_OUTS.includes(state.out)) state.out = 'blatt';
 }
 
 /* ================= Stunde: ein oder mehrere Arbeitsblätter =================
@@ -2642,7 +2656,7 @@ function abBarHTML() {
   const P = state.sheet; const A = stABs(); const multi = A.length > 1;
   return `<div class="ab-bar">${multi ? `<label class="ab-st"><span>Stunde</span><input type="text" data-st="title" value="${esc(stTitle(P))}" placeholder="Titel der Stunde" aria-label="Titel der Stunde"></label>` : ''}
     <div class="ab-tabs" role="tablist" aria-label="Arbeitsblätter dieser Stunde">${A.map(x => `<button type="button" role="tab" class="ab-tab" data-act="abx-go" data-abk="${x.k}" aria-selected="${x.k === (P.abActive || 0)}" title="${esc(plainText(x.meta.title || '') || 'ohne Titel')}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}</span></button>`).join('')}<button type="button" class="ab-add" data-act="abx-add" title="Weiteres Arbeitsblatt in dieser Stunde anlegen, z. B. Hausaufgabe oder Differenzierung">+ Arbeitsblatt</button></div>
-    <div class="ab-acts">${multi ? `<button class="link" type="button" data-act="abx-left"${P.abActive ? '' : ' disabled'}>← nach vorn</button><button class="link" type="button" data-act="abx-right"${P.abActive < A.length - 1 ? '' : ' disabled'}>nach hinten →</button><button class="link" type="button" data-act="abx-dup">Duplizieren</button><button class="link danger" type="button" data-act="abx-del">Dieses AB löschen</button>` : '<small class="hint">Eine Stunde kann mehrere Arbeitsblätter haben.</small>'}<button class="link" type="button" data-act="abx-out" style="margin-left:auto" title="Alle ABs, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde ausgeben</button></div></div>`;
+    <div class="ab-acts">${multi ? `<button class="link" type="button" data-act="abx-left"${P.abActive ? '' : ' disabled'}>← nach vorn</button><button class="link" type="button" data-act="abx-right"${P.abActive < A.length - 1 ? '' : ' disabled'}>nach hinten →</button><button class="link" type="button" data-act="abx-dup">Duplizieren</button><button class="link danger" type="button" data-act="abx-del">Dieses AB löschen</button>` : '<small class="hint">Eine Stunde kann mehrere Arbeitsblätter haben.</small>'}${isBasis() ? '' : '<button class="link" type="button" data-act="abx-out" style="margin-left:auto" title="Alle ABs, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde ausgeben</button>'}</div></div>`;
 }
 function abGo(k) {
   const P = state.sheet; if (!P.abs || k === P.abActive) return; abSwitch(k);
@@ -2726,7 +2740,7 @@ function ablaufHTML() {
 }
 // Zeit gilt für den ganzen Aufgaben-Baustein (b.min); Timer beim Präsentieren: b.timer = '' | 'klick' | 'auto'
 const TIMER_OPTS = [['', 'aus'], ['klick', 'Start per Klick'], ['auto', 'startet mit der Folie']];
-const timeCtl = (b, label) => `<div class="row tm-row"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div></div>`;
+const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div></div>`;
 // Ältere Blätter: Minuten je Aufgabe werden einmalig zur Zeit des Bausteins (parallele Gruppen zählen einmal, Hausaufgaben nur, wenn alles Hausaufgabe ist)
 function minMigrate(blocks) {
   (blocks || []).forEach(b => {
@@ -2884,17 +2898,19 @@ const blockArea = b => (b.type === 'step' ? 'stunde' : b.type === 'tafel' ? 'taf
 const inArea = (b, A) => blockArea(b) === A || (A === 'extras' && b.type === 'step' && !!b.exit);
 const areaIc = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC[k]}</svg>`;
 function areaBarHTML() {
+  if (isBasis()) return '';
   const SB = stBlocks(); const n = { stunde: SB.filter(b => b.type === 'step').length, blatt: SB.filter(b => blockArea(b) === 'blatt' && b.type !== 'pagebreak').length, tafel: SB.filter(b => b.type === 'tafel').length + (state.sheet.cards || []).length, extras: SB.filter(b => b.type === 'a3').length + exitSteps().length, pres: 0 };
   return `<nav class="area-bar" role="tablist" aria-label="Bereiche der Stunde">${AREAS.map(([k, l]) => `<button type="button" role="tab" class="area-b" data-act="area-set" data-v="${k}" aria-selected="${(state.area || 'blatt') === k}" title="${l}"><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}</nav>`;
 }
 function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras' && !stBlocks().some(b => b.type === 'a3') && exitSteps().length) return 'exit'; return L[0]; }
 function setArea(a) {
-  if (!AREA_OUTS[a]) return; if (state.area === a && OUT_AREA[state.out] === a) { $('#editor').scrollTop = 0; return; }
+  if (!AREA_OUTS[a] || isBasis() && a !== 'blatt') return; if (state.area === a && OUT_AREA[state.out] === a) { $('#editor').scrollTop = 0; return; }
   state.area = a; state.out = areaOutFor(a); state.insAt = null; closeGloss(); closeZl(); closeMenu();
   renderEditor(); $('#editor').scrollTop = 0; clearTimeout(renderTimer); renderPreview();
 }
 // Sprung in den Bereich eines Bausteins (aus dem Ablauf oder einem Platzhalter); wechselt bei Bedarf das Arbeitsblatt
 function areaGo(ar, bid, k) {
+  if (isBasis() && ar !== 'blatt') { toast('Das bearbeiten Sie im Modus „Experte“ (oben rechts).'); return; }
   const P = state.sheet;
   if (P.abs && Number.isFinite(k) && k !== (P.abActive || 0)) { abSwitch(k); state.closed = defaultClosed(); state.taskOpen = new Set(); }
   const b = bid ? P.blocks.find(x => x.id === bid) : null;
@@ -2920,7 +2936,7 @@ function cardHTML(b, i, num, opt = {}) {
 // Platzhalter auf dem Blatt für Bausteine anderer Bereiche (zeigt die Stelle in der Stunde)
 function phRowHTML(b, num) {
   const ar = blockArea(b); const onSheet = b.type === 'tafel' && (b.onSheet || 'luecke') !== 'aus';
-  return `<div class="ph-row" data-ar="${ar}"><i>${typeIcon(iconKey(b))}</i><span class="ph-t"><b>${esc(typeLabel(b))}</b> ${esc(b.type === 'step' ? stepLabel(b) : summary(b, num))}${onSheet ? ' <small>· steht auch auf dem Blatt</small>' : ''}</span><button class="link" type="button" data-act="area-go" data-area="${ar}" data-bid="${b.id}" data-abk="${state.sheet.abActive || 0}">${AREA_NAME[ar]} →</button></div>`;
+  return `<div class="ph-row" data-ar="${ar}"><i>${typeIcon(iconKey(b))}</i><span class="ph-t"><b>${esc(typeLabel(b))}</b> ${esc(b.type === 'step' ? stepLabel(b) : summary(b, num))}${onSheet ? ' <small>· steht auch auf dem Blatt</small>' : ''}</span>${isBasis() ? '<small class="ph-x">nur in „Experte“</small>' : `<button class="link" type="button" data-act="area-go" data-area="${ar}" data-bid="${b.id}" data-abk="${state.sheet.abActive || 0}">${AREA_NAME[ar]} →</button>`}</div>`;
 }
 // Bereich „Stunde“: Kopfdaten der ganzen Stunde
 function stundeCard() {
@@ -5304,7 +5320,7 @@ function renderOut() {
     if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp, 'Gruppe');
     if (sh.meta.levelsOn) h += segHTML('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all', 'Niveau');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
-    h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
+    if (!isBasis()) h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
   }
   if (state.out === 'vp') h += '<button class="btn sm" type="button" data-pv="vp-docx">Als Word speichern</button><button class="btn sm" type="button" data-pv="st-out">Ganze Stunde als Ordner</button>';
   if (state.out === 'pres') h += '<button class="btn sm primary" type="button" data-pv="pres">Präsentieren</button><button class="btn sm" type="button" data-pv="pptx">PowerPoint</button>';
@@ -5314,7 +5330,7 @@ function renderOut() {
   const w = $('#btn-docx'); w.disabled = state.out !== 'blatt'; w.title = state.out === 'blatt' ? '' : 'Word gibt es nur für das Arbeitsblatt';
 }
 function setOut(k) {
-  if (state.out === k) return;
+  if (state.out === k || isBasis() && !BASIS_OUTS.includes(k)) return;
   state.out = k; if (OUT_AREA[k]) { state.area = OUT_AREA[k]; state.areaOut[state.area] = k; } closeGloss(); closeZl(); closeMenu();
   renderEditor(); $('#editor').scrollTop = 0; renderPreview();
 }
@@ -6834,7 +6850,7 @@ function metaCard() {
           <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
           <div class="chks x-wrap x-pro${m.levelsOn ? ' used' : ''}">${fCheck('levelsOn', 'Niveaustufen ★ Basis · ★★ Standard · ★★★ Experte', m.levelsOn)}</div>
           ${m.levelsOn ? `<div class="chks">${fCheck('lvTip', 'Im Basis-Blatt steht der erste Tipp direkt unter der Aufgabe', m.lvTip !== false)}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte den Stufen zu. Bei jeder Aufgabe gibt es unter „Niveaus“ eigene Fassungen für Basis und Experte. Über der Vorschau oder beim Ausgeben die Stufe wählen.</small>` : ''}
-          <small class="hint">Stundenablauf, Stundenfrage und Gruppen stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="stunde">Stunde</button> ein.</small>
+          ${isBasis() ? '' : '<small class="hint">Stundenablauf, Stundenfrage und Gruppen stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="stunde">Stunde</button> ein.</small>'}
         </div>` : ''}</div>
     </div></div>`;
 }
@@ -6859,7 +6875,7 @@ function renderEditor(focusSel) {
   const ed = $('#editor'); const st = ed.scrollTop;
   const fa = document.activeElement; let focus = focusSel || null;
   if (!focus && fa && ed.contains(fa) && fa.dataset.k) { const c = fa.closest('[data-bid]'); focus = `[data-bid="${c.dataset.bid}"] [data-k="${fa.dataset.k}"]`; }
-  const A = state.area || 'blatt';
+  basisClamp(); const A = state.area || 'blatt';
   if (state.out === 'karten') ed.innerHTML = areaBarHTML() + kartenEditor();
   else {
     enforceOne();
@@ -7641,7 +7657,7 @@ function klassenHTML() {
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
     <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
-    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">AB-Werkstatt · © 2026 Moritz Bauer</p>' : ''}`;
 }
 function klassenSave() {
   const d = state.dlg; const school = d.setup ? dlgVal('#kl-school') : null;
@@ -7821,7 +7837,7 @@ function renderLib() {
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>
-    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button></div></aside>`;
+    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button><span class="copy-s">AB-Werkstatt · © 2026 Moritz Bauer</span></div></aside>`;
   const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   else if (state.fNew) { const i = $('#lib-fnew'); if (i) i.focus(); }
@@ -8059,7 +8075,8 @@ function rlpCopy() {
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
     <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
-    <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Tipps noch einmal zeigen</button></div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Tipps noch einmal zeigen</button></div>
+    <p class="copy-l">AB-Werkstatt · © 2026 Moritz Bauer</p>`;
 }
 const TIPS = [
   ['Bausteine einfügen und umsortieren', 'Mit „+“ zwischen zwei Karten fügen Sie einen Baustein genau dort ein. An der Kopfzeile einer Karte lässt sie sich verschieben.'],
@@ -8088,7 +8105,7 @@ function outApply(o) {
   clearTimeout(renderTimer); renderPreview();
 }
 const OUT_FMTS = { blatt: ['pdf', 'docx', 'print', 'digital', 'pptx'], vp: ['docx'], pres: ['pptx'] };
-const fmtOk = (v, out) => (OUT_FMTS[out] || ['pdf', 'print']).includes(v) && (v !== 'print' || canPrint);
+const fmtOk = (v, out) => (OUT_FMTS[out] || ['pdf', 'print']).includes(v) && (v !== 'print' || canPrint) && !(v === 'pptx' && isBasis());
 const fmtFirst = out => (OUT_FMTS[out] || ['pdf']).find(v => fmtOk(v, out)) || 'pdf';
 function openOut() {
   if (state.gapEdit) { state.gapEdit = null; renderEditor(); clearTimeout(renderTimer); renderPreview(); }
@@ -8142,8 +8159,8 @@ function outHTML() {
   const checks = outChecks();
   const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung', pptx: 'PowerPoint erstellen' }[d.fmt];
   return `<h2 id="dlg-t">Ausgeben</h2>
-    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf], ['a3', `A3-Vorlagen${nA3 ? ' · ' + nA3 : ''}`, !nA3], ...(nE ? [['exit', `Exit-Tickets · ${nE}`]] : []), ['vp', 'Verlaufsplan'], ['pres', 'Präsentation']], state.out)}</div>
-    <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${fmtOk(v, state.out) ? '' : ' disabled'}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
+    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf], ['a3', `A3-Vorlagen${nA3 ? ' · ' + nA3 : ''}`, !nA3], ...(nE ? [['exit', `Exit-Tickets · ${nE}`]] : []), ['vp', 'Verlaufsplan'], ['pres', 'Präsentation']].filter(o => !isBasis() || BASIS_OUTS.includes(o[0])), state.out)}</div>
+    <div class="f"><span>Als</span><div class="out-fmts">${fmts.filter(f => !(isBasis() && f[0] === 'pptx')).map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${fmtOk(v, state.out) ? '' : ' disabled'}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
@@ -8153,7 +8170,7 @@ function outHTML() {
     ${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? presPickHTML() : ''}
     ${state.out === 'vp' || state.out === 'pres' ? '' : `<div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>`}
-    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="out-stunde" title="Alle ABs als PDF und Word, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde als Ordner</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}${isBasis() ? '' : '<button class="btn" type="button" data-act="out-stunde" title="Alle ABs als PDF und Word, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde als Ordner</button>'}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div>`;
 }
 async function outGo() {
   const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
@@ -9901,7 +9918,7 @@ function boot() {
     if (act === 'out') openOut();
     if (act === 'new') openNew();
     if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
-    if (act === 'umfang') { setUmfang(a.dataset.v); toast(a.dataset.v === 'basis' ? 'Basis: Standards, Etikett, Phase und Zeit, Gruppen und Niveaus sind ausgeblendet, solange sie nicht benutzt werden.' : 'Experte: alle Funktionen sind sichtbar.'); }
+    if (act === 'umfang') { setUmfang(a.dataset.v); toast(a.dataset.v === 'basis' ? 'Basis: nur Arbeitsblätter. Stundenplanung, Tafel, Druck-Extras und Präsentation sind ausgeblendet, ebenso Standards, Phase und Zeit, Gruppen und Niveaus, solange sie nicht benutzt werden. Gelöscht wird nichts.' : 'Experte: alle Funktionen, auch Stunde, Tafel, Druck-Extras und Präsentation.'); }
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
     if (act === 'print') doPrint();
