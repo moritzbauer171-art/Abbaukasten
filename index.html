@@ -1383,6 +1383,16 @@ body{transition:background-color .3s,border-color .25s}
 .pr-bar button:disabled{opacity:.35;cursor:default}
 .pr-bar [hidden]{display:none!important}
 .pr-n{min-width:9em;text-align:center;font:600 13px/1.2 var(--f-ui);color:#C5CAD3}
+.pr-warn{position:absolute;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:rgba(12,15,22,.6)}
+.pr-warn-c{width:100%;max-width:460px;background:#fff;color:#1F2533;border-radius:14px;border-top:5px solid #E0A526;padding:20px 24px 18px;box-shadow:0 18px 50px rgba(0,0,0,.4);font:15.5px/1.45 var(--f-ui)}
+.pr-warn-c b{display:block;font-size:20px;line-height:1.25;margin-bottom:6px}
+.pr-warn-c p{margin:0 0 16px}
+.pr-warn-l{font-weight:700;font-variant-numeric:tabular-nums}
+.pr-warn-a{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+.pr-warn-a button{border:1px solid #C9CDD6;background:#fff;color:#1F2533;border-radius:9px;padding:8px 14px;font:600 14.5px/1.2 var(--f-ui);cursor:pointer}
+.pr-warn-a [data-w="ok"]{color:#A3262A;border-color:#E2B8B8}
+.pr-warn-a [data-w="keep"]{background:var(--acc,#2B4BA0);border-color:transparent;color:#fff}
+.pr-warn-a button:focus-visible{outline:3px solid #E0A526;outline-offset:2px}
 .pr-tm{display:inline-flex;align-items:center;gap:6px}.pr-tl{font:700 14px/1 var(--f-ui);color:#F5D46B}
 .pr-bar .sep{width:1px;height:22px;background:#4A5160;margin:0 4px}
 .tf-beam{position:fixed;inset:0;z-index:95;background:#fff;display:flex;flex-direction:column;outline:none}
@@ -2993,7 +3003,7 @@ function presEditorHTML() {
   const tl = { '': 'kein Timer', klick: 'per Klick', auto: 'mit der Folie' };
   return `<div class="card pres-ed"><div class="card-b">
       <div class="tf-ed-acts main"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><button class="btn" type="button" data-act="pres-pptx">PowerPoint erstellen</button></div>
-      <small class="hint">Im Browser: Pfeiltasten oder Klick blättern, T startet den Timer, H zeigt Tipps, E die Erwartung, Esc beendet. Rechts ein Klick auf eine Folie startet dort.</small>
+      <small class="hint">Im Browser: Pfeiltasten oder Klick blättern, T startet den Timer, H zeigt Tipps, E die Erwartung, Esc beendet. Läuft ein Timer, fragt die Präsentation nach, bevor er abgebrochen wird. Rechts ein Klick auf eine Folie startet dort.</small>
     </div></div>
     <div class="card pres-ed"><div class="card-b"><div class="f"><span>Zeit und Timer${state.sheet.abs ? ' · ' + esc(abLabel(state.sheet.meta, state.sheet.abActive || 0)) : ''}</span>${rows.length ? `<div class="pt-list">${rows.map(b => `<div class="pt-row" data-bid="${b.id}"><span class="pt-l"><i>${typeIcon(iconKey(b))}</i><span>${esc(b.type === 'step' ? stepLabel(b) : summary(b, num).replace(/ · \d+ Min\.( · Timer)?$/, ''))}</span></span><span class="pt-min"><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–" aria-label="Minuten"><small>Min.</small></span><div class="seg sm" role="group" aria-label="Timer">${TIMER_OPTS.map(([v]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${tl[v]}</button>`).join('')}</div></div>`).join('')}</div>` : '<small class="hint">Noch keine Aufgaben oder Unterrichtsschritte.</small>'}</div></div></div>
     <div class="card pres-ed"><div class="card-b">${presPickHTML()}</div></div>`;
@@ -3789,6 +3799,16 @@ function openPres(start) {
   const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
   const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1 };
   const fmt = sec => `${Math.floor(sec / 60)}:${String(Math.max(0, sec) % 60).padStart(2, '0')}`;
+  // Warnung, bevor ein laufender Timer vorzeitig endet (Zurücksetzen, Beenden, anderer Timer); Blättern hält ihn nicht an
+  let W = null;
+  const warnClose = () => { if (!W) return; W.el.remove(); W = null; ov.focus(); };
+  const tmWarn = (msg, okLabel, onOk) => {
+    if (!T.run || T.left <= 0) { onOk(); return; }
+    warnClose();
+    const other = T.slide !== P.i ? ` auf Folie ${T.slide + 1}` : '';
+    const w = el(`<div class="pr-warn" role="alertdialog" aria-modal="true" aria-labelledby="pr-warn-t" aria-describedby="pr-warn-d"><div class="pr-warn-c"><b id="pr-warn-t">Der Timer${other} läuft noch</b><p id="pr-warn-d">Noch <span class="pr-warn-l">${fmt(T.left)}</span> Min. ${msg}</p><div class="pr-warn-a"><button type="button" data-w="ok">${okLabel}</button><button type="button" data-w="keep">Weiterlaufen lassen</button></div></div></div>`);
+    ov.appendChild(w); W = { el: w, ok: onOk }; w.querySelector('[data-w="keep"]').focus();
+  };
   const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = `translate(-50%,-50%) scale(${k})`; };
   const apply = () => {
     slide.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > P.cur));
@@ -3806,9 +3826,11 @@ function openPres(start) {
     $p('[data-p="timer"]').textContent = T.run ? 'Timer anhalten' : (mine && T.left > 0 && T.left < T.full ? 'Timer fortsetzen' : 'Timer starten');
     $p('[data-p="timer"]').disabled = !el2 && !T.run;
     $p('.pr-tl').textContent = T.run && !mine ? '⏱ ' + fmt(T.left) : '';
+    if (W) { const l = W.el.querySelector('.pr-warn-l'); if (l) l.textContent = fmt(T.left); }
   };
   const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000)); if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
   const tmToggle = () => {
+    if (T.run && T.slide !== P.i && slide.querySelector('.pr-timer')) { tmWarn('Der Timer dieser Folie ersetzt ihn.', 'Neuen Timer starten', tmStart); return; }
     if (T.run) { clearInterval(T.id); T.run = false; tick(); T.run = false; tmShow(); return; }
     tmStart();
   };
@@ -3817,7 +3839,8 @@ function openPres(start) {
     if (T.slide !== P.i || T.left <= 0) { T.slide = P.i; T.full = T.left = +el2.dataset.min * 60; }
     T.end = Date.now() + T.left * 1000; T.run = true; clearInterval(T.id); T.id = setInterval(tick, 250); tmShow();
   };
-  const tmReset = () => { clearInterval(T.id); T.run = false; const el2 = slide.querySelector('.pr-timer'); T.slide = el2 ? P.i : -1; T.full = T.left = el2 ? +el2.dataset.min * 60 : 0; tmShow(); };
+  const tmReset = () => tmWarn('Zurücksetzen bricht ihn ab.', 'Zurücksetzen', tmResetNow);
+  const tmResetNow = () => { clearInterval(T.id); T.run = false; const el2 = slide.querySelector('.pr-timer'); T.slide = el2 ? P.i : -1; T.full = T.left = el2 ? +el2.dataset.min * 60 : 0; tmShow(); };
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); apply(); };
   const show = () => {
     const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
@@ -3826,17 +3849,25 @@ function openPres(start) {
     if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
     fit();
-    if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmStart();
+    warnClose();
+    if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
   };
   const next = () => { if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
   const prev = () => { if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
   const tip = () => { const tp = slide.querySelector('.pr-tips'); if (!tp) return; const h = tp.querySelector('[hidden]'); tp.hidden = false; if (h) h.hidden = false; apply(); };
   const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
-  const close = () => { clearInterval(T.id); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const close = () => tmWarn('Beim Beenden der Präsentation wird er abgebrochen.', 'Präsentation beenden', closeNow);
+  const closeNow = () => { clearInterval(T.id); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.pr-bar button')) return;
     const k = e.key; const stop = () => { e.preventDefault(); e.stopPropagation(); };
+    if (W) {
+      if ((k === ' ' || k === 'Enter') && e.target.closest && e.target.closest('.pr-warn button')) return;
+      if (k === 'Tab') return;
+      if (k === 'Escape') { stop(); warnClose(); return; }
+      warnClose();
+    }
     if (k === 'ArrowRight' || k === ' ' || k === 'PageDown' || k === 'Enter') { stop(); next(); }
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
@@ -3844,6 +3875,7 @@ function openPres(start) {
     else if (k === 'Escape') { stop(); if (!document.fullscreenElement) close(); }
   };
   ov.addEventListener('click', e => {
+    if (W) { const wb = e.target.closest('[data-w]'); if (wb) { const f = W.ok, ok = wb.dataset.w === 'ok'; warnClose(); if (ok) f(); } else if (!e.target.closest('.pr-warn-c')) warnClose(); return; }
     if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
