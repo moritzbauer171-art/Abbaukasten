@@ -8,5 +8,6 @@ contextBridge.exposeInMainWorld('abDesktop', {
   saveFolder: (name, files) => ipcRenderer.invoke('ab:savefolder', name, files),
   print: info => ipcRenderer.invoke('ab:print', info),
   open: p => ipcRenderer.invoke('ab:open', p),
-  reveal: p => ipcRenderer.invoke('ab:reveal', p)
+  reveal: p => ipcRenderer.invoke('ab:reveal', p),
+  json: url => ipcRenderer.invoke('ab:json', url)
 });

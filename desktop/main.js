@@ -1,7 +1,7 @@
 'use strict';
 // AB-Werkstatt als Desktop-App (Electron). Die Oberfläche ist dieselbe wie auf GitHub Pages,
 // nur ohne Internet: Schriften und Bibliotheken liegen im Ordner app/.
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, session } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, session, net } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -117,6 +117,16 @@ ipcMain.handle('ab:print', async (e, info) => {
     fs.writeFileSync(p, await makePdf()); shell.openPath(p); return 'pdf';
   }
   return new Promise(res => win.webContents.print({ silent: false, printBackground: true, landscape: !!(info && info.landscape), pageSize: (info && info.size) || 'A4', margins: { marginType: 'none' } }, ok => res(ok ? 'ok' : 'abgebrochen')));
+});
+// Nachschlagen für Worterklärungen: nur diese Wörterbuch-Schnittstellen, nur lesen (JSON)
+const NET_OK = ['de.wiktionary.org', 'www.openthesaurus.de', 'www.dwds.de'];
+ipcMain.handle('ab:json', async (e, url) => {
+  let u; try { u = new URL(String(url)); } catch { return null; }
+  if (u.protocol !== 'https:' || !NET_OK.includes(u.hostname)) return null;
+  try {
+    const r = await net.fetch(u.href, { headers: { 'User-Agent': 'AB-Werkstatt/1.0 (Arbeitsblaetter fuer den Unterricht)', Accept: 'application/json' } });
+    return r.ok ? await r.json() : null;
+  } catch { return null; }
 });
 ipcMain.handle('ab:open', (e, p) => shell.openPath(p));
 ipcMain.handle('ab:reveal', (e, p) => { shell.showItemInFolder(p); });

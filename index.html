@@ -350,6 +350,21 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .gpop .err{color:#C2410C;font-size:13px;font-weight:700}
 .gpop .err:empty{display:none}
 .gpop-a{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gl-wb{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:9px}
+.gl-wb:empty{display:none}
+.gl-wb-h{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;font-size:12.5px}
+.gl-wb-h span{flex:1 0 100%;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.gl-wb-h a{color:var(--tinte);font-weight:600;text-decoration:none}
+.gl-wb-h a:hover{text-decoration:underline}
+.gl-wb-s{margin:0;font-size:12.5px;color:var(--muted)}
+.gl-wb-l{display:flex;flex-direction:column;gap:5px;max-height:210px;overflow:auto}
+.gl-wb-l>span{font-size:11.5px;font-weight:700;color:var(--muted)}
+.gl-sg{text-align:left;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:8px;padding:6px 9px;font:13px/1.35 var(--f-ui);cursor:pointer;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:0 0 auto}
+.gl-sg:hover,.gl-sg:focus-visible{border-color:var(--tinte)}
+.gl-sg i{color:var(--muted)}
+.gl-wb-c{display:flex;flex-wrap:wrap;gap:5px}
+.gl-wb-c .ck-chip{padding:3px 10px}
+.gl-wb-q{font-size:11px;line-height:1.35;color:var(--faint)}
 .gpop-a small{font-size:11.5px;color:var(--faint)}
 @media (max-width:599px){
   .gl-scrim{display:block}
@@ -2378,6 +2393,127 @@ function glossFromSpans(bid, picked, rect) {
   const occ = occurrences(plain, term); let n = occ.findIndex(o => o.start === s); if (n < 0) n = occ.filter(o => o.start < s).length;
   openGlossFor(b, term, n, rect);
 }
+// ================= Nachschlagen für Worterklärungen =================
+// Wiktionary: Bedeutungen und Synonyme (frei, im Browser abrufbar). OpenThesaurus: Synonyme. DWDS: Häufigkeit (0–6).
+// Duden und DWDS nur als Links: Bedeutungen geben beide nicht über eine freie Schnittstelle heraus.
+// In der Windows-App holt das Hauptprogramm die Daten (keine Browser-Sperren für fremde Seiten).
+const WB = { cache: new Map(), off: {} };
+async function netJSON(url) {
+  let host = ''; try { host = new URL(url).hostname; } catch { return null; }
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return null;
+  const off = WB.off[host]; if (off && Date.now() - off < 300000) return null;
+  try {
+    let j = null;
+    if (window.abDesktop && window.abDesktop.json) j = await window.abDesktop.json(url);
+    else {
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 8000);
+      try { const r = await fetch(url, { signal: ctl.signal, credentials: 'omit' }); j = r.ok ? await r.json() : null; } finally { clearTimeout(tm); }
+    }
+    if (j == null || typeof j !== 'object') throw new Error('keine Daten');
+    delete WB.off[host]; return j;
+  } catch { WB.off[host] = Date.now(); return null; }
+}
+const WB_LAB = { 'ugs.': 'umgangssprachlich', 'übertr.': 'übertragen', 'abw.': 'abwertend', 'scherzh.': 'scherzhaft', 'landsch.': 'landschaftlich', 'reg.': 'regional', 'österr.': 'österreichisch', 'schweiz.': 'schweizerisch', 'süddt.': 'süddeutsch', 'norddt.': 'norddeutsch', 'fachspr.': 'fachsprachlich', 'bildungsspr.': 'bildungssprachlich', 'Pl.': 'Plural', 'Sg.': 'Singular', 'trans.': 'transitiv', 'intrans.': 'intransitiv', 'refl.': 'reflexiv', 'kPl.': 'kein Plural', 'va.': 'veraltet', 'veraltet': 'veraltet', 'veraltend': 'veraltend', 'gehoben': 'gehoben', 'poet.': 'poetisch', 'selten': 'selten', 'derb': 'derb', 'vulg.': 'vulgär', 'Jugendsprache': 'Jugendsprache', 'umgangssprachlich': 'umgangssprachlich', 'übertragen': 'übertragen' };
+function wikiClean(x) {
+  const lab = []; let t = String(x || '');
+  t = t.replace(/<ref[^>]*\/>/g, '').replace(/<ref[^>]*>[\s\S]*?<\/ref>/g, '').replace(/<!--[\s\S]*?-->/g, '');
+  for (let i = 0; i < 6 && /\{\{[^{}]*\}\}/.test(t); i++) t = t.replace(/\{\{([^{}]*)\}\}/g, (all, inner) => {
+    const ps = inner.split('|').map(v => v.trim()); const name = ps.shift();
+    if (name === 'K') { const L = ps.filter(v => v && !/^[A-Za-z0-9]+=/.test(v)).map(v => WB_LAB[v] || v); if (L.length) lab.push(L.join(', ')); return ''; }
+    if (WB_LAB[name]) lab.push(WB_LAB[name]);
+    return '';
+  });
+  t = t.replace(/\[\[(?:[^\]|]*\|)?([^\]]*)\]\]/g, '$1').replace(/'{2,}/g, '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').replace(/^[\s:;,.]+|[\s:;,]+$/g, '').trim();
+  return { lab: lab.join(', '), t };
+}
+const wikiDe = txt => { const m = /^==[^=].*\(\{\{Sprache\|Deutsch\}\}\)\s*==\s*$/m.exec(txt || ''); if (!m) return ''; const rest = txt.slice(m.index + m[0].length); const n = rest.search(/^==[^=]/m); return n < 0 ? rest : rest.slice(0, n); };
+function wikiSec(de, name) {
+  const out = []; const re = new RegExp('^\\{\\{' + name + '\\}\\}[ \\t]*$', 'gm'); let m;
+  while ((m = re.exec(de))) { for (const l of de.slice(m.index + m[0].length).split('\n').slice(1)) { if (!/^:/.test(l)) break; out.push(l); } }
+  return out;
+}
+async function wikiLookup(term, depth = 0) {
+  const cands = [...new Set([term, term.charAt(0).toLowerCase() + term.slice(1), term.charAt(0).toUpperCase() + term.slice(1)])];
+  const j = await netJSON('https://de.wiktionary.org/w/api.php?action=query&prop=revisions&rvprop=content&rvslots=main&format=json&formatversion=2&redirects=1&origin=*&titles=' + encodeURIComponent(cands.join('|')));
+  if (!j) return null;
+  const q = j.query || {}; const map = {}; [...(q.normalized || []), ...(q.redirects || [])].forEach(n => { map[n.from] = n.to; });
+  const pages = (q.pages || []).filter(pg => !pg.missing && pg.revisions && pg.revisions[0]);
+  for (const c of cands) {
+    let t = c; for (let i = 0; i < 3 && map[t]; i++) t = map[t];
+    const pg = pages.find(x => x.title === t); if (!pg) continue;
+    const rv = pg.revisions[0]; const de = wikiDe(rv.slots && rv.slots.main ? rv.slots.main.content : rv.content); if (!de) continue;
+    const defs = wikiSec(de, 'Bedeutungen').map(l => wikiClean(l.replace(/^:+\s*(\[[^\]]*\])?/, ''))).filter(d => d.t).slice(0, 5);
+    const syn = wikiSec(de, 'Synonyme').flatMap(l => [...l.matchAll(/\[\[([^\]|#]+)(?:\|[^\]]*)?\]\]/g)].map(x => x[1].trim()));
+    if (!defs.length && depth < 1) { const g = de.match(/\{\{Grundformverweis[^|}]*\|([^|}]+)/); if (g && g[1].trim() !== pg.title) { const r = await wikiLookup(g[1].trim(), depth + 1); if (r && r.defs && r.defs.length) return r; } }
+    if (!defs.length && !syn.length) continue;
+    return { lemma: pg.title, url: 'https://de.wiktionary.org/wiki/' + encodeURIComponent(pg.title.replace(/ /g, '_')), defs, syn };
+  }
+  return {};
+}
+async function otLookup(term) {
+  const j = await netJSON('https://www.openthesaurus.de/synonyme/search?q=' + encodeURIComponent(term) + '&format=application/json');
+  if (!j) return null;
+  return (j.synsets || []).slice(0, 4).flatMap(x => (x.terms || []).filter(v => !/derb|vulgär/i.test(v.level || '')).map(v => String(v.term || '').replace(/\s*\([^)]*\)\s*/g, ' ').trim())).filter(Boolean);
+}
+function wbLookup(term) {
+  if (WB.cache.has(term)) return WB.cache.get(term);
+  const pr = (async () => {
+    const w = await wikiLookup(term); const lemma = (w && w.lemma) || term;
+    let ot = await otLookup(lemma); if ((!ot || !ot.length) && lemma !== term) ot = (await otLookup(term)) || ot;
+    const low = new Set([term.toLowerCase(), lemma.toLowerCase()]); const seen = new Set();
+    const syn = [...(ot || []), ...((w && w.syn) || [])].filter(x => { const k = x.toLowerCase(); if (low.has(k) || seen.has(k)) return false; seen.add(k); return true; }).slice(0, 10);
+    const r = { lemma, wk: w && w.url, defs: (w && w.defs) || [], syn, off: w === null && ot === null };
+    if (r.off) WB.cache.delete(term); return r;
+  })();
+  WB.cache.set(term, pr); return pr;
+}
+// DWDS-Häufigkeit (0 = sehr selten … 6 = sehr häufig) für die Vorschläge im Lesbarkeits-Feld; im Browser gemerkt
+const LS_FQ = 'abw.dwdsfreq'; let WB_FQ = null; let fqBusy = false;
+const fqMap = () => { if (!WB_FQ) { WB_FQ = {}; try { WB_FQ = JSON.parse(localStorage.getItem(LS_FQ) || '{}') || {}; } catch { WB_FQ = {}; } } return WB_FQ; };
+const fqSave = () => { try { const k = Object.keys(WB_FQ); if (k.length > 3000) k.slice(0, k.length - 3000).forEach(x => delete WB_FQ[x]); localStorage.setItem(LS_FQ, JSON.stringify(WB_FQ)); } catch {} };
+async function fqWarm(words, done) {
+  const F = fqMap(); const todo = [...new Set(words)].filter(w => !(w in F)).slice(0, 30); if (!todo.length || fqBusy) return;
+  fqBusy = true; let got = 0;
+  try {
+    for (let i = 0; i < todo.length; i += 4) {
+      const part = await Promise.all(todo.slice(i, i + 4).map(w => netJSON('https://www.dwds.de/api/frequency/?q=' + encodeURIComponent(w))));
+      if (part.every(x => !x)) break;
+      part.forEach((j, k) => { if (j && typeof j.frequency === 'number') { F[todo[i + k]] = j.frequency; got++; } });
+    }
+  } finally { fqBusy = false; }
+  if (got) { fqSave(); if (done) done(); }
+}
+const FQ_WORD = ['sehr selten', 'sehr selten', 'selten', 'mittel', 'häufig', 'sehr häufig', 'sehr häufig'];
+function rdSuggHTML(b, r) {
+  const F = fqMap();
+  return r.sugg.map(o => `<button type="button" class="ck-chip" data-act="rd-gl" data-t="${esc(o.w)}" title="Worterklärung anlegen${o.w in F ? ' · im DWDS ' + FQ_WORD[F[o.w]] + ' (' + F[o.w] + ' von 6)' : ''}">+ ${esc(o.w)}</button>`).join('');
+}
+function rdSuggRefresh(bid) {
+  const box = document.querySelector(`#editor [data-rds="${bid}"]`); const b = target(bid); if (!box || !b) return;
+  const r = readStats(b); if (r) box.innerHTML = rdSuggHTML(b, r);
+}
+// Im Fenster „Worterklärung“: Vorschläge zum Übernehmen und Links zum Nachschlagen
+let glWbSeq = 0, glWbT = 0;
+const glWbLinks = (term, wk) => `<div class="gl-wb-h"><span>Nachschlagen</span><a href="https://www.duden.de/suchen/dudenonline/${encodeURIComponent(term)}" target="_blank" rel="noopener">Duden ↗</a><a href="https://www.dwds.de/wb/${encodeURIComponent(term)}" target="_blank" rel="noopener">DWDS ↗</a>${wk ? `<a href="${esc(wk)}" target="_blank" rel="noopener">Wiktionary ↗</a>` : ''}</div>`;
+function glWbHTML(term, r) {
+  const L = r.lemma || term; let h = glWbLinks(L, r.wk);
+  if (r.off) return h + '<p class="gl-wb-s">Ohne Internetverbindung gibt es keine Vorschläge.</p>';
+  if (L.toLowerCase() !== term.toLowerCase()) h += `<p class="gl-wb-s">Grundform: <b>${esc(L)}</b></p>`;
+  if (r.defs.length) h += `<div class="gl-wb-l"><span>Bedeutungen</span>${r.defs.map(d => `<button type="button" class="gl-sg" data-act="gl-sg" data-m="set" data-v="${esc(d.t)}" title="Als Erklärung übernehmen">${d.lab ? `<i>${esc(d.lab)}:</i> ` : ''}${esc(d.t)}</button>`).join('')}</div>`;
+  if (r.syn.length) h += `<div class="gl-wb-l"><span>Synonyme</span><div class="gl-wb-c">${r.syn.map(x => `<button type="button" class="ck-chip" data-act="gl-sg" data-m="add" data-v="${esc(x)}" title="Zur Erklärung hinzufügen">${esc(x)}</button>`).join('')}</div></div>`;
+  h += r.defs.length || r.syn.length ? '<small class="gl-wb-q">Vorschläge aus Wiktionary und OpenThesaurus: übernehmen, dann kürzen und an die Klasse anpassen.</small>' : '<p class="gl-wb-s">Keine Vorschläge gefunden. Oben nachschlagen.</p>';
+  return h;
+}
+async function glWbRun(raw) {
+  const box = $('#gl-wb'); const term = normTerm(raw || '').replace(/^[^\p{L}]+|[^\p{L}]+$/gu, ''); const seq = ++glWbSeq;
+  if (!box) return;
+  if (term.length < 2) { box.innerHTML = ''; placeGloss(); return; }
+  box.innerHTML = glWbLinks(term) + '<p class="gl-wb-s">Suche Vorschläge …</p>'; placeGloss();
+  let r; try { r = await wbLookup(term); } catch { r = { lemma: term, defs: [], syn: [], off: true }; }
+  if (seq !== glWbSeq || !$('#gl-wb')) return;
+  $('#gl-wb').innerHTML = glWbHTML(term, r); placeGloss();
+}
+
 function renderGloss() {
   const root = $('#gl-root'); const o = gl.open;
   if (!o) { root.innerHTML = ''; return; }
@@ -2390,10 +2526,11 @@ function renderGloss() {
       <div class="gpop-h"><span id="gl-h">${g ? 'Worterklärung bearbeiten' : 'Worterklärung'}</span><button class="ib" type="button" data-act="gl-close" title="Schließen">${I.x}</button></div>
       <form id="gl-form" novalidate>${termPart}
         <label class="f"><span>Erklärung</span><input class="inp" id="gl-text" type="text" autocomplete="off" placeholder="z. B. bekannt geworden" value="${esc(g ? g.text : '')}"></label>
+        <div class="gl-wb" id="gl-wb" aria-live="polite"></div>
         <div class="err" id="gl-err" role="alert"></div>
         <div class="gpop-a"><button class="btn primary" type="submit">${g ? 'Speichern' : 'Hinzufügen'}</button>${g ? '<button class="link danger" type="button" data-act="gl-del">Entfernen</button>' : '<small>Enter = übernehmen</small>'}</div>
       </form></div>`;
-  placeGloss();
+  placeGloss(); glWbRun(o.term);
   const f = o.free ? $('#gl-term') : $('#gl-text');
   if (f) { f.focus({ preventScroll: true }); try { f.setSelectionRange(f.value.length, f.value.length); } catch {} }
 }
@@ -2470,12 +2607,15 @@ function readStats(b) {
   const long = sents.map(x => ({ x, n: (x.match(/[\p{L}][\p{L}'’-]*/gu) || []).length })).filter(o => o.n > 25).sort((a, c) => c.n - a.n);
   const glossed = new Set((b.glossary || []).map(g => normTerm(g.term).toLowerCase())); const seen = new Map();
   words.forEach(w => { const k = w.replace(/[’']s?$/, ''); const lk = k.toLowerCase(); if (k.length < 6 || isCore(k) || glossed.has(lk)) return; const o = seen.get(lk) || { w: k, c: 0, sc: 0 }; o.c++; o.sc = k.length + (FOREIGN_RE.test(k) ? 4 : 0) + (/[A-ZÄÖÜ]/.test(k[0]) ? 0 : 1); seen.set(lk, o); });
-  const sugg = [...seen.values()].sort((a, c) => c.sc - a.sc || a.w.localeCompare(c.w, 'de')).slice(0, 10);
-  return { W, S, L, lix, cat, avg: Math.round(W / S * 10) / 10, pL: Math.round(100 * L / W), long, sugg };
+  const pool = [...seen.values()].sort((a, c) => c.sc - a.sc || a.w.localeCompare(c.w, 'de')).slice(0, 24);
+  const F = fqMap(); const fq = o => (o.w in F ? F[o.w] : 3.5);
+  const sugg = pool.slice().sort((a, c) => fq(a) - fq(c) || c.sc - a.sc || a.w.localeCompare(c.w, 'de')).slice(0, 10);
+  return { W, S, L, lix, cat, avg: Math.round(W / S * 10) / 10, pL: Math.round(100 * L / W), long, sugg, pool };
 }
 function readEditor(b) {
   if (b.form === 'gedicht') return '';
   const r = readStats(b); const key = 'read:' + b.id; const open = state.fmtOpen.has(key);
+  if (open && r && r.pool.length) setTimeout(() => fqWarm(r.pool.map(o => o.w), () => rdSuggRefresh(b.id)), 0);
   const sumT = r ? `LIX ${r.lix} · ${r.cat}${r.long.length ? ` · ${r.long.length} lange ${r.long.length === 1 ? 'Satz' : 'Sätze'}` : ''}` : 'ab 20 Wörtern';
   const lvlC = r ? (r.lix < 40 ? 'ok' : r.lix < 50 ? 'mid' : 'hard') : '';
   return `<div class="sub${open ? ' open' : ''}" data-rd>
@@ -2485,7 +2625,7 @@ function readEditor(b) {
       <p class="rd-k">${r.W} Wörter · ${r.S} ${r.S === 1 ? 'Satz' : 'Sätze'} · im Schnitt ${String(r.avg).replace('.', ',')} Wörter je Satz · ${r.pL} % lange Wörter (über 6 Buchstaben)</p>
       <small class="hint">LIX = Wörter je Satz + Anteil langer Wörter. Unter 40 eher leicht (Jugendbuch), 40–50 mittel (Sachtext), ab 50 schwer (Fachtext), ab 60 sehr schwer.</small>
       ${r.long.length ? `<div class="f"><span>Lange Sätze (über 25 Wörter)</span><ul class="rd-long">${r.long.slice(0, 6).map((o, i) => `<li><button type="button" class="link" data-act="rd-show" data-i="${i}" title="Im Text markieren">„${esc(o.x.split(/\s+/).slice(0, 7).join(' '))} …“</button><span>${o.n} Wörter</span></li>`).join('')}</ul></div>` : '<p class="rd-k">Keine Sätze über 25 Wörter.</p>'}
-      ${r.sugg.length ? `<div class="f"><span>Vorschläge für Worterklärungen</span><div class="rd-sugg">${r.sugg.map(o => `<button type="button" class="ck-chip" data-act="rd-gl" data-t="${esc(o.w)}" title="Worterklärung anlegen">+ ${esc(o.w)}</button>`).join('')}</div><small class="hint">Seltene oder lange Wörter aus dem Text. Klicken legt eine Worterklärung an.</small></div>` : ''}
+      ${r.sugg.length ? `<div class="f"><span>Vorschläge für Worterklärungen</span><div class="rd-sugg" data-rds="${b.id}">${rdSuggHTML(b, r)}</div><small class="hint">Seltene oder lange Wörter aus dem Text, die seltensten zuerst (Häufigkeit laut DWDS, wenn online). Klicken legt eine Worterklärung an, mit Vorschlägen zum Übernehmen.</small></div>` : ''}
     </div>` : open ? '<div class="sub-b"><p class="rd-k">Die Werte erscheinen ab 20 Wörtern.</p></div>' : ''}
   </div>`;
 }
@@ -9979,11 +10119,12 @@ function boot() {
   $('#btn-wide').addEventListener('click', () => { state.wide = !state.wide; applyResponsive(); });
   $('#btn-zoom').addEventListener('click', () => { state.zoom = state.zoom === 'fit' ? 'full' : 'fit'; applyScale(); });
   $('#gl-root').addEventListener('submit', onGlossSubmit);
-  $('#gl-root').addEventListener('input', e => { if (e.target.id === 'gl-term') updOcc(); });
+  $('#gl-root').addEventListener('input', e => { if (e.target.id === 'gl-term') { updOcc(); clearTimeout(glWbT); const v = e.target.value; glWbT = setTimeout(() => glWbRun(v), 600); } });
   $('#gl-root').addEventListener('click', e => {
     const a = e.target.closest('[data-act]'); if (!a || !gl.open) return;
     if (a.dataset.act === 'gl-close') closeGloss();
     if (a.dataset.act === 'gl-del') { const o = gl.open; const b = target(o.bid); closeGloss(); if (b && o.idx >= 0) removeGloss(b, o.idx); }
+    if (a.dataset.act === 'gl-sg') { const f = $('#gl-text'); if (!f) return; const v = a.dataset.v || ''; f.value = a.dataset.m === 'add' && f.value.trim() ? f.value.replace(/[\s,;]+$/, '') + ', ' + v : v; f.focus(); try { f.setSelectionRange(f.value.length, f.value.length); } catch {} }
   });
   document.addEventListener('pointerdown', e => {
     if (gl.open && !e.target.closest('#gpop')) closeGloss();
