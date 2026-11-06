@@ -1274,7 +1274,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr{position:fixed;inset:0;z-index:96;background:#20242C;display:flex;flex-direction:column;outline:none}
 .pr-stage{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;cursor:pointer}
 .pr-slide{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center;background:#fff;color:#1C1F27;font-family:var(--f-ui);display:flex;flex-direction:column;padding:54px 84px 70px 104px;box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden}
-.pr-slide.has-bar{padding-bottom:128px}
+.pr-slide.has-bar{padding-bottom:calc(var(--phh,62px) + 74px)}
 .pr-accent{position:absolute;left:0;top:0;bottom:0;width:16px;background:var(--acc)}
 .pr-top{display:flex;align-items:flex-end;gap:28px;margin-bottom:34px;flex:0 0 auto;padding-bottom:20px;border-bottom:3px solid var(--acc-tint)}
 .pr-hd{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1 1 auto}
@@ -1289,12 +1289,12 @@ body{transition:background-color .3s,border-color .25s}
 .pr-fit{width:100%}
 .pr-foot{position:absolute;left:104px;right:84px;bottom:16px;display:flex;justify-content:space-between;font-size:16px;color:#8A909C}
 .pr-src{position:absolute;left:104px;right:84px;bottom:46px;font-size:18px;color:#6B7280}
-.has-bar .pr-src{bottom:104px}
-.pr-phb{position:absolute;left:104px;right:84px;bottom:44px;height:54px;display:flex}
-.pr-phb span{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;padding:0 34px;margin-left:-14px;font-size:21px;font-weight:700;color:#6B7280;background:#EDEFF3;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 50%,calc(100% - 24px) 100%,0 100%,24px 50%);white-space:nowrap;overflow:hidden}
+.has-bar .pr-src{bottom:calc(var(--phh,62px) + 50px)}
+.pr-phb{position:absolute;left:104px;right:84px;bottom:44px;height:var(--phh,62px);display:flex}
+.pr-phb span{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;padding:0 34px;margin-left:-14px;font-size:var(--phfit,var(--phf,26px));font-weight:700;color:#6B7280;background:#EDEFF3;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 50%,calc(100% - 24px) 100%,0 100%,24px 50%);white-space:nowrap;overflow:hidden}
 .pr-phb span.first{margin-left:0;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 50%,calc(100% - 24px) 100%,0 100%)}
 .pr-phb span.on{background:var(--phc);color:#fff}
-.pr-phb.many span{font-size:16px;padding:0 26px}
+.pr-phb.many span{font-size:var(--phfit,calc(var(--phf,26px) * .76));padding:0 26px}
 .pr-k-title,.pr-k-abhead{background:var(--acc-tint)}
 .pr-k-title .pr-accent,.pr-k-abhead .pr-accent{width:40px}
 .pr-k-title .pr-phb span:not(.on),.pr-k-abhead .pr-phb span:not(.on){background:rgba(255,255,255,.75)}
@@ -1345,7 +1345,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-st-qr img{width:280px;height:280px;image-rendering:pixelated}
 .pr-pops{position:absolute;left:104px;right:84px;bottom:70px;max-height:56%;display:flex;flex-direction:column;justify-content:flex-end;gap:12px;pointer-events:none}
 .pr-pop{position:relative;flex:0 1 auto;min-height:0;pointer-events:auto;overflow:auto;font-size:28px;line-height:1.35;border-radius:14px;padding:18px 26px;box-shadow:0 6px 24px rgba(0,0,0,.12);cursor:default}
-.pr-slide.has-bar .pr-pops{bottom:128px}
+.pr-slide.has-bar .pr-pops{bottom:calc(var(--phh,62px) + 74px)}
 .pr-tips{background:#FFF6D6}.pr-tips>div+div{margin-top:8px}
 .pr-eh{background:#EAF2EC;border-left:8px solid #1E7A46}.pr-eh ul{margin:6px 0 0;padding-left:1.1em}
 .pr-chip.pr-timer{font-variant-numeric:tabular-nums;min-width:4.6em;justify-content:center}
@@ -1393,6 +1393,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-warn-a [data-w="ok"]{color:#A3262A;border-color:#E2B8B8}
 .pr-warn-a [data-w="keep"]{background:var(--acc,#2B4BA0);border-color:transparent;color:#fff}
 .pr-warn-a button:focus-visible{outline:3px solid #E0A526;outline-offset:2px}
+.pr-phs{margin:6px 0 4px}
 .pr-tm{display:inline-flex;align-items:center;gap:6px}.pr-tl{font:700 14px/1 var(--f-ui);color:#F5D46B}
 .pr-bar .sep{width:1px;height:22px;background:#4A5160;margin:0 4px}
 .tf-beam{position:fixed;inset:0;z-index:95;background:#fff;display:flex;flex-direction:column;outline:none}
@@ -3027,7 +3028,7 @@ function renderPresPreview(host) {
   const bar = S.bar || []; const w = Math.max(240, $('#preview-scroll').clientWidth - 48); const cols = w > 760 ? 2 : 1; const tw = Math.floor((w - (cols - 1) * 18) / cols);
   host.innerHTML = `<div class="pr-grid" style="--k:${(tw / 1600).toFixed(4)};--tw:${tw}px;--cols:${cols}">${S.map((x, i) => `<button type="button" class="pr-thumb" data-pres="${i}" title="Ab dieser Folie präsentieren"><div class="pr-slide pr-k-${x.k}${bar.length ? ' has-bar' : ''}"><div class="pr-accent"></div>${presSlideHTML(x, bar)}${presBarHTML(bar, x.bi)}<div class="pr-foot"><span></span><span>${i + 1}</span></div></div><span class="pr-tn">${i + 1}</span></button>`).join('')}</div>`;
   const grid = host.firstChild; setAccent(grid, state.sheet.meta);
-  grid.querySelectorAll('.pr-thumb .pr-slide').forEach((sl, i) => { const f = sl.querySelector('.pr-fit'), body = sl.querySelector('.pr-body'); try { if (f && body && PR_MAX[S[i].k]) fitUp(f, body, PR_MAX[S[i].k]); tfDraw(sl); } catch {} });
+  grid.querySelectorAll('.pr-thumb .pr-slide').forEach((sl, i) => { const f = sl.querySelector('.pr-fit'), body = sl.querySelector('.pr-body'); try { if (f && body && PR_MAX[S[i].k]) fitUp(f, body, PR_MAX[S[i].k]); tfDraw(sl); phbFit(sl); } catch {} });
   return S.length;
 }
 
@@ -3438,7 +3439,12 @@ function presPickHTML() {
     <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}${x.head ? ' pk-head' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${off.has(x.key) ? '' : ' checked'}><span>${esc(x.label)}</span></label>`).join('')}</div>
     <div class="pr-pick-a"><button class="link" type="button" data-act="pr-pick" data-v="all">Alle</button><button class="link" type="button" data-act="pr-pick" data-v="tasks">Nur Aufgaben</button><button class="link" type="button" data-act="pr-pick" data-v="none">Keine</button></div>
     <label class="chk pr-ph-chk"><input type="checkbox" data-prph${state.sheet.meta.presPhase === false ? '' : ' checked'}><span>Phasenleiste unten auf den Folien (aus den Phasen der Aufgaben)</span></label>
+    <div class="f pr-phs"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[state.sheet.meta.presPhSize] ? state.sheet.meta.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
     <small class="hint">Die Auswahl wird im Blatt gespeichert und gilt auch für „Präsentieren“.</small></div>`;
+}
+function phSizeSet(v) {
+  if (!PH_SIZES[v]) return; state.sheet.meta.presPhSize = v;
+  document.querySelectorAll('[data-act="ph-size"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v))); changed(false);
 }
 function presPickSet(v) {
   const m = state.sheet.meta; const L = presPick();
@@ -3613,6 +3619,15 @@ function tsMeta(x, s, m, col) {
   return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
 const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + x.no) : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
+const PH_SIZES = { s: { label: 'klein', px: 21, h: 54, pt: 13, ih: 0.45 }, m: { label: 'mittel', px: 26, h: 62, pt: 16, ih: 0.52 }, l: { label: 'groß', px: 31, h: 72, pt: 19, ih: 0.6 }, xl: { label: 'sehr groß', px: 37, h: 84, pt: 22, ih: 0.7 } };
+const phSize = meta => PH_SIZES[(meta || {}).presPhSize] || PH_SIZES.m;
+// Phasenleiste: zu lange Bezeichnungen verkleinern alle Felder gleichmäßig
+function phbFit(root) {
+  const b = root && root.querySelector('.pr-phb'); if (!b) return;
+  b.style.removeProperty('--phfit'); const sp = [...b.children]; if (!sp.length) return;
+  let f = parseFloat(getComputedStyle(sp[0]).fontSize) || 26;
+  for (let n = 0; n < 16 && sp.some(x => x.scrollWidth > x.clientWidth + 1); n++) { f = Math.max(10, f * 0.93); b.style.setProperty('--phfit', f.toFixed(1) + 'px'); }
+}
 const presBarHTML = (bar, cur) => (bar && bar.length ? `<div class="pr-phb${bar.length > 8 ? ' many' : ''}" aria-label="Phasen der Stunde">${bar.map((k, i) => `<span class="${i ? '' : 'first'}${cur && cur.includes(i) ? ' on' : ''}" style="--phc:${PHASEN[k].c}">${PHASEN[k].label}</span>`).join('')}</div>` : '');
 const prPops = (tips, eh) => '<div class="pr-pops">'
   + (tips.length ? `<div class="pr-pop pr-tips" hidden>${tips.map(([g, x, n]) => `<div hidden><b>Tipp ${n}${g ? ' · ' + esc(g) : ''}:</b> ${inlineHTML(x)}</div>`).join('')}</div>` : '')
@@ -3841,7 +3856,7 @@ function openPres(start) {
   };
   const tmReset = () => tmWarn('Zurücksetzen bricht ihn ab.', 'Zurücksetzen', tmResetNow);
   const tmResetNow = () => { clearInterval(T.id); T.run = false; const el2 = slide.querySelector('.pr-timer'); T.slide = el2 ? P.i : -1; T.full = T.left = el2 ? +el2.dataset.min * 60 : 0; tmShow(); };
-  const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); apply(); };
+  const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); phbFit(slide); apply(); };
   const show = () => {
     const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
     slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.bi) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
@@ -3939,7 +3954,7 @@ async function exportPPTX() {
     const pptx = new window.PptxGenJS(); pptx.layout = 'LAYOUT_WIDE';
     pptx.title = plainText(state.sheet.abs ? stTitle(state.sheet) : m.title || 'Arbeitsblatt'); pptx.subject = plainText(m.topic || ''); pptx.company = m.school || ''; pptx.author = m.course || '';
     // Maße wie die Folie im Browser (1600 × 900 Pixel = 13,33 × 7,5 Zoll)
-    const W = 13.333, X = 0.87, RM = 0.7, CW = W - X - RM, Y0 = 1.62; const bar = S.bar || []; const BOT = bar.length ? 6.42 : 6.9; const BH = BOT - Y0;
+    const W = 13.333, X = 0.87, RM = 0.7, CW = W - X - RM, Y0 = 1.62; const bar = S.bar || []; const PS = phSize(m); const BOT = bar.length ? 7.12 - PS.ih - 0.25 : 6.9; const BH = BOT - Y0;
     const multi = !!state.sheet.abs; const foot = multi ? stTitle(state.sheet) : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · ');
     const footer = { text: { text: foot, options: { x: X, y: 7.12, w: 9, h: 0.26, fontFace: F, fontSize: 9, color: LIGHT, margin: 0, valign: 'middle' } } };
     const num = { x: W - RM - 0.6, y: 7.12, w: 0.6, h: 0.26, fontFace: F, fontSize: 9, color: LIGHT, align: 'right' };
@@ -3947,8 +3962,11 @@ async function exportPPTX() {
     pptx.defineSlideMaster({ title: 'ABT', background: { color: TINT }, objects: [{ rect: { x: 0, y: 0, w: 0.33, h: 7.5, fill: { color: ACC } } }, footer], slideNumber: num });
     // Phasenleiste: Phasen der Stunde, die aktuelle farbig
     const barAdd = (sl, cur, light) => {
-      if (!bar.length) return; const n = bar.length, ov = 0.12, y = 6.67, h = 0.45; const w = (CW + (n - 1) * ov) / n;
-      bar.forEach((k, i) => { const on = !!(cur && cur.includes(i)), c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: n > 8 ? 10 : 13, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0, fit: 'shrink' }); });
+      if (!bar.length) return; const n = bar.length, ov = 0.12, h = PS.ih, y = 7.12 - h; const w = (CW + (n - 1) * ov) / n;
+      // Schriftgröße wie eingestellt, aber so, dass die längste Bezeichnung in ein Feld passt
+      const lmax = Math.max(...bar.map(k => PHASEN[k].label.length)); let fs = n > 8 ? Math.round(PS.pt * 0.77) : PS.pt;
+      while (fs > 8 && lmax * fs * 0.55 / 72 > w - 0.42) fs--;
+      bar.forEach((k, i) => { const on = !!(cur && cur.includes(i)), c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: fs, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0, fit: 'shrink' }); });
     };
     const pills = (sl, chips) => {
       let x = W - RM;
@@ -6215,7 +6233,8 @@ function paginate(items) {
 const mixHex = (hex, w) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * (1 - w) + 255 * w).toString(16).padStart(2, '0')).join('').toUpperCase();
 const markColor = meta => mixHex(pageAcc(meta).c, .74);
 function setAccent(node, meta) {
-  const d = designOf(meta); const a = pageAcc(meta);
+  const d = designOf(meta); const a = pageAcc(meta); const ps = phSize(meta);
+  node.style.setProperty('--phf', ps.px + 'px'); node.style.setProperty('--phh', ps.h + 'px');
   node.style.setProperty('--acc', a.c); node.style.setProperty('--acc-tint', a.t); node.style.setProperty('--acc-mark', markColor(meta));
   Object.keys(DESIGNS).forEach(k => node.classList.toggle('d-' + k, k === d));
   node.classList.toggle('tone', d === 'akte' && meta.tone !== false);
@@ -7065,6 +7084,7 @@ function onClick(e) {
     case 'pres-pptx': exportPPTX(); return;
     case 'vp-docx-ed': exportVP(); return;
     case 'pr-pick': presPickSet(a.dataset.v); return;
+    case 'ph-size': phSizeSet(a.dataset.v); return;
     case 'toggle': {
       if (e.target.closest('.ib')) return;
       const opening = state.closed.has(bid);
@@ -8410,6 +8430,7 @@ async function onDlgClick(e) {
     if (act === 'out-pres') { state.dlg = null; renderDlg(); openPres(0); return; }
     if (act === 'out-stunde') { state.dlg = null; renderDlg(); exportStunde(); return; }
     if (act === 'pr-pick') { presPickSet(a.dataset.v); return; }
+    if (act === 'ph-size') { phSizeSet(a.dataset.v); return; }
     if (act === 'out-vp') { openVP(); return; }
     if (act === 'out-eh') { exportEH(); return; }
   }
