@@ -1248,6 +1248,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-phb span{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;padding:0 34px;margin-left:-14px;font-size:21px;font-weight:700;color:#6B7280;background:#EDEFF3;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 50%,calc(100% - 24px) 100%,0 100%,24px 50%);white-space:nowrap;overflow:hidden}
 .pr-phb span.first{margin-left:0;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 50%,calc(100% - 24px) 100%,0 100%)}
 .pr-phb span.on{background:var(--phc);color:#fff}
+.pr-phb.many span{font-size:16px;padding:0 26px}
 .pr-k-title,.pr-k-abhead{background:var(--acc-tint)}
 .pr-k-title .pr-accent,.pr-k-abhead .pr-accent{width:40px}
 .pr-k-title .pr-phb span:not(.on),.pr-k-abhead .pr-phb span:not(.on){background:rgba(255,255,255,.75)}
@@ -3143,7 +3144,14 @@ function presPhases(S) {
     s.ph = p || '';
   });
   // Die Leiste zeigt nur Phasen, die auf einer Folie vorkommen; Phasen ohne Folie (abgewählt, „keine Folie“, leer) würden nie hervorgehoben
-  const bar = Object.keys(PHASEN).filter(k => S.some(s => s.ph === k || (s.phs && s.phs.includes(k))));
+  // Leiste in der Reihenfolge der Folien (= Reihenfolge der Bausteine): aufeinanderfolgende gleiche Phasen bilden einen Abschnitt,
+  // kehrt eine Phase später wieder, bekommt sie einen neuen Abschnitt. s.bi = Abschnitte, die auf der Folie hervorgehoben werden.
+  const bar = [];
+  S.forEach(s => {
+    s.bi = []; if (s.k === 'title') return;
+    const L = s.phs && s.phs.length ? s.phs : s.ph ? [s.ph] : [];
+    L.forEach(k => { if (bar[bar.length - 1] !== k) bar.push(k); if (!s.bi.includes(bar.length - 1)) s.bi.push(bar.length - 1); });
+  });
   S.bar = m.presPhase !== false && bar.length >= 2 ? bar : [];
   return S;
 }
@@ -3400,7 +3408,7 @@ function tsMeta(x, s, m, col) {
   return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
 const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + x.no) : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
-const presBarHTML = (bar, cur) => (bar && bar.length ? `<div class="pr-phb" aria-label="Phasen der Stunde">${bar.map((k, i) => `<span class="${i ? '' : 'first'}${(Array.isArray(cur) ? cur.includes(k) : k === cur) ? ' on' : ''}" style="--phc:${PHASEN[k].c}">${PHASEN[k].label}</span>`).join('')}</div>` : '');
+const presBarHTML = (bar, cur) => (bar && bar.length ? `<div class="pr-phb${bar.length > 8 ? ' many' : ''}" aria-label="Phasen der Stunde">${bar.map((k, i) => `<span class="${i ? '' : 'first'}${cur && cur.includes(i) ? ' on' : ''}" style="--phc:${PHASEN[k].c}">${PHASEN[k].label}</span>`).join('')}</div>` : '');
 const prPops = (tips, eh) => '<div class="pr-pops">'
   + (tips.length ? `<div class="pr-pop pr-tips" hidden>${tips.map(([g, x, n]) => `<div hidden><b>Tipp ${n}${g ? ' · ' + esc(g) : ''}:</b> ${inlineHTML(x)}</div>`).join('')}</div>` : '')
   + (eh.some(e => e[1].length) ? `<div class="pr-pop pr-eh" hidden><b>Erwartung</b>${eh.filter(e => e[1].length).map(([g, L]) => `${g ? `<div class="pr-eh-g">${esc(g)}</div>` : ''}<ul>${L.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>`).join('')}</div>` : '') + '</div>';
@@ -3618,7 +3626,7 @@ function openPres(start) {
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); apply(); };
   const show = () => {
     const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
-    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.phs && sl.phs.length ? sl.phs : sl.ph) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
+    slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.bi) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
@@ -3713,7 +3721,7 @@ async function exportPPTX() {
     // Phasenleiste: Phasen der Stunde, die aktuelle farbig
     const barAdd = (sl, cur, light) => {
       if (!bar.length) return; const n = bar.length, ov = 0.12, y = 6.67, h = 0.45; const w = (CW + (n - 1) * ov) / n;
-      bar.forEach((k, i) => { const on = Array.isArray(cur) ? cur.includes(k) : k === cur, c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: 13, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0 }); });
+      bar.forEach((k, i) => { const on = !!(cur && cur.includes(i)), c = PHASEN[k].c.slice(1).toUpperCase(); sl.addText(PHASEN[k].label, { shape: i ? 'chevron' : 'homePlate', x: X + i * (w - ov), y, w, h, fill: { color: on ? c : light ? 'FFFFFF' : 'EDEFF3' }, fontFace: F, fontSize: n > 8 ? 10 : 13, bold: true, color: on ? 'FFFFFF' : '6B7280', align: 'center', valign: 'middle', margin: 0, fit: 'shrink' }); });
     };
     const pills = (sl, chips) => {
       let x = W - RM;
@@ -3881,7 +3889,7 @@ async function exportPPTX() {
         sl.addImage({ data: QR.dataURL(s.link, 10), x: (W - 3.5) / 2, y: 1.65, w: 3.5, h: 3.5 });
         sl.addText([{ text: s.link, options: { hyperlink: { url: s.link } } }], { x: X, y: 5.3, w: CW, h: 0.45, fontFace: F, fontSize: 16, color: ACC, align: 'center', margin: 0 });
       }
-      barAdd(sl, s.phs && s.phs.length ? s.phs : s.ph, big);
+      barAdd(sl, s.bi, big);
     }
     // PptxGenJS schreibt bei Absätzen mit mehreren Läufen weitere <a:pPr> hinter die Läufe; PowerPoint verlangt sie nur am Absatzanfang
     let blob = await pptx.write({ outputType: 'blob' });
