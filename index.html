@@ -167,7 +167,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .fold-bar .onecard[aria-pressed="true"] .cb{background:currentColor}
 .fold-bar .onecard[aria-pressed="true"] .cb::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
 .f>small.fh{display:none}
-.f:focus-within>small.fh{display:block}
+.f:focus-within>small.fh,.f.fh-keep>small.fh{display:block}
 .hist-b{display:flex;gap:2px;margin-right:auto}
 .hist-b .ib:disabled{opacity:.35;cursor:default}
 .memo-flag{font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:7px;padding:6px 9px}
@@ -238,6 +238,11 @@ body.cw-dragging,body.cw-dragging *{cursor:col-resize!important}
 .ck-chip[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
 .ck-chip[aria-pressed="true"] .cbx{background:currentColor}
 .tx-row .tx-dg{font-size:12px;font-weight:700;padding:3px 10px 3px 7px;border-radius:999px;margin-left:auto}
+.tx-row .tx-fo{font-size:12px;font-weight:700;padding:3px 10px 3px 7px;border-radius:999px;margin-left:auto}
+.tx-row .tx-fo+.tx-dg{margin-left:0}
+.tx-row .tx-fo[aria-pressed="false"]{color:var(--muted);border-style:dashed;background:transparent}
+.task-ed-h .no.fo{background:var(--tinte-soft);color:var(--tinte);box-shadow:inset 0 0 0 1.5px var(--tinte)}
+.task-ed.fo{background:linear-gradient(90deg,var(--tinte-soft),transparent 60%);border-radius:10px}
 .tx-row .tx-dg[aria-pressed="false"]{color:var(--muted);border-style:dashed;background:transparent}
 .ck-chip[aria-pressed="true"] .cbx::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid var(--field);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
 /* Hilfen je Operator */
@@ -514,6 +519,8 @@ body.basis .x-pro:not(.used){display:none!important}
 .rtx.serif{font-family:var(--f-text)}
 .rtx.is-empty::before{content:attr(data-ph);position:absolute;left:10px;top:7px;color:var(--faint);pointer-events:none}
 .rtx div,.rtx p{margin:0}
+.rtx h3{margin:.45em 0 .05em;font:700 1em/1.45 var(--f-ui);color:var(--ink)}
+.rtx h3:first-child{margin-top:0}
 .rtx ul,.rtx ol{margin:.1em 0;padding-left:1.5em}
 .rtx li{margin:.1em 0}
 .rtx li::marker{color:var(--tinte)}
@@ -550,6 +557,7 @@ body.basis .x-pro:not(.used){display:none!important}
 .rt-bar .sep{width:1px;height:20px;background:var(--line);margin:0 4px}
 .rt-bar svg{width:18px;height:18px;flex:0 0 auto}
 .rt-bar[data-mode="inline"] [data-full],.rt-bar[data-mode="line"] [data-full]{display:none}
+.rt-bar:not([data-hd="1"]) [data-hd]{display:none}
 
 /* ---------- Hinweise ---------- */
 .gnote{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:12px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:7px 10px}
@@ -981,6 +989,11 @@ body{transition:background-color .3s,border-color .25s}
 .ln-t{flex:1;min-width:0;white-space:nowrap;text-align:justify;text-align-last:justify}
 .ln.pl .ln-t{text-align-last:auto}
 .ln.pf .ln-t{padding-left:4mm}
+.mat-body p.mh{font-weight:700;text-indent:0}
+.mat-body p.ah{text-indent:0}
+.ln.mh{padding-top:calc(var(--mfs,10.5pt) * .6)}
+.ln.mh .ln-t{font-weight:700;text-align:left;text-align-last:auto;padding-left:0}
+.mat-body>.ln.mh:first-child,.mcol>.ln.mh:first-child{padding-top:0}
 .blk-mat.al-left .ln-t{text-align:left;text-align-last:auto}
 .blk-mat.noind .ln.pf .ln-t{padding-left:0}
 .blk-mat.noind .mat-body p.ind{text-indent:0}
@@ -1322,6 +1335,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-course{font-size:26px;color:#8A909C;margin-top:56px}
 .pr-lines{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.9em;font-family:var(--f-text);line-height:1.48;white-space:nowrap}
 .pr-ln{color:#9AA0AA;font-size:.7em;text-align:right;font-family:var(--f-ui);align-self:center}
+.pr-lt.pr-mh{font-weight:700}
 .pr-gap{height:.55em}
 .pr-task{line-height:1.32}
 .pr-task p{margin:0}
@@ -1335,6 +1349,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-it{display:flex;gap:.5em;align-items:flex-start}
 .pr-it+.pr-it{margin-top:.6em}
 .pr-itb{flex:1 1 auto;min-width:0}
+.pr-no.fo{background:transparent;color:var(--acc);box-shadow:inset 0 0 0 .09em var(--acc)}
 .pr-no{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;min-width:1.32em;height:1.32em;padding:0 .2em;margin-top:.16em;border-radius:.2em;background:var(--acc);color:#fff;font-weight:800;font-size:.74em;line-height:1}
 .pr-imeta{font-size:.56em;font-weight:700;color:#6B7280;margin-top:.3em;letter-spacing:.01em}
 .pr-cols{display:grid;grid-template-columns:repeat(var(--nc),minmax(0,1fr));gap:.8em 0}
@@ -1718,6 +1733,8 @@ body{transition:background-color .3s,border-color .25s}
   <button type="button" data-rt="i" title="Kursiv (Strg+I)"><i style="font-family:Georgia,serif;font-size:16px">I</i></button>
   <button type="button" data-rt="u" title="Unterstrichen (Strg+U)"><u style="font-size:15px">U</u></button>
   <button type="button" data-rt="m" title="Textmarker (Strg+Umschalt+H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14" stroke-width="3.2" opacity=".45"/><path d="M8.5 15.5 15.8 5.2l3 2.2-7.2 10.3H8.5z"/><path d="m8.5 15.5-1.2 2.3"/></svg></button>
+  <span class="sep" data-hd></span>
+  <button type="button" data-rt="h" data-hd title="Zwischenüberschrift (oder „## “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14M14 5v14M5 12h9"/><path d="M17.5 13.2 20 11.5V19"/></svg></button>
   <span class="sep" data-full></span>
   <button type="button" data-rt="ul" data-full title="Aufzählung (oder „- “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.2" fill="currentColor" stroke="none"/><path d="M9.5 7H20M9.5 12H20M9.5 17H20"/></svg></button>
   <button type="button" data-rt="ol" data-full title="Nummerierung (oder „1. “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5 5.5 4.5V9.5M4 9.5h3M4 14.8c.3-.9 2.8-1.1 2.8.4 0 1.2-2.8 2.1-2.8 3.3h3"/><path d="M10.5 7H20M10.5 12H20M10.5 17H20"/></svg></button>
@@ -2098,6 +2115,19 @@ function poemVerses(text) {
 }
 // Material (Prosa): Leerzeile = neuer Absatz, einfacher Umbruch = neue Zeile im selben Absatz
 const matParas = t => String(t || '').replace(/\r/g, '').split(/\n[ \t]*\n/).map(p => p.split('\n').map(l => l.trim()).filter(Boolean)).filter(p => p.length);
+// Zwischenüberschrift im Material: Zeile mit „## “ am Anfang (im Textfeld fett als eigene Zeile)
+const MH_RE = /^##(?:[ \t\u00a0]+|$)/;
+const matHasH = t => String(t || '').split('\n').some(l => MH_RE.test(l.trim()) && l.trim().replace(MH_RE, '').trim());
+// Absätze des Materials als <p>: Überschriften „mh“, die Zeile danach ohne Einzug („ah“)
+function matParasHTML(paras, words) {
+  let prevH = false, out = '';
+  paras.forEach((p, i) => p.forEach((seg, j) => {
+    const hd = MH_RE.test(seg); const t = hd ? seg.replace(MH_RE, '') : seg; if (hd && !t.trim()) return;
+    const cls = hd ? 'mh' : prevH ? 'ah' : `${i && !j ? 'ind' : ''}${j ? ' br' : ''}`.trim();
+    out += `<p class="${cls}">${words(t)}</p>`; prevH = hd;
+  }));
+  return out;
+}
 // Text aus PDFs: Umbrüche innerhalb eines Absatzes werden zu Leerzeichen (beim Einfügen)
 const joinLines = t => String(t || '').split(/\n[ \t]*\n/).map(p => p.replace(/[ \t]*\n[ \t]*/g, ' ')).join('\n\n');
 // Ältere Blätter: einfache Umbrüche im Material wurden früher zusammengezogen. Einmalig so speichern, wie es auf dem Blatt stand.
@@ -2863,7 +2893,7 @@ const itPh = it => (it && PHASEN[it.ph] ? it.ph : '');
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
   const rows = []; let t = 0; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '' }); return; } if (b.type !== 'tasks') return; if (b.restart) t = 0; const its = b.items || []; const n0 = t + 1; t += its.length; if (!its.length) return;
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '' }); return; } if (b.type !== 'tasks') return; if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
     const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
     // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
     const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });
@@ -3449,7 +3479,7 @@ function presCollect(quiet) {
       const t = ln.querySelector('.ln-t'); if (!t) return; const c = t.cloneNode(true);
       c.querySelectorAll('sup').forEach(x => x.remove()); c.querySelectorAll('.gapb,.gap').forEach(x => x.replaceWith(document.createTextNode(' _______ ')));
       const no = ln.querySelector('.ln-no');
-      M.lines.push({ num: no && no.style.visibility !== 'hidden' ? no.textContent.trim() : '', t: c.textContent.replace(/\s+/g, ' ').trim(), st: ln.classList.contains('st') });
+      M.lines.push({ num: no && no.style.visibility !== 'hidden' ? no.textContent.trim() : '', t: c.textContent.replace(/\s+/g, ' ').trim(), st: ln.classList.contains('st'), h: ln.classList.contains('mh') });
     });
   }));
   if (!quiet) renderPreview();
@@ -3533,11 +3563,11 @@ function presMerge(S, m) {
   return R;
 }
 function presSlidesAB(off, lab, abId) {
-  const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false, grp: 'all' };
+  const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false, grp: 'all', pres: true };
   const mats = presCollect(true); const S = []; let t = 0;
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
-    if (b.type === 'tasks') { if (b.restart) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: t, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
+    if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it); if (!fo) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo ? 0 : t, fo, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
     if (b.type === 'step') { const f = stepSlideFol(b); if (f) S.push({ k: 'step', b, fol: f }); return; }
     const M = mats[b.id];
@@ -3565,7 +3595,7 @@ function presPick() {
     if (multi) L.push({ key: 'ab:' + A.id, label: `${abLabel(m, A.k)} · ${short(m.title, 50) || 'ohne Titel'} (Zwischenfolie)`, head: true });
     A.blocks.forEach(b => {
       if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
-      else if (b.type === 'tasks') { if (b.restart) t = 0; b.items.forEach((it, i) => { t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
+      else if (b.type === 'tasks') { if (rst(b)) t = 0; b.items.forEach((it, i) => { if (!itFo(it)) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
       else if (b.type === 'tafel') L.push({ key: b.id, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
       else if (b.type === 'step') { if (stepSlideFol(b)) L.push({ key: b.id, label: `${itPh(b) ? PHASEN[itPh(b)].label : 'Schritt'} · ${stepLabel(b)}`, task: true }); }
       else if (b.type === 'info') L.push({ key: b.id, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
@@ -3622,7 +3652,7 @@ function a3Norm(b) {
 }
 function a3TaskList() {
   const L = []; let t = 0;
-  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (b.restart) t = 0; b.items.forEach((it, i) => { t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `Aufgabe ${t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
+  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
   return L;
 }
 function a3TaskHTML(b) {
@@ -3753,8 +3783,8 @@ const tsHaAll = s => s.items.every(x => itPh(x.it) === 'ha');
 const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k => SOZ[k]))]; return z.length === 1 && s.items.every(x => x.it.soz === z[0]) ? z[0] : ''; };
 const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols.length) : a), 0);
 function tsKick(s, m) {
-  const its = s.items; const nos = its.map(x => x.no); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
-  const num = tsHaAll(s) ? '' : one ? 'Aufgabe ' + one.no : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
+  const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
+  const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }
 const tsHead = s => (tsHaAll(s) ? 'Hausaufgabe' : s.items.length > 1 ? 'Arbeitsaufträge' : 'Arbeitsauftrag');
@@ -3764,7 +3794,7 @@ function tsMeta(x, s, m, col) {
   const sozU = tsSoz(s); const phD = (s.phs || []).length > 1;
   return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
-const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : 'Aufgabe ' + x.no) : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
+const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : x.no ? 'Aufgabe ' + x.no : 'Auftrag') : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
 const PH_SIZES = { s: { label: 'klein', px: 21, h: 54, pt: 13, ih: 0.45 }, m: { label: 'mittel', px: 26, h: 62, pt: 16, ih: 0.52 }, l: { label: 'groß', px: 31, h: 72, pt: 19, ih: 0.6 }, xl: { label: 'sehr groß', px: 37, h: 84, pt: 22, ih: 0.7 } };
 const phSize = meta => PH_SIZES[(meta || {}).presPhSize] || PH_SIZES.m;
 // Phasenleiste: zu lange Bezeichnungen verkleinern alle Felder gleichmäßig
@@ -3789,12 +3819,12 @@ function presSlideHTML(s, bar) {
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
       return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
     case 'mat': {
-      let h = ''; s.lines.forEach((l, i) => { if (i && l.st) h += '<span class="pr-gap"></span><span class="pr-gap"></span>'; h += `<span class="pr-ln">${esc(l.num)}</span><span class="pr-lt">${esc(l.t)}</span>`; });
+      let h = ''; s.lines.forEach((l, i) => { if (i && (l.st || (l.h && !s.lines[i - 1].h))) h += '<span class="pr-gap"></span><span class="pr-gap"></span>'; h += `<span class="pr-ln">${esc(l.num)}</span><span class="pr-lt${l.h ? ' pr-mh' : ''}">${esc(l.t)}</span>`; });
       return presHead(esc(s.tag), inlineHTML(matTitle(s.b) || '') + (s.of > 1 ? ` <small>${s.part}/${s.of}</small>` : ''), '') + `<div class="pr-body"><div class="pr-fit pr-lines${s.poem ? ' poem' : ''}">${h}</div></div>${s.part === s.of && s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
     }
     case 'tasks': {
       const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s);
-      const item = (x, col) => { const meta = tsMeta(x, s, m, col); return `<div class="pr-it">${multi ? `<span class="pr-no">${itPh(x.it) === 'ha' ? 'HA' : x.no}</span>` : ''}<div class="pr-itb pr-task">${prTaskHTML(x.it, m)}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
+      const item = (x, col) => { const meta = tsMeta(x, s, m, col); return `<div class="pr-it">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' ? '' : ' fo'}">${itPh(x.it) === 'ha' ? 'HA' : x.no || '•'}</span>` : ''}<div class="pr-itb pr-task">${prTaskHTML(x.it, m)}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
       const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map(x => item(x)).join('')}</div>`
         : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map(x => item(x, c)).join('')}</div>`).join('')}</div>`; })()).join('');
       const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));
@@ -3827,7 +3857,7 @@ function presSlideHTML(s, bar) {
 const vpOf = () => { const m = state.sheet.meta; if (!m.vp || typeof m.vp !== 'object') m.vp = {}; return m.vp; };
 const vpClock = (start, min) => { const t = /^(\d{1,2})[:.](\d{2})$/.exec(String(start || '').trim()); if (!t) return null; const x = (+t[1]) * 60 + (+t[2]) + min; return `${String(Math.floor(x / 60) % 24).padStart(2, '0')}:${String(x % 60).padStart(2, '0')}`; };
 function vpRows() {
-  const P = state.sheet; const multi = !!P.abs; const v = { ...sheetView(), lehrer: true, grp: 'all' };
+  const P = state.sheet; const multi = !!P.abs; const v = { ...sheetView(), lehrer: true, grp: 'all', pres: true };
   const SB = stBlocks(); const tafel = SB.filter(b => b.type === 'tafel' && blockVisible(b, v)); const a3 = SB.filter(b => b.type === 'a3');
   const rows = []; let imp = null;
   stABs().forEach(A => withAB(A.k, () => {
@@ -3835,19 +3865,19 @@ function vpRows() {
     let t = 0, firstTask = -1;
     sh.blocks.forEach((b, bi) => {
       if (b.type === 'step') { if (blockVisible(b, v)) rows.push(stepRow(b, tafel)); return; }
-      if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; if (firstTask < 0) firstTask = bi;
+      if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; if (firstTask < 0) firstTask = bi;
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
       const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
       ITb.forEach((it, k) => {
-        t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
+        const fo = itFo(it); if (!fo) t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
         const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
-        const media = [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
+        const media = fo ? ['Folie', ...(refs.length ? [`${ab} (${refs.join(', ')})`] : [])] : [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
         if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
         a3.filter(x => x.taskRef === b.id + ':' + idx[k]).forEach(x => media.push(A3_TPL[a3Tpl(x)].label + ' (A3)'));
         if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
-        if (m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
+        if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
         const g = itGrp(b, it, m);
-        bRows.push({ no: t, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: bg, gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
+        bRows.push({ no: fo ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: bg, gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
       });
       if (bRows.length) { bRows[0].min = itMin(b); bRows[0].span = bRows.length; bRows.slice(1).forEach(r => { r.cont = true; r.head = bRows[0]; }); bRows.forEach(r => rows.push(r)); }
     });
@@ -3875,7 +3905,7 @@ const vpHa = r => (r.blk ? r.isHa : r.ph === 'ha');
 const vpTime = r => vpHa(r) ? 'HA' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
 function vpTableHTML() {
   const R = vpRows(); if (!R.rows.length) return '<p class="hint">Noch keine Aufgaben. Der Verlaufsplan entsteht aus den Aufgaben des Blatts.</p>';
-  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}">${r.cont ? '' : `<td${r.span > 1 ? ` rowspan="${r.span}"` : ''}><b>${esc(vpTime(r))}</b>${r.min && !vpHa(r) ? `<small>${r.min} Min.${r.par ? ' · parallel' : ''}${r.span > 1 ? ` · ${r.span} Aufgaben` : ''}</small>` : ''}</td>`}<td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>${r.abLab ? esc(r.abLab) + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.step ? `<b>${esc(r.label)}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
+  return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}">${r.cont ? '' : `<td${r.span > 1 ? ` rowspan="${r.span}"` : ''}><b>${esc(vpTime(r))}</b>${r.min && !vpHa(r) ? `<small>${r.min} Min.${r.par ? ' · parallel' : ''}${r.span > 1 ? ` · ${r.span} Aufgaben` : ''}</small>` : ''}</td>`}<td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>${r.abLab ? esc(r.abLab) + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.fo ? `<b>Auftrag (Folie)${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.step ? `<b>${esc(r.label)}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
     <p class="vp-sum">${R.total} von ${R.len} Minuten verplant${R.total > R.len ? ` · <b class="warn">${R.total - R.len} Min. zu viel</b>` : ''}${R.rows.some(r => !r.cont && !vpHa(r) && !r.min) ? ' · nicht alle Schritte haben eine Zeit' : ''}${R.rows.some(r => r.auto) ? ' · kursive Zeilen sind ergänzt' : ''}</p>`;
 }
 function vpHTML() {
@@ -3917,7 +3947,7 @@ async function exportVP() {
       const ital = r.auto ? { i: 1 } : {};
       const c0 = r.cont ? P('') : P(xr(vpTime(r), { b: 1, sz: 18 })) + (r.min && !vpHa(r) ? P(xr(r.min + ' Min.' + (r.par ? ' · parallel' : '') + (r.span > 1 ? ` · ${r.span} Aufgaben` : ''), { sz: 16, color: GREY })) : '');
       const c1 = P(xr(r.ph ? PHASEN[r.ph].label : 'ohne Phase', { b: 1, sz: 18, color: r.ph ? PHASEN[r.ph].c.slice(1) : GREY }));
-      const c2 = P((r.no ? xr(`${r.abLab ? r.abLab + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + r.gName : ''}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : r.step ? xr(r.label + ': ', { b: 1, sz: 18 }) : '') + xrInline(tfStr(r.task).replace(/\n+/g, ' '), { sz: 18, ...ital }));
+      const c2 = P((r.no ? xr(`${r.abLab ? r.abLab + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + r.gName : ''}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : r.fo ? xr(`Auftrag (Folie)${r.gName ? ' · ' + r.gName : ''}${r.tag ? ' · ' + r.tag : ''}: `, { b: 1, sz: 18, ...ital }) : r.step ? xr(r.label + ': ', { b: 1, sz: 18 }) : '') + xrInline(tfStr(r.task).replace(/\n+/g, ' '), { sz: 18, ...ital }));
       const c3 = r.eh.length ? r.eh.map(x => P(xr('–', { sz: 18, color: A }) + '<w:r><w:tab/></w:r>' + xrInline(x, { sz: 18 }), { ind: `<w:ind w:left="${TW(3.5)}" w:hanging="${TW(3.5)}"/>`, after: 20 })).join('') : P('');
       const c4 = P(xr(r.soz || ' ', { sz: 18 }));
       const c5 = r.media.map(x => P(xr(x, { sz: 17 }), { after: 10 })).join('') || P('');
@@ -4172,13 +4202,13 @@ async function exportPPTX() {
       } else if (s.k === 'mat') {
         head(sl, s.tag, plainText(matTitle(s.b) || '') + (s.of > 1 ? `  (${s.part}/${s.of})` : ''));
         const src = s.part === s.of && s.b.source; const bh = BH - (src ? 0.4 : 0);
-        const L = []; s.lines.forEach((l, i) => { if (i && l.st) L.push({ num: '', t: '' }); L.push(l); });
+        const L = []; s.lines.forEach((l, i) => { if (i && (l.st || (l.h && !s.lines[i - 1].h))) L.push({ num: '', t: '' }); L.push(l); });
         const n = L.length, maxC = Math.max(12, ...L.map(l => l.t.length));
         const fs = Math.max(11, Math.min(26, Math.floor(Math.min((bh - 0.2) * 72 / (n * 1.42), (CW - 0.95) * 72 / (maxC * 0.57)))));
         const ls = Math.round(fs * 1.42), h = Math.min(bh, n * ls / 72 + 0.15);
         const opt = { y: Y0 + 0.05, h, valign: 'top', margin: 0, lineSpacing: ls, paraSpaceBefore: 0, paraSpaceAfter: 0 };
         sl.addText(L.map((l, i) => ({ text: l.num || ' ', options: { breakLine: i < n - 1 } })), { ...opt, x: X, w: 0.62, fontFace: F, fontSize: Math.max(9, Math.round(fs * .72)), color: '9AA0AA', align: 'right' });
-        sl.addText(L.map((l, i) => ({ text: l.t || ' ', options: { breakLine: i < n - 1 } })), { ...opt, x: X + 0.85, w: CW - 0.85, fontFace: FT, fontSize: fs, color: INK, wrap: false });
+        sl.addText(L.map((l, i) => ({ text: l.t || ' ', options: { breakLine: i < n - 1, ...(l.h ? { bold: true } : {}) } })), { ...opt, x: X + 0.85, w: CW - 0.85, fontFace: FT, fontSize: fs, color: INK, wrap: false });
         if (src) sl.addText(plainText(s.b.source), { x: X + 0.85, y: BOT - 0.3, w: CW - 0.85, h: 0.3, fontFace: F, fontSize: 11, color: LIGHT, margin: 0 });
       } else if (s.k === 'tasks') {
         const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s); const BW = multi ? 0.62 : 0, gapR = 0.22, gapS = 0.32, gapC = 0.5, rg = 0.3, HH = 0.68;
@@ -4192,7 +4222,7 @@ async function exportPPTX() {
         const fs = [36, 32, 30, 28, 26, 24, 22, 20, 18, 16, 14].find(f => total(f) <= BH - 0.1) || 14;
         const put = (x, ix, iy, w, col) => {
           const meta = tsMeta(x, s, m, col); const h = itemH(x, w, fs, col);
-          if (multi) sl.addText(itPh(x.it) === 'ha' ? 'HA' : String(x.no), { shape: 'roundRect', rectRadius: 0.06, x: ix, y: iy + fs * 0.08 / 72, w: 0.4, h: 0.4, fill: { color: ACC }, fontFace: F, fontSize: itPh(x.it) === 'ha' ? 11 : 15, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle', margin: 0 });
+          if (multi) sl.addText(itPh(x.it) === 'ha' ? 'HA' : x.no ? String(x.no) : '•', { shape: 'roundRect', rectRadius: 0.06, x: ix, y: iy + fs * 0.08 / 72, w: 0.4, h: 0.4, fill: { color: ACC }, fontFace: F, fontSize: itPh(x.it) === 'ha' ? 11 : 15, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle', margin: 0 });
           const runs = stepRuns([x.it], fs); if (meta) { runs[runs.length - 1].options.breakLine = true; runs.push({ text: meta, options: { fontSize: metaFs(fs), color: '6B7280', bold: true, paraSpaceBefore: 2 } }); }
           sl.addText(runs, { x: ix + BW, y: iy, w: w - BW, h, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, lineSpacingMultiple: 1.1 });
           return h;
@@ -4671,10 +4701,15 @@ function rlpKeep(bid, i, fn, toEnd) {
   fn(); const n = $(sel); if (n) n.scrollTop = toEnd ? n.scrollHeight : st;
 }
 const lvOk = (x, v) => !v || !v.lvl || v.lvl === 'all' || !Array.isArray(x.lv) || x.lv.includes(v.lvl);
-const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v);
+// Aufgaben mit „Nur auf der Folie“ (it.fo) erscheinen in Präsentation, PowerPoint und Verlaufsplan (Ansicht mit pres), nicht auf dem Blatt
+const itFo = it => !!(it && it.fo);
+const foOnly = b => !!b && b.type === 'tasks' && Array.isArray(b.items) && b.items.length > 0 && b.items.every(itFo);
+const rst = b => !!b.restart && !foOnly(b);
+const itNos = (b, from) => { let c = from; return (b.items || []).map(it => (itFo(it) ? 0 : c++)); };
+const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v) && !(v && !v.pres && foOnly(b));
 // Aufgaben der gewählten Stufe: nur die Aufgaben dieser Stufe, mit dem Text für Basis oder Experte, wenn einer eingetragen ist
 const grpOk = (x, v) => !v || !v.grp || v.grp === 'all' || !x.grp || x.grp === v.grp;
-const itOk = (it, v) => lvOk(it, v) && grpOk(it, v);
+const itOk = (it, v) => lvOk(it, v) && grpOk(it, v) && (!itFo(it) || !!(v && v.pres));
 const itemsFor = (b, v) => { const l = v && v.lvl; const its = b.items.filter(it => itOk(it, v)); if (!l || l === 'all') return its; return its.map(it => { const t = l === 'b' ? it.lvb : l === 'e' ? it.lve : ''; return String(t || '').trim() ? { ...it, text: t } : it; }); };
 const lvTipOf = (it, v, meta) => v && v.lvl === 'b' && meta.lvTip !== false ? (tipsOf(it)[0] || '') : '';
 var tipsOf = it => (Array.isArray(it.tips) ? it.tips : (it.tips && typeof it.tips === 'object' ? [0, 1, 2].map(j => it.tips[j]) : [])).map(s => String(s || '').trim()).filter(Boolean);
@@ -4697,7 +4732,7 @@ function buildCover(meta, sh, v, body) {
   const ex = meta.exam || {};
   const vis = sh.blocks.filter(b => blockVisible(b, v)); const mtags = matTags(vis); const mats = vis.filter(b => mtags[b.id]);
   const tasks = []; let t = 0;
-  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (b.restart) t = 0; itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
+  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
   const sub = [meta.course, ex.halbjahr].filter(Boolean).map(esc).join(' · ');
   const node = el(`<div class="blk blk-cover" data-bid="meta">
     <div class="cv-top"><span>${esc(meta.school || '')}</span><span>${esc(meta.course || '')}</span></div>
@@ -4734,7 +4769,7 @@ function fitUp(inner, frame, maxPx) {
 function tipCards() {
   const sh = state.sheet, meta = sh.meta; const cards = []; let t = 0;
   for (const b of sh.blocks) {
-    if (b.type !== 'tasks') continue; if (b.restart) t = 0;
+    if (b.type !== 'tasks') continue; if (rst(b)) t = 0;
     const v = sheetView(); if (!blockVisible(b, v)) continue;
     for (const it of itemsFor(b, v)) { t++; const tips = tipsOf(it); tips.forEach((tx, j) => cards.push({ no: t, lvl: j + 1, of: tips.length, text: tx, grp: itGrp(b, it, meta) ? grpName(meta, itGrp(b, it, meta)) : '' })); }
   }
@@ -5063,7 +5098,7 @@ function taskExtras(b, i, it) {
   const open = w => state.taskOpen.has(taskKey(b.id, i, w));
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}${w === 'tag' || w === 'rlp' ? ' x-pro' + (filled || open(w) ? ' used' : '') : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
-  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button></div>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}<button type="button" class="ck-chip tx-fo x-pro${it.fo ? ' used' : ''}" data-act="it-fo" data-i="${i}" aria-pressed="${!!it.fo}" title="${it.fo ? 'Steht nur in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt. Anklicken, um sie wieder aufs Blatt zu nehmen.' : 'Nur auf der Folie zeigen, nicht auf dem Arbeitsblatt (etwa für mündliche Aufträge oder die Besprechung). Die Aufgaben auf dem Blatt werden ohne sie nummeriert.'}"><span class="cbx" aria-hidden="true"></span>Nur auf der Folie</button>${it.fo ? '' : `<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button>`}</div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
   if (open('tips')) h += ophBox(b, i, it, nT);
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
@@ -5280,7 +5315,7 @@ const zl = { open: null };
 const lastField = { bid: null, k: null, pos: null, end: null };
 function fieldLabel(b, k) {
   const num = numbering(state.sheet); const m = k.match(/^items\.(\d+)\.(text|eh|tips|tag)(?:\.(\d+))?/);
-  if (b.type === 'tasks' && m) { const n = num[b.id].from + +m[1]; return `Aufgabe ${n}${m[2] === 'eh' ? ' · Erwartung' : m[2] === 'tips' ? ` · Tipp ${+m[3] + 1}` : ''}`; }
+  if (b.type === 'tasks' && m) { const n = itNos(b, num[b.id].from)[+m[1]]; return `${n ? 'Aufgabe ' + n : 'Auftrag (Folie)'}${m[2] === 'eh' ? ' · Erwartung' : m[2] === 'tips' ? ` · Tipp ${+m[3] + 1}` : ''}`; }
   return typeLabel(b);
 }
 function fieldTarget() {
@@ -5340,7 +5375,7 @@ function zlSync() {
       const lab = zlFmt(r.mat, Z.lineOf[wa], Z.lineOf[wb], Z.tag);
       if (lab !== r.lab) { raw = raw.slice(0, at) + lab + raw.slice(at + r.lab.length); const d = lab.length - r.lab.length; list.forEach(x => { if (x !== r && (x.pos || 0) > at) x.pos += d; }); r.lab = lab; mod = true; }
     });
-    if (mod) { setPath(blk, r0.k, raw); any = true; if (fieldEl) { if (fieldEl.classList.contains('rtx')) { fieldEl.innerHTML = richHTML(raw, fieldEl.dataset.rt); fieldEl.classList.toggle('is-empty', !raw.trim()); } else fieldEl.value = raw; } }
+    if (mod) { setPath(blk, r0.k, raw); any = true; if (fieldEl) { if (fieldEl.classList.contains('rtx')) { fieldEl.innerHTML = richHTML(raw, fieldEl.dataset.rt, fieldEl.dataset.hd); fieldEl.classList.toggle('is-empty', !raw.trim()); } else fieldEl.value = raw; } }
   });
   if (drop.size) sh.zrefs = sh.zrefs.filter(r => !drop.has(r));
   if (any) scheduleSave();
@@ -5394,6 +5429,20 @@ function zlInsert() {
   }
   lastField.pos = lastField.end = np;
   closeZl(); toast(`${txt} eingefügt in ${f.label}. Die Angabe wandert mit, wenn sich die Zeilen verschieben.`);
+}
+// Neue Zwischenüberschrift vor der Zeile mit der Schreibmarke (sonst am Ende); der Platzhalter ist markiert, Tippen ersetzt ihn
+function matHeadInsert(bid) {
+  const x = $(`#editor [data-bid="${bid}"] [data-k="text"].rtx`); if (!x) return;
+  const sel = getSelection(); let pos = null;
+  if (sel && sel.rangeCount && x.contains(sel.anchorNode)) { try { pos = rtSerialize(x, { caret: sel.getRangeAt(0) }).start; } catch { pos = null; } }
+  const val = rtSerialize(x).raw; const atEnd = pos == null || pos < 0 || pos >= val.length;
+  const ls = atEnd ? val.length : val.lastIndexOf('\n', pos - 1) + 1;
+  const before = val.slice(0, ls).replace(/\s+$/, ''), after = atEnd ? '' : val.slice(ls).replace(/^\n+/, '');
+  const PH = 'Zwischenüberschrift'; const head = (before ? before + '\n\n' : '') + '## ';
+  rtSetRaw(x, head + PH + '\n' + after, head.length);
+  try { const s2 = getSelection(); const r = s2.getRangeAt(0); const n = r.startContainer; if (n.nodeType === 3 && n.nodeValue.slice(r.startOffset, r.startOffset + PH.length) === PH) { r.setEnd(n, r.startOffset + PH.length); s2.removeAllRanges(); s2.addRange(r); } } catch {}
+  x.dispatchEvent(new Event('input', { bubbles: true }));
+  toast('Zwischenüberschrift angelegt: gleich lostippen. Enter beginnt den Absatz darunter.');
 }
 function zlCopy() {
   const txt = zlText(); closeZl();
@@ -5474,7 +5523,7 @@ function ehMarkdown() {
     if (b.type === 'material' && gapList(b).length) { L.push('', `### Lückentext${b.title ? ': ' + plainMd(b.title) : ''}`, '', gapList(b).map((x, i) => `${i + 1}. ${plainMd(x.w)}`).join(' · ')); }
     if (b.type === 'match' && b.sort) { const M = mtLayout(b); if (M.sol.length) { L.push('', `### Sortieren${b.title ? ': ' + plainMd(b.title) : ''}`, ''); M.left.forEach((c, li) => { const ws = M.sol.filter(x => x.li === li).map(x => plainMd(M.right[x.rk].b)); L.push(`- ${b.mode === 'buchstaben' ? (li + 1) + ' – ' : ''}${plainMd(c.a)}: ${ws.join(', ') || '–'}`); }); const dist = M.right.filter((_, rk) => !M.sol.some(x => x.rk === rk)); if (dist.length) L.push(`- Ablenker: ${dist.map(w => plainMd(w.b)).join(', ')}`); } return; }
     if (b.type === 'match') { const M = mtLayout(b); const ok = M.sol.filter(x => x.rk >= 0); if (ok.length) { L.push('', `### Zuordnen${b.title ? ': ' + plainMd(b.title) : ''}`, ''); ok.forEach(x => L.push(`- ${b.mode === 'buchstaben' ? x.L + ' – ' + x.R + ': ' : ''}${plainMd(M.left[x.li].a)} → ${plainMd(M.right[x.rk].b)}`)); } return; }
-    if (b.type !== 'tasks') return; if (b.restart) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
+    if (b.type !== 'tasks') return; if (rst(b)) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
     const itsEH = itemsFor(b, vEH); if (itMin(b) && itsEH.length) L.push('', `_Bearbeitungszeit: ${itMin(b)} Min.${itsEH.length > 1 ? ` für die Aufgaben ${t + 1}–${t + itsEH.length}` : ''}_`);
     itsEH.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
@@ -6016,7 +6065,7 @@ function numbering(sheet) {
   for (const b of sheet.blocks) {
     if (b.type === 'material') map[b.id] = { m: ++m, tag: tags[b.id] };
     if (b.type === 'image' && tags[b.id]) map[b.id] = { tag: tags[b.id] };
-    if (b.type === 'tasks') { if (b.restart) t = 0; const from = t + 1; t += b.items.length; map[b.id] = { from, to: t }; }
+    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
   }
   return map;
 }
@@ -6166,14 +6215,14 @@ function buildBlock(b, ctx) {
       const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}`;
       const isPost = !!b.post && !poem; const two = fm.cols === 2 && !isPost;
-      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : (paras.length ? paras : [['Materialtext']]).map((p, i) => p.map((seg, j) => `<p class="${i && !j ? 'ind' : ''}${j ? ' br' : ''}">${toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('')).join('')}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
       const lines = []; const zw = [], zn = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
         let top = null, cur = [], first = true;
-        const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0 && !p.classList.contains('br'), pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st') }); first = false; cur = []; } };
+        const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0 && !p.classList.contains('br') && !p.classList.contains('ah') && !p.classList.contains('mh'), pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st'), h: p.classList.contains('mh') }); first = false; cur = []; } };
         [...p.querySelectorAll('.w')].forEach(w => {
           const t = w.getBoundingClientRect().top;
           if (top === null || t > top + lh * .5) { flush(false); top = t; }
@@ -6181,10 +6230,16 @@ function buildBlock(b, ctx) {
         });
         flush(true);
       });
+      // Zeilennummern: Zwischenüberschriften zählen nur mit, wenn so eingestellt; Wörter darin verweisen auf die nächste Zeile
+      if (!poem) {
+        let k = 0; lines.forEach(L => { L.n = L.h && !b.hdCount ? 0 : ++k; });
+        const nAt = ix => { for (let j = ix - 1; j < lines.length; j++) if (lines[j].n) return lines[j].n; for (let j = ix - 2; j >= 0; j--) if (lines[j].n) return lines[j].n; return ix; };
+        for (let q = 0; q < zn.length; q++) zn[q] = nAt(zn[q]);
+      }
       ZL_MAP[b.id] = { words: zw, lineOf: zn, tag: (ctx.mt && ctx.mt[b.id]) || 'M' + no, gaps: gaps.length > 0 };
       bodyEl.innerHTML = poem
         ? lines.map(L => `<div class="ln vs${L.st ? ' st' : ''}${L.cont ? ' vc' : ''}"><span class="ln-no" data-n="${L.v}">${b.lineNumbers !== false && !L.cont && L.v % step === 0 ? L.v : ''}</span><span class="ln-t">${L.html}</span></div>`).join('')
-        : lines.map((L, i) => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}"><span class="ln-no" data-n="${i + 1}">${b.lineNumbers !== false && (i + 1) % step === 0 ? i + 1 : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
+        : lines.map(L => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}${L.h ? ' mh' : ''}"><span class="ln-no" data-n="${L.n || ''}">${b.lineNumbers !== false && L.n && L.n % step === 0 ? L.n : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
       if (b.lineNumbers === false) bodyEl.querySelectorAll('.ln-no').forEach(x => x.style.visibility = 'hidden');
       const head = n.querySelector('.mat-head'), tailEl = n.querySelector('.mat-tail');
       const lineEls = [...bodyEl.children];
@@ -6207,7 +6262,7 @@ function buildBlock(b, ctx) {
         const t = tailOf(sel, !!tailEl && sel.includes(tailEl)); if (t) w.appendChild(t);
         return w;
       };
-      const item = { type: 'material', el: n, atoms, keepFirst: isPost ? 4 : 3, keepLast: (tailEl ? 3 : 2) + (isPost ? 1 : 0), contPre: () => 5.2 * MMPX, assemble };
+      const item = { type: 'material', el: n, atoms, keepFirst: isPost ? 4 : 3, keepLast: (tailEl ? 3 : 2) + (isPost ? 1 : 0), contPre: () => 5.2 * MMPX, assemble, keepNext: i => !!(atoms[i] && atoms[i].classList && atoms[i].classList.contains('mh')) };
       // Mit Worterklärungen hängt die Höhe eines Teils davon ab, welche Erklärungen mitwandern: dann den Teil selbst messen
       if (notes.length) { const memo = new Map(); item.partH = (s, e) => { const key = s + ':' + e; if (!memo.has(key)) { const w = assemble(s, e); ctx.body.appendChild(w); memo.set(key, w.getBoundingClientRect().height); w.remove(); } return memo.get(key); }; }
       return item;
@@ -6364,6 +6419,7 @@ function paginate(items) {
       if (e === n) { cur().list.push({ it, s, e }); cur().used += gap + h; break; }
       const needFirst = s === 0 ? Math.min(it.keepFirst, n) : 1;
       if (e - s < needFirst) { if (cur().list.length) { fresh(); continue; } e = Math.max(e, s + 1); }
+      if (it.keepNext) { let e3 = e; while (e3 - 1 > s && it.keepNext(e3 - 1)) e3--; if (e3 < e && e3 - s >= (s === 0 ? Math.min(it.keepFirst, n) : 1)) e = e3; }
       if (n - e < it.keepLast) { const e2 = n - it.keepLast; if (e2 - s >= needFirst) e = e2; else if (cur().list.length && s === 0) { fresh(); continue; } }
       const ph = it.partH ? it.partH(s, e) : pre + sum(it.ah, s, e) + (e === n ? it.post : 0);
       cur().list.push({ it, s, e }); cur().used += gap + ph;
@@ -6397,7 +6453,7 @@ function layout() {
   if (meta.mode === 'klausur') items.push(buildCover(meta, sh, v, body), { type: 'pagebreak' }, buildRunHead(meta, body));
   else { items.push(buildHead(meta, body)); if (v.lvl !== 'all') { const hd = items[items.length - 1].el; if (hd) hd.insertAdjacentHTML('beforeend', `<span class="lv-mark" title="Niveau ${LV[v.lvl].name}">${LV[v.lvl].sym}</span>`); } }
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
-  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks' && b.restart) ctx.t = 0; items.push(buildBlock(b, ctx)); }
+  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks' && rst(b)) ctx.t = 0; items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
@@ -6503,7 +6559,7 @@ function edTok(k) {
   return h;
 }
 // Gespeicherter Text → Inhalt des Textfelds
-function richHTML(raw, mode) {
+function richHTML(raw, mode, hd) {
   const s = String(raw ?? ''); if (!s) return '';
   const inl = l => inlineTokens(l).map(edTok).join('');
   if (mode === 'line') return inl(s.replace(/\s*\n\s*/g, ' '));
@@ -6512,7 +6568,7 @@ function richHTML(raw, mode) {
   s.split('\n').forEach(l => {
     const m = mode === 'full' && l.match(LIST_LINE);
     if (m) { const tag = m[1] ? 'ul' : 'ol'; if (!list || list.tag !== tag) { flushL(); list = { tag, items: [] }; } list.items.push(`<li>${inl(m[3]) || '<br>'}</li>`); return; }
-    flushL(); h += `<div>${inl(l) || '<br>'}</div>`;
+    flushL(); if (hd && MH_RE.test(l.trim())) { h += `<h3>${inl(l.trim().replace(MH_RE, '')) || '<br>'}</h3>`; return; } h += `<div>${inl(l) || '<br>'}</div>`;
   });
   flushL(); return h;
 }
@@ -6568,7 +6624,7 @@ function rtSerialize(root, opt = {}) {
       if (tag === 'IMG') { if (n.classList.contains('gap')) run({ gap: 1 }); else { const alt = emojiAlt(n); if (alt) text(alt, fl); } continue; }
       if (tag === 'SUP') { const t = n.textContent; if (/^(\d+|\*)$/.test(t)) run({ sup: t }); else text(t, fl); continue; }
       if (tag === 'UL' || tag === 'OL') { walk(n, fl, tag); closed = true; continue; }
-      if (BLOCK.test(tag)) { blockStart(tag === 'LI' ? (listTag === 'OL' ? 'ol' : 'ul') : ''); walk(n, flagsOf(n, fl), listTag); closed = true; continue; }
+      if (BLOCK.test(tag)) { blockStart(tag === 'LI' ? (listTag === 'OL' ? 'ol' : 'ul') : root.dataset.hd && /^H[1-6]$/.test(tag) ? 'h' : ''); walk(n, flagsOf(n, fl), listTag); closed = true; continue; }
       walk(n, flagsOf(n, fl), listTag);
     }
   };
@@ -6598,7 +6654,8 @@ function emitLines(lines, mode, plain = false) {
       for (const f of RT_FL) if (open[f]) t += RT_MK[f];
     }
     let pre = '';
-    if (mode === 'full' && L.pre) { olN = L.pre === 'ol' ? (prev === 'ol' ? olN + 1 : 1) : 0; pre = L.pre === 'ol' ? olN + '. ' : '- '; }
+    if (L.pre === 'h') { pre = '## '; t = t.replace(/^\*\*([\s\S]*)\*\*$/, '$1'); }
+    else if (mode === 'full' && L.pre) { olN = L.pre === 'ol' ? (prev === 'ol' ? olN + 1 : 1) : 0; pre = L.pre === 'ol' ? olN + '. ' : '- '; }
     else if (mode === 'full' && !plain && LIST_LINE.test(t.replace(/[\uE0F0\uE0F1]/g, ''))) t = t.replace(/^([\uE0F0\uE0F1]*)([-•]|\d{1,2})/, (m0, sn, x) => /^\d/.test(x) ? sn + x + '\\' : sn + '\\' + x);
     prev = L.pre; out.push(pre + t);
   }
@@ -6684,6 +6741,7 @@ function htmlToRaw(html, mode, opt = {}) {
       if (tag === 'TR') { brk(mode === 'full' ? 'line' : 'para'); walk(n, fl, ctx); brk(mode === 'full' ? 'line' : 'para'); continue; }
       if (/^(P|H[1-6]|BLOCKQUOTE|PRE|SECTION|ARTICLE|HEADER|FOOTER|ASIDE|NAV|MAIN|FIGURE|FIGCAPTION|ADDRESS|DL|DT|DD|TABLE|CENTER|FORM|FIELDSET)$/.test(tag)) {
         const empty = !n.textContent.replace(/[\s\u00A0]/g, '') && !n.querySelector('img');
+        if (opt.hd && !verseP && /^H[1-6]$/.test(tag) && !empty) { brk('para'); pendPre = 'h'; walk(n, flagsOf(n, fl), ctx); brk('para'); continue; }
         if (verseP && /^(P|H[1-6])$/.test(tag)) { brk(empty ? 'para' : 'line'); if (!empty) walk(n, flagsOf(n, fl), ctx); brk('line'); continue; }
         brk('para'); walk(n, flagsOf(n, fl), tag === 'PRE' ? { ...ctx, pre: true } : ctx); brk('para'); continue;
       }
@@ -6715,7 +6773,7 @@ function htmlToRaw(html, mode, opt = {}) {
 function rtInsertRaw(rt, raw) {
   const mode = rt.dataset.rt;
   if (mode === 'line' || !raw.includes('\n')) { document.execCommand('insertHTML', false, inlineTokens(raw.replace(/\s*\n\s*/g, ' ')).map(edTok).join('')); return; }
-  document.execCommand('insertHTML', false, richHTML(raw, mode));
+  document.execCommand('insertHTML', false, richHTML(raw, mode, rt.dataset.hd));
 }
 // Reiner Text ohne Leerzeilen, dessen Zeilen wie ganze Absätze aussehen (Word, Webseiten): Zeilen als Absätze
 function guessParas(t) {
@@ -6731,7 +6789,7 @@ function rtCaretEnd(el) { const rg = document.createRange(); rg.selectNodeConten
 // Text setzen und die Schreibmarke an eine Stelle im gespeicherten Text legen
 function rtSetRaw(el, raw, caret) {
   const C = '';
-  el.innerHTML = richHTML(caret == null ? raw : raw.slice(0, caret) + C + raw.slice(caret), el.dataset.rt);
+  el.innerHTML = richHTML(caret == null ? raw : raw.slice(0, caret) + C + raw.slice(caret), el.dataset.rt, el.dataset.hd);
   el.classList.toggle('is-empty', !String(raw).trim());
   el.focus({ preventScroll: true });
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n;
@@ -6747,7 +6805,7 @@ function rtSelectText(el, str) {
   while ((n = w.nextNode())) { const i = n.nodeValue.indexOf(str); if (i >= 0) { const rg = document.createRange(); rg.setStart(n, i); rg.setEnd(n, i + str.length); const s = getSelection(); s.removeAllRanges(); s.addRange(rg); return true; } }
   return false;
 }
-const rtField = (k, v, o = {}) => { const mode = o.mode || 'full'; return `<div class="rtx rtx-${mode}${o.cls ? ' ' + o.cls : ''}${String(v ?? '').trim() ? '' : ' is-empty'}" contenteditable="true" role="textbox"${mode === 'line' ? '' : ' aria-multiline="true"'} aria-label="${esc(o.aria || '')}" spellcheck="true" data-k="${k}" data-rt="${mode}" data-ph="${esc(o.ph || '')}" style="--rows:${o.rows || (mode === 'line' ? 1 : 3)}">${richHTML(v, mode)}</div>`; };
+const rtField = (k, v, o = {}) => { const mode = o.mode || 'full'; return `<div class="rtx rtx-${mode}${o.cls ? ' ' + o.cls : ''}${String(v ?? '').trim() ? '' : ' is-empty'}" contenteditable="true" role="textbox"${mode === 'line' ? '' : ' aria-multiline="true"'} aria-label="${esc(o.aria || '')}" spellcheck="true" data-k="${k}" data-rt="${mode}" data-ph="${esc(o.ph || '')}" ${o.hd ? ' data-hd="1"' : ''} style="--rows:${o.rows || (mode === 'line' ? 1 : 3)}">${richHTML(v, mode, o.hd)}</div>`; };
 const fRich = (k, label, v, o = {}) => `<div class="f rt-f"><span>${label}</span>${rtField(k, v, { aria: label, ...o })}${o.hint ? `<small class="fh">${o.hint}</small>` : ''}</div>`;
 
 /* ---------- Leiste beim Markieren ---------- */
@@ -6764,7 +6822,8 @@ function rtBar() {
   const bar = $('#rt-bar'); if (!bar) return;
   const f = rtFieldSel(); const s = getSelection();
   if (!f || s.isCollapsed || document.activeElement !== f) { bar.hidden = true; return; }
-  bar.dataset.mode = f.dataset.rt;
+  bar.dataset.mode = f.dataset.rt; bar.dataset.hd = f.dataset.hd ? '1' : '';
+  { let fb = ''; try { fb = document.queryCommandValue('formatBlock'); } catch {} const hb = bar.querySelector('[data-rt="h"]'); if (hb) hb.setAttribute('aria-pressed', /^h\d$/i.test(fb) ? 'true' : 'false'); }
   for (const [k, c] of Object.entries({ b: 'bold', i: 'italic', u: 'underline', ul: 'insertUnorderedList', ol: 'insertOrderedList' })) {
     let on = false; try { on = document.queryCommandState(c); } catch {}
     const b = bar.querySelector(`[data-rt="${k}"]`); if (b) b.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -6788,16 +6847,22 @@ function rtCmd(k) {
     case 'ul': if (full) ex('insertUnorderedList'); break;
     case 'ol': if (full) ex('insertOrderedList'); break;
     case 'gap': if (full) ex('insertHTML', GAP_ED); break;
+    case 'h': if (f.dataset.hd) { let fb = ''; try { fb = document.queryCommandValue('formatBlock'); } catch {} ex('formatBlock', /^h\d$/i.test(fb) ? 'div' : 'h3'); } break;
     case 'x': ex('removeFormat'); if (rtMarked()) ex('hiliteColor', 'transparent'); break;
   }
   rtBar();
 }
 // Beim Tippen: „- “ oder „1. “ am Zeilenanfang wird Liste, ___ wird Lücke (Strg+Z macht es rückgängig)
 function rtAuto(e, el) {
-  if (el.dataset.rt !== 'full' || e.inputType !== 'insertText' || (e.data !== ' ' && e.data !== '_')) return false;
+  if ((el.dataset.rt !== 'full' && !el.dataset.hd) || e.inputType !== 'insertText' || (e.data !== ' ' && e.data !== '_')) return false;
   const s = getSelection(); if (!s.rangeCount || !s.isCollapsed) return false;
   const r = s.getRangeAt(0); const tn = r.startContainer; if (tn.nodeType !== 3) return false;
-  let blk = tn.parentNode; while (blk !== el && !/^(DIV|P|LI)$/.test(blk.nodeName)) blk = blk.parentNode;
+  let blk = tn.parentNode; while (blk !== el && !/^(DIV|P|LI|H[1-6])$/.test(blk.nodeName)) blk = blk.parentNode;
+  if (e.data === ' ' && el.dataset.hd && !/^H\d$/.test(blk.nodeName)) {
+    const pre = document.createRange(); pre.setStart(blk, 0); pre.setEnd(tn, r.startOffset);
+    if (/^##[ \u00a0]$/.test(pre.toString())) { s.removeAllRanges(); s.addRange(pre); document.execCommand('delete'); document.execCommand('formatBlock', false, 'h3'); return true; }
+  }
+  if (el.dataset.rt !== 'full') return false;
   if (e.data === ' ' && blk.nodeName !== 'LI') {
     const pre = document.createRange(); pre.setStart(blk, 0); pre.setEnd(tn, r.startOffset);
     const m = pre.toString().replace(/ /g, ' ').match(/^(?:([-•*])|1[.)]) $/);
@@ -6882,7 +6947,7 @@ function progressionHTML() {
 function summary(b, num) {
   switch (b.type) {
     case 'material': return `${num[b.id].tag || 'M' + num[b.id].m} · ${b.title || 'ohne Titel'}`;
-    case 'tasks': { const r = num[b.id]; return r.to < r.from ? 'keine Aufgaben' : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (b.title ? ' · ' + b.title : '') + (itMin(b) ? ` · ${itMin(b)} Min.` : '') + (itMin(b) && b.timer ? ' · Timer' : ''); }
+    case 'tasks': { const r = num[b.id]; const fo = r.nFo ? (r.nFo === 1 ? '1 Auftrag nur auf der Folie' : r.nFo + ' Aufträge nur auf der Folie') : ''; return (r.to < r.from ? (fo || 'keine Aufgaben') : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (fo ? ' · ' + fo : '')) + (b.title ? ' · ' + b.title : '') + (itMin(b) ? ` · ${itMin(b)} Min.` : '') + (itMin(b) && b.timer ? ' · Timer' : ''); }
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
     case 'step': return `${itPh(b) ? PHASEN[itPh(b)].label + ' · ' : ''}${stepLabel(b)}${itMin(b) ? ' · ' + itMin(b) + ' Min.' : ''} · nicht auf dem Blatt`;
@@ -6916,21 +6981,22 @@ function bodyFor(b, num) {
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
-        : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
-      <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button></div>
+        : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
+      <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button>${poem ? '' : '<button class="link" type="button" data-act="mat-h" title="Neue Zwischenüberschrift an der Schreibmarke (sonst am Ende)">+ Zwischenüberschrift</button>'}</div>
+      ${!poem && matHasH(b.text) ? `<div class="chks">${fCheck('hdCount', 'Zwischenüberschriften bei den Zeilennummern mitzählen', b.hdCount)}</div>` : ''}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${b.post ? postEditor(b) : ''}${fmtEditor(b)}${gapEditor(b)}${readEditor(b)}
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`; }
     case 'tasks': {
-      const start = num[b.id].from;
+      const start = num[b.id].from; const nos = itNos(b, start);
       return `${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
         ${timeCtl(b, 'Zeit (Min.)')}
-        ${b.items.map((it, i) => `<div class="task-ed">
-          <div class="task-ed-h"><span class="no">${start + i}</span>${opSelect(i)}
+        ${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
+          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
-          ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: `Aufgabe ${start + i}` })}
+          ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: nos[i] ? `Aufgabe ${nos[i]}` : 'Auftrag nur auf der Folie' })}
           <div class="chips" data-chips="${i}">${chipsHTML(it.text)}</div>
           <div class="soz-row"><div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>${grpCtl(i, it)}${phCtl(i, it)}</div>
           ${taskExtras(b, i, it)}
@@ -7331,7 +7397,9 @@ function onClick(e) {
       changed(true); return; }
     case 'tf-sugg': { const n = tfSuggest(b); if (n < 0) return; changed(true); toast(`Tafelbild aus ${n} ${n === 1 ? 'Erwartung' : 'Erwartungen'} vorgeschlagen. Bitte kürzen und anpassen.`, 'Rückgängig', histUndo); return; }
     case 'tf-beam': tfBeamer(b.id); return;
+    case 'mat-h': matHeadInsert(b.id); return;
     case 'it-dg': { const it = b.items[+a.dataset.i]; if (!it) return; if (it.noDg) delete it.noDg; else it.noDg = true; changed(true); return; }
+    case 'it-fo': { const it = b.items[+a.dataset.i]; if (!it) return; if (it.fo) delete it.fo; else it.fo = true; changed(true); toast(it.fo ? 'Steht jetzt nur auf der Folie. Die Aufgaben auf dem Blatt werden ohne sie nummeriert.' : 'Steht wieder auf dem Arbeitsblatt.'); return; }
     case 'it-lv': { const it = b.items[+a.dataset.i]; if (!it) return; const k = a.dataset.v; const cur = Array.isArray(it.lv) ? it.lv : Object.keys(LV); const nx = cur.includes(k) ? cur.filter(x => x !== k) : [...cur, k]; if (!nx.length) { toast('Eine Aufgabe braucht mindestens eine Stufe.'); return; } if (nx.length === 3) delete it.lv; else it.lv = Object.keys(LV).filter(x => nx.includes(x)); changed(true); return; }
     case 'mt-mode': { const du = state.sheet.meta.anrede === 'du';
       if (mtIsDef(b.title)) b.title = MT_DEF(!!b.sort, a.dataset.v, du); b.mode = a.dataset.v; changed(true); return; }
@@ -8208,9 +8276,9 @@ const HELP = [
 const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.nr : (m.title || 'Ohne Titel'); };
 function rlpCoverage(sheets) {
   const cov = {}; let nTasks = 0, nTagged = 0;
-  sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (b.restart) t = 0; (b.items || []).forEach(it => {
-    t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
-    ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!e.t.includes(t)) e.t.push(t); });
+  sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; (b.items || []).forEach(it => {
+    const fo = itFo(it); if (!fo) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
+    ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!fo && !e.t.includes(t)) e.t.push(t); });
   }); }); });
   return { cov, nTasks, nTagged };
 }
@@ -8323,7 +8391,7 @@ function outChecks() {
     if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') warn('Das Blatt hat noch keinen richtigen Titel.');
     const num = numbering(sh); let tno = 0;
     sh.blocks.forEach(b => {
-      if (b.type === 'tasks' && b.restart) tno = 0;
+      if (b.type === 'tasks' && rst(b)) tno = 0;
       if (!blockVisible(b, v)) return;
       if (b.type === 'material') {
         const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';
@@ -9562,7 +9630,7 @@ async function exportDOCX() {
       parts.push(xtbl([TW(44), CW - TW(44)], frow('Name', '') + frow('Datum', ex.datum) + (ex.zeit ? frow('Bearbeitungszeit', ex.zeit) : '') + (ex.hilfsmittel ? frow('Hilfsmittel', ex.hilfsmittel) : ''), fbd));
       const matsC = blocksV.filter(b => tagsW[b.id]);
       if (matsC.length) { parts.push(xp(xr('Materialgrundlage', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 })); matsC.forEach(b => parts.push(xp(xr(tagsW[b.id] + '   ', { b: 1, sz: 20, color: A }) + xrInline(matTitle(b) || 'ohne Titel', { sz: 20 }), { after: 40 }))); }
-      const tl = []; let tt = 0; blocksV.forEach(b => { if (b.type !== 'tasks') return; if (b.restart) tt = 0; itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
+      const tl = []; let tt = 0; blocksV.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) tt = 0; itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
       if (tl.length) {
         parts.push(xp(xr('Aufgaben', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 }));
         const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(q => LINE(q, 4, RULE)).join('');
@@ -9582,7 +9650,7 @@ async function exportDOCX() {
 
     let mNo = 0, tNo = 0; const foot = [];
     for (const b of blocksV) {
-      if (b.type === 'tasks' && b.restart) tNo = 0;
+      if (b.type === 'tasks' && rst(b)) tNo = 0;
       if (b.type === 'pagebreak') { parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'); continue; }
       if (b.type === 'material') {
         mNo++;
@@ -9600,7 +9668,7 @@ async function exportDOCX() {
         const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
         const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
         if (b.form === 'gedicht') poemVerses(gmD.text).forEach(v => parts.push(xp(xrInline(v.t, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: 'left', before: v.st ? 160 : 0, ind: `<w:ind w:left="${TW(6)}" w:hanging="${TW(6)}"${fm.margin ? ` w:right="${TW(28)}"` : ''}/>`, bdr: mBdr })));
-        else matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => parts.push(xp(xrInline(seg, { font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: fm.align === 'left' ? 'left' : 'both', ind: mInd(j ? 0 : i), bdr: mBdr }))));
+        else { let prevH = false; matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => { const hd = MH_RE.test(seg); const tx = hd ? seg.replace(MH_RE, '') : seg; if (hd && !tx.trim()) return; parts.push(xp(xrInline(tx, { ...(hd ? { b: 1 } : {}), font: fm.font === 'sans' ? SANS : SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: hd && !b.hdCount, line: FMT_WLINE[fm.lh], jc: hd || fm.align === 'left' ? 'left' : 'both', ...(hd && (i || j) ? { before: 140, keepNext: true } : hd ? { keepNext: true } : {}), ind: mInd(hd || prevH || j ? 0 : i), bdr: mBdr })); prevH = hd; })); }
         if (two) closeSect(ln, true);
         const notes = fn ? [] : gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
         if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
@@ -9883,6 +9951,8 @@ function boot() {
   setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true); state.a3p = lsGet('abw.a3p') === 'a4x2' ? 'a4x2' : 'a3';
   const ed = $('#editor');
   ed.addEventListener('focusout', e => { const k = e.target && e.target.dataset && e.target.dataset.k; const c = k && e.target.closest('[data-bid]'); if (c && (state.sheet.zrefs || []).some(r => r.f === c.dataset.bid && r.k === k)) scheduleRender(60); });
+  // Hinweis unter einem Feld erst kurz nach dem Verlassen ausblenden: sonst rutscht beim Klick auf einen Knopf darunter alles hoch und der Klick geht daneben
+  ed.addEventListener('focusout', e => { const f = e.target && e.target.closest && e.target.closest('.f'); if (f && f.querySelector(':scope>small.fh')) { f.classList.add('fh-keep'); clearTimeout(f._fhT); f._fhT = setTimeout(() => f.classList.remove('fh-keep'), 400); } });
   ed.addEventListener('input', onInput); ed.addEventListener('change', onChange); ed.addEventListener('click', onClick);
   $('#lib-root').addEventListener('click', onLibClick);
   $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } });
@@ -10066,7 +10136,7 @@ function boot() {
       if (isMat && !(cd.getData('text/plain') || '').trim()) { const img = [...(cd.files || [])].find(x => /^image\//.test(x.type)); if (img) { openOcr(blk.id, img); return; } }
       const html = Date.now() < plainPasteUntil ? '' : (cd.getData('text/html') || '');
       let raw = '', note = '';
-      if (/<[a-z][^>]*>/i.test(html)) { try { raw = htmlToRaw(html, mode, { poem }); } catch (err) { console.error(err); raw = ''; } if (raw.trim() && mode !== 'line') note = 'Mit Formatierung und Absätzen eingefügt · Strg+Umschalt+V fügt nur den Text ein'; }
+      if (/<[a-z][^>]*>/i.test(html)) { try { raw = htmlToRaw(html, mode, { poem, hd: !!rt.dataset.hd }); } catch (err) { console.error(err); raw = ''; } if (raw.trim() && mode !== 'line') note = 'Mit Formatierung und Absätzen eingefügt · Strg+Umschalt+V fügt nur den Text ein'; }
       if (raw.trim()) {
         const pt = cd.getData('text/plain') || '';
         if (!raw.includes('\n')) { if (/^[ \t]/.test(pt) && !/^\s/.test(raw)) raw = ' ' + raw; if (/[ \t]$/.test(pt) && !/\s$/.test(raw)) raw += ' '; }
