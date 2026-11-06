@@ -341,7 +341,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .gl-add .btn{padding:5px 10px;font-size:13px}
 .gl-add small{font-size:11.5px;color:var(--faint)}
 .gl-scrim{position:fixed;inset:0;z-index:54;background:rgba(10,14,24,.38);display:none}
-.gpop{position:fixed;z-index:55;left:16px;top:16px;width:min(340px,calc(100% - 32px));background:var(--card);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--shadow);padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.gpop{position:fixed;z-index:55;left:16px;top:16px;width:min(360px,calc(100% - 32px));max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain;background:var(--card);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--shadow);padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px}
 .gpop-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .gpop-h span{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
 .gpop form{display:flex;flex-direction:column;gap:10px}
@@ -350,6 +350,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .gpop .err{color:#C2410C;font-size:13px;font-weight:700}
 .gpop .err:empty{display:none}
 .gpop-a{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.f .gl-ta{resize:none;overflow:hidden;line-height:1.4;min-height:36px;display:block}
 .gl-wb{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:9px}
 .gl-wb:empty{display:none}
 .gl-wb-h{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;font-size:12.5px}
@@ -357,9 +358,9 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 .gl-wb-h a{color:var(--tinte);font-weight:600;text-decoration:none}
 .gl-wb-h a:hover{text-decoration:underline}
 .gl-wb-s{margin:0;font-size:12.5px;color:var(--muted)}
-.gl-wb-l{display:flex;flex-direction:column;gap:5px;max-height:210px;overflow:auto}
+.gl-wb-l{display:flex;flex-direction:column;gap:5px}
 .gl-wb-l>span{font-size:11.5px;font-weight:700;color:var(--muted)}
-.gl-sg{text-align:left;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:8px;padding:6px 9px;font:13px/1.35 var(--f-ui);cursor:pointer;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:0 0 auto}
+.gl-sg{text-align:left;border:1px solid var(--line);background:var(--field);color:var(--ink);border-radius:8px;padding:6px 9px;font:13px/1.4 var(--f-ui);cursor:pointer;display:block;width:100%;white-space:normal;overflow-wrap:anywhere;flex:0 0 auto}
 .gl-sg:hover,.gl-sg:focus-visible{border-color:var(--tinte)}
 .gl-sg i{color:var(--muted)}
 .gl-wb-c{display:flex;flex-wrap:wrap;gap:5px}
@@ -369,7 +370,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 @media (max-width:599px){
   .gl-scrim{display:block}
   .gpop-a small{display:none}
-  .gpop{left:0!important;right:0;top:auto!important;bottom:0;width:100%;border-radius:16px 16px 0 0;border-width:1px 0 0;
+  .gpop{left:0!important;right:0;top:auto!important;bottom:0;width:100%;max-height:85vh;max-height:85dvh;border-radius:16px 16px 0 0;border-width:1px 0 0;
     padding:14px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
 }
 
@@ -2525,14 +2526,19 @@ function renderGloss() {
     <div class="gpop" id="gpop" role="dialog" aria-labelledby="gl-h">
       <div class="gpop-h"><span id="gl-h">${g ? 'Worterklärung bearbeiten' : 'Worterklärung'}</span><button class="ib" type="button" data-act="gl-close" title="Schließen">${I.x}</button></div>
       <form id="gl-form" novalidate>${termPart}
-        <label class="f"><span>Erklärung</span><input class="inp" id="gl-text" type="text" autocomplete="off" placeholder="z. B. bekannt geworden" value="${esc(g ? g.text : '')}"></label>
+        <label class="f"><span>Erklärung</span><textarea class="inp gl-ta" id="gl-text" rows="1" autocomplete="off" placeholder="z. B. bekannt geworden">${esc(g ? g.text : '')}</textarea></label>
         <div class="gl-wb" id="gl-wb" aria-live="polite"></div>
         <div class="err" id="gl-err" role="alert"></div>
         <div class="gpop-a"><button class="btn primary" type="submit">${g ? 'Speichern' : 'Hinzufügen'}</button>${g ? '<button class="link danger" type="button" data-act="gl-del">Entfernen</button>' : '<small>Enter = übernehmen</small>'}</div>
       </form></div>`;
-  placeGloss(); glWbRun(o.term);
+  glFit(); glWbRun(o.term);
   const f = o.free ? $('#gl-term') : $('#gl-text');
   if (f) { f.focus({ preventScroll: true }); try { f.setSelectionRange(f.value.length, f.value.length); } catch {} }
+}
+// Erklärungsfeld so hoch wie sein Text, dann das Fenster neu ausrichten
+function glFit() {
+  const f = $('#gl-text'); if (f) { f.style.height = 'auto'; f.style.height = (f.scrollHeight + 2) + 'px'; }
+  placeGloss();
 }
 function placeGloss() {
   const p = $('#gpop'); const o = gl.open; if (!p || !o) return;
@@ -2559,7 +2565,7 @@ function onGlossSubmit(e) {
   const b = target(o.bid); if (!b) return closeGloss();
   if (!Array.isArray(b.glossary)) b.glossary = [];
   const fail = m => { $('#gl-err').textContent = m; };
-  const text = $('#gl-text').value.trim();
+  const text = $('#gl-text').value.replace(/\s*\n+\s*/g, ' ').trim();
   let term = o.term, n = o.n, idx = o.idx;
   if (o.free) {
     term = normTerm($('#gl-term').value);
@@ -10119,12 +10125,13 @@ function boot() {
   $('#btn-wide').addEventListener('click', () => { state.wide = !state.wide; applyResponsive(); });
   $('#btn-zoom').addEventListener('click', () => { state.zoom = state.zoom === 'fit' ? 'full' : 'fit'; applyScale(); });
   $('#gl-root').addEventListener('submit', onGlossSubmit);
-  $('#gl-root').addEventListener('input', e => { if (e.target.id === 'gl-term') { updOcc(); clearTimeout(glWbT); const v = e.target.value; glWbT = setTimeout(() => glWbRun(v), 600); } });
+  $('#gl-root').addEventListener('keydown', e => { if (e.target.id === 'gl-text' && e.key === 'Enter' && !e.isComposing) { e.preventDefault(); const fm = $('#gl-form'); if (fm) fm.requestSubmit(); } });
+  $('#gl-root').addEventListener('input', e => { if (e.target.id === 'gl-text') glFit(); if (e.target.id === 'gl-term') { updOcc(); clearTimeout(glWbT); const v = e.target.value; glWbT = setTimeout(() => glWbRun(v), 600); } });
   $('#gl-root').addEventListener('click', e => {
     const a = e.target.closest('[data-act]'); if (!a || !gl.open) return;
     if (a.dataset.act === 'gl-close') closeGloss();
     if (a.dataset.act === 'gl-del') { const o = gl.open; const b = target(o.bid); closeGloss(); if (b && o.idx >= 0) removeGloss(b, o.idx); }
-    if (a.dataset.act === 'gl-sg') { const f = $('#gl-text'); if (!f) return; const v = a.dataset.v || ''; f.value = a.dataset.m === 'add' && f.value.trim() ? f.value.replace(/[\s,;]+$/, '') + ', ' + v : v; f.focus(); try { f.setSelectionRange(f.value.length, f.value.length); } catch {} }
+    if (a.dataset.act === 'gl-sg') { const f = $('#gl-text'); if (!f) return; const v = a.dataset.v || ''; f.value = a.dataset.m === 'add' && f.value.trim() ? f.value.replace(/[\s,;]+$/, '') + ', ' + v : v; glFit(); f.focus(); try { f.setSelectionRange(f.value.length, f.value.length); } catch {} }
   });
   document.addEventListener('pointerdown', e => {
     if (gl.open && !e.target.closest('#gpop')) closeGloss();
