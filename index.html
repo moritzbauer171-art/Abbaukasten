@@ -450,7 +450,7 @@ body.basis .x-pro:not(.used){display:none!important}
 .grp-ed-row>b{display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--tinte);color:#fff;font-size:12px}
 .grp-ed .tf-ed-acts{margin-top:2px}
 .st-tpls{display:flex;flex-direction:column;gap:6px}
-.st-g{display:grid;grid-template-columns:62px minmax(0,1fr);gap:6px;align-items:start}
+.st-g{display:grid;grid-template-columns:70px minmax(0,1fr);gap:6px;align-items:start}
 .st-g small{padding-top:5px;font-size:11.5px;font-weight:700;color:var(--muted)}
 .st-ts{display:flex;flex-wrap:wrap;gap:5px}
 .st-tp{border:1px solid var(--line-strong);background:var(--field);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer}
@@ -644,6 +644,7 @@ body.basis .x-pro:not(.used){display:none!important}
 .lib-fe{font-size:12.5px;color:var(--faint);border:1.5px dashed var(--line-strong);border-radius:9px;padding:10px 12px}
 .lib-fmenu{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;font-size:12.5px;padding:0 8px 4px 34px}
 .lib-fmenu.warnrow{color:var(--warn)}
+.lib-mv .lib-mv-k{flex-basis:100%;margin-top:4px}
 .lib-mv{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
 .lib-mv .chip{border:1px solid var(--line-strong);background:var(--field);border-radius:14px;padding:3px 10px;font-size:12.5px;cursor:pointer;color:var(--ink)}
 .lib-mv .chip.on{background:var(--tinte);color:var(--tinte-ink);border-color:var(--tinte)}
@@ -2987,7 +2988,15 @@ const STEP_TPL = {
   linie: { g: 'ein', label: 'Meinungslinie', ph: 'ein', soz: 'pl', min: 7, fol: 'text', head: '{Positioniere dich|Positionieren Sie sich}', text: '{Stelle dich|Stellen Sie sich} auf der Linie zwischen „stimme zu“ und „stimme nicht zu“ auf: …\n{Begründe|Begründen Sie} {deine|Ihre} Position in einem Satz.', note: 'These nennen, Linie im Raum markieren, einzelne Positionen begründen lassen.', eh: 'beziehen Position und begründen sie' },
   wdh: { g: 'ein', label: 'Wiederholung', ph: 'ein', soz: 'pl', min: 5, fol: 'text', head: 'Was wissen wir schon?', text: '{Fasse|Fassen Sie} die Ergebnisse der letzten Stunde in drei Sätzen zusammen.', note: 'Ergebnisse der letzten Stunde reaktivieren, Hausaufgabe aufgreifen.', eh: 'fassen die Ergebnisse der letzten Stunde zusammen' },
   video: { g: 'ein', label: 'Kurzvideo', ph: 'ein', soz: 'pl', min: 8, fol: 'text', head: 'Beobachtungsauftrag', text: '{Achte|Achten Sie} beim Ansehen darauf, wie …', note: 'Video zeigen; der Link steht als QR-Code auf der Folie.', eh: '' },
-  rueck: { g: 'end', label: 'Zurück zur Stundenfrage', ph: 'sich', soz: 'pl', min: 7, fol: 'frage', head: 'Zurück zur Stundenfrage', text: '{Beantworte|Beantworten Sie} die Stundenfrage mithilfe {deiner|Ihrer} Ergebnisse.', note: 'Vermutungen vom Stundenbeginn überprüfen, Antwort festhalten.', eh: 'beantworten die Stundenfrage begründet' },
+  vergl: { g: 'sich', label: 'Ergebnisse vergleichen', ph: 'sich', soz: 'pa', min: 7, fol: 'text', head: 'Ergebnisse vergleichen', text: '{Vergleiche|Vergleichen Sie} {deine|Ihre} Ergebnisse mit {deinem Partner oder deiner Partnerin|Ihrem Partner oder Ihrer Partnerin}.\n{Ergänze|Ergänzen Sie} Fehlendes in einer anderen Farbe.', note: 'Partnervergleich vor der Besprechung im Plenum; offene Fragen sammeln.', eh: 'vergleichen ihre Ergebnisse\nergänzen und korrigieren sie' },
+  praes: { g: 'sich', label: 'Ergebnisse vorstellen', ph: 'sich', soz: 'pl', min: 10, fol: 'text', head: 'Ergebnisse vorstellen', text: '{Stelle|Stellen Sie} {deine|Ihre} Ergebnisse vor.\nDie Zuhörenden achten darauf, ob …', note: 'Zwei bis drei Gruppen stellen vor, die anderen ergänzen und geben Rückmeldung nach dem Beobachtungsauftrag.', eh: 'präsentieren ihre Ergebnisse\nergänzen und geben begründet Rückmeldung' },
+  galerie: { g: 'sich', label: 'Galeriegang', ph: 'sich', soz: 'gr', min: 10, fol: 'text', head: 'Galeriegang', text: '{Gehe|Gehen Sie} herum und {lies|lesen Sie} die Ergebnisse der anderen Gruppen.\n{Notiere|Notieren Sie} auf Klebezetteln eine Frage oder Ergänzung.', note: 'Plakate aushängen; danach Rückfragen und Gemeinsamkeiten im Plenum klären.', eh: 'nehmen die Ergebnisse anderer Gruppen wahr\nformulieren Rückfragen und Ergänzungen' },
+  kugel: { g: 'sich', label: 'Kugellager', ph: 'sich', soz: 'pa', min: 8, fol: 'text', head: 'Kugellager', text: '{Erkläre|Erklären Sie} {deinem|Ihrem} Gegenüber in einer Minute {dein|Ihr} Ergebnis.\nNach dem Signal rückt der Außenkreis einen Platz weiter.', note: 'Innen- und Außenkreis bilden, zwei bis drei Wechsel; danach kurz im Plenum.', eh: 'erläutern ihre Ergebnisse mündlich\nhören zu und fragen nach' },
+  tafel: { g: 'sich', label: 'Tafelbild entwickeln', ph: 'sich', soz: 'pl', min: 10, fol: 'text', head: 'Ergebnisse sichern', text: 'Wir halten die Ergebnisse gemeinsam an der Tafel fest.\n{Übertrage|Übertragen Sie} das Tafelbild in {dein|Ihr} Heft.', note: 'Tafelbild im Unterrichtsgespräch aus den Ergebnissen entwickeln.', eh: 'nennen die zentralen Ergebnisse\nübertragen das Tafelbild' },
+  merk: { g: 'sich', label: 'Merksatz', ph: 'sich', soz: 'pa', min: 7, fol: 'text', head: 'Merksatz', text: '{Formuliere|Formulieren Sie} in einem Satz, was {du dir|Sie sich} aus der heutigen Stunde merken {solltest|sollten}.', note: 'Einige Merksätze vorlesen lassen, einen gemeinsam auswählen und ins Heft übernehmen.', eh: 'formulieren das zentrale Ergebnis als Merksatz' },
+  ordnen: { g: 'sich', label: 'Begriffe ordnen', ph: 'sich', soz: 'pa', min: 8, fol: 'text', head: 'Begriffe ordnen', text: '{Ordne|Ordnen Sie} die Begriffe der Stunde in einer Mindmap und {verbinde|verbinden Sie} zusammengehörende mit Pfeilen: …', note: 'Begriffe vorgeben oder sammeln; eine Mindmap unter der Dokumentenkamera besprechen.', eh: 'ordnen die zentralen Begriffe\nstellen Zusammenhänge dar' },
+  quiz: { g: 'sich', label: 'Kurzes Quiz', ph: 'sich', soz: 'ea', min: 5, fol: 'text', head: 'Quiz', text: '{Beantworte|Beantworten Sie} die Fragen:\n1. …\n2. …\n3. …', note: 'Direkt auswerten, z. B. mit Handzeichen, Antwortkarten oder digital.', eh: 'beantworten Fragen zu den Ergebnissen der Stunde' },
+  rueck: { g: 'sich', label: 'Zurück zur Stundenfrage', ph: 'sich', soz: 'pl', min: 7, fol: 'frage', head: 'Zurück zur Stundenfrage', text: '{Beantworte|Beantworten Sie} die Stundenfrage mithilfe {deiner|Ihrer} Ergebnisse.', note: 'Vermutungen vom Stundenbeginn überprüfen, Antwort festhalten.', eh: 'beantworten die Stundenfrage begründet' },
   transfer: { g: 'end', label: 'Transferfrage', ph: 'trans', soz: 'pa', min: 8, fol: 'text', head: 'Arbeitsauftrag', text: '{Übertrage|Übertragen Sie} {deine|Ihre} Ergebnisse auf …', note: '', eh: '' },
   blitz: { g: 'end', label: 'Blitzlicht', ph: 'refl', soz: 'pl', min: 5, fol: 'text', head: 'Blitzlicht', text: 'Was {nimmst du|nehmen Sie} aus der heutigen Stunde mit? {Antworte|Antworten Sie} in einem Satz.', note: 'Reihum, ohne Kommentar.', eh: 'benennen einen Lerngewinn' },
   exit: { g: 'end', label: 'Exit-Ticket', ph: 'refl', soz: 'ea', min: 5, fol: 'text', head: 'Exit-Ticket', text: '{Beantworte|Beantworten Sie} die Fragen auf {deinem|Ihrem} Exit-Ticket und {gib|geben Sie} es beim Hinausgehen ab.', note: 'Exit-Tickets austeilen und einsammeln; Auswertung für die nächste Stunde.', eh: '', exit: true, qs: 'Was habe ich heute gelernt?\nWas ist mir noch unklar?\nWelche Frage nehme ich mit in die nächste Stunde?' },
@@ -3015,7 +3024,7 @@ function stepEditor(b) {
   const tiles = g => Object.entries(STEP_TPL).filter(([, x]) => x.g === g).map(([k, x]) => `<button type="button" class="st-tp" data-act="st-tpl" data-v="${k}" aria-pressed="${b.tpl === k}">${x.label}</button>`).join('');
   const ta = (k, label, rows, ph, hint) => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph || '')}">${esc(tfStr(b[k]))}</textarea>${hint ? `<small class="hint">${hint}</small>` : ''}</label>`;
   return `<div class="memo-flag">Steht nicht auf dem Arbeitsblatt. Der Schritt zählt im Stundenablauf, steht im Verlaufsplan und wird beim Präsentieren zur Folie.</div>
-    <div class="f"><span>Vorlage</span><div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-tpl" data-v="frei" aria-pressed="${b.tpl === 'frei'}">Eigener Schritt</button></div></div></div></div>
+    <div class="f"><span>Vorlage</span><div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Sicherung</small><div class="st-ts">${tiles('sich')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-tpl" data-v="frei" aria-pressed="${b.tpl === 'frei'}">Eigener Schritt</button></div></div></div></div>
     ${fText('title', 'Bezeichnung im Verlaufsplan', b.title, 'z. B. Stummer Impuls')}
     <div class="row st-row"><label class="f"><span>Phase</span><select data-k="ph"><option value="">–</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${itPh(b) === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label><label class="f"><span>Sozialform</span><select data-k="soz"><option value="">–</option>${Object.entries(SOZ).map(([k, x]) => `<option value="${k}"${b.soz === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label></div>
     ${timeCtl(b, 'Zeit (Min.)')}
@@ -3166,12 +3175,13 @@ function flowHTML(num) {
 function stepAdderHTML() {
   const tiles = g => Object.entries(STEP_TPL).filter(([, x]) => x.g === g).map(([k, x]) => `<button type="button" class="st-tp" data-act="st-new" data-v="${k}">${x.label}</button>`).join('');
   return `<div class="adder st-adder"><span class="lbl">Unterrichtsschritt hinzufügen</span>
-    <div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-new" data-v="frei">Eigener Schritt</button></div></div></div>
-    <small class="hint">Ein Einstieg kommt vor das Material, ein Schluss ans Ende der Stunde. Unterrichtsschritte stehen nicht auf dem Arbeitsblatt.</small></div>`;
+    <div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Sicherung</small><div class="st-ts">${tiles('sich')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-new" data-v="frei">Eigener Schritt</button></div></div></div>
+    <small class="hint">Ein Einstieg kommt vor das Material, eine Sicherung hinter die letzten Aufgaben (vor den Schluss), ein Schluss ans Ende der Stunde. Unterrichtsschritte stehen nicht auf dem Arbeitsblatt; verschieben lassen sie sich im Ablauf.</small></div>`;
 }
 function stepNew(k) {
   const x = STEP_TPL[k]; if (!x) return; const blocks = state.sheet.blocks;
   let at = blocks.length; if (x.g === 'ein') { at = 0; while (at < blocks.length && blocks[at].type === 'step' && !(STEP_TPL[blocks[at].tpl] && STEP_TPL[blocks[at].tpl].g === 'end')) at++; }
+  else if (x.g === 'sich') { while (at > 0 && blocks[at - 1].type === 'step' && STEP_TPL[blocks[at - 1].tpl] && STEP_TPL[blocks[at - 1].tpl].g === 'end') at--; }
   snapshot(); const nb = paletteBlock('step', 'step'); blocks.splice(at, 0, nb);
   state.sel = nb.id; if (oneCard()) state.closed = new Set(cardIds().filter(i => i !== nb.id)); else state.closed.delete(nb.id);
   stepTpl(nb, k, at, true);
@@ -7735,12 +7745,17 @@ async function switchKlasse(k) {
   if (!backend) { openSheet(draftFor(k)); return; }
   await openForKlasse(k);
 }
-function moveKlasse(v) {
-  const sh = state.sheet; const old = KL(sh.klasse), nw = KL(v); if (old.id === nw.id) return;
+// Klasse eines Blatts wechseln: Kurs, Schule und Farbe folgen, wenn sie noch die der alten Klasse waren
+function klasseSwap(sh, v) {
+  const old = KL(sh.klasse), nw = KL(v); if (old.id === nw.id) return false;
   if (sh.meta.course === old.course) sh.meta.course = nw.course;
   if (sh.meta.accent === old.accent) sh.meta.accent = nw.accent;
   if (sh.meta.school === old.school) sh.meta.school = nw.school;
-  sh.klasse = nw.id; state.klasse = nw.id; lsSet(LS.klasse, nw.id);
+  sh.klasse = nw.id; return true;
+}
+function moveKlasse(v) {
+  const sh = state.sheet; const nw = KL(v); if (!klasseSwap(sh, v)) return;
+  state.klasse = nw.id; lsSet(LS.klasse, nw.id);
   changed(true); renderTabs();
   toast(`Das Blatt liegt jetzt unter ${nw.label}`);
 }
@@ -8003,6 +8018,28 @@ function freezeOrder(kl) {
 const FOLDER_SVG = '<svg class="fi" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5.5a1.5 1.5 0 0 1 1.5-1.5h3.6l1.6 1.8H16a1.5 1.5 0 0 1 1.5 1.5v7.7A1.5 1.5 0 0 1 16 16.5H4A1.5 1.5 0 0 1 2.5 15z"/></svg>';
 const CHEV_SVG = '<svg class="chev-s" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4l4 4-4 4"/></svg>';
 const GRIP_SVG = '<svg class="grip" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="4" r="1.2"/><circle cx="7" cy="4" r="1.2"/><circle cx="3" cy="8" r="1.2"/><circle cx="7" cy="8" r="1.2"/><circle cx="3" cy="12" r="1.2"/><circle cx="7" cy="12" r="1.2"/></svg>';
+// Ziel-Auswahl unter einem Eintrag: Kopie in diese oder eine andere Klasse; verschieben in einen Ordner oder eine andere Klasse
+function libMvHTML(d, k, fs, fid) {
+  const others = KLASSEN.filter(x => x.id !== k.id);
+  const kc = (act, x) => `<button type="button" class="chip" data-act="${act}" data-kl="${esc(x.id)}">${esc(x.label)}${x.fach && x.fach !== k.fach && FAECHER[x.fach] ? ' · ' + esc(FAECHER[x.fach].label) : ''}</button>`;
+  if (state.moveMode === 'copy') return `<div class="lib-mv"><span>Kopie anlegen in</span><button type="button" class="chip" data-act="lib-copy-to" data-kl="${esc(k.id)}">${esc(k.label)} (hier)</button>${others.map(x => kc('lib-copy-to', x)).join('')}</div>`;
+  return `<div class="lib-mv">${fs.length ? `<span>In Ordner</span>${[['', 'Ohne Ordner'], ...fs.map(f => [f.id, f.name])].map(([id, n]) => `<button type="button" class="chip${fid === id ? ' on' : ''}" data-act="lib-move-to" data-fid="${esc(id)}">${esc(n)}</button>`).join('')}` : ''}${others.length ? `<span${fs.length ? ' class="lib-mv-k"' : ''}>In andere Klasse</span>${others.map(x => kc('lib-move-kl', x)).join('')}` : ''}</div>`;
+}
+// Stunde in eine andere Klasse kopieren (Kopie bleibt dort ungeöffnet) oder verschieben (Ordner der alten Klasse entfällt)
+async function libToKlasse(id, kl, copy) {
+  const K = KLASSEN.find(x => x.id === kl); if (!K || !backend) return;
+  const open = state.sheet && state.sheet.id === id;
+  try {
+    if (open && !copy) { state.moveOpen = null; dropPlace(id); moveKlasse(K.id); upsertLib(entryOf(state.sheet)); renderLib(); return; }
+    const src = open ? clone(state.sheet) : await backend.load(id); if (!src) throw new Error('fehlt');
+    const c = normalizeSheet(src); klasseSwap(c, K.id); c.updatedAt = Date.now();
+    if (copy) { c.id = 'ab-' + uid(); c.example = false; }
+    await backend.save(c); upsertLib(entryOf(c));
+    if (!copy) dropPlace(id);
+    state.moveOpen = null; renderLib();
+    toast(copy ? `Kopie von „${stTitle(c)}“ liegt jetzt in ${K.label}.` : `„${stTitle(c)}“ liegt jetzt in ${K.label}.`);
+  } catch (err) { console.error(err); toast(copy ? 'Kopieren hat nicht geklappt. Bitte erneut versuchen.' : 'Verschieben hat nicht geklappt. Bitte erneut versuchen.'); }
+}
 function libListHTML(k, q) {
   const fmt = t => new Date(t).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   const fs = libFolders(k.id); const all = state.lib.filter(d => d.klasse === k.id);
@@ -8015,8 +8052,8 @@ function libListHTML(k, q) {
       ${hit(d)}<div class="m">${d.abs > 1 ? d.abs + ' Arbeitsblätter · ' : ''}geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
       <div class="a">${state.confirmDel === d.id
         ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
-        : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-dup">Duplizieren</button>${fs.length ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id}">Ordner</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
-      ${state.moveOpen === d.id ? `<div class="lib-mv"><span>Verschieben nach</span>${[['', 'Ohne Ordner'], ...fs.map(f => [f.id, f.name])].map(([id, n]) => `<button type="button" class="chip${fid === id ? ' on' : ''}" data-act="lib-move-to" data-fid="${esc(id)}">${esc(n)}</button>`).join('')}</div>` : ''}
+        : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-copy" aria-expanded="${state.moveOpen === d.id && state.moveMode === 'copy'}">Kopieren</button>${fs.length || KLASSEN.length > 1 ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id && state.moveMode !== 'copy'}">Verschieben</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
+      ${state.moveOpen === d.id ? libMvHTML(d, k, fs, fid) : ''}
     </div>`; };
   const sec = f => {
     const total = all.filter(d => folderOf(d.id, k.id) === f.id).length;
@@ -8141,7 +8178,23 @@ async function onLibClick(e) {
       if (f) toast(`Ordner „${f.name}“ gelöscht`);
       break;
     }
-    case 'lib-move': state.moveOpen = state.moveOpen === id ? null : id; renderLib(); break;
+    case 'lib-move': state.moveOpen = state.moveOpen === id && state.moveMode !== 'copy' ? null : id; state.moveMode = 'move'; renderLib(); break;
+    case 'lib-copy':
+      if (KLASSEN.length > 1) { state.moveOpen = state.moveOpen === id && state.moveMode === 'copy' ? null : id; state.moveMode = 'copy'; renderLib(); break; }
+      a.dataset.kl = KL(state.klasse).id; // nur eine Klasse: gleich kopieren
+      // fallthrough
+    case 'lib-copy-to':
+      if (!id) break;
+      if (a.dataset.kl && a.dataset.kl !== KL(state.klasse).id) { libToKlasse(id, a.dataset.kl, true); break; }
+      state.moveOpen = null; closeLib();
+      try {
+        const src = await backend.load(id); if (!src) throw new Error('fehlt');
+        const c = normalizeSheet(src); c.id = 'ab-' + uid(); c.example = false; c.meta.title = (c.meta.title || 'Ohne Titel') + ' (Kopie)';
+        const fo = folderOf(id, c.klasse); if (fo) { setPlace(c.id, fo); savePrefs(); }
+        openSheet(c); saveNow();
+      } catch { toast('Kopieren hat nicht geklappt. Bitte erneut versuchen.'); }
+      break;
+    case 'lib-move-kl': if (id && a.dataset.kl) libToKlasse(id, a.dataset.kl, false); break;
     case 'lib-move-to': if (id) moveSheetTo(id, a.dataset.fid || ''); break;
     case 'lib-close': closeLib(); break;
     case 'lib-new': openNew(); break;
