@@ -1656,7 +1656,11 @@ body{transition:background-color .3s,border-color .25s}
 .phr-h{display:flex;align-items:center;gap:1.8mm;font-size:7.2pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:1.6mm}
 .phr-h .phr-i{width:4.4mm;height:4.4mm;flex:0 0 auto}
 .phr-grid{display:grid;gap:2.4mm 7mm}
-.blk-phr.c2 .phr-grid{grid-template-columns:1fr 1fr}
+.blk-phr.c2 .phr-grid{display:block;column-count:2;column-gap:7mm;column-fill:balance}
+.blk-phr.c2 .phr-g+.phr-g{margin-top:2.4mm}
+.blk-phr.c2 .phr-g:not(.long){break-inside:avoid}
+.phr-gh{break-after:avoid}
+.phr-g li{break-inside:avoid}
 .phr-gh{font-weight:700;font-size:9.5pt;margin-bottom:.4mm}
 .phr-g ul{list-style:none;margin:0;padding:0}
 .phr-g li{position:relative;padding-left:3.6mm;font-size:9.5pt;line-height:1.4;margin-top:.6mm}
@@ -6095,7 +6099,7 @@ function buildBlock(b, ctx) {
     }
     case 'phrases': {
       const gs = phrGroups(b); const cols = (+b.cols || 2) === 1 ? 1 : 2;
-      return { type: 'phrases', el: put(`<div class="blk blk-phr c${cols}"><div class="phr-h">${PHR_ICON}<span>${inlineHTML(b.title || 'Formulierungshilfen')}</span></div><div class="phr-grid">${(gs.length ? gs : [{ head: '', lines: ['Formulierung …'] }]).map(g => `<div class="phr-g">${g.head ? `<div class="phr-gh">${inlineHTML(g.head)}</div>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`) };
+      return { type: 'phrases', el: put(`<div class="blk blk-phr c${cols}"><div class="phr-h">${PHR_ICON}<span>${inlineHTML(b.title || 'Formulierungshilfen')}</span></div><div class="phr-grid">${(gs.length ? gs : [{ head: '', lines: ['Formulierung …'] }]).map(g => `<div class="phr-g${g.lines.length > 3 ? ' long' : ''}">${g.head ? `<div class="phr-gh">${inlineHTML(g.head)}</div>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`) };
     }
     case 'info': {
       const n = put(`<div class="blk blk-info${b.stil ? ' st-' + b.stil : ''}"><div class="info-kind">${esc(b.kind || 'Info')}</div>${b.title ? `<div class="info-title">${inlineHTML(b.title)}</div>` : ''}<div class="info-text">${parasHTML(b.text)}</div></div>`);
@@ -9738,7 +9742,18 @@ async function exportDOCX() {
           const gs = phrGroups(b); if (!gs.length) break; const cols = (+b.cols || 2) === 1 ? 1 : 2; const w = Math.floor(CW / cols);
           parts.push(xp(xr(plainText(b.title || 'Formulierungshilfen'), { b: 1, caps: 1, sz: 15, color: A, sp: 14 }), { keepNext: true, after: 40 }));
           const cell = g => (g.head ? xp(xrInline(g.head, { b: 1, sz: 19 }), { after: 10, keepNext: true }) : '') + g.lines.map(l => xp(xr('›', { b: 1, sz: 19, color: A }) + '<w:r><w:tab/></w:r>' + xrInline(l, { sz: 19 }), { ind: `<w:ind w:left="${TW(4)}" w:hanging="${TW(4)}"/>`, before: 20 })).join('');
-          const rows = []; for (let i = 0; i < gs.length; i += cols) rows.push(xtr(Array.from({ length: cols }, (_, j) => xtc(gs[i + j] ? cell(gs[i + j]) : xp(''), { w })).join(''), { cant: 1 }));
+          // zwei Spalten: wie auf dem Blatt der Reihe nach füllen und ausgleichen; kurze Gruppen bleiben zusammen, lange dürfen nach einer Wendung umbrechen
+          let rows;
+          if (cols === 1) rows = [xtr(xtc(gs.map(cell).join('') || xp(''), { w }), { cant: 1 })];
+          else {
+            const est = t => Math.max(1, Math.ceil(plainText(t).length / 44)); const U = [];
+            gs.forEach(g => { if (g.lines.length <= 3) U.push({ g, head: true, lines: g.lines }); else { U.push({ g, head: true, lines: g.lines.slice(0, 1) }); g.lines.slice(1).forEach(l => U.push({ g, head: false, lines: [l] })); } });
+            const wt = u => (u.head && u.g.head ? 1.2 : 0) + u.lines.reduce((a, l) => a + est(l), 0) + 0.3;
+            const tot = U.reduce((a, u) => a + wt(u), 0); let best = U.length, bv = Infinity, acc = 0;
+            for (let k = 0; k <= U.length; k++) { const v = Math.max(acc, tot - acc); if (v < bv - 1e-9) { bv = v; best = k; } if (k < U.length) acc += wt(U[k]); }
+            const side = us => { let h = '', cur = null; us.forEach(u => { if (u.g !== cur && h) h += xp('', { after: 0, line: 120 }); cur = u.g; h += cell({ head: u.head ? u.g.head : '', lines: u.lines }); }); return h || xp(''); };
+            rows = [xtr(xtc(side(U.slice(0, best)), { w }) + xtc(side(U.slice(best)), { w }), { cant: 1 })];
+          }
           const bd = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 6, DOCX_MARK)).join('') + NIL('insideH') + NIL('insideV');
           parts.push(xtbl(Array(cols).fill(w), rows.join(''), bd, `<w:top w:w="${TW(1.5)}" w:type="dxa"/><w:left w:w="${TW(3)}" w:type="dxa"/><w:bottom w:w="${TW(2)}" w:type="dxa"/><w:right w:w="${TW(3)}" w:type="dxa"/>`));
           break;
