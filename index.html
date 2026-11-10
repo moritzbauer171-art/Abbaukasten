@@ -1217,6 +1217,42 @@ body{transition:background-color .3s,border-color .25s}
 .tf-page .tf-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.6mm;margin-top:3mm}
 .page.a3-page{padding:10mm 12mm 7mm;display:flex;flex-direction:column}
 .page.a3-page.quer{width:420mm;height:297mm}.page.a3-page.hoch{width:297mm;height:420mm}
+.page.a3-page.a4{width:210mm;height:297mm;padding:7mm 8mm 5mm}
+.a4 .a3-in{gap:2.5mm}
+.a4-h{display:flex;align-items:baseline;gap:4mm;font-size:9pt;color:#5A606E;flex:0 0 auto}
+.a4-h b{font-size:11pt;color:var(--paper-ink)}
+.a4-hx{margin-left:auto;font-size:8pt}
+.a4-grid{position:relative;flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(var(--c),1fr);grid-template-rows:repeat(var(--r),1fr);border:.35mm dashed #8A909C}
+.a4-sc{position:absolute;left:-1.2mm;top:-3.3mm;font-size:10pt;line-height:1;color:#6B7280;background:var(--paper);padding:0 .6mm}
+.a4c{border-right:.35mm dashed #8A909C;border-bottom:.35mm dashed #8A909C;padding:5mm;display:flex;flex-direction:column;gap:2mm;overflow:hidden;min-width:0;min-height:0}
+.a4-grid>.a4c:nth-child(1+n){}
+.a4c-h{display:flex;align-items:center;gap:2mm;font-size:10pt;font-weight:700;color:var(--acc);border-bottom:.4mm solid var(--acc);padding-bottom:1.2mm;flex:0 0 auto}
+.a4c-no{display:inline-grid;place-items:center;min-width:5.5mm;height:5.5mm;border-radius:1mm;background:var(--acc);color:#fff;font-size:8.5pt}
+.a4c-t{flex:1 1 auto;line-height:1.3;overflow:hidden}
+.a4c-t p{margin:0 0 .35em}
+.a4c.lk-f .a4c-t{display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700}
+.a4c.lk-r .a4c-t{display:flex;flex-direction:column;justify-content:center}
+.a4-strips{position:relative;border-top:.35mm dashed #8A909C;flex:0 0 auto}
+.a4s{display:flex;align-items:center;gap:4mm;border-bottom:.35mm dashed #8A909C;border-left:.35mm dashed #8A909C;border-right:.35mm dashed #8A909C;padding:0 5mm;line-height:1.25;overflow:hidden}
+.a4s-l{flex:0 0 auto;display:inline-grid;place-items:center;width:7mm;height:7mm;border-radius:1mm;border:.35mm solid var(--acc);color:var(--acc);font-weight:700;font-size:10pt}
+.a4-sol{margin-top:3mm;font-size:10pt;color:#B3261E;font-weight:700}
+.a4t-rule{font-size:9.5pt;color:#5A606E;flex:0 0 auto}
+.a4t{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 9mm 1fr;line-height:1.3}
+.a4t-c{display:flex;flex-direction:column;gap:2mm;min-width:0}
+.a4t-h{font-size:13pt;font-weight:700;color:var(--acc);border-bottom:.5mm solid var(--acc);padding-bottom:1mm}
+.a4t-r{flex:1 1 0;display:flex;gap:2.5mm;align-items:flex-start;border:.3mm solid #D5D9E1;border-radius:1.5mm;padding:2mm 2.5mm;min-height:0;overflow:hidden}
+.a4t-r small{display:block;font-size:7.5pt;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8A909C;margin-bottom:.5mm}
+.a4t-r.a{background:#F1F3F6;color:#4B5160}
+.a4t-n{flex:0 0 auto;display:inline-grid;place-items:center;width:6mm;height:6mm;border-radius:50%;background:var(--acc);color:#fff;font-size:8.5pt;font-weight:700}
+.a4t-r.a .a4t-n{background:#9AA0AA}
+.a4t-fold{position:relative;display:flex;justify-content:center}
+.a4t-fold::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:.35mm dashed #8A909C}
+.a4t-fold span{position:relative;writing-mode:vertical-rl;transform:rotate(180deg);background:var(--paper);font-size:7.5pt;color:#8A909C;padding:2mm 0;align-self:center}
+.a3-grp{flex-basis:100%;font-size:11px;font-weight:700;color:var(--muted);margin-top:2px}
+.a4-ed-r{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:6px;align-items:start}
+.a4-ed-n{padding-top:7px;font-size:12px;font-weight:700;color:var(--muted);text-align:right}
+.a4-ed-f{display:flex;flex-direction:column;gap:4px}
+.a4-ed-f textarea{min-height:52px}
 .a3-in{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:4mm}
 .a3-foot{display:flex;justify-content:space-between;font-size:8pt;color:#8A909C;border-top:.2mm solid #D5D9E1;padding-top:1.4mm;margin-top:3mm}
 .a3-h{display:flex;align-items:flex-end;gap:8mm;border-bottom:.5mm solid var(--acc);padding-bottom:2.5mm;flex:0 0 auto}
@@ -1848,7 +1884,7 @@ const TYPES = {
   info:     { label:'Infokasten',    desc:'Merke, Tipp, Definition' },
   phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge, Wendungen' },
   tafel:    { label:'Tafelbild',     desc:'Sicherung, auch als Lückentafelbild und am Beamer' },
-  a3:       { label:'A3-Vorlage',    desc:'Placemat, Annotationsbogen, Lernplakat …' },
+  a3:       { label:'Druckvorlage',  desc:'A3: Placemat, Lernplakat … · A4: Karten, Lernkarten, Satzstreifen, Tandem' },
   step:     { label:'Unterrichtsschritt', desc:'Einstieg, Stundenfrage, Abschluss, Exit-Ticket: nur Folie und Verlaufsplan' },
   table:    { label:'Tabelle',       desc:'zum Ausfüllen' },
   lines:    { label:'Schreibfläche', desc:'Linien oder Kästchen' },
@@ -3650,8 +3686,23 @@ const A3_TPL = {
   schreib: { label: 'Schreibgespräch', d: 'Impuls in der Mitte, viel Platz für schriftliche Kommentare', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5" stroke-dasharray="2 2"/><rect x="8" y="9.5" width="8" height="5" rx="1"/><path d="M5 7l2.5 2M19 17l-2.5-2"/>' },
   plakat: { label: 'Lernplakat', d: 'Für den Galeriegang: Thema, Gruppe und bis zu sechs Felder (A3 hoch)', o: 'h', ic: '<rect x="5" y="2.5" width="14" height="19" rx="1.5"/><path d="M8 6h8M7.5 9.5h4v4h-4zM12.5 9.5h4v4h-4zM7.5 15h4v4h-4zM12.5 15h4v4h-4z"/>' },
   vergleich: { label: 'Vergleichsraster', d: 'Zwei bis vier Texte oder Figuren nach Aspekten vergleichen, mit Fazit', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M8 4v16M14.5 4v16M3 8h18M3 12h18M3 16h18"/>' },
-  experte: { label: 'Expertenbogen', d: 'Gruppenpuzzle: Expertenphase, Stammgruppe und gemeinsames Ergebnis', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M11 4v16M13 8h3.5v3.5H13zM17.5 8H21M13 13h3.5v3.5H13zM5 8h4M5 11h4"/>' }
+  experte: { label: 'Expertenbogen', d: 'Gruppenpuzzle: Expertenphase, Stammgruppe und gemeinsames Ergebnis', o: 'q', ic: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M11 4v16M13 8h3.5v3.5H13zM17.5 8H21M13 13h3.5v3.5H13zM5 8h4M5 11h4"/>' },
+  karten: { label: 'Karten zum Ausschneiden', d: 'Eigene Texte als Kärtchen mit Schnittlinien, 4 bis 12 pro Seite: Rollen, Stationen, Impulse, Textpuzzle', o: 'a4', ic: '<rect x="4" y="2.5" width="16" height="19" rx="1"/><path d="M12 2.5v19M4 9h16M4 15h16" stroke-dasharray="1.6 1.4"/>' },
+  lernk: { label: 'Lernkarten', d: 'Begriff vorn, Erklärung hinten; zwei Seiten zum beidseitigen Drucken', o: 'a4', ic: '<rect x="3" y="6" width="13" height="10" rx="1"/><rect x="8" y="9" width="13" height="10" rx="1"/><path d="M11 13h7"/>' },
+  streifen: { label: 'Satzstreifen', d: 'Sätze oder Textteile als Streifen zum Ordnen, auf Wunsch gemischt mit Lösungsbuchstaben', o: 'a4', ic: '<rect x="4" y="2.5" width="16" height="19" rx="1"/><path d="M4 7.5h16M4 12h16M4 16.5h16" stroke-dasharray="1.6 1.4"/><path d="M7 5h6M7 9.7h8M7 14.2h5"/>' },
+  tandem: { label: 'Tandembogen', d: 'Partner A und B fragen sich gegenseitig ab, Lösungen auf der Seite des anderen; in der Mitte falten', o: 'a4', ic: '<rect x="4" y="2.5" width="16" height="19" rx="1"/><path d="M12 2.5v19" stroke-dasharray="1.6 1.4"/><path d="M6.5 7h3.5M14 7h3.5M6.5 11h3.5M14 11h3.5M6.5 15h3.5M14 15h3.5"/>' }
 };
+// A4-Vorlagen: Kartenraster (Spalten × Zeilen)
+const A4_GRID = { '2x2': [2, 2], '2x3': [2, 3], '2x4': [2, 4], '3x3': [3, 3], '3x4': [3, 4] };
+const a4Grid = b => A4_GRID[b.grid] || A4_GRID[b.tpl === 'lernk' ? '2x4' : '2x3'];
+// Schriftgröße so, dass der Text das Kärtchen füllt (Schätzung über die Fläche)
+const a4Fs = (txt, wmm, hmm, max = 24) => { const n = Math.max(12, plainText(txt || '').length); return Math.max(8.5, Math.min(max, Math.sqrt(Math.max(40, wmm * hmm) * 0.62 / (n * 0.0809)))); };
+const A4_ROLES = du => [
+  { h: 'Moderation', t: du ? 'Du achtest darauf, dass alle zu Wort kommen und ihr bei der Aufgabe bleibt.' : 'Sie achten darauf, dass alle zu Wort kommen und die Gruppe bei der Aufgabe bleibt.' },
+  { h: 'Zeit', t: du ? 'Du behältst die Uhr im Blick und sagst Bescheid, wenn die Hälfte der Zeit um ist.' : 'Sie behalten die Uhr im Blick und sagen Bescheid, wenn die Hälfte der Zeit um ist.' },
+  { h: 'Protokoll', t: du ? 'Du hältst die Ergebnisse der Gruppe schriftlich fest.' : 'Sie halten die Ergebnisse der Gruppe schriftlich fest.' },
+  { h: 'Präsentation', t: du ? 'Du stellst die Ergebnisse der Gruppe der Klasse vor.' : 'Sie stellen die Ergebnisse der Gruppe dem Kurs vor.' }];
+const a4Seed = (str, seed) => { let h = 2166136261 ^ (seed || 1); for (const ch of String(str)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
 const A3_COLORS = [['#FFE45C', 'Gelb'], ['#9BE39B', 'Grün'], ['#8EC9FF', 'Blau'], ['#FFB3D1', 'Rosa']];
 const a3Tpl = b => (A3_TPL[b && b.tpl] ? b.tpl : 'placemat');
 const A3_RULES = du => du ? 'Schreibt schweigend. Antwortet auf Beiträge der anderen, stellt Fragen und verbindet Gedanken mit Pfeilen.' : 'Schreiben Sie schweigend. Antworten Sie auf Beiträge der anderen, stellen Sie Fragen und verbinden Sie Gedanken mit Pfeilen.';
@@ -3662,6 +3713,10 @@ function a3Norm(b) {
   if (!Array.isArray(b.aspects) || !b.aspects.length) b.aspects = ['Thema', 'Sprecher oder Erzähler', 'Sprache und Stil', 'Wirkung'];
   if (!Array.isArray(b.experts) || b.experts.length < 2) b.experts = ['Thema A', 'Thema B', 'Thema C', 'Thema D'];
   if (!(+b.n >= 3 && +b.n <= 6)) b.n = 4;
+  if (!Array.isArray(b.cards) || !b.cards.length) b.cards = [{ h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }, { h: '', t: '' }];
+  if (!Array.isArray(b.pairs) || !b.pairs.length) b.pairs = [{ f: '', r: '' }, { f: '', r: '' }, { f: '', r: '' }, { f: '', r: '' }];
+  if (!Array.isArray(b.tq) || !b.tq.length) b.tq = [{ q: '', a: '' }, { q: '', a: '' }, { q: '', a: '' }, { q: '', a: '' }];
+  if (typeof b.strips !== 'string') b.strips = '';
   return b;
 }
 function a3TaskList() {
@@ -3675,9 +3730,9 @@ function a3TaskHTML(b) {
 }
 function a3MatList() { const num = numbering(state.sheet); return state.sheet.blocks.filter(b => b.type === 'material').map(b => { const z = num[b.id] || {}; return [b.id, `${z.tag || 'M' + (z.m || '')} · ${plainText(b.title || '') || 'ohne Titel'}`]; }); }
 function a3Page(b, inner, part) {
-  const m = state.sheet.meta, tpl = a3Tpl(b), q = A3_TPL[tpl].o === 'q';
+  const m = state.sheet.meta, tpl = a3Tpl(b), o = A3_TPL[tpl].o, q = o === 'q', a4 = o === 'a4';
   const foot = esc([m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
-  const pg = el(`<div class="page a3-page a3-${tpl} ${q ? 'quer' : 'hoch'}" data-w="${q ? 420 : 297}" data-h="${q ? 297 : 420}"><div class="a3-in">${inner}</div><div class="a3-foot"><span>${foot}</span><span>${esc(A3_TPL[tpl].label)}${part ? ' · ' + part : ''}</span></div></div>`);
+  const pg = el(`<div class="page a3-page a3-${tpl} ${a4 ? 'a4 hoch' : q ? 'quer' : 'hoch'}" data-w="${a4 ? 210 : q ? 420 : 297}" data-h="${a4 ? 297 : q ? 297 : 420}"><div class="a3-in">${inner}</div><div class="a3-foot"><span>${foot}</span><span>${esc(A3_TPL[tpl].label)}${part ? ' · ' + part : ''}</span></div></div>`);
   setAccent(pg, m); return pg;
 }
 const a3Head = (b, name, extra) => `<div class="a3-h"><div class="a3-ht"><span class="a3-kind">${esc(A3_TPL[a3Tpl(b)].label)}</span><div class="a3-title">${inlineHTML(tfStr(b.title).trim() || state.sheet.meta.title || '')}</div></div>${extra || ''}${name ? `<div class="a3-name"><span>${name}</span><i></i></div>` : ''}</div>`;
@@ -3694,6 +3749,7 @@ function a3Pages(b, mats) {
     const parts = []; for (let i = 0; i < M.lines.length; i += per) parts.push(M.lines.slice(i, i + per));
     return parts.map((L, pi) => a3Page(b, a3Head(b, 'Name', legend) + taskH + `<div class="a3-annot"><div class="a3-margin">Randnotizen</div><div class="a3-text" style="--mfs:${pt}pt;--alh:${lh};--mff:${fm.font === 'sans' ? 'var(--f-sans)' : 'var(--f-text)'}"><div class="a3-mh"><b>${esc(M.tag || 'M')}</b>${inlineHTML(mb.title || '')}${parts.length > 1 ? ` <small>Teil ${pi + 1} von ${parts.length}</small>` : ''}</div>${L.map(l => `<div class="a3-ln"><span class="n">${esc(l.num)}</span><span class="t">${esc(l.t)}</span></div>`).join('')}${pi === parts.length - 1 && mb.source ? `<div class="a3-src">${inlineHTML(mb.source)}</div>` : ''}</div><div class="a3-margin">Randnotizen</div></div>`, parts.length > 1 ? `Seite ${pi + 1} von ${parts.length}` : ''));
   }
+  if (A3_TPL[tpl].o === 'a4') return a4Pages(b);
   if (tpl === 'placemat') {
     const N = Math.min(6, Math.max(3, +b.n || 4)); const IW = 19, IH = 19;
     const at = (deg, hw, hh) => { const r = deg * Math.PI / 180, c = Math.cos(r), sn = Math.sin(r); const k = 1 / Math.max(Math.abs(c), Math.abs(sn)); return [50 + c * hw * k, 50 + sn * hh * k]; };
@@ -3725,6 +3781,62 @@ function a3Pages(b, mats) {
   return [a3Page(b, a3Head(b, 'Name') + `<div class="a3-ex"><div class="a3-ex-l"><div class="a3-step"><b>1</b>Expertenphase</div><div class="a3-name"><span>Mein Thema</span><i></i></div>${taskH}<div class="a3-box grow"><h3>Notizen</h3></div></div>
     <div class="a3-ex-r"><div class="a3-step"><b>2</b>Stammgruppe: Was berichten die anderen?</div><div class="a3-ex-g">${E.map(x => `<div class="a3-box"><h3>${inlineHTML(x)}</h3></div>`).join('')}</div><div class="a3-step"><b>3</b>Gemeinsames Ergebnis</div><div class="a3-box res"></div></div></div>`)];
 }
+function a4Strips(b) {
+  const lines = String(b.strips || '').split('\n').map(x => x.trim()).filter(Boolean);
+  let order = lines.map((t, i) => i); if (b.mix) order = order.map(i => [a4Seed(lines[i] + i, b.seed), i]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+  const letter = i => i < 26 ? String.fromCharCode(65 + i) : 'Z' + (i - 25);
+  return { lines, order, letter, sol: lines.map((_, i) => letter(order.indexOf(i))).join(' – ') };
+}
+function a4Pages(b) {
+  const tpl = a3Tpl(b), m = state.sheet.meta, du = m.anrede === 'du', lehrer = !!sheetView().lehrer;
+  const kind = A3_TPL[tpl].label; const ttl = tfStr(b.title).trim() ? inlineHTML(b.title) : '';
+  const hd = extra => `<div class="a4-h"><span class="a3-kind">${esc(kind)}</span>${ttl ? `<b>${ttl}</b>` : ''}${extra ? `<span class="a4-hx">${extra}</span>` : ''}</div>`;
+  const SC = '<span class="a4-sc" aria-hidden="true">✂</span>';
+  const GW = 194, GH = 297 - 14 - 9 - 8;   // Fläche für das Raster in mm
+  const grid = (cells, c, r) => `<div class="a4-grid" style="--c:${c};--r:${r}">${SC}${cells.join('')}</div>`;
+  if (tpl === 'karten' || tpl === 'lernk') {
+    const [c, r] = a4Grid(b); const per = c * r; const cw = GW / c, ch = GH / r;
+    if (tpl === 'karten') {
+      const L = b.cards.filter(x => tfStr(x.t).trim() || tfStr(x.h).trim()); const all = tfStr(b.cardHead).trim();
+      if (!L.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links Texte für die Karten ein.</div>')];
+      const pages = []; for (let i = 0; i < L.length; i += per) pages.push(L.slice(i, i + per));
+      // eine Schriftgröße pro Seite, damit die Karten einheitlich wirken
+      const fsOf = x => a4Fs(x.t, cw - 10, ch - 10 - (all || tfStr(x.h).trim() || b.cnum ? 9 : 0));
+      return pages.map((P, pi) => { const fs = Math.min(...P.map(fsOf)); return a3Page(b, hd('Entlang der gestrichelten Linien ausschneiden') + grid(Array.from({ length: per }, (_, k) => { const x = P[k]; if (!x) return '<div class="a4c empty"></div>'; const no = pi * per + k + 1; const h = [all, tfStr(x.h).trim()].filter(Boolean);
+        return `<div class="a4c">${h.length || b.cnum ? `<div class="a4c-h">${b.cnum ? `<span class="a4c-no">${no}</span>` : ''}${h.map(inlineHTML).join(' · ')}</div>` : ''}<div class="a4c-t" style="font-size:${fs.toFixed(1)}pt">${parasHTML(x.t || '')}</div></div>`; }), c, r), pages.length > 1 ? `${pi + 1}/${pages.length}` : ''); });
+    }
+    const L = b.pairs.filter(x => tfStr(x.f).trim() || tfStr(x.r).trim());
+    if (!L.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links Begriffe und Erklärungen ein oder übernehmen Sie die Worterklärungen.</div>')];
+    const out = [];
+    for (let i = 0; i < L.length; i += per) {
+      const P = L.slice(i, i + per); const part = L.length > per ? ` · ${i / per + 1}/${Math.ceil(L.length / per)}` : '';
+      out.push(a3Page(b, hd('Vorderseite · beidseitig drucken, an der langen Kante wenden') + grid(Array.from({ length: per }, (_, k) => P[k] ? `<div class="a4c lk-f"><div class="a4c-t" style="font-size:${Math.min(26, a4Fs(P[k].f, cw - 12, ch - 12, 30)).toFixed(1)}pt">${inlineHTML(P[k].f || '')}</div></div>` : '<div class="a4c empty"></div>'), c, r), 'Vorderseite' + part));
+      // Rückseite gespiegelt: in jeder Zeile von rechts nach links, damit beim Wenden jede Erklärung hinter ihrem Begriff liegt
+      const fsR = Math.min(...P.map(x => a4Fs(x.r, cw - 10, ch - 10, 20)));
+      out.push(a3Page(b, hd('Rückseite') + grid(Array.from({ length: per }, (_, k) => { const row = Math.floor(k / c), col = c - 1 - (k % c); const x = P[row * c + col]; return x ? `<div class="a4c lk-r"><div class="a4c-t" style="font-size:${fsR.toFixed(1)}pt">${parasHTML(x.r || '')}</div></div>` : '<div class="a4c empty"></div>'; }), c, r), 'Rückseite' + part));
+    }
+    return out;
+  }
+  if (tpl === 'streifen') {
+    const { lines, order, letter, sol } = a4Strips(b);
+    if (!lines.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links die Sätze oder Textteile ein, je einen pro Zeile, in der richtigen Reihenfolge.</div>')];
+    const maxLen = Math.max(...lines.map(l => plainText(l).length)); const n = lines.length;
+    const stripH = Math.max(12, Math.min(34, GH / Math.min(n, 14))); const fs = Math.max(10, Math.min(17, Math.min(stripH * 0.42 / 0.3528 / 1.25, Math.sqrt((GW - 22) * (stripH - 4) * 0.62 / (Math.max(20, maxLen) * 0.0809)))));
+    const per = Math.max(1, Math.floor(GH / stripH)); const out = [];
+    for (let i = 0; i < n; i += per) {
+      const P = order.slice(i, i + per);
+      out.push(a3Page(b, hd('Entlang der gestrichelten Linien ausschneiden') + `<div class="a4-strips">${SC}${P.map((ix, k) => `<div class="a4s" style="height:${stripH.toFixed(1)}mm;font-size:${fs.toFixed(1)}pt">${b.mix ? `<span class="a4s-l">${letter(i + k)}</span>` : ''}<span class="a4s-t">${inlineHTML(lines[ix])}</span></div>`).join('')}</div>${lehrer && b.mix && i + per >= n ? `<div class="a4-sol">Richtige Reihenfolge: ${esc(sol)}</div>` : ''}`, n > per ? `${i / per + 1}/${Math.ceil(n / per)}` : ''));
+    }
+    return out;
+  }
+  // Tandembogen: A fragt bei ungeraden, B bei geraden Nummern; die Lösung steht jeweils beim anderen
+  const Q = b.tq.filter(x => tfStr(x.q).trim());
+  if (!Q.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links Fragen und Lösungen ein.</div>')];
+  const rule = du ? 'Lies deine Frage vor. Dein Partner antwortet, du prüfst mit der Lösung und hilfst, wenn nötig. Dann ist dein Partner dran.' : 'Lesen Sie Ihre Frage vor. Ihr Partner antwortet, Sie prüfen mit der Lösung und helfen, wenn nötig. Dann ist Ihr Partner dran.';
+  const side = who => Q.map((x, i) => { const mine = (i % 2 === 0) === (who === 'A'); return `<div class="a4t-r${mine ? ' q' : ' a'}"><span class="a4t-n">${i + 1}</span><div>${mine ? `<small>Frage</small>${inlineHTML(x.q)}` : `<small>Lösung zu Frage ${i + 1}</small>${inlineHTML(x.a || '')}`}</div></div>`; }).join('');
+  const fsT = Math.max(9.5, Math.min(14, 14 - Math.max(0, Q.length - 6) * 0.5));
+  return [a3Page(b, hd() + `<div class="a4t-rule">${esc(rule)}</div><div class="a4t" style="font-size:${fsT}pt"><div class="a4t-c"><div class="a4t-h">Partner A</div>${side('A')}</div><div class="a4t-fold"><span>hier falten</span></div><div class="a4t-c"><div class="a4t-h">Partner B</div>${side('B')}</div></div>`)];
+}
 // A3 auf zwei A4-Blätter verteilen: verkleinert, mit 10 mm Überlappung und Schnittlinie
 function a3Split(pg) {
   const w = +pg.dataset.w, h = +pg.dataset.h, q = w > h; const M = 6, O = 10; const win = 210 - 2 * M; const k = (2 * win - O) / (q ? w : h);
@@ -3742,9 +3854,38 @@ function layoutA3() {
   const v = sheetView(); const out = [];
   stABs().forEach(A => {
     const list = A.blocks.filter(b => b.type === 'a3' && blockVisible(b, v)); if (!list.length) return;
-    withAB(A.k, () => { const mats = list.some(b => a3Tpl(b) === 'annot') ? presCollect(true) : {}; list.forEach(b => a3Pages(b, mats).forEach(pg => (state.a3p === 'a4x2' ? a3Split(pg) : [pg]).forEach(p => out.push({ pg: p, over: false })))); });
+    withAB(A.k, () => { const mats = list.some(b => a3Tpl(b) === 'annot') ? presCollect(true) : {}; list.forEach(b => a3Pages(b, mats).forEach(pg => (state.a3p === 'a4x2' && !pg.classList.contains('a4') ? a3Split(pg) : [pg]).forEach(p => out.push({ pg: p, over: false })))); });
   });
   return out;
+}
+function a4Editor(b, tpl, inp, del, add) {
+  const ta = (k, v, ph, rows = 2) => `<textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph || '')}">${esc(tfStr(v))}</textarea>`;
+  const gridSeg = keys => `<div class="f"><span>Karten pro Seite</span><div class="seg sm" role="group" aria-label="Karten pro Seite">${keys.map(k => { const [c, r] = A4_GRID[k]; return `<button type="button" data-act="a4-grid" data-v="${k}" aria-pressed="${a4Grid(b) === A4_GRID[k]}">${c * r} (${c} × ${r})</button>`; }).join('')}</div></div>`;
+  const fill = list => `<div class="f"><span>Füllen mit</span><div class="tf-ed-acts">${list.map(([v, l]) => `<button class="btn sm" type="button" data-act="a4-fill" data-v="${v}">${l}</button>`).join('')}</div></div>`;
+  if (tpl === 'karten') return `${gridSeg(['2x2', '2x3', '2x4', '3x3', '3x4'])}${fText('cardHead', 'Kopf auf jeder Karte (optional)', b.cardHead, 'z. B. Rollenkarte')}<div class="chks">${fCheck('cnum', 'Karten nummerieren', b.cnum)}</div>
+    ${fill([['rollen', 'Gruppenrollen'], ['aufgaben', 'Aufgaben des Blatts'], ['absatz', 'Absätzen eines Materials']])}
+    <div class="f"><span>Karten</span><div class="tf-ed-list a4-ed">${b.cards.map((x, i) => `<div class="a4-ed-r"><span class="a4-ed-n">${i + 1}</span><div class="a4-ed-f">${inp(`cards.${i}.h`, x.h, 'Überschrift (optional)')}${ta(`cards.${i}.t`, x.t, 'Text der Karte')}</div>${del('cards', i, b.cards.length <= 1)}</div>`).join('')}</div><div class="tf-ed-acts">${add('cards', 'Karte', b.cards.length >= 60)}</div></div>`;
+  if (tpl === 'lernk') return `${gridSeg(['2x3', '2x4', '3x4'])}${fill([['glossar', 'Worterklärungen des Blatts']])}
+    <div class="f"><span>Begriff · Erklärung</span><div class="tf-ed-list a4-ed">${b.pairs.map((x, i) => `<div class="a4-ed-r"><span class="a4-ed-n">${i + 1}</span><div class="a4-ed-f">${inp(`pairs.${i}.f`, x.f, 'Vorderseite, z. B. Metapher')}${ta(`pairs.${i}.r`, x.r, 'Rückseite: Erklärung')}</div>${del('pairs', i, b.pairs.length <= 1)}</div>`).join('')}</div><div class="tf-ed-acts">${add('pairs', 'Karte', b.pairs.length >= 60)}</div></div>`;
+  if (tpl === 'streifen') return `${fill([['saetze', 'Sätzen eines Materials']])}<label class="f"><span>Streifen (einer pro Zeile, in der richtigen Reihenfolge)</span>${ta('strips', b.strips, 'Erster Satz …\nZweiter Satz …', 8)}</label>
+    <div class="chks">${fCheck('mix', 'Gemischt drucken, mit Buchstaben', b.mix)}</div>${b.mix ? `<div class="tf-ed-acts"><button class="link" type="button" data-act="a4-remix">Neu mischen</button></div>${a4Strips(b).lines.length ? `<small class="hint">Lösung: ${esc(a4Strips(b).sol)}</small>` : ''}` : ''}`;
+  return `<div class="f"><span>Fragen und Lösungen</span><small class="hint">Partner A fragt bei 1, 3, 5 …, Partner B bei 2, 4, 6 …; die Lösung steht jeweils auf der Seite des anderen.</small><div class="tf-ed-list a4-ed">${b.tq.map((x, i) => `<div class="a4-ed-r"><span class="a4-ed-n">${i % 2 ? 'B' : 'A'}${i + 1}</span><div class="a4-ed-f">${inp(`tq.${i}.q`, x.q, 'Frage')}${inp(`tq.${i}.a`, x.a, 'Lösung')}</div>${del('tq', i, b.tq.length <= 1)}</div>`).join('')}</div><div class="tf-ed-acts">${add('tq', 'Frage', b.tq.length >= 20)}</div></div>`;
+}
+// „Füllen mit …“: Karten aus vorhandenem Material des Blatts
+function a4Fill(b, v) {
+  const sh = state.sheet, du = sh.meta.anrede === 'du'; const mats = sh.blocks.filter(x => x.type === 'material' && plainText(x.text || '').trim());
+  const keep = arr => arr.filter(x => Object.values(x).some(y => tfStr(y).trim()));
+  if (v === 'rollen') { b.cards = [...keep(b.cards), ...A4_ROLES(du)]; if (!tfStr(b.cardHead).trim()) b.cardHead = 'Rollenkarte'; return 'Vier Gruppenrollen angefügt.'; }
+  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
+  if (v === 'absatz' || v === 'saetze') {
+    const mb = mats[0]; if (!mb) return 'Das Blatt hat noch kein Material mit Text.';
+    const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l)).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    if (v === 'absatz') { b.cards = [...keep(b.cards), ...paras.map(t => ({ h: '', t }))]; return paras.length + ' Absätze als Karten angefügt (zum Ordnen: „Karten nummerieren“ aus).'; }
+    const sents = paras.join(' ').split(/(?<=[.!?…][“”"»)]?)\s+(?=[„"»(]?[A-ZÄÖÜ0-9])/).map(x => x.trim()).filter(Boolean).slice(0, 40);
+    b.strips = sents.join('\n'); b.mix = true; return sents.length + ' Sätze als Streifen übernommen und gemischt.';
+  }
+  if (v === 'glossar') { const L = []; sh.blocks.forEach(x => { if (x.type === 'material') (x.glossary || []).forEach(g => { if (tfStr(g.term).trim()) L.push({ f: g.term, r: g.text || '' }); }); }); if (!L.length) return 'Das Blatt hat noch keine Worterklärungen.'; b.pairs = [...keep(b.pairs), ...L]; return L.length + ' Worterklärungen als Lernkarten angefügt.'; }
+  return '';
 }
 function a3Editor(b) {
   a3Norm(b); const tpl = a3Tpl(b); const T = a3TaskList();
@@ -3753,20 +3894,21 @@ function a3Editor(b) {
   const add = (w, l, dis) => `<button class="link" type="button" data-act="a3-add" data-w="${w}"${dis ? ' disabled' : ''}>+ ${l}</button>`;
   const list = (w, label, one, arr, ph, min, max) => `<div class="f"><span>${label}</span><div class="tf-ed-list">${arr.map((x, i) => `<div class="tf-ed-row two">${inp(`${w}.${i}`, x, ph(i))}${del(w, i, arr.length <= min)}</div>`).join('')}</div><div class="tf-ed-acts">${add(w, one, arr.length >= max)}</div></div>`;
   let c = '';
-  const taskF = tpl === 'schreib' ? '' : `<label class="f"><span>Arbeitsauftrag</span><select data-k="taskRef"><option value="">${T.length ? 'Eigener Text …' : 'Eigener Text'}</option>${T.map(([k, l]) => `<option value="${k}"${b.taskRef === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>${b.taskRef ? '' : `<label class="f"><span class="sr">Eigener Arbeitsauftrag</span><textarea data-k="task" rows="2" placeholder="${tpl === 'placemat' ? 'Frage oder Aufgabe für die Mitte' : 'optional'}">${esc(tfStr(b.task))}</textarea></label>`}`;
+  const taskF = tpl === 'schreib' || A3_TPL[tpl].o === 'a4' ? '' : `<label class="f"><span>Arbeitsauftrag</span><select data-k="taskRef"><option value="">${T.length ? 'Eigener Text …' : 'Eigener Text'}</option>${T.map(([k, l]) => `<option value="${k}"${b.taskRef === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>${b.taskRef ? '' : `<label class="f"><span class="sr">Eigener Arbeitsauftrag</span><textarea data-k="task" rows="2" placeholder="${tpl === 'placemat' ? 'Frage oder Aufgabe für die Mitte' : 'optional'}">${esc(tfStr(b.task))}</textarea></label>`}`;
   if (tpl === 'annot') { const ML = a3MatList(); c = `<label class="f"><span>Material</span><select data-k="mat">${ML.length ? ML.map(([k, l]) => `<option value="${k}"${(b.mat || ML[0][0]) === k ? ' selected' : ''}>${esc(l)}</option>`).join('') : '<option value="">Noch kein Material</option>'}</select></label>
       <div class="f"><span>Farblegende</span><div class="tf-ed-list">${b.legend.map((x, i) => `<div class="a3-leg-ed"><b style="background:${A3_COLORS[i][0]}" title="${A3_COLORS[i][1]}"></b>${inp(`legend.${i}`, x, [A3_COLORS[i][1] + ', z. B. Nähe-Signale', A3_COLORS[i][1] + ', z. B. Distanz', A3_COLORS[i][1], A3_COLORS[i][1]][i])}</div>`).join('')}</div><small class="hint">Leere Farben erscheinen mit einer Linie zum Selbst-Eintragen. Zeilen und Zeilennummern sind dieselben wie auf dem Arbeitsblatt, nur mit doppeltem Zeilenabstand.</small></div>`; }
   else if (tpl === 'placemat') c = `<div class="f"><span>Personen</span><div class="seg sm" role="group" aria-label="Personen">${[3, 4, 5, 6].map(n => `<button type="button" data-act="a3-n" data-v="${n}" aria-pressed="${+b.n === n}">${n}</button>`).join('')}</div></div>`;
   else if (tpl === 'schreib') c = `<label class="f"><span>Impuls in der Mitte</span><textarea data-k="impulse" rows="3" placeholder="leer = Zitat des Blatts oder Aufgabe">${esc(tfStr(b.impulse))}</textarea></label>${fText('rules', 'Regeln', b.rules, A3_RULES(state.sheet.meta.anrede === 'du'))}${taskF ? '' : ''}`;
   else if (tpl === 'plakat') c = list('sections', 'Felder', 'Feld', b.sections, i => 'Feld ' + (i + 1), 1, 6);
   else if (tpl === 'vergleich') { const mt = a3MatList(); c = list('cols', 'Spalten', 'Spalte', b.cols, i => mt[i] ? 'leer = ' + mt[i][1] : 'z. B. Text ' + String.fromCharCode(65 + i), 2, 4) + list('aspects', 'Aspekte', 'Aspekt', b.aspects, () => 'z. B. Sprache', 1, 10); }
-  else c = list('experts', 'Expertenthemen', 'Thema', b.experts, i => 'Thema ' + String.fromCharCode(65 + i), 2, 6);
-  return `<div class="f"><span>Vorlage</span><div class="tf-tpls" role="group" aria-label="Vorlage">${Object.entries(A3_TPL).map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}</div></div>
-    <small class="hint">${esc(A3_TPL[tpl].d)}. ${A3_TPL[tpl].o === 'q' ? 'A3 quer' : 'A3 hoch'}.</small>
+  else if (tpl === 'experte') c = list('experts', 'Expertenthemen', 'Thema', b.experts, i => 'Thema ' + String.fromCharCode(65 + i), 2, 6);
+  else c = a4Editor(b, tpl, inp, del, add);
+  return `<div class="f"><span>Vorlage</span><div class="tf-tpls" role="group" aria-label="Vorlage"><small class="a3-grp">A3</small>${Object.entries(A3_TPL).filter(([, x]) => x.o !== 'a4').map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}<small class="a3-grp">A4</small>${Object.entries(A3_TPL).filter(([, x]) => x.o === 'a4').map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}</div></div>
+    <small class="hint">${esc(A3_TPL[tpl].d)}. ${A3_TPL[tpl].o === 'a4' ? 'A4 hoch' : A3_TPL[tpl].o === 'q' ? 'A3 quer' : 'A3 hoch'}.</small>
     ${fText('title', 'Überschrift', b.title, state.sheet.meta.title || 'Überschrift')}
     ${taskF}
     <div class="tf-ed">${c}</div>
-    <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="a3-show">A3-Vorlagen ansehen</button><small class="hint">Steht nicht auf dem Arbeitsblatt; die Vorschau rechts zeigt die Vorlagen in A3.</small></div>`;
+    <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="a3-show">Druckvorlagen ansehen</button><small class="hint">Steht nicht auf dem Arbeitsblatt; die Vorschau rechts zeigt die Druckvorlagen.</small></div>`;
 }
 const presHead = (kick, head, chips) => { if (!head) { head = kick; kick = ''; } return `<div class="pr-top"><div class="pr-hd">${kick ? `<span class="pr-kick">${kick}</span>` : ''}<div class="pr-ttl">${head || ''}</div></div>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`; };
 // Arbeitsauftrag auf Folien: ein Schritt je Satz oder Zeile, Operator mit Anrede fett, Material- und Zeilenangaben hervorgehoben
@@ -3997,7 +4139,7 @@ function openPres(start) {
   const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
-    <span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
+    <span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
     <button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div></div>`);
   setAccent(ov, m); document.body.appendChild(ov);
   const stage = ov.querySelector('.pr-stage'), slide = ov.querySelector('.pr-slide'), $p = q => ov.querySelector(q);
@@ -4044,6 +4186,15 @@ function openPres(start) {
     if (T.slide !== P.i || T.left <= 0) { T.slide = P.i; T.full = T.left = +el2.dataset.min * 60; }
     T.end = Date.now() + T.left * 1000; T.run = true; clearInterval(T.id); T.id = setInterval(tick, 250); tmShow();
   };
+  // ±1 Minute: läuft der Timer, verschiebt sich das Ende; sonst ändert sich die Startzeit dieser Folie (nur für diese Präsentation)
+  const tmAdj = d => {
+    const el2 = slide.querySelector('.pr-timer');
+    if (!T.run && (T.slide !== P.i || T.left <= 0)) { if (!el2) return; T.slide = P.i; T.full = T.left = +el2.dataset.min * 60; }
+    if (!T.run && T.slide !== P.i) return;
+    const dd = Math.max(-T.left + (T.run ? 1 : 60), d * 60); if (!dd) return;
+    T.left += dd; T.full = Math.max(T.left, T.full + dd); if (T.run) T.end += dd * 1000;
+    tmShow(); toast((dd > 0 ? '+' : '−') + Math.abs(Math.round(dd / 60)) + ' Min. · noch ' + fmt(T.left));
+  };
   const tmReset = () => tmWarn('Zurücksetzen bricht ihn ab.', 'Zurücksetzen', tmResetNow);
   const tmResetNow = () => { clearInterval(T.id); T.run = false; const el2 = slide.querySelector('.pr-timer'); T.slide = el2 ? P.i : -1; T.full = T.left = el2 ? +el2.dataset.min * 60 : 0; tmShow(); };
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); phbFit(slide); apply(); };
@@ -4076,7 +4227,7 @@ function openPres(start) {
     if (k === 'ArrowRight' || k === ' ' || k === 'PageDown' || k === 'Enter') { stop(); next(); }
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
-    else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
+    else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === '+' || k === '=') { stop(); tmAdj(1); } else if (k === '-' || k === '_') { stop(); tmAdj(-1); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
     else if (k === 'Escape') { stop(); if (!document.fullscreenElement) close(); }
   };
   ov.addEventListener('click', e => {
@@ -4085,7 +4236,7 @@ function openPres(start) {
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
-    else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset();
+    else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
   document.addEventListener('keydown', key, true); window.addEventListener('resize', scale);
@@ -4120,6 +4271,13 @@ async function tfImage(b) {
   } finally { box.remove(); }
 }
 // PowerPoint-Timer ohne Makros: Animationen (Microsoft-Methode „Bildschirm-Timer“). Der Balken trägt Modus und Minuten im Namen.
+// Platzhalter mit eigener Lage: PptxGenJS übernimmt immer die Lage aus der Masterfolie; „abwPos|x|y|w|h“ im Namen setzt sie hier (Zoll)
+function pptxPos(xml) {
+  return xml.replace(/<p:sp>(?:(?!<\/p:sp>)[\s\S])*?name="abwPos\|([\d.]+)\|([\d.]+)\|([\d.]+)\|([\d.]+)"[\s\S]*?<\/p:sp>/g, (sp, x, y, w, h) => {
+    const E = v => Math.round(parseFloat(v) * 914400);
+    return sp.replace(/name="abwPos[^"]*"/, 'name="Platzhalter"').replace(/<a:off x="\d+" y="\d+"\/>/, `<a:off x="${E(x)}" y="${E(y)}"/>`).replace(/<a:ext cx="\d+" cy="\d+"\/>/, `<a:ext cx="${E(w)}" cy="${E(h)}"/>`);
+  });
+}
 function pptxTiming(xml) {
   const bar = /<p:cNvPr id="(\d+)" name="abwTimerBar-(klick|auto)-(\d+)"/.exec(xml); if (!bar || /<p:timing>/.test(xml)) return xml;
   const barId = bar[1], auto = bar[2] === 'auto', N = +bar[3], ms = N * 60000; const ids = {};
@@ -4148,8 +4306,24 @@ async function exportPPTX() {
     const multi = !!state.sheet.abs; const foot = multi ? stTitle(state.sheet) : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · ');
     const footer = { text: { text: foot, options: { x: X, y: 7.12, w: 9, h: 0.26, fontFace: F, fontSize: 9, color: LIGHT, margin: 0, valign: 'middle' } } };
     const num = { x: W - RM - 0.6, y: 7.12, w: 0.6, h: 0.26, fontFace: F, fontSize: 9, color: LIGHT, align: 'right' };
-    pptx.defineSlideMaster({ title: 'AB', background: { color: 'FFFFFF' }, objects: [{ rect: { x: 0, y: 0, w: 0.13, h: 7.5, fill: { color: ACC } } }, footer], slideNumber: num });
-    pptx.defineSlideMaster({ title: 'ABT', background: { color: TINT }, objects: [{ rect: { x: 0, y: 0, w: 0.33, h: 7.5, fill: { color: ACC } } }, footer], slideNumber: num });
+    // Masterfolien im Design des Blatts: Titel, Abschnitt, Inhalt, Zwei Inhalte, Nur Titel, Leer. Titel und Text stehen in Platzhaltern,
+    // so passen neue Folien in PowerPoint (Start → Neue Folie) zum Rest; Schriften kommen aus dem Design (Theme).
+    pptx.theme = { headFontFace: F, bodyFontFace: F };
+    const bar0 = { rect: { x: 0, y: 0, w: 0.13, h: 7.5, fill: { color: ACC } } }, barT = { rect: { x: 0, y: 0, w: 0.33, h: 7.5, fill: { color: ACC } } };
+    const hdLine = { line: { x: X, y: 1.4, w: CW, h: 0, line: { color: TINT, width: 2.5 } } };
+    const PH = { title: { fontFace: F, fontSize: 29, bold: true, color: INK, valign: 'middle', margin: 0 }, body: { fontFace: F, fontSize: 24, color: INK, valign: 'top', margin: 0 } };
+    // Achtung: PptxGenJS verändert die Platzhalter-Objekte, daher für jede Masterfolie neu anlegen
+    const phT = () => ({ placeholder: { options: { name: 'title', type: 'title', align: 'left', x: X, y: 0.74, w: CW, h: 0.56, ...PH.title }, text: 'Titel hinzufügen' } });
+    const phB = (name, x, w) => ({ placeholder: { options: { name, type: 'body', align: 'left', x, y: Y0, w, h: BH, ...PH.body }, text: 'Text hinzufügen' } });
+    const half = (CW - 0.5) / 2;
+    pptx.defineSlideMaster({ title: 'AB Inhalt', background: { color: 'FFFFFF' }, objects: [bar0, hdLine, footer, phT(), phB('body', X, CW)], slideNumber: num });
+    pptx.defineSlideMaster({ title: 'AB Zwei Inhalte', background: { color: 'FFFFFF' }, objects: [bar0, hdLine, footer, phT(), phB('links', X, half), phB('rechts', X + half + 0.5, half)], slideNumber: num });
+    pptx.defineSlideMaster({ title: 'AB Nur Titel', background: { color: 'FFFFFF' }, objects: [bar0, hdLine, footer, phT()], slideNumber: num });
+    pptx.defineSlideMaster({ title: 'AB Leer', background: { color: 'FFFFFF' }, objects: [bar0, footer], slideNumber: num });
+    pptx.defineSlideMaster({ title: 'AB Titel', background: { color: TINT }, objects: [barT, footer, { placeholder: { options: { name: 'title', type: 'title', align: 'left', x: 1.0, y: 1.8, w: W - 1.0 - RM, h: 1.5, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0 }, text: 'Titel hinzufügen' } }, { placeholder: { options: { name: 'body', type: 'body', align: 'left', x: 1.0, y: 3.35, w: W - 1.0 - RM, h: 0.8, fontFace: F, fontSize: 24, color: GREY, valign: 'top', margin: 0 }, text: 'Untertitel hinzufügen' } }], slideNumber: num });
+    pptx.defineSlideMaster({ title: 'AB Abschnitt', background: { color: TINT }, objects: [barT, footer, { placeholder: { options: { name: 'title', type: 'title', align: 'left', x: 1.0, y: 3.1, w: W - 1.0 - RM, h: 1.2, fontFace: F, fontSize: 40, bold: true, color: INK, valign: 'top', margin: 0 }, text: 'Abschnitt' } }, { placeholder: { options: { name: 'body', type: 'body', align: 'left', x: 1.0, y: 4.3, w: W - 1.0 - RM, h: 0.7, fontFace: F, fontSize: 22, color: GREY, valign: 'top', margin: 0 }, text: 'Thema' } }], slideNumber: num });
+    const phPos = (sl, x, y, w, h) => { const o = sl._slideObjects[sl._slideObjects.length - 1]; if (o && o.options) o.options.objectName = `abwPos|${(+x).toFixed(3)}|${(+y).toFixed(3)}|${(+w).toFixed(3)}|${(+h).toFixed(3)}`; };
+    const hasHead = s => !(s.k === 'quote' || (s.k === 'step' && (s.fol === 'zitat' || (s.fol === 'bild' && !s.b.cap))) || (s.k === 'image' && !s.b.caption));
     // Phasenleiste: Phasen der Stunde, die aktuelle farbig
     const barAdd = (sl, cur, light) => {
       if (!bar.length) return; const n = bar.length, ov = 0.12, h = PS.ih, y = 7.12 - h; const w = (CW + (n - 1) * ov) / n;
@@ -4178,8 +4352,7 @@ async function exportPPTX() {
       if (!title) { title = kick; kick = ''; }
       const cw = chips.length ? pills(sl, chips) + 0.2 : 0;
       if (kick) sl.addText(String(kick).toUpperCase(), { x: X, y: 0.42, w: CW - cw, h: 0.3, fontFace: F, fontSize: 13, bold: true, color: ACC, charSpacing: 1.5, valign: 'bottom', margin: 0 });
-      if (title) sl.addText(String(title), { x: X, y: 0.74, w: CW - cw, h: 0.56, fontFace: F, fontSize: 29, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
-      sl.addShape('line', { x: X, y: 1.4, w: CW, h: 0, line: { color: TINT, width: 2.5 } });
+      if (title) sl.addText(String(title), { placeholder: 'title', align: 'left', x: X, y: 0.74, w: CW - cw, h: 0.56, ...PH.title, fit: 'shrink' }); if (cw) phPos(sl, X, 0.74, CW - cw, 0.56);
     };
     const chipsOf = (it, ph, mn, mode) => [it && SOZ[it.soz] ? { t: SOZ[it.soz].label } : null, ph && !bar.length ? { t: PHASEN[ph].label, fill: PHASEN[ph].c.slice(1).toUpperCase(), color: 'FFFFFF' } : null, mn ? { t: mn + ' Min.', ...(mode && mn <= 180 ? { timer: mn, mode } : {}) } : null].filter(Boolean);
     // Arbeitsauftrag: Schritte als Aufzählung, Operator und Anrede fett in der Akzentfarbe, Material- und Zeilenangaben hervorgehoben
@@ -4199,19 +4372,19 @@ async function exportPPTX() {
       return [eh.length ? `Erwartung${pre}:\n` + eh.map(x => '– ' + plainText(x)).join('\n') : '', tips.length ? `Gestufte Hilfen${pre}:\n` + tips.map((x, j) => `${j + 1}. ${plainText(x)}`).join('\n') : '', rl.length ? `Standards${pre}: ` + rl.map(id => { const x = rlpInfo(id); return x.own ? x.t : x.code; }).join(', ') : ''].filter(Boolean).join('\n\n'); }).filter(Boolean);
     const imgIn = async (sl, data, path, bx, by, bw, bh) => { const [iw, ih] = await imgSize(data || path); const k = Math.min(bw / iw, bh / ih); const w = iw * k, h = ih * k; sl.addImage({ ...(data ? { data } : { path }), x: bx + (bw - w) / 2, y: by + (bh - h) / 2, w, h }); };
     for (const s of S) {
-      const big = s.k === 'title' || s.k === 'abhead'; const sl = pptx.addSlide({ masterName: big ? 'ABT' : 'AB' }); const TX = 1.0, TW2 = W - TX - RM;
+      const big = s.k === 'title' || s.k === 'abhead'; const sl = pptx.addSlide({ masterName: s.k === 'abhead' ? 'AB Abschnitt' : big ? 'AB Titel' : hasHead(s) ? 'AB Nur Titel' : 'AB Leer' }); const TX = 1.0, TW2 = W - TX - RM;
       if (s.k === 'abhead') {
         sl.addText(s.lab, { shape: 'roundRect', rectRadius: 0.08, x: TX, y: 2.1, w: Math.max(1.6, s.lab.length * 0.2 + 0.6), h: 0.8, fontFace: F, fontSize: 28, bold: true, color: 'FFFFFF', fill: { color: ACC }, align: 'center', valign: 'middle', margin: 0 });
-        sl.addText(plainText(s.title || ''), { x: TX, y: 3.1, w: TW2, h: 1.2, fontFace: F, fontSize: 40, bold: true, color: INK, valign: 'top', margin: 0, fit: 'shrink' });
-        if (s.topic) sl.addText(plainText(deQuoteStr(s.topic)), { x: TX, y: 4.3, w: TW2, h: 0.7, fontFace: F, fontSize: 22, color: GREY, margin: 0 });
+        sl.addText(plainText(s.title || ''), { placeholder: 'title', align: 'left', x: TX, y: 3.1, w: TW2, h: 1.2, fontFace: F, fontSize: 40, bold: true, color: INK, valign: 'top', margin: 0, fit: 'shrink' });
+        sl.addText(s.topic ? plainText(deQuoteStr(s.topic)) : ' ', { placeholder: 'body', align: 'left', x: TX, y: 4.3, w: TW2, h: 0.7, fontFace: F, fontSize: 22, color: GREY, margin: 0 });
       } else if (s.k === 'title' && multi) {
-        sl.addText(stTitle(state.sheet), { x: TX, y: 1.7, w: TW2, h: 1.4, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
-        sl.addText(stABs().map((x, i, a) => ({ text: abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''), options: { breakLine: i < a.length - 1 } })), { x: TX, y: 3.25, w: TW2, h: 1.8, fontFace: F, fontSize: 22, color: GREY, valign: 'top', margin: 0 });
+        sl.addText(stTitle(state.sheet), { placeholder: 'title', align: 'left', x: TX, y: 1.7, w: TW2, h: 1.4, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
+        sl.addText(stABs().map((x, i, a) => ({ text: abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''), options: { breakLine: i < a.length - 1 } })), { placeholder: 'body', align: 'left', x: TX, y: 3.25, w: TW2, h: 1.8, fontFace: F, fontSize: 22, color: GREY, valign: 'top', margin: 0 });
         const c = [m.course, m.school].filter(Boolean).join(' · '); if (c) sl.addText(c, { x: TX, y: 5.35, w: TW2, h: 0.5, fontFace: F, fontSize: 16, color: LIGHT, margin: 0 });
       } else if (s.k === 'title') {
         let x = TX; if (m.nr) { sl.addText([{ text: 'AB', options: { fontSize: 13, breakLine: true } }, { text: String(m.nr), options: { fontSize: 34, bold: true } }], { shape: 'roundRect', rectRadius: 0.1, x, y: 1.95, w: 1.2, h: 1.2, fontFace: F, color: 'FFFFFF', fill: { color: ACC }, align: 'center', valign: 'middle', margin: 0 }); x += 1.55; }
-        sl.addText(plainText(m.title || 'Arbeitsblatt'), { x, y: 1.8, w: W - RM - x, h: 1.5, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' });
-        if (m.topic) sl.addText(plainText(deQuoteStr(m.topic)), { x, y: 3.35, w: W - RM - x, h: 0.8, fontFace: F, fontSize: 24, color: GREY, valign: 'top', margin: 0 });
+        sl.addText(plainText(m.title || 'Arbeitsblatt'), { placeholder: 'title', align: 'left', x, y: 1.8, w: W - RM - x, h: 1.5, fontFace: F, fontSize: 44, bold: true, color: INK, valign: 'middle', margin: 0, fit: 'shrink' }); phPos(sl, x, 1.8, W - RM - x, 1.5);
+        sl.addText(m.topic ? plainText(deQuoteStr(m.topic)) : ' ', { placeholder: 'body', align: 'left', x, y: 3.35, w: W - RM - x, h: 0.8, fontFace: F, fontSize: 24, color: GREY, valign: 'top', margin: 0 }); phPos(sl, x, 3.35, W - RM - x, 0.8);
         const c = [m.course, m.school].filter(Boolean).join(' · '); if (c) sl.addText(c, { x, y: 5.35, w: W - RM - x, h: 0.5, fontFace: F, fontSize: 16, color: LIGHT, margin: 0 });
       } else if (s.k === 'mat') {
         head(sl, s.tag, plainText(matTitle(s.b) || '') + (s.of > 1 ? `  (${s.part}/${s.of})` : ''));
@@ -4330,7 +4503,7 @@ async function exportPPTX() {
     let blob = await pptx.write({ outputType: 'blob' });
     try {
       await loadScript(LIBS.zip); const z = await window.JSZip.loadAsync(blob); let fixed = 0;
-      for (const n of Object.keys(z.files).filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f))) { const x = await z.file(n).async('string'); const y = pptxTiming(x.replace(/(<\/a:r>)<a:pPr\b[^>]*?(?:\/>|>[\s\S]*?<\/a:pPr>)/g, '$1')); if (y !== x) { z.file(n, y); fixed++; } }
+      for (const n of Object.keys(z.files).filter(f => /^ppt\/slides\/slide\d+\.xml$/.test(f))) { const x = await z.file(n).async('string'); const y = pptxPos(pptxTiming(x.replace(/(<\/a:r>)<a:pPr\b[^>]*?(?:\/>|>[\s\S]*?<\/a:pPr>)/g, '$1'))); if (y !== x) { z.file(n, y); fixed++; } }
       if (fixed) blob = await z.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', compression: 'DEFLATE' });
     } catch (err) { console.warn('PowerPoint-Nachbearbeitung übersprungen', err); }
     overlay(''); await deliver((state.sheet.abs ? 'Stunde_' + slug(stTitle(state.sheet)) : fileBase()) + '_Praesentation.pptx', blob);
@@ -5059,7 +5232,7 @@ function insRow(i) {
 function adderHTML(A = 'blatt') {
   const tile = t => `<button type="button" class="add-b" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)}"><i class="add-ic">${typeIcon(t.ic)}</i><span class="add-tx"><b>${t.label}</b></span></button>`;
   const L = areaPalette(A);
-  if (A !== 'blatt') return `<div class="adder"><span class="lbl">Hinzufügen</span><div class="adder-grid">${L.map(tile).join('')}${A === 'extras' ? `<button type="button" class="add-b" data-act="st-new" data-v="exit" title="Exit-Ticket: Unterrichtsschritt am Ende der Stunde mit Fragen zum Ausdrucken"><i class="add-ic">${typeIcon('step')}</i><span class="add-tx"><b>Exit-Ticket</b></span></button>` : ''}</div></div>`;
+  if (A !== 'blatt') return `<div class="adder"><span class="lbl">Hinzufügen</span><div class="adder-grid">${L.map(tile).join('')}${A === 'extras' ? `<button type="button" class="add-b" data-act="a4-new" data-v="karten" title="Eigene Texte als Kärtchen mit Schnittlinien"><i class="add-ic">${typeIcon('a3')}</i><span class="add-tx"><b>Karten zum Ausschneiden</b></span></button><button type="button" class="add-b" data-act="st-new" data-v="exit" title="Exit-Ticket: Unterrichtsschritt am Ende der Stunde mit Fragen zum Ausdrucken"><i class="add-ic">${typeIcon('step')}</i><span class="add-tx"><b>Exit-Ticket</b></span></button>` : ''}</div></div>`;
   return `<div class="adder"><span class="lbl">Baustein hinzufügen</span>${['Material', 'Aufgaben und Übungen', 'Gestaltung'].map((g, gi) => { const T = L.filter(t => PAL_GRP(t) === gi); return T.length ? `<div class="adder-g"><small>${g}</small><div class="adder-grid">${T.map(tile).join('')}</div></div>` : ''; }).join('')}
     ${(() => { const open = state.fmtOpen.has('snips'); const n = allSnips().length; return `<button type="button" class="link snips-h" data-act="sub-toggle" data-key="snips" aria-expanded="${open}">${open ? '▾' : '▸'} Aus der Sammlung · ${n}</button>`; })()}
     <div class="snips"${state.fmtOpen.has('snips') ? '' : ' hidden'}>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
@@ -7306,6 +7479,7 @@ function onClick(e) {
     case 'area-set': setArea(a.dataset.v); return;
     case 'area-go': areaGo(a.dataset.area, a.dataset.bid, a.dataset.abk != null ? +a.dataset.abk : NaN); return;
     case 'st-new': stepNew(a.dataset.v); return;
+    case 'a4-new': { const nb = paletteBlock('a3', 'a3'); nb.tpl = A3_TPL[a.dataset.v] ? a.dataset.v : 'karten'; a3Norm(nb); snapshot(); state.sheet.blocks.push(nb); state.sel = nb.id; if (oneCard()) state.closed = new Set(cardIds().filter(i => i !== nb.id)); else state.closed.delete(nb.id); changed(true); setOut('a3'); return; }
     case 'pres-go': openPres(0); return;
     case 'pres-pptx': exportPPTX(); return;
     case 'vp-docx-ed': exportVP(); return;
@@ -7391,7 +7565,10 @@ function onClick(e) {
     case 'tm-set': if (b) { b.timer = a.dataset.v || ''; if (!b.timer) delete b.timer; changed(true); } return;
     case 'grp-add': { const m = state.sheet.meta; const L = grpList(m); if (L.length >= GRP_KEYS.length) return; m.groups = L.concat([{ k: GRP_KEYS[L.length], name: '', add: '' }]); changed(true); const inp = $(`#editor [data-k="groups.${L.length}.name"]`); if (inp) inp.focus(); return; }
     case 'grp-del': grpRemove(+a.dataset.i); return;
-    case 'a3-add': { a3Norm(b); const w = a.dataset.w; const lim = { sections: 6, cols: 4, aspects: 10, experts: 6 }[w] || 8; if (Array.isArray(b[w]) && b[w].length < lim) b[w].push(''); changed(true); return; }
+    case 'a3-add': { a3Norm(b); const w = a.dataset.w; const lim = { sections: 6, cols: 4, aspects: 10, experts: 6, cards: 60, pairs: 60, tq: 20 }[w] || 8; const proto = { cards: { h: '', t: '' }, pairs: { f: '', r: '' }, tq: { q: '', a: '' } }[w]; if (Array.isArray(b[w]) && b[w].length < lim) b[w].push(proto ? { ...proto } : ''); changed(true); return; }
+    case 'a4-grid': if (A4_GRID[a.dataset.v]) { b.grid = a.dataset.v; changed(true); } return;
+    case 'a4-remix': b.seed = ((b.seed || 1) % 997) + 1; changed(true); return;
+    case 'a4-fill': { a3Norm(b); const msg = a4Fill(b, a.dataset.v); changed(true); if (msg) toast(msg); return; }
     case 'a3-del': { a3Norm(b); const w = a.dataset.w; if (Array.isArray(b[w])) b[w].splice(+a.dataset.i, 1); a3Norm(b); changed(true); return; }
     case 'tf-tpl': { const nx = a.dataset.v; if (!TF_TPL[nx] || nx === tfTpl(b)) return; tfConvert(b, nx); b.tpl = nx; changed(true); return; }
     case 'tf-on': b.onSheet = a.dataset.v; changed(true); return;
