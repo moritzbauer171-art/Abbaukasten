@@ -1540,13 +1540,16 @@ body{transition:background-color .3s,border-color .25s}
 .qz-ok-b{flex:0 0 auto;width:28px;height:28px;border-radius:7px;border:1.5px solid var(--line);background:var(--field,#fff);font:inherit;font-weight:800;font-size:12px;color:var(--muted);cursor:pointer}
 .qz-ok-b[aria-pressed="true"]{background:#2E7D4F;border-color:#2E7D4F;color:#fff}
 @media (max-width:520px){.qz-ed-o{grid-template-columns:1fr}}
-.pr-timer b{font-weight:800}.pr-timer small{font-size:17px;font-weight:700;opacity:.85;margin-left:2px}
+.pr-chip.pr-timer{font-size:46px;padding:12px 32px;gap:16px;border-radius:999px;align-self:flex-end}.pr-chips:has(.pr-timer){align-items:flex-end}
+.pr-timer b{font-weight:800;letter-spacing:.01em}.pr-timer small{font-size:30px;font-weight:700;opacity:.9;margin-left:4px}
+.pr-chip.pr-timer::before{width:38px;height:38px;border-width:5px;background:linear-gradient(currentColor,currentColor) 50% 22%/5px 12px no-repeat}
+.pr-tbar{height:16px}
 .pr-timer.low,.pr-timer.run.low{background:#E07A00;color:#fff;animation:pr-low 1.6s ease-in-out infinite}
 @keyframes pr-low{50%{box-shadow:0 0 0 10px rgba(224,122,0,.28)}}
 .pr-tbar.low{background:#FCE3C4}.pr-tbar.low i{background:#E07A00;opacity:1}
 .pr-slide.t-low::after{content:"";position:absolute;inset:0;border:9px solid rgba(224,122,0,.55);pointer-events:none;z-index:3}
 .pr-tl.low{color:#FFB347}
-.pr-clock{font:700 14px/1 var(--f-ui);color:#C9CED8;font-variant-numeric:tabular-nums;margin-right:6px}.pr-clock:empty{display:none}
+.pr-clock{font:800 18px/1 var(--f-ui);color:#C9CED8;font-variant-numeric:tabular-nums;margin-right:6px}.pr-clock:empty{display:none}
 .pr-tbar{position:absolute;left:16px;right:0;top:0;height:10px;background:var(--acc-tint);z-index:2}
 .pr-tbar i{display:block;height:100%;width:100%;background:var(--acc);opacity:.35;transition:width .3s linear}
 .pr-tbar.run i{opacity:1}
@@ -1589,7 +1592,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-warn-a [data-w="keep"]{background:var(--acc,#2B4BA0);border-color:transparent;color:#fff}
 .pr-warn-a button:focus-visible{outline:3px solid #E0A526;outline-offset:2px}
 .pr-phs{margin:6px 0 4px}
-.pr-tm{display:inline-flex;align-items:center;gap:6px}.pr-tl{font:700 14px/1 var(--f-ui);color:#F5D46B}
+.pr-tm{display:inline-flex;align-items:center;gap:6px}.pr-tl{font:800 18px/1 var(--f-ui);color:#F5D46B}
 .pr-bar .sep{width:1px;height:22px;background:#4A5160;margin:0 4px}
 .tf-beam{position:fixed;inset:0;z-index:95;background:#fff;display:flex;flex-direction:column;outline:none}
 .tf-bm-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;padding:4vh 5vw;overflow:hidden;cursor:pointer}
@@ -4686,8 +4689,10 @@ async function exportPPTX() {
     const pills = (sl, chips) => {
       let x = W - RM;
       [...chips].reverse().forEach(c => {
-        const pill = (t, o = {}) => ({ shape: 'roundRect', rectRadius: 0.19, x, y: 0.86, w, h: 0.38, fill: { color: c.fill || TINT }, fontFace: F, fontSize: 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0, ...o });
-        const w = (c.timer ? ('noch ' + c.timer + ' Min.').length : c.t.length) * 0.105 + 0.46; x -= w;
+        // Timer groß: 22 pt statt 13 pt, unten bündig mit den übrigen Pillen
+        const big = !!c.timer; const ph = big ? 0.64 : 0.38;
+        const pill = (t, o = {}) => ({ shape: 'roundRect', rectRadius: ph / 2, x, y: 1.24 - ph, w, h: ph, fill: { color: c.fill || TINT }, fontFace: F, fontSize: big ? 22 : 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0, ...o });
+        const w = big ? ('noch ' + c.timer + ' Min.').length * 0.175 + 0.6 : c.t.length * 0.105 + 0.46; x -= w;
         if (c.timer) {
           // Stapel: unten „Zeit um“, darüber noch 1 … n Min.; jede Minute verschwindet die oberste Angabe (Animation, siehe pptxTiming)
           sl.addText('Zeit um', pill('Zeit um', { fill: { color: 'B3261E' }, color: 'FFFFFF', objectName: 'abwTimerEnd' }));
