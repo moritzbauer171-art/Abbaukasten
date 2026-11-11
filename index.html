@@ -4312,7 +4312,7 @@ function presSlideHTML(s, bar) {
   const m = state.sheet.meta; const acc = pageAcc(m).c; const barOn = !!(bar && bar.length);
   const sozChip = it => (it && SOZ[it.soz] ? `<span class="pr-chip"><img src="${sozURI(it.soz, acc, pageAcc(m).t || '#fff')}" alt="">${SOZ[it.soz].label}</span>` : '');
   const phChip = ph => (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
-  const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn}:00</span>` : `<span class="pr-chip">${mn} Min.</span>`);
+  const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn} Min.</span>` : `<span class="pr-chip">${mn} Min.</span>`);
   switch (s.k) {
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
@@ -4497,7 +4497,7 @@ function openPres(start) {
   const slideBid = sl => (sl.k === 'step' ? sl.b && sl.b.id : sl.k === 'tasks' ? ((sl.items || []).find(x => (x.bmin || 0) === tsMin(sl)) || {}).bid : null);
   const clockEnd = sl => { if (!PLAN) return null; const n = nowMin(); if (n < PLAN.s0 - 10 || n > PLAN.end) return null; const r = planEnd(PLAN, slideBid(sl), n); if (!r) return null; return Date.now() + Math.max(1, r.end - n) * 60000; };
   const hhmm = ms => { const d = new Date(ms); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
-  const fmt = sec => `${Math.floor(sec / 60)}:${String(Math.max(0, sec) % 60).padStart(2, '0')}`;
+  const fmt = sec => (sec > 0 ? Math.ceil(sec / 60) + ' Min.' : '0 Min.');
   // Warnung, bevor ein laufender Timer vorzeitig endet (Zurücksetzen, Beenden, anderer Timer); Blättern hält ihn nicht an
   let W = null;
   const warnClose = () => { if (!W) return; W.el.remove(); W = null; ov.focus(); };
@@ -4505,7 +4505,7 @@ function openPres(start) {
     if (!T.run || T.left <= 0) { onOk(); return; }
     warnClose();
     const other = T.slide !== P.i ? ` auf Folie ${T.slide + 1}` : '';
-    const w = el(`<div class="pr-warn" role="alertdialog" aria-modal="true" aria-labelledby="pr-warn-t" aria-describedby="pr-warn-d"><div class="pr-warn-c"><b id="pr-warn-t">Der Timer${other} läuft noch</b><p id="pr-warn-d">Noch <span class="pr-warn-l">${fmt(T.left)}</span> Min. ${msg}</p><div class="pr-warn-a"><button type="button" data-w="ok">${okLabel}</button><button type="button" data-w="keep">Weiterlaufen lassen</button></div></div></div>`);
+    const w = el(`<div class="pr-warn" role="alertdialog" aria-modal="true" aria-labelledby="pr-warn-t" aria-describedby="pr-warn-d"><div class="pr-warn-c"><b id="pr-warn-t">Der Timer${other} läuft noch</b><p id="pr-warn-d">Noch <span class="pr-warn-l">${fmt(T.left)}</span> ${msg}</p><div class="pr-warn-a"><button type="button" data-w="ok">${okLabel}</button><button type="button" data-w="keep">Weiterlaufen lassen</button></div></div></div>`);
     ov.appendChild(w); W = { el: w, ok: onOk }; w.querySelector('[data-w="keep"]').focus();
   };
   const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = `translate(-50%,-50%) scale(${k})`; };
@@ -4522,7 +4522,7 @@ function openPres(start) {
     const low = mine && T.full > 0 && T.left > 0 && T.left <= T.full * 0.3;
     if (el2) { let sec = mine ? T.left : +el2.dataset.min * 60; let bis = '';
       if (mine && T.run) bis = hhmm(T.end); else if (!mine || (T.left <= 0 && !T.full)) { const ce = clockEnd(S[P.i]); if (ce) { sec = Math.round((ce - Date.now()) / 1000); bis = hhmm(ce); } }
-      el2.innerHTML = `<b>${fmt(sec)}</b>${bis ? `<small>bis ${bis}</small>` : ''}`; el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); el2.classList.toggle('low', low); }
+      el2.innerHTML = `<b>${mine && T.full > 0 && T.left <= 0 && !T.run ? 'Zeit um' : fmt(sec)}</b>${bis ? `<small>bis ${bis}</small>` : ''}`; el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); el2.classList.toggle('low', low); }
     const tb = slide.querySelector('.pr-tbar'); if (tb) { const f = mine && T.full ? T.left / T.full : 1; tb.firstChild.style.width = (f * 100).toFixed(2) + '%'; tb.classList.toggle('end', mine && T.left <= 0 && T.full > 0); tb.classList.toggle('run', mine && T.run); tb.classList.toggle('low', low); }
     slide.classList.toggle('t-low', low && T.run);
     { const c = $p('.pr-clock'); if (c) c.textContent = PLAN ? `${hmFmt(nowMin())} · Ende ${hmFmt(PLAN.end)}` : ''; }
