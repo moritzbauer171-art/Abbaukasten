@@ -238,6 +238,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .cw-h:focus-visible::before{box-shadow:0 0 0 2px var(--field),0 0 0 4px var(--tinte-soft)}
 body.cw-dragging,body.cw-dragging *{cursor:col-resize!important}
 .ck-chips{display:flex;flex-wrap:wrap;gap:6px}
+.res-badge{flex:0 0 auto;margin-left:6px;padding:2px 8px;border:1.5px dashed #D97706;border-radius:999px;background:#FEF3C7;color:#92400E;font-size:11.5px;font-weight:700;white-space:nowrap}
 .ck-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:var(--field);border-radius:14px;padding:3px 10px 3px 7px;font-size:12.5px;cursor:pointer;color:var(--ink)}
 .ck-chip .cbx{width:12px;height:12px;border:1.5px solid currentColor;border-radius:3px;position:relative;flex:0 0 auto}
 .ck-chip[aria-pressed="true"]{border-color:var(--tinte);background:var(--tinte-soft);color:var(--tinte)}
@@ -1464,6 +1465,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-chip{display:inline-flex;align-items:center;gap:10px;background:var(--acc-tint);color:var(--acc);border-radius:999px;padding:7px 20px;font-size:22px;font-weight:700;white-space:nowrap}
 .pr-chip img{height:26px}
 .pr-chip.ph{background:var(--phc);color:#fff}
+.pr-chip.res{background:#FEF3C7;color:#92400E;border:2px dashed #D97706}
 .pr-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 .pr-fit{width:100%}
 .pr-foot{position:absolute;left:104px;right:84px;bottom:16px;display:flex;justify-content:space-between;font-size:16px;color:#8A909C}
@@ -3077,14 +3079,15 @@ const PHASEN = {
 };
 const itMin = it => { const n = parseInt(String((it && it.min) || '').replace(/\D/g, ''), 10); return n > 0 && n < 1000 ? n : 0; };
 const itPh = it => (it && PHASEN[it.ph] ? it.ph : '');
+const isRes = b => !!(b && b.res);
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
   const rows = []; let t = 0; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '' }); return; } if (b.type !== 'tasks') return; if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') return; if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
     const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
     // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
     const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });
-    rows.push({ no: n0, it: b, b, ph, min: itMin(b), g: gs.length === 1 ? gs[0] : '', split: Object.keys(cnt).length > 1 ? cnt : null }); });
+    rows.push({ no: n0, it: b, b, ph, min: itMin(b), g: isRes(b) ? '' : gs.length === 1 ? gs[0] : '', res: isRes(b), split: Object.keys(cnt).length > 1 ? cnt : null }); });
   // Aufeinanderfolgende Aufgaben verschiedener Gruppen laufen parallel: gezählt wird nur die längste Gruppe
   for (let i = 0; i < rows.length;) {
     if (!rows[i].g) { i++; continue; }
@@ -3093,9 +3096,10 @@ function ablaufOf(sh) {
     i = j;
   }
   const by = {}; Object.keys(PHASEN).forEach(k => (by[k] = 0)); let open = 0, none = 0;
-  rows.forEach(r => { const mn = r.par ? 0 : r.min; if (r.split) { const n = Object.values(r.split).reduce((a, x) => a + x, 0); Object.entries(r.split).forEach(([k, x]) => { if (k) by[k] += mn * x / n; else open += mn * x / n; }); } else if (r.ph) by[r.ph] += mn; else open += mn; if (!r.min && r.ph !== 'ha') none++; });
-  const total = rows.reduce((a, r) => a + (r.ph === 'ha' || r.par ? 0 : r.min), 0);
-  return { rows, by, open, none, total, any: rows.some(r => r.ph || r.min) };
+  rows.forEach(r => { if (r.res) return; const mn = r.par ? 0 : r.min; if (r.split) { const n = Object.values(r.split).reduce((a, x) => a + x, 0); Object.entries(r.split).forEach(([k, x]) => { if (k) by[k] += mn * x / n; else open += mn * x / n; }); } else if (r.ph) by[r.ph] += mn; else open += mn; if (!r.min && r.ph !== 'ha') none++; });
+  const total = rows.reduce((a, r) => a + (r.ph === 'ha' || r.par || r.res ? 0 : r.min), 0);
+  const res = rows.reduce((a, r) => a + (r.res ? r.min : 0), 0);
+  return { rows, by, open, none, total, res, any: rows.some(r => !r.res && (r.ph || r.min)) };
 }
 function ablaufHTML() {
   const sh = state.sheet, m = sh.meta; const A = ablaufOf({ meta: m, blocks: stBlocks() }); const L0 = Number(m.lesson) || 45;
@@ -3110,11 +3114,11 @@ function ablaufHTML() {
   return `<div class="f abl-sum"><span>Stundenablauf</span>
     <div class="abl-bar" style="--fill:${Math.min(100, L / base * 100).toFixed(2)}%">${segs}</div>
     <div class="abl-leg">${parts.join('')}</div>
-    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[...new Set([45, 60, 75, 90, 135, L])].sort((a, b) => a - b).map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Baustein' : 'Bausteine'} ohne Zeit</small>` : ''}</div></div>`;
+    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[...new Set([45, 60, 75, 90, 135, L])].sort((a, b) => a - b).map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.res ? `<small>+ Reserve ${A.res} Min. (nicht mitgezählt)</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Baustein' : 'Bausteine'} ohne Zeit</small>` : ''}</div></div>`;
 }
 // Zeit gilt für den ganzen Aufgaben-Baustein (b.min); Timer beim Präsentieren: b.timer = '' | 'klick' | 'auto'
 const TIMER_OPTS = [['', 'aus'], ['klick', 'Start per Klick'], ['auto', 'startet mit der Folie']];
-const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><label class="f narrow" title="Feste Uhrzeit, zu der dieser Teil spätestens fertig sein muss (optional)"><span>Fertig bis</span><input type="time" data-k="until" value="${esc(hmOk(b.until))}"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div></div>`;
+const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><label class="f narrow" title="Feste Uhrzeit, zu der dieser Teil spätestens fertig sein muss (optional)"><span>Fertig bis</span><input type="time" data-k="until" value="${esc(hmOk(b.until))}"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div><div class="f"><span>Reserve</span><button type="button" class="ck-chip res-chip${isRes(b) ? ' used' : ''}" data-act="res-tg" aria-pressed="${isRes(b)}" title="Reserve für den Fall, dass Zeit übrig bleibt: steht in der Präsentation, aber nicht in der Phasenleiste unten, zählt nicht zur Stundenzeit und steht im Verlaufsplan am Ende"><span class="cbx" aria-hidden="true"></span>Als Reserve</button></div></div>`;
 // Ältere Blätter: Minuten je Aufgabe werden einmalig zur Zeit des Bausteins (parallele Gruppen zählen einmal, Hausaufgaben nur, wenn alles Hausaufgabe ist)
 function minMigrate(blocks) {
   (blocks || []).forEach(b => {
@@ -3183,6 +3187,7 @@ const STEP_TPL = {
   transfer: { g: 'end', label: 'Transferfrage', ph: 'trans', soz: 'pa', min: 8, fol: 'text', head: 'Arbeitsauftrag', text: '{Übertrage|Übertragen Sie} {deine|Ihre} Ergebnisse auf …', note: '', eh: '' },
   blitz: { g: 'end', label: 'Blitzlicht', ph: 'refl', soz: 'pl', min: 5, fol: 'text', head: 'Blitzlicht', text: 'Was {nimmst du|nehmen Sie} aus der heutigen Stunde mit? {Antworte|Antworten Sie} in einem Satz.', note: 'Reihum, ohne Kommentar.', eh: 'benennen einen Lerngewinn' },
   exit: { g: 'end', label: 'Exit-Ticket', ph: 'refl', soz: 'ea', min: 5, fol: 'text', head: 'Exit-Ticket', text: '{Beantworte|Beantworten Sie} die Fragen auf {deinem|Ihrem} Exit-Ticket und {gib|geben Sie} es beim Hinausgehen ab.', note: 'Exit-Tickets austeilen und einsammeln; Auswertung für die nächste Stunde.', eh: '', exit: true, qs: 'Was habe ich heute gelernt?\nWas ist mir noch unklar?\nWelche Frage nehme ich mit in die nächste Stunde?' },
+  reserve: { g: 'end', label: 'Reserve', res: true, ph: '', soz: 'ea', min: 10, fol: 'text', head: 'Zusatzaufgabe', text: '{Bearbeite|Bearbeiten Sie} …', note: 'Nur, wenn Zeit bleibt. Zählt nicht zur Stundenzeit und steht nicht in der Phasenleiste.', eh: '' },
   ausblick: { g: 'end', label: 'Ausblick', ph: 'refl', soz: 'pl', min: 3, fol: 'text', head: 'Ausblick', text: 'In der nächsten Stunde …', note: '', eh: '' },
   frei: { g: '', label: 'Eigener Schritt', ph: '', soz: '', min: '', fol: 'text', head: '', text: '', note: '', eh: '' }
 };
@@ -3246,7 +3251,7 @@ function stepEditor(b) {
 function stepTpl(b, k, idx, noSnap) {
   const x = STEP_TPL[k]; if (!x || !b) return; const blocks = state.sheet.blocks;
   if (!noSnap) snapshot(); const du = state.sheet.meta.anrede === 'du'; const first = !b.tpl; const had = !first && (tfStr(b.text).trim() || tfStr(b.note).trim());
-  Object.assign(b, { tpl: k, title: k === 'frei' ? '' : x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: x.fol === 'quiz' ? '' : duSie(x.text, du), note: x.note, eh: x.eh, exit: !!x.exit, ...(x.qs && !tfStr(b.qs).trim() ? { qs: x.qs } : {}) });
+  Object.assign(b, { tpl: k, title: k === 'frei' ? '' : x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: x.fol === 'quiz' ? '' : duSie(x.text, du), note: x.note, eh: x.eh, exit: !!x.exit, ...(x.qs && !tfStr(b.qs).trim() ? { qs: x.qs } : {}), ...(x.res ? { res: true } : {}) });
   if (x.fol === 'quiz') qzNorm(b);
   // Frisch unten angefügt und als Einstieg gewählt: an den Anfang des Blatts
   let moved = ''; const fc = blocks.findIndex(z => z.type === 'material' || z.type === 'tasks'); let lt = -1; blocks.forEach((z, i) => { if (z.type === 'tasks') lt = i; });
@@ -3481,7 +3486,7 @@ const areaPalette = A => paletteFor().filter(t => (A === 'tafel' ? t.type === 't
 function cardHTML(b, i, num, opt = {}) {
   const blocks = state.sheet.blocks; const closed = state.closed.has(b.id); const gOn = state.sheet.meta.groupsOn;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"${opt.drag === false ? '' : ' draggable="true" title="Zum Umsortieren ziehen"'}><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">${esc(grpName(state.sheet.meta, b.group))}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>${isBasis() ? '' : presBtn(b)}
+        <div class="card-h" data-act="toggle"${opt.drag === false ? '' : ' draggable="true" title="Zum Umsortieren ziehen"'}><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">${esc(grpName(state.sheet.meta, b.group))}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>${isRes(b) ? '<span class="res-badge" title="Reserve: nur, wenn Zeit bleibt">Reserve</span>' : ''}${isBasis() ? '' : presBtn(b)}
           <button class="ib" type="button" data-act="up" title="${opt.drag === false ? 'Früher in der Stunde' : 'Nach oben'}"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="${opt.drag === false ? 'Später in der Stunde' : 'Nach unten'}"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
@@ -3522,7 +3527,7 @@ function flowHTML(num) {
       if (b.type === 'step' && x.k === act) { h += cardHTML(b, P.blocks.indexOf(b), num, { drag: false }); return; }
       const ar = blockArea(b); const phs = b.type === 'tasks' ? [...new Set((b.items || []).map(it => itPh(it)).filter(Boolean))] : b.type === 'step' && itPh(b) ? [itPh(b)] : b.type === 'tafel' ? ['sich'] : [];
       let sum = ''; try { sum = b.type === 'step' ? stepLabel(b) : summary(b, numX); } catch {}
-      h += `<div class="flow-row" data-ar="${ar}"><i class="flow-ic">${typeIcon(iconKey(b))}</i><span class="flow-t"><b>${esc(typeLabel(b))}</b>${sum ? ` <span>${esc(sum)}</span>` : ''}</span><span class="flow-m">${phs.map(p => `<span class="flow-ph" style="--phc:${PHASEN[p].c}" title="${PHASEN[p].label}">${PHASEN[p].label}</span>`).join('')}${itMin(b) ? `<em>${itMin(b)} Min.</em>` : ''}</span><button class="link" type="button" data-act="area-go" data-area="${ar}" data-bid="${b.id}" data-abk="${x.k}">${ar === 'stunde' ? 'bearbeiten' : AREA_NAME[ar]} →</button></div>`;
+      h += `<div class="flow-row" data-ar="${ar}"><i class="flow-ic">${typeIcon(iconKey(b))}</i><span class="flow-t"><b>${esc(typeLabel(b))}</b>${sum ? ` <span>${esc(sum)}</span>` : ''}</span><span class="flow-m">${isRes(b) ? '<span class="res-badge">Reserve</span>' : ''}${phs.map(p => `<span class="flow-ph" style="--phc:${PHASEN[p].c}" title="${PHASEN[p].label}">${PHASEN[p].label}</span>`).join('')}${itMin(b) ? `<em>${itMin(b)} Min.</em>` : ''}</span><button class="link" type="button" data-act="area-go" data-area="${ar}" data-bid="${b.id}" data-abk="${x.k}">${ar === 'stunde' ? 'bearbeiten' : AREA_NAME[ar]} →</button></div>`;
     });
   });
   return `<div class="flow">${h}</div>`;
@@ -3538,6 +3543,7 @@ const SICH_AFTER = ['era', 'vert', 'trans'];
 const sichAutoOn = () => !state.prefs || state.prefs.sichAuto !== false;
 const sichLastOn = () => !state.prefs || state.prefs.sichLast !== false;
 function blkPhs(b) {
+  if (isRes(b)) return null;
   if (b.type === 'tafel') return ['sich', 'sich'];
   if (b.type === 'step') { const p = itPh(b); return p ? [p, p] : null; }
   if (b.type !== 'tasks') return null;
@@ -3907,11 +3913,12 @@ function presSlides(quiet) {
 function presPhases(S) {
   const m = state.sheet.meta; const have = new Set();
   stBlocks().forEach(b => { if (b.type === 'tasks') (b.items || []).forEach(it => { const p = itPh(it); if (p) have.add(p); }); else if (b.type === 'step' && itPh(b)) have.add(itPh(b)); });
-  const isT = s => s.k === 'tasks' || s.k === 'step';
+  const isT = s => (s.k === 'tasks' || s.k === 'step') && !s.res;
+  const SB = stBlocks(); S.forEach(s => { if (s.k === 'step') s.res = isRes(s.b); else if (s.k === 'tasks') s.res = isRes(SB.find(x => x.id === s.bid)); });
   S.forEach(s => { if (s.k === 'step') s.ph = itPh(s.b); else if (s.k === 'tasks') { s.phs = [...new Set(s.items.map(x => itPh(x.it)).filter(Boolean))]; s.ph = s.phs[0] || ''; } });
   const first = S.findIndex(isT); const autoEin = !have.has('ein'); let usedEin = false, usedSich = false;
   S.forEach((s, i) => {
-    if (isT(s) || s.k === 'title') return;
+    if (isT(s) || s.res || s.k === 'title') return;
     if ((s.k === 'quote' || s.k === 'image') && autoEin && (first < 0 || i < first)) { s.ph = 'ein'; usedEin = true; }
     else if (s.k === 'tafel') { s.ph = 'sich'; usedSich = true; }
   });
@@ -3927,7 +3934,7 @@ function presPhases(S) {
   // kehrt eine Phase später wieder, bekommt sie einen neuen Abschnitt. s.bi = Abschnitte, die auf der Folie hervorgehoben werden.
   let bar = [];
   S.forEach(s => {
-    s.bi = []; if (s.k === 'title') return;
+    s.bi = []; if (s.k === 'title' || s.res) return;
     const L = s.phs && s.phs.length ? s.phs : s.ph ? [s.ph] : [];
     L.forEach(k => { if (bar[bar.length - 1] !== k) bar.push(k); if (!s.bi.includes(bar.length - 1)) s.bi.push(bar.length - 1); });
   });
@@ -4332,7 +4339,7 @@ const prCk = c => String(c == null ? '' : c).replace(/^\s*\[\s*\]\s*$/, '☐').r
 function presSlideHTML(s, bar) {
   const m = state.sheet.meta; const acc = pageAcc(m).c; const barOn = !!(bar && bar.length);
   const sozChip = it => (it && SOZ[it.soz] ? `<span class="pr-chip"><img src="${sozURI(it.soz, acc, pageAcc(m).t || '#fff')}" alt="">${SOZ[it.soz].label}</span>` : '');
-  const phChip = ph => (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
+  const phChip = ph => (s.res ? '<span class="pr-chip res">Reserve</span>' : '') + (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
   const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn} Min.</span>` : `<span class="pr-chip">${mn} Min.</span>`);
   switch (s.k) {
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
@@ -4388,7 +4395,7 @@ function vpRows() {
     const sh = state.sheet, m = sh.meta; const tags = matTags(sh.blocks); const mats = sh.blocks.filter(b => tags[b.id]); const ab = abLabel(m, A.k); const abLab = multi ? ab : '';
     let t = 0, firstTask = -1;
     sh.blocks.forEach((b, bi) => {
-      if (b.type === 'step') { if (blockVisible(b, v)) rows.push(stepRow(b, tafel)); return; }
+      if (b.type === 'step') { if (blockVisible(b, v)) rows.push({ ...stepRow(b, tafel), res: isRes(b) }); return; }
       if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; if (firstTask < 0) firstTask = bi;
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
       const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
@@ -4401,7 +4408,7 @@ function vpRows() {
         if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
         if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
         const g = itGrp(b, it, m);
-        bRows.push({ no: fo ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: bg, gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
+        bRows.push({ no: fo ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: isRes(b) ? '' : bg, res: isRes(b), gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
       });
       if (bRows.length) { bRows[0].min = itMin(b); bRows[0].span = bRows.length; bRows.slice(1).forEach(r => { r.cont = true; r.head = bRows[0]; }); bRows.forEach(r => rows.push(r)); }
     });
@@ -4411,7 +4418,7 @@ function vpRows() {
   if (!rows.some(r => r.ph === 'ein') && imp) rows.unshift({ auto: true, ph: 'ein', min: 0, soz: 'Plenum', task: imp.type === 'quote' ? `Impuls: Zitat „${plainText(imp.text).slice(0, 120)}“${imp.author ? ' (' + plainText(imp.author) + ')' : ''}; Schülerinnen und Schüler äußern erste Eindrücke.` : `Impuls: ${plainText(imp.caption || 'Bild')}; Schülerinnen und Schüler beschreiben und deuten.`, eh: [], media: [imp.type === 'quote' ? 'Zitat (Beamer oder Tafel)' : 'Bild (Beamer)'] });
   // Sicherung am Tafelbild, wenn keine Aufgabe dafür vorgesehen ist
   if (tafel.length && !rows.some(r => r.ph === 'sich')) rows.push({ auto: true, ph: 'sich', min: 0, soz: 'Plenum', task: 'Ergebnisse werden im Unterrichtsgespräch gesichert.', eh: [], media: tafel.map(x => 'Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')) });
-  const isHa = r => (r.blk ? r.isHa : r.ph === 'ha'); const main = rows.filter(r => !isHa(r)), ha = rows.filter(isHa);
+  const isHa = r => (r.blk ? r.isHa : r.ph === 'ha'); const main = rows.filter(r => !isHa(r) && !r.res), resv = rows.filter(r => !isHa(r) && r.res), ha = rows.filter(isHa);
   let c = 0, run = null; const start = vpOf().start;
   // Aufgaben verschiedener Gruppen direkt nacheinander laufen parallel und beginnen gleichzeitig
   main.forEach((r, i) => {
@@ -4423,10 +4430,10 @@ function vpRows() {
     } else { r.from = c; c += r.min || 0; r.to = c; }
     r.clock = vpClock(start, r.from) ? `${vpClock(start, r.from)}–${vpClock(start, r.to)}` : '';
   });
-  return { rows: main.concat(ha), total: c, len: Number(state.sheet.meta.lesson) || 45 };
+  return { rows: main.concat(resv, ha), total: c, len: Number(state.sheet.meta.lesson) || 45 };
 }
 const vpHa = r => (r.blk ? r.isHa : r.ph === 'ha');
-const vpTime = r => vpHa(r) ? 'HA' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
+const vpTime = r => vpHa(r) ? 'HA' : r.res ? 'Reserve' : r.min ? (r.clock || `${r.from}–${r.to}`) : '';
 function vpTableHTML() {
   const R = vpRows(); if (!R.rows.length) return '<p class="hint">Noch keine Aufgaben. Der Verlaufsplan entsteht aus den Aufgaben des Blatts.</p>';
   return `<div class="vp-wrap"><table class="vp-tbl"><thead><tr><th>Zeit</th><th>Phase</th><th>Unterrichtsgeschehen</th><th>Erwartetes Schülerverhalten</th><th>Sozialform</th><th>Medien</th></tr></thead><tbody>${R.rows.map(r => `<tr class="${r.auto ? 'auto' : ''}">${r.cont ? '' : `<td${r.span > 1 ? ` rowspan="${r.span}"` : ''}><b>${esc(vpTime(r))}</b>${r.min && !vpHa(r) ? `<small>${r.min} Min.${r.par ? ' · parallel' : ''}${r.span > 1 ? ` · ${r.span} Aufgaben` : ''}</small>` : ''}</td>`}<td style="--phc:${r.ph ? PHASEN[r.ph].c : '#B7BCC6'}" class="ph">${r.ph ? PHASEN[r.ph].label : '<span class="miss">ohne Phase</span>'}</td><td>${r.no ? `<b>${r.abLab ? esc(r.abLab) + ', ' : ''}Aufgabe ${r.no}${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.fo ? `<b>Auftrag (Folie)${r.gName ? ' · ' + esc(r.gName) : ''}${r.tag ? ' · ' + esc(r.tag) : ''}:</b> ` : r.step ? `<b>${esc(r.label)}:</b> ` : ''}${inlineHTML(tfStr(r.task).replace(/\n+/g, ' '))}</td><td>${r.eh.length ? `<ul>${r.eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : '<span class="miss">noch keine Erwartung</span>'}</td><td>${esc(r.soz)}</td><td>${r.media.map(esc).join('<br>')}</td></tr>`).join('')}</tbody></table></div>
@@ -7997,6 +8004,7 @@ function onClick(e) {
     case 'qz-up': { const Q = qzNorm(b); const i = +a.dataset.i; if (i > 0) { [Q[i - 1], Q[i]] = [Q[i], Q[i - 1]]; changed(true); } return; }
     case 'st-img-del': if (b) { b.src = ''; delete b.w; delete b.h; delete b.assetId; changed(true); } return;
     case 'st-exit-show': setOut('exit'); return;
+    case 'res-tg': if (b && (b.type === 'tasks' || b.type === 'step')) { if (isRes(b)) delete b.res; else { b.res = true; delete b.until; delete b.untilAuto; delete b.minAuto; } timeSync(null); changed(true); toast(isRes(b) ? 'Als Reserve markiert: auf den Folien, nicht in der Phasenleiste und nicht in der Stundenzeit' : 'Keine Reserve mehr'); } return;
     case 'tm-set': if (b) { b.timer = a.dataset.v || ''; if (!b.timer) delete b.timer; changed(true); } return;
     case 'grp-add': { const m = state.sheet.meta; const L = grpList(m); if (L.length >= GRP_KEYS.length) return; m.groups = L.concat([{ k: GRP_KEYS[L.length], name: '', add: '' }]); changed(true); const inp = $(`#editor [data-k="groups.${L.length}.name"]`); if (inp) inp.focus(); return; }
     case 'grp-del': grpRemove(+a.dataset.i); return;
@@ -8671,7 +8679,7 @@ const uhrOn = () => !state.prefs || state.prefs.uhr !== false;
 function stPlan() {
   const m = state.sheet.meta, vp = vpOf(); const s0 = hm(vp.start); if (!Number.isFinite(s0)) return null;
   const L = Number(m.lesson) || 45; const end = s0 + L;
-  const TL = ablaufOf({ meta: m, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par && r.min);
+  const TL = ablaufOf({ meta: m, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par && !r.res && r.min);
   let t = s0; const at = {}; TL.forEach((r, i) => { at[r.b.id] = { i, from: t, to: t + r.min, until: r.b.untilAuto ? NaN : hm(r.b.until) }; t += r.min; });
   return { s0, end, TL, at, total: t - s0 };
 }
@@ -8679,7 +8687,7 @@ function stPlan() {
 // Berechnete Uhrzeiten (untilAuto) wandern mit, wenn sich davor etwas ändert; selbst eingetragene bleiben feste Punkte.
 function timeSync(b, src) {
   const vp = vpOf(); const s0 = hm(vp.start); if (!Number.isFinite(s0)) return false;
-  const rows = ablaufOf({ meta: state.sheet.meta, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par);
+  const rows = ablaufOf({ meta: state.sheet.meta, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par && !r.res);
   const startOf = x => { let t = s0; for (const r of rows) { if (r.b === x) return t; const u = hm(r.b.until); t = Number.isFinite(u) && !r.b.untilAuto ? Math.max(u, t) : t + itMin(r.b); } return NaN; };
   if (b && src === 'until') { const u = hm(b.until); delete b.untilAuto; if (Number.isFinite(u)) b.minAuto = true; else delete b.minAuto; }
   if (b && src === 'min') { delete b.minAuto; if (itMin(b)) b.untilAuto = true; else if (b.untilAuto) { delete b.until; delete b.untilAuto; } }
