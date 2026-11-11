@@ -553,6 +553,26 @@ body.basis .x-pro:not(.used){display:none!important}
 .tbl-ed .rh-h{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;padding:3px 4px;line-height:1.2}
 .tbl-ed .rtx.is-empty::before{left:8px;top:6px}
 /* Leiste beim Markieren */
+.mw-word{border:1px solid #C8CCD5;border-radius:10px;overflow:hidden;background:#F3F4F7;box-shadow:0 1px 3px rgba(20,30,50,.08)}
+.mw-wh{background:var(--acc,#2741B5);color:#fff;font-size:12.5px;font-weight:700;padding:3px 6px 3px 12px;letter-spacing:.02em;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:30px}
+.mw-big{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.55);background:transparent;color:#fff;border-radius:6px;padding:3px 9px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.mw-big:hover,.mw-big:focus-visible{background:rgba(255,255,255,.16);outline:none}
+.mw-wt{display:flex;flex-wrap:wrap;align-items:center;gap:2px;padding:5px 6px;background:#F7F8FA;border-bottom:1px solid #DDE1E8}
+.mw-wt button{min-width:32px;height:32px;border:1px solid transparent;border-radius:6px;background:transparent;font-size:15px;color:#1C1F27;cursor:pointer;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.mw-wt button svg{width:18px;height:18px}
+.mw-wt button:hover{background:#E6EAF2}
+.mw-wt button[aria-pressed="true"]{background:#DCE3F7;border-color:#9DB0E8}
+.mw-tl{font-size:12.5px;font-weight:700;margin-left:5px}
+.mw-sep{width:1px;height:22px;background:#D5DAE3;margin:0 4px}
+.mw-wpg{background:#E9ECF1;padding:12px}
+.mw-word .rtx.mw-wp{border:1px solid #DDE1E8;border-radius:0;background:#fff;color:#1C1F27;box-shadow:0 1px 4px rgba(20,30,50,.10);padding:16px 18px;font-size:15px;line-height:1.55;max-height:46vh}
+.mw-word .rtx.mw-wp.is-empty::before{left:19px;top:16px}
+.mw-ws{display:flex;justify-content:space-between;gap:10px;padding:4px 12px;font-size:11.5px;color:#5B6170;background:#F7F8FA;border-top:1px solid #DDE1E8}
+.mw-word.mw-max{position:fixed;inset:0;z-index:70;border-radius:0;display:flex;flex-direction:column}
+.mw-word.mw-max .mw-wpg{flex:1 1 auto;min-height:0;display:flex;padding:18px}
+.mw-word.mw-max .rtx.mw-wp{flex:1 1 auto;max-height:none;width:100%;max-width:860px;margin:0 auto;padding:28px 34px;font-size:17px}
+body.mw-max-on{overflow:hidden}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .mw-word{border-color:#3A3F4B}}
 .rt-bar{position:fixed;z-index:60;display:flex;align-items:center;gap:1px;padding:4px;background:var(--panel);border:1px solid var(--line-strong);border-radius:10px;box-shadow:var(--shadow)}
 .rt-bar[hidden]{display:none}
 [hidden]{display:none!important}
@@ -2491,19 +2511,23 @@ function glossMarks(b, opt) {
   list.forEach((x, i) => { x.no = i + 1; });
   let out = text;
   const ins = list.map(x => ({ pos: x.end, s: '' + x.no + '', pri: 0 }));
+  // Wortgruppen: Anfangszeichen, damit in der Vorschau die ganze Gruppe unterstrichen wird
+  if (opt && opt.phrase) list.forEach(x => { if (/\s/.test(text.slice(x.start, x.end))) ins.push({ pos: x.start, s: '\ue004', pri: 3 }); });
   if (opt && opt.gaps) gapList(b).forEach(x => { ins.push({ pos: x.end, s: '', pri: 1 }, { pos: x.start, s: '', pri: 2 }); });
   ins.sort((a, c) => c.pos - a.pos || a.pri - c.pri).forEach(x => { out = out.slice(0, x.pos) + x.s + out.slice(x.pos); });
   return { text: out, list, missing };
 }
 // Wörter für das Setzen: HTML mit Fußnotenzahl + reiner Text (für die Klick-Zuordnung)
 function toWordsM(text, gapShow, gapW) {
-  const words = []; let h = '', t = '', gl = false, gp = false;
-  const push = () => { if (h) words.push({ h, t, gl, gp }); h = ''; t = ''; gl = false; gp = false; };
+  const words = []; let h = '', t = '', gl = false, gp = false, glOpen = false;
+  const push = () => { if (h) words.push({ h, t, gl: gl || glOpen && !!t, gp }); h = ''; t = ''; gl = false; gp = false; };
   for (const k of inlineTokens(text)) {
     if (k.sup || k.gap) { h += tokHTML(k); continue; }
-    for (const p of k.t.split(/(\s+)/)) {
+    for (let p of k.t.split(/(\s+)/)) {
       if (!p) continue;
       if (/^\s+$/.test(p)) { push(); continue; }
+      if (p.includes('\ue004')) { glOpen = true; p = p.replace(/\ue004/g, ''); if (!p) continue; }
+      if (glOpen && GM_RE.test(p)) { GM_RE.lastIndex = 0; gl = true; glOpen = false; }
       if (/\d+/.test(p)) gl = true;
       if (//.test(p) || //.test(p)) {
         gp = true;
@@ -2550,7 +2574,7 @@ function glossRows(b) {
   return `<div class="f gl-box" data-gl="${b.id}"><span>Worterklärungen</span>${rows ? `<div class="gl-list">${rows}</div>` : ''}
     <div class="gl-add"><button class="btn" type="button" data-act="gl-add">+ Worterklärung</button><small>Wort im Text markieren oder in der Vorschau anklicken</small></div></div>`;
 }
-function openGloss(o) { o.sc = { p: $('#preview-scroll').scrollTop, e: $('#editor').scrollTop }; gl.open = o; renderGloss(); }
+function openGloss(o) { o.sc = { p: $('#preview-scroll').scrollTop, e: $('#editor').scrollTop }; o.t0 = Date.now(); gl.open = o; renderGloss(); }
 function closeGloss() { if (!gl.open) return; gl.open = null; renderGloss(); }
 function openGlossFor(b, term, n, rect) {
   const count = occurrences(b.text, term).length;
@@ -3388,7 +3412,6 @@ function settingsHTML() {
       <div class="f"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[m.presPhSize] ? m.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
       <div class="f"><span>Größe des Timers auf den Folien</span><div class="seg sm" role="group" aria-label="Größe des Timers">${Object.entries(TM_SIZES).map(([k, v]) => `<button type="button" data-act="tm-size" data-v="${k}" aria-pressed="${tmSize() === k}">${v.label}</button>`).join('')}</div><small>Gilt für alle Stunden, im Browser und in PowerPoint. „klein“ ist so groß wie die übrigen Angaben oben rechts.</small></div>
       <div class="f"><span>Sicherungen</span>
-        <label class="chk"><input type="checkbox" data-pref="sichAuto"${sichAutoOn() ? ' checked' : ''}><span>Nach Erarbeitung, Vertiefung und Transfer automatisch eine Sicherung einfügen (sobald die Phase gewählt wird)</span></label>
         <label class="chk"><input type="checkbox" data-pref="sichLast"${sichLastOn() ? ' checked' : ''}><span>In der Phasenleiste nur die letzte Sicherung der Stunde zeigen; bei den Sicherungen davor bleibt die vorige Phase hervorgehoben</span></label></div>
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
@@ -6798,7 +6821,7 @@ function buildBlock(b, ctx) {
     }
     case 'material': {
       const no = ++ctx.m; const step = Number(meta.lineStep) || 5; const matLab = (designOf(meta) === 'akte' ? 'Anlage ' : '') + ((ctx.mt && ctx.mt[b.id]) || 'M' + no);
-      const gm = glossMarks(b, { gaps: true }); const fm = matFmt(b); const notes = gm.list;
+      const gm = glossMarks(b, { gaps: true, phrase: true }); const fm = matFmt(b); const notes = gm.list;
       const gapShow = !!(ctx.view && ctx.view.lehrer) || state.gapEdit === b.id; const gaps = gapList(b);
       const bankH = gaps.length && b.gapBank !== false ? `<div class="gap-bank"><b>Wortspeicher</b><span>${[...new Set(gaps.map(x => normTerm(x.w)))].sort((a, c) => a.localeCompare(c, 'de', { sensitivity: 'base' })).map(w => esc(w)).join('<i>·</i>')}</span></div>` : '';
       const tailFor = (list, src, bank) => (list.length || src || (bank && bankH)) ? `<div class="mat-tail">${bank ? bankH : ''}${list.length ? `<div class="notes">${list.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${src ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
@@ -7398,6 +7421,40 @@ function rtSelectText(el, str) {
   return false;
 }
 const rtField = (k, v, o = {}) => { const mode = o.mode || 'full'; return `<div class="rtx rtx-${mode}${o.cls ? ' ' + o.cls : ''}${String(v ?? '').trim() ? '' : ' is-empty'}" contenteditable="true" role="textbox"${mode === 'line' ? '' : ' aria-multiline="true"'} aria-label="${esc(o.aria || '')}" spellcheck="true" data-k="${k}" data-rt="${mode}" data-ph="${esc(o.ph || '')}" ${o.hd ? ' data-hd="1"' : ''} style="--rows:${o.rows || (mode === 'line' ? 1 : 3)}">${richHTML(v, mode, o.hd)}</div>`; };
+// Word-artiges Fenster: Kopfzeile, feste Leiste, weiße Seite auf grauem Grund, Wortzahl, Vergrößern
+const MW_IC = {};
+const mwIc = k => { if (!(k in MW_IC)) { const b = document.querySelector(`#rt-bar [data-rt="${k}"]`); MW_IC[k] = b ? b.innerHTML : k; } return MW_IC[k]; };
+const mwWords = v => { const n = (plainText(tfStr(v)).match(/\S+/g) || []).length; return n === 1 ? '1 Wort' : n + ' Wörter'; };
+function fWord(k, label, v, o = {}) {
+  const big = state.mwBig === o.bid;
+  const T = [['b', 'Fett (Strg+B)'], ['i', 'Kursiv (Strg+I)'], ['u', 'Unterstrichen (Strg+U)'], ['m', 'Textmarker (Strg+Umschalt+H)'], '|', ...(o.hd ? [['h', 'Zwischenüberschrift (oder „## “ am Zeilenanfang)'], '|'] : []), ['x', 'Formatierung entfernen'], '|', ...(o.gl ? [['gl', 'Markiertes Wort oder markierte Wortgruppe erklären (z. B. Übersetzung einer Wendung)', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h12v13H6a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12"/><path d="M9 8.5h5M9 12h3"/></svg><span class="mw-tl">Worterklärung</span>'], '|'] : []),
+    ['undo', 'Rückgängig (Strg+Z)', '↶'], ['redo', 'Wiederholen (Strg+Y)', '↷']];
+  const BIG = ['<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4v4M6 14H2v-4M14 2 9.5 6.5M2 14l4.5-4.5"/></svg>', '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 6.5h-4v-4M2.5 9.5h4v4M9.5 6.5 14 2M6.5 9.5 2 14"/></svg>'];
+  return `<div class="f rt-f mw-f"><span>${label}</span><div class="mw-word${big ? ' mw-max' : ''}" data-mw="${esc(o.bid || '')}">
+    <div class="mw-wh"><span>${esc(o.head || label)}</span><button type="button" class="mw-big" data-act="mw-big" aria-pressed="${big}" title="${big ? 'Fenster verkleinern (Esc)' : 'Fenster groß machen'}">${BIG[big ? 1 : 0]}<span>${big ? 'Verkleinern' : 'Vergrößern'}</span></button></div>
+    <div class="mw-wt" role="toolbar" aria-label="Formatierung">${T.map(x => x === '|' ? '<span class="mw-sep"></span>' : `<button type="button" data-mwc="${x[0]}" title="${x[1]}" aria-label="${x[1]}"${/^[biumh]$/.test(x[0]) ? ' aria-pressed="false"' : ''}>${x[2] || mwIc(x[0])}</button>`).join('')}</div>
+    <div class="mw-wpg">${rtField(k, v, { aria: label, ...o, cls: ((o.cls || '') + ' mw-wp').trim() })}</div>
+    <div class="mw-ws"><span class="mw-wc">${mwWords(v)}</span><span>wird automatisch gespeichert</span></div></div>${o.hint ? `<small class="fh">${o.hint}</small>` : ''}</div>`;
+}
+function mwBigSet(id) {
+  state.mwBig = id || null; document.body.classList.toggle('mw-max-on', !!state.mwBig);
+  document.querySelectorAll('#editor .mw-word').forEach(w => { const on = !!id && w.dataset.mw === id; w.classList.toggle('mw-max', on);
+    const bt = w.querySelector('.mw-big'); if (bt) { bt.setAttribute('aria-pressed', on); bt.title = on ? 'Fenster verkleinern (Esc)' : 'Fenster groß machen'; bt.querySelector('span').textContent = on ? 'Verkleinern' : 'Vergrößern'; }
+    if (on) { const f = w.querySelector('.rtx'); if (f) { f.focus(); rtCaretEnd(f); } } });
+}
+function mwState() {
+  const f = rtFieldSel(); document.querySelectorAll('#editor .mw-wt [aria-pressed]').forEach(bt => {
+    const inF = f && bt.closest('.mw-word').contains(f); let on = false;
+    if (inF) { const c = bt.dataset.mwc; try { if (c === 'm') on = rtMarked(); else if (c === 'h') on = /^h\d$/i.test(document.queryCommandValue('formatBlock')); else on = document.queryCommandState({ b: 'bold', i: 'italic', u: 'underline' }[c]); } catch {} }
+    bt.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+}
+function mwCmd(btn) {
+  const w = btn.closest('.mw-word'); const f = w && w.querySelector('.rtx'); if (!f) return; const c = btn.dataset.mwc;
+  if (!f.contains(getSelection().anchorNode)) { f.focus(); rtCaretEnd(f); }
+  if (c === 'gl') { const card = btn.closest('.card'); const b = card && target(card.dataset.bid); if (b) glossFromTextarea(card, b, btn); return; }
+  if (c === 'undo' || c === 'redo') { try { document.execCommand(c); } catch {} } else rtCmd(c);
+  mwState(); const wc = w.querySelector('.mw-wc'); if (wc) wc.textContent = mwWords(f.innerText);
+}
 const fRich = (k, label, v, o = {}) => `<div class="f rt-f"><span>${label}</span>${rtField(k, v, { aria: label, ...o })}${o.hint ? `<small class="fh">${o.hint}</small>` : ''}</div>`;
 
 /* ---------- Leiste beim Markieren ---------- */
@@ -7413,7 +7470,7 @@ function rtMarked() {
 function rtBar() {
   const bar = $('#rt-bar'); if (!bar) return;
   const f = rtFieldSel(); const s = getSelection();
-  if (!f || s.isCollapsed || document.activeElement !== f) { bar.hidden = true; return; }
+  if (!f || s.isCollapsed || document.activeElement !== f || f.closest('.mw-word')) { bar.hidden = true; return; }
   bar.dataset.mode = f.dataset.rt; bar.dataset.hd = f.dataset.hd ? '1' : '';
   { let fb = ''; try { fb = document.queryCommandValue('formatBlock'); } catch {} const hb = bar.querySelector('[data-rt="h"]'); if (hb) hb.setAttribute('aria-pressed', /^h\d$/i.test(fb) ? 'true' : 'false'); }
   for (const [k, c] of Object.entries({ b: 'bold', i: 'italic', u: 'underline', ul: 'insertUnorderedList', ol: 'insertOrderedList' })) {
@@ -7574,8 +7631,8 @@ function bodyFor(b, num) {
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>`;
       return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
-      ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
-        : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
+      ${poem ? fWord('text', 'Gedicht', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Gedicht`, mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
+        : fWord('text', 'Text', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Text`, mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button>${poem ? '' : '<button class="link" type="button" data-act="mat-h" title="Neue Zwischenüberschrift an der Schreibmarke (sonst am Ende)">+ Zwischenüberschrift</button>'}</div>
       ${!poem && matHasH(b.text) ? `<div class="chks">${fCheck('hdCount', 'Zwischenüberschriften bei den Zeilennummern mitzählen', b.hdCount)}</div>` : ''}
       ${glossRows(b)}
@@ -7858,8 +7915,6 @@ function onChange(e) {
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  const sichHook = sichAutoOn() && !isBasis() && SICH_AFTER.includes(v) && (/^items\.\d+\.ph$/.test(k) || (k === 'ph' && target(card.dataset.bid) && target(card.dataset.bid).type === 'step'));
-  if (sichHook) { changed(true); sichFill(); return; }
   changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
@@ -8005,6 +8060,7 @@ function onClick(e) {
     case 'st-img-del': if (b) { b.src = ''; delete b.w; delete b.h; delete b.assetId; changed(true); } return;
     case 'st-exit-show': setOut('exit'); return;
     case 'res-tg': if (b && (b.type === 'tasks' || b.type === 'step')) { if (isRes(b)) delete b.res; else { b.res = true; delete b.until; delete b.untilAuto; delete b.minAuto; } timeSync(null); changed(true); toast(isRes(b) ? 'Als Reserve markiert: auf den Folien, nicht in der Phasenleiste und nicht in der Stundenzeit' : 'Keine Reserve mehr'); } return;
+    case 'mw-big': mwBigSet(state.mwBig === a.closest('.mw-word').dataset.mw ? null : a.closest('.mw-word').dataset.mw); return;
     case 'tm-set': if (b) { b.timer = a.dataset.v || ''; if (!b.timer) delete b.timer; changed(true); } return;
     case 'grp-add': { const m = state.sheet.meta; const L = grpList(m); if (L.length >= GRP_KEYS.length) return; m.groups = L.concat([{ k: GRP_KEYS[L.length], name: '', add: '' }]); changed(true); const inp = $(`#editor [data-k="groups.${L.length}.name"]`); if (inp) inp.focus(); return; }
     case 'grp-del': grpRemove(+a.dataset.i); return;
@@ -10964,7 +11020,11 @@ function boot() {
   const rtb = $('#rt-bar');
   rtb.addEventListener('mousedown', e => e.preventDefault());
   rtb.addEventListener('click', e => { const btn = e.target.closest('[data-rt]'); if (btn) rtCmd(btn.dataset.rt); });
-  document.addEventListener('selectionchange', () => requestAnimationFrame(rtBar));
+  document.addEventListener('selectionchange', () => requestAnimationFrame(() => { rtBar(); mwState(); }));
+  ed.addEventListener('mousedown', e => { if (e.target.closest('.mw-wt button')) e.preventDefault(); });
+  ed.addEventListener('click', e => { const bt = e.target.closest('.mw-wt [data-mwc]'); if (bt) { e.stopPropagation(); mwCmd(bt); } }, true);
+  ed.addEventListener('input', e => { const w = e.target.closest && e.target.closest('.mw-word'); if (!w) return; const wc = w.querySelector('.mw-wc'); if (wc) wc.textContent = mwWords(e.target.innerText); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.mwBig) { e.preventDefault(); e.stopPropagation(); mwBigSet(null); } }, true);
   ed.addEventListener('scroll', () => { if (!rtb.hidden) rtBar(); }, { passive: true });
   window.addEventListener('resize', () => { if (!rtb.hidden) rtBar(); });
   ed.addEventListener('keydown', e => {
@@ -11058,6 +11118,7 @@ function boot() {
   // Schließt erst, wenn wirklich weggescrollt wurde (kleine Sprünge durch Fokus ignorieren)
   ['#preview-scroll', '#editor'].forEach(q => $(q).addEventListener('scroll', () => {
     const o = gl.open; if (!o || !o.sc || narrowGloss()) return;
+    if (Date.now() - (o.t0 || 0) < 700) { o.sc = { p: $('#preview-scroll').scrollTop, e: $('#editor').scrollTop }; return; }
     if (Math.abs($('#preview-scroll').scrollTop - o.sc.p) > 60 || Math.abs($('#editor').scrollTop - o.sc.e) > 60) closeGloss();
   }, { passive: true }));
   window.addEventListener('resize', () => { if (gl.open) placeGloss(); });
