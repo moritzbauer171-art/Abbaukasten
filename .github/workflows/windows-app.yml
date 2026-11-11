@@ -1,11 +1,12 @@
-# Baut die Windows-App bei jeder Änderung an der Seite oder am Desktop-Ordner
+# Baut die Windows-App bei Änderungen am Desktop-Ordner (oder von Hand über „Run workflow“)
 # und legt sie als Download unter Releases ab (immer gleicher Link, siehe README).
+# Änderungen nur an der Website (index.html) lösen vorerst keinen neuen App-Build aus.
 name: Windows-App
 
 on:
   push:
     branches: [main]
-    paths: ['index.html', 'desktop/**', '.github/workflows/windows-app.yml']
+    paths: ['desktop/**', '.github/workflows/windows-app.yml']
   workflow_dispatch:
 
 permissions:
