@@ -1295,6 +1295,14 @@ body{transition:background-color .3s,border-color .25s}
 .pt-until{display:inline-flex;align-items:center;gap:5px}.pt-until small{font-size:11px;color:var(--muted)}.pt-until input{width:104px;font:inherit;font-size:12px;padding:3px 5px;border:1px solid var(--line);border-radius:6px;background:var(--field,#fff);color:var(--ink)}
 .pt-plan{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.pt-plan.late,.pt-note .late{color:#B3261E}
 @media (max-width:520px){.zt-row{grid-template-columns:1fr 1fr auto}.zt-row input[aria-label="Bezeichnung"]{grid-column:1/-1}}
+.lib-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:4px 0 10px}
+.lib-tabs button{padding:8px 12px;border:0;border-bottom:2.5px solid transparent;background:transparent;font:inherit;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.lib-tabs button[aria-selected="true"]{color:var(--acc,#2B45B8);border-bottom-color:var(--acc,#2B45B8)}
+.lib-tabs em{font-style:normal;font-size:11px;background:var(--line);border-radius:9px;padding:0 6px;margin-left:3px}
+.share-item .t{cursor:default}.share-mine{font-style:normal;font-size:11px;font-weight:700;color:#2E7D4F;background:#E3F4EA;border-radius:6px;padding:1px 6px;margin-left:6px}
+.share-text{font-size:12.5px;color:var(--ink);margin:3px 0 2px;line-height:1.4}
+.share-hint{display:block;margin:0 0 8px}
+.lib-empty{padding:18px 6px;color:var(--muted);font-size:13px}.lib-empty .btn{margin-top:6px}
 .set-h{display:flex;flex-direction:column;gap:2px;margin:0 0 10px}.set-h h2{margin:0;font-size:22px}.set-h .link{align-self:flex-start;font-size:13px}
 .set-tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:12px}
 .set-tabs button{padding:8px 12px;border:0;border-bottom:2.5px solid transparent;background:transparent;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:-1px}
@@ -1307,6 +1315,12 @@ body{transition:background-color .3s,border-color .25s}
 .set-link span{flex:1;min-width:0}.set-link b{display:block;font-size:13px}.set-link small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .set-link em{font-style:normal;font-size:18px;color:var(--muted)}.set-link:hover{border-color:var(--acc,#2B45B8)}
 .umfang-chip:empty{display:none}.umfang-chip{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+.pres-tg{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;margin-left:6px;padding:4px 10px 4px 8px;border:1.5px solid var(--line-strong,#B9C0CE);border-radius:999px;background:var(--field,#fff);font:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+.pres-tg svg{width:18px;height:15px}
+.pres-tg:hover{border-color:var(--acc,#2B45B8);color:var(--acc,#2B45B8)}
+.pres-tg.on{background:var(--acc,#2B45B8);border-color:var(--acc,#2B45B8);color:#fff}
+@media (max-width:520px){.pres-tg span{display:none}.pres-tg{padding:4px 7px}}
+.pk-opt span::after{content:" · nur auf Wunsch";color:var(--muted);font-size:11px}
 .more-b{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:4px 10px 4px 11px;border:1px dashed var(--line-strong,#B9C0CE);border-radius:999px;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;min-width:0}
 .more-b small{font-weight:600;color:var(--acc,#2B45B8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .more-b svg{flex:0 0 auto;width:12px;height:12px}
@@ -3467,7 +3481,7 @@ const areaPalette = A => paletteFor().filter(t => (A === 'tafel' ? t.type === 't
 function cardHTML(b, i, num, opt = {}) {
   const blocks = state.sheet.blocks; const closed = state.closed.has(b.id); const gOn = state.sheet.meta.groupsOn;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"${opt.drag === false ? '' : ' draggable="true" title="Zum Umsortieren ziehen"'}><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">${esc(grpName(state.sheet.meta, b.group))}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>
+        <div class="card-h" data-act="toggle"${opt.drag === false ? '' : ' draggable="true" title="Zum Umsortieren ziehen"'}><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">${esc(grpName(state.sheet.meta, b.group))}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>${isBasis() ? '' : presBtn(b)}
           <button class="ib" type="button" data-act="up" title="${opt.drag === false ? 'Früher in der Stunde' : 'Nach oben'}"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="${opt.drag === false ? 'Später in der Stunde' : 'Nach unten'}"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
@@ -3572,8 +3586,9 @@ function presPickChange(t) {
   if (t.dataset.prph != null) { state.sheet.meta.presPhase = !!t.checked; changed(false); return true; }
   if (t.dataset.prk == null) return false;
   const m = state.sheet.meta; const k = t.dataset.prk; const off = new Set(Array.isArray(m.presOff) ? m.presOff : []);
-  if (t.checked) off.delete(k); else off.add(k); m.presOff = [...off]; changed(false);
-  const L = presPick(); document.querySelectorAll('#pr-pick-n').forEach(nEl => { nEl.textContent = `${L.filter(x => !off.has(x.key)).length} von ${L.length} ausgewählt`; }); return true;
+  if (t.dataset.prb) { const bb = stBlocks().find(x => x.id === t.dataset.prb); if (bb) { if (t.checked) bb.pres = true; else delete bb.pres; } off.delete(k); } else if (t.checked) off.delete(k); else off.add(k);
+  m.presOff = [...off]; changed(false);
+  const L = presPick(); document.querySelectorAll('#pr-pick-n').forEach(nEl => { nEl.textContent = `${L.filter(x => (x.opt ? presOn(x.opt) : true) && !off.has(x.key)).length} von ${L.length} ausgewählt`; }); return true;
 }
 // Vorschau rechts: Verlaufsplan und Folien
 function renderVPPreview(host) {
@@ -3950,6 +3965,9 @@ function presMerge(S, m) {
   });
   return R;
 }
+const PRES_OPT = new Set(['material', 'tafel', 'info', 'quote', 'image', 'table', 'phrases', 'match']);
+const presOn = b => b.pres === true;
+const presBtn = b => PRES_OPT.has(b.type) ? `<button type="button" class="pres-tg${presOn(b) ? ' on' : ''}" data-act="pres-tg" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht in der Präsentation auf einer eigenen Folie · klicken zum Entfernen' : 'Steht nicht in der Präsentation · klicken, um ihn auf eine Folie zu bringen'}"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="10" rx="1.2"/><path d="M10 11.5v3M7 14.5h6"/>${presOn(b) ? '<path d="m7 6.5 2 2 4-4"/>' : ''}</svg><span>${presOn(b) ? 'Auf der Folie' : 'Auf die Folie'}</span></button>` : '';
 function presSlidesAB(off, lab, abId) {
   const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false, grp: 'all', pres: true };
   const mats = presCollect(true); const S = []; let t = 0;
@@ -3957,6 +3975,7 @@ function presSlidesAB(off, lab, abId) {
     if (!blockVisible(b, v)) return;
     if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it); if (!fo) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo ? 0 : t, fo, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
+    if (PRES_OPT.has(b.type) && !presOn(b)) return;
     if (b.type === 'step') { const f = stepSlideFol(b); if (f === 'quiz') { const Q = qzList(b); Q.forEach((x, i) => S.push({ k: 'step', b, fol: f, qz: x, qi: i, qn: Q.length })); } else if (f) S.push({ k: 'step', b, fol: f }); return; }
     const M = mats[b.id];
     if (M && M.lines.length) { const poem = b.form === 'gedicht'; const parts = presChunks(M.lines, poem); parts.forEach((p, i) => S.push({ k: 'mat', b, tag: M.tag || 'M', lines: p, part: i + 1, of: parts.length, poem })); return; }
@@ -3982,25 +4001,26 @@ function presPick() {
     const m = A.meta; const num = numbering({ ...P, meta: m, blocks: A.blocks }); let t = 0;
     if (multi) L.push({ key: 'ab:' + A.id, label: `${abLabel(m, A.k)} · ${short(m.title, 50) || 'ohne Titel'} (Zwischenfolie)`, head: true });
     A.blocks.forEach(b => {
-      if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
+      if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, opt: b, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
       else if (b.type === 'tasks') { if (rst(b)) t = 0; b.items.forEach((it, i) => { if (!itFo(it)) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
-      else if (b.type === 'tafel') L.push({ key: b.id, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
+      else if (b.type === 'tafel') L.push({ key: b.id, opt: b, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
       else if (b.type === 'step') { if (stepSlideFol(b)) L.push({ key: b.id, label: `${itPh(b) ? PHASEN[itPh(b)].label : 'Schritt'} · ${stepLabel(b)}`, task: true }); }
-      else if (b.type === 'info') L.push({ key: b.id, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
-      else if (b.type === 'quote') L.push({ key: b.id, label: 'Zitat · ' + short(b.text, 50) });
-      else if (b.type === 'image' && b.src) L.push({ key: b.id, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
-      else if (b.type === 'table') L.push({ key: b.id, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
-      else if (b.type === 'phrases') L.push({ key: b.id, label: short(b.title || 'Formulierungshilfen', 60) });
-      else if (b.type === 'match') L.push({ key: b.id, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });
+      else if (b.type === 'info') L.push({ key: b.id, opt: b, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
+      else if (b.type === 'quote') L.push({ key: b.id, opt: b, label: 'Zitat · ' + short(b.text, 50) });
+      else if (b.type === 'image' && b.src) L.push({ key: b.id, opt: b, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
+      else if (b.type === 'table') L.push({ key: b.id, opt: b, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
+      else if (b.type === 'phrases') L.push({ key: b.id, opt: b, label: short(b.title || 'Formulierungshilfen', 60) });
+      else if (b.type === 'match') L.push({ key: b.id, opt: b, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });
     });
     if (m.dg && m.dg.id) L.push({ key: multi ? 'qr:' + A.id : 'qr', label: 'QR-Code zur digitalen Fassung' });
   });
   return L;
 }
 function presPickHTML() {
-  const L = presPick(); const off = new Set(state.sheet.meta.presOff || []); const on = L.filter(x => !off.has(x.key)).length;
+  const L = presPick(); const off = new Set(state.sheet.meta.presOff || []); const isOn = x => (x.opt ? presOn(x.opt) && !off.has(x.key) : !off.has(x.key)); const on = L.filter(isOn).length;
   return `<div class="f pr-pick-f"><span>Folien <small id="pr-pick-n">${on} von ${L.length} ausgewählt</small></span>
-    <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}${x.head ? ' pk-head' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${off.has(x.key) ? '' : ' checked'}><span>${esc(x.label)}</span></label>`).join('')}</div>
+    <small class="hint">Titelfolie, Aufgaben und Unterrichtsschritte stehen von selbst auf den Folien. Material, Tafelbild, Bilder, Zitate und andere Bausteine kommen nur auf eine Folie, wenn Sie sie hier oder mit „Auf die Folie“ an der Karte auswählen.</small>
+    <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}${x.head ? ' pk-head' : ''}${x.opt ? ' pk-opt' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${x.opt ? ` data-prb="${esc(x.opt.id)}"` : ''}${isOn(x) ? ' checked' : ''}><span>${esc(x.label)}</span></label>`).join('')}</div>
     <div class="pr-pick-a"><button class="link" type="button" data-act="pr-pick" data-v="all">Alle</button><button class="link" type="button" data-act="pr-pick" data-v="tasks">Nur Aufgaben</button><button class="link" type="button" data-act="pr-pick" data-v="none">Keine</button></div>
     <small class="hint pr-ph-note">Phasenleiste: ${state.sheet.meta.presPhase === false ? 'aus' : 'an, Schrift ' + (PH_SIZES[state.sheet.meta.presPhSize] || PH_SIZES.m).label} · ändern unter <button class="link" type="button" data-act="settings" data-tab="pres">Einstellungen</button></small>
     <small class="hint">Die Auswahl wird im Blatt gespeichert und gilt auch für „Präsentieren“.</small></div>`;
@@ -4011,7 +4031,8 @@ function phSizeSet(v) {
 }
 function presPickSet(v) {
   const m = state.sheet.meta; const L = presPick();
-  m.presOff = v === 'all' ? [] : v === 'none' ? L.map(x => x.key) : L.filter(x => !x.task).map(x => x.key);
+  L.forEach(x => { if (x.opt) { if (v === 'all') x.opt.pres = true; else delete x.opt.pres; } });
+  m.presOff = v === 'all' ? [] : v === 'none' ? L.filter(x => !x.opt).map(x => x.key) : L.filter(x => !x.task && !x.opt && x.key !== 'title').map(x => x.key);
   changed(false); if (state.dlg) renderDlg(); if (state.area === 'pres') renderEditor();
 }
 
@@ -6599,7 +6620,7 @@ function enforceOne() {
 }
 function openOnly(bid) { if (!oneCard()) { state.closed.delete(bid); saveClosed(); return; } state.allOpen = false; state.closed = new Set(cardIds().filter(x => x !== bid)); saveClosed(); }
 function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id) return; localStorage.setItem(closedKey(id), JSON.stringify([...state.closed])); } catch {} }
-const state = { lvl: 'all', area: 'blatt', areaOut: {}, sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, insAt: null, allOpen: false, wide: false, base: null, conflict: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
+const state = { libTab: 'mine', shareQuery: '', shared: null, sharedAt: 0, sharedErr: '', shareBusy: null, lvl: 'all', area: 'blatt', areaOut: {}, sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, insAt: null, allOpen: false, wide: false, base: null, conflict: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
@@ -7879,6 +7900,7 @@ function onClick(e) {
     case 'help': state.dlg = { mode: 'help' }; renderDlg(); return;
     case 'out-open': openOut(); return;
     case 'sv-ab': { const k = +a.dataset.abk; if (state.sheet.abs && k !== state.sheet.abActive) { abSwitch(k); state.sel = null; state.closed = defaultClosed(); state.taskOpen = new Set(); } setArea('blatt'); return; }
+    case 'pres-tg': if (b && PRES_OPT.has(b.type)) { if (presOn(b)) delete b.pres; else b.pres = true; const off = new Set(state.sheet.meta.presOff || []); off.delete(b.id); state.sheet.meta.presOff = [...off]; changed(true); toast(presOn(b) ? `„${plainText(summary(b, numbering(state.sheet)) || typeLabel(b)).slice(0, 40)}“ steht jetzt auf einer Folie` : 'Nicht mehr auf den Folien'); } return;
     case 'more': { const k = 'more:' + a.dataset.key; if (state.fmtOpen.has(k)) state.fmtOpen.delete(k); else state.fmtOpen.add(k); renderEditor(); return; }
     case 'more-all': lsSet(LS_MORE, moreAll() ? '0' : '1'); renderEditor(); return;
     case 'area-go': areaGo(a.dataset.area, a.dataset.bid, a.dataset.abk != null ? +a.dataset.abk : NaN); return;
@@ -8185,7 +8207,17 @@ function supaB(sb, user) {
     async remove(id) { chk(await T().delete().eq('id', id)); },
     async stamp(id) { const d = chk(await T().select('updated_at').eq('id', id).maybeSingle()); return d ? Date.parse(d.updated_at) || 0 : null; },
     async loadPrefs() { const d = chk(await sb.from('ab_einstellungen').select('data').maybeSingle()); return d ? d.data : null; },
-    async savePrefs(p) { chk(await sb.from('ab_einstellungen').upsert({ user_id: user.id, data: p, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })); }
+    async savePrefs(p) { chk(await sb.from('ab_einstellungen').upsert({ user_id: user.id, data: p, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })); },
+    async shareList() {
+      const rows = chk(await sb.from('ab_geteilt').select('id,user_id,sheet_id,title,klasse,fach,beschreibung,autor,updated_at,suchtext').order('updated_at', { ascending: false }).limit(500)) || [];
+      return rows.map(r => ({ id: r.id, sheetId: r.sheet_id, mine: r.user_id === user.id, title: r.title || 'Ohne Titel', klasse: r.klasse || '', fach: r.fach || '', text: r.beschreibung || '', autor: r.autor || '', q: r.suchtext || '', updatedAt: Date.parse(r.updated_at) || 0 }));
+    },
+    async shareGet(id) { const d = chk(await sb.from('ab_geteilt').select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
+    async sharePut(sh, info) {
+      const rid = info.id || Array.from(crypto.getRandomValues(new Uint8Array(14)), x => 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x % 56]).join('');
+      chk(await sb.from('ab_geteilt').upsert({ id: rid, user_id: user.id, sheet_id: sh.id, title: stTitle(sh) || 'Ohne Titel', klasse: KL(sh.klasse).label || '', fach: fachKey(sh.klasse), beschreibung: String(info.text || '').slice(0, 600), autor: String(info.autor || '').slice(0, 80), suchtext: searchText(sh), data: sh, updated_at: new Date().toISOString() }, { onConflict: 'user_id,sheet_id' }));
+    },
+    async shareDel(id) { chk(await sb.from('ab_geteilt').delete().eq('id', id)); }
   };
 }
 
@@ -8202,6 +8234,73 @@ function setStatus(s) {
 }
 function idleStatus() { setStatus(state.sheet.example ? 'example' : (backend ? backend.kind : 'pending')); }
 
+/* ---------- Geteilte Stunden ---------- */
+const canShare = () => !!(backend && backend.kind === 'supabase' && backend.shareList);
+async function shareLoad(force) {
+  if (!canShare()) { state.shared = null; return; }
+  if (state.shared && !force && Date.now() - state.sharedAt < 60000) return;
+  try { state.shared = await backend.shareList(); state.sharedAt = Date.now(); state.sharedErr = ''; }
+  catch (err) { console.error(err); state.sharedErr = /relation|does not exist|schema cache/i.test(String(err && err.message)) ? 'Die Ablage für geteilte Stunden fehlt noch in der Datenbank.' : 'Die geteilten Stunden konnten nicht geladen werden. Bitte später erneut versuchen.'; state.shared = state.shared || []; }
+  if (state.libOpen) renderLib();
+}
+const sharedOf = sheetId => (state.shared || []).find(x => x.mine && x.sheetId === sheetId);
+function sharedListHTML() {
+  if (!canShare()) return `<div class="lib-empty"><p>Geteilte Stunden sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? '<button class="btn primary" type="button" data-act="login">Anmelden</button>' : ''}</div>`;
+  if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; }), 0); } return '<div class="lib-empty"><p>Wird geladen …</p></div>'; }
+  const q = state.shareQuery.trim().toLowerCase(); const words = q ? q.split(/\s+/).filter(Boolean) : [];
+  const L = state.shared.filter(x => !words.length || words.every(w => (x.title + ' ' + x.klasse + ' ' + x.autor + ' ' + x.text + ' ' + x.q).toLowerCase().includes(w)));
+  const fmt = t => new Date(t).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const head = `${state.sharedErr ? `<div class="notice"><span>${esc(state.sharedErr)}</span></div>` : ''}<div class="row lib-tools"><input class="inp" id="share-q" type="search" placeholder="Geteilte Stunden durchsuchen" value="${esc(state.shareQuery)}" aria-label="Geteilte Stunden durchsuchen" style="flex:1"><button class="btn" type="button" data-act="share-reload" title="Neu laden">Aktualisieren</button></div>
+    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieser AB-Werkstatt teilen. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
+  if (!L.length) return head + `<div class="lib-empty"><p>${state.shared.length ? 'Keine geteilte Stunde passt zur Suche.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
+  return head + L.map(x => `<div class="lib-item share-item" data-sid="${esc(x.id)}">
+      <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von Ihnen</em>' : ''}</div>
+      <div class="m">${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
+      ${x.text ? `<div class="share-text">${esc(x.text)}</div>` : ''}
+      <div class="a">${state.shareBusy === x.id ? '<span class="m">Wird übernommen …</span>' : `<button class="link" type="button" data-act="share-take">Übernehmen</button>${x.mine ? '<button class="link" type="button" data-act="share-edit">Bearbeiten</button>' : ''}`}</div>
+    </div>`).join('');
+}
+async function shareTake(sid) {
+  const x = (state.shared || []).find(y => y.id === sid); if (!x) return;
+  state.shareBusy = sid; renderLib();
+  try {
+    const src = await backend.shareGet(sid); if (!src) throw new Error('fehlt');
+    const c = normalizeSheet(src); c.id = 'ab-' + uid(); c.example = false; c.klasse = KL(state.klasse).id; c.updatedAt = Date.now();
+    state.shareBusy = null; state.libOpen = false; state.libTab = 'mine'; renderLib(); openSheet(c); saveNow();
+    toast(`„${x.title}“ übernommen${x.autor ? ' (von ' + x.autor + ')' : ''} · Ihre Kopie liegt in „Meine Stunden“`);
+  } catch (err) { console.error(err); state.shareBusy = null; renderLib(); toast('Übernehmen hat nicht geklappt. Bitte erneut versuchen.'); }
+}
+// Fenster „Stunde teilen“
+async function openShare(sheetId) {
+  if (!canShare()) { toast('Zum Teilen bitte anmelden.'); return; }
+  await shareLoad(); const ex = sharedOf(sheetId); const e = state.lib.find(d => d.id === sheetId);
+  state.dlg = { mode: 'share', sheetId, title: (e && e.title) || stTitle(state.sheet), sid: ex ? ex.id : '', text: ex ? ex.text : '', autor: ex ? ex.autor : (state.prefs.autor || '') }; renderDlg();
+}
+function shareDlgHTML(d) {
+  return `<h2 id="dlg-t">Stunde teilen</h2>
+    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieser AB-Werkstatt geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'Ihr Konto' : 'Ihr Konto'}.</p>
+    <label class="f"><span>Ihr Name, wie er bei der Stunde steht</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
+    <label class="f"><span>Kurze Beschreibung (optional)</span><textarea class="inp" id="share-text" rows="3" maxlength="600" placeholder="Worum geht es, welche Klasse, was ist besonders?">${esc(d.text || '')}</textarea></label>
+    ${d.sid ? '<small class="hint">Die Stunde ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand; Kopien, die andere schon übernommen haben, ändern sich nicht.</small>' : '<small class="hint">Später geänderte Stunden bleiben in der geteilten Fassung auf dem Stand von heute, bis Sie „Aktualisieren“ wählen.</small>'}
+    <div class="row"><button class="btn primary" type="button" data-act="share-go">${d.sid ? 'Aktualisieren' : 'Teilen'}</button>${d.sid ? '<button class="btn danger" type="button" data-act="share-del">Nicht mehr teilen</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+}
+async function shareGo() {
+  const d = state.dlg; if (!d || d.mode !== 'share') return;
+  const autor = (($('#share-autor') || {}).value || '').trim(), text = (($('#share-text') || {}).value || '').trim();
+  if (!autor) { toast('Bitte Ihren Namen eintragen, damit andere wissen, von wem die Stunde ist.'); const i = $('#share-autor'); if (i) i.focus(); return; }
+  if (state.prefs.autor !== autor) { state.prefs.autor = autor; savePrefs(); }
+  try {
+    if (state.sheet && state.sheet.id === d.sheetId) await saveNow();
+    const sh = state.sheet && state.sheet.id === d.sheetId ? clone(state.sheet) : await backend.load(d.sheetId); if (!sh) throw new Error('fehlt');
+    await backend.sharePut(sh, { id: d.sid, text, autor }); state.dlg = null; renderDlg(); await shareLoad(true);
+    toast(d.sid ? 'Geteilte Fassung aktualisiert' : 'Stunde geteilt · für alle Konten unter „Geteilte Stunden“ zu finden');
+  } catch (err) { console.error(err); toast(/too large|payload|413/i.test(String(err && err.message)) ? 'Die Stunde ist zu groß zum Teilen. Bitte Bilder verkleinern.' : 'Teilen hat nicht geklappt. Bitte erneut versuchen.'); }
+}
+async function shareDelGo() {
+  const d = state.dlg; if (!d || !d.sid) return;
+  try { await backend.shareDel(d.sid); state.dlg = null; renderDlg(); await shareLoad(true); toast('Die Stunde wird nicht mehr geteilt. Übernommene Kopien anderer bleiben bestehen.'); }
+  catch (err) { console.error(err); toast('Das hat nicht geklappt. Bitte erneut versuchen.'); }
+}
 /* ---------- Liste, Reiter ---------- */
 function sortLib() { state.lib.sort((a, b) => b.updatedAt - a.updatedAt); }
 function upsertLib(e) { const i = state.lib.findIndex(d => d.id === e.id); if (i >= 0) state.lib[i] = e; else state.lib.push(e); sortLib(); renderTabs(); if (state.libOpen) renderLib(); }
@@ -8367,7 +8466,7 @@ async function deleteSheet(id) {
 /* ---------- Speicherort wählen ---------- */
 async function useBackend(b) {
   const t = ++backendToken;
-  backend = b; setStatus('pending');
+  backend = b; setStatus('pending'); state.shared = null; state.sharedAt = 0;
   let listed = true;
   try { await refreshLib(); } catch (err) { console.error(err); listed = false; }
   if (t !== backendToken) return;
@@ -8609,7 +8708,7 @@ function normPrefs(p) {
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
   const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
   const zeiten = {}; Object.entries(obj(p.zeiten)).forEach(([sch, l]) => { if (Array.isArray(l)) zeiten[String(sch).slice(0, 120)] = l.filter(x => x && typeof x === 'object').slice(0, 20).map(x => ({ id: String(x.id || 'z' + uid()).slice(0, 20), l: String(x.l || '').slice(0, 40), s: hmOk(x.s), e: hmOk(x.e) })); });
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(typeof p.autor === 'string' ? { autor: p.autor.slice(0, 80) } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
 const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
@@ -8691,7 +8790,7 @@ function libListHTML(k, q) {
       ${hit(d)}<div class="m">${d.abs > 1 ? d.abs + ' Arbeitsblätter · ' : ''}geändert ${fmt(d.updatedAt)}${d.id === state.sheet.id ? ' · gerade geöffnet' : ''}</div>
       <div class="a">${state.confirmDel === d.id
         ? `<span class="m">Endgültig löschen?</span><button class="link danger" type="button" data-act="lib-del-yes">Löschen</button><button class="link" type="button" data-act="lib-del-no">Abbrechen</button>`
-        : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-copy" aria-expanded="${state.moveOpen === d.id && state.moveMode === 'copy'}">Kopieren</button>${fs.length || KLASSEN.length > 1 ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id && state.moveMode !== 'copy'}">Verschieben</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
+        : `<button class="link" type="button" data-act="lib-open-sheet">Öffnen</button><button class="link" type="button" data-act="lib-copy" aria-expanded="${state.moveOpen === d.id && state.moveMode === 'copy'}">Kopieren</button>${canShare() ? `<button class="link" type="button" data-act="lib-share">${sharedOf(d.id) ? 'Geteilt ✓' : 'Teilen'}</button>` : ''}${fs.length || KLASSEN.length > 1 ? `<button class="link" type="button" data-act="lib-move" aria-expanded="${state.moveOpen === d.id && state.moveMode !== 'copy'}">Verschieben</button>` : ''}<button class="link danger" type="button" data-act="lib-del">Löschen</button>`}</div>
       ${state.moveOpen === d.id ? libMvHTML(d, k, fs, fid) : ''}
     </div>`; };
   const sec = f => {
@@ -8778,11 +8877,13 @@ function renderLib() {
   root.innerHTML = `<div class="scrim" data-act="lib-close"></div><aside class="drawer" role="dialog" aria-label="Meine Stunden">
     <div class="drawer-h"><div class="dh"><h2>Meine Stunden</h2><span>${esc(k.label)}</span></div><button class="ib" type="button" data-act="lib-close" title="Schließen">${I.x}</button></div>
     <div class="acct">${acct}</div>
+    <div class="lib-tabs" role="tablist" aria-label="Stunden"><button type="button" role="tab" data-act="lib-tab" data-v="mine" aria-selected="${state.libTab !== 'shared'}">Meine Stunden</button><button type="button" role="tab" data-act="lib-tab" data-v="shared" aria-selected="${state.libTab === 'shared'}">Geteilte Stunden${state.shared && state.shared.length ? ` <em>${state.shared.length}</em>` : ''}</button></div>
+    ${state.libTab === 'shared' ? `<div class="lib-list share-list">${sharedListHTML()}</div>` : `
     ${nLocal ? `<div class="notice"><span>${nLocal} ${nLocal === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser.</span><button class="link" type="button" data-act="lib-migrate">Online übernehmen</button></div>` : ''}
     <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neue Stunde</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}<button class="btn lib-fadd" type="button" data-act="lib-fnew">${FOLDER_SVG}Neuer Ordner</button></div>
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
-    <div class="lib-list">${libListHTML(k, q)}</div>
+    <div class="lib-list">${libListHTML(k, q)}</div>`}
     <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button><span class="copy-s">AB-Werkstatt · © 2026 Moritz Bauer</span></div></aside>`;
   const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
@@ -8822,6 +8923,11 @@ async function onLibClick(e) {
       if (KLASSEN.length > 1) { state.moveOpen = state.moveOpen === id && state.moveMode === 'copy' ? null : id; state.moveMode = 'copy'; renderLib(); break; }
       a.dataset.kl = KL(state.klasse).id; // nur eine Klasse: gleich kopieren
       // fallthrough
+    case 'lib-tab': state.libTab = a.dataset.v === 'shared' ? 'shared' : 'mine'; renderLib(); if (state.libTab === 'shared') shareLoad(); break;
+    case 'share-reload': state.shared = null; renderLib(); shareLoad(true); break;
+    case 'share-take': { const it = a.closest('[data-sid]'); if (it) shareTake(it.dataset.sid); break; }
+    case 'share-edit': { const it = a.closest('[data-sid]'); const x = it && (state.shared || []).find(y => y.id === it.dataset.sid); if (x) { if (!state.lib.some(dd => dd.id === x.sheetId)) { toast('Die Original-Stunde liegt nicht mehr in Ihren Stunden. Sie können die geteilte Fassung trotzdem zurückziehen.'); } openShare(x.sheetId); } break; }
+    case 'lib-share': if (id) openShare(id); break;
     case 'lib-copy-to':
       if (!id) break;
       if (a.dataset.kl && a.dataset.kl !== KL(state.klasse).id) { libToKlasse(id, a.dataset.kl, true); break; }
@@ -9237,7 +9343,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg;
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'share' ? shareDlgHTML(d) : d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -9344,6 +9450,7 @@ async function onDlgClick(e) {
     if (act === 'rlp-copy') { rlpCopy(); return; }
     if (act === 'rlp-go') { const id = a.dataset.id; closeDlg(); if (state.libOpen) { state.libOpen = false; renderLib(); } if (id !== state.sheet.id) await openById(id); return; }
   }
+  if (state.dlg.mode === 'share') { if (act === 'share-go') { shareGo(); return; } if (act === 'share-del') { shareDelGo(); return; } }
   if (state.dlg.mode === 'out') {
     if (act === 'out-set') {
       const f = a.dataset.f, v = a.dataset.v; const o = outState();
@@ -10686,7 +10793,7 @@ function boot() {
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); (all[i + 1] || all[i]).focus(); } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); if (i > 0) all[i - 1].focus(); else { const q = $('#editor [data-bkq]'); if (q) q.focus(); } } else if (e.key === 'Escape') { e.preventDefault(); bkClose(); } });
   document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'k' || e.key === 'K') && !state.dlg && !document.querySelector('.pr-ov, .lib-open')) { e.preventDefault(); bkOpen(); } });
   $('#lib-root').addEventListener('click', onLibClick);
-  $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } });
+  $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } if (e.target.id === 'share-q') { state.shareQuery = e.target.value; const l = $('#lib-root .share-list'); if (l) { l.innerHTML = sharedListHTML(); const i = $('#share-q'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
   $('#lib-root').addEventListener('change', e => { if (e.target.id === 'lib-sort') { if (e.target.value === 'eigen') freezeOrder(KL(state.klasse).id); else lsSet(LS_SORT, e.target.value); savePrefs(); renderLib(); } });
   $('#lib-root').addEventListener('keydown', e => {
     const t = e.target;
