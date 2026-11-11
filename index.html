@@ -1285,6 +1285,15 @@ body{transition:background-color .3s,border-color .25s}
 .sv-ab:hover{background:var(--acc-soft,#EEF1FB)}
 .sv-sec .abl-sum{margin:0}
 .sv-hint{text-align:center}
+.zt-sch{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid var(--line)}.zt-sch>b{font-size:14px}
+.zt-list{display:flex;flex-direction:column;gap:6px}
+.zt-row{display:grid;grid-template-columns:minmax(0,1fr) 108px auto 108px 52px auto;gap:6px;align-items:center}
+.zt-row input{font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--field,#fff);color:var(--ink);min-width:0}
+.zt-row>span{font-size:12px;color:var(--muted)}.zt-d{font-size:11.5px;color:var(--muted)}
+.st-end{font-size:13px;padding-top:7px}
+.pt-until{display:inline-flex;align-items:center;gap:5px}.pt-until small{font-size:11px;color:var(--muted)}.pt-until input{width:104px;font:inherit;font-size:12px;padding:3px 5px;border:1px solid var(--line);border-radius:6px;background:var(--field,#fff);color:var(--ink)}
+.pt-plan{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}.pt-plan.late,.pt-note .late{color:#B3261E}
+@media (max-width:520px){.zt-row{grid-template-columns:1fr 1fr auto}.zt-row input[aria-label="Bezeichnung"]{grid-column:1/-1}}
 .set-h{display:flex;flex-direction:column;gap:2px;margin:0 0 10px}.set-h h2{margin:0;font-size:22px}.set-h .link{align-self:flex-start;font-size:13px}
 .set-tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:12px}
 .set-tabs button{padding:8px 12px;border:0;border-bottom:2.5px solid transparent;background:transparent;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:-1px}
@@ -1509,6 +1518,13 @@ body{transition:background-color .3s,border-color .25s}
 .pr-chip.pr-timer::before{content:'';flex:0 0 auto;width:20px;height:20px;border:3px solid currentColor;border-radius:50%;box-sizing:border-box;background:linear-gradient(currentColor,currentColor) 50% 22%/3px 7px no-repeat}
 .pr-chip.pr-timer{cursor:pointer}
 .pr-chip.pr-timer.run{background:var(--acc);color:#fff}
+.pr-timer b{font-weight:800}.pr-timer small{font-size:17px;font-weight:700;opacity:.85;margin-left:2px}
+.pr-timer.low,.pr-timer.run.low{background:#E07A00;color:#fff;animation:pr-low 1.6s ease-in-out infinite}
+@keyframes pr-low{50%{box-shadow:0 0 0 10px rgba(224,122,0,.28)}}
+.pr-tbar.low{background:#FCE3C4}.pr-tbar.low i{background:#E07A00;opacity:1}
+.pr-slide.t-low::after{content:"";position:absolute;inset:0;border:9px solid rgba(224,122,0,.55);pointer-events:none;z-index:3}
+.pr-tl.low{color:#FFB347}
+.pr-clock{font:700 14px/1 var(--f-ui);color:#C9CED8;font-variant-numeric:tabular-nums;margin-right:6px}.pr-clock:empty{display:none}
 .pr-tbar{position:absolute;left:16px;right:0;top:0;height:10px;background:var(--acc-tint);z-index:2}
 .pr-tbar i{display:block;height:100%;width:100%;background:var(--acc);opacity:.35;transition:width .3s linear}
 .pr-tbar.run i{opacity:1}
@@ -3044,7 +3060,7 @@ function ablaufOf(sh) {
 }
 function ablaufHTML() {
   const sh = state.sheet, m = sh.meta; const A = ablaufOf({ meta: m, blocks: stBlocks() }); const L0 = Number(m.lesson) || 45;
-  if (!A.any) return `<div class="f abl-sum"><span>Stundenablauf</span><div class="abl-tot"><b>0 von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L0 ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b><small>Zeiten tragen Sie an den Aufgaben-Bausteinen und Unterrichtsschritten ein.</small></div></div>`;
+  if (!A.any) return `<div class="f abl-sum"><span>Stundenablauf</span><div class="abl-tot"><b>0 von</b><select data-k="lesson" aria-label="Länge der Stunde">${[...new Set([45, 60, 75, 90, 135, L0])].sort((a, b) => a - b).map(n => `<option value="${n}"${n === L0 ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b><small>Zeiten tragen Sie an den Aufgaben-Bausteinen und Unterrichtsschritten ein.</small></div></div>`;
   const L = Number(m.lesson) || 45; const base = Math.max(L, A.total) || 1;
   const segs = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<i style="width:${(A.by[k] / base * 100).toFixed(2)}%;background:${x.c}" title="${x.label}: ${Math.round(A.by[k])} Min."></i>`).join('')
     + (A.open ? `<i style="width:${(A.open / base * 100).toFixed(2)}%;background:#B7BCC6" title="ohne Phase: ${Math.round(A.open)} Min."></i>` : '');
@@ -3055,11 +3071,11 @@ function ablaufHTML() {
   return `<div class="f abl-sum"><span>Stundenablauf</span>
     <div class="abl-bar" style="--fill:${Math.min(100, L / base * 100).toFixed(2)}%">${segs}</div>
     <div class="abl-leg">${parts.join('')}</div>
-    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Baustein' : 'Bausteine'} ohne Zeit</small>` : ''}</div></div>`;
+    <div class="abl-tot"><b>${A.total} von</b><select data-k="lesson" aria-label="Länge der Stunde">${[...new Set([45, 60, 75, 90, 135, L])].sort((a, b) => a - b).map(n => `<option value="${n}"${n === L ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b>${st}${A.by.ha ? `<small>+ Hausaufgabe ${A.by.ha} Min.</small>` : ''}${A.none ? `<small>${A.none} ${A.none === 1 ? 'Baustein' : 'Bausteine'} ohne Zeit</small>` : ''}</div></div>`;
 }
 // Zeit gilt für den ganzen Aufgaben-Baustein (b.min); Timer beim Präsentieren: b.timer = '' | 'klick' | 'auto'
 const TIMER_OPTS = [['', 'aus'], ['klick', 'Start per Klick'], ['auto', 'startet mit der Folie']];
-const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div></div>`;
+const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><label class="f narrow" title="Feste Uhrzeit, zu der dieser Teil spätestens fertig sein muss (optional)"><span>Fertig bis</span><input type="time" data-k="until" value="${esc(hmOk(b.until))}"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div></div>`;
 // Ältere Blätter: Minuten je Aufgabe werden einmalig zur Zeit des Bausteins (parallele Gruppen zählen einmal, Hausaufgaben nur, wenn alles Hausaufgabe ist)
 function minMigrate(blocks) {
   (blocks || []).forEach(b => {
@@ -3278,9 +3294,9 @@ function startHTML() {
   </div>`;
 }
 // Bereich „Einstellungen“: alles, was nicht Inhalt ist, an einem Ort
-const SET_TABS = [['kurs', 'Kurs'], ['blatt', 'Arbeitsblatt'], ['design', 'Aussehen'], ['pres', 'Präsentation'], ['app', 'App']];
+const SET_TABS = [['kurs', 'Kurs'], ['blatt', 'Arbeitsblatt'], ['design', 'Aussehen'], ['zeiten', 'Zeiten'], ['pres', 'Präsentation'], ['app', 'App']];
 function settingsHTML() {
-  const m = state.sheet.meta; const basis = isBasis(); const tabs = SET_TABS.filter(([k]) => !(basis && k === 'pres'));
+  const m = state.sheet.meta; const basis = isBasis(); const tabs = SET_TABS.filter(([k]) => !(basis && (k === 'pres' || k === 'zeiten')));
   const tab = tabs.some(([k]) => k === state.setTab) ? state.setTab : 'kurs'; const isK = m.mode === 'klausur';
   let c = '';
   if (tab === 'kurs') c = `<div class="card set-card" data-bid="meta"><div class="card-b">
@@ -3297,7 +3313,13 @@ function settingsHTML() {
       <small class="hint">Gilt für ${state.sheet.abs ? 'alle Arbeitsblätter der Stunde' : 'das Arbeitsblatt'}.</small>
     </div></div>`;
   else if (tab === 'design') { const sc = seiteCard(); c = sc.replace('<div class="card', '<div class="card set-card').replace(/<div class="card-h"[\s\S]*?<\/div>\s*<div class="card-b">/, '<div class="card-b">').replace(' closed', ''); c = (state.sheet.abs ? `<small class="hint">Design und Papier gelten für ${esc(abLabel(m, state.sheet.abActive || 0))}; die anderen Arbeitsblätter stellen Sie jeweils dort ein.</small>` : '') + c; }
+  else if (tab === 'zeiten') c = `<div class="card set-card"><div class="card-b">
+      <small class="hint">Start und Ende der Unterrichtsstunden je Schule. In der Karte „Stunde“ wählen Sie dann das Zeitfenster; Beginn und Länge werden übernommen, und die Timer der Präsentation richten sich nach der Uhr. Gespeichert wird mit Ihrem Konto.</small>
+      ${zeitSchulen().map(sch => { const L = zeitenOf(sch); return `<div class="zt-sch"><b>${esc(sch)}</b>${L.length ? `<div class="zt-list">${L.map((z, i) => { const d = hm(z.e) - hm(z.s); return `<div class="zt-row"><input type="text" data-zt="${esc(sch)}|${i}|l" value="${esc(z.l)}" placeholder="Bezeichnung, z. B. 1./2. Stunde" aria-label="Bezeichnung"><input type="time" data-zt="${esc(sch)}|${i}|s" value="${esc(z.s)}" aria-label="Beginn"><span>bis</span><input type="time" data-zt="${esc(sch)}|${i}|e" value="${esc(z.e)}" aria-label="Ende"><small class="zt-d">${d > 0 ? d + ' Min.' : ''}</small><button class="ib" type="button" data-act="zt-del" data-sch="${esc(sch)}" data-i="${i}" title="Entfernen" aria-label="Entfernen">${I.x}</button></div>`; }).join('')}</div>` : '<small class="hint">Noch keine Zeiten.</small>'}<button class="link" type="button" data-act="zt-add" data-sch="${esc(sch)}">+ Zeitfenster</button></div>`; }).join('')}
+    </div></div>`;
   else if (tab === 'pres') c = `<div class="card set-card"><div class="card-b">
+      <label class="chk"><input type="checkbox" data-uhr${uhrOn() ? ' checked' : ''}><span>Timer nach der Uhr: Arbeitsphasen enden zur geplanten Uhrzeit, wenn die Stunde einen Beginn hat</span></label>
+      <small class="hint">Die Endzeit ergibt sich aus Beginn, Länge und den Minuten der Bausteine. Steht bei einem Baustein „fertig bis“, gilt diese Uhrzeit als fester Punkt; sonst ist das Stundenende der feste Punkt. Beginnt eine Phase später, wird sie kürzer, damit das Folgende noch passt. Außerhalb der Stundenzeit zählen die Timer wie bisher nur die Minuten herunter. Bei 30 % Restzeit wird der Timer auf der Folie orange.</small>
       <label class="chk"><input type="checkbox" data-prph${m.presPhase === false ? '' : ' checked'}><span>Phasenleiste unten auf den Folien (aus den Phasen der Aufgaben)</span></label>
       <div class="f"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[m.presPhSize] ? m.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
@@ -3414,7 +3436,8 @@ function stundeCard() {
     <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${areaIc('stunde')}</span><span class="kind">Stunde</span><span class="sum">${esc(stTitle(P))}${vp.datum ? ' · ' + esc(vp.datum) : ''}</span></div>
     <div class="card-b">
       ${P.abs ? `<label class="f"><span>Titel der Stunde</span><input type="text" data-st="title" value="${esc(stTitle(P))}" placeholder="Titel der Stunde"></label>` : fText('title', 'Titel der Stunde (zugleich Titel des Arbeitsblatts)', m.title, 'Titel')}
-      <div class="row">${fText('vp.datum', 'Datum', vp.datum || '', 'z. B. 12.11.2026')}<label class="f narrow"><span>Beginn</span><input type="text" data-k="vp.start" value="${esc(vp.start || '')}" placeholder="08:00"></label></div>
+      <div class="row">${fText('vp.datum', 'Datum', vp.datum || '', 'z. B. 12.11.2026')}${(() => { const Z = zeitenOf(m.school); return `<label class="f"><span>Zeitfenster</span><select data-k="vp.slot"><option value="">${Z.length ? 'eigene Zeit' : 'eigene Zeit (Zeitfenster in den Einstellungen)'}</option>${Z.filter(z => z.s && z.e).map(z => `<option value="${esc(z.id)}"${vp.slot === z.id ? ' selected' : ''}>${esc([z.l, z.s + '–' + z.e].filter(Boolean).join(' · '))}</option>`).join('')}</select></label>`; })()}</div>
+      <div class="row"><label class="f narrow"><span>Beginn</span><input type="text" data-k="vp.start" value="${esc(vp.start || '')}" placeholder="08:00"></label>${Number.isFinite(hm(vp.start)) ? `<div class="f"><span>Ende</span><div class="st-end">${hmFmt(hm(vp.start) + (Number(m.lesson) || 45))} Uhr · ${Number(m.lesson) || 45} Min.${vp.slot ? '' : ' <button class="link" type="button" data-act="settings" data-tab="zeiten">Zeitfenster einrichten</button>'}</div></div>` : ''}</div>
       <label class="f"><span>Stundenziel</span><textarea data-k="vp.ziel" rows="2" placeholder="Die Schülerinnen und Schüler …">${esc(vp.ziel || '')}</textarea></label>
       ${fText('frage', 'Stundenfrage', m.frage, 'z. B. Wie erzeugen Politikerinnen und Politiker in sozialen Medien Nähe?')}
       ${ablaufHTML()}
@@ -3460,12 +3483,13 @@ function stepNew(k) {
 function presEditorHTML() {
   const blocks = state.sheet.blocks; const num = numbering(state.sheet);
   const rows = blocks.filter(b => (b.type === 'tasks' && (b.items || []).some(it => tfStr(it.text).trim())) || b.type === 'step');
-  const tl = { '': 'kein Timer', klick: 'per Klick', auto: 'mit der Folie' };
+  const tl = { '': 'kein Timer', klick: 'per Klick', auto: 'mit der Folie' }; const PL = stPlan();
+  const planNote = PL ? `<small class="hint pt-note">Stunde ${hmFmt(PL.s0)}–${hmFmt(PL.end)} Uhr · geplant ${PL.total} von ${PL.end - PL.s0} Min.${PL.total > PL.end - PL.s0 ? ' · <b class="late">' + (PL.total - (PL.end - PL.s0)) + ' Min. zu viel</b>' : ''}${uhrOn() ? ' · Timer laufen nach der Uhr' : ''}</small>` : '<small class="hint pt-note">Mit Beginn oder Zeitfenster (Bereich „Stunde“) richten sich die Timer nach der Uhr.</small>';
   return `<div class="card pres-ed"><div class="card-b">
       <div class="tf-ed-acts main"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><button class="btn" type="button" data-act="pres-pptx">PowerPoint erstellen</button></div>
       <small class="hint">Im Browser: Pfeiltasten oder Klick blättern, T startet den Timer, H zeigt Tipps, E die Erwartung, Esc beendet. Läuft ein Timer, fragt die Präsentation nach, bevor er abgebrochen wird. Rechts ein Klick auf eine Folie startet dort.</small>
     </div></div>
-    <div class="card pres-ed"><div class="card-b"><div class="f"><span>Zeit und Timer${state.sheet.abs ? ' · ' + esc(abLabel(state.sheet.meta, state.sheet.abActive || 0)) : ''}</span>${rows.length ? `<div class="pt-list">${rows.map(b => `<div class="pt-row" data-bid="${b.id}"><span class="pt-l"><i>${typeIcon(iconKey(b))}</i><span>${esc(b.type === 'step' ? stepLabel(b) : summary(b, num).replace(/ · \d+ Min\.( · Timer)?$/, ''))}</span></span><span class="pt-min"><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–" aria-label="Minuten"><small>Min.</small></span><div class="seg sm" role="group" aria-label="Timer">${TIMER_OPTS.map(([v]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${tl[v]}</button>`).join('')}</div></div>`).join('')}</div>` : '<small class="hint">Noch keine Aufgaben oder Unterrichtsschritte.</small>'}</div></div></div>
+    <div class="card pres-ed"><div class="card-b"><div class="f"><span>Zeit und Timer${state.sheet.abs ? ' · ' + esc(abLabel(state.sheet.meta, state.sheet.abActive || 0)) : ''}</span>${planNote}${rows.length ? `<div class="pt-list">${rows.map(b => `<div class="pt-row" data-bid="${b.id}"><span class="pt-l"><i>${typeIcon(iconKey(b))}</i><span>${esc(b.type === 'step' ? stepLabel(b) : summary(b, num).replace(/ · \d+ Min\.( · Timer)?$/, ''))}</span></span><span class="pt-min"><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–" aria-label="Minuten"><small>Min.</small></span><label class="pt-until" title="Feste Uhrzeit, zu der dieser Teil spätestens fertig sein muss (optional)"><small>fertig bis</small><input type="time" data-k="until" value="${esc(hmOk(b.until))}" aria-label="Fertig bis"></label>${(() => { const x = PL && PL.at[b.id]; if (!x) return ''; const late = Number.isFinite(x.until) && x.to > x.until + 0.01; return `<small class="pt-plan${late ? ' late' : ''}" title="${late ? 'Passt nicht: nach Plan erst um ' + hmFmt(x.to) + ' fertig' : 'Geplante Uhrzeit'}">${hmFmt(x.from)}–${hmFmt(x.to)}</small>`; })()}<div class="seg sm" role="group" aria-label="Timer">${TIMER_OPTS.map(([v]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${tl[v]}</button>`).join('')}</div></div>`).join('')}</div>` : '<small class="hint">Noch keine Aufgaben oder Unterrichtsschritte.</small>'}</div></div></div>
     <div class="card pres-ed"><div class="card-b">${presPickHTML()}</div></div>`;
 }
 function presPickChange(t) {
@@ -4373,12 +4397,17 @@ function openPres(start) {
   const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
-    <span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
+    <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
     <button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div></div>`);
   setAccent(ov, m); document.body.appendChild(ov);
   const stage = ov.querySelector('.pr-stage'), slide = ov.querySelector('.pr-slide'), $p = q => ov.querySelector(q);
   const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
-  const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1 };
+  const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1, cid: 0 };
+  // Uhrzeit-Plan der Stunde; gilt nur, solange die Uhr in der Stundenzeit liegt (sonst wie bisher Minuten herunterzählen)
+  const PLAN = uhrOn() ? stPlan() : null;
+  const slideBid = sl => (sl.k === 'step' ? sl.b && sl.b.id : sl.k === 'tasks' ? ((sl.items || []).find(x => (x.bmin || 0) === tsMin(sl)) || {}).bid : null);
+  const clockEnd = sl => { if (!PLAN) return null; const n = nowMin(); if (n < PLAN.s0 - 10 || n > PLAN.end) return null; const r = planEnd(PLAN, slideBid(sl), n); if (!r) return null; return Date.now() + Math.max(1, r.end - n) * 60000; };
+  const hhmm = ms => { const d = new Date(ms); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
   const fmt = sec => `${Math.floor(sec / 60)}:${String(Math.max(0, sec) % 60).padStart(2, '0')}`;
   // Warnung, bevor ein laufender Timer vorzeitig endet (Zurücksetzen, Beenden, anderer Timer); Blättern hält ihn nicht an
   let W = null;
@@ -4401,14 +4430,20 @@ function openPres(start) {
   };
   const tmShow = () => {
     const el2 = slide.querySelector('.pr-timer'); const mine = T.slide === P.i;
-    if (el2) { const sec = mine ? T.left : +el2.dataset.min * 60; el2.textContent = fmt(sec); el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); }
-    const tb = slide.querySelector('.pr-tbar'); if (tb) { const f = mine && T.full ? T.left / T.full : 1; tb.firstChild.style.width = (f * 100).toFixed(2) + '%'; tb.classList.toggle('end', mine && T.left <= 0 && T.full > 0); tb.classList.toggle('run', mine && T.run); }
+    const low = mine && T.full > 0 && T.left > 0 && T.left <= T.full * 0.3;
+    if (el2) { let sec = mine ? T.left : +el2.dataset.min * 60; let bis = '';
+      if (mine && T.run) bis = hhmm(T.end); else if (!mine || (T.left <= 0 && !T.full)) { const ce = clockEnd(S[P.i]); if (ce) { sec = Math.round((ce - Date.now()) / 1000); bis = hhmm(ce); } }
+      el2.innerHTML = `<b>${fmt(sec)}</b>${bis ? `<small>bis ${bis}</small>` : ''}`; el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); el2.classList.toggle('low', low); }
+    const tb = slide.querySelector('.pr-tbar'); if (tb) { const f = mine && T.full ? T.left / T.full : 1; tb.firstChild.style.width = (f * 100).toFixed(2) + '%'; tb.classList.toggle('end', mine && T.left <= 0 && T.full > 0); tb.classList.toggle('run', mine && T.run); tb.classList.toggle('low', low); }
+    slide.classList.toggle('t-low', low && T.run);
+    { const c = $p('.pr-clock'); if (c) c.textContent = PLAN ? `${hmFmt(nowMin())} · Ende ${hmFmt(PLAN.end)}` : ''; }
     $p('.pr-tm').hidden = !el2 && !T.run;
     $p('[data-p="timer"]').textContent = T.run ? 'Timer anhalten' : (mine && T.left > 0 && T.left < T.full ? 'Timer fortsetzen' : 'Timer starten');
     $p('[data-p="timer"]').disabled = !el2 && !T.run;
-    $p('.pr-tl').textContent = T.run && !mine ? '⏱ ' + fmt(T.left) : '';
+    $p('.pr-tl').textContent = T.run && !mine ? '⏱ ' + fmt(T.left) + ' · bis ' + hhmm(T.end) : ''; $p('.pr-tl').classList.toggle('low', T.run && !mine && T.left <= T.full * 0.3);
     if (W) { const l = W.el.querySelector('.pr-warn-l'); if (l) l.textContent = fmt(T.left); }
   };
+  if (PLAN) T.cid = setInterval(() => { if (!T.run) tmShow(); }, 15000);
   const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000)); if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
   const tmToggle = () => {
     if (T.run && T.slide !== P.i && slide.querySelector('.pr-timer')) { tmWarn('Der Timer dieser Folie ersetzt ihn.', 'Neuen Timer starten', tmStart); return; }
@@ -4417,7 +4452,8 @@ function openPres(start) {
   };
   const tmStart = () => {
     const el2 = slide.querySelector('.pr-timer'); if (!el2) return;
-    if (T.slide !== P.i || T.left <= 0) { T.slide = P.i; T.full = T.left = +el2.dataset.min * 60; }
+    if (T.slide !== P.i || T.left <= 0) { T.slide = P.i; const ce = clockEnd(S[P.i]); T.full = T.left = ce ? Math.max(60, Math.round((ce - Date.now()) / 1000)) : +el2.dataset.min * 60;
+      if (ce) { const plan = +el2.dataset.min; const got = Math.round(T.left / 60); if (got < plan) toast(`Nach der Uhr bleiben ${got} statt ${plan} Min. · fertig um ${hhmm(Date.now() + T.left * 1000)}`); } }
     T.end = Date.now() + T.left * 1000; T.run = true; clearInterval(T.id); T.id = setInterval(tick, 250); tmShow();
   };
   // ±1 Minute: läuft der Timer, verschiebt sich das Ende; sonst ändert sich die Startzeit dieser Folie (nur für diese Präsentation)
@@ -4447,7 +4483,7 @@ function openPres(start) {
   const tip = () => { const tp = slide.querySelector('.pr-tips'); if (!tp) return; const h = tp.querySelector('[hidden]'); tp.hidden = false; if (h) h.hidden = false; apply(); };
   const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
   const close = () => tmWarn('Beim Beenden der Präsentation wird er abgebrochen.', 'Präsentation beenden', closeNow);
-  const closeNow = () => { clearInterval(T.id); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const closeNow = () => { clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.pr-bar button')) return;
@@ -7628,6 +7664,7 @@ function snapshot() { undoSnap = clone(state.sheet); }
 
 function onInput(e) {
   const t = e.target; const isRt = !!(t.classList && t.classList.contains('rtx'));
+  if (t.dataset && t.dataset.zt != null) { const [sch, i, f] = t.dataset.zt.split('|'); const L = zeitenOf(sch).map(z => ({ ...z })); if (!L[+i]) return; L[+i][f] = f === 'l' ? t.value : hmOk(t.value) || t.value; zeitenSet(sch, L); const d = t.closest('.zt-row') && t.closest('.zt-row').querySelector('.zt-d'); if (d) { const n = hm(L[+i].e) - hm(L[+i].s); d.textContent = n > 0 ? n + ' Min.' : ''; } return; }
   if (t.dataset && t.dataset.bkq != null) { state.bkQ = t.value; const l = $('#bk-list'); if (l) l.innerHTML = bkList(); return; }
   if (t.dataset && t.dataset.sf != null) { state.sheet.meta.frage = t.value; changed(false); return; }
   if (t.dataset && t.dataset.st === 'title') { if (!state.sheet.stunde) state.sheet.stunde = {}; state.sheet.stunde.title = t.value; changed(false); return; }
@@ -7651,6 +7688,9 @@ function onInput(e) {
 function onChange(e) {
   const t = e.target; if (hist.timer) histCommit();
   if (presPickChange(t)) return;
+  if (t.dataset.uhr != null) { state.prefs.uhr = !!t.checked; savePrefs(); return; }
+  if (t.dataset.k === 'vp.slot') { const vp = vpOf(); const z = zeitenOf(state.sheet.meta.school).find(x => x.id === t.value); if (z) { vp.slot = z.id; vp.start = z.s; const d = hm(z.e) - hm(z.s); if (d > 0) state.sheet.meta.lesson = String(d); } else delete vp.slot; changed(true); return; }
+  if (t.dataset.k === 'lesson' || t.dataset.k === 'vp.start') delete vpOf().slot;
   if (t.dataset.act === 'op') {
     const card = t.closest('[data-bid]'); const b = target(card.dataset.bid); const i = +t.dataset.i;
     const o = curOps().find(x => x.op === t.value); if (!o) return;
@@ -7675,7 +7715,9 @@ function onChange(e) {
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
   if (/^items\.\d+\.min$/.test(k) || k === 'min') { const n = parseInt(String(v).replace(/\D/g, ''), 10); v = n > 0 ? String(Math.min(n, 999)) : ''; t.value = v; }
+  if (k === 'until') { v = hmOk(v); if (!v) { const bb = target(card.dataset.bid); if (bb) delete bb.until; changed(true); return; } }
   setPath(target(card.dataset.bid), k, v);
+  if (k === 'until' || k === 'min') { changed(true); return; }
   if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
@@ -7715,6 +7757,8 @@ function onClick(e) {
   switch (act) {
     case 'area-set': setArea(a.dataset.v); return;
     case 'settings': openSettings(a.dataset.tab); return;
+    case 'zt-add': { const sch = a.dataset.sch; zeitenSet(sch, [...zeitenOf(sch), { id: 'z' + uid(), l: '', s: '', e: '' }]); renderEditor(); const r = [...document.querySelectorAll('#editor .zt-row input[data-zt$="|l"]')].filter(x => x.dataset.zt.startsWith(sch + '|')).pop(); if (r) r.focus(); return; }
+    case 'zt-del': { const sch = a.dataset.sch; zeitenSet(sch, zeitenOf(sch).filter((_, i) => i !== +a.dataset.i)); renderEditor(); return; }
     case 'settings-back': setArea(isBasis() ? 'blatt' : state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return;
     case 'set-tab': state.setTab = a.dataset.v; renderEditor(); return;
     case 'umfang': setUmfang(a.dataset.v); return;
@@ -8396,6 +8440,35 @@ function klassenSave() {
 // Ordner gelten je Reiter. Gespeichert wird ein kleines Einstellungsdokument je Ablage: Ordner, Zuordnung der Blätter, eigene Reihenfolge.
 const LS_PREF = 'abw.ordner', LS_SORT = 'abw.sort', LS_FZU = 'abw.fzu';
 const LIB_SORT = [['neu', 'Zuletzt geändert'], ['nr', 'Nach AB-Nr.'], ['titel', 'Nach Titel'], ['eigen', 'Eigene Reihenfolge']];
+// Uhrzeiten „HH:MM“ ↔ Minuten des Tages
+const hmOk = v => { const m = String(v || '').trim().match(/^(\d{1,2})[:.](\d{2})$/); return m && +m[1] < 24 && +m[2] < 60 ? String(+m[1]).padStart(2, '0') + ':' + m[2] : ''; };
+const hm = v => { const t = hmOk(v); return t ? +t.slice(0, 2) * 60 + +t.slice(3) : NaN; };
+const hmFmt = min => { const x = Math.round(min); const h = Math.floor(((x % 1440) + 1440) % 1440 / 60), mm = ((x % 60) + 60) % 60; return `${h}:${String(mm).padStart(2, '0')}`; };
+const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60; };
+// Vorbelegung: Georg-Herwegh-Gymnasium
+const ZEIT_DEF = { 'Georg-Herwegh-Gymnasium': [{ id: 'ghg60', l: '60 Min.', s: '14:00', e: '15:00' }, { id: 'ghg75', l: '75 Min.', s: '08:15', e: '09:30' }] };
+const zeitSchulen = () => [...new Set([...KLASSEN.map(k => String(k.school || '').trim()), String((state.sheet && state.sheet.meta.school) || '').trim()].filter(Boolean))];
+const zeitenOf = sch => { const z = state.prefs && state.prefs.zeiten; return z && Array.isArray(z[sch]) ? z[sch] : (ZEIT_DEF[sch] || []); };
+function zeitenSet(sch, L) { if (!state.prefs.zeiten) state.prefs.zeiten = {}; state.prefs.zeiten[sch] = L; savePrefs(); }
+const uhrOn = () => !state.prefs || state.prefs.uhr !== false;
+// Zeitplan der Stunde: geplante Zeiten je Baustein, feste Ankerpunkte („fertig bis“), Stundenende
+function stPlan() {
+  const m = state.sheet.meta, vp = vpOf(); const s0 = hm(vp.start); if (!Number.isFinite(s0)) return null;
+  const L = Number(m.lesson) || 45; const end = s0 + L;
+  const TL = ablaufOf({ meta: m, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par && r.min);
+  let t = s0; const at = {}; TL.forEach((r, i) => { at[r.b.id] = { i, from: t, to: t + r.min, until: hm(r.b.until) }; t += r.min; });
+  return { s0, end, TL, at, total: t - s0 };
+}
+// Ende eines Bausteins nach der Uhr: eigene Dauer, aber spätestens so, dass bis zum nächsten Anker (oder Stundenende) alles Folgende noch passt
+function planEnd(P, bid, now) {
+  const x = P && P.at[bid]; if (!x) return null; const TL = P.TL; const i = x.i;
+  let anchor = P.end, a = TL.length - 1;
+  for (let j = i; j < TL.length; j++) { const u = hm(TL[j].b.until); if (Number.isFinite(u)) { anchor = u; a = j; break; } }
+  let rest = 0; for (let k = i + 1; k <= a; k++) rest += TL[k].min;
+  // Reicht die Zeit bis zum festen Punkt nicht, werden diese und die folgenden Phasen bis dorthin anteilig gekürzt
+  const d = TL[i].min, avail = anchor - now, need = d + rest; const f = need > avail ? Math.max(0, avail) / need : 1;
+  return { end: now + d * f, short: f < 1, anchor, fixed: a === i && Number.isFinite(hm(TL[i].b.until)) };
+}
 function normPrefs(p) {
   p = p && typeof p === 'object' ? p : {};
   const obj = o => (o && typeof o === 'object' && !Array.isArray(o) ? o : {});
@@ -8403,7 +8476,8 @@ function normPrefs(p) {
     .map(f => ({ id: f.id, klasse: KL(f.klasse).id, name: String(f.name).trim().slice(0, 60) }));
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
   const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, ...(klassen ? { klassen } : {}) };
+  const zeiten = {}; Object.entries(obj(p.zeiten)).forEach(([sch, l]) => { if (Array.isArray(l)) zeiten[String(sch).slice(0, 120)] = l.filter(x => x && typeof x === 'object').slice(0, 20).map(x => ({ id: String(x.id || 'z' + uid()).slice(0, 20), l: String(x.l || '').slice(0, 40), s: hmOk(x.s), e: hmOk(x.e) })); });
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
 const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
@@ -8422,6 +8496,7 @@ function mergePrefs(p) {
   lp.folders.forEach(f => { if (!ids.has(f.id)) state.prefs.folders.push(f); });
   Object.entries(lp.place).forEach(([sid, fid]) => { if (!state.prefs.place[sid]) state.prefs.place[sid] = fid; });
   Object.entries(lp.order).forEach(([k, v]) => { if (!state.prefs.order[k] && Array.isArray(v)) state.prefs.order[k] = v; });
+  Object.entries(lp.zeiten || {}).forEach(([k, v]) => { if (!state.prefs.zeiten) state.prefs.zeiten = {}; if (!state.prefs.zeiten[k]) state.prefs.zeiten[k] = v; });
   if (lp.klassen) { const have = state.prefs.klassen || []; const ids = new Set(have.map(k => k.id)); state.prefs.klassen = have.concat(lp.klassen.filter(k => !ids.has(k.id))); applyKlassen(); }
   savePrefs(); return true;
 }
