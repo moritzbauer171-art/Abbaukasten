@@ -1518,6 +1518,27 @@ body{transition:background-color .3s,border-color .25s}
 .pr-chip.pr-timer::before{content:'';flex:0 0 auto;width:20px;height:20px;border:3px solid currentColor;border-radius:50%;box-sizing:border-box;background:linear-gradient(currentColor,currentColor) 50% 22%/3px 7px no-repeat}
 .pr-chip.pr-timer{cursor:pointer}
 .pr-chip.pr-timer.run{background:var(--acc);color:#fff}
+.pr-qz{display:flex;flex-direction:column;gap:34px;font-size:var(--qzf,40px)}
+.qz-q{font-size:1.1em;font-weight:700;line-height:1.25;color:#1C1F27}
+.qz-o{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:22px}.qz-o.four{grid-template-columns:1fr 1fr}
+.qz-o li{position:relative;display:flex;align-items:center;gap:22px;padding:22px 26px;border:3px solid #D4D9E3;border-radius:18px;background:#fff;font-size:.8em;line-height:1.25;transition:background .25s,border-color .25s,opacity .25s}
+.qz-o li>b{flex:0 0 auto;display:grid;place-items:center;width:62px;height:62px;border-radius:14px;background:var(--acc);color:#fff;font-size:30px}
+.qz-o li>span{flex:1;min-width:0}
+.qz-o li>i{font-style:normal}
+.qz-mark{position:absolute;right:22px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:#2E7D4F;color:#fff;font-size:34px;font-weight:800}
+.qz-dim{display:none}
+.qz-o li.ok:has(>.qz-mark:not(.tf-hid)){background:#E3F4EA;border-color:#2E7D4F}.qz-o li.ok:has(>.qz-mark:not(.tf-hid))>b{background:#2E7D4F}
+.qz-o li:has(>.qz-dim:not(.tf-hid)){opacity:.4}
+.qz-mark.tf-hid{visibility:hidden}
+.qz-a{padding:24px 30px;border-left:10px solid #2E7D4F;background:#E3F4EA;border-radius:0 16px 16px 0;font-size:.85em;line-height:1.35}.qz-a small{display:block;font-size:22px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#2E7D4F;margin-bottom:6px}.qz-a p{margin:0}
+.qz-ed{display:flex;flex-direction:column;gap:10px}
+.qz-ed-q{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.qz-ed-h{display:flex;align-items:center;gap:8px}.qz-ed-h>b{display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--acc,#2B45B8);color:#fff;font-size:12px}.qz-ed-h .seg{margin-right:auto}
+.qz-ed-q input,.qz-ed-q textarea{width:100%;font:inherit;font-size:13.5px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--field,#fff);color:var(--ink);box-sizing:border-box}
+.qz-ed-o{display:grid;grid-template-columns:1fr 1fr;gap:6px}.qz-ed-r{display:flex;gap:5px;align-items:center}
+.qz-ok-b{flex:0 0 auto;width:28px;height:28px;border-radius:7px;border:1.5px solid var(--line);background:var(--field,#fff);font:inherit;font-weight:800;font-size:12px;color:var(--muted);cursor:pointer}
+.qz-ok-b[aria-pressed="true"]{background:#2E7D4F;border-color:#2E7D4F;color:#fff}
+@media (max-width:520px){.qz-ed-o{grid-template-columns:1fr}}
 .pr-timer b{font-weight:800}.pr-timer small{font-size:17px;font-weight:700;opacity:.85;margin-left:2px}
 .pr-timer.low,.pr-timer.run.low{background:#E07A00;color:#fff;animation:pr-low 1.6s ease-in-out infinite}
 @keyframes pr-low{50%{box-shadow:0 0 0 10px rgba(224,122,0,.28)}}
@@ -3130,7 +3151,7 @@ const STEP_TPL = {
   hypo: { g: 'ein', label: 'Vermutungen sammeln', ph: 'ein', soz: 'pa', min: 5, fol: 'text', head: '{Deine|Ihre} Vermutung', text: '{Stelle|Stellen Sie} eine Vermutung zur Stundenfrage auf.\n{Notiere|Notieren Sie} sie in einem Satz.', note: 'Vermutungen an der Tafel sammeln und am Ende der Stunde überprüfen.', eh: 'stellen begründete Vermutungen auf' },
   linie: { g: 'ein', label: 'Meinungslinie', ph: 'ein', soz: 'pl', min: 7, fol: 'text', head: '{Positioniere dich|Positionieren Sie sich}', text: '{Stelle dich|Stellen Sie sich} auf der Linie zwischen „stimme zu“ und „stimme nicht zu“ auf: …\n{Begründe|Begründen Sie} {deine|Ihre} Position in einem Satz.', note: 'These nennen, Linie im Raum markieren, einzelne Positionen begründen lassen.', eh: 'beziehen Position und begründen sie' },
   wdh: { g: 'ein', label: 'Wiederholung', ph: 'ein', soz: 'pl', min: 5, fol: 'text', head: 'Was wissen wir schon?', text: '{Fasse|Fassen Sie} die Ergebnisse der letzten Stunde in drei Sätzen zusammen.', note: 'Ergebnisse der letzten Stunde reaktivieren, Hausaufgabe aufgreifen.', eh: 'fassen die Ergebnisse der letzten Stunde zusammen' },
-  equiz: { g: 'ein', label: 'Quiz zum Einstieg', ph: 'ein', soz: 'ea', min: 5, fol: 'text', head: 'Was {weißt du|wissen Sie} schon?', text: '{Beantworte|Beantworten Sie} die Fragen, ohne nachzuschlagen:\n1. …\n2. …\n3. …', note: 'Vorwissen oder die letzte Stunde abfragen, Antworten kurz vergleichen, Lücken als Anlass für die Stundenfrage nutzen. Für ein digitales Quiz (z. B. Kahoot, Oncoo, Mentimeter) den Link eintragen: er erscheint als QR-Code auf der Folie.', eh: 'aktivieren Vorwissen und beantworten die Fragen\nbenennen offene Fragen' },
+  equiz: { g: 'ein', label: 'Quiz zum Einstieg', ph: 'ein', soz: 'ea', min: 5, fol: 'quiz', head: 'Was {weißt du|wissen Sie} schon?', text: '{Beantworte|Beantworten Sie} die Fragen, ohne nachzuschlagen:\n1. …\n2. …\n3. …', note: 'Vorwissen oder die letzte Stunde abfragen, Antworten kurz vergleichen, Lücken als Anlass für die Stundenfrage nutzen. Für ein digitales Quiz (z. B. Kahoot, Oncoo, Mentimeter) den Link eintragen: er erscheint als QR-Code auf der Folie.', eh: 'aktivieren Vorwissen und beantworten die Fragen\nbenennen offene Fragen' },
   video: { g: 'ein', label: 'Kurzvideo', ph: 'ein', soz: 'pl', min: 8, fol: 'text', head: 'Beobachtungsauftrag', text: '{Achte|Achten Sie} beim Ansehen darauf, wie …', note: 'Video zeigen; der Link steht als QR-Code auf der Folie.', eh: '' },
   vergl: { g: 'sich', label: 'Ergebnisse vergleichen', ph: 'sich', soz: 'pa', min: 7, fol: 'text', head: 'Ergebnisse vergleichen', text: '{Vergleiche|Vergleichen Sie} {deine|Ihre} Ergebnisse mit {deinem Partner oder deiner Partnerin|Ihrem Partner oder Ihrer Partnerin}.\n{Ergänze|Ergänzen Sie} Fehlendes in einer anderen Farbe.', note: 'Partnervergleich vor der Besprechung im Plenum; offene Fragen sammeln.', eh: 'vergleichen ihre Ergebnisse\nergänzen und korrigieren sie' },
   praes: { g: 'sich', label: 'Ergebnisse vorstellen', ph: 'sich', soz: 'pl', min: 10, fol: 'text', head: 'Ergebnisse vorstellen', text: '{Stelle|Stellen Sie} {deine|Ihre} Ergebnisse vor.\nDie Zuhörenden achten darauf, ob …', note: 'Zwei bis drei Gruppen stellen vor, die anderen ergänzen und geben Rückmeldung nach dem Beobachtungsauftrag.', eh: 'präsentieren ihre Ergebnisse\nergänzen und geben begründet Rückmeldung' },
@@ -3139,7 +3160,7 @@ const STEP_TPL = {
   tafel: { g: 'sich', label: 'Tafelbild entwickeln', ph: 'sich', soz: 'pl', min: 10, fol: 'text', head: 'Ergebnisse sichern', text: 'Wir halten die Ergebnisse gemeinsam an der Tafel fest.\n{Übertrage|Übertragen Sie} das Tafelbild in {dein|Ihr} Heft.', note: 'Tafelbild im Unterrichtsgespräch aus den Ergebnissen entwickeln.', eh: 'nennen die zentralen Ergebnisse\nübertragen das Tafelbild' },
   merk: { g: 'sich', label: 'Merksatz', ph: 'sich', soz: 'pa', min: 7, fol: 'text', head: 'Merksatz', text: '{Formuliere|Formulieren Sie} in einem Satz, was {du dir|Sie sich} aus der heutigen Stunde merken {solltest|sollten}.', note: 'Einige Merksätze vorlesen lassen, einen gemeinsam auswählen und ins Heft übernehmen.', eh: 'formulieren das zentrale Ergebnis als Merksatz' },
   ordnen: { g: 'sich', label: 'Begriffe ordnen', ph: 'sich', soz: 'pa', min: 8, fol: 'text', head: 'Begriffe ordnen', text: '{Ordne|Ordnen Sie} die Begriffe der Stunde in einer Mindmap und {verbinde|verbinden Sie} zusammengehörende mit Pfeilen: …', note: 'Begriffe vorgeben oder sammeln; eine Mindmap unter der Dokumentenkamera besprechen.', eh: 'ordnen die zentralen Begriffe\nstellen Zusammenhänge dar' },
-  quiz: { g: 'sich', label: 'Kurzes Quiz', ph: 'sich', soz: 'ea', min: 5, fol: 'text', head: 'Quiz', text: '{Beantworte|Beantworten Sie} die Fragen:\n1. …\n2. …\n3. …', note: 'Direkt auswerten, z. B. mit Handzeichen, Antwortkarten oder digital.', eh: 'beantworten Fragen zu den Ergebnissen der Stunde' },
+  quiz: { g: 'sich', label: 'Kurzes Quiz', ph: 'sich', soz: 'ea', min: 5, fol: 'quiz', head: 'Quiz', text: '{Beantworte|Beantworten Sie} die Fragen:\n1. …\n2. …\n3. …', note: 'Direkt auswerten, z. B. mit Handzeichen, Antwortkarten oder digital.', eh: 'beantworten Fragen zu den Ergebnissen der Stunde' },
   rueck: { g: 'sich', label: 'Zurück zur Stundenfrage', ph: 'sich', soz: 'pl', min: 7, fol: 'frage', head: 'Zurück zur Stundenfrage', text: '{Beantworte|Beantworten Sie} die Stundenfrage mithilfe {deiner|Ihrer} Ergebnisse.', note: 'Vermutungen vom Stundenbeginn überprüfen, Antwort festhalten.', eh: 'beantworten die Stundenfrage begründet' },
   transfer: { g: 'end', label: 'Transferfrage', ph: 'trans', soz: 'pa', min: 8, fol: 'text', head: 'Arbeitsauftrag', text: '{Übertrage|Übertragen Sie} {deine|Ihre} Ergebnisse auf …', note: '', eh: '' },
   blitz: { g: 'end', label: 'Blitzlicht', ph: 'refl', soz: 'pl', min: 5, fol: 'text', head: 'Blitzlicht', text: 'Was {nimmst du|nehmen Sie} aus der heutigen Stunde mit? {Antworte|Antworten Sie} in einem Satz.', note: 'Reihum, ohne Kommentar.', eh: 'benennen einen Lerngewinn' },
@@ -3147,7 +3168,13 @@ const STEP_TPL = {
   ausblick: { g: 'end', label: 'Ausblick', ph: 'refl', soz: 'pl', min: 3, fol: 'text', head: 'Ausblick', text: 'In der nächsten Stunde …', note: '', eh: '' },
   frei: { g: '', label: 'Eigener Schritt', ph: '', soz: '', min: '', fol: 'text', head: '', text: '', note: '', eh: '' }
 };
-const STEP_FOL = [['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['aus', 'keine Folie']];
+const STEP_FOL = [['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['aus', 'keine Folie']];
+const QZ_L = 'ABCD';
+const qzNew = (t = 'mc') => ({ t, q: '', o: ['', '', '', ''], ok: 0, a: '' });
+function qzNorm(b) { if (!Array.isArray(b.qz) || !b.qz.length) b.qz = [qzNew(), qzNew(), qzNew()]; b.qz = b.qz.map(x => ({ ...qzNew(), ...(x && typeof x === 'object' ? x : {}), o: [0, 1, 2, 3].map(i => String(((x && x.o) || [])[i] || '')) })); return b.qz; }
+const qzList = b => qzNorm(b).filter(x => tfStr(x.q).trim());
+// Lösung einer Frage als Text (Verlaufsplan, Notizen)
+const qzSol = x => (x.t === 'open' ? plainText(x.a || '').trim() : tfStr(x.o[x.ok]).trim() ? QZ_L[x.ok] + ') ' + plainText(x.o[x.ok]).trim() : '');
 const stepFol = b => (STEP_FOL.some(([k]) => k === b.fol) ? b.fol : 'text');
 const stepLabel = b => tfStr(b.title).trim() || (STEP_TPL[b.tpl] && b.tpl !== 'frei' ? STEP_TPL[b.tpl].label : '') || 'Unterrichtsschritt';
 const stepHeadDef = b => (stepFol(b) === 'frage' ? 'Stundenfrage' : itPh(b) === 'ein' ? 'Impuls' : 'Arbeitsauftrag');
@@ -3155,12 +3182,23 @@ const stepQs = b => tfLines(b.qs);
 const exitSteps = () => stBlocks().filter(b => b.type === 'step' && b.exit && stepQs(b).length);
 const linkShort = u => { const x = tfStr(u).trim().replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, ''); return x.length > 42 ? x.slice(0, 40) + '…' : x; };
 // Welche Folie entsteht? Ohne Bild oder Zitat fällt die Folie auf den Text zurück; ohne Inhalt gibt es keine.
+function qzEditor(b) {
+  const Q = qzNorm(b);
+  return `<div class="f"><span>Fragen <small>· je Frage eine Folie; ein Klick deckt die Lösung auf</small></span><div class="qz-ed">${Q.map((x, i) => `<div class="qz-ed-q">
+      <div class="qz-ed-h"><b>${i + 1}</b><div class="seg sm" role="group" aria-label="Art der Frage"><button type="button" data-act="qz-t" data-i="${i}" data-v="mc" aria-pressed="${x.t !== 'open'}">4 Optionen</button><button type="button" data-act="qz-t" data-i="${i}" data-v="open" aria-pressed="${x.t === 'open'}">Frage + Lösung</button></div>
+        <button class="ib" type="button" data-act="qz-up" data-i="${i}" title="Nach oben"${i ? '' : ' disabled'}>${I.up}</button><button class="ib" type="button" data-act="qz-del" data-i="${i}" title="Frage entfernen"${Q.length > 1 ? '' : ' disabled'}>${I.x}</button></div>
+      <input type="text" data-k="qz.${i}.q" value="${esc(tfStr(x.q))}" placeholder="Frage" aria-label="Frage ${i + 1}">
+      ${x.t === 'open' ? `<textarea data-k="qz.${i}.a" rows="2" placeholder="Lösung (wird auf Klick aufgedeckt)" aria-label="Lösung">${esc(tfStr(x.a))}</textarea>`
+        : `<div class="qz-ed-o">${x.o.map((o, j) => `<div class="qz-ed-r"><button type="button" class="qz-ok-b" data-act="qz-ok" data-i="${i}" data-v="${j}" aria-pressed="${x.ok === j}" title="${x.ok === j ? 'Richtige Antwort' : 'Als richtige Antwort markieren'}">${QZ_L[j]}</button><input type="text" data-k="qz.${i}.o.${j}" value="${esc(tfStr(o))}" placeholder="Antwort ${QZ_L[j]}${j > 1 ? ' (optional)' : ''}"></div>`).join('')}</div><small class="hint">Buchstaben anklicken, um die richtige Antwort zu markieren.</small>`}
+    </div>`).join('')}</div><div class="tf-ed-acts"><button class="link" type="button" data-act="qz-add"${Q.length >= 15 ? ' disabled' : ''}>+ Frage</button></div></div>`;
+}
 function stepSlideFol(b) {
   const f = stepFol(b); const t = tfStr(b.text).trim();
   if (f === 'aus') return '';
   if (f === 'bild' && !b.src) return t ? 'text' : '';
   if (f === 'zitat' && !tfStr(b.quote).trim()) return t ? 'text' : '';
   if (f === 'text' && !t && !tfStr(b.head).trim() && !tfStr(b.link).trim()) return '';
+  if (f === 'quiz' && !qzList(b).length) return t ? 'text' : '';
   return f;
 }
 function stepEditor(b) {
@@ -3177,6 +3215,7 @@ function stepEditor(b) {
     ${fol === 'frage' ? `<label class="f"><span>Stundenfrage (gilt für die ganze Stunde)</span><textarea data-sf rows="2" placeholder="z. B. Wie erzeugen Politikerinnen und Politiker in sozialen Medien Nähe?">${esc(tfStr(m.frage))}</textarea><small class="hint">Dieselbe Frage steht im Kopf und im Verlaufsplan. Ein Schritt am Ende mit der Folie „Stundenfrage“ zeigt sie wieder.</small></label>` : ''}
     ${fol === 'text' ? ta('text', 'Impuls oder Auftrag (auf der Folie)', 3, m.anrede === 'du' ? 'z. B. Was fällt dir auf?' : 'z. B. Was fällt Ihnen auf?', 'Eine Zeile oder ein Satz wird auf der Folie zu einem Schritt; **fett** geht auch.') : ''}
     ${fol === 'frage' ? ta('text', 'Auftrag unter der Frage (optional)', 2, '') : ''}
+    ${fol === 'quiz' ? fText('head', 'Überschrift auf der Folie', b.head, 'Quiz') + qzEditor(b) : ''}
     ${fol === 'zitat' ? ta('quote', 'Zitat', 3, '') + fText('author', 'Quelle oder Autor', b.author, '') : ''}
     ${fol === 'bild' ? `<div class="f"><span>Bild</span>${b.src ? `<div class="st-img"><img src="${esc(b.src)}" alt=""><button class="link" type="button" data-act="st-img-del">Bild entfernen</button></div>` : ''}<input type="file" accept="image/*" data-act="img" aria-label="${b.src ? 'Bild ersetzen' : 'Bild wählen'}"></div>${fText('cap', 'Bildunterschrift (optional)', b.cap, '')}` : ''}
     ${fol === 'aus' ? '' : fText('link', 'Link, z. B. zu einem Video (erscheint als QR-Code auf der Folie)', b.link, 'https://…')}
@@ -3189,7 +3228,8 @@ function stepEditor(b) {
 function stepTpl(b, k, idx, noSnap) {
   const x = STEP_TPL[k]; if (!x || !b) return; const blocks = state.sheet.blocks;
   if (!noSnap) snapshot(); const du = state.sheet.meta.anrede === 'du'; const first = !b.tpl; const had = !first && (tfStr(b.text).trim() || tfStr(b.note).trim());
-  Object.assign(b, { tpl: k, title: k === 'frei' ? '' : x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: duSie(x.text, du), note: x.note, eh: x.eh, exit: !!x.exit, ...(x.qs && !tfStr(b.qs).trim() ? { qs: x.qs } : {}) });
+  Object.assign(b, { tpl: k, title: k === 'frei' ? '' : x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: x.fol === 'quiz' ? '' : duSie(x.text, du), note: x.note, eh: x.eh, exit: !!x.exit, ...(x.qs && !tfStr(b.qs).trim() ? { qs: x.qs } : {}) });
+  if (x.fol === 'quiz') qzNorm(b);
   // Frisch unten angefügt und als Einstieg gewählt: an den Anfang des Blatts
   let moved = ''; const fc = blocks.findIndex(z => z.type === 'material' || z.type === 'tasks'); let lt = -1; blocks.forEach((z, i) => { if (z.type === 'tasks') lt = i; });
   if (first && x.g === 'ein' && fc >= 0 && idx > fc) { let j = 0; while (j < fc && blocks[j].type === 'step') j++; blocks.splice(idx, 1); blocks.splice(j, 0, b); moved = 'Als Einstieg vor das Material verschoben'; }
@@ -3214,7 +3254,7 @@ function layoutExit() {
 // Zeile im Verlaufsplan
 function stepRow(b, tafel) {
   const m = state.sheet.meta; const fol = stepFol(b); const ph = itPh(b); const sent = x => (/[.!?…“"]$/.test(x) ? x : x + '.');
-  const imp = fol === 'frage' ? (tfStr(m.frage).trim() ? `Stundenfrage: „${plainText(m.frage).trim()}“` : 'Stundenfrage') : fol === 'zitat' && tfStr(b.quote).trim() ? `Impuls: Zitat „${plainText(b.quote).replace(/\s+/g, ' ').trim().slice(0, 140)}“${b.author ? ' (' + plainText(b.author) + ')' : ''}` : fol === 'bild' && b.src ? 'Impuls: Bild' + (b.cap ? ' (' + plainText(b.cap) + ')' : '') : '';
+  const imp = fol === 'quiz' ? (qzList(b).length ? `Quiz mit ${qzList(b).length} ${qzList(b).length === 1 ? 'Frage' : 'Fragen'}: ${qzList(b).map(x => plainText(x.q).trim()).join(' / ')}` : 'Quiz') : fol === 'frage' ? (tfStr(m.frage).trim() ? `Stundenfrage: „${plainText(m.frage).trim()}“` : 'Stundenfrage') : fol === 'zitat' && tfStr(b.quote).trim() ? `Impuls: Zitat „${plainText(b.quote).replace(/\s+/g, ' ').trim().slice(0, 140)}“${b.author ? ' (' + plainText(b.author) + ')' : ''}` : fol === 'bild' && b.src ? 'Impuls: Bild' + (b.cap ? ' (' + plainText(b.cap) + ')' : '') : '';
   const txt = (fol === 'text' || fol === 'frage') && tfStr(b.text).trim() ? plainText(b.text).replace(/\s*\n\s*/g, ' ').trim() : '';
   const task = [tfStr(b.note).trim() ? sent(tfStr(b.note).trim()) : '', imp ? sent(imp) : '', txt ? (fol === 'text' && !imp ? 'Impuls: ' : '') + txt : ''].filter(Boolean).join(' ');
   const media = tfStr(b.media).split(/[,;\n]/).map(x => x.trim()).filter(Boolean);
@@ -3877,7 +3917,7 @@ function presSlidesAB(off, lab, abId) {
     if (!blockVisible(b, v)) return;
     if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it); if (!fo) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo ? 0 : t, fo, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
-    if (b.type === 'step') { const f = stepSlideFol(b); if (f) S.push({ k: 'step', b, fol: f }); return; }
+    if (b.type === 'step') { const f = stepSlideFol(b); if (f === 'quiz') { const Q = qzList(b); Q.forEach((x, i) => S.push({ k: 'step', b, fol: f, qz: x, qi: i, qn: Q.length })); } else if (f) S.push({ k: 'step', b, fol: f }); return; }
     const M = mats[b.id];
     if (M && M.lines.length) { const poem = b.form === 'gedicht'; const parts = presChunks(M.lines, poem); parts.forEach((p, i) => S.push({ k: 'mat', b, tag: M.tag || 'M', lines: p, part: i + 1, of: parts.length, poem })); return; }
     if (b.type === 'tafel') { tfNorm(b); if (tfHas(b, tfTpl(b))) S.push({ k: 'tafel', b }); return; }
@@ -4248,11 +4288,15 @@ function presSlideHTML(s, bar) {
         + prPops(tips, s.items.map(x => [tsLab(x, s, m), ehLines(x.it)]));
     }
     case 'step': {
-      const b = s.b, ph = itPh(b), mn = itMin(b); const chips = sozChip(b) + phChip(ph) + minChip(mn, b.timer); const pops = prPops([], [['', ehLines(b)]]);
+      const b = s.b, ph = itPh(b), mn = itMin(b); const later = s.fol === 'quiz' && s.qi > 0; const chips = later ? '' : sozChip(b) + phChip(ph) + minChip(mn, b.timer); const pops = later ? '' : prPops([], [['', ehLines(b)]]);
       const qr = tfStr(b.link).trim() ? `<div class="pr-st-qr"><img src="${QR.dataURL(tfStr(b.link).trim(), 8)}" alt="QR-Code"><span>${esc(linkShort(b.link))}</span></div>` : ''; const hq = qr ? ' has-qr' : '';
       const head = tfStr(b.head).trim() ? inlineHTML(b.head) : esc(stepHeadDef(b));
       if (s.fol === 'zitat') return `<div class="pr-body st-zitat${hq}"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(b.quote)}</div>${b.author ? `<div class="pr-auth">${inlineHTML(b.author)}</div>` : ''}</div>${qr}</div>` + pops;
       if (s.fol === 'bild') return (b.cap ? presHead('', inlineHTML(b.cap), chips) : '') + `<div class="pr-body pr-imgb${hq}"><img class="pr-img" src="${esc(b.src)}" alt="${esc(plainText(b.cap || 'Bild'))}">${qr}</div>` + pops;
+      if (s.fol === 'quiz') { const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [o, j]).filter(([o]) => tfStr(o).trim());
+        const body = open ? `<div class="qz-q">${inlineHTML(x.q)}</div>${tfStr(x.a).trim() ? `<div class="qz-a" data-st="1"><small>Lösung</small>${parasHTML(x.a)}</div>` : ''}`
+          : `<div class="qz-q">${inlineHTML(x.q)}</div><ol class="qz-o${O.length > 2 ? ' four' : ''}">${O.map(([o, j]) => `<li${j === x.ok ? ' class="ok"' : ''}><b>${QZ_L[j]}</b><span>${inlineHTML(o)}</span>${j === x.ok ? '<i class="qz-mark" data-st="1">✓</i>' : '<i class="qz-dim" data-st="1"></i>'}</li>`).join('')}</ol>`;
+        return presHead(esc(`Frage ${s.qi + 1} von ${s.qn}`), head, chips) + `<div class="pr-body${hq}"><div class="pr-fit pr-qz">${body}</div>${s.qi === 0 ? qr : ''}</div>` + pops; }
       if (s.fol === 'frage') { const q = tfStr(m.frage).trim(); return presHead('', head, chips) + `<div class="pr-body${hq}"><div class="pr-fit pr-sq"><div class="pr-sq-q${q ? '' : ' empty'}">${q ? inlineHTML(q) : 'Stundenfrage noch nicht eingetragen'}</div>${tfStr(b.text).trim() ? `<div class="pr-task pr-sq-t">${prTaskHTML(b, m)}</div>` : ''}</div>${qr}</div>` + pops; }
       const xq = b.exit ? stepQs(b) : [];
       return presHead('', head, chips) + `<div class="pr-body${hq}"><div class="pr-fit pr-task">${prTaskHTML(b, m)}${xq.length ? `<ol class="pr-xq">${xq.map(q => `<li>${inlineHTML(q)}</li>`).join('')}</ol>` : ''}</div>${qr}</div>` + pops;
@@ -4708,7 +4752,22 @@ async function exportPPTX() {
         const b = s.b, ph = itPh(b), mn = itMin(b); const link = tfStr(b.link).trim(); const qrW = link ? 3.0 : 0; const tw = CW - (qrW ? qrW + 0.4 : 0);
         const addQR = (y0, h0) => { if (!link) return; const sz = Math.min(2.7, h0 - 0.6); const qy = y0 + (h0 - sz - 0.45) / 2; sl.addImage({ data: QR.dataURL(link, 8), x: X + CW - qrW + (qrW - sz) / 2, y: qy, w: sz, h: sz }); sl.addText([{ text: linkShort(link), options: { hyperlink: { url: link } } }], { x: X + CW - qrW, y: qy + sz + 0.08, w: qrW, h: 0.32, fontFace: F, fontSize: 11, color: ACC, align: 'center', margin: 0, fit: 'shrink' }); };
         const head1 = tfStr(b.head).trim() ? plainText(b.head) : stepHeadDef(b);
-        if (s.fol === 'zitat') {
+        if (s.fol === 'quiz') {
+          const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [plainText(o).trim(), j]).filter(([o]) => o);
+          const draw = (z, sol) => { head(z, `Frage ${s.qi + 1} von ${s.qn}${sol ? ' · Lösung' : ''}`, head1, s.qi || sol ? [] : chipsOf(b, ph, mn, b.timer));
+            const q = plainText(x.q).trim(); const fq = q.length < 70 ? 34 : q.length < 140 ? 28 : 24; const hq = Math.min(2.2, needH([q.length], tw, fq) + 0.25);
+            z.addText(q, { x: X, y: Y0 + 0.05, w: tw, h: hq, fontFace: F, fontSize: fq, bold: true, color: INK, valign: 'top', margin: 0 });
+            const y0 = Y0 + hq + 0.3, hh = BOT - y0;
+            if (open) { if (sol && tfStr(x.a).trim()) { z.addText(plainText(x.a).trim(), { x: X, y: y0, w: tw, h: Math.min(hh, 2.6), fontFace: F, fontSize: 26, color: INK, fill: { color: TINT }, valign: 'middle', margin: 16, fit: 'shrink' }); z.addShape('rect', { x: X, y: y0, w: 0.12, h: Math.min(hh, 2.6), fill: { color: ACC } }); } return; }
+            const two = O.length > 2; const cols = two ? 2 : 1, rows = Math.ceil(O.length / cols); const gw = 0.35, gh = 0.25; const cw = (tw - gw * (cols - 1)) / cols, ch = Math.min(1.5, (hh - gh * (rows - 1)) / rows);
+            O.forEach(([o, j], k) => { const cx = X + (k % cols) * (cw + gw), cy = y0 + Math.floor(k / cols) * (ch + gh); const good = sol && j === x.ok, dim = sol && j !== x.ok;
+              z.addShape('roundRect', { x: cx, y: cy, w: cw, h: ch, rectRadius: 0.12, fill: { color: good ? 'E3F4EA' : 'FFFFFF' }, line: { color: good ? '2E7D4F' : 'D4D9E3', width: good ? 2.5 : 1.25 } });
+              z.addText(QZ_L[j], { x: cx + 0.2, y: cy + (ch - 0.62) / 2, w: 0.62, h: 0.62, fontFace: F, fontSize: 22, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle', margin: 0, fill: { color: good ? '2E7D4F' : dim ? 'B7BCC6' : ACC } });
+              z.addText(o + (good ? '  ✓' : ''), { x: cx + 1.0, y: cy, w: cw - 1.2, h: ch, fontFace: F, fontSize: 22, color: dim ? '9AA0AA' : INK, bold: good, valign: 'middle', margin: 0, fit: 'shrink' }); }); };
+          draw(sl, false);
+          const sol = qzSol(x); if (sol) { const s2 = pptx.addSlide({ masterName: 'AB Nur Titel' }); draw(s2, true); s2.addNotes('Lösung: ' + sol); barAdd(s2, s.bi, false); }
+          addQR(Y0, BH);
+        } else if (s.fol === 'zitat') {
           sl.addText(htmlRuns(parasHTML(b.quote || ''), { italic: true }), { x: X + 0.4, y: 1.1, w: tw - 0.8, h: BOT - 1.1 - 0.9, fontFace: FT, fontSize: 32, color: INK, valign: 'middle', align: 'center', margin: 0, fit: 'shrink' });
           if (b.author) sl.addText(plainText(b.author), { x: X + 0.4, y: BOT - 0.75, w: tw - 0.8, h: 0.5, fontFace: F, fontSize: 20, color: GREY, align: 'right', margin: 0 });
           addQR(1.1, BOT - 1.1);
@@ -4727,7 +4786,7 @@ async function exportPPTX() {
           const runs = stepRuns([b], fs); if (xq.length) { runs[runs.length - 1].options.breakLine = true; xq.forEach((q, i) => runs.push({ text: plainText(q), options: { bullet: { type: 'number', indent: Math.round(fs * 1.1) }, fontSize: Math.round(fs * 0.8), color: GREY, paraSpaceBefore: i ? 0 : Math.round(fs * 0.5), paraSpaceAfter: Math.round(fs * 0.25), ...(i < xq.length - 1 ? { breakLine: true } : {}) } })); }
           sl.addText(runs, { x: X, y: Y0 + 0.05, w: tw, h: BH - 0.15, fontFace: F, fontSize: fs, color: INK, valign: 'middle', margin: 0, lineSpacingMultiple: 1.12 }); addQR(Y0, BH);
         }
-        const nt = notesOf([['', b]]); if (tfStr(b.note).trim()) nt.unshift('Was ich tue: ' + plainText(b.note)); if (ph || mn) nt.push([ph ? 'Phase: ' + PHASEN[ph].label : '', mn ? 'Zeit: ' + mn + ' Min.' : ''].filter(Boolean).join(' · '));
+        const nt = s.fol === 'quiz' && s.qi ? [] : notesOf([['', b]]); if (s.fol === 'quiz' && qzSol(s.qz)) nt.push('Lösung: ' + qzSol(s.qz)); if (tfStr(b.note).trim() && !(s.fol === 'quiz' && s.qi)) nt.unshift('Was ich tue: ' + plainText(b.note)); if (ph || mn) nt.push([ph ? 'Phase: ' + PHASEN[ph].label : '', mn ? 'Zeit: ' + mn + ' Min.' : ''].filter(Boolean).join(' · '));
         if (nt.length) sl.addNotes(nt.join('\n\n'));
       } else if (s.k === 'tafel') {
         const b = s.b; const cl = tfTpl(b) === 'cluster' && !tfStr(b.center).trim(); head(sl, 'Tafelbild', cl ? '' : plainText(tfStrip(b.title || '')));
@@ -7856,7 +7915,12 @@ function onClick(e) {
     case 'a3-show': setOut(a3Fmt(b)); return;
     case 'vp-open': openVP(); return;
     case 'st-tpl': stepTpl(b, a.dataset.v, idx); return;
-    case 'st-fol': if (b) { b.fol = a.dataset.v; changed(true); } return;
+    case 'st-fol': if (b) { b.fol = a.dataset.v; if (b.fol === 'quiz') qzNorm(b); changed(true); } return;
+    case 'qz-t': { const x = qzNorm(b)[+a.dataset.i]; if (x) { x.t = a.dataset.v === 'open' ? 'open' : 'mc'; changed(true); } return; }
+    case 'qz-ok': { const x = qzNorm(b)[+a.dataset.i]; if (x) { x.ok = +a.dataset.v; changed(true); } return; }
+    case 'qz-add': { const Q = qzNorm(b); const last = Q[Q.length - 1]; Q.push(qzNew(last ? last.t : 'mc')); changed(true); const f = $(`#editor [data-bid="${bid}"] [data-k="qz.${Q.length - 1}.q"]`); if (f) f.focus(); return; }
+    case 'qz-del': { const Q = qzNorm(b); if (Q.length > 1) { snapshot(); Q.splice(+a.dataset.i, 1); changed(true); toast('Frage entfernt', 'Rückgängig', histUndo); } return; }
+    case 'qz-up': { const Q = qzNorm(b); const i = +a.dataset.i; if (i > 0) { [Q[i - 1], Q[i]] = [Q[i], Q[i - 1]]; changed(true); } return; }
     case 'st-img-del': if (b) { b.src = ''; delete b.w; delete b.h; delete b.assetId; changed(true); } return;
     case 'st-exit-show': setOut('exit'); return;
     case 'tm-set': if (b) { b.timer = a.dataset.v || ''; if (!b.timer) delete b.timer; changed(true); } return;
