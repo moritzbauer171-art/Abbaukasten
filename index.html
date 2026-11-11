@@ -3555,7 +3555,7 @@ function presEditorHTML() {
   const blocks = state.sheet.blocks; const num = numbering(state.sheet);
   const rows = blocks.filter(b => (b.type === 'tasks' && (b.items || []).some(it => tfStr(it.text).trim())) || b.type === 'step');
   const tl = { '': 'kein Timer', klick: 'per Klick', auto: 'mit der Folie' }; const PL = stPlan();
-  const planNote = PL ? `<small class="hint pt-note">Stunde ${hmFmt(PL.s0)}–${hmFmt(PL.end)} Uhr · geplant ${PL.total} von ${PL.end - PL.s0} Min.${PL.total > PL.end - PL.s0 ? ' · <b class="late">' + (PL.total - (PL.end - PL.s0)) + ' Min. zu viel</b>' : ''}${uhrOn() ? ' · Timer laufen nach der Uhr' : ''}</small>` : '<small class="hint pt-note">Mit Beginn oder Zeitfenster (Bereich „Stunde“) richten sich die Timer nach der Uhr.</small>';
+  const planNote = PL ? `<small class="hint pt-note">Stunde ${hmFmt(PL.s0)}–${hmFmt(PL.end)} Uhr · geplant ${PL.total} von ${PL.end - PL.s0} Min. · Dauer oder „fertig bis“ eintragen, das andere wird ergänzt${PL.total > PL.end - PL.s0 ? ' · <b class="late">' + (PL.total - (PL.end - PL.s0)) + ' Min. zu viel</b>' : ''}${uhrOn() ? ' · Timer laufen nach der Uhr' : ''}</small>` : '<small class="hint pt-note">Mit Beginn oder Zeitfenster (Bereich „Stunde“) richten sich die Timer nach der Uhr.</small>';
   return `<div class="card pres-ed"><div class="card-b">
       <div class="tf-ed-acts main"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><button class="btn" type="button" data-act="pres-pptx">PowerPoint erstellen</button></div>
       <small class="hint">Im Browser: Pfeiltasten oder Klick blättern, T startet den Timer, H zeigt Tipps, E die Erwartung, Esc beendet. Läuft ein Timer, fragt die Präsentation nach, bevor er abgebrochen wird. Rechts ein Klick auf eine Folie startet dort.</small>
@@ -7786,7 +7786,7 @@ function onChange(e) {
   if (presPickChange(t)) return;
   if (t.dataset.uhr != null) { state.prefs.uhr = !!t.checked; savePrefs(); return; }
   if (t.dataset.pref) { state.prefs[t.dataset.pref] = !!t.checked; savePrefs(); scheduleRender(); return; }
-  if (t.dataset.k === 'vp.slot') { const vp = vpOf(); const z = zeitenOf(state.sheet.meta.school).find(x => x.id === t.value); if (z) { vp.slot = z.id; vp.start = z.s; const d = hm(z.e) - hm(z.s); if (d > 0) state.sheet.meta.lesson = String(d); } else delete vp.slot; changed(true); return; }
+  if (t.dataset.k === 'vp.slot') { const vp = vpOf(); const z = zeitenOf(state.sheet.meta.school).find(x => x.id === t.value); if (z) { vp.slot = z.id; vp.start = z.s; const d = hm(z.e) - hm(z.s); if (d > 0) state.sheet.meta.lesson = String(d); } else delete vp.slot; timeSync(null); changed(true); return; }
   if (t.dataset.k === 'lesson' || t.dataset.k === 'vp.start') delete vpOf().slot;
   if (t.dataset.act === 'op') {
     const card = t.closest('[data-bid]'); const b = target(card.dataset.bid); const i = +t.dataset.i;
@@ -7812,9 +7812,10 @@ function onChange(e) {
   let v = t.type === 'checkbox' ? t.checked : t.value;
   if (k === 'width' || k === 'lineStep') v = Number(v);
   if (/^items\.\d+\.min$/.test(k) || k === 'min') { const n = parseInt(String(v).replace(/\D/g, ''), 10); v = n > 0 ? String(Math.min(n, 999)) : ''; t.value = v; }
-  if (k === 'until') { v = hmOk(v); if (!v) { const bb = target(card.dataset.bid); if (bb) delete bb.until; changed(true); return; } }
+  if (k === 'vp.start') { setPath(target(card.dataset.bid), k, v); timeSync(null); changed(true); return; }
+  if (k === 'until') { v = hmOk(v); if (!v) { const bb = target(card.dataset.bid); if (bb) { delete bb.until; delete bb.untilAuto; delete bb.minAuto; } changed(true); return; } }
   setPath(target(card.dataset.bid), k, v);
-  if (k === 'until' || k === 'min') { changed(true); return; }
+  if (k === 'until' || k === 'min') { const bb = target(card.dataset.bid); if (bb && (bb.type === 'tasks' || bb.type === 'step')) { const ok = timeSync(bb, k); if (!ok && k === 'until') toast('Für die Dauer aus der Uhrzeit braucht die Stunde einen Beginn (Bereich „Stunde“).'); } changed(true); return; }
   if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
@@ -8561,18 +8562,33 @@ function stPlan() {
   const m = state.sheet.meta, vp = vpOf(); const s0 = hm(vp.start); if (!Number.isFinite(s0)) return null;
   const L = Number(m.lesson) || 45; const end = s0 + L;
   const TL = ablaufOf({ meta: m, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par && r.min);
-  let t = s0; const at = {}; TL.forEach((r, i) => { at[r.b.id] = { i, from: t, to: t + r.min, until: hm(r.b.until) }; t += r.min; });
+  let t = s0; const at = {}; TL.forEach((r, i) => { at[r.b.id] = { i, from: t, to: t + r.min, until: r.b.untilAuto ? NaN : hm(r.b.until) }; t += r.min; });
   return { s0, end, TL, at, total: t - s0 };
+}
+// Dauer und „fertig bis“ ergänzen sich: aus der Dauer wird die Uhrzeit (ab dem geplanten Beginn des Bausteins), aus der Uhrzeit die Dauer.
+// Berechnete Uhrzeiten (untilAuto) wandern mit, wenn sich davor etwas ändert; selbst eingetragene bleiben feste Punkte.
+function timeSync(b, src) {
+  const vp = vpOf(); const s0 = hm(vp.start); if (!Number.isFinite(s0)) return false;
+  const rows = ablaufOf({ meta: state.sheet.meta, blocks: stBlocks() }).rows.filter(r => r.ph !== 'ha' && !r.par);
+  const startOf = x => { let t = s0; for (const r of rows) { if (r.b === x) return t; const u = hm(r.b.until); t = Number.isFinite(u) && !r.b.untilAuto ? Math.max(u, t) : t + itMin(r.b); } return NaN; };
+  if (b && src === 'until') { const u = hm(b.until); delete b.untilAuto; if (Number.isFinite(u)) b.minAuto = true; else delete b.minAuto; }
+  if (b && src === 'min') { delete b.minAuto; if (itMin(b)) b.untilAuto = true; else if (b.untilAuto) { delete b.until; delete b.untilAuto; } }
+  let t = s0;
+  rows.forEach(r => { const x = r.b, mn = itMin(x); const u = hm(x.until);
+    if (x.minAuto && Number.isFinite(u)) { if (u > t) x.min = String(Math.round(u - t)); t = Math.max(u, t); }
+    else if (x.untilAuto) { if (mn) { x.until = hmOk(hmFmt(t + mn)); t += mn; } else { delete x.until; delete x.untilAuto; } }
+    else if (Number.isFinite(u)) t = Math.max(u, t); else t += mn; });
+  return true;
 }
 // Ende eines Bausteins nach der Uhr: eigene Dauer, aber spätestens so, dass bis zum nächsten Anker (oder Stundenende) alles Folgende noch passt
 function planEnd(P, bid, now) {
   const x = P && P.at[bid]; if (!x) return null; const TL = P.TL; const i = x.i;
   let anchor = P.end, a = TL.length - 1;
-  for (let j = i; j < TL.length; j++) { const u = hm(TL[j].b.until); if (Number.isFinite(u)) { anchor = u; a = j; break; } }
+  for (let j = i; j < TL.length; j++) { const u = TL[j].b.untilAuto ? NaN : hm(TL[j].b.until); if (Number.isFinite(u)) { anchor = u; a = j; break; } }
   let rest = 0; for (let k = i + 1; k <= a; k++) rest += TL[k].min;
   // Reicht die Zeit bis zum festen Punkt nicht, werden diese und die folgenden Phasen bis dorthin anteilig gekürzt
   const d = TL[i].min, avail = anchor - now, need = d + rest; const f = need > avail ? Math.max(0, avail) / need : 1;
-  return { end: now + d * f, short: f < 1, anchor, fixed: a === i && Number.isFinite(hm(TL[i].b.until)) };
+  return { end: now + d * f, short: f < 1, anchor, fixed: a === i && !TL[i].b.untilAuto && Number.isFinite(hm(TL[i].b.until)) };
 }
 function normPrefs(p) {
   p = p && typeof p === 'object' ? p : {};
