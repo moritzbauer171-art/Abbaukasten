@@ -166,6 +166,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .fold-bar .onecard .cb{display:inline-block;width:11px;height:11px;border:1.5px solid currentColor;border-radius:3px;margin-right:5px;vertical-align:-1px;position:relative}
 .fold-bar .onecard[aria-pressed="true"] .cb{background:currentColor}
 .fold-bar .onecard[aria-pressed="true"] .cb::after{content:"";position:absolute;left:3px;top:0;width:3px;height:6px;border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
+.set-chks .onecard{display:inline-flex;align-items:center;text-align:left;color:var(--ink);font-weight:600}
+.set-chks .onecard .cb{flex:0 0 auto;display:inline-block;width:14px;height:14px;border:1.5px solid var(--muted);border-radius:4px;margin-right:8px;position:relative}
+.set-chks .onecard[aria-pressed="true"] .cb{background:var(--acc,#2B45B8);border-color:var(--acc,#2B45B8)}
+.set-chks .onecard[aria-pressed="true"] .cb::after{content:"";position:absolute;left:3.5px;top:.5px;width:3.5px;height:7px;border:solid #fff;border-width:0 1.8px 1.8px 0;transform:rotate(45deg)}
+.area-b[data-v="start"]{flex:0 0 44px}.area-b[data-v="start"] span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.area-b[data-v="start"] i{margin:8px 0}
 .f>small.fh{display:none}
 .f:focus-within>small.fh,.f.fh-keep>small.fh{display:block}
 .hist-b{display:flex;gap:2px;margin-right:auto}
@@ -745,7 +750,19 @@ body.basis .x-pro:not(.used){display:none!important}
 .tpl b{font-size:14px}
 .tpl>span>span{font-size:11.5px;color:var(--muted);line-height:1.3}
 .tpl-copy{display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--line);padding-top:10px}
-.dlg.dlg-out{width:min(520px,calc(100% - 32px))}
+.dlg.dlg-out{width:min(820px,calc(100% - 32px))}
+.out-2{display:grid;grid-template-columns:200px minmax(0,1fr);gap:18px;align-items:start}
+.out-how{display:flex;flex-direction:column;gap:12px;min-width:0}
+.out-what{display:flex;flex-direction:column;gap:3px;border-right:1px solid var(--line);padding-right:14px;position:sticky;top:0}
+.ow-g{font-size:11px;font-weight:700;color:var(--muted);margin:9px 0 2px;text-transform:uppercase;letter-spacing:.05em}
+.ow{display:flex;align-items:center;gap:8px;text-align:left;padding:7px 10px;border:1px solid transparent;border-radius:8px;background:transparent;font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer}
+.ow b{font-weight:600}.ow em{margin-left:auto;font-style:normal;font-size:11px;font-weight:700;background:var(--line);border-radius:9px;padding:0 7px}
+.ow:hover:not(:disabled){background:var(--card)}
+.ow[aria-pressed="true"]{background:var(--acc-soft,#EEF1FB);border-color:var(--acc,#2B45B8);color:var(--acc,#2B45B8)}.ow[aria-pressed="true"] b{font-weight:800}
+.ow:disabled{opacity:.42;cursor:default}
+.ow-all{flex-direction:column;align-items:flex-start;gap:0;border-color:var(--line);background:var(--card)}.ow-all small{font-size:11.5px;color:var(--muted)}
+.out-whole{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:12px 14px}.out-whole p{margin:6px 0;font-size:13px;color:var(--muted)}.out-whole ul{margin:4px 0 0;padding-left:18px;font-size:13px;line-height:1.55}
+@media (max-width:700px){.out-2{grid-template-columns:1fr}.out-what{border-right:0;padding-right:0;flex-direction:row;flex-wrap:wrap;position:static}.ow-g{flex-basis:100%}}
 .dlg.dlg-rlp{width:min(720px,calc(100% - 32px))}
 .dlg.dlg-vp{width:min(1060px,calc(100% - 32px))}
 .vp-meta .f.narrow{flex:0 0 110px}
@@ -790,7 +807,7 @@ body.basis .x-pro:not(.used){display:none!important}
 .ocr-bar i{display:block;height:100%;width:0;background:var(--tinte);border-radius:4px;transition:width .25s}
 .ocr-t{width:100%;min-height:260px;font-family:var(--f-text,Georgia,serif);font-size:14px;line-height:1.5;resize:vertical}
 .dlg-ocr .chk{margin:2px 0 8px}
-.ocr-link{display:flex;justify-content:flex-end;margin-top:-4px}
+.ocr-link{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:4px 16px;margin-top:-4px}
 .ocr-link .link{display:inline-flex;align-items:center;gap:6px}
 .ocr-link svg{width:16px;height:16px}
 .mp-row{gap:10px;align-items:flex-start}.mp-row .f{flex:1;min-width:0}
@@ -1248,7 +1265,79 @@ body{transition:background-color .3s,border-color .25s}
 .a4t-fold{position:relative;display:flex;justify-content:center}
 .a4t-fold::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:.35mm dashed #8A909C}
 .a4t-fold span{position:relative;writing-mode:vertical-rl;transform:rotate(180deg);background:var(--paper);font-size:7.5pt;color:#8A909C;padding:2mm 0;align-self:center}
-.a3-grp{flex-basis:100%;font-size:11px;font-weight:700;color:var(--muted);margin-top:2px}
+.sv{display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
+.sv-h small{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.sv-h h2{margin:2px 0 3px;font-family:var(--f-text,Georgia,serif);font-size:25px;line-height:1.2}
+.sv-h>span{font-size:12.5px;color:var(--muted)}
+.sv-q{margin:10px 0 0;padding:8px 12px;border-left:3px solid var(--acc,#2B45B8);background:var(--card);border-radius:0 8px 8px 0;font-size:14px}.sv-q em{display:block;font-style:normal;font-size:11px;font-weight:700;color:var(--muted)}
+.sv-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.sv-t{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);font:inherit;color:var(--ink);cursor:pointer;min-height:66px}
+.sv-t i{grid-row:1/3;display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--acc-soft,#EEF1FB);color:var(--acc,#2B45B8)}.sv-t i svg{width:20px;height:20px}
+.sv-t b{font-size:14px}.sv-t small{font-size:11.5px;color:var(--muted);line-height:1.3}
+.sv-t.main{border-color:var(--acc,#2B45B8)}.sv-t.main i{background:var(--acc,#2B45B8);color:#fff}
+.sv-t:hover{box-shadow:0 3px 12px rgba(20,30,60,.1);border-color:var(--acc,#2B45B8)}
+.sv-sec{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.sv-st{display:flex;align-items:baseline;justify-content:space-between}.sv-st b{font-size:14px}
+.sv-ab{display:flex;align-items:center;gap:12px;text-align:left;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:transparent;font:inherit;color:var(--ink);cursor:pointer}
+.sv-ab>b{flex:0 0 auto;font-size:12px;background:var(--acc,#2B45B8);color:#fff;border-radius:6px;padding:3px 7px}
+.sv-ab span{flex:1;min-width:0;font-weight:600}.sv-ab span small{display:block;font-weight:500;font-size:11.5px;color:var(--muted)}
+.sv-ab em{font-style:normal;font-size:12px;font-weight:700;color:var(--acc,#2B45B8)}
+.sv-ab:hover{background:var(--acc-soft,#EEF1FB)}
+.sv-sec .abl-sum{margin:0}
+.sv-hint{text-align:center}
+.set-h{display:flex;flex-direction:column;gap:2px;margin:0 0 10px}.set-h h2{margin:0;font-size:22px}.set-h .link{align-self:flex-start;font-size:13px}
+.set-tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:12px}
+.set-tabs button{padding:8px 12px;border:0;border-bottom:2.5px solid transparent;background:transparent;font:inherit;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.set-tabs button[aria-selected="true"]{color:var(--acc,#2B45B8);border-bottom-color:var(--acc,#2B45B8)}
+.set-card .card-b{display:flex;flex-direction:column;gap:12px}
+.set-chks{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.set-store{font-size:13px;margin-bottom:6px}
+.set-link{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:9px 12px;margin-top:4px;border:1px solid var(--line);border-radius:10px;background:var(--field,#fff);font:inherit;color:var(--ink);cursor:pointer}
+.set-link i{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--acc-soft,#EEF1FB);color:var(--acc,#2B45B8)}.set-link i svg{width:17px;height:17px}
+.set-link span{flex:1;min-width:0}.set-link b{display:block;font-size:13px}.set-link small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.set-link em{font-style:normal;font-size:18px;color:var(--muted)}.set-link:hover{border-color:var(--acc,#2B45B8)}
+.umfang-chip:empty{display:none}.umfang-chip{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+.more-b{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:4px 10px 4px 11px;border:1px dashed var(--line-strong,#B9C0CE);border-radius:999px;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;min-width:0}
+.more-b small{font-weight:600;color:var(--acc,#2B45B8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.more-b svg{flex:0 0 auto;width:12px;height:12px}
+.more-b.on svg{transform:rotate(180deg)}
+.more-b:hover{border-color:var(--acc,#2B45B8);color:var(--ink)}
+.tx-row .more-b{margin-left:auto}
+.more-card{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.more-in{margin-top:8px}
+.bk{margin:6px 0 18px}
+.bk-open{display:flex;align-items:center;gap:10px;width:100%;padding:13px 16px;border:1.5px dashed var(--line-strong,#B9C0CE);border-radius:12px;background:transparent;font:inherit;font-weight:700;font-size:14.5px;color:var(--ink);cursor:pointer}
+.bk-open b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--acc,#2B45B8);color:#fff;font-size:18px;line-height:1}
+.bk-open small{margin-left:auto;font-weight:600;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.bk-open:hover{border-color:var(--acc,#2B45B8);background:var(--card)}
+.bk.open{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px;box-shadow:0 6px 22px rgba(20,30,60,.08)}
+.bk-h{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.bk-h input{flex:1;font:inherit;font-size:15px;padding:10px 12px;border:1.5px solid var(--acc,#2B45B8);border-radius:9px;background:var(--bg-soft,#fff);color:var(--ink)}
+.bk-list{max-height:min(62vh,640px);overflow:auto;margin:0 -4px;padding:0 4px}
+.bk-g{margin:10px 0 0}.bk-g>small{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:5px}.bk-g>small i{font-style:normal;font-weight:600;color:var(--acc,#2B45B8)}
+.bk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:5px}
+.bk-it{display:flex;align-items:flex-start;gap:8px;text-align:left;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg-soft,#fff);font:inherit;color:inherit;cursor:pointer;min-width:0}
+.bk-it:hover,.bk-it:focus-visible{border-color:var(--acc,#2B45B8);background:var(--acc-soft,#EEF1FB);outline:none}
+.bk-it .add-ic{flex:0 0 auto;margin-top:1px}.bk-it .add-ic svg{width:20px;height:20px}
+.bk-it span{min-width:0}.bk-it b{display:block;font-size:12.5px;line-height:1.25}.bk-it small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11px;color:var(--muted);line-height:1.3}
+.bk-none{padding:14px 4px;color:var(--muted);font-size:13px}
+.bk>.hint{display:block;margin-top:8px}
+.xs{border:1px solid var(--line);border-radius:12px;background:var(--card);margin:0 0 14px;padding:0 0 10px;--xc:#2F6B4F;--xbg:#E7F2EC}
+.xs.xs-a3{--xc:#8A4B12;--xbg:#F8EBDD}
+.xs.xs-exit{--xc:#4B5160;--xbg:#ECEEF2}
+.xs.on{border-color:var(--xc);box-shadow:0 0 0 1px var(--xc)}
+.xs-h{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--line);border-radius:12px 12px 0 0;background:linear-gradient(90deg,var(--xbg),transparent 75%)}
+.xs-badge{flex:0 0 auto;display:grid;place-items:center;width:42px;height:42px;border-radius:8px;background:var(--xc);color:#fff;font-weight:800;font-size:15px;letter-spacing:.02em}
+.xs-ht{flex:1 1 auto;min-width:0}.xs-ht b{display:block;font-size:15px}.xs-ht b em{font-style:normal;font-size:11px;font-weight:700;background:var(--xc);color:#fff;border-radius:9px;padding:1px 7px;vertical-align:2px;margin-left:4px}
+.xs-ht small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+.xs-eye{flex:0 0 auto;font-size:11.5px;font-weight:700;color:var(--xc);white-space:nowrap}
+.xs>.card{margin:10px 10px 0}
+.xs-add{padding:10px 12px 0}.xs-add>small{display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.xs-tps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.xs-tp{display:grid;grid-template-columns:26px 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg-soft,#fff);cursor:pointer;font:inherit;color:inherit}
+.xs-tp:hover{border-color:var(--xc);background:var(--xbg)}
+.xs-tp svg{grid-row:1/3;width:24px;height:24px;color:var(--xc)}
+.xs-tp b{font-size:12.5px;line-height:1.2}.xs-tp span{font-size:11px;color:var(--muted);line-height:1.25}
 .a4-ed-r{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:6px;align-items:start}
 .a4-ed-n{padding-top:7px;font-size:12px;font-weight:700;color:var(--muted);text-align:right}
 .a4-ed-f{display:flex;flex-direction:column;gap:4px}
@@ -1730,7 +1819,8 @@ body{transition:background-color .3s,border-color .25s}
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
-      <div class="seg sm umfang" role="group" aria-label="Funktionsumfang" title="Basis: nur Arbeitsblätter erstellen. Experte: dazu Stundenplanung, Tafel, Druck-Extras und Präsentation. Ihre Blätter ändern sich dadurch nicht."><button type="button" data-act="umfang" data-v="basis" aria-pressed="false">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="true">Experte</button></div>
+      <button class="btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      <span class="umfang-chip" id="umfang-chip" title="Funktionsumfang, umstellen in den Einstellungen"></span>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neue Stunde anlegen">
@@ -1875,7 +1965,7 @@ const tbRowMM = (b, ri) => { const own = b.rowEach && Array.isArray(b.rowH) ? Nu
 const tbEh = (b, ri, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '').split('\n').map(x => x.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
 const tbEhCount = b => b.rows.reduce((n, r, ri) => n + r.reduce((k, _, ci) => k + (tbEh(b, ri, ci).length ? 1 : 0), 0), 0);
 const tbLines = h => Math.max(1, Math.round(h / 9));
-const typeLabel = b => b.type === 'material' && b.post ? 'Post' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
+const typeLabel = b => b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
   poem:     { label:'Gedicht',       desc:'Verse und Strophen' },
@@ -2838,15 +2928,16 @@ const LS_UMFANG = 'abw.umfang';
 function setUmfang(v, quiet) {
   const basis = v === 'basis'; document.body.classList.toggle('basis', basis);
   document.querySelectorAll('[data-act="umfang"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (basis ? 'basis' : 'experte'))));
+  const uc = document.getElementById('umfang-chip'); if (uc) uc.textContent = basis ? 'Basis' : '';
   if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
-  if (!quiet) { basisClamp(); state.insAt = null; closeGloss(); closeZl(); closeMenu(); renderEditor(); clearTimeout(renderTimer); renderPreview(); }
+  if (!quiet) { if (basis && state.area === 'start') state.area = 'blatt'; basisClamp(); state.insAt = null; closeGloss(); closeZl(); closeMenu(); renderEditor(); clearTimeout(renderTimer); renderPreview(); }
 }
 // Basis kennt nur Arbeitsblätter: Bereich „Arbeitsblätter“, Ausgaben Arbeitsblatt und Tippkarten
 const isBasis = () => document.body.classList.contains('basis');
 const BASIS_OUTS = ['blatt', 'tipps'];
 function basisClamp() {
   if (!isBasis()) return;
-  state.area = 'blatt'; if (!BASIS_OUTS.includes(state.out)) state.out = 'blatt';
+  if (state.area !== 'einst') state.area = 'blatt'; if (!BASIS_OUTS.includes(state.out)) state.out = 'blatt';
 }
 
 /* ================= Stunde: ein oder mehrere Arbeitsblätter =================
@@ -2904,7 +2995,7 @@ function abAct(act, a) {
   const P = state.sheet;
   if (act === 'abx-go') { abGo(+a.dataset.abk); return; }
   if (act === 'abx-add') { abAdd(); return; }
-  if (act === 'abx-out') { exportStunde(); return; }
+  if (act === 'abx-out') { openOut(); if (state.dlg) { state.dlg.whole = true; renderDlg(); } return; }
   if (!P.abs) return; const k = P.abActive; if (hist.timer) histCommit();
   if (act === 'abx-left' || act === 'abx-right') { const j = act === 'abx-left' ? k - 1 : k + 1; if (j < 0 || j >= P.abs.length) return; [P.abs[k], P.abs[j]] = [P.abs[j], P.abs[k]]; P.abActive = j; changed(true); clearTimeout(renderTimer); renderPreview(); return; }
   if (act === 'abx-dup') {
@@ -3124,37 +3215,179 @@ const AREA_IC = {
   blatt: '<path d="M6 2.8h8.5l3.5 3.5v14.9H6z"/><path d="M14.5 2.8v3.5H18"/><path d="M8.8 11h6.4M8.8 14.2h6.4M8.8 17.4h4"/>',
   tafel: '<rect x="2.8" y="4.2" width="18.4" height="12.6" rx="1.2"/><path d="M8 20.5l2-3.7M16 20.5l-2-3.7"/><path d="M6.5 9.2h6M6.5 12.2h9"/>',
   extras: '<path d="M7 8V3.2h10V8"/><rect x="3.2" y="8" width="17.6" height="8" rx="1.4"/><path d="M7 13.5h10v7H7z"/>',
-  pres: '<rect x="2.8" y="3.8" width="18.4" height="12" rx="1.2"/><path d="M12 15.8v4.4M8.5 20.6h7"/><path d="m10 7.8 4.6 2.2L10 12.2z"/>'
+  pres: '<rect x="2.8" y="3.8" width="18.4" height="12" rx="1.2"/><path d="M12 15.8v4.4M8.5 20.6h7"/><path d="m10 7.8 4.6 2.2L10 12.2z"/>',
+  start: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.8 9.5v10h12.4v-10"/><path d="M10 19.5v-5h4v5"/>',
+  einst: '<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>'
 };
-const AREAS = [['stunde', 'Stunde'], ['blatt', 'Arbeitsblätter'], ['tafel', 'Tafel'], ['extras', 'Druck-Extras'], ['pres', 'Präsentation']];
+const AREAS = [['start', 'Übersicht'], ['stunde', 'Stunde'], ['blatt', 'Arbeitsblätter'], ['tafel', 'Tafel'], ['extras', 'Druck-Extras'], ['pres', 'Präsentation']];
 const AREA_NAME = Object.fromEntries(AREAS);
-const AREA_OUTS = { stunde: ['vp'], blatt: ['blatt', 'tipps'], tafel: ['tafel', 'karten'], extras: ['a3', 'exit'], pres: ['pres'] };
-const OUT_AREA = { vp: 'stunde', blatt: 'blatt', tipps: 'blatt', tafel: 'tafel', karten: 'tafel', a3: 'extras', exit: 'extras', pres: 'pres' };
+const AREA_OUTS = { start: ['blatt'], einst: ['blatt'], stunde: ['vp'], blatt: ['blatt', 'tipps'], tafel: ['tafel', 'karten'], extras: ['a4', 'a3', 'exit'], pres: ['pres'] };
+const OUT_AREA = { vp: 'stunde', blatt: 'blatt', tipps: 'blatt', tafel: 'tafel', karten: 'tafel', a3: 'extras', a4: 'extras', exit: 'extras', pres: 'pres' };
 const blockArea = b => (b.type === 'step' ? 'stunde' : b.type === 'tafel' ? 'tafel' : b.type === 'a3' ? 'extras' : 'blatt');
 const inArea = (b, A) => blockArea(b) === A || (A === 'extras' && b.type === 'step' && !!b.exit);
 const areaIc = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC[k]}</svg>`;
 function areaBarHTML() {
   if (isBasis()) return '';
-  const SB = stBlocks(); const n = { stunde: SB.filter(b => b.type === 'step').length, blatt: SB.filter(b => blockArea(b) === 'blatt' && b.type !== 'pagebreak').length, tafel: SB.filter(b => b.type === 'tafel').length + (state.sheet.cards || []).length, extras: SB.filter(b => b.type === 'a3').length + exitSteps().length, pres: 0 };
+  const SB = stBlocks(); const n = { start: 0, stunde: SB.filter(b => b.type === 'step').length, blatt: SB.filter(b => blockArea(b) === 'blatt' && b.type !== 'pagebreak').length, tafel: SB.filter(b => b.type === 'tafel').length + (state.sheet.cards || []).length, extras: SB.filter(b => b.type === 'a3').length + exitSteps().length, pres: 0 };
   return `<nav class="area-bar" role="tablist" aria-label="Bereiche der Stunde">${AREAS.map(([k, l]) => `<button type="button" role="tab" class="area-b" data-act="area-set" data-v="${k}" aria-selected="${(state.area || 'blatt') === k}" title="${l}"><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}</nav>`;
 }
-function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras' && !stBlocks().some(b => b.type === 'a3') && exitSteps().length) return 'exit'; return L[0]; }
+function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras') { const SB = stBlocks(); return SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4') ? 'a4' : SB.some(b => b.type === 'a3') ? 'a3' : exitSteps().length ? 'exit' : 'a4'; } return L[0]; }
 function setArea(a) {
-  if (!AREA_OUTS[a] || isBasis() && a !== 'blatt') return; if (state.area === a && OUT_AREA[state.out] === a) { $('#editor').scrollTop = 0; return; }
+  if (!AREA_OUTS[a] || isBasis() && a !== 'blatt' && a !== 'einst') return; if (state.area === a && (OUT_AREA[state.out] === a || a === 'start' || a === 'einst')) { $('#editor').scrollTop = 0; return; }
+  if (a === 'einst' && state.area !== 'einst') state.prevArea = state.area || 'blatt';
   state.area = a; state.out = areaOutFor(a); state.insAt = null; closeGloss(); closeZl(); closeMenu();
   renderEditor(); $('#editor').scrollTop = 0; clearTimeout(renderTimer); renderPreview();
 }
 // Sprung in den Bereich eines Bausteins (aus dem Ablauf oder einem Platzhalter); wechselt bei Bedarf das Arbeitsblatt
 function areaGo(ar, bid, k) {
-  if (isBasis() && ar !== 'blatt') { toast('Das bearbeiten Sie im Modus „Experte“ (oben rechts).'); return; }
+  if (isBasis() && ar !== 'blatt') { toast('Das bearbeiten Sie im Modus „Experte“ (Einstellungen ⚙ → App).'); return; }
   const P = state.sheet;
   if (P.abs && Number.isFinite(k) && k !== (P.abActive || 0)) { abSwitch(k); state.closed = defaultClosed(); state.taskOpen = new Set(); }
   const b = bid ? P.blocks.find(x => x.id === bid) : null;
-  state.area = ar; state.out = ar === 'tafel' && b ? 'tafel' : ar === 'extras' && b ? (b.type === 'a3' ? 'a3' : 'exit') : areaOutFor(ar);
+  state.area = ar; state.out = ar === 'tafel' && b ? 'tafel' : ar === 'extras' && b ? (b.type === 'a3' ? a3Fmt(b) : 'exit') : areaOutFor(ar);
   if (b) { state.sel = b.id; if (oneCard()) state.closed = new Set(cardIds().filter(x => x !== b.id)); else state.closed.delete(b.id); }
   state.insAt = null; closeGloss(); closeZl(); closeMenu();
   renderEditor(); clearTimeout(renderTimer); renderPreview();
   const c = b && $(`#editor .card[data-bid="${b.id}"]`); if (c) c.scrollIntoView({ block: 'start' }); else $('#editor').scrollTop = 0;
+}
+// Bereich „Übersicht“: die Stunde auf einen Blick, mit großen Wegen in die Bereiche
+function startHTML() {
+  const P = state.sheet, m = P.meta, vp = vpOf(); const A = stABs(); const SB = stBlocks(); const kl = KL(P.klasse);
+  const cnt = (L, t) => L.filter(b => t.includes(b.type)).length;
+  const nA4 = SB.filter(b => b.type === 'a3' && a3Fmt(b) === 'a4').length, nA3 = SB.filter(b => b.type === 'a3' && a3Fmt(b) === 'a3').length, nE = exitSteps().length;
+  const nTf = cnt(SB, ['tafel']), nK = (P.cards || []).length, nSt = cnt(SB, ['step']);
+  const pl = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const tile = (act, attrs, ic, t, sub, cls = '') => `<button type="button" class="sv-t${cls}" data-act="${act}" ${attrs}><i>${ic}</i><b>${t}</b><small>${sub}</small></button>`;
+  const when = [vp.datum, vp.start ? vp.start + ' Uhr' : '', (Number(m.lesson) || 45) + ' Min.'].filter(Boolean).join(' · ');
+  const upd = P.updatedAt ? new Date(P.updatedAt) : null;
+  return `<div class="sv">
+    <div class="sv-h"><small>${esc(kl.label)}${m.course ? ' · ' + esc(m.course) : ''}</small><h2>${esc(plainText(stTitle(P)) || 'Ohne Titel')}</h2><span>${esc(when)}${upd ? ` · zuletzt geändert ${upd.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' })}, ${upd.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}` : ''}</span>
+      ${String(m.frage || '').trim() ? `<p class="sv-q"><em>Stundenfrage</em>${esc(m.frage)}</p>` : ''}</div>
+    <div class="sv-tiles">
+      ${tile('area-set', 'data-v="blatt"', areaIc('blatt'), 'Arbeitsblatt bearbeiten', A.length > 1 ? pl(A.length, 'Arbeitsblatt', 'Arbeitsblätter') : pl(cnt(P.blocks, ['material', 'tasks', 'match', 'table', 'info', 'phrases', 'quote', 'image', 'text', 'heading', 'lines', 'qr']), 'Baustein', 'Bausteine'), ' main')}
+      ${tile('pres-go', '', areaIc('pres'), 'Präsentieren', 'Folien der Stunde am Beamer', ' main')}
+      ${tile('out-open', '', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="2.5" y="9" width="19" height="8" rx="1.5"/><path d="M6 14h12v7H6z"/></svg>', 'Ausgeben', 'PDF, Word, PowerPoint oder die ganze Stunde', ' main')}
+      ${tile('area-set', 'data-v="stunde"', areaIc('stunde'), 'Stunde planen', nSt ? pl(nSt, 'Unterrichtsschritt', 'Unterrichtsschritte') + ' · Verlaufsplan' : 'Ablauf, Stundenziel, Verlaufsplan')}
+      ${tile('area-set', 'data-v="tafel"', areaIc('tafel'), 'Tafel', [nTf ? pl(nTf, 'Tafelbild', 'Tafelbilder') : '', nK ? pl(nK, 'Tafelkarte', 'Tafelkarten') : ''].filter(Boolean).join(' · ') || 'Tafelbild und Tafelkarten')}
+      ${tile('area-set', 'data-v="extras"', areaIc('extras'), 'Druck-Extras', [nA4 ? nA4 + ' × A4' : '', nA3 ? nA3 + ' × A3' : '', nE ? pl(nE, 'Exit-Ticket', 'Exit-Tickets') : ''].filter(Boolean).join(' · ') || 'Karten, Placemat, Exit-Ticket …')}
+    </div>
+    <div class="sv-sec"><div class="sv-st"><b>Arbeitsblätter dieser Stunde</b><button class="link" type="button" data-act="abx-add">+ Arbeitsblatt</button></div>
+      ${A.map(x => { const nM = cnt(x.blocks, ['material']), nT = x.blocks.filter(b => b.type === 'tasks').reduce((n, b) => n + (b.items || []).filter(it => !itFo(it)).length, 0); return `<button type="button" class="sv-ab" data-act="sv-ab" data-abk="${x.k}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}<small>${[nM ? pl(nM, 'Material', 'Materialien') : '', nT ? pl(nT, 'Aufgabe', 'Aufgaben') : ''].filter(Boolean).join(' · ') || 'noch leer'}</small></span><em>bearbeiten ›</em></button>`; }).join('')}</div>
+    <div class="sv-sec" data-bid="stunde">${ablaufHTML()}</div>
+    <small class="hint sv-hint">Diese Übersicht erscheint beim Öffnen einer Stunde; abschalten unter <button class="link" type="button" data-act="settings" data-tab="app">Einstellungen</button>.</small>
+  </div>`;
+}
+// Bereich „Einstellungen“: alles, was nicht Inhalt ist, an einem Ort
+const SET_TABS = [['kurs', 'Kurs'], ['blatt', 'Arbeitsblatt'], ['design', 'Aussehen'], ['pres', 'Präsentation'], ['app', 'App']];
+function settingsHTML() {
+  const m = state.sheet.meta; const basis = isBasis(); const tabs = SET_TABS.filter(([k]) => !(basis && k === 'pres'));
+  const tab = tabs.some(([k]) => k === state.setTab) ? state.setTab : 'kurs'; const isK = m.mode === 'klausur';
+  let c = '';
+  if (tab === 'kurs') c = `<div class="card set-card" data-bid="meta"><div class="card-b">
+      <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
+      <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}</div>
+      <div class="chks x-wrap x-pro${m.levelsOn ? ' used' : ''}">${fCheck('levelsOn', 'Niveaustufen ★ Basis · ★★ Standard · ★★★ Experte', m.levelsOn)}</div>
+      ${m.levelsOn ? `<div class="chks">${fCheck('lvTip', 'Im Basis-Blatt steht der erste Tipp direkt unter der Aufgabe', m.lvTip !== false)}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte den Stufen zu. Bei jeder Aufgabe gibt es unter „Mehr“ → „Niveaus“ eigene Fassungen für Basis und Experte.</small>` : ''}
+      ${basis ? '' : '<small class="hint">Gruppen, Stundenziel und Stundenlänge stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="stunde">Stunde</button> ein.</small>'}
+    </div></div>`;
+  else if (tab === 'blatt') c = `<div class="card set-card" data-bid="meta"><div class="card-b">
+      <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
+      <div class="row">${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
+      <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
+      <small class="hint">Gilt für ${state.sheet.abs ? 'alle Arbeitsblätter der Stunde' : 'das Arbeitsblatt'}.</small>
+    </div></div>`;
+  else if (tab === 'design') { const sc = seiteCard(); c = sc.replace('<div class="card', '<div class="card set-card').replace(/<div class="card-h"[\s\S]*?<\/div>\s*<div class="card-b">/, '<div class="card-b">').replace(' closed', ''); c = (state.sheet.abs ? `<small class="hint">Design und Papier gelten für ${esc(abLabel(m, state.sheet.abActive || 0))}; die anderen Arbeitsblätter stellen Sie jeweils dort ein.</small>` : '') + c; }
+  else if (tab === 'pres') c = `<div class="card set-card"><div class="card-b">
+      <label class="chk"><input type="checkbox" data-prph${m.presPhase === false ? '' : ' checked'}><span>Phasenleiste unten auf den Folien (aus den Phasen der Aufgaben)</span></label>
+      <div class="f"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[m.presPhSize] ? m.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
+      <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
+    </div></div>`;
+  else c = `<div class="card set-card"><div class="card-b">
+      <div class="f"><span>Funktionsumfang</span><div class="seg sm" role="group" aria-label="Funktionsumfang"><button type="button" data-act="umfang" data-v="basis" aria-pressed="${basis}">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="${!basis}">Experte</button></div><small>Basis: nur Arbeitsblätter erstellen. Experte: dazu Stundenplanung, Tafel, Druck-Extras und Präsentation. Ihre Stunden ändern sich dadurch nicht.</small></div>
+      <div class="f"><span>Ansicht</span><div class="set-chks">
+        ${basis ? '' : `<button type="button" class="link onecard" data-act="start-pref" aria-pressed="${String(lsGet(LS_START)) !== '0'}"><span class="cb" aria-hidden="true"></span>Beim Öffnen einer Stunde die Übersicht zeigen</button>`}
+        <button type="button" class="link onecard" data-act="more-all" aria-pressed="${moreAll()}"><span class="cb" aria-hidden="true"></span>In den Karten immer alle Optionen zeigen (sonst unter „Mehr“)</button>
+        <button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}"><span class="cb" aria-hidden="true"></span>Nur eine Karte gleichzeitig offen</button></div></div>
+      <div class="f"><span>Speicherort</span><div class="set-store">${esc(($('#status span') || {}).textContent || '')}</div>${$('#btn-login') && !$('#btn-login').hidden ? '<button class="btn sm" type="button" data-act="login">Anmelden und online speichern</button>' : ''}</div>
+      <div class="f"><span>Hilfe</span><div class="tf-ed-acts"><button class="btn sm" type="button" data-act="help">Hilfe und Kniffe</button></div><small>Tastenkürzel: Strg+K Baustein hinzufügen · Strg+Z rückgängig · Strg+Umschalt+S speichern unter</small></div>
+    </div></div>`;
+  return `<div class="set-h"><button class="link" type="button" data-act="settings-back">‹ Zurück${state.prevArea && state.prevArea !== 'einst' && !isBasis() ? ' zu „' + esc(AREA_NAME[state.prevArea] || 'Arbeitsblätter') + '“' : ''}</button><h2>Einstellungen</h2></div>
+    <div class="set-tabs" role="tablist" aria-label="Einstellungen">${tabs.map(([k, l]) => `<button type="button" role="tab" data-act="set-tab" data-v="${k}" aria-selected="${tab === k}">${l}</button>`).join('')}</div>${c}`;
+}
+function openSettings(tab) { if (tab) state.setTab = tab; if (isNarrow() && state.view !== 'edit') setView('edit'); if (state.area === 'einst') { renderEditor(); return; } closeGloss(); closeZl(); closeMenu(); setArea('einst'); }
+// Bereich „Druck-Extras“: A4-Vorlagen, A3-Vorlagen und Exit-Tickets in eigenen Abschnitten
+const XS = {
+  a4: { t: 'A4-Vorlagen', d: 'Zum Austeilen und Ausschneiden, auf normalem Druckerpapier' },
+  a3: { t: 'A3-Vorlagen', d: 'Plakate und Methodenbögen für Gruppen, in A3 oder auf zwei A4-Blättern zum Kleben' },
+  exit: { t: 'Exit-Tickets', d: 'Kurze Rückmeldung am Ende der Stunde, mehrere Tickets pro A4-Seite' }
+};
+const TPL_SHORT = { karten: 'Eigene Texte mit Schnittlinien', lernk: 'Begriff vorn, Erklärung hinten', streifen: 'Sätze zum Ordnen', tandem: 'Partner fragen sich ab', annot: 'Text mit breitem Rand', placemat: 'Für 3 bis 6 Personen', schreib: 'Impuls in der Mitte', plakat: 'Für den Galeriegang', vergleich: 'Texte nach Aspekten', experte: 'Fürs Gruppenpuzzle' };
+const xsTpl = (k, x) => `<button type="button" class="xs-tp" data-act="tpl-new" data-v="${k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><b>${x.label}</b><span>${esc(TPL_SHORT[k] || '')}</span></button>`;
+function extrasHTML(num) {
+  const blocks = state.sheet.blocks;
+  const sec = (k, cards, add) => { const on = state.out === k; const n = cards.length;
+    return `<section class="xs xs-${k}${on ? ' on' : ''}"><div class="xs-h" data-act="xs-show" data-v="${k}" title="In der Vorschau zeigen"><span class="xs-badge">${k === 'exit' ? 'A4' : k.toUpperCase()}</span><div class="xs-ht"><b>${XS[k].t}${n ? ` <em>${n}</em>` : ''}</b><small>${XS[k].d}</small></div><span class="xs-eye">${on ? 'in der Vorschau' : 'Vorschau ›'}</span></div>
+      ${cards.join('')}<div class="xs-add"><small>${n ? 'Weitere hinzufügen' : 'Hinzufügen'}</small><div class="xs-tps">${add}</div></div></section>`; };
+  const cardsOf = f => blocks.map((b, i) => (f(b) ? cardHTML(b, i, num) : '')).filter(Boolean);
+  return sec('a4', cardsOf(b => b.type === 'a3' && a3Fmt(b) === 'a4'), Object.entries(A3_TPL).filter(([, x]) => x.o === 'a4').map(([k, x]) => xsTpl(k, x)).join(''))
+    + sec('a3', cardsOf(b => b.type === 'a3' && a3Fmt(b) === 'a3'), Object.entries(A3_TPL).filter(([, x]) => x.o !== 'a4').map(([k, x]) => xsTpl(k, x)).join(''))
+    + sec('exit', cardsOf(b => b.type === 'step' && !!b.exit), `<button type="button" class="xs-tp" data-act="st-new" data-v="exit" title="Unterrichtsschritt am Ende der Stunde mit Fragen zum Ausdrucken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><b>Exit-Ticket</b><span>Zwei bis drei Fragen zum Abschluss</span></button>`);
+}
+// „+ Baustein“: alle Bausteine der Stunde an einem Ort, mit Suche; der Baustein landet in seinem Bereich
+const BK_KW = { material: 'text prosa auszug roman erzählung sachtext zeilennummern', poem: 'lyrik verse strophen', tasks: 'aufgabe arbeitsauftrag operator', match: 'verbinden paare linien', sortieren: 'ordnen kategorien oberbegriffe', info: 'merke tipp definition kasten', phrases: 'satzanfänge schreibhilfe wendungen', tafel: 'sicherung schaubild tafel lückentafelbild', table: 'raster ausfüllen', lines: 'linien schreibzeilen kästchen zeichenfläche', heading: 'zwischentitel', text: 'absatz hinweis einleitung', quote: 'zitat impuls', qr: 'link video', image: 'foto abbildung karikatur grafik', pagebreak: 'neue seite', post: 'social media instagram tiktok x', a3: '' };
+const bkNorm = t => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ß/g, 'ss');
+function bkItems() {
+  const L = []; const basis = isBasis(); const ic = k => typeIcon(k);
+  const svg = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  paletteFor().filter(t => !['step', 'tafel', 'a3'].includes(t.type)).forEach(t => L.push({ g: ['Material', 'Aufgaben und Übungen', 'Gestaltung'][PAL_GRP(t)], ar: 'blatt', label: t.label, desc: t.desc, kw: BK_KW[t.k] || BK_KW[t.type] || '', ic: ic(t.ic), attrs: `data-act="add" data-type="${t.type}" data-pk="${t.k}"` }));
+  allSnips().forEach(x => L.push({ g: 'Aus der Sammlung', ar: 'blatt', label: x.name, desc: x.builtin ? 'vorbereitet' : (TYPES[x.type] || {}).label || '', kw: 'sammlung gespeichert', ic: ic(x.type), attrs: `data-act="snip-add" data-id="${esc(x.id)}"` }));
+  if (!basis) {
+    const SG = { ein: 'Unterrichtsschritt · Einstieg', sich: 'Unterrichtsschritt · Sicherung', end: 'Unterrichtsschritt · Schluss' };
+    Object.entries(STEP_TPL).forEach(([k, x]) => { if (k === 'exit') return; L.push({ g: SG[x.g] || 'Unterrichtsschritt', ar: 'stunde', label: x.label, desc: plainText(duSie(x.note || '', state.sheet.meta.anrede === 'du')), kw: 'schritt unterrichtsschritt ' + (SG[x.g] || ''), ic: ic('step'), attrs: `data-act="st-new" data-v="${k}"` }); });
+    L.push({ g: 'Unterrichtsschritt · Schluss', ar: 'stunde', label: 'Eigener Schritt', desc: 'Leerer Unterrichtsschritt', kw: 'frei schritt', ic: ic('step'), attrs: 'data-act="st-new" data-v="frei"' });
+    L.push({ g: 'Tafel', ar: 'tafel', label: 'Tafelbild', desc: TYPES.tafel.desc, kw: BK_KW.tafel, ic: ic('tafel'), attrs: 'data-act="add" data-type="tafel" data-pk="tafel"' });
+    Object.entries(A3_TPL).forEach(([k, x]) => L.push({ g: x.o === 'a4' ? 'A4-Vorlage zum Drucken' : 'A3-Vorlage zum Drucken', ar: 'extras', label: x.label, desc: x.d, kw: (x.o === 'a4' ? 'a4 ausschneiden drucken kärtchen ' : 'a3 plakat gruppe drucken ') + (k === 'experte' ? 'gruppenpuzzle' : ''), ic: svg(x.ic), attrs: `data-act="tpl-new" data-v="${k}"` }));
+    L.push({ g: 'Exit-Ticket', ar: 'extras', label: 'Exit-Ticket', desc: 'Zwei bis drei Fragen zum Abschluss, mehrmals pro A4-Seite', kw: 'rückmeldung abschluss feedback', ic: ic('step'), attrs: 'data-act="st-new" data-v="exit"' });
+  }
+  return L;
+}
+function bkList() {
+  const A = state.area || 'blatt'; const q = bkNorm(state.bkQ || '').trim(); const words = q.split(/\s+/).filter(Boolean);
+  let L = bkItems(); if (words.length) {
+    L = L.filter(x => { const h = bkNorm(`${x.label} ${x.desc} ${x.kw} ${x.g}`); return words.every(w => h.includes(w)); });
+    // Treffer im Namen zuerst, dann im Stichwort, dann in der Beschreibung
+    const sc = x => { const l = bkNorm(x.label), k = bkNorm(x.kw + ' ' + x.g); return words.reduce((n, w) => n + (l.startsWith(w) ? 0 : l.includes(w) ? 1 : k.includes(w) ? 2 : 3), 0); };
+    L = L.map((x, i) => [sc(x), i, x]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(z => z[2]);
+    if (!L.length) return '<div class="bk-none">Kein Baustein gefunden. Versuchen Sie ein anderes Wort, etwa „Tabelle“, „Karten“ oder „Einstieg“.</div>';
+    const order = [...new Set(L.map(x => x.g))];
+    return order.map(g => bkGroup(g, L.filter(x => x.g === g), A)).join('');
+  }
+  if (!L.length) return '<div class="bk-none">Kein Baustein gefunden. Versuchen Sie ein anderes Wort, etwa „Tabelle“, „Karten“ oder „Einstieg“.</div>';
+  // aktueller Bereich zuerst
+  const order = [...new Set([...L.filter(x => x.ar === A).map(x => x.g), ...L.map(x => x.g)])];
+  return order.map(g => bkGroup(g, L.filter(x => x.g === g), A)).join('');
+}
+const bkGroup = (g, G, A) => `<div class="bk-g"><small>${esc(g)}${G[0].ar !== A && !isBasis() ? ` <i>→ ${esc(AREA_NAME[G[0].ar])}</i>` : ''}</small><div class="bk-grid">${G.map(x => `<button type="button" class="bk-it" ${x.attrs} data-bk-area="${x.ar}" title="${esc(x.desc)}"><i class="add-ic">${x.ic}</i><span><b>${esc(x.label)}</b><small>${esc(x.desc)}</small></span></button>`).join('')}</div></div>`;
+function bkHTML() {
+  if (!state.bkOpen) return `<div class="bk"><button type="button" class="bk-open" data-act="bk-open"><b>+</b> Baustein hinzufügen<small>Strg+K</small></button></div>`;
+  return `<div class="bk open"><div class="bk-h"><input type="search" data-bkq value="${esc(state.bkQ || '')}" placeholder="Suchen, z. B. Tabelle, Karten, Einstieg …" aria-label="Baustein suchen" autocomplete="off"><button type="button" class="ib" data-act="bk-close" title="Schließen (Esc)" aria-label="Schließen">${I.x}</button></div>
+    <div class="bk-list" id="bk-list">${bkList()}</div><small class="hint">Enter fügt den ersten Treffer ein. Bausteine aus anderen Bereichen landen dort, die Ansicht wechselt mit.</small></div>`;
+}
+function bkOpen() {
+  if (isNarrow() && state.view !== 'edit') setView('edit');
+  if (['pres', 'start', 'einst'].includes(state.area || 'blatt') || state.out === 'karten') setArea('blatt');
+  state.bkOpen = true; state.bkQ = ''; renderEditor();
+  const box = $('#editor .bk'); if (box) { box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const q = box.querySelector('[data-bkq]'); if (q) q.focus({ preventScroll: true }); }
+}
+function bkClose() { state.bkOpen = false; state.bkQ = ''; renderEditor(); }
+// „Mehr“: selten gebrauchte Einstellungen einer Aufgabe oder Karte; „Alle Optionen zeigen“ klappt alles auf
+const LS_MORE = 'abw.more';
+const moreAll = () => String(lsGet(LS_MORE)) === '1';
+const moreOn = key => moreAll() || state.fmtOpen.has('more:' + key);
+const moreBtn = (key, sum, label = 'Mehr') => moreAll() ? '' : `<button type="button" class="more-b${moreOn(key) ? ' on' : ''}" data-act="more" data-key="${esc(key)}" aria-expanded="${moreOn(key)}"><span>${moreOn(key) ? 'Weniger' : label}</span>${!moreOn(key) && sum ? `<small>${esc(sum)}</small>` : ''}<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>`;
+function itMoreSum(it) {
+  const m = state.sheet.meta; const p = itPh(it);
+  return [p ? PHASEN[p].label : '', m.groupsOn && it.grp ? grpName(m, it.grp) : '', String(it.tag || '').trim() ? 'Etikett: ' + String(it.tag).trim() : '', rlpOf(it).length ? rlpOf(it).length + ' Standards' : '', m.levelsOn && (Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) ? 'Niveaus' : '', it.fo ? 'nur Folie' : '', !it.fo && it.noDg ? 'nicht digital' : ''].filter(Boolean).join(' · ');
 }
 // Bausteinleiste je Bereich; auf dem Blatt nach Zweck gruppiert
 const PAL_GRP = t => (['tasks', 'match', 'sort', 'table', 'phrases'].includes(t.type) ? 1 : ['heading', 'text', 'lines', 'qr', 'pagebreak'].includes(t.type) ? 2 : 0);
@@ -3187,7 +3420,7 @@ function stundeCard() {
       ${ablaufHTML()}
       <div class="chks">${fCheck('groupsOn', 'Gruppen (eigene Blätter und Aufgaben je Gruppe)', m.groupsOn)}</div>
       ${m.groupsOn ? grpEdHTML(m) : ''}
-      <div class="tf-ed-acts"><button class="btn sm" type="button" data-act="vp-docx-ed">Verlaufsplan als Word</button><button class="btn sm" type="button" data-act="abx-out">Ganze Stunde als Ordner</button></div>
+      <div class="tf-ed-acts"><button class="btn sm" type="button" data-act="vp-docx-ed">Verlaufsplan als Word</button><button class="btn sm" type="button" data-act="abx-out">Ganze Stunde ausgeben</button></div>
     </div></div>`;
 }
 // Bereich „Stunde“: Ablauf aller Bausteine in Reihenfolge; Unterrichtsschritte werden hier bearbeitet
@@ -3664,8 +3897,7 @@ function presPickHTML() {
   return `<div class="f pr-pick-f"><span>Folien <small id="pr-pick-n">${on} von ${L.length} ausgewählt</small></span>
     <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}${x.head ? ' pk-head' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${off.has(x.key) ? '' : ' checked'}><span>${esc(x.label)}</span></label>`).join('')}</div>
     <div class="pr-pick-a"><button class="link" type="button" data-act="pr-pick" data-v="all">Alle</button><button class="link" type="button" data-act="pr-pick" data-v="tasks">Nur Aufgaben</button><button class="link" type="button" data-act="pr-pick" data-v="none">Keine</button></div>
-    <label class="chk pr-ph-chk"><input type="checkbox" data-prph${state.sheet.meta.presPhase === false ? '' : ' checked'}><span>Phasenleiste unten auf den Folien (aus den Phasen der Aufgaben)</span></label>
-    <div class="f pr-phs"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[state.sheet.meta.presPhSize] ? state.sheet.meta.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
+    <small class="hint pr-ph-note">Phasenleiste: ${state.sheet.meta.presPhase === false ? 'aus' : 'an, Schrift ' + (PH_SIZES[state.sheet.meta.presPhSize] || PH_SIZES.m).label} · ändern unter <button class="link" type="button" data-act="settings" data-tab="pres">Einstellungen</button></small>
     <small class="hint">Die Auswahl wird im Blatt gespeichert und gilt auch für „Präsentieren“.</small></div>`;
 }
 function phSizeSet(v) {
@@ -3705,6 +3937,7 @@ const A4_ROLES = du => [
 const a4Seed = (str, seed) => { let h = 2166136261 ^ (seed || 1); for (const ch of String(str)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
 const A3_COLORS = [['#FFE45C', 'Gelb'], ['#9BE39B', 'Grün'], ['#8EC9FF', 'Blau'], ['#FFB3D1', 'Rosa']];
 const a3Tpl = b => (A3_TPL[b && b.tpl] ? b.tpl : 'placemat');
+const a3Fmt = b => (A3_TPL[a3Tpl(b)].o === 'a4' ? 'a4' : 'a3');
 const A3_RULES = du => du ? 'Schreibt schweigend. Antwortet auf Beiträge der anderen, stellt Fragen und verbindet Gedanken mit Pfeilen.' : 'Schreiben Sie schweigend. Antworten Sie auf Beiträge der anderen, stellen Sie Fragen und verbinden Sie Gedanken mit Pfeilen.';
 function a3Norm(b) {
   if (!Array.isArray(b.legend)) b.legend = ['', '', '', ''];
@@ -3853,7 +4086,8 @@ function a3Split(pg) {
 function layoutA3() {
   const v = sheetView(); const out = [];
   stABs().forEach(A => {
-    const list = A.blocks.filter(b => b.type === 'a3' && blockVisible(b, v)); if (!list.length) return;
+    const fmt = state.out === 'a4' ? 'a4' : 'a3';
+    const list = A.blocks.filter(b => b.type === 'a3' && a3Fmt(b) === fmt && blockVisible(b, v)); if (!list.length) return;
     withAB(A.k, () => { const mats = list.some(b => a3Tpl(b) === 'annot') ? presCollect(true) : {}; list.forEach(b => a3Pages(b, mats).forEach(pg => (state.a3p === 'a4x2' && !pg.classList.contains('a4') ? a3Split(pg) : [pg]).forEach(p => out.push({ pg: p, over: false })))); });
   });
   return out;
@@ -3903,12 +4137,12 @@ function a3Editor(b) {
   else if (tpl === 'vergleich') { const mt = a3MatList(); c = list('cols', 'Spalten', 'Spalte', b.cols, i => mt[i] ? 'leer = ' + mt[i][1] : 'z. B. Text ' + String.fromCharCode(65 + i), 2, 4) + list('aspects', 'Aspekte', 'Aspekt', b.aspects, () => 'z. B. Sprache', 1, 10); }
   else if (tpl === 'experte') c = list('experts', 'Expertenthemen', 'Thema', b.experts, i => 'Thema ' + String.fromCharCode(65 + i), 2, 6);
   else c = a4Editor(b, tpl, inp, del, add);
-  return `<div class="f"><span>Vorlage</span><div class="tf-tpls" role="group" aria-label="Vorlage"><small class="a3-grp">A3</small>${Object.entries(A3_TPL).filter(([, x]) => x.o !== 'a4').map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}<small class="a3-grp">A4</small>${Object.entries(A3_TPL).filter(([, x]) => x.o === 'a4').map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}</div></div>
+  return `<div class="f"><span>Vorlage</span><div class="tf-tpls" role="group" aria-label="Vorlage">${Object.entries(A3_TPL).filter(([, x]) => (x.o === 'a4') === (a3Fmt(b) === 'a4')).map(([k, x]) => `<button type="button" class="tf-tp" data-act="a3-tpl" data-v="${k}" aria-pressed="${tpl === k}" title="${esc(x.d)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.ic}</svg><span>${x.label}</span></button>`).join('')}</div></div>
     <small class="hint">${esc(A3_TPL[tpl].d)}. ${A3_TPL[tpl].o === 'a4' ? 'A4 hoch' : A3_TPL[tpl].o === 'q' ? 'A3 quer' : 'A3 hoch'}.</small>
     ${fText('title', 'Überschrift', b.title, state.sheet.meta.title || 'Überschrift')}
     ${taskF}
     <div class="tf-ed">${c}</div>
-    <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="a3-show">Druckvorlagen ansehen</button><small class="hint">Steht nicht auf dem Arbeitsblatt; die Vorschau rechts zeigt die Druckvorlagen.</small></div>`;
+    <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="a3-show">In der Vorschau zeigen</button><small class="hint">Steht nicht auf dem Arbeitsblatt.</small></div>`;
 }
 const presHead = (kick, head, chips) => { if (!head) { head = kick; kick = ''; } return `<div class="pr-top"><div class="pr-hd">${kick ? `<span class="pr-kick">${kick}</span>` : ''}<div class="pr-ttl">${head || ''}</div></div>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`; };
 // Arbeitsauftrag auf Folien: ein Schritt je Satz oder Zeile, Operator mit Anrede fett, Material- und Zeilenangaben hervorgehoben
@@ -5222,7 +5456,7 @@ function saveSnip(b) {
   const list = userSnips(); const c = clone(b); delete c.group;
   const name = (typeLabel(b) + ': ' + summary(b, numbering(state.sheet))).slice(0, 70);
   list.unshift({ id: 's' + uid(), name, block: c }); lsSet(LS_SNIP, list.slice(0, 60));
-  state.fmtOpen.add('snips'); toast('In der Sammlung gespeichert · unten bei „Baustein hinzufügen“');
+  state.fmtOpen.add('snips'); toast('In der Sammlung gespeichert · unter „+ Baustein hinzufügen“ (Strg+K)');
 }
 // Einfügen an Ort und Stelle: ein „+“ zwischen den Karten öffnet die Bausteinauswahl genau dort
 function insRow(i) {
@@ -5284,8 +5518,9 @@ function taskExtras(b, i, it) {
   const isK = state.sheet.meta.mode === 'klausur';
   const open = w => state.taskOpen.has(taskKey(b.id, i, w));
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
+  const mo = moreOn(`t:${b.id}:${i}`);
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}${w === 'tag' || w === 'rlp' ? ' x-pro' + (filled || open(w) ? ' used' : '') : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
-  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)}${pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)}${state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}<button type="button" class="ck-chip tx-fo x-pro${it.fo ? ' used' : ''}" data-act="it-fo" data-i="${i}" aria-pressed="${!!it.fo}" title="${it.fo ? 'Steht nur in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt. Anklicken, um sie wieder aufs Blatt zu nehmen.' : 'Nur auf der Folie zeigen, nicht auf dem Arbeitsblatt (etwa für mündliche Aufträge oder die Besprechung). Die Aufgaben auf dem Blatt werden ohne sie nummeriert.'}"><span class="cbx" aria-hidden="true"></span>Nur auf der Folie</button>${it.fo ? '' : `<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button>`}</div>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${mo ? (pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)) + (pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)) + (state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : '') : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}${mo ? `<button type="button" class="ck-chip tx-fo x-pro${it.fo ? ' used' : ''}" data-act="it-fo" data-i="${i}" aria-pressed="${!!it.fo}" title="${it.fo ? 'Steht nur in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt. Anklicken, um sie wieder aufs Blatt zu nehmen.' : 'Nur auf der Folie zeigen, nicht auf dem Arbeitsblatt (etwa für mündliche Aufträge oder die Besprechung). Die Aufgaben auf dem Blatt werden ohne sie nummeriert.'}"><span class="cbx" aria-hidden="true"></span>Nur auf der Folie</button>${it.fo ? '' : `<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button>`}` : ''}${moreBtn(`t:${b.id}:${i}`, itMoreSum(it))}</div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
   if (open('tips')) h += ophBox(b, i, it, nT);
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
@@ -5742,8 +5977,8 @@ function segHTML(key, opts, cur, label) {
   return `<div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-pv="${key}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${l}</button>`).join('')}</div>`;
 }
 function renderOut() {
-  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const SB = stBlocks(); const nTf = SB.filter(x => x.type === 'tafel').length; const nA3 = SB.filter(x => x.type === 'a3').length; const nE = exitSteps().length;
-  const OUTS = { blatt: ['blatt', 'Arbeitsblatt', 0], tipps: ['tipps', 'Tippkarten', nT], karten: ['karten', 'Tafelkarten', nK], tafel: ['tafel', 'Tafelbild', nTf], a3: ['a3', 'A3-Vorlagen', nA3], exit: ['exit', 'Exit-Tickets', nE], vp: ['vp', 'Verlaufsplan', 0], pres: ['pres', 'Folien', 0] };
+  const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const SB = stBlocks(); const nTf = SB.filter(x => x.type === 'tafel').length; const nA3 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a3').length; const nA4 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a4').length; const nE = exitSteps().length;
+  const OUTS = { blatt: ['blatt', 'Arbeitsblatt', 0], tipps: ['tipps', 'Tippkarten', nT], karten: ['karten', 'Tafelkarten', nK], tafel: ['tafel', 'Tafelbild', nTf], a4: ['a4', 'A4-Vorlagen', nA4], a3: ['a3', 'A3-Vorlagen', nA3], exit: ['exit', 'Exit-Tickets', nE], vp: ['vp', 'Verlaufsplan', 0], pres: ['pres', 'Folien', 0] };
   $('#outsw').innerHTML = (AREA_OUTS[state.area || 'blatt'] || AREA_OUTS.blatt).map(k => OUTS[k])
     .map(([k, l, n]) => `<button type="button" data-out="${k}" aria-pressed="${state.out === k}">${l}${n ? `<span>${n}</span>` : ''}</button>`).join('');
   let h = '';
@@ -5754,7 +5989,7 @@ function renderOut() {
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
     if (!isBasis()) h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
   }
-  if (state.out === 'vp') h += '<button class="btn sm" type="button" data-pv="vp-docx">Als Word speichern</button><button class="btn sm" type="button" data-pv="st-out">Ganze Stunde als Ordner</button>';
+  if (state.out === 'vp') h += '<button class="btn sm" type="button" data-pv="vp-docx">Als Word speichern</button><button class="btn sm" type="button" data-pv="st-out">Ganze Stunde ausgeben</button>';
   if (state.out === 'pres') h += '<button class="btn sm primary" type="button" data-pv="pres">Präsentieren</button><button class="btn sm" type="button" data-pv="pptx">PowerPoint</button>';
   if (state.out === 'a3') h += segHTML('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3', 'Papier');
   if (state.out === 'tafel') { h += segHTML('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung, 'Fassung'); if (nTf) h += '<button class="btn sm" type="button" data-pv="tfbeam">Am Beamer zeigen</button>'; }
@@ -6153,7 +6388,7 @@ async function newGo() {
   sh.meta.nr = String(d.nr || '').trim(); if (d.topic.trim() && sh.meta.mode !== 'klausur') sh.meta.topic = d.topic.trim();
   sh.meta.paper = d.paper;
   state.dlg = null; renderDlg(); state.libOpen = false; state.confirmDel = null; renderLib();
-  openSheet(sh); state.openSnap = null; saveNow();
+  openSheet(sh, { edit: true }); state.openSnap = null; saveNow();
   if (d.folder) { setPlace(sh.id, d.folder); savePrefs(); }
   // direkt bearbeiten: die erste inhaltliche Karte öffnen und hineinspringen
   const first = sh.blocks.find(b => b.type === 'material' || b.type === 'poem' || (b.type === 'image' && b.mk)) || sh.blocks.find(b => b.type !== 'pagebreak');
@@ -6683,9 +6918,9 @@ function renderPreview() {
     $('#pv-hint').hidden = true; renderOut(); return;
   }
   let out;
-  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : state.out === 'a3' ? layoutA3() : state.out === 'exit' ? layoutExit() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
+  try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : state.out === 'a3' || state.out === 'a4' ? layoutA3() : state.out === 'exit' ? layoutExit() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
-  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'exit' ? 'Noch kein Exit-Ticket. Legen Sie links unten mit „Exit-Ticket“ eines an und tragen Sie die Fragen ein.' : state.out === 'a3' ? 'Noch keine A3-Vorlage. Fügen Sie links unten bei den Bausteinen „A3-Vorlage“ hinzu.' : state.out === 'tafel' ? 'Noch kein Tafelbild. Fügen Sie links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
+  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'exit' ? 'Noch kein Exit-Ticket. Legen Sie links unter „Exit-Tickets“ eines an und tragen Sie die Fragen ein.' : state.out === 'a3' ? 'Noch keine A3-Vorlage. Wählen Sie links unter „A3-Vorlagen“ eine Vorlage, etwa Placemat oder Lernplakat.' : state.out === 'a4' ? 'Noch keine A4-Vorlage. Wählen Sie links unter „A4-Vorlagen“ eine Vorlage, etwa Karten zum Ausschneiden.' : state.out === 'tafel' ? 'Noch kein Tafelbild. Fügen Sie links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
     pg.classList.add('pout');
     const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(pg);
@@ -6695,7 +6930,7 @@ function renderPreview() {
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
   const buch = state.out === 'blatt' && state.sheet.meta.paper === 'buch';
   const kH = state.out === 'karten' && state.kkHalf;
-  const [one, many, unit] = state.out === 'exit' ? ['Seite', 'Seiten', 'Exit-Tickets'] : state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  const [one, many, unit] = state.out === 'exit' ? ['Seite', 'Seiten', 'Exit-Tickets'] : state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'a4' ? ['Seite', 'Seiten', 'A4'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
   const cnt = state.out === 'karten' ? (state.kkCount || 0) : out.length;
   const nB = state.bookPages || 0;
   $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`
@@ -7162,10 +7397,12 @@ function bodyFor(b, num) {
     case 'heading': return `${fText('text', 'Überschrift', b.text, 'z. B. Vertiefung')}
       <div class="row">${[['padTop', 'Abstand davor'], ['padBot', 'Abstand danach']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="blk-set" data-f="${f}" data-v="${v}" aria-pressed="${(b[f] || '') === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>`;
     case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
-    case 'material': { const poem = b.form === 'gedicht'; return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
-      ${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
+    case 'material': { const poem = b.form === 'gedicht'; const bm = moreOn('b:' + b.id);
+      const mSum = [fachKey() === 'gp' && b.mk ? ({ q: 'Quelle', d: 'Darstellung' })[b.mk] : '', matFmt(b).cols === 2 ? 'zwei Spalten' : ''].filter(Boolean).join(' · ');
+      const moreTop = `${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
       <div class="row" style="gap:8px 18px">${fachKey() === 'deutsch' || poem ? `<div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>` : ''}
-        <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>
+        <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>`;
+      return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fRich('text', 'Gedicht', b.text, { mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fRich('text', 'Text', b.text, { mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
@@ -7173,23 +7410,25 @@ function bodyFor(b, num) {
       ${!poem && matHasH(b.text) ? `<div class="chks">${fCheck('hdCount', 'Zwischenüberschriften bei den Zeilennummern mitzählen', b.hdCount)}</div>` : ''}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
-      ${b.post ? postEditor(b) : ''}${fmtEditor(b)}${gapEditor(b)}${readEditor(b)}
-      ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}`; }
+      ${b.post ? postEditor(b) : ''}
+      <div class="more-card">${moreBtn('b:' + b.id, mSum, 'Mehr: Spalten, Schrift, Lücken, Lesehilfe, Notiz')}${bm ? `<div class="more-in">${moreTop}${fmtEditor(b)}${gapEditor(b)}${readEditor(b)}
+      ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}</div>` : ''}</div>`; }
     case 'tasks': {
-      const start = num[b.id].from; const nos = itNos(b, start);
-      return `${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
-        ${timeCtl(b, 'Zeit (Min.)')}
-        ${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
+      const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
+      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : ''].filter(Boolean).join(' · ');
+      return `${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
           <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
           ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: nos[i] ? `Aufgabe ${nos[i]}` : 'Auftrag nur auf der Folie' })}
           <div class="chips" data-chips="${i}">${chipsHTML(it.text)}</div>
-          <div class="soz-row"><div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>${grpCtl(i, it)}${phCtl(i, it)}</div>
+          <div class="soz-row"><div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>${moreOn(`t:${b.id}:${i}`) ? grpCtl(i, it) + phCtl(i, it) : ''}</div>
           ${taskExtras(b, i, it)}
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
-        <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div>
+        <div class="more-card">${moreBtn('b:' + b.id, bSum, 'Mehr zum Baustein: Überschrift, Zeit, Timer')}${bm ? `<div class="more-in">${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
+        ${timeCtl(b, 'Zeit (Min.)')}
+        <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div></div>` : ''}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
@@ -7292,16 +7531,7 @@ function metaCard() {
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum x-pro"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
-      <div class="sub${more ? ' open' : ''}"><button type="button" class="sub-h" data-act="sub-toggle" data-key="meta-more" aria-expanded="${more}"><span class="sub-t">Weitere Einstellungen</span><span class="sub-s">${esc(moreSum)}</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button>
-        ${more ? `<div class="sub-b">
-      <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
-          <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
-          <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
-          <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
-          <div class="chks x-wrap x-pro${m.levelsOn ? ' used' : ''}">${fCheck('levelsOn', 'Niveaustufen ★ Basis · ★★ Standard · ★★★ Experte', m.levelsOn)}</div>
-          ${m.levelsOn ? `<div class="chks">${fCheck('lvTip', 'Im Basis-Blatt steht der erste Tipp direkt unter der Aufgabe', m.lvTip !== false)}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte den Stufen zu. Bei jeder Aufgabe gibt es unter „Niveaus“ eigene Fassungen für Basis und Experte. Über der Vorschau oder beim Ausgeben die Stufe wählen.</small>` : ''}
-          ${isBasis() ? '' : '<small class="hint">Stundenablauf, Stundenfrage und Gruppen stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="stunde">Stunde</button> ein.</small>'}
-        </div>` : ''}</div>
+      <button type="button" class="set-link" data-act="settings" data-tab="kurs"><i>${areaIc('einst')}</i><span><b>Einstellungen</b><small>${esc([isK ? 'Klausur' : '', m.course, m.anrede === 'du' ? 'du' : 'Sie', DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[m.paper || 'a4']].filter(Boolean).join(' · '))}</small></span><em>›</em></button>
     </div></div>`;
 }
 // Eigene Karte für alles, was das Aussehen der Seite bestimmt
@@ -7331,14 +7561,17 @@ function renderEditor(focusSel) {
     enforceOne();
     const num = numbering(state.sheet); const blocks = state.sheet.blocks;
     const intro = state.out === 'exit' ? '<div class="memo-flag">Exit-Tickets entstehen aus Unterrichtsschritten mit „Exit-Ticket zum Ausdrucken“. Jede Seite enthält dasselbe Ticket mehrmals zum Ausschneiden.</div>' : state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'a3' ? '<div class="memo-flag">A3-Vorlagen und Exit-Tickets gehören zur Stunde, nicht aufs Arbeitsblatt. A3 sehen Sie rechts in A3; „2 × A4 zum Kleben“ verteilt jede Seite auf zwei A4-Blätter mit Schnittlinie.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Tafelbilder der Stunde. Rechts stehen sie auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt sie Schritt für Schritt auf. Die Tafelkarten wählen Sie rechts oben.</div>' : '';
-    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
+    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button><span aria-hidden="true">·</span><button type="button" class="link onecard" data-act="more-all" aria-pressed="${moreAll()}" title="Auch die selten gebrauchten Einstellungen (Phase, Etikett, Standards, Zeit, Spalten …) immer zeigen"><span class="cb" aria-hidden="true"></span>Alle Optionen</button></div>`;
     let body;
-    if (A === 'pres') body = presEditorHTML();
-    else if (A === 'stunde') body = fold + stundeCard() + flowHTML(num) + stepAdderHTML();
+    if (A === 'start') body = startHTML();
+    else if (A === 'einst') body = settingsHTML();
+    else if (A === 'pres') body = presEditorHTML();
+    else if (A === 'extras') body = fold + (state.sheet.abs ? abBarHTML() : '') + extrasHTML(num) + bkHTML();
+    else if (A === 'stunde') body = fold + stundeCard() + flowHTML(num) + bkHTML();
     else {
       const cards = blocks.map((b, i) => (inArea(b, A) ? (A === 'blatt' ? insRow(i) : '') + cardHTML(b, i, num) : A === 'blatt' && b.type !== 'pagebreak' ? phRowHTML(b, num) : '')).join('');
       const none = A !== 'blatt' && !blocks.some(b => inArea(b, A));
-      body = fold + (A === 'blatt' || state.sheet.abs ? abBarHTML() : '') + intro + (A === 'blatt' ? metaCard() + seiteCard() : '') + cards + (none ? `<div class="flow-empty">${A === 'tafel' ? 'Noch kein Tafelbild in diesem Arbeitsblatt.' : 'Noch keine A3-Vorlage und kein Exit-Ticket in diesem Arbeitsblatt.'}</div>` : '') + adderHTML(A);
+      body = fold + (A === 'blatt' || state.sheet.abs ? abBarHTML() : '') + intro + (A === 'blatt' ? metaCard() : '') + cards + (none ? `<div class="flow-empty">${A === 'tafel' ? 'Noch kein Tafelbild in diesem Arbeitsblatt.' : 'Noch keine A3-Vorlage und kein Exit-Ticket in diesem Arbeitsblatt.'}</div>` : '') + bkHTML();
     }
     ed.innerHTML = areaBarHTML() + body;
   }
@@ -7395,6 +7628,7 @@ function snapshot() { undoSnap = clone(state.sheet); }
 
 function onInput(e) {
   const t = e.target; const isRt = !!(t.classList && t.classList.contains('rtx'));
+  if (t.dataset && t.dataset.bkq != null) { state.bkQ = t.value; const l = $('#bk-list'); if (l) l.innerHTML = bkList(); return; }
   if (t.dataset && t.dataset.sf != null) { state.sheet.meta.frage = t.value; changed(false); return; }
   if (t.dataset && t.dataset.st === 'title') { if (!state.sheet.stunde) state.sheet.stunde = {}; state.sheet.stunde.title = t.value; changed(false); return; }
   if (t.dataset && t.dataset.rlpq != null) { state.rlpQ = t.value; rlpFilter(t.closest('.rlp-f')); return; }
@@ -7473,13 +7707,30 @@ function onClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || a.disabled) return;
   if (hist.timer && !/^(toggle|undo|redo|ins-open|ins-close|sub-toggle|fmt-toggle)$/.test(a.dataset.act)) histCommit();
   const act = a.dataset.act; if (act.startsWith('abx-')) { abAct(act, a); return; }
+  if (act === 'bk-open') { bkOpen(); return; }
+  if (act === 'bk-close') { bkClose(); return; }
+  if (a.dataset.bkArea) { state.bkOpen = false; state.bkQ = ''; const ar = a.dataset.bkArea; if (ar !== (state.area || 'blatt')) { state.area = ar; state.out = areaOutFor(ar); if (ar === 'extras' && a.dataset.act === 'st-new') state.out = 'exit'; } }
   const card = a.closest('[data-bid]'); const bid = card && card.dataset.bid;
   const blocks = state.sheet.blocks; const idx = blocks.findIndex(b => b.id === bid); const b = blocks[idx];
   switch (act) {
     case 'area-set': setArea(a.dataset.v); return;
+    case 'settings': openSettings(a.dataset.tab); return;
+    case 'settings-back': setArea(isBasis() ? 'blatt' : state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return;
+    case 'set-tab': state.setTab = a.dataset.v; renderEditor(); return;
+    case 'umfang': setUmfang(a.dataset.v); return;
+    case 'start-pref': lsSet(LS_START, String(lsGet(LS_START)) === '0' ? '1' : '0'); renderEditor(); return;
+    case 'login': openDlg('login'); return;
+    case 'help': state.dlg = { mode: 'help' }; renderDlg(); return;
+    case 'out-open': openOut(); return;
+    case 'sv-ab': { const k = +a.dataset.abk; if (state.sheet.abs && k !== state.sheet.abActive) { abSwitch(k); state.sel = null; state.closed = defaultClosed(); state.taskOpen = new Set(); } setArea('blatt'); return; }
+    case 'more': { const k = 'more:' + a.dataset.key; if (state.fmtOpen.has(k)) state.fmtOpen.delete(k); else state.fmtOpen.add(k); renderEditor(); return; }
+    case 'more-all': lsSet(LS_MORE, moreAll() ? '0' : '1'); renderEditor(); return;
     case 'area-go': areaGo(a.dataset.area, a.dataset.bid, a.dataset.abk != null ? +a.dataset.abk : NaN); return;
     case 'st-new': stepNew(a.dataset.v); return;
-    case 'a4-new': { const nb = paletteBlock('a3', 'a3'); nb.tpl = A3_TPL[a.dataset.v] ? a.dataset.v : 'karten'; a3Norm(nb); snapshot(); state.sheet.blocks.push(nb); state.sel = nb.id; if (oneCard()) state.closed = new Set(cardIds().filter(i => i !== nb.id)); else state.closed.delete(nb.id); changed(true); setOut('a3'); return; }
+    case 'a4-new': case 'tpl-new': { const nb = paletteBlock('a3', 'a3'); nb.tpl = A3_TPL[a.dataset.v] ? a.dataset.v : 'karten'; a3Norm(nb); snapshot(); state.sheet.blocks.push(nb); state.sel = nb.id; if (oneCard()) state.closed = new Set(cardIds().filter(i => i !== nb.id)); else state.closed.delete(nb.id);
+      if (state.area !== 'extras') state.area = 'extras'; state.out = a3Fmt(nb); state.areaOut.extras = state.out; changed(true); renderPreview();
+      const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) nc.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+    case 'xs-show': if (state.out !== a.dataset.v) setOut(a.dataset.v); return;
     case 'pres-go': openPres(0); return;
     case 'pres-pptx': exportPPTX(); return;
     case 'vp-docx-ed': exportVP(); return;
@@ -7494,6 +7745,7 @@ function onClick(e) {
       document.querySelectorAll('#editor .card[data-bid]').forEach(c => { const zu = state.closed.has(c.dataset.bid); c.classList.toggle('closed', zu); const ch = c.querySelector('.chev'); if (ch) { ch.setAttribute('aria-expanded', String(!zu)); ch.title = zu ? 'Aufklappen' : 'Zuklappen'; } });
       document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel')); card.classList.add('sel'); markSel();
       if (opening) { const r = card.getBoundingClientRect(), er = $('#editor').getBoundingClientRect(); if (r.top < er.top || r.top > er.top + er.height * .6) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+      if (opening && state.area === 'extras' && b) { const f = b.type === 'a3' ? a3Fmt(b) : 'exit'; if (state.out !== f) { state.out = f; state.areaOut.extras = f; renderOut(); clearTimeout(renderTimer); renderPreview(); document.querySelectorAll('#editor .xs').forEach(x => { const on = x.classList.contains('xs-' + f); x.classList.toggle('on', on); const e = x.querySelector('.xs-eye'); if (e) e.textContent = on ? 'in der Vorschau' : 'Vorschau ›'; }); } }
       return;
     }
     case 'up': case 'down': { const j = act === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); return; }
@@ -7556,7 +7808,7 @@ function onClick(e) {
     case 'rlp-sheet': openRlpDlg('sheet'); return;
     case 'a3-tpl': { if (!A3_TPL[a.dataset.v]) return; b.tpl = a.dataset.v; a3Norm(b); changed(true); return; }
     case 'a3-n': b.n = +a.dataset.v; changed(true); return;
-    case 'a3-show': setOut('a3'); return;
+    case 'a3-show': setOut(a3Fmt(b)); return;
     case 'vp-open': openVP(); return;
     case 'st-tpl': stepTpl(b, a.dataset.v, idx); return;
     case 'st-fol': if (b) { b.fol = a.dataset.v; changed(true); } return;
@@ -7887,8 +8139,11 @@ async function doSave(b, snap) {
 }
 
 /* ---------- Öffnen, Reiter wechseln ---------- */
-function openSheet(sh) {
-  state.gapEdit = null;
+const LS_START = 'abw.start';
+const startWanted = () => !isBasis() && String(lsGet(LS_START)) !== '0';
+function openSheet(sh, opt = {}) {
+  state.gapEdit = null; state.bkOpen = false;
+  if (!opt.keepArea) { if (startWanted() && !opt.edit) { state.area = 'start'; state.out = 'blatt'; if (typeof isNarrow === 'function' && isNarrow() && state.view !== 'edit') setTimeout(() => setView('edit'), 0); } else if (state.area === 'start' || state.area === 'einst' || !state.area) { state.area = 'blatt'; state.out = 'blatt'; } }
   closeGloss(); closeZl(); closeMenu();
   if (savePending) saveNow();
   state.sheet = normalizeSheet(sh); state.sel = null; state.closed = loadClosed(state.sheet.id) || defaultClosed(); state.allOpen = false; state.taskOpen = new Set(); undoSnap = null; state.touched = false;
@@ -8376,7 +8631,7 @@ async function onLibClick(e) {
     case 'lib-close': closeLib(); break;
     case 'lib-new': openNew(); break;
     case 'lib-example': closeLib(); openSheet(exampleSheet()); break;
-    case 'lib-open-sheet': if (id) { closeLib(); await openById(id); if (isNarrow()) setView('preview'); } break;
+    case 'lib-open-sheet': if (id) { closeLib(); await openById(id); if (isNarrow()) setView(state.area === 'start' ? 'edit' : 'preview'); } break;
     case 'lib-dup':
       if (!id) break;
       closeLib();
@@ -8434,7 +8689,7 @@ async function conflictResolve(how) {
     try { await backend.save(c); upsertLib(entryOf(c)); const fo = folderOf(sh.id, sh.klasse); if (fo) { setPlace(c.id, fo); savePrefs(); } } catch { toast('Die Kopie konnte nicht gespeichert werden.'); return; }
   }
   savePending = false; clearTimeout(saveTimer); state.conflict = null;
-  if (theirs) openSheet(theirs); else idleStatus();
+  if (theirs) openSheet(theirs, { keepArea: true }); else idleStatus();
   toast(how === 'both' ? 'Ihre Fassung liegt jetzt als Kopie in „Meine Stunden“.' : 'Die neuere Fassung ist geladen.');
 }
 // Beim Zurückkehren zur Seite: neuere Fassung still übernehmen, wenn hier nichts Ungespeichertes ist
@@ -8447,12 +8702,18 @@ async function checkRemote() {
   if (!r || r <= state.base.stamp + 500 || state.sheet !== sh) return;
   if (savePending) { saveNow(); return; }
   let theirs = null; try { theirs = await b.load(sh.id); } catch {}
-  if (theirs && state.sheet === sh && !savePending) { openSheet(theirs); toast('Neuere Fassung von einem anderen Gerät geladen.'); }
+  if (theirs && state.sheet === sh && !savePending) { openSheet(theirs, { keepArea: true }); toast('Neuere Fassung von einem anderen Gerät geladen.'); }
   try { await refreshLib(); } catch {}
 }
 
 /* ---------- Hilfe und Tipps ---------- */
 const HELP = [
+  ['Überblick', [
+    ['Übersicht (Haus-Symbol)', 'erscheint beim Öffnen einer Stunde: Titel, Stundenfrage, Arbeitsblätter, Stundenablauf und große Knöpfe zum Bearbeiten, Präsentieren und Ausgeben. Abschalten unter Einstellungen → App.'],
+    ['„+ Baustein hinzufügen“ oder Strg+K', 'zeigt alle Bausteine mit Suche: Material, Aufgaben, Unterrichtsschritte, Tafelbild, A4- und A3-Vorlagen, Exit-Ticket, Gespeichertes aus der Sammlung. Tippen filtert, Enter fügt den ersten Treffer ein; der Baustein landet in seinem Bereich.'],
+    ['„Mehr“ an Aufgaben und Karten', 'Phase, Gruppe, Etikett, Standards, Niveaus, „Nur auf der Folie“, Zeit und Timer, Spalten und Schrift stehen hinter „Mehr“; was eingestellt ist, steht kurz daneben. „Alle Optionen“ über den Karten zeigt immer alles.'],
+    ['Zahnrad oben', 'Einstellungen an einem Ort: Kurs und Anrede, Arbeitsblatt (Namensfeld, AFB …), Aussehen (Design, Farbe, Papier), Präsentation (Phasenleiste) und App (Basis oder Experte, Ansicht).'],
+    ['Ausgeben', 'links wählen, was ausgegeben wird (auch „Ganze Stunde“ als Ordner), rechts Format und Fassung.']]],
   ['Bausteine', [
     ['„+ Neue Stunde“ oben', 'fragt Klasse, Vorlage, Nummer, Titel, Thema, Papier und Ordner ab und öffnet danach gleich den ersten Text.'],
     ['„+“ zwischen zwei Karten', 'fügt einen Baustein genau dort ein.'],
@@ -8485,7 +8746,7 @@ const HELP = [
     ['Fach einer Klasse', '„+ Klassen“ neben den Reitern. Operatoren, Vorlagen und Formulierungshilfen richten sich nach dem Fach.'],
     ['Quelle, Darstellung', 'In Geschichte/Politik wird ein Material zur Quelle (Q1) oder Darstellung (D1). Bilder bekommen auf Wunsch eine Nummer (M, Q, D) mit Titel.'],
     ['Biologie', 'Bilder als Abbildung nummerieren (Abb. 1), freie Fläche für Zeichnungen und Skizzen (Baustein Schreibfläche, Art „Freie Fläche“).'],
-    ['Operatorenübersicht', 'Unten unter „Aus der Sammlung“: für Deutsch der IQB-Grundstock, für Geschichte/Politik und Biologie die KMK-Listen mit Erläuterungen.']]],
+    ['Operatorenübersicht', 'Unter „+ Baustein hinzufügen“ → „Aus der Sammlung“: für Deutsch der IQB-Grundstock, für Geschichte/Politik und Biologie die KMK-Listen mit Erläuterungen.']]],
   ['Aufgaben', [
     ['Operatoren', 'werden erkannt und fett gesetzt; dazu der Anforderungsbereich.'],
     ['Erwartung', 'steht nur in der Lehrerfassung und im Erwartungshorizont (.md).'],
@@ -8583,7 +8844,8 @@ const TIPS = [
   ['Worterklärung per Klick', 'Klicken Sie in der Vorschau auf ein Wort im Material. Die Erklärung erscheint als Fußnote.'],
   ['Zeilenangaben per Klick', 'Klicken Sie in der Vorschau auf eine Zeilennummer, für einen Bereich auf eine zweite. „Einfügen“ setzt die Angabe in die Aufgabe.'],
   ['Ausgeben', 'PDF, Word oder Drucken stecken jetzt in einem Fenster, mit Fassung, Papier und einer kurzen Prüfung vor dem Druck.'],
-  ['Rückgängig und Hilfe', 'Strg+Z oder der Pfeil über den Karten macht Schritte rückgängig. Alle Kniffe finden Sie oben unter „?“.']
+  ['Baustein suchen', '„+ Baustein hinzufügen“ unter den Karten oder Strg+K: tippen Sie, was Sie brauchen, etwa „Tabelle“ oder „Karten“.'],
+  ['Rückgängig und Hilfe', 'Strg+Z oder der Pfeil über den Karten macht Schritte rückgängig. Alle Kniffe finden Sie oben unter „?“, Einstellungen unter dem Zahnrad.']
 ];
 const LS_TIPS = 'abw.tips';
 let tipIdx = -1;
@@ -8648,7 +8910,7 @@ function outChecks() {
   return L;
 }
 function outHTML() {
-  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, SB = stBlocks(), nTf = SB.filter(x => x.type === 'tafel').length, nA3 = SB.filter(x => x.type === 'a3').length, nE = exitSteps().length;
+  const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, SB = stBlocks(), nTf = SB.filter(x => x.type === 'tafel').length, nA3 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a3').length, nA4 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a4').length, nE = exitSteps().length;
   const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t, dis]) => `<button type="button" data-act="out-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}"${dis ? ' disabled' : ''}>${t}</button>`).join('')}</div>`;
   const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
     ['docx', 'Word', state.out === 'blatt' || state.out === 'vp' ? 'zum Weiterbearbeiten' : 'für Blatt und Verlaufsplan', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
@@ -8658,8 +8920,16 @@ function outHTML() {
   const pages = document.querySelectorAll('#pages .pout').length;
   const checks = outChecks();
   const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung', pptx: 'PowerPoint erstellen' }[d.fmt];
-  return `<h2 id="dlg-t">Ausgeben</h2>
-    <div class="out-g"><div class="f"><span>Was</span>${seg('out', [['blatt', 'Arbeitsblatt'], ['tipps', `Tippkarten${nT ? ' · ' + nT : ''}`, !nT], ['karten', `Tafelkarten${nK ? ' · ' + nK : ''}`, !nK], ['tafel', `Tafelbild${nTf ? ' · ' + nTf : ''}`, !nTf], ['a3', `A3-Vorlagen${nA3 ? ' · ' + nA3 : ''}`, !nA3], ...(nE ? [['exit', `Exit-Tickets · ${nE}`]] : []), ['vp', 'Verlaufsplan'], ['pres', 'Präsentation']].filter(o => !isBasis() || BASIS_OUTS.includes(o[0])), state.out)}</div>
+  const W = [['Arbeitsblatt', [['blatt', 'Arbeitsblatt', 0, 1], ['tipps', 'Tippkarten', nT]]], ['Stunde', [['vp', 'Verlaufsplan', 0, 1], ['pres', 'Präsentation', 0, 1]]], ['Tafel', [['tafel', 'Tafelbild', nTf], ['karten', 'Tafelkarten', nK]]], ['Druck-Extras', [['a4', 'A4-Vorlagen', nA4], ['a3', 'A3-Vorlagen', nA3], ['exit', 'Exit-Tickets', nE]]]]
+    .map(([g, L]) => [g, L.filter(o => !isBasis() || BASIS_OUTS.includes(o[0]))]).filter(([, L]) => L.length);
+  const what = `<nav class="out-what" aria-label="Was ausgeben">${isBasis() ? '' : `<button type="button" class="ow ow-all" data-act="out-set" data-f="whole" data-v="1" aria-pressed="${!!d.whole}"><b>Ganze Stunde</b><small>alles in einem Ordner</small></button>`}
+    ${W.map(([g, L]) => `<small class="ow-g">${g}</small>${L.map(([k, l, n, always]) => `<button type="button" class="ow" data-act="out-set" data-f="out" data-v="${k}" aria-pressed="${!d.whole && state.out === k}"${!always && !n ? ' disabled title="Noch nichts angelegt"' : ''}><b>${l}</b>${n ? `<em>${n}</em>` : ''}</button>`).join('')}`).join('')}</nav>`;
+  if (d.whole) { const A = stABs(); const SB2 = stBlocks();
+    const L = [...A.map(x => `${esc(abLabel(x.meta, x.k))}: Schüler- und Lehrerfassung als PDF und Word, Erwartungshorizont${tipCards().length ? ', Tippkarten' : ''}, digitale Fassung`), nTf ? 'Tafelbild, vollständig und als Lückenfassung' : '', nK ? 'Tafelkarten' : '', nA4 ? 'A4-Vorlagen' : '', nA3 ? 'A3-Vorlagen in A3 und auf 2 × A4' : '', nE ? 'Exit-Tickets' : '', 'PowerPoint mit allen Folien', 'Verlaufsplan als Word', 'Inhaltsliste'].filter(Boolean);
+    return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how"><div class="out-whole"><b>Ganze Stunde als Ordner</b><p>${window.abw ? 'Sie wählen einen Ort, der Ordner wird dort angelegt.' : 'Der Ordner kommt als ZIP-Datei.'} Die Dateien sind durchnummeriert:</p><ul>${L.map(x => `<li>${x}</li>`).join('')}</ul></div>
+      <div class="row"><button class="btn primary" type="button" data-act="out-stunde">Ordner erstellen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div></div></div>`; }
+  return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how">
+    <div class="out-g">
     <div class="f"><span>Als</span><div class="out-fmts">${fmts.filter(f => !(isBasis() && f[0] === 'pptx')).map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${fmtOk(v, state.out) ? '' : ' disabled'}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp)}</div>` : ''}
@@ -8670,7 +8940,7 @@ function outHTML() {
     ${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? presPickHTML() : ''}
     ${state.out === 'vp' || state.out === 'pres' ? '' : `<div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>`}
-    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}${isBasis() ? '' : '<button class="btn" type="button" data-act="out-stunde" title="Alle ABs als PDF und Word, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde als Ordner</button>'}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div></div></div>`;
 }
 async function outGo() {
   const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
@@ -8871,7 +9141,8 @@ async function onDlgClick(e) {
     if (act === 'out-set') {
       const f = a.dataset.f, v = a.dataset.v; const o = outState();
       if (f === 'fmt') state.dlg.fmt = v;
-      else { o[f] = v; if (f === 'out' && !fmtOk(state.dlg.fmt, v)) state.dlg.fmt = fmtFirst(v); if (f === 'fassung' && v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); outApply(o); renderOut(); }
+      else if (f === 'whole') state.dlg.whole = true;
+      else { if (f === 'out') state.dlg.whole = false; o[f] = v; if (f === 'out' && !fmtOk(state.dlg.fmt, v)) state.dlg.fmt = fmtFirst(v); if (f === 'fassung' && v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); outApply(o); renderOut(); }
       renderDlg(); return;
     }
     if (act === 'out-go') { outGo(); return; }
@@ -8946,7 +9217,8 @@ async function exportStunde() {
     const stem = P.abs ? 'Stunde' : fileBase(); const SB = stBlocks();
     if ((P.cards || []).length) { overlay('Tafelkarten …'); show('karten'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_Tafelkarten.pdf`, r.blob, 'Tafelkarten'); }
     if (SB.some(b => b.type === 'tafel')) { overlay('Tafelbild …'); for (const f of ['lehrer', 'schueler']) { show('tafel', f); const r = await capture(() => exportPDF()); if (r) add(`${stem}_Tafelbild${f === 'schueler' ? '_Lueckenfassung' : ''}.pdf`, r.blob, f === 'schueler' ? 'Tafelbild als Lückenfassung' : 'Tafelbild vollständig (A4 quer)'); } }
-    if (SB.some(b => b.type === 'a3')) { overlay('A3-Vorlagen …'); for (const p of ['a3', 'a4x2']) { state.a3p = p; show('a3'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_A3-Vorlagen${p === 'a4x2' ? '_2xA4' : ''}.pdf`, r.blob, p === 'a4x2' ? 'A3-Vorlagen verteilt auf je zwei A4-Blätter zum Kleben' : 'A3-Vorlagen in A3'); } state.a3p = keep.a3p; }
+    if (SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4')) { overlay('A4-Vorlagen …'); show('a4'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_A4-Vorlagen.pdf`, r.blob, 'A4-Vorlagen: Karten, Lernkarten, Satzstreifen, Tandembogen'); }
+    if (SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a3')) { overlay('A3-Vorlagen …'); for (const p of ['a3', 'a4x2']) { state.a3p = p; show('a3'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_A3-Vorlagen${p === 'a4x2' ? '_2xA4' : ''}.pdf`, r.blob, p === 'a4x2' ? 'A3-Vorlagen verteilt auf je zwei A4-Blätter zum Kleben' : 'A3-Vorlagen in A3'); } state.a3p = keep.a3p; }
     if (exitSteps().length) { overlay('Exit-Tickets …'); show('exit'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_Exit-Tickets.pdf`, r.blob, 'Exit-Tickets zum Ausdrucken und Ausschneiden'); }
     show('blatt', 'schueler');
     overlay('Präsentation …'); { const r = await capture(() => exportPPTX()); if (r) add(`${stem}_Praesentation.pptx`, r.blob, 'Präsentation (PowerPoint)'); else notes.push('Die PowerPoint-Datei fehlt: Dafür braucht der Browser Internet.'); }
@@ -8998,13 +9270,13 @@ async function deliver(name, blob) {
 }
 async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || [], EXTRA_FONTS); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
-const outSuffix = () => state.out === 'exit' ? '_Exit-Tickets' : state.out === 'a3' ? (state.a3p === 'a4x2' ? '_A3-Vorlagen_2xA4' : '_A3-Vorlagen') : state.out === 'tipps' ? '_Tippkarten' : state.out === 'tafel' ? (state.fassung === 'lehrer' ? '_Tafelbild' : '_Tafelbild_Lueckenfassung') : state.out === 'karten' ? '_Tafelkarten'
+const outSuffix = () => state.out === 'exit' ? '_Exit-Tickets' : state.out === 'a4' ? '_A4-Vorlagen' : state.out === 'a3' ? (state.a3p === 'a4x2' ? '_A3-Vorlagen_2xA4' : '_A3-Vorlagen') : state.out === 'tipps' ? '_Tippkarten' : state.out === 'tafel' ? (state.fassung === 'lehrer' ? '_Tafelbild' : '_Tafelbild_Lueckenfassung') : state.out === 'karten' ? '_Tafelkarten'
   : (state.fassung === 'lehrer' ? '_Lehrerfassung' : '') + (state.sheet.meta.groupsOn && state.grp !== 'all' ? '_Gruppe-' + state.grp : '') + (state.sheet.meta.levelsOn && state.lvl && state.lvl !== 'all' ? '_' + LV[state.lvl].name : '') + (state.sheet.meta.paper === 'a5x2' ? '_A5' : state.sheet.meta.paper === 'buch' ? '_A5-Buch' : '');
 async function exportPDF() {
   if (busy) return;
   clearTimeout(renderTimer); renderPreview();
   const pages = [...document.querySelectorAll('#pages .pout')];
-  if (!pages.length) { toast(state.out === 'exit' ? 'Es gibt noch kein Exit-Ticket.' : state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : state.out === 'tafel' ? 'Es gibt noch kein Tafelbild.' : state.out === 'a3' ? 'Es gibt noch keine A3-Vorlage.' : 'Es gibt noch keine Tafelkarten.'); return; }
+  if (!pages.length) { toast(state.out === 'exit' ? 'Es gibt noch kein Exit-Ticket.' : state.out === 'tipps' ? 'Es gibt noch keine Tippkarten.' : state.out === 'tafel' ? 'Es gibt noch kein Tafelbild.' : state.out === 'a3' ? 'Es gibt noch keine A3-Vorlage.' : state.out === 'a4' ? 'Es gibt noch keine A4-Vorlage.' : 'Es gibt noch keine Tafelkarten.'); return; }
   busy = true;
   try { await pagesToPdf(pages, fileBase() + outSuffix() + '.pdf', { title: (state.sheet.meta.nr ? 'AB ' + state.sheet.meta.nr + ' – ' : '') + (state.sheet.meta.title || ''), subject: state.sheet.meta.topic || '' }); }
   finally { busy = false; }
@@ -10199,6 +10471,13 @@ function boot() {
   // Hinweis unter einem Feld erst kurz nach dem Verlassen ausblenden: sonst rutscht beim Klick auf einen Knopf darunter alles hoch und der Klick geht daneben
   ed.addEventListener('focusout', e => { const f = e.target && e.target.closest && e.target.closest('.f'); if (f && f.querySelector(':scope>small.fh')) { f.classList.add('fh-keep'); clearTimeout(f._fhT); f._fhT = setTimeout(() => f.classList.remove('fh-keep'), 400); } });
   ed.addEventListener('input', onInput); ed.addEventListener('change', onChange); ed.addEventListener('click', onClick);
+  ed.addEventListener('keydown', e => { if (!e.target.matches || !e.target.matches('[data-bkq]')) return;
+    if (e.key === 'Enter') { e.preventDefault(); const f = $('#bk-list .bk-it'); if (f) f.click(); }
+    else if (e.key === 'Escape') { e.preventDefault(); bkClose(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); const f = $('#bk-list .bk-it'); if (f) f.focus(); } });
+  ed.addEventListener('keydown', e => { if (!e.target.classList || !e.target.classList.contains('bk-it')) return; const all = [...document.querySelectorAll('#bk-list .bk-it')]; const i = all.indexOf(e.target);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); (all[i + 1] || all[i]).focus(); } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); if (i > 0) all[i - 1].focus(); else { const q = $('#editor [data-bkq]'); if (q) q.focus(); } } else if (e.key === 'Escape') { e.preventDefault(); bkClose(); } });
+  document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'k' || e.key === 'K') && !state.dlg && !document.querySelector('.pr-ov, .lib-open')) { e.preventDefault(); bkOpen(); } });
   $('#lib-root').addEventListener('click', onLibClick);
   $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } });
   $('#lib-root').addEventListener('change', e => { if (e.target.id === 'lib-sort') { if (e.target.value === 'eigen') freezeOrder(KL(state.klasse).id); else lsSet(LS_SORT, e.target.value); savePrefs(); renderLib(); } });
@@ -10307,7 +10586,7 @@ function boot() {
     if (k === 'pres') { openPres(0); return; }
     if (k === 'vp') { openVP(); return; }
     if (k === 'vp-docx') { exportVP(); return; }
-    if (k === 'st-out') { exportStunde(); return; }
+    if (k === 'st-out') { openOut(); if (state.dlg) { state.dlg.whole = true; renderDlg(); } return; }
     if (k === 'pptx') { exportPPTX(); return; }
     if (k === 'fassung') { state.fassung = v; if (v === 'lehrer') state.sheet.blocks.forEach(x => { if (x.type === 'tasks') x.items.forEach((_, i) => state.taskOpen.add(taskKey(x.id, i, 'eh'))); }); renderEditor(); }
     if (k === 'grp') state.grp = v;
@@ -10432,6 +10711,7 @@ function boot() {
     if (act === 'out') openOut();
     if (act === 'new') openNew();
     if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
+    if (act === 'settings') openSettings();
     if (act === 'umfang') { setUmfang(a.dataset.v); toast(a.dataset.v === 'basis' ? 'Basis: nur Arbeitsblätter. Stundenplanung, Tafel, Druck-Extras und Präsentation sind ausgeblendet, ebenso Standards, Phase und Zeit, Gruppen und Niveaus, solange sie nicht benutzt werden. Gelöscht wird nichts.' : 'Experte: alle Funktionen, auch Stunde, Tafel, Druck-Extras und Präsentation.'); }
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
@@ -10512,7 +10792,7 @@ function boot() {
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
   setupPWA();
-  if (isNarrow()) setView('preview');
+  if (isNarrow()) setView(state.area === 'start' ? 'edit' : 'preview');
   $('#tip-root').addEventListener('click', e => { const b = e.target.closest('[data-tip]'); if (!b) return; const k = b.dataset.tip; showTip(k === 'close' ? -1 : k === 'prev' ? tipIdx - 1 : tipIdx + 1 < TIPS.length ? tipIdx + 1 : -1); });
   if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg && !lsGet(LS_TIPS)) showTip(0); }, 1800);
 }
