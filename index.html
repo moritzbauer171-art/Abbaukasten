@@ -119,7 +119,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .chev:hover{background:var(--tinte-soft);color:var(--ink)}
 .chev svg{width:14px;height:14px;transition:transform .15s}
 .card.closed .chev svg{transform:rotate(-90deg)}
-.area-bar{position:sticky;top:0;z-index:6;display:flex;gap:3px;margin:-14px -14px 2px calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding:8px 10px 8px max(16px, env(safe-area-inset-left, 0px));background:var(--panel);border-bottom:1px solid var(--line)}
+.area-bar{position:sticky;top:-14px;z-index:6;display:flex;gap:3px;margin:-14px -14px 2px calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding:8px 10px 8px max(16px, env(safe-area-inset-left, 0px));background:var(--panel);border-bottom:1px solid var(--line)}
 .area-b{flex:1 1 0;min-width:0;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px 5px;border:0;border-radius:9px;background:none;color:var(--muted);font:inherit;font-size:11.5px;font-weight:700;cursor:pointer}
 .area-b i{display:block;width:20px;height:20px}.area-b i svg{width:20px;height:20px;display:block}
 .area-b span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1336,6 +1336,66 @@ body{transition:background-color .3s,border-color .25s}
 .set-link span{flex:1;min-width:0}.set-link b{display:block;font-size:13px}.set-link small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .set-link em{font-style:normal;font-size:18px;color:var(--muted)}.set-link:hover{border-color:var(--acc,#2B45B8)}
 .umfang-chip:empty{display:none}.umfang-chip{font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+.area-bar.a2{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}
+.qbar{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:2px;padding-top:6px;margin-top:2px;border-top:1px solid var(--line)}
+.qb{flex:1 0 auto;display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:52px;padding:5px 4px;border:1px solid transparent;border-radius:8px;background:transparent;font:inherit;font-size:11px;font-weight:700;color:var(--ink,#1C1F27);cursor:pointer}
+.qb i{width:22px;height:22px;display:inline-flex;color:var(--acc,#2B45B8)}.qb i svg{width:22px;height:22px}
+.qb:hover,.qb:focus-visible{background:var(--acc-tint,#EEF2FC);border-color:var(--acc,#2B45B8);outline:none}
+.qb-more b{font-size:19px;line-height:22px;color:var(--acc,#2B45B8)}
+.dzp{position:fixed;z-index:60;max-height:calc(100vh - 24px);overflow:auto;background:var(--panel,#fff);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(20,30,50,.22)}
+.dzp-h{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 10px 9px 14px;background:var(--panel,#fff);border-bottom:1px solid var(--line);font-size:13.5px}
+.dzp-b{padding:4px 4px 8px}.dzp-b .card{border:0;box-shadow:none;margin:0;background:transparent}
+.dz-hint{display:block;margin:6px 0}
+.dz-btn{display:inline-flex;align-items:center;gap:6px}
+.area-bar.a2 .area-b{flex:1 1 0}
+.area-more{position:relative;flex:0 0 auto;display:flex}
+.area-mb{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--field,#fff);border-radius:10px;padding:0 10px;font:inherit;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer}
+.area-mb.on{color:var(--acc,#2B45B8);border-color:var(--acc,#2B45B8)}
+.area-mp{position:absolute;right:0;top:calc(100% + 6px);z-index:40;min-width:250px;background:var(--panel,#fff);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(20,30,50,.18);padding:6px;display:flex;flex-direction:column}
+.area-mp button{display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:8px 10px;border-radius:8px;font:inherit;font-size:13px;text-align:left;cursor:pointer;color:inherit}
+.area-mp button:hover,.area-mp button[aria-current]{background:var(--acc-tint,#E8EDFB)}
+.area-mp i{width:20px;height:20px;display:inline-flex}.area-mp i svg{width:20px;height:20px}
+.area-mp em{margin-left:auto;font-style:normal;font-size:11px;color:var(--muted)}
+.pht{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:2px 0 10px;margin-bottom:8px;border-bottom:1px dashed var(--line)}
+.pht label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--muted)}
+.pht select,.fm-c select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--field,#fff);color:inherit}
+.pht select.ph-on,.fm-c select.ph-on{border-color:var(--phc);box-shadow:inset 4px 0 0 var(--phc)}
+.pht-min{display:inline-flex;align-items:center;gap:5px}.pht-min input{width:52px;text-align:center;font:inherit;font-size:13px;padding:5px 6px;border:1px solid var(--line);border-radius:8px;background:var(--field,#fff);color:inherit}
+.pht-min small{font-weight:600}
+.fm-top{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
+.fm{background:var(--panel,#fff);border:1px solid var(--line);border-radius:12px;padding:12px}
+.fm-h{display:flex;flex-direction:column;gap:3px;margin-bottom:8px}.fm-h b{font-size:15px}.fm-h small{color:var(--muted);font-size:12px}
+.fm-row{border:1px solid var(--line);border-radius:10px;background:var(--field,#fff);padding:8px 10px}
+.fm-row.zw{background:var(--acc-tint,#EEF2FC);border-style:dashed}
+.fm-row.off .fm-l b{color:var(--muted)}
+.fm-row.off .fm-l small::after{content:" · nicht auf den Folien";text-transform:none;letter-spacing:0;font-weight:600}
+.fm-t{display:flex;align-items:center;gap:8px;min-width:0}
+.fm-ic{flex:0 0 auto;width:22px;height:22px;display:inline-flex;color:var(--muted)}.fm-ic svg{width:22px;height:22px}
+.fm-l{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}.fm-l small{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.fm-l b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fm-mv{display:inline-flex;flex:0 0 auto}
+.fm-c{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:7px 0 0 30px}
+.fm-c .fm-acts{margin-left:auto;display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}
+.fm-l b{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fm-title .fm-c{display:none}
+.fm-until{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}.fm-until input{font:inherit;font-size:12.5px;padding:4px 6px;border:1px solid var(--line);border-radius:8px;background:var(--field,#fff);color:inherit}
+.fm-ed{margin-top:10px}.fm-ed .card{margin:0}
+.fm-ins{display:flex;justify-content:center;padding:3px 0}
+.fm-ins button{border:1px dashed transparent;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:700;border-radius:999px;padding:2px 12px;cursor:pointer;opacity:.55}
+.fm-ins button:hover,.fm-ins button:focus-visible{opacity:1;border-color:var(--acc,#2B45B8);color:var(--acc,#2B45B8);background:var(--acc-tint,#EEF2FC);outline:none}
+.fm-pal{border:1.5px solid var(--acc,#2B45B8);border-radius:10px;padding:8px;margin:5px 0;background:var(--panel,#fff)}
+.fm-pal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:13px}
+.fm-pal-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
+.fm-pal-g button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;border:1px solid var(--line);background:var(--field,#fff);border-radius:8px;padding:7px 9px;font:inherit;cursor:pointer;color:inherit}
+.fm-pal-g button:hover{border-color:var(--acc,#2B45B8);background:var(--acc-tint,#EEF2FC)}
+.fm-pal-g b{font-size:13px}.fm-pal-g small{font-size:11px;color:var(--muted)}
+.fm-pal-g button:first-child{border-color:var(--acc,#2B45B8)}
+.fm-chk{margin-left:auto}
+.fm-fine-b{display:block;margin:10px 0 4px}.fm-fine{margin-bottom:8px}
+.pr-zw{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:26px}
+.pr-zw-h{font:800 128px/1.05 var(--f-ui);color:var(--acc);letter-spacing:-.01em;max-width:1300px}
+.pr-zw-t{font-size:44px;line-height:1.3;color:#3A3F4B;max-width:1200px}
+.pr-zw-c{display:flex;gap:12px}
 .pres-tg{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;margin-left:6px;padding:4px 10px 4px 8px;border:1.5px solid var(--line-strong,#B9C0CE);border-radius:999px;background:var(--field,#fff);font:inherit;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
 .pres-tg svg{width:18px;height:15px}
 .pres-tg:hover{border-color:var(--acc,#2B45B8);color:var(--acc,#2B45B8)}
@@ -1898,7 +1958,6 @@ body{transition:background-color .3s,border-color .25s}
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
-      <div class="seg sm umfang" role="group" aria-label="Funktionsumfang" title="Basis: nur Arbeitsblätter erstellen. Experte: dazu Stundenplanung, Tafel, Druck-Extras und Präsentation. Ihre Blätter ändern sich dadurch nicht."><button type="button" data-act="umfang" data-v="basis" aria-pressed="false">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="true">Experte</button></div>
       <button class="btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
@@ -2054,7 +2113,7 @@ const TYPES = {
   phrases:  { label:'Formulierungshilfen', desc:'Satzanfänge, Wendungen' },
   tafel:    { label:'Tafelbild',     desc:'Sicherung, auch als Lückentafelbild und am Beamer' },
   a3:       { label:'Druckvorlage',  desc:'A3: Placemat, Lernplakat … · A4: Karten, Lernkarten, Satzstreifen, Tandem' },
-  step:     { label:'Unterrichtsschritt', desc:'Einstieg, Stundenfrage, Abschluss, Exit-Ticket: nur Folie und Verlaufsplan' },
+  step:     { label:'Unterrichtsschritt', desc:'Zwischenfolie: Einstieg, Sicherung, Stundenfrage, Abschluss, nur in der Präsentation' },
   table:    { label:'Tabelle',       desc:'zum Ausfüllen' },
   lines:    { label:'Schreibfläche', desc:'Linien oder Kästchen' },
   heading:  { label:'Überschrift',   desc:'Zwischentitel' },
@@ -3009,14 +3068,14 @@ const SOZ = {
 /* ================= Funktionsumfang: Basis blendet selten gebrauchte Werkzeuge aus (.x-pro), solange sie nicht benutzt werden (.used) ================= */
 const LS_UMFANG = 'abw.umfang';
 function setUmfang(v, quiet) {
-  const basis = v === 'basis'; document.body.classList.toggle('basis', basis);
+  const basis = false; document.body.classList.remove('basis');
   document.querySelectorAll('[data-act="umfang"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (basis ? 'basis' : 'experte'))));
   const uc = document.getElementById('umfang-chip'); if (uc) uc.textContent = basis ? 'Basis' : '';
   if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
   if (!quiet) { if (basis && state.area === 'start') state.area = 'blatt'; basisClamp(); state.insAt = null; closeGloss(); closeZl(); closeMenu(); renderEditor(); clearTimeout(renderTimer); renderPreview(); }
 }
 // Basis kennt nur Arbeitsblätter: Bereich „Arbeitsblätter“, Ausgaben Arbeitsblatt und Tippkarten
-const isBasis = () => document.body.classList.contains('basis');
+const isBasis = () => false;
 const BASIS_OUTS = ['blatt', 'tipps'];
 function basisClamp() {
   if (!isBasis()) return;
@@ -3058,7 +3117,7 @@ function abBarHTML() {
   const P = state.sheet; const A = stABs(); const multi = A.length > 1;
   return `<div class="ab-bar">${multi ? `<label class="ab-st"><span>Stunde</span><input type="text" data-st="title" value="${esc(stTitle(P))}" placeholder="Titel der Stunde" aria-label="Titel der Stunde"></label>` : ''}
     <div class="ab-tabs" role="tablist" aria-label="Arbeitsblätter dieser Stunde">${A.map(x => `<button type="button" role="tab" class="ab-tab" data-act="abx-go" data-abk="${x.k}" aria-selected="${x.k === (P.abActive || 0)}" title="${esc(plainText(x.meta.title || '') || 'ohne Titel')}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}</span></button>`).join('')}<button type="button" class="ab-add" data-act="abx-add" title="Weiteres Arbeitsblatt in dieser Stunde anlegen, z. B. Hausaufgabe oder Differenzierung">+ Arbeitsblatt</button></div>
-    <div class="ab-acts">${multi ? `<button class="link" type="button" data-act="abx-left"${P.abActive ? '' : ' disabled'}>← nach vorn</button><button class="link" type="button" data-act="abx-right"${P.abActive < A.length - 1 ? '' : ' disabled'}>nach hinten →</button><button class="link" type="button" data-act="abx-dup">Duplizieren</button><button class="link danger" type="button" data-act="abx-del">Dieses AB löschen</button>` : '<small class="hint">Eine Stunde kann mehrere Arbeitsblätter haben.</small>'}${isBasis() ? '' : '<button class="link" type="button" data-act="abx-out" style="margin-left:auto" title="Alle ABs, Tafelkarten, Tafelbild, A3-Vorlagen, Präsentation und Verlaufsplan in einen Ordner">Ganze Stunde ausgeben</button>'}</div></div>`;
+    <div class="ab-acts">${multi ? `<button class="link" type="button" data-act="abx-left"${P.abActive ? '' : ' disabled'}>← nach vorn</button><button class="link" type="button" data-act="abx-right"${P.abActive < A.length - 1 ? '' : ' disabled'}>nach hinten →</button><button class="link" type="button" data-act="abx-dup">Duplizieren</button><button class="link danger" type="button" data-act="abx-del">Dieses AB löschen</button>` : '<small class="hint">Eine Stunde kann mehrere Arbeitsblätter haben.</small>'}${isBasis() ? '' : '<button class="link" type="button" data-act="abx-out" style="margin-left:auto" title="Alle ABs, Tafelkarten, Tafelbild, A3-Vorlagen und Präsentation in einen Ordner">Ganze Stunde ausgeben</button>'}</div></div>`;
 }
 function abGo(k) {
   const P = state.sheet; if (!P.abs || k === P.abActive) return; abSwitch(k);
@@ -3109,7 +3168,7 @@ const isRes = b => !!(b && b.res);
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
   const rows = []; let t = 0; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') return; if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
     const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
     // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
     const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });
@@ -3144,7 +3203,7 @@ function ablaufHTML() {
 }
 // Zeit gilt für den ganzen Aufgaben-Baustein (b.min); Timer beim Präsentieren: b.timer = '' | 'klick' | 'auto'
 const TIMER_OPTS = [['', 'aus'], ['klick', 'Start per Klick'], ['auto', 'startet mit der Folie']];
-const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><label class="f narrow" title="Feste Uhrzeit, zu der dieser Teil spätestens fertig sein muss (optional)"><span>Fertig bis</span><input type="time" data-k="until" value="${esc(hmOk(b.until))}"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div><div class="f"><span>Reserve</span><button type="button" class="ck-chip res-chip${isRes(b) ? ' used' : ''}" data-act="res-tg" aria-pressed="${isRes(b)}" title="Reserve für den Fall, dass Zeit übrig bleibt: steht in der Präsentation, aber nicht in der Phasenleiste unten, zählt nicht zur Stundenzeit und steht im Verlaufsplan am Ende"><span class="cbx" aria-hidden="true"></span>Als Reserve</button></div></div>`;
+const timeCtl = (b, label) => `<div class="row tm-row${b.type === 'tasks' ? ' x-pro' + (itMin(b) || b.timer ? ' used' : '') : ''}"><label class="f narrow" title="${b.type === 'tasks' ? 'Bearbeitungszeit für alle Aufgaben dieses Bausteins' : 'Dauer des Schritts'}"><span>${label}</span><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–"></label><label class="f narrow" title="Feste Uhrzeit, zu der dieser Teil spätestens fertig sein muss (optional)"><span>Fertig bis</span><input type="time" data-k="until" value="${esc(hmOk(b.until))}"></label><div class="f"><span>Timer beim Präsentieren</span><div class="seg sm" role="group" aria-label="Timer beim Präsentieren">${TIMER_OPTS.map(([v, l]) => `<button type="button" data-act="tm-set" data-v="${v}" aria-pressed="${(b.timer || '') === v}">${l}</button>`).join('')}</div>${b.timer && !itMin(b) ? '<small class="hint">Für den Timer bitte eine Zeit eintragen.</small>' : ''}</div><div class="f"><span>Reserve</span><button type="button" class="ck-chip res-chip${isRes(b) ? ' used' : ''}" data-act="res-tg" aria-pressed="${isRes(b)}" title="Reserve für den Fall, dass Zeit übrig bleibt: steht in der Präsentation, aber nicht in der Phasenleiste unten, zählt nicht zur Stundenzeit"><span class="cbx" aria-hidden="true"></span>Als Reserve</button></div></div>`;
 // Ältere Blätter: Minuten je Aufgabe werden einmalig zur Zeit des Bausteins (parallele Gruppen zählen einmal, Hausaufgaben nur, wenn alles Hausaufgabe ist)
 function minMigrate(blocks) {
   (blocks || []).forEach(b => {
@@ -3213,11 +3272,13 @@ const STEP_TPL = {
   transfer: { g: 'end', label: 'Transferfrage', ph: 'trans', soz: 'pa', min: 8, fol: 'text', head: 'Arbeitsauftrag', text: '{Übertrage|Übertragen Sie} {deine|Ihre} Ergebnisse auf …', note: '', eh: '' },
   blitz: { g: 'end', label: 'Blitzlicht', ph: 'refl', soz: 'pl', min: 5, fol: 'text', head: 'Blitzlicht', text: 'Was {nimmst du|nehmen Sie} aus der heutigen Stunde mit? {Antworte|Antworten Sie} in einem Satz.', note: 'Reihum, ohne Kommentar.', eh: 'benennen einen Lerngewinn' },
   exit: { g: 'end', label: 'Exit-Ticket', ph: 'refl', soz: 'ea', min: 5, fol: 'text', head: 'Exit-Ticket', text: '{Beantworte|Beantworten Sie} die Fragen auf {deinem|Ihrem} Exit-Ticket und {gib|geben Sie} es beim Hinausgehen ab.', note: 'Exit-Tickets austeilen und einsammeln; Auswertung für die nächste Stunde.', eh: '', exit: true, qs: 'Was habe ich heute gelernt?\nWas ist mir noch unklar?\nWelche Frage nehme ich mit in die nächste Stunde?' },
+  sichs: { g: 'sich', label: 'Sicherung', ph: 'sich', soz: 'pl', min: 5, fol: 'titel', head: 'Sicherung', text: '', note: 'Ergebnisse besprechen und festhalten.', eh: '' },
+  kapitel: { g: '', label: 'Zwischentitel', ph: '', soz: '', min: '', fol: 'titel', head: 'Neuer Abschnitt', text: '', note: '', eh: '' },
   reserve: { g: 'end', label: 'Reserve', res: true, ph: '', soz: 'ea', min: 10, fol: 'text', head: 'Zusatzaufgabe', text: '{Bearbeite|Bearbeiten Sie} …', note: 'Nur, wenn Zeit bleibt. Zählt nicht zur Stundenzeit und steht nicht in der Phasenleiste.', eh: '' },
   ausblick: { g: 'end', label: 'Ausblick', ph: 'refl', soz: 'pl', min: 3, fol: 'text', head: 'Ausblick', text: 'In der nächsten Stunde …', note: '', eh: '' },
   frei: { g: '', label: 'Eigener Schritt', ph: '', soz: '', min: '', fol: 'text', head: '', text: '', note: '', eh: '' }
 };
-const STEP_FOL = [['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['aus', 'keine Folie']];
+const STEP_FOL = [['titel', 'Großer Titel (schlicht)'], ['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['aus', 'keine Folie']];
 const QZ_L = 'ABCD';
 const qzNew = (t = 'mc') => ({ t, q: '', o: ['', '', '', ''], ok: 0, a: '' });
 function qzNorm(b) { if (!Array.isArray(b.qz) || !b.qz.length) b.qz = [qzNew(), qzNew(), qzNew()]; b.qz = b.qz.map(x => ({ ...qzNew(), ...(x && typeof x === 'object' ? x : {}), o: [0, 1, 2, 3].map(i => String(((x && x.o) || [])[i] || '')) })); return b.qz; }
@@ -3244,6 +3305,7 @@ function qzEditor(b) {
 function stepSlideFol(b) {
   const f = stepFol(b); const t = tfStr(b.text).trim();
   if (f === 'aus') return '';
+  if (f === 'titel') return 'titel';
   if (f === 'bild' && !b.src) return t ? 'text' : '';
   if (f === 'zitat' && !tfStr(b.quote).trim()) return t ? 'text' : '';
   if (f === 'text' && !t && !tfStr(b.head).trim() && !tfStr(b.link).trim()) return '';
@@ -3254,9 +3316,9 @@ function stepEditor(b) {
   const m = state.sheet.meta; const fol = stepFol(b);
   const tiles = g => Object.entries(STEP_TPL).filter(([, x]) => x.g === g).map(([k, x]) => `<button type="button" class="st-tp" data-act="st-tpl" data-v="${k}" aria-pressed="${b.tpl === k}">${x.label}</button>`).join('');
   const ta = (k, label, rows, ph, hint) => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph || '')}">${esc(tfStr(b[k]))}</textarea>${hint ? `<small class="hint">${hint}</small>` : ''}</label>`;
-  return `<div class="memo-flag">Steht nicht auf dem Arbeitsblatt. Der Schritt zählt im Stundenablauf, steht im Verlaufsplan und wird beim Präsentieren zur Folie.</div>
+  return `<div class="memo-flag">Zwischenfolie: steht nicht auf dem Arbeitsblatt, nur in der Präsentation, und zählt im Stundenablauf.</div>
     <div class="f"><span>Vorlage</span><div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Sicherung</small><div class="st-ts">${tiles('sich')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-tpl" data-v="frei" aria-pressed="${b.tpl === 'frei'}">Eigener Schritt</button></div></div></div></div>
-    ${fText('title', 'Bezeichnung im Verlaufsplan', b.title, 'z. B. Stummer Impuls')}
+    ${fText('title', 'Bezeichnung', b.title, 'z. B. Stummer Impuls')}
     <div class="row st-row"><label class="f"><span>Phase</span><select data-k="ph"><option value="">–</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${itPh(b) === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label><label class="f"><span>Sozialform</span><select data-k="soz"><option value="">–</option>${Object.entries(SOZ).map(([k, x]) => `<option value="${k}"${b.soz === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select></label></div>
     ${timeCtl(b, 'Zeit (Min.)')}
     <div class="f"><span>Folie</span><div class="seg sm" role="group" aria-label="Folie">${STEP_FOL.map(([v, l]) => `<button type="button" data-act="st-fol" data-v="${v}" aria-pressed="${fol === v}">${l}</button>`).join('')}</div></div>
@@ -3268,7 +3330,7 @@ function stepEditor(b) {
     ${fol === 'zitat' ? ta('quote', 'Zitat', 3, '') + fText('author', 'Quelle oder Autor', b.author, '') : ''}
     ${fol === 'bild' ? `<div class="f"><span>Bild</span>${b.src ? `<div class="st-img"><img src="${esc(b.src)}" alt=""><button class="link" type="button" data-act="st-img-del">Bild entfernen</button></div>` : ''}<input type="file" accept="image/*" data-act="img" aria-label="${b.src ? 'Bild ersetzen' : 'Bild wählen'}"></div>${fText('cap', 'Bildunterschrift (optional)', b.cap, '')}` : ''}
     ${fol === 'aus' ? '' : fText('link', 'Link, z. B. zu einem Video (erscheint als QR-Code auf der Folie)', b.link, 'https://…')}
-    ${ta('note', 'Was ich tue (Verlaufsplan und Notizen)', 2, 'z. B. Bild kommentarlos zeigen, Äußerungen sammeln')}
+    ${ta('note', 'Was ich tue (Notiz, auch in den PowerPoint-Notizen)', 2, 'z. B. Bild kommentarlos zeigen, Äußerungen sammeln')}
     ${ta('eh', 'Erwartetes Schülerverhalten', 2, 'eine Zeile je Punkt')}
     ${fText('media', 'Medien', b.media, 'z. B. Beamer, Tafel, Karten')}
     <div class="chks">${fCheck('exit', 'Exit-Ticket zum Ausdrucken', b.exit)}</div>
@@ -3325,20 +3387,32 @@ const AREA_IC = {
   start: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.8 9.5v10h12.4v-10"/><path d="M10 19.5v-5h4v5"/>',
   einst: '<circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>'
 };
-const AREAS = [['start', 'Übersicht'], ['stunde', 'Stunde'], ['blatt', 'Arbeitsblätter'], ['tafel', 'Tafel'], ['extras', 'Druck-Extras'], ['pres', 'Präsentation']];
-const AREA_NAME = Object.fromEntries(AREAS);
-const AREA_OUTS = { start: ['blatt'], einst: ['blatt'], stunde: ['vp'], blatt: ['blatt', 'tipps'], tafel: ['tafel', 'karten'], extras: ['a4', 'a3', 'exit'], pres: ['pres'] };
-const OUT_AREA = { vp: 'stunde', blatt: 'blatt', tipps: 'blatt', tafel: 'tafel', karten: 'tafel', a3: 'extras', a4: 'extras', exit: 'extras', pres: 'pres' };
+const AREAS = [['blatt', 'Arbeitsblatt'], ['pres', 'Präsentation']];
+const AREAS_MORE = [['tafel', 'Tafelbilder und Karten'], ['extras', 'Druck-Extras: A4, A3, Exit-Tickets']];
+const AREA_NAME = { ...Object.fromEntries([...AREAS, ...AREAS_MORE]), start: 'Arbeitsblatt', stunde: 'Präsentation' };
+const areaNorm = a => (a === 'start' || !a ? 'blatt' : a === 'stunde' ? 'pres' : a);
+const AREA_OUTS = { start: ['blatt'], einst: ['blatt'], stunde: ['pres'], blatt: ['blatt', 'tipps'], tafel: ['tafel', 'karten'], extras: ['a4', 'a3', 'exit'], pres: ['pres'] };
+const OUT_AREA = { vp: 'pres', blatt: 'blatt', tipps: 'blatt', tafel: 'tafel', karten: 'tafel', a3: 'extras', a4: 'extras', exit: 'extras', pres: 'pres' };
 const blockArea = b => (b.type === 'step' ? 'stunde' : b.type === 'tafel' ? 'tafel' : b.type === 'a3' ? 'extras' : 'blatt');
 const inArea = (b, A) => blockArea(b) === A || (A === 'extras' && b.type === 'step' && !!b.exit);
 const areaIc = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC[k]}</svg>`;
 function areaBarHTML() {
   if (isBasis()) return '';
   const SB = stBlocks(); const n = { start: 0, stunde: SB.filter(b => b.type === 'step').length, blatt: SB.filter(b => blockArea(b) === 'blatt' && b.type !== 'pagebreak').length, tafel: SB.filter(b => b.type === 'tafel').length + (state.sheet.cards || []).length, extras: SB.filter(b => b.type === 'a3').length + exitSteps().length, pres: 0 };
-  return `<nav class="area-bar" role="tablist" aria-label="Bereiche der Stunde">${AREAS.map(([k, l]) => `<button type="button" role="tab" class="area-b" data-act="area-set" data-v="${k}" aria-selected="${(state.area || 'blatt') === k}" title="${l}"><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}</nav>`;
+  const A = areaNorm(state.area); const more = AREAS_MORE.find(x => x[0] === A); const mo = state.areaMore;
+  return `<nav class="area-bar a2" role="tablist" aria-label="Bereiche der Stunde">${AREAS.map(([k, l]) => `<button type="button" role="tab" class="area-b" data-act="area-set" data-v="${k}" aria-selected="${A === k}" title="${l}"><i>${areaIc(k)}</i><span>${l}</span>${k === 'blatt' && n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}
+    <div class="area-more"><button type="button" class="area-mb${more ? ' on' : ''}" data-act="area-more" aria-expanded="${!!mo}" title="Seltener gebraucht: Tafelbilder, Tafelkarten, Druck-Extras">${more ? `<b>${esc(more[1].split(':')[0])}</b>` : 'Mehr'}<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+    ${mo ? `<div class="area-mp" role="menu">${AREAS_MORE.map(([k, l]) => `<button type="button" role="menuitem" data-act="area-set" data-v="${k}"${A === k ? ' aria-current="true"' : ''}><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}${more ? `<button type="button" role="menuitem" data-act="area-set" data-v="blatt"><i>${areaIc('blatt')}</i><span>Zurück zum Arbeitsblatt</span></button>` : ''}</div>` : ''}</div>${A === 'blatt' ? quickBarHTML() : ''}</nav>`;
+}
+// Die meistgenutzten Bausteine immer griffbereit; der Rest unter „Weitere“ (mit Suche)
+const QUICK = ['material', 'tasks', 'info', 'phrases', 'table', 'lines'];
+function quickBarHTML() {
+  const P = paletteFor(); const L = QUICK.map(k => P.find(t => t.k === k)).filter(Boolean);
+  return `<div class="qbar" role="toolbar" aria-label="Baustein hinzufügen">${L.map(t => `<button type="button" class="qb" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)} · wird hinter dem gewählten Baustein eingefügt"><i>${typeIcon(t.ic)}</i><span>${esc(t.label)}</span></button>`).join('')}<button type="button" class="qb qb-more" data-act="bk-open" title="Alle Bausteine mit Suche (Strg+K)"><b>+</b><span>Weitere</span></button></div>`;
 }
 function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras') { const SB = stBlocks(); return SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4') ? 'a4' : SB.some(b => b.type === 'a3') ? 'a3' : exitSteps().length ? 'exit' : 'a4'; } return L[0]; }
 function setArea(a) {
+  a = areaNorm(a); state.areaMore = false;
   if (!AREA_OUTS[a] || isBasis() && a !== 'blatt' && a !== 'einst') return; if (state.area === a && (OUT_AREA[state.out] === a || a === 'start' || a === 'einst')) { $('#editor').scrollTop = 0; return; }
   if (a === 'einst' && state.area !== 'einst') state.prevArea = state.area || 'blatt';
   state.area = a; state.out = areaOutFor(a); state.insAt = null; closeGloss(); closeZl(); closeMenu();
@@ -3346,6 +3420,8 @@ function setArea(a) {
 }
 // Sprung in den Bereich eines Bausteins (aus dem Ablauf oder einem Platzhalter); wechselt bei Bedarf das Arbeitsblatt
 function areaGo(ar, bid, k) {
+  ar = areaNorm(ar); state.areaMore = false;
+  if (ar === 'pres' && bid) state.zwOpen = bid;
   if (isBasis() && ar !== 'blatt') { toast('Das bearbeiten Sie im Modus „Experte“ (Einstellungen ⚙ → App).'); return; }
   const P = state.sheet;
   if (P.abs && Number.isFinite(k) && k !== (P.abActive || 0)) { abSwitch(k); state.closed = defaultClosed(); state.taskOpen = new Set(); }
@@ -3418,9 +3494,8 @@ function settingsHTML() {
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
   else c = `<div class="card set-card"><div class="card-b">
-      <div class="f"><span>Funktionsumfang</span><div class="seg sm" role="group" aria-label="Funktionsumfang"><button type="button" data-act="umfang" data-v="basis" aria-pressed="${basis}">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="${!basis}">Experte</button></div><small>Basis: nur Arbeitsblätter erstellen. Experte: dazu Stundenplanung, Tafel, Druck-Extras und Präsentation. Ihre Stunden ändern sich dadurch nicht.</small></div>
       <div class="f"><span>Ansicht</span><div class="set-chks">
-        ${basis ? '' : `<button type="button" class="link onecard" data-act="start-pref" aria-pressed="${String(lsGet(LS_START)) !== '0'}"><span class="cb" aria-hidden="true"></span>Beim Öffnen einer Stunde die Übersicht zeigen</button>`}
+        ${true ? '' : `<button type="button" class="link onecard" data-act="start-pref" aria-pressed="${String(lsGet(LS_START)) !== '0'}"><span class="cb" aria-hidden="true"></span>Beim Öffnen einer Stunde die Übersicht zeigen</button>`}
         <button type="button" class="link onecard" data-act="more-all" aria-pressed="${moreAll()}"><span class="cb" aria-hidden="true"></span>In den Karten immer alle Optionen zeigen (sonst unter „Mehr“)</button>
         <button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}"><span class="cb" aria-hidden="true"></span>Nur eine Karte gleichzeitig offen</button></div></div>
       <div class="f"><span>Speicherort</span><div class="set-store">${esc(($('#status span') || {}).textContent || '')}</div>${$('#btn-login') && !$('#btn-login').hidden ? '<button class="btn sm" type="button" data-act="login">Anmelden und online speichern</button>' : ''}</div>
@@ -3507,6 +3582,18 @@ function itMoreSum(it) {
 // Bausteinleiste je Bereich; auf dem Blatt nach Zweck gruppiert
 const PAL_GRP = t => (['tasks', 'match', 'sort', 'table', 'phrases'].includes(t.type) ? 1 : ['heading', 'text', 'lines', 'qr', 'pagebreak'].includes(t.type) ? 2 : 0);
 const areaPalette = A => paletteFor().filter(t => (A === 'tafel' ? t.type === 'tafel' : A === 'extras' ? t.type === 'a3' : !['step', 'tafel', 'a3'].includes(t.type)));
+// Phase und Zeit: an jedem Baustein oben in der Karte (Aufgaben: für alle Aufgaben des Bausteins)
+const PHT_NO = new Set(['step', 'pagebreak', 'a3']);
+function phSelHTML(b) {
+  const tasks = b.type === 'tasks'; let cur = itPh(b), mixed = false;
+  if (tasks) { const P = [...new Set((b.items || []).map(it => itPh(it)))]; cur = P.length === 1 ? P[0] : ''; mixed = P.length > 1; }
+  return `<select ${tasks ? 'data-phall="1"' : 'data-k="ph"'} aria-label="Phase"${cur ? ` style="--phc:${PHASEN[cur].c}" class="ph-on"` : ''}>${mixed ? '<option value="__mix" selected>gemischt</option>' : ''}<option value=""${!cur && !mixed ? ' selected' : ''}>keine Phase</option>${Object.entries(PHASEN).map(([k, x]) => `<option value="${k}"${cur === k ? ' selected' : ''}>${x.label}</option>`).join('')}</select>`;
+}
+const minInHTML = b => `<span class="pht-min"><input type="text" inputmode="numeric" maxlength="3" data-k="min" value="${esc(itMin(b) || '')}" placeholder="–" aria-label="Minuten"><small>Min.</small></span>`;
+function phtStrip(b) {
+  if (PHT_NO.has(b.type)) return '';
+  return `<div class="pht"><label><span>Phase</span>${phSelHTML(b)}</label><label><span>Zeit</span>${minInHTML(b)}</label></div>`;
+}
 // eine Karte im Editor
 function cardHTML(b, i, num, opt = {}) {
   const blocks = state.sheet.blocks; const closed = state.closed.has(b.id); const gOn = state.sheet.meta.groupsOn;
@@ -3515,7 +3602,7 @@ function cardHTML(b, i, num, opt = {}) {
           <button class="ib" type="button" data-act="up" title="${opt.drag === false ? 'Früher in der Stunde' : 'Nach oben'}"${i === 0 ? ' disabled' : ''}>${I.up}</button>
           <button class="ib" type="button" data-act="down" title="${opt.drag === false ? 'Später in der Stunde' : 'Nach unten'}"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
-        ${b.type === 'pagebreak' ? '' : `<div class="card-b">${gNote(b.id)}${bodyFor(b, num)}</div>`}</div>`;
+        ${b.type === 'pagebreak' ? '' : `<div class="card-b">${gNote(b.id)}${phtStrip(b)}${bodyFor(b, num)}</div>`}</div>`;
 }
 // Platzhalter auf dem Blatt für Bausteine anderer Bereiche (zeigt die Stelle in der Stunde)
 function phRowHTML(b, num) {
@@ -3526,17 +3613,16 @@ function phRowHTML(b, num) {
 function stundeCard() {
   const P = state.sheet, m = P.meta, vp = vpOf(); const closed = state.closed.has('stunde');
   return `<div class="card st-card${closed ? ' closed' : ''}" data-bid="stunde">
-    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${areaIc('stunde')}</span><span class="kind">Stunde</span><span class="sum">${esc(stTitle(P))}${vp.datum ? ' · ' + esc(vp.datum) : ''}</span></div>
+    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${areaIc('stunde')}</span><span class="kind">Zeit</span><span class="sum">${esc(stTitle(P))}${vp.datum ? ' · ' + esc(vp.datum) : ''}</span></div>
     <div class="card-b">
       ${P.abs ? `<label class="f"><span>Titel der Stunde</span><input type="text" data-st="title" value="${esc(stTitle(P))}" placeholder="Titel der Stunde"></label>` : fText('title', 'Titel der Stunde (zugleich Titel des Arbeitsblatts)', m.title, 'Titel')}
-      <div class="row">${fText('vp.datum', 'Datum', vp.datum || '', 'z. B. 12.11.2026')}${(() => { const Z = zeitenOf(m.school); return `<label class="f"><span>Zeitfenster</span><select data-k="vp.slot"><option value="">${Z.length ? 'eigene Zeit' : 'eigene Zeit (Zeitfenster in den Einstellungen)'}</option>${Z.filter(z => z.s && z.e).map(z => `<option value="${esc(z.id)}"${vp.slot === z.id ? ' selected' : ''}>${esc([z.l, z.s + '–' + z.e].filter(Boolean).join(' · '))}</option>`).join('')}</select></label>`; })()}</div>
+      <div class="row">${(() => { const Z = zeitenOf(m.school); return `<label class="f"><span>Zeitfenster</span><select data-k="vp.slot"><option value="">${Z.length ? 'eigene Zeit' : 'eigene Zeit (Zeitfenster in den Einstellungen)'}</option>${Z.filter(z => z.s && z.e).map(z => `<option value="${esc(z.id)}"${vp.slot === z.id ? ' selected' : ''}>${esc([z.l, z.s + '–' + z.e].filter(Boolean).join(' · '))}</option>`).join('')}</select></label>`; })()}</div>
       <div class="row"><label class="f narrow"><span>Beginn</span><input type="text" data-k="vp.start" value="${esc(vp.start || '')}" placeholder="08:00"></label>${Number.isFinite(hm(vp.start)) ? `<div class="f"><span>Ende</span><div class="st-end">${hmFmt(hm(vp.start) + (Number(m.lesson) || 45))} Uhr · ${Number(m.lesson) || 45} Min.${vp.slot ? '' : ' <button class="link" type="button" data-act="settings" data-tab="zeiten">Zeitfenster einrichten</button>'}</div></div>` : ''}</div>
-      <label class="f"><span>Stundenziel</span><textarea data-k="vp.ziel" rows="2" placeholder="Die Schülerinnen und Schüler …">${esc(vp.ziel || '')}</textarea></label>
       ${fText('frage', 'Stundenfrage', m.frage, 'z. B. Wie erzeugen Politikerinnen und Politiker in sozialen Medien Nähe?')}
       ${ablaufHTML()}
       <div class="chks">${fCheck('groupsOn', 'Gruppen (eigene Blätter und Aufgaben je Gruppe)', m.groupsOn)}</div>
       ${m.groupsOn ? grpEdHTML(m) : ''}
-      <div class="tf-ed-acts"><button class="btn sm" type="button" data-act="vp-docx-ed">Verlaufsplan als Word</button><button class="btn sm" type="button" data-act="abx-out">Ganze Stunde ausgeben</button></div>
+      <div class="tf-ed-acts"><button class="btn sm" type="button" data-act="abx-out">Ganze Stunde ausgeben</button></div>
     </div></div>`;
 }
 // Bereich „Stunde“: Ablauf aller Bausteine in Reihenfolge; Unterrichtsschritte werden hier bearbeitet
@@ -3600,7 +3686,52 @@ function stepNew(k) {
   const c = $(`#editor .card[data-bid="${nb.id}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
 }
 // Bereich „Präsentation“
+// Zwischenfolien = Unterrichtsschritte, die nur in der Präsentation stehen
+const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
+function zwNew(k, at) {
+  const blocks = state.sheet.blocks; at = Math.max(0, Math.min(blocks.length, +at || 0));
+  snapshot(); const nb = paletteBlock('step', 'step'); nb.tpl = 'frei'; blocks.splice(at, 0, nb);
+  const tk = k === 'zitat' || k === 'frei' ? 'frei' : k === 'bild' ? 'impuls' : k; stepTpl(nb, tk, at, true);
+  if (k === 'zitat') Object.assign(nb, { fol: 'zitat', title: 'Zitat' }); if (k === 'frei') nb.title = 'Impuls';
+  state.zwAt = null; state.zwOpen = (k === 'sichs' || k === 'kapitel' || k === 'vergl' || k === 'reserve' || k === 'frage') ? null : nb.id; changed(true);
+  toast(`Zwischenfolie „${ZW_KINDS.find(x => x[0] === k)[1]}“ eingefügt`, 'Rückgängig', histUndo);
+}
+const presRowOK = b => b.type === 'step' || (b.type === 'tasks' && (b.items || []).some(it => tfStr(it.text).trim())) || PRES_OPT.has(b.type);
+function fmInsHTML(at) {
+  if (state.zwAt === at) return `<div class="fm-pal" data-at="${at}"><div class="fm-pal-h"><b>Zwischenfolie einfügen</b><button type="button" class="ib" data-act="zw-close" title="Schließen">${I.x}</button></div><div class="fm-pal-g">${ZW_KINDS.map(([k, l, d]) => `<button type="button" data-act="zw-add" data-k="${k}" data-at="${at}"><b>${l}</b><small>${d}</small></button>`).join('')}</div></div>`;
+  return `<div class="fm-ins"><button type="button" data-act="zw-ins" data-at="${at}" title="Hier eine Folie einfügen, die nur in der Präsentation steht">+ Zwischenfolie</button></div>`;
+}
+function fmRowHTML(b, i, num, PL) {
+  const st = b.type === 'step', tk = b.type === 'tasks', opt = PRES_OPT.has(b.type); const open = st && state.zwOpen === b.id;
+  const offSl = st ? !stepSlideFol(b) : opt ? !presOn(b) : false;
+  const lab = st ? stepLabel(b) : summary(b, num).replace(/ · \d+ Min\.( · Timer)?$/, '');
+  const x = PL && PL.at[b.id]; const late = x && Number.isFinite(x.until) && x.to > x.until + 0.01;
+  const timed = st || tk;
+  return `<div class="fm-row${st ? ' zw' : ''}${offSl ? ' off' : ''}${open ? ' open' : ''}" data-bid="${b.id}">
+    <div class="fm-t"><span class="fm-ic">${typeIcon(iconKey(b))}</span><span class="fm-l"><small>${st ? 'Zwischenfolie' : esc(typeLabel(b))}${isRes(b) ? ' · Reserve' : ''}</small><b>${esc(lab || typeLabel(b))}</b></span>
+</div>
+    <div class="fm-c">${phSelHTML(b)}${minInHTML(b)}${timed ? `<label class="fm-until" title="Feste Uhrzeit, zu der dieser Teil fertig sein muss (optional)"><small>bis</small><input type="time" data-k="until" value="${esc(hmOk(b.until))}" aria-label="Fertig bis"></label><select data-k="timer" aria-label="Timer"><option value=""${!b.timer ? ' selected' : ''}>kein Timer</option><option value="klick"${b.timer === 'klick' ? ' selected' : ''}>Timer per Klick</option><option value="auto"${b.timer === 'auto' ? ' selected' : ''}>Timer mit der Folie</option></select>` : ''}${x ? `<small class="pt-plan${late ? ' late' : ''}">${hmFmt(x.from)}–${hmFmt(x.to)}</small>` : ''}<span class="fm-acts">${opt ? presBtn(b) : ''}${st ? `<button type="button" class="btn sm" data-act="zw-open" aria-expanded="${open}">${open ? 'Fertig' : 'Bearbeiten'}</button><button type="button" class="ib" data-act="del" title="Zwischenfolie löschen" aria-label="Löschen">${I.x}</button>` : `<button type="button" class="link" data-act="area-go" data-area="blatt" data-bid="${b.id}" data-abk="${state.sheet.abActive || 0}" title="Im Arbeitsblatt bearbeiten">Bearbeiten</button>`}
+<span class="fm-mv"><button class="ib" type="button" data-act="up" title="Früher"${i === 0 ? ' disabled' : ''}>${I.up}</button><button class="ib" type="button" data-act="down" title="Später"${i === state.sheet.blocks.length - 1 ? ' disabled' : ''}>${I.down}</button></span></span></div>
+    ${open ? `<div class="fm-ed">${cardHTML(b, i, num, { drag: false })}</div>` : ''}</div>`;
+}
 function presEditorHTML() {
+  const blocks = state.sheet.blocks; const num = numbering(state.sheet); const PL = stPlan(); const m = state.sheet.meta;
+  const offT = new Set(m.presOff || []).has('title');
+  let list = `<div class="fm-row fm-title${offT ? ' off' : ''}"><div class="fm-t"><span class="fm-ic">${areaIc('pres')}</span><span class="fm-l"><small>Titelfolie</small><b>${esc(plainText(m.title || '') || 'Titel der Stunde')}</b></span><label class="chk fm-chk"><input type="checkbox" data-prk="title"${offT ? '' : ' checked'}><span>zeigen</span></label></div></div>`;
+  let any = false;
+  blocks.forEach((b, i) => { if (!presRowOK(b)) return; list += fmInsHTML(i) + fmRowHTML(b, i, num, PL); any = true; });
+  list += fmInsHTML(blocks.length);
+  const planNote = PL ? `<small class="hint pt-note">Stunde ${hmFmt(PL.s0)}–${hmFmt(PL.end)} Uhr · geplant ${PL.total} von ${PL.end - PL.s0} Min.${PL.total > PL.end - PL.s0 ? ' · <b class="late">' + (PL.total - (PL.end - PL.s0)) + ' Min. zu viel</b>' : ''}</small>` : '';
+  const fine = state.fmtOpen.has('fmfine');
+  if (!state.stInit) { state.stInit = true; state.closed.add('stunde'); }
+  return `<div class="fm-top"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><button class="btn" type="button" data-act="pres-pptx">PowerPoint</button><button class="btn" type="button" data-act="settings" data-tab="pres" title="Phasenleiste, Timergröße, Uhrzeit, Sicherungen">Folien-Einstellungen</button></div>
+    ${(state.sheet.abs ? abBarHTML() : '') + stundeCard()}
+    <div class="fm"><div class="fm-h"><b>Folien</b><small>In der Reihenfolge der Stunde. Mit „+ Zwischenfolie“ fügen Sie Folien ein, die nur in der Präsentation stehen. Phase und Zeit tragen Sie direkt ein.</small>${planNote}</div>${list}
+      ${any ? '' : '<small class="hint">Noch keine Aufgaben auf dem Arbeitsblatt.</small>'}
+      <button class="link fm-fine-b" type="button" data-act="sub-toggle" data-key="fmfine" aria-expanded="${fine}">${fine ? '▾' : '▸'} Einzelne Folien an- und abwählen</button>${fine ? `<div class="fm-fine">${presPickHTML()}</div>` : ''}
+      <button class="link" type="button" data-act="sich-fill">Fehlende Sicherungen ergänzen</button></div>`;
+}
+function presEditorHTMLalt() {
   const blocks = state.sheet.blocks; const num = numbering(state.sheet);
   const rows = blocks.filter(b => (b.type === 'tasks' && (b.items || []).some(it => tfStr(it.text).trim())) || b.type === 'step');
   const tl = { '': 'kein Timer', klick: 'per Klick', auto: 'mit der Folie' }; const PL = stPlan();
@@ -3941,9 +4072,10 @@ function presPhases(S) {
   const isT = s => (s.k === 'tasks' || s.k === 'step') && !s.res;
   const SB = stBlocks(); S.forEach(s => { if (s.k === 'step') s.res = isRes(s.b); else if (s.k === 'tasks') s.res = isRes(SB.find(x => x.id === s.bid)); });
   S.forEach(s => { if (s.k === 'step') s.ph = itPh(s.b); else if (s.k === 'tasks') { s.phs = [...new Set(s.items.map(x => itPh(x.it)).filter(Boolean))]; s.ph = s.phs[0] || ''; } });
+  S.forEach(s => { if (s.k !== 'step' && s.k !== 'tasks' && s.b && itPh(s.b)) { s.ph = itPh(s.b); have.add(s.ph); } });
   const first = S.findIndex(isT); const autoEin = !have.has('ein'); let usedEin = false, usedSich = false;
   S.forEach((s, i) => {
-    if (isT(s) || s.res || s.k === 'title') return;
+    if (isT(s) || s.res || s.k === 'title' || s.ph) return;
     if ((s.k === 'quote' || s.k === 'image') && autoEin && (first < 0 || i < first)) { s.ph = 'ein'; usedEin = true; }
     else if (s.k === 'tafel') { s.ph = 'sich'; usedSich = true; }
   });
@@ -4388,6 +4520,7 @@ function presSlideHTML(s, bar) {
       const b = s.b, ph = itPh(b), mn = itMin(b); const later = s.fol === 'quiz' && s.qi > 0; const chips = later ? '' : sozChip(b) + phChip(ph) + minChip(mn, b.timer); const pops = later ? '' : prPops([], [['', ehLines(b)]]);
       const qr = tfStr(b.link).trim() ? `<div class="pr-st-qr"><img src="${QR.dataURL(tfStr(b.link).trim(), 8)}" alt="QR-Code"><span>${esc(linkShort(b.link))}</span></div>` : ''; const hq = qr ? ' has-qr' : '';
       const head = tfStr(b.head).trim() ? inlineHTML(b.head) : esc(stepHeadDef(b));
+      if (s.fol === 'titel') return (chips ? presHead('', '', chips) : '') + `<div class="pr-body pr-zw${hq}"><div class="pr-zw-h">${head}</div>${tfStr(b.text).trim() ? `<div class="pr-zw-t">${inlineHTML(b.text)}</div>` : ''}${qr}</div>` + pops;
       if (s.fol === 'zitat') return `<div class="pr-body st-zitat${hq}"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(b.quote)}</div>${b.author ? `<div class="pr-auth">${inlineHTML(b.author)}</div>` : ''}</div>${qr}</div>` + pops;
       if (s.fol === 'bild') return (b.cap ? presHead('', inlineHTML(b.cap), chips) : '') + `<div class="pr-body pr-imgb${hq}"><img class="pr-img" src="${esc(b.src)}" alt="${esc(plainText(b.cap || 'Bild'))}">${qr}</div>` + pops;
       if (s.fol === 'quiz') { const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [o, j]).filter(([o]) => tfStr(o).trim());
@@ -4871,6 +5004,10 @@ async function exportPPTX() {
           draw(sl, false);
           const sol = qzSol(x); if (sol) { const s2 = pptx.addSlide({ masterName: 'AB Nur Titel' }); draw(s2, true); s2.addNotes('Lösung: ' + sol); barAdd(s2, s.bi, false); }
           addQR(Y0, BH);
+        } else if (s.fol === 'titel') {
+          const ht = plainText(b.head || '').trim() || stepHeadDef(b); const tx = plainText(b.text || '').trim();
+          sl.addText(ht, { x: X, y: tx ? 1.6 : 2.0, w: tw, h: 1.8, fontFace: F, fontSize: 60, bold: true, color: ACC, align: 'center', valign: 'middle', margin: 0, fit: 'shrink' });
+          if (tx) sl.addText(tx, { x: X + 0.4, y: 3.5, w: tw - 0.8, h: 1.2, fontFace: F, fontSize: 24, color: INK, align: 'center', valign: 'top', margin: 0, fit: 'shrink' });
         } else if (s.fol === 'zitat') {
           sl.addText(htmlRuns(parasHTML(b.quote || ''), { italic: true }), { x: X + 0.4, y: 1.1, w: tw - 0.8, h: BOT - 1.1 - 0.9, fontFace: FT, fontSize: 32, color: INK, valign: 'middle', align: 'center', margin: 0, fit: 'shrink' });
           if (b.author) sl.addText(plainText(b.author), { x: X + 0.4, y: BOT - 0.75, w: tw - 0.8, h: 0.5, fontFace: F, fontSize: 20, color: GREY, align: 'right', margin: 0 });
@@ -5720,7 +5857,7 @@ function taskExtras(b, i, it) {
   const nT = tipsOf(it).length, hasEh = ehLines(it).length > 0, hasTag = !!String(it.tag || '').trim();
   const mo = moreOn(`t:${b.id}:${i}`);
   const pill = (w, label, filled) => `<button type="button" class="tx${open(w) ? ' on' : ''}${filled ? ' filled' : ''}${w === 'tag' || w === 'rlp' ? ' x-pro' + (filled || open(w) ? ' used' : '') : ''}" data-act="tx" data-i="${i}" data-w="${w}" aria-expanded="${open(w)}">${label}</button>`;
-  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${mo ? (pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)) + (pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)) + (state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : '') : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}${mo ? `<button type="button" class="ck-chip tx-fo x-pro${it.fo ? ' used' : ''}" data-act="it-fo" data-i="${i}" aria-pressed="${!!it.fo}" title="${it.fo ? 'Steht nur in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt. Anklicken, um sie wieder aufs Blatt zu nehmen.' : 'Nur auf der Folie zeigen, nicht auf dem Arbeitsblatt (etwa für mündliche Aufträge oder die Besprechung). Die Aufgaben auf dem Blatt werden ohne sie nummeriert.'}"><span class="cbx" aria-hidden="true"></span>Nur auf der Folie</button>${it.fo ? '' : `<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button>`}` : ''}${moreBtn(`t:${b.id}:${i}`, itMoreSum(it))}</div>`;
+  let h = `<div class="tx-row">${pill('eh', 'Erwartung', hasEh)}${pill('tips', nT ? `Tipps ${nT}` : 'Tipps', nT)}${mo ? (pill('tag', hasTag ? 'Etikett: ' + esc(it.tag) : 'Etikett', hasTag)) + (pill('rlp', rlpOf(it).length ? 'Standards · ' + esc(rlpOf(it).map(id => rlpInfo(id).own ? 'eigen' : rlpInfo(id).code).slice(0, 3).join(', ')) + (rlpOf(it).length > 3 ? ' …' : '') : 'Standards', rlpOf(it).length)) + (state.sheet.meta.levelsOn ? pill('lv', 'Niveaus' + (Array.isArray(it.lv) ? ' · ' + it.lv.map(x => LV[x].sym).join(' ') : ''), Array.isArray(it.lv) || String(it.lvb || '').trim() || String(it.lve || '').trim()) : '') : ''}${isK ? `<label class="tx-pts"><span>Gewichtung</span><input type="text" data-k="items.${i}.pts" value="${esc(it.pts || '')}" placeholder="z. B. 30 %"></label>` : ''}${mo ? `<button type="button" class="ck-chip tx-fo x-pro${it.fo ? ' used' : ''}" data-act="it-fo" data-i="${i}" aria-pressed="${!!it.fo}" title="${it.fo ? 'Steht nur in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt. Anklicken, um sie wieder aufs Blatt zu nehmen.' : 'Nur auf der Folie zeigen, nicht auf dem Arbeitsblatt (etwa für mündliche Aufträge oder die Besprechung). Die Aufgaben auf dem Blatt werden ohne sie nummeriert.'}"><span class="cbx" aria-hidden="true"></span>Nur auf der Folie</button>${it.fo ? '' : `<button type="button" class="ck-chip tx-dg x-pro${it.noDg ? ' used' : ''}" data-act="it-dg" data-i="${i}" aria-pressed="${!it.noDg}" title="${it.noDg ? 'In der digitalen Fassung gibt es zu dieser Aufgabe kein Antwortfeld. Anklicken, um es wieder anzubieten.' : 'In der digitalen Fassung (Tablet, QR-Code) gibt es zu dieser Aufgabe ein Antwortfeld. Abwählen bei Aufgaben, zu denen nichts geschrieben wird, etwa Lesen, mündlich oder im Heft.'}"><span class="cbx" aria-hidden="true"></span>Digital bearbeitbar</button>`}` : ''}${moreBtn(`t:${b.id}:${i}`, itMoreSum(it))}</div>`;
   if (open('eh')) h += `<div class="f tx-f"><span>Erwartung (erscheint nur in der Lehrerfassung)</span>${rtField(`items.${i}.eh`, it.eh || '', { mode: 'inline', rows: 3, ph: 'Ein Punkt pro Zeile', aria: 'Erwartung' })}</div>`;
   if (open('tips')) h += ophBox(b, i, it, nT);
   if (open('tips')) { const t = Array.isArray(it.tips) ? it.tips : []; h += `<div class="f tx-f"><span>Gestufte Hilfen (werden zu Tippkarten)</span>${[0, 1, 2].map(j => rtField(`items.${i}.tips.${j}`, t[j] || '', { mode: 'line', ph: `Tipp ${j + 1}${j === 0 ? ': kleiner Anstoß' : j === 1 ? ': konkreter' : ': fast die Lösung'}`, aria: `Tipp ${j + 1}` })).join('')}</div>`; }
@@ -6190,6 +6327,7 @@ function renderOut() {
     if (!isBasis()) h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
   }
   if (state.out === 'vp') h += '<button class="btn sm" type="button" data-pv="vp-docx">Als Word speichern</button><button class="btn sm" type="button" data-pv="st-out">Ganze Stunde ausgeben</button>';
+  if (state.out === 'blatt') h += '<button class="btn sm dz-btn" type="button" data-pv="dz-page" title="Design, Farbe, Papier und Abstände"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5a7.5 7.5 0 1 0 0 15c1 0 1.5-.7 1.5-1.4 0-.9-.8-1.2-.8-2 0-.8.6-1.3 1.4-1.3h1.6a3.8 3.8 0 0 0 3.8-3.8C17.5 5.5 14.2 2.5 10 2.5Z"/><circle cx="6.5" cy="9" r="1"/><circle cx="9" cy="6" r="1"/><circle cx="12.8" cy="6.6" r="1"/></svg>Aussehen</button>';
   if (state.out === 'pres') h += '<button class="btn sm primary" type="button" data-pv="pres">Präsentieren</button><button class="btn sm" type="button" data-pv="pptx">PowerPoint</button>';
   if (state.out === 'a3') h += segHTML('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3', 'Papier');
   if (state.out === 'tafel') { h += segHTML('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung, 'Fassung'); if (nTf) h += '<button class="btn sm" type="button" data-pv="tfbeam">Am Beamer zeigen</button>'; }
@@ -7150,6 +7288,38 @@ function applyScale() {
   slots.forEach(sl => { const [pw, ph] = dims(sl); sl.style.width = pw * sc + 'px'; sl.style.height = ph * sc + 'px'; sl.firstChild.style.transform = `scale(${sc})`; });
   $('#btn-zoom').textContent = state.zoom === 'fit' ? '100 %' : 'Einpassen';
 }
+// Design-Popup: Aussehen der Seite (Knopf über der Vorschau) oder eines Bausteins (Klick in der Vorschau)
+const DZ_TYPES = new Set(['material', 'info', 'text']);
+function dzBodyHTML(z) {
+  if (z.k === 'page') { const sc = seiteCard(); return sc.replace(/<div class="card-h"[\s\S]*?<\/div>\s*<div class="card-b">/, '<div class="card-b">').replace(' closed', '').replace('<div class="card', '<div data-bid="seite" class="card dz-card'); }
+  const b = state.sheet.blocks.find(x => x.id === z.bid); if (!b) return '';
+  let h = '';
+  if (b.type === 'material') {
+    const f = matFmt(b); const seg = key => { const d = MAT_FMT[key]; return `<div class="f"><span>${d.label}</span><div class="seg sm" role="group" aria-label="${d.label}">${d.opts.map(([v, t]) => `<button type="button" data-act="fmt" data-f="${key}" data-v="${v}" aria-pressed="${f[key] === v}">${t}</button>`).join('')}</div></div>`; };
+    const isDef = JSON.stringify(f) === JSON.stringify(matFmt({})) && b.lineNumbers !== false; const nMat = state.sheet.blocks.filter(x => x.type === 'material').length;
+    h = `${b.form === 'gedicht' ? '' : seg('align')}${seg('font')}${seg('size')}${seg('lh')}
+      <div class="chks">${fCheck('lineNumbers', b.form === 'gedicht' ? 'Verszählung' : 'Zeilennummern', b.lineNumbers !== false)}${b.form === 'gedicht' ? '' : fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${f.cols === 2 ? '' : fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
+      <div class="row" style="gap:6px 18px">${isDef ? '' : '<button class="link" type="button" data-act="fmt-reset">Standard</button>'}${nMat > 1 ? '<button class="link" type="button" data-act="fmt-all">Für alle Materialien übernehmen</button>' : ''}</div>`;
+  } else if (b.type === 'info') h = stilTiles(b, ST_INFO); else if (b.type === 'text') h = stilTiles(b, ST_TEXT);
+  return `<div class="card dz-card" data-bid="${b.id}"><div class="card-b">${h}</div></div>`;
+}
+function dzRender() {
+  const z = state.dz; let box = document.getElementById('dz');
+  if (!z) { if (box) box.remove(); return; }
+  if (!box) { box = document.createElement('div'); box.id = 'dz'; box.className = 'dzp'; box.setAttribute('role', 'dialog'); document.body.appendChild(box);
+    box.addEventListener('input', onInput); box.addEventListener('change', onChange); box.addEventListener('click', e => { if (e.target.closest('[data-dz-x]')) { dzClose(); return; } onClick(e); }); }
+  const b = z.k === 'block' && state.sheet.blocks.find(x => x.id === z.bid);
+  box.setAttribute('aria-label', z.k === 'page' ? 'Aussehen der Seite' : 'Gestaltung');
+  box.innerHTML = `<div class="dzp-h"><b>${z.k === 'page' ? 'Aussehen der Seite' : 'Gestaltung · ' + esc(b ? typeLabel(b) : '')}</b><button type="button" class="ib" data-dz-x title="Schließen (Esc)" aria-label="Schließen">${I.x}</button></div><div class="dzp-b">${dzBodyHTML(z)}</div>`;
+  const W = Math.min(z.k === 'page' ? 470 : 360, innerWidth - 24); box.style.width = W + 'px';
+  let x = z.x, y = z.y; const r = box.getBoundingClientRect(); if (x + W > innerWidth - 12) x = innerWidth - 12 - W; if (x < 12) x = 12; if (y + r.height > innerHeight - 12) y = Math.max(12, innerHeight - 12 - r.height);
+  box.style.left = x + 'px'; box.style.top = y + 'px';
+}
+function dzOpen(k, bid, rect) {
+  const R = rect || { left: innerWidth - 400, top: 120, right: innerWidth - 400, bottom: 120 };
+  state.dz = { k, bid, x: Math.round(R.right + 12 > innerWidth - 372 ? R.left : R.right + 12), y: Math.round(Math.max(70, R.top)) }; dzRender();
+}
+function dzClose() { state.dz = null; dzRender(); }
 function markSel() {
   document.querySelectorAll('#pages .is-sel').forEach(n => n.classList.remove('is-sel'));
   if (state.sel) document.querySelectorAll(`#pages [data-bid="${state.sel}"]`).forEach(n => n.classList.add('is-sel'));
@@ -7630,7 +7800,7 @@ function bodyFor(b, num) {
   switch (b.type) {
     case 'heading': return `${fText('text', 'Überschrift', b.text, 'z. B. Vertiefung')}
       <div class="row">${[['padTop', 'Abstand davor'], ['padBot', 'Abstand danach']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="blk-set" data-f="${f}" data-v="${v}" aria-pressed="${(b[f] || '') === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>`;
-    case 'text': return `${stilTiles(b, ST_TEXT)}${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
+    case 'text': return `${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
     case 'material': { const poem = b.form === 'gedicht'; const bm = moreOn('b:' + b.id);
       const mSum = [fachKey() === 'gp' && b.mk ? ({ q: 'Quelle', d: 'Darstellung' })[b.mk] : '', matFmt(b).cols === 2 ? 'zwei Spalten' : ''].filter(Boolean).join(' · ');
       const moreTop = `${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
@@ -7645,13 +7815,13 @@ function bodyFor(b, num) {
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${b.post ? postEditor(b) : ''}
-      <div class="more-card">${moreBtn('b:' + b.id, mSum, 'Mehr: Spalten, Schrift, Lücken, Lesehilfe, Notiz')}${bm ? `<div class="more-in">${moreTop}${fmtEditor(b)}${gapEditor(b)}${readEditor(b)}
+      <div class="more-card">${moreBtn('b:' + b.id, mSum, 'Mehr: Lücken, Lesehilfe, Notiz')}${bm ? `<div class="more-in">${moreTop}<small class="hint dz-hint">Schrift, Größe, Zeilenabstand, Einzug und Rand: in der Vorschau auf das Material klicken.</small>${gapEditor(b)}${readEditor(b)}
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}</div>` : ''}</div>`; }
     case 'tasks': {
       const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
       const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : ''].filter(Boolean).join(' · ');
       return `${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
-          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation, PowerPoint und Verlaufsplan, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
+          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
           ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: nos[i] ? `Aufgabe ${nos[i]}` : 'Auftrag nur auf der Folie' })}
@@ -7666,7 +7836,7 @@ function bodyFor(b, num) {
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
-      ${stilTiles(b, ST_INFO)}
+      <small class="hint dz-hint">Stil (Fläche, Rahmen, Linie, klein): in der Vorschau auf den Infokasten klicken.</small>
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
     case 'phrases': {
       if (!Array.isArray(b.groups) || !b.groups.length) b.groups = [{ head: '', text: '' }];
@@ -7788,14 +7958,15 @@ function seiteCard() {
 function renderEditor(focusSel) {
   const ed = $('#editor'); const st = ed.scrollTop;
   const fa = document.activeElement; let focus = focusSel || null;
-  if (!focus && fa && ed.contains(fa) && fa.dataset.k) { const c = fa.closest('[data-bid]'); focus = `[data-bid="${c.dataset.bid}"] [data-k="${fa.dataset.k}"]`; }
+  if (!focus && fa && ed.contains(fa) && fa.dataset.k) { const c = fa.closest('[data-bid]'); if (c) focus = `[data-bid="${c.dataset.bid}"] [data-k="${fa.dataset.k}"]`; }
+  state.area = areaNorm(state.area); if (state.out === 'vp') state.out = 'pres'; if (OUT_AREA[state.out] && state.area !== 'einst' && OUT_AREA[state.out] !== state.area) state.out = areaOutFor(state.area);
   basisClamp(); const A = state.area || 'blatt';
   if (state.out === 'karten') ed.innerHTML = areaBarHTML() + kartenEditor();
   else {
     enforceOne();
     const num = numbering(state.sheet); const blocks = state.sheet.blocks;
     const intro = state.out === 'exit' ? '<div class="memo-flag">Exit-Tickets entstehen aus Unterrichtsschritten mit „Exit-Ticket zum Ausdrucken“. Jede Seite enthält dasselbe Ticket mehrmals zum Ausschneiden.</div>' : state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'a3' ? '<div class="memo-flag">A3-Vorlagen und Exit-Tickets gehören zur Stunde, nicht aufs Arbeitsblatt. A3 sehen Sie rechts in A3; „2 × A4 zum Kleben“ verteilt jede Seite auf zwei A4-Blätter mit Schnittlinie.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Tafelbilder der Stunde. Rechts stehen sie auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt sie Schritt für Schritt auf. Die Tafelkarten wählen Sie rechts oben.</div>' : '';
-    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link onecard" data-act="onecard" aria-pressed="${oneCard()}" title="Beim Öffnen einer Karte schließen sich die anderen"><span class="cb" aria-hidden="true"></span>Eine Karte offen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button><span aria-hidden="true">·</span><button type="button" class="link onecard" data-act="more-all" aria-pressed="${moreAll()}" title="Auch die selten gebrauchten Einstellungen (Phase, Etikett, Standards, Zeit, Spalten …) immer zeigen"><span class="cb" aria-hidden="true"></span>Alle Optionen</button></div>`;
+    const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
     let body;
     if (A === 'start') body = startHTML();
     else if (A === 'einst') body = settingsHTML();
@@ -7810,6 +7981,7 @@ function renderEditor(focusSel) {
     ed.innerHTML = areaBarHTML() + body;
   }
   ed.scrollTop = st;
+  if (state.dz) { if (state.dz.k === 'block' && !state.sheet.blocks.some(x => x.id === state.dz.bid) || state.out !== 'blatt') state.dz = null; dzRender(); }
   ed.style.setProperty('--ed-mark', markColor(state.sheet.meta));
   if (focus) { const f = ed.querySelector(focus); if (f && f.classList.contains('rtx')) { f.focus({ preventScroll: true }); rtCaretEnd(f); } else if (f) { f.focus({ preventScroll: true }); if (f.setSelectionRange && typeof f.value === 'string' && f.type !== 'number') { const l = f.value.length; try { f.setSelectionRange(l, l); } catch {} } } }
 }
@@ -7888,6 +8060,7 @@ function onChange(e) {
   if (presPickChange(t)) return;
   if (t.dataset.uhr != null) { state.prefs.uhr = !!t.checked; savePrefs(); return; }
   if (t.dataset.pref) { state.prefs[t.dataset.pref] = !!t.checked; savePrefs(); scheduleRender(); return; }
+  if (t.dataset.phall != null) { const c = t.closest('[data-bid]'); const bb = c && target(c.dataset.bid); if (bb && t.value !== '__mix') { snapshot(); (bb.items || []).forEach(it => { if (t.value) it.ph = t.value; else delete it.ph; }); changed(true); } return; }
   if (t.dataset.k === 'vp.slot') { const vp = vpOf(); const z = zeitenOf(state.sheet.meta.school).find(x => x.id === t.value); if (z) { vp.slot = z.id; vp.start = z.s; const d = hm(z.e) - hm(z.s); if (d > 0) state.sheet.meta.lesson = String(d); } else delete vp.slot; timeSync(null); changed(true); return; }
   if (t.dataset.k === 'lesson' || t.dataset.k === 'vp.start') delete vpOf().slot;
   if (t.dataset.act === 'op') {
@@ -7964,6 +8137,11 @@ function onClick(e) {
     case 'settings-back': setArea(isBasis() ? 'blatt' : state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return;
     case 'set-tab': state.setTab = a.dataset.v; renderEditor(); return;
     case 'umfang': setUmfang(a.dataset.v); return;
+    case 'area-more': state.areaMore = !state.areaMore; renderEditor(); return;
+    case 'zw-ins': state.zwAt = +a.dataset.at; renderEditor(); return;
+    case 'zw-close': state.zwAt = null; renderEditor(); return;
+    case 'zw-add': zwNew(a.dataset.k, a.dataset.at); return;
+    case 'zw-open': state.zwOpen = state.zwOpen === b.id ? null : b.id; renderEditor(); return;
     case 'start-pref': lsSet(LS_START, String(lsGet(LS_START)) === '0' ? '1' : '0'); renderEditor(); return;
     case 'login': openDlg('login'); return;
     case 'help': state.dlg = { mode: 'help' }; renderDlg(); return;
@@ -9297,19 +9475,19 @@ function outHTML() {
   const d = state.dlg, sh = state.sheet; const nT = tipCards().length, nK = (sh.cards || []).length, SB = stBlocks(), nTf = SB.filter(x => x.type === 'tafel').length, nA3 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a3').length, nA4 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a4').length, nE = exitSteps().length;
   const seg = (f, opts, cur) => `<div class="seg sm" role="group">${opts.map(([v, t, dis]) => `<button type="button" data-act="out-set" data-f="${f}" data-v="${v}" aria-pressed="${cur === v}"${dis ? ' disabled' : ''}>${t}</button>`).join('')}</div>`;
   const fmts = [['pdf', 'PDF', 'zum Drucken und Teilen', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="M7.5 11h5M7.5 14h3.5"/>'],
-    ['docx', 'Word', state.out === 'blatt' || state.out === 'vp' ? 'zum Weiterbearbeiten' : 'für Blatt und Verlaufsplan', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
+    ['docx', 'Word', state.out === 'blatt' || state.out === 'vp' ? 'zum Weiterbearbeiten' : 'für das Arbeitsblatt', '<path d="M5 2.5h6.5l3 3V17.5H5z"/><path d="M11.5 2.5v3h3"/><path d="m7 9.5 1.2 5 1.8-3.8 1.8 3.8 1.2-5"/>'],
     ...(canPrint ? [['print', 'Drucken', 'direkt an den Drucker', '<path d="M6 7V2.5h8V7"/><rect x="3" y="7" width="14" height="6.5" rx="1.2"/><path d="M6 11.5h8v6H6z"/>']] : []),
     ['digital', 'Digital', state.out === 'blatt' ? 'zum Ausfüllen am Tablet, mit QR-Code' : 'nur fürs Arbeitsblatt', '<rect x="4" y="2.5" width="12" height="15" rx="1.8"/><path d="M7.5 7h5M7.5 10h3"/><path d="m8 13.2 1.3 1.3 2.7-2.7"/>'],
     ['pptx', 'PowerPoint', state.out === 'blatt' || state.out === 'pres' ? 'Folien der Stunde, bearbeitbar' : 'für Blatt und Präsentation', '<rect x="2.5" y="3.5" width="15" height="10" rx="1.2"/><path d="M10 13.5v3M7 17.5h6"/><path d="M6 7h4M6 10h7"/>']];
   const pages = document.querySelectorAll('#pages .pout').length;
   const checks = outChecks();
   const go = { pdf: 'PDF erstellen', docx: 'Word-Datei erstellen', print: 'Drucken', digital: 'Weiter zur digitalen Fassung', pptx: 'PowerPoint erstellen' }[d.fmt];
-  const W = [['Arbeitsblatt', [['blatt', 'Arbeitsblatt', 0, 1], ['tipps', 'Tippkarten', nT]]], ['Stunde', [['vp', 'Verlaufsplan', 0, 1], ['pres', 'Präsentation', 0, 1]]], ['Tafel', [['tafel', 'Tafelbild', nTf], ['karten', 'Tafelkarten', nK]]], ['Druck-Extras', [['a4', 'A4-Vorlagen', nA4], ['a3', 'A3-Vorlagen', nA3], ['exit', 'Exit-Tickets', nE]]]]
+  const W = [['Arbeitsblatt', [['blatt', 'Arbeitsblatt', 0, 1], ['tipps', 'Tippkarten', nT]]], ['Präsentation', [['pres', 'Präsentation', 0, 1]]], ['Tafel', [['tafel', 'Tafelbild', nTf], ['karten', 'Tafelkarten', nK]]], ['Druck-Extras', [['a4', 'A4-Vorlagen', nA4], ['a3', 'A3-Vorlagen', nA3], ['exit', 'Exit-Tickets', nE]]]]
     .map(([g, L]) => [g, L.filter(o => !isBasis() || BASIS_OUTS.includes(o[0]))]).filter(([, L]) => L.length);
   const what = `<nav class="out-what" aria-label="Was ausgeben">${isBasis() ? '' : `<button type="button" class="ow ow-all" data-act="out-set" data-f="whole" data-v="1" aria-pressed="${!!d.whole}"><b>Ganze Stunde</b><small>alles in einem Ordner</small></button>`}
     ${W.map(([g, L]) => `<small class="ow-g">${g}</small>${L.map(([k, l, n, always]) => `<button type="button" class="ow" data-act="out-set" data-f="out" data-v="${k}" aria-pressed="${!d.whole && state.out === k}"${!always && !n ? ' disabled title="Noch nichts angelegt"' : ''}><b>${l}</b>${n ? `<em>${n}</em>` : ''}</button>`).join('')}`).join('')}</nav>`;
   if (d.whole) { const A = stABs(); const SB2 = stBlocks();
-    const L = [...A.map(x => `${esc(abLabel(x.meta, x.k))}: Schüler- und Lehrerfassung als PDF und Word, Erwartungshorizont${tipCards().length ? ', Tippkarten' : ''}, digitale Fassung`), nTf ? 'Tafelbild, vollständig und als Lückenfassung' : '', nK ? 'Tafelkarten' : '', nA4 ? 'A4-Vorlagen' : '', nA3 ? 'A3-Vorlagen in A3 und auf 2 × A4' : '', nE ? 'Exit-Tickets' : '', 'PowerPoint mit allen Folien', 'Verlaufsplan als Word', 'Inhaltsliste'].filter(Boolean);
+    const L = [...A.map(x => `${esc(abLabel(x.meta, x.k))}: Schüler- und Lehrerfassung als PDF und Word, Erwartungshorizont${tipCards().length ? ', Tippkarten' : ''}, digitale Fassung`), nTf ? 'Tafelbild, vollständig und als Lückenfassung' : '', nK ? 'Tafelkarten' : '', nA4 ? 'A4-Vorlagen' : '', nA3 ? 'A3-Vorlagen in A3 und auf 2 × A4' : '', nE ? 'Exit-Tickets' : '', 'PowerPoint mit allen Folien', 'Inhaltsliste'].filter(Boolean);
     return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how"><div class="out-whole"><b>Ganze Stunde als Ordner</b><p>${window.abw ? 'Sie wählen einen Ort, der Ordner wird dort angelegt.' : 'Der Ordner kommt als ZIP-Datei.'} Die Dateien sind durchnummeriert:</p><ul>${L.map(x => `<li>${x}</li>`).join('')}</ul></div>
       <div class="row"><button class="btn primary" type="button" data-act="out-stunde">Ordner erstellen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div></div></div>`; }
   return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how">
@@ -9607,7 +9785,6 @@ async function exportStunde() {
     if (exitSteps().length) { overlay('Exit-Tickets …'); show('exit'); const r = await capture(() => exportPDF()); if (r) add(`${stem}_Exit-Tickets.pdf`, r.blob, 'Exit-Tickets zum Ausdrucken und Ausschneiden'); }
     show('blatt', 'schueler');
     overlay('Präsentation …'); { const r = await capture(() => exportPPTX()); if (r) add(`${stem}_Praesentation.pptx`, r.blob, 'Präsentation (PowerPoint)'); else notes.push('Die PowerPoint-Datei fehlt: Dafür braucht der Browser Internet.'); }
-    overlay('Verlaufsplan …'); { const r = await capture(() => exportVP()); if (r) add(`${stem}_Verlaufsplan.docx`, r.blob, 'Verlaufsplan (Word, A4 quer)'); }
     const title = stTitle(P); const folder = slug(title) ? (P.abs ? 'Stunde_' : (stNr(P) ? 'AB' + slug(String(stNr(P))) + '_' : '')) + slug(title) : 'Stunde';
     const inhalt = [`Stunde: ${title}`, [P.meta.course, P.meta.school].filter(Boolean).join(' · '), `Zusammengestellt mit der AB-Werkstatt am ${new Date().toLocaleDateString('de-DE')}`, '', 'Inhalt:', ...files.map(f => `${f.name}  –  ${f.what}`), ...(notes.length ? ['', 'Hinweise:', ...notes] : [])].join('\r\n');
     files.push({ name: '00_Inhalt.txt', blob: new Blob([inhalt], { type: 'text/plain' }) });
@@ -10968,6 +11145,7 @@ function boot() {
     const b = e.target.closest('[data-pv]'); if (!b) return; const k = b.dataset.pv, v = b.dataset.v;
     if (k === 'ehmd') { exportEH(); return; }
     if (k === 'tfbeam') { tfBeamer(); return; }
+    if (k === 'dz-page') { if (state.dz && state.dz.k === 'page') dzClose(); else dzOpen('page', null, b.getBoundingClientRect()); return; }
     if (k === 'pres') { openPres(0); return; }
     if (k === 'vp') { openVP(); return; }
     if (k === 'vp-docx') { exportVP(); return; }
@@ -11031,6 +11209,8 @@ function boot() {
   ed.addEventListener('mousedown', e => { if (e.target.closest('.mw-wt button')) e.preventDefault(); });
   ed.addEventListener('click', e => { const bt = e.target.closest('.mw-wt [data-mwc]'); if (bt) { e.stopPropagation(); mwCmd(bt); } }, true);
   ed.addEventListener('input', e => { const w = e.target.closest && e.target.closest('.mw-word'); if (!w) return; const wc = w.querySelector('.mw-wc'); if (wc) wc.textContent = mwWords(e.target.innerText); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.dz && !state.mwBig) { e.preventDefault(); dzClose(); return; } }, true);
+  document.addEventListener('mousedown', e => { if (state.dz && !e.target.closest('#dz') && !e.target.closest('#pages') && !e.target.closest('[data-pv="dz-page"]')) dzClose(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.mwBig) { e.preventDefault(); e.stopPropagation(); mwBigSet(null); } }, true);
   ed.addEventListener('scroll', () => { if (!rtb.hidden) rtBar(); }, { passive: true });
   window.addEventListener('resize', () => { if (!rtb.hidden) rtBar(); });
@@ -11159,6 +11339,9 @@ function boot() {
     if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;
     const bid = n.dataset.bid; state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed();
+    const bb = state.sheet.blocks.find(x => x.id === bid); const dzOn = !!(bb && DZ_TYPES.has(bb.type) && state.out === 'blatt');
+    if (dzOn) dzOpen('block', bid, n.getBoundingClientRect()); else if (state.dz && state.dz.k === 'block') dzClose();
+    if (dzOn && window.matchMedia('(max-width: 899px)').matches) { renderEditor(); markSel(); return; }
     if (state.wide) { state.wide = false; applyResponsive(); }
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
     renderEditor(); markSel();
