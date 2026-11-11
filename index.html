@@ -2807,7 +2807,7 @@ const MAT_FMT = {
 const FMT_SIZE = { S: 9.5, M: 10.5, L: 12 }, FMT_LH = { eng: 1.35, normal: 1.52, weit: 2 }, FMT_WLINE = { eng: 276, normal: 300, weit: 400 }, FMT_WSZ = { S: 19, M: 21, L: 24 };
 function matFmt(b) {
   const f = b.fmt || {};
-  return { align: f.align === 'left' ? 'left' : 'justify', font: f.font === 'sans' ? 'sans' : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent !== false, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1 };
+  return { align: f.align === 'left' ? 'left' : 'justify', font: f.font === 'sans' ? 'sans' : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent === true, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1 };
 }
 function fmtSummary(b) {
   const f = matFmt(b);
