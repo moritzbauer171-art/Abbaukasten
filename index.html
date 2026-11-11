@@ -1265,6 +1265,7 @@ body{transition:background-color .3s,border-color .25s}
 .a4t-fold{position:relative;display:flex;justify-content:center}
 .a4t-fold::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:.35mm dashed #8A909C}
 .a4t-fold span{position:relative;writing-mode:vertical-rl;transform:rotate(180deg);background:var(--paper);font-size:7.5pt;color:#8A909C;padding:2mm 0;align-self:center}
+.flow-h .btn{align-self:flex-start;margin-top:6px}
 .sv{display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
 .sv-h small{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .sv-h h2{margin:2px 0 3px;font-family:var(--f-text,Georgia,serif);font-size:25px;line-height:1.2}
@@ -3363,6 +3364,9 @@ function settingsHTML() {
       <small class="hint">Die Endzeit ergibt sich aus Beginn, Länge und den Minuten der Bausteine. Steht bei einem Baustein „fertig bis“, gilt diese Uhrzeit als fester Punkt; sonst ist das Stundenende der feste Punkt. Beginnt eine Phase später, wird sie kürzer, damit das Folgende noch passt. Außerhalb der Stundenzeit zählen die Timer wie bisher nur die Minuten herunter. Bei 30 % Restzeit wird der Timer auf der Folie orange.</small>
       <label class="chk"><input type="checkbox" data-prph${m.presPhase === false ? '' : ' checked'}><span>Phasenleiste unten auf den Folien (aus den Phasen der Aufgaben)</span></label>
       <div class="f"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[m.presPhSize] ? m.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
+      <div class="f"><span>Sicherungen</span>
+        <label class="chk"><input type="checkbox" data-pref="sichAuto"${sichAutoOn() ? ' checked' : ''}><span>Nach Erarbeitung, Vertiefung und Transfer automatisch eine Sicherung einfügen (sobald die Phase gewählt wird)</span></label>
+        <label class="chk"><input type="checkbox" data-pref="sichLast"${sichLastOn() ? ' checked' : ''}><span>In der Phasenleiste nur die letzte Sicherung der Stunde zeigen; bei den Sicherungen davor bleibt die vorige Phase hervorgehoben</span></label></div>
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
   else c = `<div class="card set-card"><div class="card-b">
@@ -3490,7 +3494,7 @@ function stundeCard() {
 // Bereich „Stunde“: Ablauf aller Bausteine in Reihenfolge; Unterrichtsschritte werden hier bearbeitet
 function flowHTML(num) {
   const P = state.sheet; const A = stABs(); const multi = A.length > 1; const act = P.abActive || 0;
-  let h = `<div class="flow-h"><b>Ablauf der Stunde</b><small>Unterrichtsschritte bearbeiten Sie hier, mit ↑ ↓ setzen Sie sie an die richtige Stelle. Alles andere öffnet sich in seinem Bereich.</small></div>`;
+  let h = `<div class="flow-h"><b>Ablauf der Stunde</b><small>Unterrichtsschritte bearbeiten Sie hier, mit ↑ ↓ setzen Sie sie an die richtige Stelle. Alles andere öffnet sich in seinem Bereich.</small><button class="btn sm" type="button" data-act="sich-fill" title="Nach jeder Erarbeitung, Vertiefung und jedem Transfer ohne folgende Sicherung einen Schritt „Ergebnisse vergleichen“ einfügen">Fehlende Sicherungen ergänzen</button></div>`;
   A.forEach(x => {
     if (multi) h += `<div class="flow-ab${x.k === act ? ' on' : ''}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}</span>${x.k === act ? '' : `<button class="link" type="button" data-act="abx-go" data-abk="${x.k}">Schritte hier bearbeiten</button>`}</div>`;
     let numX = num; if (x.k !== act) { try { numX = numbering({ ...P, meta: x.meta, blocks: x.blocks }); } catch { numX = {}; } }
@@ -3511,6 +3515,32 @@ function stepAdderHTML() {
     <div class="st-tpls"><div class="st-g"><small>Einstieg</small><div class="st-ts">${tiles('ein')}</div></div><div class="st-g"><small>Sicherung</small><div class="st-ts">${tiles('sich')}</div></div><div class="st-g"><small>Schluss</small><div class="st-ts">${tiles('end')}</div></div><div class="st-g"><small>Frei</small><div class="st-ts"><button type="button" class="st-tp" data-act="st-new" data-v="frei">Eigener Schritt</button></div></div></div>
     <small class="hint">Ein Einstieg kommt vor das Material, eine Sicherung hinter die letzten Aufgaben (vor den Schluss), ein Schluss ans Ende der Stunde. Unterrichtsschritte stehen nicht auf dem Arbeitsblatt; verschieben lassen sie sich im Ablauf.</small></div>`;
 }
+// Nach Erarbeitung, Vertiefung oder Transfer folgt eine Sicherung; fehlt sie, wird ein Unterrichtsschritt „Ergebnisse vergleichen“ (bei Gruppenarbeit „Ergebnisse vorstellen“) eingefügt
+const SICH_AFTER = ['era', 'vert', 'trans'];
+const sichAutoOn = () => !state.prefs || state.prefs.sichAuto !== false;
+const sichLastOn = () => !state.prefs || state.prefs.sichLast !== false;
+function blkPhs(b) {
+  if (b.type === 'tafel') return ['sich', 'sich'];
+  if (b.type === 'step') { const p = itPh(b); return p ? [p, p] : null; }
+  if (b.type !== 'tasks') return null;
+  const L = (b.items || []).map(it => itPh(it)).filter(Boolean); if (!L.length) return null;
+  const w = L.filter(p => p !== 'ha'); return w.length ? [w[0], w[w.length - 1]] : ['ha', 'ha'];
+}
+function sichFill(quiet) {
+  const blocks = state.sheet.blocks; let n = 0;
+  for (let i = 0; i < blocks.length; i++) {
+    const P = blkPhs(blocks[i]); if (!P || !SICH_AFTER.includes(P[1])) continue;
+    let j = i + 1, nx = null; for (; j < blocks.length; j++) { nx = blkPhs(blocks[j]); if (nx) break; }
+    if (nx && (!nx[0] || nx[0] === P[1] || nx[0] === 'sich')) continue;
+    if (!nx && j < blocks.length) continue;
+    const b = blocks[i]; const its = b.type === 'tasks' ? (b.items || []).filter(it => itPh(it) !== 'ha') : [b];
+    const ga = its.some(it => it.soz === 'ga') || (b.type === 'tasks' && state.sheet.meta.groupsOn && its.some(it => it.grp));
+    const nb = paletteBlock('step', 'step'); blocks.splice(i + 1, 0, nb); stepTplQuiet(nb, ga ? 'praes' : 'vergl'); nb.autoSich = true; n++; i++;
+  }
+  if (n) { changed(true); if (!quiet) toast(n === 1 ? 'Sicherung nach der Arbeitsphase eingefügt (Bereich „Stunde“)' : `${n} Sicherungen nach den Arbeitsphasen eingefügt`, 'Rückgängig', histUndo); }
+  return n;
+}
+function stepTplQuiet(b, k) { const x = STEP_TPL[k]; if (!x) return; const du = state.sheet.meta.anrede === 'du'; Object.assign(b, { tpl: k, title: x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: duSie(x.text, du), note: x.note, eh: x.eh, exit: false }); }
 function stepNew(k) {
   const x = STEP_TPL[k]; if (!x) return; const blocks = state.sheet.blocks;
   let at = blocks.length; if (x.g === 'ein') { at = 0; while (at < blocks.length && blocks[at].type === 'step' && !(STEP_TPL[blocks[at].tpl] && STEP_TPL[blocks[at].tpl].g === 'end')) at++; }
@@ -3876,12 +3906,18 @@ function presPhases(S) {
   // Die Leiste zeigt nur Phasen, die auf einer Folie vorkommen; Phasen ohne Folie (abgewählt, „keine Folie“, leer) würden nie hervorgehoben
   // Leiste in der Reihenfolge der Folien (= Reihenfolge der Bausteine): aufeinanderfolgende gleiche Phasen bilden einen Abschnitt,
   // kehrt eine Phase später wieder, bekommt sie einen neuen Abschnitt. s.bi = Abschnitte, die auf der Folie hervorgehoben werden.
-  const bar = [];
+  let bar = [];
   S.forEach(s => {
     s.bi = []; if (s.k === 'title') return;
     const L = s.phs && s.phs.length ? s.phs : s.ph ? [s.ph] : [];
     L.forEach(k => { if (bar[bar.length - 1] !== k) bar.push(k); if (!s.bi.includes(bar.length - 1)) s.bi.push(bar.length - 1); });
   });
+  // Nur die letzte Sicherung bekommt einen Abschnitt; Folien früherer Sicherungen heben den Abschnitt davor hervor
+  if (sichLastOn() && bar.filter(k => k === 'sich').length > 1) {
+    const last = bar.lastIndexOf('sich'); const nb = [], map = [];
+    bar.forEach((k, i) => { if (k === 'sich' && i !== last) { map[i] = nb.length - 1; return; } if (nb[nb.length - 1] === k) { map[i] = nb.length - 1; return; } nb.push(k); map[i] = nb.length - 1; });
+    S.forEach(s => { s.bi = [...new Set((s.bi || []).map(i => map[i]).filter(i => i >= 0))]; }); bar = nb;
+  }
   S.bar = m.presPhase !== false && bar.length >= 2 ? bar : [];
   return S;
 }
@@ -7749,6 +7785,7 @@ function onChange(e) {
   const t = e.target; if (hist.timer) histCommit();
   if (presPickChange(t)) return;
   if (t.dataset.uhr != null) { state.prefs.uhr = !!t.checked; savePrefs(); return; }
+  if (t.dataset.pref) { state.prefs[t.dataset.pref] = !!t.checked; savePrefs(); scheduleRender(); return; }
   if (t.dataset.k === 'vp.slot') { const vp = vpOf(); const z = zeitenOf(state.sheet.meta.school).find(x => x.id === t.value); if (z) { vp.slot = z.id; vp.start = z.s; const d = hm(z.e) - hm(z.s); if (d > 0) state.sheet.meta.lesson = String(d); } else delete vp.slot; changed(true); return; }
   if (t.dataset.k === 'lesson' || t.dataset.k === 'vp.start') delete vpOf().slot;
   if (t.dataset.act === 'op') {
@@ -7782,6 +7819,8 @@ function onChange(e) {
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
   if (k === 'levelsOn' && !v) state.lvl = 'all';
+  const sichHook = sichAutoOn() && !isBasis() && SICH_AFTER.includes(v) && (/^items\.\d+\.ph$/.test(k) || (k === 'ph' && target(card.dataset.bid) && target(card.dataset.bid).type === 'step'));
+  if (sichHook) { changed(true); sichFill(); return; }
   changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
@@ -7817,6 +7856,7 @@ function onClick(e) {
   switch (act) {
     case 'area-set': setArea(a.dataset.v); return;
     case 'settings': openSettings(a.dataset.tab); return;
+    case 'sich-fill': if (!sichFill()) toast('Nach jeder Erarbeitung, Vertiefung und jedem Transfer folgt schon eine Sicherung. (Gezählt werden Bausteine mit eingetragener Phase.)'); return;
     case 'zt-add': { const sch = a.dataset.sch; zeitenSet(sch, [...zeitenOf(sch), { id: 'z' + uid(), l: '', s: '', e: '' }]); renderEditor(); const r = [...document.querySelectorAll('#editor .zt-row input[data-zt$="|l"]')].filter(x => x.dataset.zt.startsWith(sch + '|')).pop(); if (r) r.focus(); return; }
     case 'zt-del': { const sch = a.dataset.sch; zeitenSet(sch, zeitenOf(sch).filter((_, i) => i !== +a.dataset.i)); renderEditor(); return; }
     case 'settings-back': setArea(isBasis() ? 'blatt' : state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return;
@@ -8542,7 +8582,7 @@ function normPrefs(p) {
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
   const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
   const zeiten = {}; Object.entries(obj(p.zeiten)).forEach(([sch, l]) => { if (Array.isArray(l)) zeiten[String(sch).slice(0, 120)] = l.filter(x => x && typeof x === 'object').slice(0, 20).map(x => ({ id: String(x.id || 'z' + uid()).slice(0, 20), l: String(x.l || '').slice(0, 40), s: hmOk(x.s), e: hmOk(x.e) })); });
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(klassen ? { klassen } : {}) };
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
 const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
