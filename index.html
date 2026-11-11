@@ -1540,9 +1540,9 @@ body{transition:background-color .3s,border-color .25s}
 .qz-ok-b{flex:0 0 auto;width:28px;height:28px;border-radius:7px;border:1.5px solid var(--line);background:var(--field,#fff);font:inherit;font-weight:800;font-size:12px;color:var(--muted);cursor:pointer}
 .qz-ok-b[aria-pressed="true"]{background:#2E7D4F;border-color:#2E7D4F;color:#fff}
 @media (max-width:520px){.qz-ed-o{grid-template-columns:1fr}}
-.pr-chip.pr-timer{font-size:46px;padding:12px 32px;gap:16px;border-radius:999px;align-self:flex-end}.pr-chips:has(.pr-timer){align-items:flex-end}
-.pr-timer b{font-weight:800;letter-spacing:.01em}.pr-timer small{font-size:30px;font-weight:700;opacity:.9;margin-left:4px}
-.pr-chip.pr-timer::before{width:38px;height:38px;border-width:5px;background:linear-gradient(currentColor,currentColor) 50% 22%/5px 12px no-repeat}
+.pr-chip.pr-timer{font-size:var(--tmf,46px);padding:calc(var(--tmf,46px) * .26) calc(var(--tmf,46px) * .7);gap:calc(var(--tmf,46px) * .35);border-radius:999px;align-self:flex-end}.pr-chips:has(.pr-timer){align-items:flex-end}
+.pr-timer b{font-weight:800;letter-spacing:.01em}.pr-timer small{font-size:calc(var(--tmf,46px) * .65);font-weight:700;opacity:.9;margin-left:4px}
+.pr-chip.pr-timer::before{width:calc(var(--tmf,46px) * .82);height:calc(var(--tmf,46px) * .82);border-width:calc(var(--tmf,46px) * .11);background:linear-gradient(currentColor,currentColor) 50% 22%/calc(var(--tmf,46px) * .11) calc(var(--tmf,46px) * .26) no-repeat}
 .pr-tbar{height:16px}
 .pr-timer.low,.pr-timer.run.low{background:#E07A00;color:#fff;animation:pr-low 1.6s ease-in-out infinite}
 @keyframes pr-low{50%{box-shadow:0 0 0 10px rgba(224,122,0,.28)}}
@@ -3367,6 +3367,7 @@ function settingsHTML() {
       <small class="hint">Die Endzeit ergibt sich aus Beginn, Länge und den Minuten der Bausteine. Steht bei einem Baustein „fertig bis“, gilt diese Uhrzeit als fester Punkt; sonst ist das Stundenende der feste Punkt. Beginnt eine Phase später, wird sie kürzer, damit das Folgende noch passt. Außerhalb der Stundenzeit zählen die Timer wie bisher nur die Minuten herunter. Bei 30 % Restzeit wird der Timer auf der Folie orange.</small>
       <label class="chk"><input type="checkbox" data-prph${m.presPhase === false ? '' : ' checked'}><span>Phasenleiste unten auf den Folien (aus den Phasen der Aufgaben)</span></label>
       <div class="f"><span>Schrift der Phasenleiste</span><div class="seg sm" role="group" aria-label="Schriftgröße der Phasenleiste">${Object.entries(PH_SIZES).map(([k, v]) => `<button type="button" data-act="ph-size" data-v="${k}" aria-pressed="${(PH_SIZES[m.presPhSize] ? m.presPhSize : 'm') === k}">${v.label}</button>`).join('')}</div></div>
+      <div class="f"><span>Größe des Timers auf den Folien</span><div class="seg sm" role="group" aria-label="Größe des Timers">${Object.entries(TM_SIZES).map(([k, v]) => `<button type="button" data-act="tm-size" data-v="${k}" aria-pressed="${tmSize() === k}">${v.label}</button>`).join('')}</div><small>Gilt für alle Stunden, im Browser und in PowerPoint. „klein“ ist so groß wie die übrigen Angaben oben rechts.</small></div>
       <div class="f"><span>Sicherungen</span>
         <label class="chk"><input type="checkbox" data-pref="sichAuto"${sichAutoOn() ? ' checked' : ''}><span>Nach Erarbeitung, Vertiefung und Transfer automatisch eine Sicherung einfügen (sobald die Phase gewählt wird)</span></label>
         <label class="chk"><input type="checkbox" data-pref="sichLast"${sichLastOn() ? ' checked' : ''}><span>In der Phasenleiste nur die letzte Sicherung der Stunde zeigen; bei den Sicherungen davor bleibt die vorige Phase hervorgehoben</span></label></div>
@@ -4289,6 +4290,10 @@ function tsMeta(x, s, m, col) {
   return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
 const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : x.no ? 'Aufgabe ' + x.no : 'Auftrag') : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
+// Größe des Timers auf den Folien (Standard für alle Stunden, mit dem Konto gespeichert)
+const TM_SIZES = { s: { label: 'klein', px: 24, pt: 14, h: 0.4 }, m: { label: 'mittel', px: 34, pt: 18, h: 0.52 }, l: { label: 'groß', px: 46, pt: 22, h: 0.64 }, xl: { label: 'sehr groß', px: 64, pt: 30, h: 0.84 } };
+const tmSize = () => TM_SIZES[state.prefs && state.prefs.tmSize] ? state.prefs.tmSize : 'l';
+const tmApply = () => document.documentElement.style.setProperty('--tmf', TM_SIZES[tmSize()].px + 'px');
 const PH_SIZES = { s: { label: 'klein', px: 21, h: 54, pt: 13, ih: 0.45 }, m: { label: 'mittel', px: 26, h: 62, pt: 16, ih: 0.52 }, l: { label: 'groß', px: 31, h: 72, pt: 19, ih: 0.6 }, xl: { label: 'sehr groß', px: 37, h: 84, pt: 22, ih: 0.7 } };
 const phSize = meta => PH_SIZES[(meta || {}).presPhSize] || PH_SIZES.m;
 // Phasenleiste: zu lange Bezeichnungen verkleinern alle Felder gleichmäßig
@@ -4690,9 +4695,9 @@ async function exportPPTX() {
       let x = W - RM;
       [...chips].reverse().forEach(c => {
         // Timer groß: 22 pt statt 13 pt, unten bündig mit den übrigen Pillen
-        const big = !!c.timer; const ph = big ? 0.64 : 0.38;
-        const pill = (t, o = {}) => ({ shape: 'roundRect', rectRadius: ph / 2, x, y: 1.24 - ph, w, h: ph, fill: { color: c.fill || TINT }, fontFace: F, fontSize: big ? 22 : 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0, ...o });
-        const w = big ? ('noch ' + c.timer + ' Min.').length * 0.175 + 0.6 : c.t.length * 0.105 + 0.46; x -= w;
+        const big = !!c.timer; const TS = TM_SIZES[tmSize()]; const ph = big ? TS.h : 0.38;
+        const pill = (t, o = {}) => ({ shape: 'roundRect', rectRadius: ph / 2, x, y: 1.24 - ph, w, h: ph, fill: { color: c.fill || TINT }, fontFace: F, fontSize: big ? TS.pt : 13, bold: true, color: c.color || ACC, align: 'center', valign: 'middle', margin: 0, ...o });
+        const w = big ? ('noch ' + c.timer + ' Min.').length * 0.0079 * TS.pt + 0.5 : c.t.length * 0.105 + 0.46; x -= w;
         if (c.timer) {
           // Stapel: unten „Zeit um“, darüber noch 1 … n Min.; jede Minute verschwindet die oberste Angabe (Animation, siehe pptxTiming)
           sl.addText('Zeit um', pill('Zeit um', { fill: { color: 'B3261E' }, color: 'FFFFFF', objectName: 'abwTimerEnd' }));
@@ -7862,6 +7867,7 @@ function onClick(e) {
   switch (act) {
     case 'area-set': setArea(a.dataset.v); return;
     case 'settings': openSettings(a.dataset.tab); return;
+    case 'tm-size': if (TM_SIZES[a.dataset.v]) { state.prefs.tmSize = a.dataset.v; savePrefs(); tmApply(); renderEditor(); } return;
     case 'sich-fill': if (!sichFill()) toast('Nach jeder Erarbeitung, Vertiefung und jedem Transfer folgt schon eine Sicherung. (Gezählt werden Bausteine mit eingetragener Phase.)'); return;
     case 'zt-add': { const sch = a.dataset.sch; zeitenSet(sch, [...zeitenOf(sch), { id: 'z' + uid(), l: '', s: '', e: '' }]); renderEditor(); const r = [...document.querySelectorAll('#editor .zt-row input[data-zt$="|l"]')].filter(x => x.dataset.zt.startsWith(sch + '|')).pop(); if (r) r.focus(); return; }
     case 'zt-del': { const sch = a.dataset.sch; zeitenSet(sch, zeitenOf(sch).filter((_, i) => i !== +a.dataset.i)); renderEditor(); return; }
@@ -8603,7 +8609,7 @@ function normPrefs(p) {
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
   const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
   const zeiten = {}; Object.entries(obj(p.zeiten)).forEach(([sch, l]) => { if (Array.isArray(l)) zeiten[String(sch).slice(0, 120)] = l.filter(x => x && typeof x === 'object').slice(0, 20).map(x => ({ id: String(x.id || 'z' + uid()).slice(0, 20), l: String(x.l || '').slice(0, 40), s: hmOk(x.s), e: hmOk(x.e) })); });
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
 const saveFClosed = () => lsSet(LS_FZU, [...fClosed]);
@@ -8615,7 +8621,7 @@ function savePrefs() {
     try { await b.savePrefs(clone(state.prefs)); } catch (err) { console.error(err); toast('Die Ordner konnten gerade nicht gespeichert werden. Die nächste Änderung versucht es erneut.'); }
   }, 250);
 }
-async function loadPrefs(b) { let p = null; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); } if (b === backend) state.prefs = normPrefs(p); }
+async function loadPrefs(b) { let p = null; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); } if (b === backend) { state.prefs = normPrefs(p); tmApply(); } }
 function mergePrefs(p) {
   const lp = normPrefs(p); if (!lp.folders.length && !Object.keys(lp.place).length && !lp.klassen) return false;
   const ids = new Set(state.prefs.folders.map(f => f.id));
