@@ -917,11 +917,17 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 /* Grundfarbe der Seite je Fach: Deutsch Tinte, Geschichte/Politik Umbra, Biologie Blattgrün */
 :root[data-fach="gp"]{--tinte:#7A4E1D;--tinte-soft:#F3E9DC;--desk:#E8E4DC;--karo:rgba(122,78,29,.08)}
 :root[data-fach="bio"]{--tinte:#2E6B3A;--tinte-soft:#E2F0E4;--desk:#E0E7E1;--karo:rgba(46,107,58,.085)}
+:root[data-fach="en"]{--tinte:#9B2335;--tinte-soft:#F6E5E8;--desk:#E9E3E4;--karo:rgba(155,35,53,.075)}
+:root[data-fach="es"]{--tinte:#B4530C;--tinte-soft:#F8EADF;--desk:#EAE5DF;--karo:rgba(180,83,12,.075)}
 @media (prefers-color-scheme: dark){
   :root[data-fach="gp"]:not([data-theme="light"]){--tinte:#E3B47C;--tinte-ink:#2A1A08;--tinte-soft:#3A2C1C;--desk:#15130F;--karo:rgba(227,180,124,.06)}
+  :root[data-fach="en"]:not([data-theme="light"]){--tinte:#F0A3AE;--tinte-ink:#2A0A10;--tinte-soft:#3A1F24;--desk:#150F10;--karo:rgba(240,163,174,.06)}
+  :root[data-fach="es"]:not([data-theme="light"]){--tinte:#F2B27E;--tinte-ink:#2A1405;--tinte-soft:#3A281B;--desk:#15110E;--karo:rgba(242,178,126,.06)}
   :root[data-fach="bio"]:not([data-theme="light"]){--tinte:#8FD49C;--tinte-ink:#0C2412;--tinte-soft:#1F3324;--desk:#0F1511;--karo:rgba(143,212,156,.06)}
 }
 :root[data-theme="dark"][data-fach="gp"]{--tinte:#E3B47C;--tinte-ink:#2A1A08;--tinte-soft:#3A2C1C;--desk:#15130F;--karo:rgba(227,180,124,.06)}
+:root[data-theme="dark"][data-fach="en"]{--tinte:#F0A3AE;--tinte-ink:#2A0A10;--tinte-soft:#3A1F24;--desk:#150F10;--karo:rgba(240,163,174,.06)}
+:root[data-theme="dark"][data-fach="es"]{--tinte:#F2B27E;--tinte-ink:#2A1405;--tinte-soft:#3A281B;--desk:#15110E;--karo:rgba(242,178,126,.06)}
 :root[data-theme="dark"][data-fach="bio"]{--tinte:#8FD49C;--tinte-ink:#0C2412;--tinte-soft:#1F3324;--desk:#0F1511;--karo:rgba(143,212,156,.06)}
 body{transition:background-color .3s,border-color .25s}
 /* Prüfhinweise in Korrekturrot */
@@ -2050,9 +2056,12 @@ const DEFAULT_KLASSEN = [
 // Die Klassen gehören zum Konto (Einstellungen der Ablage). DEFAULT_KLASSEN sind die ursprünglichen drei Reiter.
 const LEGACY_IDS = ['gk', 'k10', 'k910'];
 const LS_KLCACHE = 'abw.klassen';
-const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && (k.fach === 'gp' || k.fach === 'bio') ? k.fach : 'deutsch' });
+const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && ['gp', 'bio', 'en', 'es'].includes(k.fach) ? k.fach : 'deutsch' });
 /* Fächer: bestimmen Operatoren, Vorlagen, Formulierungshilfen und Materialarten */
-const FAECHER = { deutsch: { label: 'Deutsch', course: 'Deutsch', ops: 'IQB-Grundstock Deutsch', opsShort: 'IQB-Grundstock' }, gp: { label: 'Geschichte/Politik', course: 'Geschichte', ops: 'KMK-Operatoren Geschichte', opsShort: 'KMK-Liste Geschichte' }, bio: { label: 'Biologie', course: 'Biologie', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' } };
+const FAECHER = { deutsch: { label: 'Deutsch', course: 'Deutsch', ops: 'IQB-Grundstock Deutsch', opsShort: 'IQB-Grundstock' }, gp: { label: 'Geschichte/Politik', course: 'Geschichte', ops: 'KMK-Operatoren Geschichte', opsShort: 'KMK-Liste Geschichte' }, bio: { label: 'Biologie', course: 'Biologie', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' },
+  en: { label: 'Englisch', course: 'Englisch', ops: 'Operatoren Englisch (KMK, Abitur)', opsShort: 'Operatoren Englisch', lang: 'en' },
+  es: { label: 'Spanisch', course: 'Spanisch', ops: 'Operatoren Spanisch (KMK, Abitur)', opsShort: 'Operatoren Spanisch', lang: 'es' } };
+const fachLang = kl => (FAECHER[fachKey(kl)] || {}).lang || 'de';
 const fachKey = kl => KL(kl || (state.sheet ? state.sheet.klasse : state.klasse)).fach || 'deutsch';
 const fachInfo = kl => FAECHER[fachKey(kl)] || FAECHER.deutsch;
 let KLASSEN = (() => { try { const c = JSON.parse(localStorage.getItem(LS_KLCACHE) || 'null'); if (Array.isArray(c) && c.length) return c.map(normKlasse); } catch {} return DEFAULT_KLASSEN.map((k, i) => normKlasse(k, i)); })();
@@ -2130,6 +2139,7 @@ const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[t
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
   deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
+  get en() { return this.deutsch; }, get es() { return this.deutsch; },
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Textquelle mit Zeilennummern (Q1)', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
@@ -2270,6 +2280,30 @@ const OPS_BIO_TABLE = [
   ['interpretieren, deuten', 'III', 'Ergebnisse oder Sachverhalte im Hinblick auf mögliche Erklärungen untersuchen'],
   ['planen', 'III', 'zu einer Frage einen Versuch entwerfen und eine Anleitung erstellen']
 ];
+// Fremdsprachen: Imperativ steht vorn; Englisch hat eine Form, Spanisch tú (du) und usted (Sie)
+const opE = (op, a, b, tpl) => ({ op, afb: [a, b], iqb: 1, fl: 1, imp: op.split(' ')[0], tpl: tpl || cap0(op) + ' …', tplDu: tpl || cap0(op) + ' …' });
+const opS = (op, tu, ud, a, b, rest = ' …') => ({ op, afb: [a, b], iqb: 1, fl: 1, imp: tu, imp2: ud, tpl: cap0(ud) + rest, tplDu: cap0(tu) + rest });
+function cap0(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
+const OPS_EN = [
+  opE('describe', 1, 1), opE('outline', 1, 1), opE('point out', 1, 1), opE('state', 1, 1), opE('summarize', 1, 1), opE('present', 1, 2),
+  opE('analyse', 2, 2), opE('analyze', 2, 2), opE('characterize', 2, 2), opE('compare', 2, 2), opE('contrast', 2, 2), opE('examine', 2, 2), opE('explain', 2, 2), opE('illustrate', 2, 2), opE('interpret', 2, 3), opE('show', 2, 2),
+  opE('assess', 3, 3), opE('comment', 3, 3, 'Comment on …'), opE('discuss', 3, 3), opE('evaluate', 3, 3), opE('justify', 3, 3), opE('write', 3, 3), opE('create', 3, 3), opE('design', 3, 3), opE('imagine', 3, 3), opE('compose', 3, 3)
+];
+const OPS_ES = [
+  opS('describir', 'describe', 'describa', 1, 1), opS('resumir', 'resume', 'resuma', 1, 1), opS('presentar', 'presenta', 'presente', 1, 1), opS('indicar', 'indica', 'indique', 1, 1), opS('nombrar', 'nombra', 'nombre', 1, 1), opS('enumerar', 'enumera', 'enumere', 1, 1),
+  opS('analizar', 'analiza', 'analice', 2, 2), opS('caracterizar', 'caracteriza', 'caracterice', 2, 2), opS('comparar', 'compara', 'compare', 2, 2), opS('examinar', 'examina', 'examine', 2, 2), opS('explicar', 'explica', 'explique', 2, 2), opS('situar', 'sitúa', 'sitúe', 2, 2), opS('interpretar', 'interpreta', 'interprete', 2, 3),
+  opS('comentar', 'comenta', 'comente', 3, 3), opS('discutir', 'discute', 'discuta', 3, 3), opS('evaluar', 'evalúa', 'evalúe', 3, 3), opS('valorar', 'valora', 'valore', 3, 3), opS('justificar', 'justifica', 'justifique', 3, 3), opS('escribir', 'escribe', 'escriba', 3, 3), opS('redactar', 'redacta', 'redacte', 3, 3), opS('crear', 'crea', 'cree', 3, 3), opS('imaginar', 'imagina', 'imagine', 3, 3)
+];
+const OPS_EN_TABLE = [
+  ['describe', 'I', 'give a detailed account of something'], ['outline', 'I', 'give the main features or general principles, leaving out details'], ['point out', 'I', 'find and explain certain aspects'], ['state', 'I', 'specify clearly'], ['summarize', 'I', 'give a concise account of the main points'],
+  ['analyse', 'II', 'describe and explain in detail certain aspects and/or features of the text'], ['characterize', 'II', 'describe and analyse the character of a person'], ['compare', 'II', 'point out similarities and differences'], ['examine', 'II', 'investigate in detail'], ['explain', 'II', 'describe and define in detail'], ['interpret', 'II–III', 'make clear the meaning of something and give your own views on it'],
+  ['assess, evaluate', 'III', 'consider in a balanced way the points for and against something and come to a conclusion'], ['comment on', 'III', 'state clearly your opinion on the topic in question and support it with evidence'], ['discuss', 'III', 'give arguments for and against and come to a conclusion'], ['justify', 'III', 'show adequate grounds for decisions or conclusions'], ['write, create', 'III', 'produce a text with specific features']
+];
+const OPS_ES_TABLE = [
+  ['describir', 'I', 'exponer de forma detallada las características de algo'], ['resumir', 'I', 'presentar de forma breve y estructurada lo esencial de un texto'], ['presentar, indicar', 'I', 'exponer de forma clara determinados aspectos'], ['nombrar, enumerar', 'I', 'mencionar datos o aspectos sin explicarlos'],
+  ['analizar', 'II', 'examinar y explicar con detalle aspectos del contenido, de la estructura y del lenguaje'], ['caracterizar', 'II', 'describir y analizar los rasgos de un personaje'], ['comparar', 'II', 'señalar semejanzas y diferencias'], ['explicar', 'II', 'exponer de forma razonada causas y relaciones'], ['situar', 'II', 'colocar un texto o un hecho en su contexto'], ['interpretar', 'II–III', 'aclarar el sentido de un texto y fundamentar la propia opinión'],
+  ['comentar', 'III', 'expresar y fundamentar una opinión propia sobre un tema'], ['discutir', 'III', 'presentar argumentos a favor y en contra y llegar a una conclusión'], ['evaluar, valorar', 'III', 'emitir un juicio razonado considerando distintos aspectos'], ['justificar', 'III', 'fundamentar una decisión o una conclusión'], ['escribir, redactar, crear', 'III', 'producir un texto con determinadas características']
+];
 const IRREG = { nehmen: 'nimm', geben: 'gib', entwerfen: 'entwirf', entwickeln: 'entwickle' };
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 [OPS, OPS_GP, OPS_BIO].forEach(L => L.forEach(o => {
@@ -2278,7 +2312,8 @@ const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
   o.imp = IRREG[base] || (base.endsWith('ern') ? base.slice(0, -1) + 'e' : base.slice(0, -2) + 'e');
   o.tplDu = cap(o.imp) + o.tpl.replace(/^\S+ Sie/, '').replace(/^ sich /, ' dich ');
 }));
-const curOps = () => ({ gp: OPS_GP, bio: OPS_BIO })[fachKey()] || OPS;
+const curOps = () => ({ gp: OPS_GP, bio: OPS_BIO, en: OPS_EN, es: OPS_ES })[fachKey()] || OPS;
+const impHit = (o, w) => o.imp === w || (!!o.imp2 && o.imp2 === w);
 // Abgetrenntes Teil am Ende eines (Teil-)Satzes, damit „zu“, „auf“, „ab“, „nach“ nicht überall zählen
 const partAtEnd = (s, p) => new RegExp('(^|[\\s(„])' + p + '(?=\\s*([,.;:!?)“”–—]|$|(und|oder|sowie|aber|denn)\\s))', 'i').test(s);
 const ROMAN = ['', 'I', 'II', 'III'];
@@ -2443,7 +2478,8 @@ function parseNotes(t) {
 }
 
 /* ---------- Operator-Erkennung ---------- */
-const DU_LEAD = new Set(['und', 'oder', 'dann', 'danach', 'anschließend', 'abschließend', 'zunächst', 'außerdem', 'schließlich', 'nun', 'bitte']);
+const DU_LEAD = new Set(['und', 'oder', 'dann', 'danach', 'anschließend', 'abschließend', 'zunächst', 'außerdem', 'schließlich', 'nun', 'bitte',
+  'then', 'and', 'or', 'now', 'next', 'finally', 'afterwards', 'also', 'first', 'please', 'y', 'o', 'luego', 'después', 'finalmente', 'además', 'primero', 'ahora', 'por', 'favor']);
 function detectOps(text) {
   const found = [];
   const sentences = plainText(text).split(/(?<=[.!?;:])\s+/);
@@ -2456,7 +2492,7 @@ function detectOps(text) {
       for (const o of curOps()) {
         const hit = sie
           ? (o.verb ? o.verb === w[i] && w.slice(i + 2).includes(o.part) && (!o.end || partAtEnd(s, o.part)) : o.op === w[i])
-          : (o.imp === w[i] && (!o.part || (w.slice(i + 1).includes(o.part) && (!o.end || partAtEnd(s, o.part)))));
+          : (impHit(o, w[i]) && (!o.part || (w.slice(i + 1).includes(o.part) && (!o.end || partAtEnd(s, o.part)))));
         if (hit && !found.includes(o)) found.push(o);
       }
     }
@@ -2482,7 +2518,7 @@ function opBold(text) {
         const okJ = j => j > i && w[j] === o.part && (!o.end || /^\s*([,.;:!?)“”–—]|$|(und|oder|sowie|aber|denn)\s)/i.test(src.slice(S[j].e, S[j].e + 8)));
         const hasPart = from => w.some((x, j) => j >= from && okJ(j));
         const hit = sie ? (o.verb ? o.verb === w[i] && hasPart(i + 2) : o.op === w[i])
-          : (o.imp === w[i] && (!o.part || hasPart(i + 1)));
+          : (impHit(o, w[i]) && (!o.part || hasPart(i + 1)));
         if (!hit) continue;
         mark.add(S[i]);
         if (o.part) { const j = w.findIndex((x, k) => okJ(k)); if (j > 0) { mark.add(S[j]); if (o.part === 'beziehung' && w[j - 1] === 'in') mark.add(S[j - 1]); } }
@@ -2514,7 +2550,7 @@ function applyOperator(text, o, anrede) {
   first = first.replace(/[.!?]$/, '');
   const lead = first.match(/^([^\s,]+)(?:\s+(Sie))?(?=[\s,]|$)\s*/);
   const w = lead ? lead[1].toLowerCase() : '';
-  const cands = lead ? curOps().filter(x => lead[2] ? (x.verb || x.op) === w : x.imp === w) : [];
+  const cands = lead ? curOps().filter(x => lead[2] ? (x.verb || x.op) === w : impHit(x, w)) : [];
   if (cands.length) {
     first = first.slice(lead[0].length);
     const old = cands.find(x => !x.part || new RegExp('(^|\\s)' + x.part + '(?=$|[\\s,;:.])', 'i').test(first)) || cands[0];
@@ -2776,6 +2812,7 @@ const LS_FQ = 'abw.dwdsfreq'; let WB_FQ = null; let fqBusy = false;
 const fqMap = () => { if (!WB_FQ) { WB_FQ = {}; try { WB_FQ = JSON.parse(localStorage.getItem(LS_FQ) || '{}') || {}; } catch { WB_FQ = {}; } } return WB_FQ; };
 const fqSave = () => { try { const k = Object.keys(WB_FQ); if (k.length > 3000) k.slice(0, k.length - 3000).forEach(x => delete WB_FQ[x]); localStorage.setItem(LS_FQ, JSON.stringify(WB_FQ)); } catch {} };
 async function fqWarm(words, done) {
+  if (fachLang() !== 'de') return;
   const F = fqMap(); const todo = [...new Set(words)].filter(w => !(w in F)).slice(0, 30); if (!todo.length || fqBusy) return;
   fqBusy = true; let got = 0;
   try {
@@ -3024,7 +3061,8 @@ function designEditor(m) {
 }
 function headHTML(meta) {
   const d = designOf(meta);
-  const fields = (meta.showName ? '<span>Name<i></i></span>' : '') + (meta.showDate ? '<span class="dt">Datum<i></i></span>' : '');
+  const HL = ({ en: ['Name', 'Date'], es: ['Nombre', 'Fecha'] })[fachLang()] || ['Name', 'Datum'];
+  const fields = (meta.showName ? `<span>${HL[0]}<i></i></span>` : '') + (meta.showDate ? `<span class="dt">${HL[1]}<i></i></span>` : '');
   const title = esc(deQuoteStr(meta.title || 'Ohne Titel'));
   if (d === 'akte') {
     const org = [meta.school, meta.course].filter(Boolean).map(esc).join(' · ');
@@ -5689,6 +5727,7 @@ const LS_SNIP = 'abw.snips';
 const userSnips = () => { const s = lsGet(LS_SNIP); return Array.isArray(s) ? s.filter(x => x && x.block && TYPES[x.block.type]) : []; };
 function opsTableBlock() {
   if (fachKey() === 'bio') return { ...newBlock('table'), title: 'Operatoren Biologie (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_BIO_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
+  if (fachKey() === 'en' || fachKey() === 'es') { const en = fachKey() === 'en'; return { ...newBlock('table'), title: en ? 'Operators' : 'Operadores', cols: [en ? 'Operator · AFB' : 'Operador · AFB', en ? 'What you do' : 'Qué hay que hacer'], rows: (en ? OPS_EN_TABLE : OPS_ES_TABLE).map(([o, a, d]) => [o + ' · ' + a, d]), rowHeight: 'normal', firstBold: true }; }
   if (fachKey() === 'gp') return { ...newBlock('table'), title: 'Operatoren Geschichte (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_GP_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
   return { ...newBlock('table'), title: 'Operatoren (IQB-Grundstock Deutsch)', cols: ['Operator', 'Anforderungsbereich'], rows: OPS.filter(o => o.iqb).map(o => [o.op, 'AFB ' + afbLabel(o.afb)]), rowHeight: 'normal', firstBold: true };
 }
@@ -7249,6 +7288,7 @@ function scheduleRender(ms = 220) { clearTimeout(renderTimer); renderTimer = set
 let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
   if (MAPPE_LOCK || DG_VIEW) return;
+  { const h = $('#pages'); if (h) h.lang = fachLang(); }
   if (state.out === 'vp' || state.out === 'pres') {
     const host = $('#pages'); host.style.removeProperty('zoom'); let n = 0;
     try { if (state.out === 'vp') renderVPPreview(host); else n = renderPresPreview(host); } catch (err) { console.error(err); host.innerHTML = '<div class="pv-empty">Die Vorschau ließ sich nicht anzeigen.</div>'; }
@@ -7734,7 +7774,21 @@ const PHRASE_SETS_BIO = [
   { head: 'Ergebnis und Fehlerbetrachtung', lines: ['Die Hypothese wird bestätigt, weil …', 'Die Hypothese wird verworfen, weil …', 'Mögliche Fehlerquellen sind …', 'Um das Ergebnis abzusichern, müsste man …'] },
   { head: 'Bewerten', lines: ['Für … spricht, dass …', 'Dagegen spricht, dass …', 'Betroffen ist dabei der Wert …', 'Ich halte … für vertretbar, weil …'] }
 ];
-const phraseSets = () => fachKey() === 'gp' ? [...PHRASE_SETS_GP, ...PHRASE_SETS.filter(p => p.head === 'Argumentieren' || p.head === 'Vergleichen')]
+const PHRASE_SETS_EN = [
+  { head: 'Introducing a text', lines: ['The text … by … (published in …) deals with …', 'The author focuses on …', 'In the excerpt, the reader learns that …'] },
+  { head: 'Describing and analysing', lines: ['The text is structured into … parts.', 'The author uses … in order to …', 'This shows / suggests that …', 'The use of … emphasises …'] },
+  { head: 'Comparing', lines: ['Both … and … ', 'In contrast to …, …', 'Whereas …, …', 'Similarly, …'] },
+  { head: 'Giving your opinion', lines: ['In my opinion, …', 'I am convinced that …, because …', 'On the one hand …, on the other hand …', 'All in all, …'] },
+  { head: 'Linking ideas', lines: ['First of all, …', 'Furthermore, …', 'However, …', 'As a result, …', 'To conclude, …'] }
+];
+const PHRASE_SETS_ES = [
+  { head: 'Presentar un texto', lines: ['El texto … de … (publicado en …) trata de …', 'El autor / la autora se centra en …', 'En el fragmento se describe …'] },
+  { head: 'Describir y analizar', lines: ['El texto se divide en … partes.', 'El autor utiliza … para …', 'Esto muestra / sugiere que …', 'El uso de … subraya …'] },
+  { head: 'Comparar', lines: ['Tanto … como …', 'A diferencia de …, …', 'Mientras que …, …', 'De la misma manera, …'] },
+  { head: 'Dar tu opinión', lines: ['En mi opinión, …', 'Estoy convencido/-a de que …, porque …', 'Por un lado …, por otro lado …', 'En resumen, …'] },
+  { head: 'Conectar ideas', lines: ['En primer lugar, …', 'Además, …', 'Sin embargo, …', 'Por eso, …', 'Para concluir, …'] }
+];
+const phraseSets = () => fachKey() === 'en' ? PHRASE_SETS_EN : fachKey() === 'es' ? PHRASE_SETS_ES : fachKey() === 'gp' ? [...PHRASE_SETS_GP, ...PHRASE_SETS.filter(p => p.head === 'Argumentieren' || p.head === 'Vergleichen')]
   : fachKey() === 'bio' ? [...PHRASE_SETS_BIO, ...PHRASE_SETS.filter(p => p.head === 'Vergleichen')] : PHRASE_SETS;
 const PHRASE_SETS = [
   { head: 'Einleitung', lines: ['In dem Text „…“ von … (…) geht es um …', 'Der Text „…“ wurde … veröffentlicht und thematisiert …', 'Im Mittelpunkt steht …', 'Die Kernaussage lautet, dass …'] },
@@ -7804,7 +7858,7 @@ function bodyFor(b, num) {
     case 'material': { const poem = b.form === 'gedicht'; const bm = moreOn('b:' + b.id);
       const mSum = [fachKey() === 'gp' && b.mk ? ({ q: 'Quelle', d: 'Darstellung' })[b.mk] : '', matFmt(b).cols === 2 ? 'zwei Spalten' : ''].filter(Boolean).join(' · ');
       const moreTop = `${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
-      <div class="row" style="gap:8px 18px">${fachKey() === 'deutsch' || poem ? `<div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>` : ''}
+      <div class="row" style="gap:8px 18px">${['deutsch', 'en', 'es'].includes(fachKey()) || poem ? `<div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>` : ''}
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>`;
       return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
@@ -7981,6 +8035,7 @@ function renderEditor(focusSel) {
     ed.innerHTML = areaBarHTML() + body;
   }
   ed.scrollTop = st;
+  { const L = fachLang(); if (L !== 'de') ed.querySelectorAll('.rtx, textarea, input[type="text"]').forEach(x => { x.lang = L; }); }
   if (state.dz) { if (state.dz.k === 'block' && !state.sheet.blocks.some(x => x.id === state.dz.bid) || state.out !== 'blatt') state.dz = null; dzRender(); }
   ed.style.setProperty('--ed-mark', markColor(state.sheet.meta));
   if (focus) { const f = ed.querySelector(focus); if (f && f.classList.contains('rtx')) { f.focus({ preventScroll: true }); rtCaretEnd(f); } else if (f) { f.focus({ preventScroll: true }); if (f.setSelectionRange && typeof f.value === 'string' && f.type !== 'number') { const l = f.value.length; try { f.setSelectionRange(l, l); } catch {} } } }
@@ -8563,7 +8618,7 @@ function setKlColor() {
 }
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.sheet) setKlColor(); }); } catch {}
 const LS_FACHKL = 'abw.fachkl';
-const FACH_DOT = { deutsch: '#2741B5', gp: '#7A4E1D', bio: '#2E6B3A' };
+const FACH_DOT = { deutsch: '#2741B5', gp: '#7A4E1D', bio: '#2E6B3A', en: '#9B2335', es: '#B4530C' };
 function fachPopHTML() {
   const cur = fachKey(state.klasse);
   const row = ([k, f]) => { const n = KLASSEN.filter(x => x.fach === k).length; return `<button type="button" class="fp-i" data-fach="${k}" aria-pressed="${k === cur}"><i style="background:${FACH_DOT[k]}"></i><b>${f.label}</b><small>${n ? n + (n === 1 ? ' Klasse' : ' Klassen') : 'Klasse anlegen'}</small></button>`; };
@@ -8858,7 +8913,7 @@ function applyKlassen() {
 function maybeSetup(afterLogin) { if (!state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
 function openKlassen(setup, addFach) {
   const rows = (setup ? [] : KLASSEN).map(k => ({ ...k }));
-  if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol' })[addFach], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
+  if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
   if (setup) rows.push(normKlasse({ id: 'k1', label: '', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0));
   if (addFach) rows[rows.length - 1].label = '';
   state.dlg = { mode: 'klassen', setup: !!setup, rows, school: setup ? '' : null, wantFach: addFach || null };
@@ -9651,7 +9706,7 @@ async function onDlgClick(e) {
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
   if (state.dlg.mode === 'klassen') {
     const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
-    if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
+    if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie', 'Englisch', 'Spanisch'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
     if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach }, n)); d.rows[n].label = ''; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
     if (act === 'kl-del') { d.rows.splice(i, 1); renderDlg(); return; }
     if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
@@ -9909,11 +9964,14 @@ function ocrProg(msg, p) {
   const d = state.dlg; if (!d || d.mode !== 'ocr') return; d.msg = msg; if (p != null) d.p = p;
   const m = $('#ocr-msg'), b = $('#ocr-bar'); if (m) m.textContent = msg; if (b) b.style.width = Math.round((d.p || 0) * 100) + '%';
 }
+let ocrLang = '';
 async function ocrWorker() {
-  if (ocrW) return ocrW;
+  const want = ({ en: 'eng', es: 'spa' })[fachLang()] || 'deu';
+  if (ocrW && ocrLang !== want) { try { await ocrW.terminate(); } catch {} ocrW = null; }
+  if (ocrW) return ocrW; ocrLang = want;
   await loadScript(OCR_LIBS.tess);
   if (!window.Tesseract || !window.Tesseract.createWorker) throw new Error('Tesseract fehlt');
-  ocrW = await window.Tesseract.createWorker('deu', 1, { logger: m => { if (m && m.status) ocrProg(OCR_ST[m.status] || 'Texterkennung …', m.progress); } });
+  ocrW = await window.Tesseract.createWorker(({ en: 'eng', es: 'spa' })[fachLang()] || 'deu', 1, { logger: m => { if (m && m.status) ocrProg(OCR_ST[m.status] || 'Texterkennung …', m.progress); } });
   return ocrW;
 }
 function ocrStop() { const w = ocrW; ocrW = null; if (w) { try { w.terminate(); } catch {} } }
