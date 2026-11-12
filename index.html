@@ -6848,7 +6848,7 @@ function setupPWA() {
   add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'apple-mobile-web-app-title', content: 'AB-Werkstatt' });
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(err => console.warn('Offline-Speicher nicht verfügbar', err)));
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(r => { if (r.active) r.active.postMessage({ warm: [...Object.values(LIBS), 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'] }); }).catch(err => console.warn('Offline-Speicher nicht verfügbar', err)));
 }
 const isNarrow = () => window.matchMedia('(max-width: 899px)').matches;
 const canPrint = location.protocol === 'file:' || (!isFramed && !window.claude);
@@ -8525,6 +8525,64 @@ function supaB(sb, user) {
   };
 }
 
+/* ---------- Offline: Kopie der eigenen Stunden im Browser (IndexedDB) ---------- */
+// Nach jedem erfolgreichen Laden der Liste werden alle eigenen Stunden im Hintergrund mitgeschrieben.
+// Ohne Verbindung zeigen „Meine Stunden“ und das Öffnen diesen letzten Stand; Änderungen gehen wie bisher
+// in die Warteschlange und werden nachgetragen, sobald die Ablage wieder erreichbar ist.
+const OFF = (() => {
+  let dbp = null;
+  const open = () => dbp || (dbp = new Promise((res, rej) => { try { const r = indexedDB.open('abw-offline', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }));
+  const run = async (mode, fn) => { const db = await open(); return new Promise((res, rej) => { const t = db.transaction('kv', mode); const q = fn(t.objectStore('kv')); t.oncomplete = () => res(q ? q.result : undefined); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error); }); };
+  return { get: k => run('readonly', st => st.get(k)).catch(() => null), set: (k, v) => run('readwrite', st => st.put(v, k)).catch(() => null), del: k => run('readwrite', st => st.delete(k)).catch(() => null) };
+})();
+const LS_OFFUSER = 'abw.offuser';
+let offWarmRun = 0;
+async function offWarm(b, L) {
+  const run = ++offWarmRun; await wait(2500);
+  const st = (await OFF.get('stamps:' + b.key)) || {}; let n = 0;
+  for (const e of L) {
+    if (run !== offWarmRun || !navigator.onLine) return;
+    if (st[e.id] && st[e.id] >= (e.updatedAt || 0)) continue;
+    try { const sh = await b.load(e.id); if (sh) { await OFF.set('sh:' + b.key + ':' + e.id, sh); st[e.id] = e.updatedAt || Date.now(); if (++n % 5 === 0) await OFF.set('stamps:' + b.key, st); } } catch {}
+    await wait(120);
+  }
+  const ids = new Set(L.map(e => e.id)); Object.keys(st).forEach(id => { if (!ids.has(id)) { delete st[id]; OFF.del('sh:' + b.key + ':' + id); } });
+  await OFF.set('stamps:' + b.key, st);
+}
+function offMergePend(b, L) {
+  const P = lsGet(pendKey(b)) || {}; const out = L.slice();
+  Object.values(P).forEach(sh => { if (!sh || !sh.meta) return; const e = { ...entryOf(sh), kraw: sh.klasse, pend: true }; const i = out.findIndex(x => x.id === sh.id); if (i >= 0) out[i] = e; else out.unshift(e); });
+  return out;
+}
+function withOffline(b) {
+  if (!b || b.kind === 'local' || b.offWrapped) return b;
+  const K = b.key; const W = Object.create(b); W.offWrapped = true; W.base = b;
+  const hit = at => { state.offline = { at: at || (state.offline && state.offline.at) || 0 }; };
+  W.list = async () => {
+    try { const L = await b.list(); state.offline = null; OFF.set('list:' + K, { at: Date.now(), list: L }); offWarm(b, L); return L; }
+    catch (e) { const c = await OFF.get('list:' + K); if (!c || !Array.isArray(c.list)) throw e; hit(c.at); return offMergePend(W, c.list); }
+  };
+  W.load = async id => {
+    try { const sh = await b.load(id); if (sh) OFF.set('sh:' + K + ':' + id, sh); return sh; }
+    catch (e) { const p = (lsGet(pendKey(W)) || {})[id]; if (p) { hit(); return clone(p); } const c = await OFF.get('sh:' + K + ':' + id); if (c) { hit(); return c; } throw e; }
+  };
+  W.save = async sh => { await b.save(sh); OFF.set('sh:' + K + ':' + sh.id, sh); };
+  W.loadPrefs = async () => { try { const p = await b.loadPrefs(); OFF.set('prefs:' + K, p); return p; } catch (e) { const c = await OFF.get('prefs:' + K); if (c) return c; throw e; } };
+  return W;
+}
+// Ohne Netz und ohne gültige Anmeldung: das zuletzt angemeldete Konto aus der Kopie
+function offlineOnlyB(u) {
+  const no = async () => { throw { code: 'offline' }; };
+  return withOffline({ kind: 'supabase', key: 'sb:' + u.id, offOnly: true, list: no, load: no, save: no, remove: no, stamp: no, loadPrefs: no, savePrefs: no, shareList: no, shareGet: no, sharePut: no, shareDel: no });
+}
+const offDate = at => at ? new Date(at).toLocaleString('de-DE', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' Uhr' : '';
+window.addEventListener('online', () => {
+  if (!state.offline || !backend) return;
+  toast('Wieder online. Änderungen werden nachgetragen.');
+  if (backend.offOnly) { initBackend(); return; }
+  useBackend(backend);
+});
+
 /* ---------- Status ---------- */
 const STATUS = {
   pending: 'Wird geladen …', saving: 'Speichert …',
@@ -8533,7 +8591,8 @@ const STATUS = {
   toolarge: 'Zu groß zum Speichern · Bilder verkleinern', quota: 'Browser-Speicher voll · Bilder verkleinern oder Blätter löschen'
 };
 function setStatus(s) {
-  const txt = s === 'example' ? (state.sheet && state.sheet.sample ? 'Beispielblatt' : 'Neue Stunde') + ' · wird beim Bearbeiten gespeichert' : (STATUS[s] || '');
+  if (state.offline && (s === 'supabase' || s === 'claude')) s = 'offcache';
+  const txt = s === 'offcache' ? `Offline · letzter Stand ${offDate(state.offline.at) ? 'vom ' + offDate(state.offline.at) : 'aus diesem Browser'} · Änderungen werden nachgetragen` : s === 'example' ? (state.sheet && state.sheet.sample ? 'Beispielblatt' : 'Neue Stunde') + ' · wird beim Bearbeiten gespeichert' : (STATUS[s] || '');
   const n = $('#status'); n.dataset.s = s; n.querySelector('span').textContent = txt;
 }
 function idleStatus() { setStatus(state.sheet.example ? 'example' : (backend ? backend.kind : 'pending')); }
@@ -8651,10 +8710,10 @@ const pendKey = b => LS.pending + '.' + b.key;
 function addPending(b, sh) { const p = lsGet(pendKey(b)) || {}; p[sh.id] = sh; lsSet(pendKey(b), p); }
 function dropPending(b, id) { const p = lsGet(pendKey(b)); if (p && p[id]) { delete p[id]; lsSet(pendKey(b), p); } }
 async function flushPending() {
-  const b = backend; if (!b || b.kind === 'local') return;
+  const b = backend; if (!b || b.kind === 'local' || b.offOnly || state.offline) return;
   const p = lsGet(pendKey(b)) || {}; const ids = Object.keys(p); if (!ids.length) return;
   for (const id of ids) {
-    const sh = p[id]; const srv = state.lib.find(d => d.id === id);
+    const sh = p[id]; const srv = state.lib.find(d => d.id === id && !d.pend);
     if (srv && srv.updatedAt >= (sh.updatedAt || 0)) { delete p[id]; continue; }
     try { await b.save(sh); delete p[id]; upsertLib(entryOf(sh)); } catch { break; }
   }
@@ -8770,7 +8829,8 @@ async function deleteSheet(id) {
 /* ---------- Speicherort wählen ---------- */
 async function useBackend(b) {
   const t = ++backendToken;
-  backend = b; setStatus('pending'); state.shared = null; state.sharedAt = 0;
+  b = withOffline(b); backend = b; state.offline = null;
+  if (b.kind === 'supabase' && !b.offOnly && store.user) lsSet(LS_OFFUSER, { id: store.user.id }); setStatus('pending'); state.shared = null; state.sharedAt = 0;
   let listed = true;
   try { await refreshLib(); } catch (err) { console.error(err); listed = false; }
   if (t !== backendToken) return;
@@ -8781,7 +8841,8 @@ async function useBackend(b) {
     return;
   }
   await loadPrefs(b); applyKlassen(); if (state.libOpen) renderLib();
-  await flushPending();
+  if (state.offline) toast(`Offline: Sie arbeiten mit dem Stand ${offDate(state.offline.at) ? 'vom ' + offDate(state.offline.at) : 'aus diesem Browser'}. Änderungen werden nachgetragen, sobald wieder Verbindung besteht.`);
+  if (!state.offline) await flushPending();
   if (t !== backendToken) return;
   if (state.touched && !state.sheet.example && KLASSEN.some(k => k.id === state.sheet.klasse)) await saveNow();
   else await openForKlasse(state.klasse);
@@ -8804,12 +8865,15 @@ async function initBackend() {
       const { data } = await sb.auth.getSession();
       store.user = data && data.session ? data.session.user : null;
       sb.auth.onAuthStateChange((ev, session) => setTimeout(() => onAuth(ev, session), 0));
+      const ou = lsGet(LS_OFFUSER);
+      if (!store.user && !navigator.onLine && ou && ou.id) { await useBackend(offlineOnlyB(ou)); return; }
       await useBackend(store.user ? supaB(sb, store.user) : localB);
       if (store.user) offerMigration();
       else if (!lsGet(LS.skip)) openDlg('login');
       return;
     } catch (err) {
       console.error(err); store.sb = null; store.user = null;
+      const ou = lsGet(LS_OFFUSER); if (ou && ou.id) { await useBackend(offlineOnlyB(ou)); return; }
       toast('Die Online-Ablage ist gerade nicht erreichbar. Blätter werden in diesem Browser gespeichert.');
     }
   }
@@ -9263,7 +9327,7 @@ async function onLibClick(e) {
     case 'lib-del-no': state.confirmDel = null; renderLib(); break;
     case 'lib-del-yes': deleteSheet(id); break;
     case 'login': closeLib(); openDlg('login'); break;
-    case 'logout': closeLib(); if (savePending) saveNow(); await saveChain; try { await store.sb.auth.signOut({ scope: 'local' }); } catch {} break;
+    case 'logout': closeLib(); if (savePending) saveNow(); await saveChain; try { await store.sb.auth.signOut({ scope: 'local' }); } catch {} try { localStorage.removeItem(LS_OFFUSER); indexedDB.deleteDatabase('abw-offline'); } catch {} break;
     case 'lib-migrate': migrateLocal(); break;
     case 'backup': exportBackup(); break;
     case 'restore': $('#import-file').click(); break;
