@@ -1413,6 +1413,18 @@ body{transition:background-color .3s,border-color .25s}
 .rlp-dn{font-size:13px;color:var(--muted)}
 .rlpv-b{flex:1 1 auto;min-height:0;border-top:1px solid var(--line);background:#525659}
 .rlp-pdf{display:block;width:100%;height:100%;border:0;background:#525659}
+.rlpv-s{display:flex;align-items:center;gap:6px;padding:0 16px 10px}.rlpv-s input{flex:1 1 auto;min-width:0;font-size:15px;padding:9px 12px}
+.rlp-hn{font-size:12.5px;color:var(--muted);white-space:nowrap;min-width:60px;text-align:right}
+.rlp-zm{display:inline-flex;margin-left:6px;padding-left:6px;border-left:1px solid var(--line)}
+.rlp-view{overflow:auto;-webkit-overflow-scrolling:touch;padding:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.rlp-pg{position:relative;flex:0 0 auto;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.rlp-pg canvas{display:block}
+.rlp-pgn{position:absolute;right:6px;bottom:4px;font-size:11px;color:#888}
+.rlp-mk{position:absolute;background:rgba(253,224,71,.45);border-radius:2px;pointer-events:none;mix-blend-mode:multiply}
+.rlp-mk.cur{background:rgba(249,115,22,.5);outline:2px solid #EA580C}
+.rlp-load{color:#E5E7EB;font-size:14px;margin:40px auto}
+.rlp-nomob{display:flex;align-items:center;justify-content:center;padding:24px;background:var(--panel,#fff)!important;text-align:center}
+.rlp-nomob>div{max-width:440px;display:flex;flex-direction:column;gap:12px;align-items:center}.rlp-nomob p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
 .rlp-acts{margin-left:auto}
 .rlpv-f{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;padding:9px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
 .rlpv-f a,.rlpv-f .link{color:var(--acc,#2B45B8);font-weight:600;text-decoration:none;cursor:pointer}.rlpv-f a:hover{text-decoration:underline}
@@ -8634,11 +8646,16 @@ async function rlpImport(file) {
   toast('Gespeichert: Der Rahmenlehrplan öffnet sich jetzt aus diesem Browser, auch ohne Internet.');
 }
 function rlpRender() {
+  rlpRender0(); if (rlpv.open && rlpv.rec && rlpv.rec.blob) rlpViewer().then(() => { if (rpv.q) { const qi = document.getElementById('rlpv-q'); if (qi) qi.value = rpv.q; rlpSearch(rpv.q); } });
+}
+function rlpRender0() {
   let box = document.getElementById('rlpv');
   if (!rlpv.open) { if (box) box.remove(); return; }
   const { kl, st, L, d } = rlpSel(); const F = FAECHER[fachKey(kl.id)] || FAECHER.deutsch; const R = rlpv.rec;
   if (!box) { box = document.createElement('div'); box.id = 'rlpv'; box.className = 'rlpv'; box.innerHTML = '<div class="rlpv-scrim" data-rlp="x"></div><div class="rlpv-w" role="dialog" aria-modal="true" aria-labelledby="rlpv-t"></div>'; document.body.appendChild(box);
     box.addEventListener('click', rlpClick); box.addEventListener('change', rlpChange);
+    box.addEventListener('input', e => { if (e.target.id === 'rlpv-q') { clearTimeout(rpv.tm); rpv.tm = setTimeout(() => rlpSearch(e.target.value), 250); } });
+    box.addEventListener('keydown', e => { if (e.target.id === 'rlpv-q' && e.key === 'Enter') { e.preventDefault(); rlpJump(rpv.hi + (e.shiftKey ? -1 : 1)); } });
     box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('over'); });
     box.addEventListener('dragleave', e => { if (e.target === box || !box.contains(e.relatedTarget)) box.classList.remove('over'); });
     box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('over'); if (e.dataTransfer.files[0]) rlpImport(e.dataTransfer.files[0]); }); }
@@ -8647,10 +8664,68 @@ function rlpRender() {
     <div class="rlpv-tools"><div class="seg sm" role="group" aria-label="Stufe"><button type="button" data-rlp="st" data-v="s1" aria-pressed="${st === 's1'}">Klasse 1–10</button><button type="button" data-rlp="st" data-v="go" aria-pressed="${st === 'go'}">Oberstufe</button></div>
       ${L.length > 1 ? `<select data-rlp-doc aria-label="Plan">${L.map(x => `<option value="${x[0]}"${x[0] === d[0] ? ' selected' : ''}>${esc(x[1])}</option>`).join('')}</select>` : `<span class="rlp-dn">${esc(d[1])}</span>`}
       <span class="rlp-acts"><a class="btn sm" href="${esc(rlpv.url || d[2])}" target="_blank" rel="noopener">In neuem Tab ↗</a></span></div>
-    <div class="rlpv-b"><iframe class="rlp-pdf" src="${esc(src)}" title="${esc(d[1])}"></iframe></div>
+    ${R ? `<div class="rlpv-s"><input id="rlpv-q" class="inp" type="search" placeholder="Im Rahmenlehrplan suchen" aria-label="Im Rahmenlehrplan suchen" autocomplete="off"><span class="rlp-hn" id="rlp-hn"></span><button type="button" class="ib" data-rlp="hp" title="Voriger Treffer" aria-label="Voriger Treffer">‹</button><button type="button" class="ib" data-rlp="hx" title="Nächster Treffer" aria-label="Nächster Treffer">›</button><span class="rlp-zm"><button type="button" class="ib" data-rlp="zo" title="Kleiner" aria-label="Kleiner">−</button><button type="button" class="ib" data-rlp="zi" title="Größer" aria-label="Größer">+</button></span></div>
+      <div class="rlpv-b rlp-view" id="rlp-view"><div class="rlp-load">PDF wird geladen …</div></div>`
+      : RLP_MOBILE() ? `<div class="rlpv-b rlp-nomob"><div><b>Auf diesem Gerät kann der Browser die PDF nicht im Fenster zeigen.</b><p>Öffnen Sie sie mit „In neuem Tab“ oder laden Sie sie einmal herunter und speichern Sie sie hier mit „PDF hier speichern“. Dann zeigt das Fenster sie mit Suche, auch offline.</p><a class="btn" href="${esc(d[2])}" target="_blank" rel="noopener">PDF öffnen ↗</a></div></div>`
+      : `<div class="rlpv-b"><iframe class="rlp-pdf" src="${esc(src)}" title="${esc(d[1])}"></iframe></div>`}
     <div class="rlpv-f">${R ? `<span>Gespeicherte Fassung vom ${new Date(R.at).toLocaleDateString('de-DE')} (${esc(R.name)}) · geht auch offline</span><label class="link">ersetzen<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label><button type="button" class="link" data-rlp="del">entfernen</button>`
       : `<span>Amtliche Fassung von berlin.de. Suchen mit Strg+F im Dokument. Leer? Dann „In neuem Tab“ oder die PDF einmal hier ablegen:</span><label class="link">PDF hier speichern (auch offline)<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label>`}
       <a href="${esc(RLP_TB[st][1])}" target="_blank" rel="noopener">${esc(RLP_TB[st][0])} ↗</a><a href="${esc(RLP_OVR[st])}" target="_blank" rel="noopener">Alle Pläne ↗</a>${rlpv.err ? `<b class="rlp-err">${esc(rlpv.err)}</b>` : ''}</div>`;
+}
+const RLP_MOBILE = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+const rlpNorm = x => { let o = ''; for (let i = 0; i < x.length; i++) { const c = x[i]; const d = c.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); o += d.length === 1 ? d : c.toLowerCase().length === 1 ? c.toLowerCase() : c; } return o; };
+const rpv = { doc: null, key: '', zoom: 1, pages: [], text: null, hits: [], hi: -1, io: null };
+async function rlpViewer() {
+  const host = document.getElementById('rlp-view'); if (!host || !rlpv.rec || !rlpv.rec.blob) return;
+  const key = rlpv.doc + ':' + rlpv.rec.at;
+  try {
+    if (rpv.key !== key) { rpv.doc = await ocrPdfDoc(rlpv.rec.blob); rpv.key = key; rpv.text = null; rpv.hits = []; rpv.hi = -1; }
+    const doc = rpv.doc; const W = Math.max(240, host.clientWidth - 24);
+    host.innerHTML = ''; rpv.pages = []; if (rpv.io) rpv.io.disconnect();
+    const p1 = await doc.getPage(1); const v1 = p1.getViewport({ scale: 1 });
+    for (let i = 1; i <= doc.numPages; i++) {
+      const el = document.createElement('div'); el.className = 'rlp-pg'; el.dataset.n = i;
+      const sc = (W / v1.width) * rpv.zoom; el.style.width = Math.round(v1.width * sc) + 'px'; el.style.height = Math.round(v1.height * sc) + 'px';
+      el.innerHTML = `<span class="rlp-pgn">${i}</span>`; host.appendChild(el); rpv.pages.push({ el, sc, done: false });
+    }
+    rpv.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) rlpDraw(+e.target.dataset.n); }), { root: host, rootMargin: '600px 0px' });
+    rpv.pages.forEach(x => rpv.io.observe(x.el));
+  } catch (e) { console.error(e); host.innerHTML = '<div class="rlp-load">Die PDF ließ sich nicht öffnen. Bitte mit „ersetzen“ neu speichern.</div>'; }
+}
+async function rlpDraw(n) {
+  const x = rpv.pages[n - 1]; if (!x || x.done) return; x.done = true;
+  try {
+    const pg = await rpv.doc.getPage(n); const vp = pg.getViewport({ scale: x.sc }); const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const cv = document.createElement('canvas'); cv.width = Math.floor(vp.width * dpr); cv.height = Math.floor(vp.height * dpr); cv.style.width = vp.width + 'px'; cv.style.height = vp.height + 'px';
+    await pg.render({ canvasContext: cv.getContext('2d'), viewport: vp, transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null }).promise;
+    x.el.prepend(cv); x.vp = vp; rlpMarks(n);
+  } catch (e) { console.error(e); x.done = false; }
+}
+async function rlpText() {
+  if (rpv.text) return rpv.text; const T = [];
+  for (let i = 1; i <= rpv.doc.numPages; i++) { const tc = await (await rpv.doc.getPage(i)).getTextContent(); T.push(tc.items.filter(it => it.str).map(it => ({ s: it.str, n: rlpNorm(it.str), t: it.transform, w: it.width, h: it.height }))); }
+  return (rpv.text = T);
+}
+// Treffer je Textstück; Wörter über mehrere Stücke werden über den Seitentext gefunden und am ersten Wort markiert
+async function rlpSearch(q) {
+  const w = rlpNorm(q).trim(); rpv.hits = []; rpv.hi = -1; rpv.q = w;
+  if (w.length > 1) { const T = await rlpText(); const first = w.split(/\s+/)[0];
+    T.forEach((items, pi) => { const page = items.map(it => it.n).join(' ').replace(/\s+/g, ' '); if (!page.includes(w)) return; items.forEach((it, k) => { if (it.n.includes(first)) rpv.hits.push({ p: pi + 1, k }); }); }); }
+  rpv.pages.forEach((x, i) => rlpMarks(i + 1));
+  const hn = document.getElementById('rlp-hn'); if (hn) hn.textContent = w.length > 1 ? (rpv.hits.length ? `${rpv.hits.length} Treffer` : 'kein Treffer') : '';
+  if (rpv.hits.length) rlpJump(0);
+}
+function rlpMarks(n) {
+  const x = rpv.pages[n - 1]; if (!x || !x.vp) return; x.el.querySelectorAll('.rlp-mk').forEach(m => m.remove());
+  if (!rpv.text) return; const items = rpv.text[n - 1] || [];
+  rpv.hits.forEach((h, i) => { if (h.p !== n) return; const it = items[h.k]; const r = x.vp.convertToViewportRectangle([it.t[4], it.t[5], it.t[4] + it.w, it.t[5] + (it.h || Math.abs(it.t[3]))]);
+    const m = document.createElement('i'); m.className = 'rlp-mk' + (i === rpv.hi ? ' cur' : ''); const L = Math.min(r[0], r[2]), Tp = Math.min(r[1], r[3]);
+    Object.assign(m.style, { left: L + 'px', top: (Tp - 1) + 'px', width: Math.abs(r[2] - r[0]) + 'px', height: (Math.abs(r[3] - r[1]) + 3) + 'px' }); x.el.appendChild(m); });
+}
+function rlpJump(i) {
+  if (!rpv.hits.length) return; rpv.hi = (i + rpv.hits.length) % rpv.hits.length; const h = rpv.hits[rpv.hi]; const x = rpv.pages[h.p - 1]; const host = document.getElementById('rlp-view'); if (!x || !host) return;
+  rlpDraw(h.p).then(() => { rpv.pages.forEach((_, j) => rlpMarks(j + 1)); const m = x.el.querySelector('.rlp-mk.cur'); host.scrollTop = x.el.offsetTop - host.offsetTop + (m ? m.offsetTop - host.clientHeight / 3 : 0); });
+  const hn = document.getElementById('rlp-hn'); if (hn) hn.textContent = `${rpv.hi + 1} von ${rpv.hits.length}`;
 }
 async function rlpOpen() { rlpv.open = true; rlpv.err = ''; await rlpLoad(); rlpRender(); }
 function rlpClose() { rlpv.open = false; rlpRender(); if (rlpv.url) { URL.revokeObjectURL(rlpv.url); rlpv.url = ''; } }
@@ -8658,7 +8733,10 @@ async function rlpClick(e) {
   const a = e.target.closest('[data-rlp]'); if (!a) return; const k = a.dataset.rlp;
   if (k === 'x') return rlpClose();
   if (k === 'st') { rlpSave({ st: a.dataset.v, d: '' }); await rlpLoad(); return rlpRender(); }
-  if (k === 'del') { await OFF.del('rlp:' + rlpv.doc); await rlpLoad(); return rlpRender(); }
+  if (k === 'del') { await OFF.del('rlp:' + rlpv.doc); rpv.key = ''; await rlpLoad(); return rlpRender(); }
+  if (k === 'hx') return rlpJump(rpv.hi + 1);
+  if (k === 'hp') return rlpJump(rpv.hi - 1);
+  if (k === 'zi' || k === 'zo') { const host = document.getElementById('rlp-view'); const f = host ? host.scrollTop / Math.max(1, host.scrollHeight) : 0; rpv.zoom = Math.max(0.5, Math.min(3, rpv.zoom * (k === 'zi' ? 1.25 : 0.8))); await rlpViewer(); rpv.pages.forEach((_, j) => rlpMarks(j + 1)); if (host) host.scrollTop = f * host.scrollHeight; return; }
 }
 async function rlpChange(e) {
   if (e.target.matches('[data-rlp-doc]')) { rlpSave({ d: e.target.value }); await rlpLoad(); return rlpRender(); }
