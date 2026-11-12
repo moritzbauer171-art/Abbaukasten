@@ -563,6 +563,10 @@ body.basis .x-pro:not(.used){display:none!important}
 .mw-word .rtx.mw-wp{font-family:var(--mwff,inherit)!important;font-size:var(--mwfs,15px)!important}
 .mw-word.mw-max .rtx.mw-wp{font-size:calc(var(--mwfs,15px) * 1.13)!important}
 .dzp-b .mw-sel{width:100%;max-width:none;height:36px}
+.mw-word{color-scheme:light}
+.f .mw-word select.mw-sel{width:auto;background:#fff;color:#1C1F27;border:1px solid #D5DAE3;padding:0 6px;font-size:13px;border-radius:6px}
+.f .mw-word select.mw-sel-size{width:84px}
+.dzp-b select.mw-sel{background:var(--field);color:var(--ink);border:1px solid var(--line-strong)}
 .mw-wt button{min-width:32px;height:32px;border:1px solid transparent;border-radius:6px;background:transparent;font-size:15px;color:#1C1F27;cursor:pointer;padding:0 7px;display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .mw-wt button svg{width:18px;height:18px}
 .mw-wt button:hover{background:#E6EAF2}
@@ -3599,6 +3603,7 @@ function settingsHTML() {
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
   else c = `<div class="card set-card"><div class="card-b">
+      <div class="f"><span>Darstellung</span><div class="seg sm" role="group" aria-label="Darstellung">${[['light', 'Hell'], ['dark', 'Dunkel'], ['auto', 'Wie das Gerät']].map(([v, l]) => `<button type="button" data-act="theme-set" data-v="${v}" aria-pressed="${themePref() === v}">${l}</button>`).join('')}</div></div>
       <div class="f"><span>Ansicht</span><div class="set-chks">
         ${true ? '' : `<button type="button" class="link onecard" data-act="start-pref" aria-pressed="${String(lsGet(LS_START)) !== '0'}"><span class="cb" aria-hidden="true"></span>Beim Öffnen einer Stunde die Übersicht zeigen</button>`}
         <button type="button" class="link onecard" data-act="more-all" aria-pressed="${moreAll()}"><span class="cb" aria-hidden="true"></span>In den Karten immer alle Optionen zeigen (sonst unter „Mehr“)</button>
@@ -6906,6 +6911,11 @@ function saveClosed() { try { const id = state.sheet && state.sheet.id; if (!id)
 const state = { libTab: 'mine', shareQuery: '', shared: null, sharedAt: 0, sharedErr: '', shareBusy: null, lvl: 'all', area: 'blatt', areaOut: {}, sheet: null, sel: null, closed: new Set(), fmtOpen: new Set(), taskOpen: new Set(), tbEh: new Set(), out: 'blatt', fassung: 'schueler', grp: 'all', view: 'edit', zoom: 'fit', lib: [], libOpen: false, libQuery: '', confirmDel: null, klasse: 'gk', touched: false, dlg: null, openSnap: null, insAt: null, allOpen: false, wide: false, base: null, conflict: null, prefs: { v: 1, folders: [], place: {}, order: {} }, fNew: false, fEdit: null, fMenu: null, fDel: null, moveOpen: null };
 const store = { dl: null, assets: null, sb: null, user: null };
 let backend = null, backendToken = 0;
+// Darstellung: standardmäßig hell; dunkel oder „wie das Gerät“ nur auf Wunsch (Einstellungen → Allgemein)
+const LS_THEME = 'abw.theme';
+const themePref = () => { try { const v = JSON.parse(localStorage.getItem(LS_THEME) || '"light"'); return v === 'dark' || v === 'auto' ? v : 'light'; } catch { return 'light'; } };
+function themeApply() { const v = themePref(); if (v === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = v; }
+themeApply();
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
 // Installierbar als App (Startbildschirm, Vollbild, offline) nur auf der eigenen Online-Seite, nicht in Claude und nicht in der Windows-App
 function setupPWA() {
@@ -8263,6 +8273,7 @@ function onClick(e) {
     case 'settings-back': setArea(isBasis() ? 'blatt' : state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return;
     case 'set-tab': state.setTab = a.dataset.v; renderEditor(); return;
     case 'umfang': setUmfang(a.dataset.v); return;
+    case 'theme-set': try { localStorage.setItem(LS_THEME, JSON.stringify(a.dataset.v)); } catch {} themeApply(); renderEditor(); renderPreview(); return;
     case 'area-more': state.areaMore = !state.areaMore; renderEditor(); return;
     case 'zw-ins': state.zwAt = +a.dataset.at; renderEditor(); return;
     case 'zw-close': state.zwAt = null; renderEditor(); return;
