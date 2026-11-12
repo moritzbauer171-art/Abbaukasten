@@ -1403,6 +1403,35 @@ body{transition:background-color .3s,border-color .25s}
 .pr-zw-t{font-size:44px;line-height:1.3;color:#3A3F4B;max-width:1200px}
 .pr-zw-c{display:flex;gap:12px}
 .rlp-btn{display:inline-flex;align-items:center;gap:6px}
+.nw-ov{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:16px;animation:nwFade .25s ease both}
+.nw-ov.out{animation:nwFadeOut .22s ease both}
+.nw-scrim{position:absolute;inset:0;background:rgba(12,16,32,.55);backdrop-filter:blur(3px)}
+.nw-card{position:relative;width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel,#fff);color:var(--ink,#1C1F27);border-radius:20px;box-shadow:0 30px 80px rgba(10,15,40,.45);animation:nwPop .45s cubic-bezier(.2,1.3,.4,1) both}
+.nw-art{position:relative;height:170px;background:radial-gradient(120% 140% at 15% 0%,#5B7BFF 0%,var(--acc,#2B45B8) 55%,#16236B 100%);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.nw-art svg{width:min(320px,90%);height:auto}
+.nw-badge{position:absolute;top:14px;left:16px;background:#FDE68A;color:#3B2A00;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.nw-book{transform-origin:160px 80px;animation:nwBook .9s .15s cubic-bezier(.2,1.2,.4,1) both}
+.nw-lens{animation:nwLens 3.2s .6s ease-in-out infinite}
+.nw-dot{animation:nwTw 2.4s ease-in-out infinite}.nw-dot.d2{animation-delay:.6s}.nw-dot.d3{animation-delay:1.2s}
+.nw-in{padding:20px 24px 22px}
+.nw-in h2{margin:0 0 8px;font-size:22px;line-height:1.2;letter-spacing:-.01em}
+.nw-lead{margin:0 0 14px;font-size:15px;line-height:1.5;color:var(--muted)}
+.nw-k{display:inline-flex;align-items:center;padding:1px 8px;border:1.5px solid currentColor;border-radius:7px;font-size:13px;color:var(--acc,#2B45B8)}
+.nw-list{list-style:none;margin:0 0 18px;padding:0;display:flex;flex-direction:column;gap:11px}
+.nw-list li{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.45;opacity:0;animation:nwUp .4s ease both}
+.nw-list li:nth-child(1){animation-delay:.35s}.nw-list li:nth-child(2){animation-delay:.5s}.nw-list li:nth-child(3){animation-delay:.65s}
+.nw-list i{flex:0 0 26px;height:26px;border-radius:50%;background:var(--acc-tint,#E8EDFB);color:var(--acc,#2B45B8);font-style:normal;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center}
+.nw-acts{display:flex;gap:10px;flex-wrap:wrap}
+.nw-acts .btn.primary{padding-left:18px;padding-right:18px}
+.btn.nw-pulse{animation:nwPulse 1.4s ease-out 3}
+@keyframes nwFade{from{opacity:0}to{opacity:1}}@keyframes nwFadeOut{to{opacity:0}}
+@keyframes nwPop{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes nwBook{from{opacity:0;transform:scale(.6) rotate(-6deg)}to{opacity:1;transform:none}}
+@keyframes nwLens{0%,100%{transform:translate(0,0)}50%{transform:translate(-46px,-16px)}}
+@keyframes nwTw{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes nwUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes nwPulse{0%{box-shadow:0 0 0 0 rgba(43,69,184,.55)}100%{box-shadow:0 0 0 14px rgba(43,69,184,0)}}
+@media (prefers-reduced-motion:reduce){.nw-ov,.nw-card,.nw-book,.nw-lens,.nw-dot,.nw-list li,.btn.nw-pulse{animation:none!important;opacity:1}}
 .rlpv{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px}
 .rlpv-scrim{position:absolute;inset:0;background:rgba(15,20,35,.45)}
 .rlpv-w{position:relative;width:min(1100px,100%);height:min(94vh,1100px);display:flex;flex-direction:column;background:var(--panel,#fff);color:var(--ink,#1C1F27);border-radius:14px;box-shadow:0 24px 60px rgba(10,15,30,.35);overflow:hidden}
@@ -8727,6 +8756,38 @@ function rlpJump(i) {
   rlpDraw(h.p).then(() => { rpv.pages.forEach((_, j) => rlpMarks(j + 1)); const m = x.el.querySelector('.rlp-mk.cur'); host.scrollTop = x.el.offsetTop - host.offsetTop + (m ? m.offsetTop - host.clientHeight / 3 : 0); });
   const hn = document.getElementById('rlp-hn'); if (hn) hn.textContent = `${rpv.hi + 1} von ${rpv.hits.length}`;
 }
+// Einmaliger Hinweis auf Neues: erscheint beim nächsten Laden genau einmal
+const LS_NEWS = 'abw.news', NEWS_ID = 'rlp-2026-11';
+function newsMaybe() {
+  if (DG_VIEW || MAPPE_LOCK || String(lsGet(LS_NEWS) || '') === NEWS_ID) return;
+  if (state.dlg || state.libOpen || document.querySelector('.pr-ov, #rlpv, .nw-ov')) { setTimeout(newsMaybe, 1500); return; }
+  const box = document.createElement('div'); box.className = 'nw-ov'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'nw-t');
+  box.innerHTML = `<div class="nw-scrim" data-nw="x"></div><div class="nw-card">
+    <div class="nw-art" aria-hidden="true"><svg viewBox="0 0 320 150" fill="none">
+      <defs><linearGradient id="nwg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient></defs>
+      <circle class="nw-dot d1" cx="44" cy="34" r="5" fill="#FDE68A"/><circle class="nw-dot d2" cx="276" cy="28" r="4" fill="#fff"/><circle class="nw-dot d3" cx="290" cy="112" r="6" fill="#FDE68A" opacity=".8"/><circle class="nw-dot d1" cx="30" cy="118" r="3" fill="#fff"/>
+      <g class="nw-book"><path d="M70 34c26-12 54-12 90 4v92c-36-16-64-16-90-4z" fill="url(#nwg)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M250 34c-26-12-54-12-90 4v92c36-16 64-16 90-4z" fill="url(#nwg)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M86 56c18-6 36-5 56 3M86 72c18-6 36-5 56 3M86 88c18-6 36-5 56 3M178 59c20-8 38-9 56-3M178 75c20-8 38-9 56-3" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+        <path d="M178 91c20-8 38-9 56-3" stroke="#FDE68A" stroke-width="7" stroke-linecap="round" opacity=".9"/></g>
+      <g class="nw-lens"><circle cx="224" cy="96" r="24" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-width="5"/><path d="M241 113l20 20" stroke="#fff" stroke-width="8" stroke-linecap="round"/></g>
+    </svg><span class="nw-badge">Neu</span></div>
+    <div class="nw-in"><h2 id="nw-t">Der Rahmenlehrplan auf Knopfdruck</h2>
+      <p class="nw-lead">Oben in der Leiste gibt es jetzt <b class="nw-k">RLP</b>. Ein Klick öffnet den Berliner Rahmenlehrplan für das Fach der Klasse, in der Sie gerade sind.</p>
+      <ul class="nw-list">
+        <li><i>1</i><span><b>Passend zur Klasse.</b> Deutsch, Geschichte, Politik, Biologie, Englisch, Spanisch. Oben wechseln Sie zwischen Klasse 1–10 und Oberstufe.</span></li>
+        <li><i>2</i><span><b>Einmal speichern, überall lesen.</b> Amtliche PDF herunterladen und ins Fenster ziehen: Dann öffnet sie sich hier sofort, auch auf Handy und Tablet und ohne Internet.</span></li>
+        <li><i>3</i><span><b>Suchen statt blättern.</b> Begriff eintippen, Fundstellen leuchten gelb, mit ‹ › springen Sie von Treffer zu Treffer. Mit − + zoomen.</span></li>
+      </ul>
+      <div class="nw-acts"><button type="button" class="btn primary" data-nw="go">Jetzt ausprobieren</button><button type="button" class="btn" data-nw="x">Später</button></div></div></div>`;
+  document.body.appendChild(box);
+  const close = go => { lsSet(LS_NEWS, NEWS_ID); box.classList.add('out'); setTimeout(() => box.remove(), 220); document.removeEventListener('keydown', onK, true);
+    const b = $('#btn-rlp'); if (b) { b.classList.add('nw-pulse'); setTimeout(() => b.classList.remove('nw-pulse'), 4200); }
+    if (go) setTimeout(rlpOpen, 230); };
+  const onK = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(false); } };
+  document.addEventListener('keydown', onK, true);
+  box.addEventListener('click', e => { const a = e.target.closest('[data-nw]'); if (a) close(a.dataset.nw === 'go'); });
+  setTimeout(() => { const g = box.querySelector('[data-nw="go"]'); if (g) g.focus(); }, 60);
+}
 async function rlpOpen() { rlpv.open = true; rlpv.err = ''; await rlpLoad(); rlpRender(); }
 function rlpClose() { rlpv.open = false; rlpRender(); if (rlpv.url) { URL.revokeObjectURL(rlpv.url); rlpv.url = ''; } }
 async function rlpClick(e) {
@@ -11648,7 +11709,7 @@ function boot() {
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
-  setupPWA();
+  setupPWA(); setTimeout(newsMaybe, 1500);
   if (isNarrow()) setView(state.area === 'start' ? 'edit' : 'preview');
   $('#tip-root').addEventListener('click', e => { const b = e.target.closest('[data-tip]'); if (!b) return; const k = b.dataset.tip; showTip(k === 'close' ? -1 : k === 'prev' ? tipIdx - 1 : tipIdx + 1 < TIPS.length ? tipIdx + 1 : -1); });
   if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg && !lsGet(LS_TIPS)) showTip(0); }, 1800);
