@@ -6450,7 +6450,7 @@ function setOut(k) {
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: k.school,
-    showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar', headGap: 'm', botGap: 'm',
+    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar', headGap: 'm', botGap: 'm',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     levelsOn: false, lvTip: true, groupsOn: false, groups: [{ k: 'A', name: '', add: 'für Gruppe 1 und 3' }, { k: 'B', name: '', add: 'für Gruppe 2 und 4' }], paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
@@ -6871,11 +6871,13 @@ function draftFor(k) { return k === 'gk' ? exampleSheet() : Object.assign(blankS
 // Ältere Blätter (vor den Reitern) gehören zum Grundkurs
 function normalizeSheet(sh) {
   sh.klasse = KL(sh.klasse).id;
-  const schoolOld = !(sh.meta && sh.meta.schoolV); const hadG = !!(sh.meta && Array.isArray(sh.meta.groups) && sh.meta.groups.length >= 2);
+  const schoolOld = !(sh.meta && sh.meta.schoolV); const fmtOld = !(sh.meta && sh.meta.fmtV); const hadG = !!(sh.meta && Array.isArray(sh.meta.groups) && sh.meta.groups.length >= 2);
   sh.meta = { ...defaultMeta('', sh.klasse), anrede: 'sie', ...sh.meta }; grpNorm(sh.meta, hadG);
   if (schoolOld) { if (sh.meta.school === 'Georg-Herwegh-Gymnasium' && KL(sh.klasse).school) sh.meta.school = KL(sh.klasse).school; sh.meta.schoolV = 1; }
   if (!Array.isArray(sh.blocks)) sh.blocks = [];
   sh.blocks.forEach(b => { if (b && b.type === 'material') { migrateGlossary(b); migrateMatNl(b); } });
+  // Materialtexte einmalig auf Blocksatz ohne Einzug zurücksetzen (Standard); danach bleibt jede eigene Wahl erhalten
+  if (fmtOld) [sh.blocks, ...(Array.isArray(sh.abs) ? sh.abs.map(x => (x && Array.isArray(x.blocks) ? x.blocks : [])) : [])].forEach(L => L.forEach(b => { if (b && b.type === 'material' && b.fmt) { b.fmt = { ...b.fmt }; delete b.fmt.align; delete b.fmt.indent; } }));
   if (!Array.isArray(sh.cards)) sh.cards = [];
   sh.meta.exam = { ...defaultMeta('', sh.klasse).exam, ...(sh.meta.exam || {}) };
   sh.meta.kk = kkOf(sh.meta);
