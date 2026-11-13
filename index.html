@@ -9837,7 +9837,7 @@ function donateOpen() {
       <li><b>Einen eigenen Server</b><span>in meinem Heimnetzwerk. Damit sollen Ihre Stunden und Materialien künftig nicht bei großen Cloud-Anbietern liegen, sondern geschützt auf eigener Hardware, die ich selbst betreue.</span></li>
     </ul>
     <p class="don-s">Jeder Betrag hilft, und alles ist freiwillig: Die App bleibt für alle kostenlos.<br>Moritz Bauer</p>
-    <div class="don-acts"><a class="btn donate-b don-go" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer" data-don="go">${CUP_SVG}Weiter zu PayPal</a><button type="button" class="btn" data-don="x">Vielleicht später</button></div></div>`;
+    <div class="don-acts"><a class="btn donate-b don-go" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer" data-don="go">${CUP_SVG}Weiter zu PayPal</a><button type="button" class="btn" data-don="x">Bruder, lass ma’</button></div></div>`;
   document.body.append(box); const prev = document.activeElement;
   const close = () => { box.remove(); document.removeEventListener('keydown', key, true); if (prev && prev.focus) prev.focus(); };
   const key = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
