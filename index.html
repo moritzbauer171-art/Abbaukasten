@@ -2184,6 +2184,89 @@ body.home-on{overflow:hidden}
 .tour-card p{margin:0 0 12px;font-size:14px;line-height:1.5;color:var(--ink)}
 .tour-dots{display:flex;gap:5px;margin-bottom:12px}.tour-dots i{width:7px;height:7px;border-radius:50%;background:var(--line-strong)}.tour-dots i.on{background:var(--tinte);width:18px;border-radius:4px}
 .tour-acts{display:flex;justify-content:space-between;gap:10px}
+
+/* ===== Handy (Pixel & Co.): kompakte Kopfleiste, untere Leiste, große Tippziele ===== */
+#mbar,#btn-mmore{display:none}
+.mm-pop{position:fixed;z-index:46;min-width:220px;background:var(--card);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 14px 36px -14px rgba(20,30,60,.45);padding:6px;display:flex;flex-direction:column}
+.mm-pop[hidden]{display:none}
+.mm-pop button{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 12px;border:0;background:none;color:var(--ink);font:inherit;font-size:15px;text-align:left;border-radius:10px;cursor:pointer}
+.mm-pop button:active,.mm-pop button:focus-visible{background:var(--panel)}
+.mm-i{width:22px;display:grid;place-items:center;color:var(--muted)}.mm-i svg{width:20px;height:20px}
+/* verhindert, dass absolut gesetzte Teile im Editor die Seite verlängern (leerer Bereich beim Wischen) */
+#editor,#preview-scroll{contain:paint}
+@media (max-width: 640px){
+  :root{--mbar-h:64px}
+  body{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+  .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand brand" "status actions";gap:6px 8px;padding-top:max(8px, env(safe-area-inset-top, 0px))}
+  .brand{grid-area:brand}
+  .actions{grid-area:actions;gap:6px;flex-wrap:nowrap;justify-content:flex-end}
+  .status{grid-area:status;align-self:center;min-width:0}
+  .bar .tabs{display:none!important}
+  #btn-out,#btn-saveas,#btn-help,#btn-set,#btn-rlp,#btn-login{display:none!important}
+  #btn-mmore{display:inline-grid;place-items:center}
+  .actions .btn,.actions .ib-help{min-width:44px;height:44px;padding:0 10px;border-radius:12px}
+  .actions .ib-help{width:44px;padding:0}
+  .actions .btn svg{width:20px;height:20px}
+  #btn-new .l-short{display:inline}
+  .fach-btn{min-height:36px;padding:4px 10px}
+  .rt{padding:10px 14px;min-height:44px}
+  #mbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:35;height:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px));padding:6px max(8px, env(safe-area-inset-left, 0px)) env(safe-area-inset-bottom, 0px) max(8px, env(safe-area-inset-right, 0px));background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px -12px rgba(20,30,60,.35)}
+  #mbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:600 11.5px/1.1 var(--f-ui);border-radius:14px;margin:0 3px;-webkit-tap-highlight-color:transparent}
+  #mbar button svg{width:24px;height:24px}
+  #mbar button[aria-pressed="true"]{color:var(--tinte);background:var(--tinte-soft)}
+  #mbar .mb-add{color:#fff;background:var(--tinte);margin:2px 8px}
+  #mbar .mb-add:active{filter:brightness(.92)}
+  .area-bar{position:static;margin-left:0;margin-right:0}
+  .qbar{position:static}
+  .toast{bottom:calc(var(--mbar-h) + 14px + env(safe-area-inset-bottom, 0px))!important}
+  #tip-root{bottom:calc(var(--mbar-h) + 10px + env(safe-area-inset-bottom, 0px))}
+  .card-h .ib,.card-h button.ib,.card-h [data-act="toggle"],.card-h [data-act="up"],.card-h [data-act="down"],.card-h [data-act="menu"]{min-width:40px;min-height:40px}
+  [data-act="ins-open"]{min-width:36px;min-height:36px}
+  .seg button{min-height:38px}
+  input[type="text"],input[type="number"],input[type="time"],select,textarea,.inp{font-size:16px}
+  .hm-top{padding-top:max(10px, env(safe-area-inset-top, 0px))}
+  .hm{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+  .tour-card{bottom:auto}
+}
+@media (pointer: coarse){
+  /* Tablets und Handys: größere Tippziele, keine Zoom-Sprünge beim Tippen in Felder (iPad/iPhone zoomen unter 16 px) */
+  input[type="text"],input[type="number"],input[type="time"],input[type="search"],select,textarea,.inp,.rtx{font-size:16px}
+  .card-h [data-act="toggle"],.card-h [data-act="up"],.card-h [data-act="down"],.card-h [data-act="menu"],.card-h .ib{min-width:40px;min-height:40px}
+  .pres-tg{min-height:36px}
+  .seg button{min-height:38px}
+  .ib-help,.actions .btn{min-height:40px}
+  .rt{min-height:42px}
+  *{-webkit-tap-highlight-color:transparent}
+}
+/* Mittlere Breiten (Surface Go, iPad quer, kleine Laptops): kurze Knopftexte, Kopfleiste in einer Zeile */
+@media (min-width: 900px) and (max-width: 1440px){
+  .bar{flex-wrap:nowrap}
+  .brand{flex:0 0 auto}
+  .status{flex:1 1 auto;justify-content:flex-end;overflow:hidden}
+  .status span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .actions{flex-wrap:nowrap;flex:0 0 auto}
+  .l-long{display:none}.l-short{display:inline}
+}
+@media (min-width: 900px) and (max-width: 1100px){ .status{display:none} .actions .btn{padding-left:9px;padding-right:9px} }
+/* Tablets hochkant (iPad mini, iPad, iPad Air): dieselbe untere Leiste, Kopfleiste bleibt vollständig */
+@media (min-width: 641px) and (max-width: 899px) and (pointer: coarse){
+  :root{--mbar-h:68px}
+  body{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+  .bar .tabs{display:none!important}
+  #btn-out{display:none!important}
+  #mbar{display:grid;grid-template-columns:repeat(4,minmax(0,160px));justify-content:center;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:35;height:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px));padding:8px 16px env(safe-area-inset-bottom, 0px);background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px -12px rgba(20,30,60,.35)}
+  #mbar button{display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:none;color:var(--muted);font:600 14px/1.1 var(--f-ui);border-radius:14px;-webkit-tap-highlight-color:transparent}
+  #mbar button svg{width:22px;height:22px}
+  #mbar button[aria-pressed="true"]{color:var(--tinte);background:var(--tinte-soft)}
+  #mbar .mb-add{color:#fff;background:var(--tinte)}
+  .toast{bottom:calc(var(--mbar-h) + 14px + env(safe-area-inset-bottom, 0px))!important}
+  .hm{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+}
+@media (max-width: 640px) and (pointer: coarse){
+  .soz button,.soz.arb button{min-height:40px}
+  .chk{min-height:40px}
+  .link{padding-top:6px;padding-bottom:6px}
+}
 /* Tafelkarten */
 .kk-page{width:297mm;height:210mm;padding:9mm;background:#FFFFFF}
 .kk-frame{width:100%;height:100%;border:2.4mm solid var(--kc);border-radius:7mm;display:flex;align-items:center;justify-content:center;padding:12mm 16mm;overflow:hidden}
@@ -2292,6 +2375,7 @@ body.home-on{overflow:hidden}
       <button class="btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       <button class="btn rlp-btn" type="button" id="btn-rlp" data-act="rlp-view" title="Rahmenlehrplan Berlin für dieses Fach als PDF"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.6c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.6"/></svg><span>RLP</span></button>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
+      <button class="btn ib-help" type="button" id="btn-mmore" aria-haspopup="true" aria-expanded="false" title="Weitere: Rahmenlehrplan, Speichern unter, Einstellungen, Hilfe" aria-label="Weitere Funktionen"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18.5" cy="12" r="1.8"/></svg></button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neue Stunde anlegen">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg><span class="l-long">Neue Stunde</span><span class="l-short">Neu</span></button>
@@ -2323,6 +2407,13 @@ body.home-on{overflow:hidden}
 <div id="measure-host"><div class="page" id="measure"><div class="pg-body"></div></div></div>
 <div id="fit-host"></div>
 <div id="printroot"></div>
+<nav id="mbar" aria-label="Schnellzugriff">
+  <button type="button" data-mb="edit" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 19.5l1-4.6L16.3 4.1a2.2 2.2 0 0 1 3.1 3.1L8.6 18z"/><path d="M14.4 6l3.1 3.1"/></svg><span>Bearbeiten</span></button>
+  <button type="button" data-mb="preview" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.8" width="14" height="18.4" rx="1.6"/><path d="M8.5 7.5h7M8.5 11h7M8.5 14.5h4.5"/></svg><span>Vorschau</span></button>
+  <button type="button" data-mb="add" class="mb-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Baustein</span></button>
+  <button type="button" data-mb="out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><path d="M6 14h12v7H6z"/></svg><span>Ausgeben</span></button>
+</nav>
+<div id="mmore-pop" class="mm-pop" hidden role="menu"></div>
 <div id="home-root"></div>
 <div id="lib-root"></div>
 <div id="dlg-root"></div>
@@ -9770,10 +9861,10 @@ const TOUR = [
   { sel: '#editor .qbar', t: 'Bausteine einfügen', d: 'Die meistgebrauchten Bausteine liegen hier griffbereit: Material, Aufgaben, Infokasten und mehr. „Weitere“ (oder Strg+K) zeigt alle, mit Suche.' },
   { sel: '#editor .card[data-bid]:not([data-bid="meta"])', t: 'Karten bearbeiten', d: 'Jeder Baustein ist eine Karte. Aufklappen, Text eingeben, Phase und Zeit festlegen. Aufgaben prüfen die Operatoren und bekommen auf Wunsch Sozialform und Arbeitsform.' },
   { sel: '#preview-scroll', t: 'Die Vorschau zum Anfassen', d: 'Ein Klick auf ein Wort im Material legt eine Worterklärung an, ein Klick auf eine Zeilennummer eine Zeilenangabe. Mit der Maus über einem Baustein erscheint eine kleine Leiste zum Verschieben, Verdoppeln und Löschen, an den Kanten ein „+“ zum Einfügen.' },
-  { sel: '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation starten Sie im Bereich Präsentation.' },
+  { sel: () => getComputedStyle(document.getElementById('mbar')).display !== 'none' ? '#mbar [data-mb="out"]' : '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation starten Sie im Bereich Präsentation.' },
   { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier finden Sie Ihre Stunden je Klasse, Ordner und mit Anmeldung auch die Stunden, die Kolleginnen und Kollegen geteilt haben.' },
   { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite mit Klassen, zuletzt bearbeiteten und neu geteilten Stunden. Daneben öffnet „RLP“ den Rahmenlehrplan Ihres Fachs.' },
-  { sel: '#btn-help', t: 'Fertig!', d: 'Unter „?“ finden Sie alle Kniffe und können diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
+  { sel: () => isPhone() ? '#btn-mmore' : '#btn-help', t: 'Fertig!', d: 'Unter „?“ (auf dem Handy unter den drei Punkten) finden Sie alle Kniffe und können diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
 ];
 const tour = { i: -1 };
 const tourDue = () => !lsGet(LS_TOUR) && !lsGet(LS_TIPS);
@@ -9788,7 +9879,7 @@ function tourEnd() { tour.i = -1; lsSet(LS_TOUR, 1); const r = $('#tour-root'); 
 function tourShow() {
   const r = $('#tour-root'); const st = TOUR[tour.i]; if (!st) return tourEnd();
   if (st.prep) try { st.prep(); } catch {}
-  const el = st.sel ? [...document.querySelectorAll(st.sel)].find(x => { const b = x.getBoundingClientRect(); return b.width > 4 && b.height > 4; }) : null;
+  const sel = typeof st.sel === 'function' ? st.sel() : st.sel; const el = sel ? [...document.querySelectorAll(sel)].find(x => { const b = x.getBoundingClientRect(); return b.width > 4 && b.height > 4; }) : null;
   if (el && el.scrollIntoView) { const b0 = el.getBoundingClientRect(); if (b0.top < 0 || b0.bottom > innerHeight) el.scrollIntoView({ block: 'center' }); }
   const b = el ? el.getBoundingClientRect() : null; const pad = 6;
   const spot = b ? `<div class="tour-spot" style="left:${b.left - pad}px;top:${b.top - pad}px;width:${b.width + 2 * pad}px;height:${Math.min(b.height, innerHeight - 20) + 2 * pad}px"></div>` : '<div class="tour-dim"></div>';
@@ -9810,6 +9901,57 @@ function tourInit() {
   document.addEventListener('keydown', e => { if (tour.i < 0) return; if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); tourEnd(); } else if (e.key === 'ArrowRight') { tour.i = Math.min(TOUR.length - 1, tour.i + 1); tourShow(); } else if (e.key === 'ArrowLeft' && tour.i > 0) { tour.i--; tourShow(); } }, true);
   window.addEventListener('resize', () => { if (tour.i >= 0) tourShow(); });
   setTimeout(() => tourMaybe(), 1200);
+}
+
+/* ================= Handy: untere Leiste, „Mehr“-Menü, Zurück-Geste ================= */
+const isPhone = () => window.matchMedia('(max-width: 640px)').matches;
+function mbarSync() { const v = state.view === 'preview' ? 'preview' : 'edit'; document.querySelectorAll('#mbar [data-mb="edit"],#mbar [data-mb="preview"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mb === v))); }
+function mmoreHTML() {
+  const it = (id, ic, l) => `<button type="button" role="menuitem" data-mm="${id}"><span class="mm-i">${ic}</span>${l}</button>`;
+  return it('btn-rlp', '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.3c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.3"/></svg>', 'Rahmenlehrplan')
+    + it('btn-saveas', '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 2.5h8.3l2.7 2.7v8.3h-11z"/><path d="M5.2 2.5v3.2h4.6V2.5"/></svg>', 'Speichern unter …')
+    + it('btn-set', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>', 'Einstellungen')
+    + it('btn-help', '<b>?</b>', 'Hilfe und Kniffe')
+    + (document.getElementById('btn-login') && !document.getElementById('btn-login').hidden ? it('btn-login', '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.5" r="2.8"/><path d="M2.8 14c.8-2.8 2.8-4 5.2-4s4.4 1.2 5.2 4"/></svg>', 'Anmelden') : '');
+}
+function mmoreToggle(open) {
+  const p = $('#mmore-pop'), b = $('#btn-mmore'); if (!p || !b) return; const on = open === undefined ? p.hidden : open;
+  if (on) { p.innerHTML = mmoreHTML(); const r = b.getBoundingClientRect(); p.style.top = (r.bottom + 6) + 'px'; p.style.right = Math.max(8, innerWidth - r.right) + 'px'; }
+  p.hidden = !on; b.setAttribute('aria-expanded', String(on)); if (on) { const f = p.querySelector('button'); if (f) f.focus(); }
+}
+// Zurück-Geste auf dem Handy: erst Fenster schließen, dann von der Vorschau zurück zum Bearbeiten
+function backClose() {
+  if (document.getElementById('don-ov')) { document.getElementById('don-ov').remove(); return true; }
+  if (typeof tour !== 'undefined' && tour.i >= 0) { tourEnd(); return true; }
+  if (!$('#mmore-pop').hidden) { mmoreToggle(false); return true; }
+  if (!$('#fach-pop').hidden) { toggleFachPop(false); return true; }
+  if (PVT && PVT.ins != null) { pvInsClose(); return true; }
+  if (rlpv.open) { rlpClose(); return true; }
+  if (state.dz) { dzClose(); return true; }
+  if (gl.open) { closeGloss(); return true; }
+  if (state.bkOpen) { bkClose(); return true; }
+  if (state.dlg && !state.needSetup) { closeDlg(); return true; }
+  if (state.libOpen) { state.libOpen = false; renderLib(); return true; }
+  if (hmS.open) { homeClose(); return true; }
+  if (state.area === 'einst') { setArea(state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return true; }
+  if (state.view === 'preview') { setView('edit'); return true; }
+  return false;
+}
+function mobileInit() {
+  const bar = $('#mbar');
+  bar.addEventListener('click', e => { const b = e.target.closest('[data-mb]'); if (!b) return; const k = b.dataset.mb;
+    if (k === 'edit' || k === 'preview') { if (hmS.open) homeClose(); setView(k); window.scrollTo({ top: 0 }); return; }
+    if (k === 'add') { if (hmS.open) homeClose(); if ((state.area || 'blatt') !== 'blatt' && state.area !== 'extras') setArea('blatt'); setView('edit'); bkOpen(); setTimeout(() => { const q = document.querySelector('#editor .bk-q, #editor .bk input, #editor [data-bk-q]'); const box = q && (q.closest('.bk') || q); if (box) box.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 80); return; }
+    if (k === 'out') { const o = $('#btn-out'); if (o) o.click(); } });
+  $('#btn-mmore').addEventListener('click', e => { e.stopPropagation(); mmoreToggle(); });
+  $('#mmore-pop').addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('[data-mm]'); if (!b) return; mmoreToggle(false); const t = document.getElementById(b.dataset.mm); if (t) t.click(); });
+  document.addEventListener('click', e => { const p = $('#mmore-pop'); if (p && !p.hidden && !e.target.closest('#mmore-pop, #btn-mmore')) mmoreToggle(false); });
+  // Zurück-Geste: eigener Eintrag im Verlauf, solange keine Freigabe- oder Mappen-Adresse offen ist
+  if (!location.hash && !DG_VIEW && !MAPPE_LOCK && window.history && history.pushState) {
+    try { history.replaceState({ abw: 0 }, ''); history.pushState({ abw: 1 }, ''); } catch {}
+    window.addEventListener('popstate', () => { if (!isNarrow()) { try { history.pushState({ abw: 1 }, ''); } catch {} return; } if (backClose()) { try { history.pushState({ abw: 1 }, ''); } catch {} } else history.back(); });
+  }
+  mbarSync();
 }
 async function rlpOpen() { rlpv.open = true; rlpv.err = ''; await rlpLoad(); rlpRender(); }
 function rlpClose() { rlpv.open = false; rlpRender(); if (rlpv.url) { URL.revokeObjectURL(rlpv.url); rlpv.url = ''; } }
@@ -12408,7 +12550,7 @@ async function exportDOCX() {
 function setView(v) {
   state.view = v;
   $('#tab-edit').setAttribute('aria-pressed', v === 'edit'); $('#tab-prev').setAttribute('aria-pressed', v === 'preview');
-  applyResponsive();
+  applyResponsive(); if (typeof mbarSync === 'function') mbarSync();
 }
 function applyResponsive() {
   const narrow = window.matchMedia('(max-width: 899px)').matches;
@@ -12789,7 +12931,7 @@ function boot() {
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
-  setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit();
+  setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit(); mobileInit();
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
 
