@@ -1525,8 +1525,14 @@ body{transition:background-color .3s,border-color .25s}
 .a3-h{display:flex;align-items:flex-end;gap:8mm;border-bottom:.5mm solid var(--acc);padding-bottom:2.5mm;flex:0 0 auto}
 .a3-ht{flex:1 1 auto;min-width:0}
 .a3-kind{font-size:8.5pt;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
-.a3-title{font-size:19pt;font-weight:700;line-height:1.15}
-.a3-title.big{font-size:30pt}
+.a3-title{font-size:calc(19pt * var(--a3ts,1));font-weight:700;line-height:1.15}
+.a3-title.big{font-size:calc(30pt * var(--a3ts,1))}
+.a3-page.a3-sw{--acc:#1C1F27 !important;--acc-tint:#EEF0F3 !important}
+.a3-page.ru-lines :is(.a3-margin,.a3-pm,.a3-sg,.a3-box,.a3-vg>div:not(.hd):not(.asp)){background-image:linear-gradient(to top,#BFC5D0 .3mm,transparent .3mm);background-size:100% var(--pcg,11mm)}
+.a3-page.ru-karo :is(.a3-margin,.a3-pm,.a3-sg,.a3-box,.a3-vg>div:not(.hd):not(.asp)){background-image:linear-gradient(to top,#D3D8E0 .25mm,transparent .25mm),linear-gradient(to right,#D3D8E0 .25mm,transparent .25mm);background-size:calc(var(--pcg,11mm) * .5) calc(var(--pcg,11mm) * .5)}
+.a3-page.ru-dots :is(.a3-margin,.a3-pm,.a3-sg,.a3-box,.a3-vg>div:not(.hd):not(.asp)){background-image:radial-gradient(circle,#A9B0BC .35mm,transparent .45mm);background-size:calc(var(--pcg,11mm) * .5) calc(var(--pcg,11mm) * .5)}
+.a3-page:is(.ru-lines,.ru-karo,.ru-dots) :is(.a3-box h3,.a3-margin){background:none}
+.a3-page:is(.ru-lines,.ru-karo,.ru-dots) .a3-box h3{background:#fff;align-self:flex-start;padding-right:2mm}
 .a3-pc-h{display:flex;align-items:flex-end;gap:8mm;border-bottom:.6mm solid var(--acc);padding-bottom:3mm;flex:0 0 auto}
 .a3-pc-t{flex:1 1 auto;min-width:0;font-size:40pt;font-weight:800;line-height:1.08;letter-spacing:-.01em;text-align:center;color:#1C1F27}
 .a3-pc-t .a3-blank{margin:0 auto;height:1.1em}
@@ -1537,8 +1543,27 @@ body{transition:background-color .3s,border-color .25s}
 .a3-pc-col h3{margin:0 0 3mm;display:flex;align-items:center;gap:3mm;font-size:24pt;line-height:1.1}
 .a3-pc-col h3 b{display:inline-flex;align-items:center;justify-content:center;width:11mm;height:11mm;border-radius:50%;color:#fff;font-size:22pt;line-height:1}
 .a3-pc-col.pro h3{color:#1E7A3A}.a3-pc-col.pro h3 b{background:#1E7A3A}
-.a3-pc-col.con{text-align:right}.a3-pc-col.con h3{color:#B42318;justify-content:flex-end;flex-direction:row-reverse}.a3-pc-col.con h3 b{background:#B42318}
-.a3-pc-ln{flex:1 1 auto;background-image:linear-gradient(to top,#BFC5D0 .3mm,transparent .3mm);background-size:100% 11mm;background-repeat:repeat-y}
+.a3-pc-col.con{text-align:right}.a3-pc-col.con h3{color:#B42318;justify-content:flex-start;flex-direction:row-reverse}.a3-pc-col.con h3 b{background:#B42318}
+.a3-pc-wrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:4mm}
+.a3-pc-wrap .a3-pc-t{font-size:var(--pct,40pt)}
+.a3-pc-ln{flex:1 1 auto;min-height:0}
+.a3-pc-ln.r-lines{background-image:linear-gradient(to top,#BFC5D0 .3mm,transparent .3mm);background-size:100% var(--pcg,11mm)}
+.a3-pc-ln.r-karo{background-image:linear-gradient(to top,#D3D8E0 .25mm,transparent .25mm),linear-gradient(to right,#D3D8E0 .25mm,transparent .25mm);background-size:calc(var(--pcg,11mm) * .5) calc(var(--pcg,11mm) * .5)}
+.a3-pc-ln.r-dots{background-image:radial-gradient(circle,#A9B0BC .35mm,transparent .45mm);background-size:calc(var(--pcg,11mm) * .5) calc(var(--pcg,11mm) * .5)}
+.a3-pc-wrap .a3-pc-col.pro h3{color:var(--pcp)}.a3-pc-wrap .a3-pc-col.pro h3 b{background:var(--pcp)}
+.a3-pc-wrap .a3-pc-col.con h3{color:var(--pcc)}.a3-pc-wrap .a3-pc-col.con h3 b{background:var(--pcc)}
+.a3-pc-wrap.pp-oben .a3-pc-mid{top:5mm;transform:translateX(-50%)}
+.a3-pc-wrap.pp-unten .a3-pc-mid{top:auto;bottom:5mm;transform:translateX(-50%)}
+.a3-pc-wrap.pf-solid .a3-pc-img{border-style:solid;border-color:#5A606E}
+.a3-pc-wrap.pf-none .a3-pc-img{border-color:transparent}
+.a3-pc-faz{flex:0 0 auto;height:52mm;display:flex;flex-direction:column;border:.5mm solid var(--acc);border-radius:3mm;padding:4mm 7mm}
+.a3-pc-faz h3{margin:0 0 2mm;font-size:18pt;color:var(--acc)}
+.hoch .a3-pc-faz{height:70mm}
+.pc-opts{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:var(--panel,#F7F8FA)}
+.pc-opts .chks{flex-direction:column;gap:6px}
+.pc-opts .chk{justify-content:flex-start;align-items:center;margin:0;text-align:left}
+.pc-opts .chk input{flex:0 0 auto;width:17px}
+.pc-oh{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .a3-pc-mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:stretch;gap:2.5mm;max-width:calc(100% - 20mm);z-index:1}
 .a3-pc-img{position:relative;background:#fff;border:.5mm dashed #8A909C;border-radius:2mm;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 0 3mm #fff}
 .a3-pc-img.has{border:.4mm solid #C9CED8}
@@ -4360,6 +4385,18 @@ const A3_COLORS = [['#FFE45C', 'Gelb'], ['#9BE39B', 'Grün'], ['#8EC9FF', 'Blau'
 const a3Tpl = b => (A3_TPL[b && b.tpl] ? b.tpl : 'placemat');
 const a3Fmt = b => (A3_TPL[a3Tpl(b)].o === 'a4' ? 'a4' : 'a3');
 const A3_RULES = du => du ? 'Schreibt schweigend. Antwortet auf Beiträge der anderen, stellt Fragen und verbindet Gedanken mit Pfeilen.' : 'Schreiben Sie schweigend. Antworten Sie auf Beiträge der anderen, stellen Sie Fragen und verbinden Sie Gedanken mit Pfeilen.';
+const PC_OPT = {
+  rule: { none: 'ohne', lines: 'Linien', karo: 'Kästchen', dots: 'Punkte' },
+  gap: { 8: 'eng', 11: 'normal', 14: 'weit' },
+  col: { farbe: 'grün / rot', akzent: 'Akzentfarbe', sw: 'schwarz-weiß' },
+  ttl: { 28: 'klein', 40: 'mittel', 54: 'groß' },
+  pos: { oben: 'oben', mitte: 'Mitte', unten: 'unten' },
+  frame: { dash: 'gestrichelt', solid: 'durchgezogen', none: 'ohne' }
+};
+const PC_DEF = { gap: '11', col: 'farbe', ttl: '40', pos: 'mitte', frame: 'dash' };
+// Gestaltung für die übrigen A3-Vorlagen
+const A3G_COL = { akzent: 'Akzentfarbe', sw: 'schwarz-weiß' }, A3G_TTL = { 1: 'klein', 1.4: 'mittel', 1.8: 'groß' };
+const a3G = b => b.tpl !== 'procon' && A3_TPL[a3Tpl(b)].o !== 'a4';
 function a3Norm(b) {
   if (!Array.isArray(b.legend)) b.legend = ['', '', '', ''];
   if (!Array.isArray(b.sections) || !b.sections.length) b.sections = ['Worum geht es?', 'Unsere Ergebnisse', 'Belege aus dem Material', 'Offene Fragen'];
@@ -4371,7 +4408,9 @@ function a3Norm(b) {
   if (!Array.isArray(b.pairs) || !b.pairs.length) b.pairs = [{ f: '', r: '' }, { f: '', r: '' }, { f: '', r: '' }, { f: '', r: '' }];
   if (!Array.isArray(b.tq) || !b.tq.length) b.tq = [{ q: '', a: '' }, { q: '', a: '' }, { q: '', a: '' }, { q: '', a: '' }];
   if (typeof b.strips !== 'string') b.strips = '';
-  if (b.tpl === 'procon') { if (!(+b.pcW >= 4 && +b.pcW <= 38)) b.pcW = 14; if (!(+b.pcH >= 3 && +b.pcH <= 26)) b.pcH = 10; if (typeof b.pcLines !== 'boolean') b.pcLines = true; }
+  if (a3G(b)) { if (!PC_OPT.rule[b.pcRule]) b.pcRule = 'none'; if (!PC_OPT.gap[b.pcGap]) b.pcGap = '11'; if (!A3G_COL[b.pcCol]) b.pcCol = 'akzent'; if (!A3G_TTL[b.a3Ts]) b.a3Ts = '1'; }
+  if (b.tpl === 'procon') { if (!(+b.pcW >= 4 && +b.pcW <= 38)) b.pcW = 14; if (!(+b.pcH >= 3 && +b.pcH <= 26)) b.pcH = 10; if (typeof b.pcLines !== 'boolean') b.pcLines = true;
+    if (!PC_OPT.rule[b.pcRule]) b.pcRule = b.pcLines ? 'lines' : 'none'; for (const k of ['gap', 'col', 'ttl', 'pos', 'frame']) { const key = 'pc' + k[0].toUpperCase() + k.slice(1); if (!PC_OPT[k][b[key]]) b[key] = PC_DEF[k]; } if (typeof b.pcSym !== 'boolean') b.pcSym = true; if (typeof b.pcFaz !== 'boolean') b.pcFaz = false; }
   return b;
 }
 function a3TaskList() {
@@ -4385,15 +4424,16 @@ function a3TaskHTML(b) {
 }
 function a3MatList() { const num = numbering(state.sheet); return state.sheet.blocks.filter(b => b.type === 'material').map(b => { const z = num[b.id] || {}; return [b.id, `${z.tag || 'M' + (z.m || '')} · ${plainText(b.title || '') || 'ohne Titel'}`]; }); }
 function a3Page(b, inner, part) {
-  const m = state.sheet.meta, tpl = a3Tpl(b), o = A3_TPL[tpl].o, q = o === 'q' && !(tpl === 'procon' && b.pcHoch), a4 = o === 'a4';
+  const m = state.sheet.meta, tpl = a3Tpl(b), o = A3_TPL[tpl].o, g = a3G(b), q = tpl === 'procon' ? !b.pcHoch : (o === 'q') !== !!(g && b.a3Flip && tpl !== 'annot'), a4 = o === 'a4';
+  const gc = g ? ` ru-${b.pcRule || 'none'}${b.pcCol === 'sw' ? ' a3-sw' : ''}` : '', gs = g ? ` style="--pcg:${b.pcGap || 11}mm;--a3ts:${b.a3Ts || 1}"` : '';
   const foot = esc([m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
-  const pg = el(`<div class="page a3-page a3-${tpl} ${a4 ? 'a4 hoch' : q ? 'quer' : 'hoch'}" data-w="${a4 ? 210 : q ? 420 : 297}" data-h="${a4 ? 297 : q ? 297 : 420}"><div class="a3-in">${inner}</div><div class="a3-foot"><span>${foot}</span><span>${esc(A3_TPL[tpl].label)}${part ? ' · ' + part : ''}</span></div></div>`);
+  const pg = el(`<div class="page a3-page a3-${tpl} ${a4 ? 'a4 hoch' : q ? 'quer' : 'hoch'}${gc}"${gs} data-w="${a4 ? 210 : q ? 420 : 297}" data-h="${a4 ? 297 : q ? 297 : 420}"><div class="a3-in">${inner}</div><div class="a3-foot"><span>${foot}</span><span>${esc(A3_TPL[tpl].label)}${part ? ' · ' + part : ''}</span></div></div>`);
   setAccent(pg, m); return pg;
 }
-const a3Head = (b, name, extra) => `<div class="a3-h"><div class="a3-ht"><span class="a3-kind">${esc(A3_TPL[a3Tpl(b)].label)}</span><div class="a3-title">${inlineHTML(tfStr(b.title).trim() || state.sheet.meta.title || '')}</div></div>${extra || ''}${name ? `<div class="a3-name"><span>${name}</span><i></i></div>` : ''}</div>`;
+const a3Head = (b, name, extra) => `<div class="a3-h"><div class="a3-ht"><span class="a3-kind">${esc(A3_TPL[a3Tpl(b)].label)}</span><div class="a3-title">${inlineHTML(tfStr(b.title).trim() || state.sheet.meta.title || '')}</div></div>${extra || ''}${name && b.a3Name !== false ? `<div class="a3-name"><span>${name}</span><i></i></div>` : ''}</div>`;
 const a3Lines = n => '<i></i>'.repeat(n);
 function a3Pages(b, mats) {
-  a3Norm(b); const tpl = a3Tpl(b), m = state.sheet.meta, acc = pageAcc(m).c; const task = a3TaskHTML(b);
+  a3Norm(b); const tpl = a3Tpl(b), m = state.sheet.meta, acc = a3G(b) && b.pcCol === 'sw' ? '#1C1F27' : pageAcc(m).c; const task = a3TaskHTML(b);
   const taskH = task ? `<div class="a3-task">${task}</div>` : '';
   if (tpl === 'annot') {
     const ids = Object.keys(mats); const id = mats[b.mat] ? b.mat : ids.find(k => mats[k].lines.length); const M = id && mats[id]; const mb = id && state.sheet.blocks.find(x => x.id === id);
@@ -4424,7 +4464,7 @@ function a3Pages(b, mats) {
   }
   if (tpl === 'plakat') {
     const S = b.sections.filter(x => tfStr(x).trim()).slice(0, 6); const n = Math.max(1, S.length); const c = n >= 4 ? 2 : 1;
-    return [a3Page(b, `<div class="a3-h a3-plh"><div class="a3-ht"><span class="a3-kind">Lernplakat · Thema</span><div class="a3-title big">${tfStr(b.title).trim() ? inlineHTML(b.title) : '<span class="a3-blank"></span>'}</div></div></div><div class="a3-name wide"><span>Gruppe</span><i></i></div>${taskH}<div class="a3-pl" style="--c:${c}">${(S.length ? S : ['']).map(x => `<div class="a3-box"><h3>${inlineHTML(x)}</h3></div>`).join('')}</div><div class="a3-name wide"><span>Quellen</span><i></i></div>`)];
+    return [a3Page(b, `<div class="a3-h a3-plh"><div class="a3-ht"><span class="a3-kind">Lernplakat · Thema</span><div class="a3-title big">${tfStr(b.title).trim() ? inlineHTML(b.title) : '<span class="a3-blank"></span>'}</div></div></div>${b.a3Name !== false ? '<div class="a3-name wide"><span>Gruppe</span><i></i></div>' : ''}${taskH}<div class="a3-pl" style="--c:${c}">${(S.length ? S : ['']).map(x => `<div class="a3-box"><h3>${inlineHTML(x)}</h3></div>`).join('')}</div><div class="a3-name wide"><span>Quellen</span><i></i></div>`)];
   }
   if (tpl === 'procon') {
     const W = Math.max(4, Math.min(38, +b.pcW || 14)), H = Math.max(3, Math.min(26, +b.pcH || 10));
@@ -4432,9 +4472,11 @@ function a3Pages(b, mats) {
     const lab = [tfStr(b.pcPro).trim() || 'Pro', tfStr(b.pcCon).trim() || 'Contra'];
     const cap = tfStr(b.pcCap).trim(), src = tfStr(b.pcSrc).trim(), info = tfStr(b.pcInfo).trim();
     const pic = b.src ? `<img src="${esc(b.src)}" alt="" style="object-fit:${b.pcFit === 'cover' ? 'cover' : 'contain'}">` : `<span class="a3-pc-ph">Bild aufkleben<small>${String(W).replace('.', ',')} × ${String(H).replace('.', ',')} cm</small></span>`;
-    const col = (k, sym) => `<div class="a3-pc-col ${k}"><h3><b>${sym}</b>${inlineHTML(lab[k === 'pro' ? 0 : 1])}</h3>${b.pcLines ? '<div class="a3-pc-ln"></div>' : ''}</div>`;
-    return [a3Page(b, `<div class="a3-pc-h"><div class="a3-pc-t">${ttl}</div>${b.pcName ? '<div class="a3-name"><span>Name / Gruppe</span><i></i></div>' : ''}</div>${info ? `<div class="a3-pc-info">${parasHTML(b.pcInfo)}</div>` : ''}${taskH}
-      <div class="a3-pc">${col('pro', '+')}${col('con', '−')}<div class="a3-pc-mid" style="width:${W * 10}mm"><div class="a3-pc-img${b.src ? ' has' : ''}" style="height:${H * 10}mm">${pic}</div>${cap || src ? `<div class="a3-pc-cap">${cap ? parasHTML(b.pcCap) : ''}${src ? `<small>${inlineHTML(b.pcSrc)}</small>` : ''}</div>` : ''}</div></div>`)];
+    const col = (k, sym) => `<div class="a3-pc-col ${k}"><h3>${b.pcSym ? `<b>${sym}</b>` : ''}${inlineHTML(lab[k === 'pro' ? 0 : 1])}</h3>${b.pcRule !== 'none' ? `<div class="a3-pc-ln r-${b.pcRule}"></div>` : ''}</div>`;
+    const cols = { farbe: ['#1E7A3A', '#B42318'], akzent: ['var(--acc)', 'var(--acc)'], sw: ['#1C1F27', '#1C1F27'] }[b.pcCol] || ['#1E7A3A', '#B42318'];
+    const pcSty = `--pcg:${b.pcGap}mm;--pcp:${cols[0]};--pcc:${cols[1]};--pct:${b.pcTtl}pt`;
+    return [a3Page(b, `<div class="a3-pc-wrap pf-${b.pcFrame} pp-${b.pcPos}" style="${pcSty}"><div class="a3-pc-h"><div class="a3-pc-t">${ttl}</div>${b.pcName ? '<div class="a3-name"><span>Name / Gruppe</span><i></i></div>' : ''}</div>${info ? `<div class="a3-pc-info">${parasHTML(b.pcInfo)}</div>` : ''}${taskH}
+      <div class="a3-pc">${col('pro', '+')}${col('con', '−')}<div class="a3-pc-mid" style="width:${W * 10}mm"><div class="a3-pc-img${b.src ? ' has' : ''}" style="height:${H * 10}mm">${pic}</div>${cap || src ? `<div class="a3-pc-cap">${cap ? parasHTML(b.pcCap) : ''}${src ? `<small>${inlineHTML(b.pcSrc)}</small>` : ''}</div>` : ''}</div></div>${b.pcFaz ? `<div class="a3-pc-faz"><h3>${inlineHTML(tfStr(b.pcFazT).trim() || 'Fazit')}</h3>${b.pcRule !== 'none' ? `<div class="a3-pc-ln r-${b.pcRule}"></div>` : ''}</div>` : ''}</div>`)];
   }
   if (tpl === 'vergleich') {
     const mt = a3MatList(); const C = Math.min(4, Math.max(2, b.cols.length)); const heads = Array.from({ length: C }, (_, i) => tfStr(b.cols[i]).trim() || (mt[i] ? mt[i][1] : 'Text ' + String.fromCharCode(65 + i)));
@@ -4553,6 +4595,13 @@ function a4Fill(b, v) {
   if (v === 'glossar') { const L = []; sh.blocks.forEach(x => { if (x.type === 'material') (x.glossary || []).forEach(g => { if (tfStr(g.term).trim()) L.push({ f: g.term, r: g.text || '' }); }); }); if (!L.length) return 'Das Blatt hat noch keine Worterklärungen.'; b.pairs = [...keep(b.pairs), ...L]; return L.length + ' Worterklärungen als Lernkarten angefügt.'; }
   return '';
 }
+const gSeg = (b, key, label, opts) => `<div class="f"><span>${label}</span><div class="seg sm" role="group" aria-label="${label}">${Object.entries(opts).map(([v, l]) => `<button type="button" data-act="pc-set" data-k="${key}" data-v="${v}" aria-pressed="${String(b[key]) === v}">${l}</button>`).join('')}</div></div>`;
+const a3GEditor = (b, tpl) => { const o = A3_TPL[tpl].o, q = (o === 'q') !== !!(b.a3Flip && tpl !== 'annot');
+  return `<div class="pc-opts"><b class="pc-oh">Gestaltung</b>
+    ${gSeg(b, 'pcRule', tpl === 'annot' ? 'Randnotizen' : 'Schreibfläche', PC_OPT.rule)}${b.pcRule !== 'none' ? gSeg(b, 'pcGap', 'Abstand', PC_OPT.gap) : ''}${gSeg(b, 'pcCol', 'Farben', A3G_COL)}${gSeg(b, 'a3Ts', 'Titelgröße', A3G_TTL)}
+    ${tpl === 'annot' ? '' : `<div class="f"><span>Blatt</span><div class="seg sm" role="group" aria-label="Ausrichtung"><button type="button" data-act="pc-set" data-k="a3Flip" data-v="${o === 'q' ? '' : '1'}" aria-pressed="${q}">A3 quer</button><button type="button" data-act="pc-set" data-k="a3Flip" data-v="${o === 'q' ? '1' : ''}" aria-pressed="${!q}">A3 hoch</button></div></div>`}
+    ${tpl === 'schreib' ? '' : `<div class="chks">${fCheck('a3Name', tpl === 'placemat' || tpl === 'plakat' ? 'Feld für die Gruppe' : 'Feld für den Namen', b.a3Name !== false)}</div>`}</div>`; };
+const pcSeg = (b, k, label) => { const key = 'pc' + k[0].toUpperCase() + k.slice(1); return `<div class="f"><span>${label}</span><div class="seg sm" role="group" aria-label="${label}">${Object.entries(PC_OPT[k]).map(([v, l]) => `<button type="button" data-act="pc-set" data-k="${key}" data-v="${v}" aria-pressed="${String(b[key]) === v}">${l}</button>`).join('')}</div></div>`; };
 function a3Editor(b) {
   a3Norm(b); const tpl = a3Tpl(b); const T = a3TaskList();
   const inp = (k, v, ph) => `<input type="text" data-k="${k}" value="${esc(tfStr(v))}" placeholder="${esc(ph || '')}">`;
@@ -4574,7 +4623,11 @@ function a3Editor(b) {
       <label class="f"><span>Bildbeschreibung</span><textarea data-k="pcCap" rows="3" placeholder="steht unter dem Bild, z. B. Bildunterschrift oder kurze Beschreibung">${esc(tfStr(b.pcCap))}</textarea></label>
       ${fText('pcSrc', 'Bildquelle', b.pcSrc, 'z. B. Foto: …, Lizenz')}
       <label class="f"><span>Infotext oben</span><textarea data-k="pcInfo" rows="2" placeholder="optional: kurzer Hintergrund oder die Streitfrage">${esc(tfStr(b.pcInfo))}</textarea></label>
-      <div class="chks">${fCheck('pcLines', 'Schreiblinien', b.pcLines)}${fCheck('pcName', 'Feld für Name oder Gruppe', b.pcName)}${fCheck('pcHoch', 'A3 hoch statt quer', b.pcHoch)}</div>`;
+      <div class="pc-opts"><b class="pc-oh">Gestaltung</b>
+        ${pcSeg(b, 'rule', 'Schreibfläche')}${b.pcRule !== 'none' ? pcSeg(b, 'gap', 'Abstand') : ''}${pcSeg(b, 'col', 'Farben')}${pcSeg(b, 'ttl', 'Titelgröße')}${pcSeg(b, 'pos', 'Bildfeld')}${pcSeg(b, 'frame', 'Bildrahmen')}
+        <div class="f"><span>Blatt</span><div class="seg sm" role="group" aria-label="Ausrichtung"><button type="button" data-act="pc-set" data-k="pcHoch" data-v="" aria-pressed="${!b.pcHoch}">A3 quer</button><button type="button" data-act="pc-set" data-k="pcHoch" data-v="1" aria-pressed="${!!b.pcHoch}">A3 hoch</button></div></div>
+        <div class="chks">${fCheck('pcSym', 'Plus- und Minuszeichen', b.pcSym)}${fCheck('pcName', 'Feld für Name oder Gruppe', b.pcName)}${fCheck('pcFaz', 'Fazit-Feld unten', b.pcFaz)}</div>
+        ${b.pcFaz ? fText('pcFazT', 'Überschrift Fazit', b.pcFazT, 'Fazit') : ''}</div>`;
   else if (tpl === 'vergleich') { const mt = a3MatList(); c = list('cols', 'Spalten', 'Spalte', b.cols, i => mt[i] ? 'leer = ' + mt[i][1] : 'z. B. Text ' + String.fromCharCode(65 + i), 2, 4) + list('aspects', 'Aspekte', 'Aspekt', b.aspects, () => 'z. B. Sprache', 1, 10); }
   else if (tpl === 'experte') c = list('experts', 'Expertenthemen', 'Thema', b.experts, i => 'Thema ' + String.fromCharCode(65 + i), 2, 6);
   else c = a4Editor(b, tpl, inp, del, add);
@@ -4582,7 +4635,7 @@ function a3Editor(b) {
     <small class="hint">${esc(A3_TPL[tpl].d)}. ${A3_TPL[tpl].o === 'a4' ? 'A4 hoch' : A3_TPL[tpl].o === 'q' ? 'A3 quer' : 'A3 hoch'}.</small>
     ${fText('title', 'Überschrift', b.title, state.sheet.meta.title || 'Überschrift')}
     ${taskF}
-    <div class="tf-ed">${c}</div>
+    <div class="tf-ed">${c}${a3G(b) ? a3GEditor(b, tpl) : ''}</div>
     <div class="tf-ed-acts main"><button class="btn sm" type="button" data-act="a3-show">In der Vorschau zeigen</button><small class="hint">Steht nicht auf dem Arbeitsblatt.</small></div>`;
 }
 const presHead = (kick, head, chips) => { if (!head) { head = kick; kick = ''; } return `<div class="pr-top"><div class="pr-hd">${kick ? `<span class="pr-kick">${kick}</span>` : ''}<div class="pr-ttl">${head || ''}</div></div>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`; };
@@ -8412,6 +8465,7 @@ function onClick(e) {
     case 'rlp-sheet': openRlpDlg('sheet'); return;
     case 'pc-size': if (b) { b.pcW = +a.dataset.w; b.pcH = +a.dataset.h; changed(true); } return;
     case 'pc-fit': if (b) { b.pcFit = a.dataset.v; changed(true); } return;
+    case 'pc-set': if (b) { const k = a.dataset.k; if (k === 'pcHoch' || k === 'a3Flip') b[k] = !!a.dataset.v; else b[k] = a.dataset.v; if (k === 'pcRule') b.pcLines = a.dataset.v !== 'none'; changed(true); } return;
     case 'a3-tpl': { if (!A3_TPL[a.dataset.v]) return; b.tpl = a.dataset.v; a3Norm(b); changed(true); return; }
     case 'a3-n': b.n = +a.dataset.v; changed(true); return;
     case 'a3-show': setOut(a3Fmt(b)); return;
