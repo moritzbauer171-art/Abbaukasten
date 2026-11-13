@@ -1051,7 +1051,8 @@ body{transition:background-color .3s,border-color .25s}
 .blk-mat.al-left .ln-t{text-align:left;text-align-last:auto}
 .blk-mat.noind .ln.pf .ln-t{padding-left:0}
 .blk-mat.noind .mat-body p.ind{text-indent:0}
-.blk-mat.rand .mat-body{width:calc(100% - 28mm);padding-right:4mm;border-right:.25mm solid var(--paper-hair)}
+.blk-mat.rand .mat-body{width:calc(100% - var(--mrw,28mm));padding-right:4mm;border-right:.25mm solid var(--paper-hair);position:relative}
+.blk-mat.rand .mat-body[data-rh]::before{content:attr(data-rh);position:absolute;left:calc(100% + 3mm);top:0;width:calc(var(--mrw,28mm) - 3mm);font-family:var(--f-ui);font-size:7.5pt;font-weight:700;line-height:1.25;letter-spacing:.04em;text-transform:uppercase;color:var(--paper-muted);overflow-wrap:anywhere;hyphens:auto}
 .blk-mat.mc-m .mat-body{width:calc((100% - 5mm) / 2)}
 .mat-body.mc-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:5mm;align-items:start}
 .mc-cols .mcol>.ln.st:first-child{padding-top:0}
@@ -3037,15 +3038,17 @@ const MAT_FMT = {
   align: { label: 'Ausrichtung', opts: [['justify', 'Blocksatz'], ['left', 'Linksbündig']] },
   font: { label: 'Schrift', opts: [['serif', 'Literata (mit Serifen)'], ['sans', 'Atkinson (ohne Serifen)'], ['mono', 'Schreibmaschine'], ['hand', 'Handschrift'], ['frak', 'Fraktur']] },
   size: { label: 'Schriftgröße', opts: [['XS', '9 pt'], ['S', '9,5 pt'], ['M10', '10 pt'], ['M', '10,5 pt'], ['M11', '11 pt'], ['L', '12 pt'], ['XL', '13 pt'], ['XXL', '14 pt']] },
-  lh: { label: 'Zeilenabstand', opts: [['eng', 'eng'], ['normal', 'normal'], ['weit', 'weit']] }
+  lh: { label: 'Zeilenabstand', opts: [['eng', 'eng'], ['normal', 'normal'], ['weit', 'weit']] },
+  mrw: { label: 'Breite des Rands', opts: [['20', 'schmal'], ['28', 'mittel'], ['40', 'breit'], ['55', 'sehr breit']] }
 };
+const FMT_MRW = { 20: 1, 28: 1, 40: 1, 55: 1 };
 const FMT_SIZE = { XS: 9, S: 9.5, M10: 10, M: 10.5, M11: 11, L: 12, XL: 13, XXL: 14 }, FMT_LH = { eng: 1.35, normal: 1.52, weit: 2 }, FMT_WLINE = { eng: 276, normal: 300, weit: 400 }, FMT_WSZ = { XS: 18, S: 19, M10: 20, M: 21, M11: 22, L: 24, XL: 26, XXL: 28 };
 const FMT_FF = { serif: 'var(--f-text)', sans: 'var(--f-sans)', mono: "'Courier Prime','Courier New',Courier,monospace", hand: "'Caveat','Segoe Print',cursive", frak: "'UnifrakturMaguntia','Old English Text MT',serif" };
 const FMT_WF = { serif: 'Georgia', sans: 'Arial', mono: 'Courier New', hand: 'Segoe Print', frak: 'Old English Text MT' };
 const fmtFF = f => FMT_FF[f] || FMT_FF.serif;
 function matFmt(b) {
   const f = b.fmt || {};
-  return { align: f.align === 'left' ? 'left' : 'justify', font: FMT_FF[f.font] ? f.font : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent === true, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1 };
+  return { align: f.align === 'left' ? 'left' : 'justify', font: FMT_FF[f.font] ? f.font : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent === true, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1, mrw: FMT_MRW[f.mrw] ? String(f.mrw) : '28', mrh: typeof f.mrh === 'string' ? f.mrh : '' };
 }
 function fmtSummary(b) {
   const f = matFmt(b);
@@ -7185,9 +7188,9 @@ function buildBlock(b, ctx) {
       const tail = tailFor(notes, !!b.source, true);
       const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
       const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
-      const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fmtFF(fm.font)}`;
+      const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fmtFF(fm.font)}${fm.margin ? `;--mrw:${fm.mrw}mm` : ''}`;
       const isPost = !!b.post && !poem; const two = fm.cols === 2 && !isPost;
-      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body">${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' '))}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
@@ -7512,6 +7515,7 @@ function dzBodyHTML(z) {
     const isDef = JSON.stringify(f) === JSON.stringify(matFmt({})) && b.lineNumbers !== false; const nMat = state.sheet.blocks.filter(x => x.type === 'material').length;
     h = `${b.form === 'gedicht' ? '' : seg('align')}<div class="f"><span>Schrift</span>${fmtSel(b, 'font')}</div><div class="f"><span>Schriftgröße</span>${fmtSel(b, 'size')}</div>${seg('lh')}
       <div class="chks">${fCheck('lineNumbers', b.form === 'gedicht' ? 'Verszählung' : 'Zeilennummern', b.lineNumbers !== false)}${b.form === 'gedicht' ? '' : fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${f.cols === 2 ? '' : fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
+      ${f.margin ? `<div class="mrand-ed">${seg('mrw')}<label class="f"><span>Überschrift im Rand</span><input type="text" data-k="fmt.mrh" value="${esc(f.mrh)}" placeholder="z. B. Notizen, Stilmittel, Fragen an den Text"></label></div>` : ''}
       <div class="row" style="gap:6px 18px">${isDef ? '' : '<button class="link" type="button" data-act="fmt-reset">Standard</button>'}${nMat > 1 ? '<button class="link" type="button" data-act="fmt-all">Für alle Materialien übernehmen</button>' : ''}</div>`;
   } else if (b.type === 'info') h = stilTiles(b, ST_INFO); else if (b.type === 'text') h = stilTiles(b, ST_TEXT);
   return `<div class="card dz-card" data-bid="${b.id}"><div class="card-b">${h}</div></div>`;
@@ -11197,7 +11201,7 @@ async function exportDOCX() {
         // Läuft das Material über mehrere Seiten, werden die Worterklärungen echte Fußnoten: Word setzt sie unten auf die Seite des Wortes
         const fnMap = new Map(); if (gmD.list.length && SPLIT_MATS.has(b.id)) gmD.list.forEach(x => { const id = foot.length + 1; fnMap.set(String(x.no), id); foot.push({ id, no: String(x.no), term: normTerm(x.g.term), text: x.g.text }); });
         const fn = fnMap.size ? (k => fnMap.get(k)) : null;
-        const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
+        const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(+fm.mrw || 28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
         const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
         if (b.form === 'gedicht') poemVerses(gmD.text).forEach(v => parts.push(xp(xrInline(v.t, { font: FMT_WF[fm.font] || SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: 'left', before: v.st ? 160 : 0, ind: `<w:ind w:left="${TW(6)}" w:hanging="${TW(6)}"${fm.margin ? ` w:right="${TW(28)}"` : ''}/>`, bdr: mBdr })));
         else { let prevH = false; matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => { const hd = MH_RE.test(seg); const tx = hd ? seg.replace(MH_RE, '') : seg; if (hd && !tx.trim()) return; parts.push(xp(xrInline(tx, { ...(hd ? { b: 1 } : {}), font: FMT_WF[fm.font] || SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: hd && !b.hdCount, line: FMT_WLINE[fm.lh], jc: hd || fm.align === 'left' ? 'left' : 'both', ...(hd && (i || j) ? { before: 140, keepNext: true } : hd ? { keepNext: true } : {}), ind: mInd(hd || prevH || j ? 0 : i), bdr: mBdr })); prevH = hd; })); }
