@@ -2151,6 +2151,17 @@ body.home-on{overflow:hidden}
 .kl-stufe .seg button{min-width:96px}
 
 /* Kaffee spendieren */
+#don-ov{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px}
+.don-scrim{position:absolute;inset:0;background:rgba(15,20,40,.5)}
+.don-card{position:relative;width:min(480px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--card);color:var(--ink);border-radius:16px;padding:22px 24px 18px;box-shadow:0 24px 60px -20px rgba(10,15,40,.6);animation:tourIn .18s ease-out}
+.don-art{width:68px;height:68px;border-radius:18px;background:#FFDD00;color:#1C1300;display:grid;place-items:center;margin-bottom:12px}
+.don-card h2{margin:0 0 8px;font-size:19px;letter-spacing:-.01em;line-height:1.25}
+.don-card p{margin:0 0 10px;font-size:14px;line-height:1.55}
+.don-l{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:8px}
+.don-l li{display:flex;flex-direction:column;gap:2px;padding:9px 12px;border-radius:10px;background:var(--panel);font-size:14px;line-height:1.45}
+.don-l b{font-size:14px}
+.don-s{color:var(--muted);font-size:13px!important}
+.don-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 .hd-coffee{background:#FFDD00;border-color:#E6C700;color:#1C1300;text-decoration:none;display:inline-grid;place-items:center}
 .hd-coffee:hover{background:#FFE84D;border-color:#D9BC00;color:#1C1300}
 .hd-coffee svg{transition:transform .2s}.hd-coffee:hover svg{transform:rotate(-12deg) scale(1.08)}
@@ -9715,6 +9726,28 @@ const LS_TOUR = 'abw.tour';
 // Unterstützung: freiwilliger Kaffee über PayPal
 const DONATE_URL = 'https://www.paypal.me/mehrbier';
 const CUP_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg>';
+// Vor PayPal ein kurzes Fenster: wofür das Geld gedacht ist
+function donateOpen() {
+  if (document.getElementById('don-ov')) return;
+  const box = document.createElement('div'); box.id = 'don-ov'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'don-t');
+  box.innerHTML = `<div class="don-scrim" data-don="x"></div><div class="don-card">
+    <div class="don-art" aria-hidden="true">${CUP_SVG.replace('width="18" height="18"', 'width="44" height="44"')}</div>
+    <h2 id="don-t">Danke, dass Sie die AB-Werkstatt unterstützen möchten!</h2>
+    <p>Die AB-Werkstatt ist kostenlos und ohne Werbung. Ich entwickle sie neben meinem Unterricht in meiner freien Zeit. Ihr Beitrag fließt in zwei Dinge:</p>
+    <ul class="don-l">
+      <li><b>Arbeitszeit</b><span>für neue Bausteine und Vorlagen, Fehlerbehebungen und die Wünsche, die aus dem Kollegium kommen.</span></li>
+      <li><b>Einen eigenen Server</b><span>in meinem Heimnetzwerk. Damit sollen Ihre Stunden und Materialien künftig nicht bei großen Cloud-Anbietern liegen, sondern geschützt auf eigener Hardware, die ich selbst betreue.</span></li>
+    </ul>
+    <p class="don-s">Jeder Betrag hilft, und alles ist freiwillig: Die App bleibt für alle kostenlos.<br>Moritz Bauer</p>
+    <div class="don-acts"><a class="btn donate-b don-go" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer" data-don="go">${CUP_SVG}Weiter zu PayPal</a><button type="button" class="btn" data-don="x">Vielleicht später</button></div></div>`;
+  document.body.append(box); const prev = document.activeElement;
+  const close = () => { box.remove(); document.removeEventListener('keydown', key, true); if (prev && prev.focus) prev.focus(); };
+  const key = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+  document.addEventListener('keydown', key, true);
+  box.addEventListener('click', e => { const a = e.target.closest('[data-don]'); if (!a) return; if (a.dataset.don === 'go') setTimeout(close, 50); else close(); });
+  const f = box.querySelector('.don-go'); if (f) f.focus();
+}
+document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('.hd-coffee, .donate .donate-b'); if (!a) return; e.preventDefault(); e.stopPropagation(); donateOpen(); }, true);
 const donateHTML = (lead = 'Gefällt Ihnen die AB-Werkstatt?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützen Sie die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
 const TOUR = [
   { t: 'Willkommen in der AB-Werkstatt', d: 'In gut einer Minute sehen Sie das Wichtigste. Links bauen Sie die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
