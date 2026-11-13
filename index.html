@@ -2091,6 +2091,62 @@ body.home-on{overflow:hidden}
 #editor .card.flash{animation:pvFlash 1.1s ease-out}
 @keyframes pvFlash{0%,35%{box-shadow:0 0 0 3px var(--tinte)}100%{box-shadow:0 0 0 0 transparent}}
 @media print{#pv-tools,#pv-ins,#pv-insp{display:none!important}}
+/* Grundschule: Lineaturen, Silben, Aufgabenformate */
+.gl{position:relative;width:100%}
+.gl>i{position:absolute;left:0;right:0;height:0;border-top:.2mm solid #9AA3B2}
+.gl>i.mi{border-top-color:#B9C0CC}
+.gl>i.bl{border-top:.3mm solid #5F6B7E}
+.gl>b.mb{position:absolute;left:0;right:0;background:#FFF2BF}
+.gl4>i.hl{border-top:.2mm dashed #B9C0CC}
+.blk-lines .gl:last-child{margin-bottom:0}
+.sb{display:inline}
+.sil-f .mat-body .sb.s0,.gsa-sbw.sil-f .sb.s0{color:#1F4FB4}.sil-f .mat-body .sb.s1,.gsa-sbw.sil-f .sb.s1{color:#C0262D}
+.sil-b .sb{border-bottom:.3mm solid currentColor;border-radius:0 0 45% 45%/0 0 .5em .5em;padding:0 .04em .06em;margin:0 .03em}
+.sil-b .mat-body .sb{border-bottom-color:#8A93A3}
+.page.gs{font-size:var(--gsfs,13pt);line-height:1.5}
+.page.gs .task-body,.page.gs .info-text,.page.gs .blk-text,.page.gs .tb td,.page.gs .tb th,.page.gs .mt-t{font-size:var(--gsfs,13pt);line-height:1.5}
+.page.gs .task-no{width:7mm;height:7mm;font-size:11pt}
+.page.gs .task{column-gap:3.5mm;padding:1.4mm 0}
+.blk-gsa{display:flex;flex-direction:column;gap:2.2mm;margin:1mm 0 3mm}
+.gsa-h{display:flex;align-items:flex-start;gap:2.5mm;font-weight:700;margin-bottom:.8mm}
+.gsa-ic{width:7mm;height:7mm;flex:0 0 auto;margin-top:-.3mm}
+.gsa-t{flex:1 1 auto}
+.gs-box{display:inline-grid;place-items:center;width:6.5mm;height:6.5mm;border:.35mm solid var(--paper-ink);border-radius:1mm;flex:0 0 auto;font-style:normal}
+.gs-box.big{width:9mm;height:9mm}
+.gs-box em{font-style:normal;font-weight:700;color:#C0262D;font-size:1.15em}
+.gs-x{width:5mm;height:5mm;stroke:#C0262D;stroke-width:1.6;stroke-linecap:round;fill:none}
+.gsa-kr{display:grid;grid-template-columns:minmax(0,1fr) 20mm 20mm;align-items:center;gap:2mm;padding:1.2mm 0;border-bottom:.2mm solid var(--paper-hair)}
+.gsa-kr>.gs-box{justify-self:center}
+.gsa-krh{border-bottom:.3mm solid var(--paper-ink);padding-bottom:.6mm;font-size:.85em}.gsa-krh b{text-align:center}
+.gsa-kr.ja{grid-template-columns:auto minmax(0,1fr);border-bottom:0}
+.gsa-or{display:flex;align-items:center;gap:3mm;padding:.8mm 0}
+.gsa-ss{display:grid;width:max-content;margin:1mm auto;border-top:.3mm solid var(--paper-ink);border-left:.3mm solid var(--paper-ink);font-family:var(--f-sans);font-weight:600}
+.gsa-ss span{display:grid;place-items:center;border-right:.3mm solid var(--paper-ink);border-bottom:.3mm solid var(--paper-ink);line-height:1}
+.gsa-ss span.on{background:#FFE58A}
+.gsa-ssl{display:flex;flex-wrap:wrap;gap:2mm 6mm;justify-content:center;font-weight:600}
+.gsa-ssl span{padding:.6mm 2.5mm;border:.25mm solid var(--paper-hair);border-radius:1.2mm}
+.gsa-sb{display:flex;align-items:flex-end;justify-content:space-between;gap:6mm;padding:1.5mm 0 3.5mm;border-bottom:.2mm solid var(--paper-hair)}
+.gsa-sbw{font-size:1.45em;letter-spacing:.04em;font-family:var(--f-sans);padding-bottom:4mm}
+.gsa-sbw.sil-b{padding-bottom:3.2mm}
+.gsa-sbw.sil-b .sb{border-bottom:.35mm solid #C0262D}
+.gsa-sbc{display:flex;gap:2mm;padding-bottom:2mm}
+.gsa-sbc i{width:6mm;height:6mm;border:.3mm solid var(--paper-ink);border-radius:50%}
+.gsa-sbc i.on{background:#7FB3F0}
+.gsa-ab{font-family:var(--f-sans);font-size:1.12em;margin-top:1.5mm}
+.gsa-ln .wl{height:11mm}
+.gsa-frame{border:.35mm solid var(--paper-ink);border-radius:2mm}
+.gsa-img{text-align:center}.gsa-img img{max-width:100%;display:inline-block}
+.gsa-se{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,10mm);align-items:center;gap:3mm;padding:1.4mm 0;border-bottom:.2mm solid var(--paper-hair)}
+.gsa-se i{display:grid;place-items:center}.gsa-se svg{width:9mm;height:9mm;color:var(--paper-ink)}
+.gs-items{display:flex;flex-direction:column;gap:6px}
+.gs-it{display:flex;align-items:center;gap:8px}
+.gs-it .inp{flex:1 1 auto;min-width:0}
+.gs-no{width:22px;height:22px;border-radius:6px;background:var(--panel);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted);flex:0 0 auto}
+.gs-ok{white-space:nowrap;margin:0}
+.gs-kind .seg{flex-wrap:wrap}
+.gs-prev{font-family:var(--f-sans)}
+.hint.warn{color:#B42318}
+.kl-stufe .seg button{min-width:96px}
 /* Tafelkarten */
 .kk-page{width:297mm;height:210mm;padding:9mm;background:#FFFFFF}
 .kk-frame{width:100%;height:100%;border:2.4mm solid var(--kc);border-radius:7mm;display:flex;align-items:center;justify-content:center;padding:12mm 16mm;overflow:hidden}
@@ -2289,7 +2345,7 @@ const DEFAULT_KLASSEN = [
 // Die Klassen gehören zum Konto (Einstellungen der Ablage). DEFAULT_KLASSEN sind die ursprünglichen drei Reiter.
 const LEGACY_IDS = ['gk', 'k10', 'k910'];
 const LS_KLCACHE = 'abw.klassen';
-const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && ['gp', 'bio', 'en', 'es'].includes(k.fach) ? k.fach : 'deutsch' });
+const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && ['gp', 'bio', 'en', 'es'].includes(k.fach) ? k.fach : 'deutsch', stufe: k && k.stufe === 'gs' ? 'gs' : 'os', jg: k && k.stufe === 'gs' ? Math.max(1, Math.min(6, +k.jg || jgGuess(k.label) || 3)) : 0 });
 /* Fächer: bestimmen Operatoren, Vorlagen, Formulierungshilfen und Materialarten */
 const FAECHER = { deutsch: { label: 'Deutsch', course: 'Deutsch', ops: 'IQB-Grundstock Deutsch', opsShort: 'IQB-Grundstock' }, gp: { label: 'Geschichte/Politik', course: 'Geschichte', ops: 'KMK-Operatoren Geschichte', opsShort: 'KMK-Liste Geschichte' }, bio: { label: 'Biologie', course: 'Biologie', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' },
   en: { label: 'Englisch', course: 'Englisch', ops: 'Operatoren Englisch (KMK, Abitur)', opsShort: 'Operatoren Englisch', lang: 'en' },
@@ -2334,8 +2390,9 @@ const TYPE_ICON = {
   zeichnung: '<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="m8 16 1-3.2 6.2-6.2 2.2 2.2-6.2 6.2z"/>',
   pagebreak: '<path d="M5 3v5.5h14V3M5 21v-5.5h14V21"/><path d="M3 12h2.5M8.2 12h2.5M13.3 12h2.5M18.5 12H21"/>'
 };
-const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
-const iconKey = b => b.type === 'material' && b.post ? 'post' : b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type;
+Object.keys({ kreuz: 1, ordnen: 1, suchsel: 1, silben: 1, abschreib: 1, bildschreib: 1, selbst: 1 }).forEach(k => { TYPE_ICON['gs-' + k] = () => GSA[k].ic; });
+const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${typeof TYPE_ICON[k] === 'function' ? TYPE_ICON[k]() : TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
+const iconKey = b => b.type === 'material' && b.post ? 'post' : b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type === 'gsa' ? 'gs-' + gsaK(b) : b.type;
 // Tabellen: Höhe einer Zeile in mm (Voreinstellung, eigene Höhe oder Höhe dieser Zeile)
 const TB_H = { normal: 8, hoch: 16, sehrhoch: 28, gross: 40 };
 const tbBaseMM = b => b.rowHeight === 'eigen' ? Math.max(5, Math.min(250, Number(b.rowMM) || 50)) : TB_H[b.rowHeight] || 8;
@@ -2345,7 +2402,7 @@ const tbRowMM = (b, ri) => { const own = b.rowEach && Array.isArray(b.rowH) ? Nu
 const tbEh = (b, ri, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '').split('\n').map(x => x.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
 const tbEhCount = b => b.rows.reduce((n, r, ri) => n + r.reduce((k, _, ci) => k + (tbEh(b, ri, ci).length ? 1 : 0), 0), 0);
 const tbLines = h => Math.max(1, Math.round(h / 9));
-const typeLabel = b => b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
+const typeLabel = b => b.type === 'gsa' ? GSA[gsaK(b)].label : b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
   poem:     { label:'Gedicht',       desc:'Verse und Strophen' },
@@ -2363,7 +2420,8 @@ const TYPES = {
   quote:    { label:'Zitat',         desc:'Impuls zum Einstieg' },
   qr:       { label:'QR-Code',       desc:'Link zu Video, Quelle' },
   image:    { label:'Bild',          desc:'Grafik, Schaubild' },
-  pagebreak:{ label:'Seitenumbruch', desc:'Rest auf neue Seite' }
+  pagebreak:{ label:'Seitenumbruch', desc:'Rest auf neue Seite' },
+  gsa:      { label:'Grundschul-Aufgabe', desc:'Ankreuzen, Reihenfolge, Suchsel, Silben, Abschreiben, Bild und Schreiben, Selbsteinschätzung' }
 };
 
 /* Bausteinliste je Fach. Ein Eintrag ist eine Bausteinart mit Voreinstellungen (pre). Gedichte gibt es nur in Deutsch. */
@@ -2371,7 +2429,7 @@ const PAL_POST = () => PAL('material', { k: 'post', label: 'Post', desc: 'Beitra
 const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
+  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
   get en() { return this.deutsch; }, get es() { return this.deutsch; },
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Text- oder Bildquelle (Q1), im Baustein umschaltbar', ic: 'quelle', pre: { mk: 'q' } }),
@@ -2391,11 +2449,20 @@ const PALETTE = {
     PAL('lines', { desc: 'Linien oder Kästchen' }), PAL('heading'), PAL('text'), PAL('qr'), PAL('pagebreak')
   ]
 };
-const paletteFor = () => PALETTE[fachKey()] || PALETTE.deutsch;
+const PAL_GSA = () => Object.entries(GSA).map(([k, x]) => PAL('gsa', { k: 'gs-' + k, label: x.label, desc: x.desc, ic: 'gs-' + k, pre: { gk: k, ...(k === 'ordnen' ? { items: [{ t: '' }, { t: '' }, { t: '' }, { t: '' }] } : k === 'selbst' ? { items: [{ t: 'Ich kann …' }, { t: 'Ich kann …' }, { t: 'Ich kann …' }] } : {}) } }));
+const PALETTE_GS = () => [PAL('material', { label: 'Lesetext', desc: 'Text zum Lesen, große Schrift, auf Wunsch mit Silben' }), PAL('poem'), PAL('tasks', { desc: 'Arbeitsaufträge mit Handlungsverben' }), ...PAL_GSA(),
+  PAL('match', { label: 'Verbinden', desc: 'Wörter, Sätze oder Bilder mit Linien verbinden' }), PAL_SORT(), PAL('lines', { k: 'lineatur', label: 'Lineatur', desc: 'Schreiblinien passend zur Klassenstufe', pre: { count: 4 } }), PAL('lines', { k: 'malfeld', label: 'Malfeld', desc: 'Freie Fläche zum Malen', ic: 'zeichnung', pre: { style: 'rahmen', count: 9 } }),
+  PAL('image'), PAL('info', { desc: 'Merke, Tipp' }), PAL('table'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')];
+let PAL_GS_CACHE = null;
+const paletteFor = () => fachKey() === 'deutsch' && isGS() ? (PAL_GS_CACHE = PAL_GS_CACHE || PALETTE_GS()) : PALETTE[fachKey()] || PALETTE.deutsch;
 function paletteBlock(k, type) {
   const e = paletteFor().find(x => x.k === k) || Object.values(PALETTE).flat().find(x => x.k === k);
   const nb = newBlock(e ? e.type : type);
   if (e && e.pre) Object.assign(nb, JSON.parse(JSON.stringify(e.pre)));
+  // Grundschule: große Schrift, Flattersatz und Lineatur passend zur Klassenstufe
+  if (isGS()) { const jg = gsJg();
+    if (nb.type === 'material' && !(e && e.pre && e.pre.fmt)) nb.fmt = { ...(nb.fmt || {}), font: 'sans', size: jg <= 2 ? 'G20' : jg <= 4 ? 'G16' : 'XXL', lh: 'weit', align: 'left' };
+    if (nb.type === 'lines' && !(e && e.pre && e.pre.style)) nb.style = linForJg(jg); }
   if (nb.type === 'match' && nb.sort) { nb.title = MT_DEF(true, nb.mode, state.sheet && state.sheet.meta && state.sheet.meta.anrede === 'du'); nb.cats.forEach(c => { const o = c.id; c.id = mtCid(); nb.words.forEach(w => { if (w.c === o) w.c = c.id; }); }); }
   return nb;
 }
@@ -2545,7 +2612,7 @@ const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
   o.imp = IRREG[base] || (base.endsWith('ern') ? base.slice(0, -1) + 'e' : base.slice(0, -2) + 'e');
   o.tplDu = cap(o.imp) + o.tpl.replace(/^\S+ Sie/, '').replace(/^ sich /, ' dich ');
 }));
-const curOps = () => ({ gp: OPS_GP, bio: OPS_BIO, en: OPS_EN, es: OPS_ES })[fachKey()] || OPS;
+const curOps = () => (fachKey() === 'deutsch' && isGS() ? OPS_GS : ({ gp: OPS_GP, bio: OPS_BIO, en: OPS_EN, es: OPS_ES })[fachKey()] || OPS);
 const impHit = (o, w) => o.imp === w || (!!o.imp2 && o.imp2 === w);
 // Abgetrenntes Teil am Ende eines (Teil-)Satzes, damit „zu“, „auf“, „ab“, „nach“ nicht überall zählen
 const partAtEnd = (s, p) => new RegExp('(^|[\\s(„])' + p + '(?=\\s*([,.;:!?)“”–—]|$|(und|oder|sowie|aber|denn)\\s))', 'i').test(s);
@@ -3156,18 +3223,19 @@ function onGlossSubmit(e) {
 const MAT_FMT = {
   align: { label: 'Ausrichtung', opts: [['justify', 'Blocksatz'], ['left', 'Linksbündig']] },
   font: { label: 'Schrift', opts: [['serif', 'Literata (mit Serifen)'], ['sans', 'Atkinson (ohne Serifen)'], ['mono', 'Schreibmaschine'], ['hand', 'Handschrift'], ['frak', 'Fraktur']] },
-  size: { label: 'Schriftgröße', opts: [['XS', '9 pt'], ['S', '9,5 pt'], ['M10', '10 pt'], ['M', '10,5 pt'], ['M11', '11 pt'], ['L', '12 pt'], ['XL', '13 pt'], ['XXL', '14 pt']] },
+  size: { label: 'Schriftgröße', opts: [['XS', '9 pt'], ['S', '9,5 pt'], ['M10', '10 pt'], ['M', '10,5 pt'], ['M11', '11 pt'], ['L', '12 pt'], ['XL', '13 pt'], ['XXL', '14 pt'], ['G16', '16 pt'], ['G18', '18 pt'], ['G20', '20 pt'], ['G24', '24 pt']] },
+  silben: { label: 'Silben', opts: [['', 'aus'], ['boegen', 'Silbenbögen'], ['farbe', 'farbig (blau/rot)']] },
   lh: { label: 'Zeilenabstand', opts: [['eng', 'eng'], ['normal', 'normal'], ['weit', 'weit']] },
   mrw: { label: 'Breite des Rands', opts: [['20', 'schmal'], ['28', 'mittel'], ['40', 'breit'], ['55', 'sehr breit']] }
 };
 const FMT_MRW = { 20: 1, 28: 1, 40: 1, 55: 1 };
-const FMT_SIZE = { XS: 9, S: 9.5, M10: 10, M: 10.5, M11: 11, L: 12, XL: 13, XXL: 14 }, FMT_LH = { eng: 1.35, normal: 1.52, weit: 2 }, FMT_WLINE = { eng: 276, normal: 300, weit: 400 }, FMT_WSZ = { XS: 18, S: 19, M10: 20, M: 21, M11: 22, L: 24, XL: 26, XXL: 28 };
+const FMT_SIZE = { XS: 9, S: 9.5, M10: 10, M: 10.5, M11: 11, L: 12, XL: 13, XXL: 14, G16: 16, G18: 18, G20: 20, G24: 24 }, FMT_LH = { eng: 1.35, normal: 1.52, weit: 2 }, FMT_WLINE = { eng: 276, normal: 300, weit: 400 }, FMT_WSZ = { XS: 18, S: 19, M10: 20, M: 21, M11: 22, L: 24, XL: 26, XXL: 28, G16: 32, G18: 36, G20: 40, G24: 48 };
 const FMT_FF = { serif: 'var(--f-text)', sans: 'var(--f-sans)', mono: "'Courier Prime','Courier New',Courier,monospace", hand: "'Caveat','Segoe Print',cursive", frak: "'UnifrakturMaguntia','Old English Text MT',serif" };
 const FMT_WF = { serif: 'Georgia', sans: 'Arial', mono: 'Courier New', hand: 'Segoe Print', frak: 'Old English Text MT' };
 const fmtFF = f => FMT_FF[f] || FMT_FF.serif;
 function matFmt(b) {
   const f = b.fmt || {};
-  return { align: f.align === 'left' ? 'left' : 'justify', font: FMT_FF[f.font] ? f.font : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent === true, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1, mrw: FMT_MRW[f.mrw] ? String(f.mrw) : '28', mrh: typeof f.mrh === 'string' ? f.mrh : '' };
+  return { align: f.align === 'left' ? 'left' : 'justify', font: FMT_FF[f.font] ? f.font : 'serif', size: FMT_SIZE[f.size] ? f.size : 'M', lh: FMT_LH[f.lh] ? f.lh : 'normal', indent: f.indent === true, margin: !!f.margin && f.cols !== '2', cols: f.cols === '2' ? 2 : 1, mrw: FMT_MRW[f.mrw] ? String(f.mrw) : '28', mrh: typeof f.mrh === 'string' ? f.mrh : '', silben: ['boegen', 'farbe'].includes(f.silben) ? f.silben : '', silx: typeof f.silx === 'string' ? f.silx : '' };
 }
 function fmtSummary(b) {
   const f = matFmt(b);
@@ -3351,9 +3419,180 @@ const ARB = {
   sehen: { label: 'Video sehen', g: '<rect x="2.5" y="4" width="19" height="13.5" rx="2"/><path d="M10 7.9v5.7l4.9-2.85z" class="f"/><path d="M8 21h8"/>' },
   zeichnen: { label: 'Zeichnen', g: '<path d="M12 3a9 9 0 1 0 0 18c1.3 0 1.9-.8 1.9-1.8 0-1.4-1.3-1.7-1.3-3 0-1 .8-1.7 1.9-1.7h2.3A4.2 4.2 0 0 0 21 10.3C21 6.2 17 3 12 3z"/><circle cx="7.6" cy="11" r="1.2" class="f"/><circle cx="10.4" cy="7.2" r="1.2" class="f"/><circle cx="15" cy="7.4" r="1.2" class="f"/>' }
 };
+Object.assign(ARB, {
+  kreuz: { label: 'Ankreuzen', gs: 1, g: '<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M8 8l8 8M16 8l-8 8"/>' },
+  einkreisen: { label: 'Einkreisen', gs: 1, g: '<ellipse cx="12" cy="12" rx="9.5" ry="6.5"/><path d="M8 12h8"/>' },
+  ausmalen: { label: 'Ausmalen', gs: 1, g: '<path d="M14.5 3.5l6 6-8.5 8.5-6-6z"/><path d="M6 12l-2.5 6.5L10 16" class="f"/>' },
+  ausschneiden: { label: 'Ausschneiden', gs: 1, g: '<circle cx="6" cy="17" r="2.8"/><circle cx="6" cy="7" r="2.8"/><path d="M8.3 8.6 20 17M8.3 15.4 20 7"/>' },
+  kleben: { label: 'Kleben', gs: 1, g: '<rect x="7" y="9" width="10" height="12" rx="2"/><path d="M9 9V5.5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5.5V9"/><path d="M9.5 14h5"/>' },
+  verbinden: { label: 'Verbinden', gs: 1, g: '<circle cx="5" cy="6" r="2" class="f"/><circle cx="19" cy="18" r="2" class="f"/><path d="M6.6 7.3 17.4 16.7"/><circle cx="5" cy="18" r="2" class="f"/><circle cx="19" cy="6" r="2" class="f"/><path d="M6.8 17 17.2 7"/>' }
+});
 const arbOf = it => (it && Array.isArray(it.arb) ? it.arb.filter(k => ARB[k]) : []);
 const arbSVG = (k, c) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><style>.f{fill:${c}}</style><g style="fill:none;stroke:${c};stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round">${(ARB[k] || {}).g || ''}</g></svg>`;
 const arbURI = (k, c) => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(arbSVG(k, c));
+/* ================= Grundschule: Schulform an der Klasse, Lineaturen, Silben, einfache Handlungsverben, eigene Aufgabenformate ================= */
+const isGS = kl => KL(kl || (state.sheet ? state.sheet.klasse : state.klasse)).stufe === 'gs';
+const gsJg = kl => { const k = KL(kl || (state.sheet ? state.sheet.klasse : state.klasse)); return k.stufe === 'gs' ? (+k.jg || 3) : 0; };
+// Anrede beim Anlegen: Grundschule und bis Klasse 10 „du“, Oberstufe „Sie“
+function anredeGuess(label, stufe) {
+  if (stufe === 'gs') return 'du'; const L = String(label || '');
+  if (/\b(Q\s?[1-4]|E-?Phase|Q-?Phase|LK|GK|Grundkurs|Leistungskurs|Oberstufe|Abitur|Sek\.?\s?II|Kursstufe)\b/i.test(L)) return 'sie';
+  const m = L.match(/(?:^|\D)(\d{1,2})(?!\d)/); if (m) return +m[1] >= 11 ? 'sie' : 'du';
+  return 'du';
+}
+const jgGuess = label => { const m = String(label || '').match(/(?:^|\D)([1-6])(?!\d)/); return m ? +m[1] : 0; };
+// Lineaturen: Ober-, Mittel- und Unterband in mm, Abstand zur nächsten Zeile
+const LIN = {
+  lin1: { label: 'Lineatur 1 (Klasse 1)', o: 5, m: 5, u: 5, g: 6 },
+  lin2: { label: 'Lineatur 2 (Klasse 2)', o: 4, m: 4, u: 4, g: 5 },
+  lin3: { label: 'Lineatur 3 (Klasse 3)', o: 3, m: 4, u: 3, g: 4 },
+  lin4: { label: 'Lineatur 4 (Klasse 4)', x: 9, hl: 3.6 }
+};
+const linForJg = jg => jg === 1 ? 'lin1' : jg === 2 ? 'lin2' : jg === 3 ? 'lin3' : jg === 4 ? 'lin4' : 'linien';
+const linAuto = s => (s && (LIN[s] || s === 'linien') ? s : (gsJg() ? linForJg(gsJg()) : 'linien'));
+function linRow(st, mb) {
+  if (st === 'linien' || !LIN[st]) return '<div class="wl"></div>';
+  const L = LIN[st];
+  if (L.x) return `<div class="gl gl4" style="height:${L.x}mm"><i class="hl" style="bottom:${L.hl}mm"></i><i class="bl" style="bottom:0"></i></div>`;
+  const H = L.o + L.m + L.u;
+  return `<div class="gl" style="height:${H}mm;margin-bottom:${L.g}mm">${mb ? `<b class="mb" style="top:${L.o}mm;height:${L.m}mm"></b>` : ''}<i style="top:0"></i><i class="mi" style="top:${L.o}mm"></i><i class="bl" style="top:${L.o + L.m}mm"></i><i style="top:${H}mm"></i></div>`;
+}
+const linRowMM = st => { const L = LIN[st]; return !L ? 9 : L.x ? L.x : L.o + L.m + L.u + L.g; };
+
+/* ---------- Silben: regelbasiert (deutsche Silbentrennung, vereinfacht); eigene Trennungen mit „-“ ---------- */
+const SIL_VG = ['äu', 'eu', 'ei', 'ai', 'au', 'ey', 'ay', 'ie', 'aa', 'ee', 'oo'];
+const SIL_CU = ['sch', 'ch', 'ck', 'ph', 'th', 'qu'];
+const SIL_ON = new Set(['bl', 'br', 'pl', 'pr', 'kl', 'kr', 'gl', 'gr', 'fl', 'fr', 'dr', 'tr', 'schl', 'schr', 'schm', 'schn', 'schw', 'pfl', 'zw', 'kn', 'gn', 'wr', 'chr']);
+const silIsV = c => /[aeiouyäöü]/i.test(c);
+function silSplit(word, ex) {
+  const w = String(word || ''); if (w.includes('-') && /\p{L}-\p{L}/u.test(w)) return w.split('-').filter(Boolean);
+  const lw = w.toLowerCase(); if (ex && ex.has(lw)) return ex.get(lw);
+  const U = []; let i = 0;
+  while (i < lw.length) {
+    const c = lw[i];
+    if (!/\p{L}/u.test(c)) { U.push({ s: i, e: i + 1, v: false }); i++; continue; }
+    const cu = SIL_CU.find(x => lw.startsWith(x, i)); if (cu) { U.push({ s: i, e: i + cu.length, v: false, t: cu }); i += cu.length; continue; }
+    if (silIsV(c)) { const vg = SIL_VG.find(x => lw.startsWith(x, i)); const n = vg ? vg.length : 1; U.push({ s: i, e: i + n, v: true }); i += n; continue; }
+    U.push({ s: i, e: i + 1, v: false, t: c }); i++;
+  }
+  const nuc = U.map((u, k) => u.v ? k : -1).filter(k => k >= 0); if (nuc.length < 2) return [w];
+  const cuts = [];
+  for (let q = 0; q < nuc.length - 1; q++) {
+    const a = nuc[q], b = nuc[q + 1]; const C = U.slice(a + 1, b);
+    if (!C.length) { cuts.push(U[b].s); continue; }
+    if (C.length === 1) { cuts.push(C[0].s); continue; }
+    let on = 1; for (let k = Math.min(3, C.length); k >= 2; k--) { if (SIL_ON.has(C.slice(C.length - k).map(x => x.t || '').join(''))) { on = k; break; } }
+    cuts.push(C[C.length - on].s);
+  }
+  const out = []; let p = 0; cuts.forEach(c => { out.push(w.slice(p, c)); p = c; }); out.push(w.slice(p)); return out.filter(Boolean);
+}
+const silEx = txt => { const m = new Map(); String(txt || '').split(/[,;\n]+/).map(x => x.trim()).filter(x => x.includes('-')).forEach(x => m.set(x.replace(/-/g, '').toLowerCase(), x.split('-').filter(Boolean))); return m; };
+// Wörter in einem HTML-Stück in Silben zerlegen (Tags bleiben unberührt)
+function silHTML(h, ex) { return String(h).replace(/(<[^>]*>)|(&[a-z#0-9]+;)|([\p{L}][\p{L}\-]*[\p{L}]|[\p{L}])/gu, (m, tag, ent, word) => { if (tag || ent) return m; const S = silSplit(word.replace(/-/g, '') === word ? word : word, ex); return S.length < 2 ? `<span class="sb s0">${word}</span>` : S.map((x, k) => `<span class="sb s${k % 2}">${x}</span>`).join(''); }); }
+
+/* ---------- Handlungsverben für die Grundschule (du-Form) ---------- */
+const opG = (op, imp, tpl, part, imp2) => ({ op, afb: [1, 1], iqb: 1, fl: 1, gs: 1, imp, imp2, part, end: !!part, tpl, tplDu: tpl });
+const OPS_GS = [
+  opG('lesen', 'lies', 'Lies …'), opG('vorlesen', 'lies', 'Lies … vor.', 'vor'), opG('schreiben', 'schreibe', 'Schreibe …', null, 'schreib'), opG('abschreiben', 'schreibe', 'Schreibe … ab.', 'ab', 'schreib'),
+  opG('aufschreiben', 'schreibe', 'Schreibe … auf.', 'auf', 'schreib'), opG('malen', 'male', 'Male …', null, 'mal'), opG('anmalen', 'male', 'Male … an.', 'an', 'mal'), opG('ausmalen', 'male', 'Male … aus.', 'aus', 'mal'),
+  opG('zeichnen', 'zeichne', 'Zeichne …'), opG('einkreisen', 'kreise', 'Kreise … ein.', 'ein', 'kreis'), opG('unterstreichen', 'unterstreiche', 'Unterstreiche …'), opG('markieren', 'markiere', 'Markiere …'),
+  opG('ankreuzen', 'kreuze', 'Kreuze … an.', 'an', 'kreuz'), opG('verbinden', 'verbinde', 'Verbinde …'), opG('ausschneiden', 'schneide', 'Schneide … aus.', 'aus', 'schneid'), opG('aufkleben', 'klebe', 'Klebe … auf.', 'auf', 'kleb'),
+  opG('einsetzen', 'setze', 'Setze … ein.', 'ein', 'setz'), opG('ergänzen', 'ergänze', 'Ergänze …'), opG('ordnen', 'ordne', 'Ordne …'), opG('sortieren', 'sortiere', 'Sortiere …'), opG('nummerieren', 'nummeriere', 'Nummeriere …'),
+  opG('finden', 'finde', 'Finde …', null, 'find'), opG('suchen', 'suche', 'Suche …', null, 'such'), opG('zählen', 'zähle', 'Zähle …', null, 'zähl'), opG('vergleichen', 'vergleiche', 'Vergleiche …'),
+  opG('erzählen', 'erzähle', 'Erzähle …', null, 'erzähl'), opG('sprechen', 'sprich', 'Sprich …'), opG('besprechen', 'besprich', 'Besprich … mit deinem Partner.'), opG('beschreiben', 'beschreibe', 'Beschreibe …'),
+  opG('erklären', 'erkläre', 'Erkläre …', null, 'erklär'), opG('begründen', 'begründe', 'Begründe …'), opG('überlegen', 'überlege', 'Überlege …', null, 'überleg'), opG('prüfen', 'prüfe', 'Prüfe …'),
+  opG('korrigieren', 'korrigiere', 'Korrigiere …'), opG('notieren', 'notiere', 'Notiere …'), opG('Silben schwingen', 'schwinge', 'Schwinge … in Silben.', null, 'schwing'), opG('Silben klatschen', 'klatsche', 'Klatsche … in Silben.', null, 'klatsch')
+];
+
+/* ---------- Eigene Aufgabenformate ---------- */
+const GSA = {
+  kreuz: { label: 'Ankreuzen', desc: 'Richtig oder falsch, oder: Kreuze an, was stimmt', task: 'Kreuze an: Richtig oder falsch?', task2: 'Kreuze an, was stimmt.', arb: 'kreuz', ic: '<rect x="3.5" y="4" width="7" height="7" rx="1"/><path d="m5 7.5 1.6 1.6L9.2 6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1"/><path d="M13.5 7.5h7M13.5 17h7"/>' },
+  ordnen: { label: 'Reihenfolge', desc: 'Sätze oder Bilder in die richtige Reihenfolge bringen', task: 'Bringe die Sätze in die richtige Reihenfolge. Schreibe die Zahlen in die Kästchen.', arb: 'schreiben', ic: '<rect x="3.5" y="4" width="5" height="5" rx=".8"/><rect x="3.5" y="10" width="5" height="5" rx=".8"/><rect x="3.5" y="16" width="5" height="5" rx=".8"/><path d="M11.5 6.5h9M11.5 12.5h9M11.5 18.5h9"/>' },
+  suchsel: { label: 'Suchsel', desc: 'Wörter im Buchstabengitter finden und einkreisen', task: 'Finde die Wörter und kreise sie ein.', arb: 'einkreisen', ic: '<rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17M14.8 3.5v17"/><rect x="4.6" y="10.2" width="14.8" height="3.6" rx="1.8"/>' },
+  silben: { label: 'Silben', desc: 'Wörter in Silben sprechen, Bögen zeichnen, Silben zählen', task: 'Sprich die Wörter in Silben. Zeichne die Silbenbögen. Male so viele Kreise an, wie das Wort Silben hat.', arb: 'sprechen', ic: '<path d="M3 15c1.5 3 5 3 6.5 0M10.5 15c1.5 3 5 3 6.5 0"/><path d="M4 11h12"/><circle cx="19.5" cy="7" r="1.5"/><circle cx="19.5" cy="12" r="1.5"/>' },
+  abschreib: { label: 'Abschreiben', desc: 'Text mit Lineatur darunter, passend zur Klassenstufe', task: 'Schreibe den Text sauber ab.', arb: 'schreiben', ic: '<path d="M4 5h16"/><path d="M4 9.5h16M4 12h16" stroke-dasharray="1.5 1.3"/><path d="M4 17h16M4 19.5h16" stroke-dasharray="1.5 1.3"/>' },
+  bildschreib: { label: 'Bild und Schreiben', desc: 'Bildfeld zum Malen oder ein Bild, darunter Lineatur', task: 'Male ein Bild. Schreibe dazu.', task2: 'Schau dir das Bild an. Schreibe dazu.', arb: 'zeichnen', ic: '<rect x="3.5" y="3.5" width="17" height="10" rx="1.2"/><path d="m5 12 4-3.5 3 2.5 2.5-2 4 3"/><path d="M4 17h16M4 20.5h16"/>' },
+  selbst: { label: 'Selbsteinschätzung', desc: '„Das kann ich“ mit drei Gesichtern zum Anmalen', task: 'Wie gut kannst du das? Male ein Gesicht an.', arb: 'ausmalen', ic: '<circle cx="6" cy="12" r="3.3"/><circle cx="12" cy="12" r="3.3"/><circle cx="18" cy="12" r="3.3"/><path d="M4.7 12.8c.8 1 1.8 1 2.6 0M10.6 13h2.8M16.7 13.6c.8-1 1.8-1 2.6 0"/>' }
+};
+const gsaK = b => (GSA[b.gk] ? b.gk : 'kreuz');
+const gsaTask = b => { const k = gsaK(b), d = GSA[k]; const t = tfStr(b.title).trim(); if (t) return b.title; if (k === 'kreuz' && b.mode === 'ja') return d.task2; if (k === 'bildschreib' && b.src) return d.task2; return d.task; };
+function gsRng(seed) { let a = (+seed || 1) >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const gsShuffle = (arr, seed) => { const r = gsRng(seed), a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const gsWords = t => String(t || '').split(/[\n,;]+/).map(x => x.trim()).filter(Boolean);
+const gsUp = w => w.replace(/ß/g, 'ẞ').toLocaleUpperCase('de-DE').replace(/\s+/g, '');
+// Suchsel bauen: waagerecht, senkrecht, auf Wunsch schräg; Rest mit häufigen Buchstaben
+function suchselBuild(b) {
+  const n = Math.max(6, Math.min(16, +b.size || 10)); const dirs = [[0, 1], [1, 0], ...(b.dirs === 'hvd' ? [[1, 1]] : [])].filter((d, i) => b.dirs !== 'h' || i === 0);
+  const W = gsWords(b.words).map(gsUp).filter(w => w.length && w.length <= n).sort((a, c) => c.length - a.length);
+  const r = gsRng(b.seed || 7); const G = Array.from({ length: n }, () => Array(n).fill('')); const pos = []; const miss = [];
+  W.forEach(w => { let ok = false;
+    for (let t = 0; t < 300 && !ok; t++) { const [dy, dx] = dirs[Math.floor(r() * dirs.length)]; const y0 = Math.floor(r() * (n - dy * (w.length - 1))), x0 = Math.floor(r() * (n - dx * (w.length - 1)));
+      if ([...w].every((ch, k) => { const g = G[y0 + dy * k][x0 + dx * k]; return !g || g === ch; })) { [...w].forEach((ch, k) => { G[y0 + dy * k][x0 + dx * k] = ch; }); pos.push({ w, y0, x0, dy, dx }); ok = true; } }
+    if (!ok) miss.push(w); });
+  const F = 'EEEEENNNNIIIIRRRSSSAAATTTDDHHUULLCGMOBWFKZPVÄÖÜ'; for (const row of G) for (let x = 0; x < n; x++) if (!row[x]) row[x] = F[Math.floor(r() * F.length)];
+  return { n, G, pos, miss, words: gsWords(b.words) };
+}
+const FACES = ['<circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.1" fill="currentColor"/><circle cx="15.5" cy="10" r="1.1" fill="currentColor"/><path d="M7.5 14.2c2.4 3 6.6 3 9 0"/>',
+  '<circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.1" fill="currentColor"/><circle cx="15.5" cy="10" r="1.1" fill="currentColor"/><path d="M8 15.5h8"/>',
+  '<circle cx="12" cy="12" r="10"/><circle cx="8.5" cy="10" r="1.1" fill="currentColor"/><circle cx="15.5" cy="10" r="1.1" fill="currentColor"/><path d="M7.5 17c2.4-3 6.6-3 9 0"/>'];
+const faceSVG = i => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">${FACES[i]}</svg>`;
+const GS_CHK = '<svg viewBox="0 0 10 10" class="gs-x" aria-hidden="true"><path d="M2 2l6 6M8 2l-6 6"/></svg>';
+function gsaHTML(b, ctx) {
+  const k = gsaK(b), d = GSA[k], teach = !!(ctx.view && ctx.view.lehrer); const lin = linAuto(b.lin); const acc = ctx.acc || '#2741B5';
+  const ic = ARB[d.arb] ? `<img class="gsa-ic" src="${arbURI(d.arb, acc)}" alt="">` : '';
+  const head = `<div class="gsa-h">${ic}<div class="gsa-t">${inlineHTML(gsaTask(b))}</div></div>`;
+  const rows = [];
+  if (k === 'kreuz') {
+    const It = (b.items || []).filter(x => tfStr(x.t).trim()); const rf = b.mode !== 'ja';
+    if (rf) rows.push(`<div class="gsa-kr gsa-krh"><span></span><b>richtig</b><b>falsch</b></div>`);
+    (It.length ? It : [{ t: 'Aussage', ok: true }]).forEach(x => rows.push(rf
+      ? `<div class="gsa-kr"><span>${inlineHTML(x.t)}</span><i class="gs-box">${teach && x.ok ? GS_CHK : ''}</i><i class="gs-box">${teach && !x.ok ? GS_CHK : ''}</i></div>`
+      : `<div class="gsa-kr ja"><i class="gs-box">${teach && x.ok ? GS_CHK : ''}</i><span>${inlineHTML(x.t)}</span></div>`));
+  } else if (k === 'ordnen') {
+    const It = (b.items || []).map((x, i) => ({ t: x.t, n: i + 1 })).filter(x => tfStr(x.t).trim()); const S = gsShuffle(It, b.seed || 3);
+    (S.length ? S : [{ t: 'Satz', n: 1 }]).forEach(x => rows.push(`<div class="gsa-or"><i class="gs-box big">${teach ? `<em>${x.n}</em>` : ''}</i><span>${inlineHTML(x.t)}</span></div>`));
+  } else if (k === 'suchsel') {
+    const S = suchselBuild(b); const hit = new Set(); if (teach) S.pos.forEach(p => { for (let q = 0; q < p.w.length; q++) hit.add((p.y0 + p.dy * q) * S.n + p.x0 + p.dx * q); });
+    const cell = Math.min(10, Math.floor(170 / S.n * 10) / 10);
+    rows.push(`<div class="gsa-ss" style="grid-template-columns:repeat(${S.n},${cell}mm);font-size:${Math.max(10, Math.min(18, cell * 1.5))}pt">${S.G.map((row, y) => row.map((ch, x) => `<span style="height:${cell}mm" class="${hit.has(y * S.n + x) ? 'on' : ''}">${esc(ch)}</span>`).join('')).join('')}</div>`);
+    if (b.showList !== false && S.words.length) rows.push(`<div class="gsa-ssl">${S.words.map(w => `<span>${esc(w)}</span>`).join('')}</div>`);
+  } else if (k === 'silben') {
+    const ex = silEx(b.ex); const W = gsWords(b.words);
+    (W.length ? W : ['Wort']).forEach(w => { const S = silSplit(w, ex); const nC = Math.max(4, S.length + 1); const shown = w.replace(/-/g, '');
+      rows.push(`<div class="gsa-sb"><span class="gsa-sbw${teach ? ' sil-b' : ''}">${teach ? S.map((x, j) => `<span class="sb s${j % 2}">${esc(x)}</span>`).join('') : esc(shown)}</span>${b.count !== false ? `<span class="gsa-sbc">${Array.from({ length: nC }, (_, j) => `<i class="${teach && j < S.length ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>`); });
+  } else if (k === 'abschreib') {
+    const L = String(b.text || '').split('\n').map(x => x.trim()).filter(Boolean); const per = Math.max(1, Math.min(3, +b.per || 1));
+    (L.length ? L : ['Text zum Abschreiben']).forEach(t => { rows.push(`<div class="gsa-ab">${inlineHTML(t)}</div>`); for (let q = 0; q < per; q++) rows.push(`<div class="gsa-ln">${linRow(lin, b.mb)}</div>`); });
+  } else if (k === 'bildschreib') {
+    const hmm = Math.max(30, Math.min(150, +b.fh || 80));
+    rows.push(b.src ? `<div class="gsa-img"><img src="${esc(b.src)}" alt="" style="max-height:${hmm}mm"></div>` : `<div class="gsa-frame" style="height:${hmm}mm"></div>`);
+    for (let q = 0; q < Math.max(1, Math.min(12, +b.rows || 3)); q++) rows.push(`<div class="gsa-ln">${linRow(lin, b.mb)}</div>`);
+  } else if (k === 'selbst') {
+    const It = (b.items || []).filter(x => tfStr(x.t).trim());
+    rows.push(`<div class="gsa-se gsa-seh"><span></span><b>${faceSVG(0)}</b><b>${faceSVG(1)}</b><b>${faceSVG(2)}</b></div>`.replace(/<b>/g, '<b class="hd">'));
+    (It.length ? It : [{ t: 'Ich kann …' }]).forEach(x => rows.push(`<div class="gsa-se"><span>${inlineHTML(x.t)}</span><i>${faceSVG(0)}</i><i>${faceSVG(1)}</i><i>${faceSVG(2)}</i></div>`));
+    rows.splice(0, 1);
+  }
+  return `<div class="blk blk-gsa gsa-${k}">${head}${rows.join('')}</div>`;
+}
+
+function gsaEditor(b) {
+  const k = gsaK(b), d = GSA[k]; const seg = (key, label, opts) => `<div class="f"><span>${label}</span><div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-act="gs-set" data-k="${key}" data-v="${v}" aria-pressed="${String(b[key] == null ? '' : b[key]) === v}">${l}</button>`).join('')}</div></div>`;
+  const linSel = () => fSelect('lin', 'Lineatur', b.lin || '', [['', `passend zur Klasse (${linAuto('') === 'linien' ? 'Linien' : LIN[linAuto('')].label.split(' (')[0]})`], ...Object.entries(LIN).map(([v, x]) => [v, x.label]), ['linien', 'einfache Linien (9 mm)']]) + (LIN[linAuto(b.lin)] && !LIN[linAuto(b.lin)].x ? fCheck('mb', 'Mittelband farbig', b.mb) : '');
+  const items = (ph, extra) => `<div class="f"><span>${k === 'ordnen' ? 'Sätze in der richtigen Reihenfolge' : k === 'selbst' ? 'Was die Kinder einschätzen' : 'Aussagen'}</span><div class="gs-items">${(b.items || []).map((it, i) => `<div class="gs-it">${k === 'ordnen' ? `<span class="gs-no">${i + 1}</span>` : ''}<input class="inp" type="text" data-k="items.${i}.t" value="${esc(it.t || '')}" placeholder="${esc(ph)}">${extra ? extra(it, i) : ''}<button class="ib" type="button" data-act="gs-del" data-i="${i}" title="Entfernen"${(b.items || []).length < 2 ? ' disabled' : ''}>${I.x}</button></div>`).join('')}</div><button class="link" type="button" data-act="gs-add">+ ${k === 'ordnen' ? 'Satz' : k === 'selbst' ? 'Zeile' : 'Aussage'}</button></div>`;
+  let h = `<div class="f gs-kind"><span>Format</span><div class="seg sm" role="group" aria-label="Format">${Object.entries(GSA).map(([v, x]) => `<button type="button" data-act="gs-set" data-k="gk" data-v="${v}" aria-pressed="${k === v}">${x.label}</button>`).join('')}</div></div>`
+    + fText('title', 'Arbeitsauftrag', b.title, gsaTask({ ...b, title: '' }));
+  if (k === 'kreuz') h += seg('mode', 'Art', [['', 'richtig oder falsch'], ['ja', 'ankreuzen, was stimmt']]) + items('z. B. Der Igel schläft im Winter.', (it, i) => `<label class="chk gs-ok"><input type="checkbox" data-k="items.${i}.ok"${it.ok ? ' checked' : ''}>stimmt</label>`) + '<small class="hint">In der Lehrerfassung sind die richtigen Kreuze eingetragen.</small>';
+  if (k === 'ordnen') h += items('z. B. Am Morgen wacht Lina auf.') + `<div class="row"><button class="link" type="button" data-act="gs-seed">Neu mischen</button><small class="hint">Auf dem Blatt erscheinen die Sätze gemischt, in der Lehrerfassung mit den richtigen Zahlen.</small></div>`;
+  if (k === 'suchsel') { const S = suchselBuild(b); h += fArea('words', 'Wörter', b.words || '', 4, 'Igel\nFuchs\nEule', '', 'Ein Wort pro Zeile oder mit Komma getrennt.') + seg('size', 'Größe', [['8', '8 × 8'], ['10', '10 × 10'], ['12', '12 × 12'], ['14', '14 × 14']]) + seg('dirs', 'Richtungen', [['h', 'nur waagerecht'], ['hv', 'waagerecht und senkrecht'], ['hvd', 'auch schräg']]) + `<div class="chks">${fCheck('showList', 'Wörter unter dem Gitter zeigen', b.showList !== false)}</div><div class="row"><button class="link" type="button" data-act="gs-seed">Neu mischen</button>${S.miss.length ? `<small class="hint warn">Passt nicht ins Gitter: ${esc(S.miss.join(', '))}. Gitter größer machen oder neu mischen.</small>` : ''}</div>`; }
+  if (k === 'silben') { const ex = silEx(b.ex); const W = gsWords(b.words); h += fArea('words', 'Wörter', b.words || '', 4, 'Tomate\nBanane\nApfel', '', 'Ein Wort pro Zeile. Eigene Trennung mit Bindestrich, z. B. The-a-ter.') + (W.length ? `<small class="hint gs-prev">So trennt die App: ${W.slice(0, 12).map(w => esc(silSplit(w, ex).join('·'))).join(', ')}</small>` : '') + `<div class="chks">${fCheck('count', 'Kreise zum Silbenzählen', b.count !== false)}</div><small class="hint">In der Lehrerfassung stehen die Silbenbögen und die angemalten Kreise.</small>`; }
+  if (k === 'abschreib') h += fArea('text', 'Text', b.text || '', 4, 'Der Hund spielt im Garten.', '', 'Jede Zeile bekommt darunter eine Lineatur.') + `<div class="row">${linSel()}</div>` + seg('per', 'Zeilen zum Schreiben je Textzeile', [['1', '1'], ['2', '2'], ['3', '3']]);
+  if (k === 'bildschreib') h += `<div class="f"><span>Bild (optional)</span>${b.src ? `<div class="st-img"><img src="${esc(b.src)}" alt=""><button class="link" type="button" data-act="st-img-del">Bild entfernen, Feld zum Malen</button></div>` : '<small class="hint">Ohne Bild bleibt ein Rahmen zum Malen.</small>'}<input type="file" accept="image/*" data-act="img"></div>` + seg('fh', b.src ? 'Höchstens so hoch' : 'Höhe des Malfelds', [['50', '5 cm'], ['80', '8 cm'], ['110', '11 cm']]) + `<div class="row">${linSel()}<label class="f narrow"><span>Zeilen</span><input type="number" min="1" max="12" data-k="rows" value="${esc(b.rows || 3)}"></label></div>`;
+  if (k === 'selbst') h += items('z. B. Ich kann Silben schwingen.');
+  return h;
+}
+const gsaSummary = b => { const k = gsaK(b); const n = k === 'suchsel' || k === 'silben' ? gsWords(b.words).length : k === 'abschreib' ? String(b.text || '').split('\n').filter(x => x.trim()).length : (b.items || []).filter(x => tfStr(x.t).trim()).length; return `${GSA[k].label}${n ? ' · ' + n + (k === 'suchsel' || k === 'silben' ? ' Wörter' : k === 'abschreib' ? ' Zeilen' : k === 'selbst' ? ' Zeilen' : k === 'ordnen' ? ' Sätze' : ' Aussagen') : ''}`; };
+
 
 /* ================= Funktionsumfang: Basis blendet selten gebrauchte Werkzeuge aus (.x-pro), solange sie nicht benutzt werden (.used) ================= */
 const LS_UMFANG = 'abw.umfang';
@@ -3695,9 +3934,9 @@ function areaBarHTML() {
     ${mo ? `<div class="area-mp" role="menu">${AREAS_MORE.map(([k, l]) => `<button type="button" role="menuitem" data-act="area-set" data-v="${k}"${A === k ? ' aria-current="true"' : ''}><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}${more ? `<button type="button" role="menuitem" data-act="area-set" data-v="blatt"><i>${areaIc('blatt')}</i><span>Zurück zum Arbeitsblatt</span></button>` : ''}</div>` : ''}</div>${A === 'blatt' ? quickBarHTML() : ''}</nav>`;
 }
 // Die meistgenutzten Bausteine immer griffbereit; der Rest unter „Weitere“ (mit Suche)
-const QUICK = ['material', 'tasks', 'info', 'phrases', 'table', 'lines'];
+const QUICK = ['material', 'tasks', 'info', 'phrases', 'table', 'lines'], QUICK_GS = ['material', 'tasks', 'gs-kreuz', 'gs-ordnen', 'lineatur', 'image'];
 function quickBarHTML() {
-  const P = paletteFor(); const L = QUICK.map(k => P.find(t => t.k === k)).filter(Boolean);
+  const P = paletteFor(); const L = (isGS() && fachKey() === 'deutsch' ? QUICK_GS : QUICK).map(k => P.find(t => t.k === k)).filter(Boolean);
   return `<div class="qbar" role="toolbar" aria-label="Baustein hinzufügen">${L.map(t => `<button type="button" class="qb" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)} · wird hinter dem gewählten Baustein eingefügt"><i>${typeIcon(t.ic)}</i><span>${esc(t.label)}</span></button>`).join('')}<button type="button" class="qb qb-more" data-act="bk-open" title="Alle Bausteine mit Suche (Strg+K)"><b>+</b><span>Weitere</span></button></div>`;
 }
 function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras') { const SB = stBlocks(); return SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4') ? 'a4' : SB.some(b => b.type === 'a3') ? 'a3' : exitSteps().length ? 'exit' : 'a4'; } return L[0]; }
@@ -6652,6 +6891,7 @@ function gTargets(bid) {
     case 'a3': a3Norm(b); return [[b, 'title'], [b, 'task'], [b, 'impulse'], [b, 'rules'], ...['legend', 'sections', 'cols', 'aspects', 'experts'].flatMap(k => b[k].map((_, i) => [b[k], i]))];
     case 'tafel': tfNorm(b); return [[b, 'title'], [b, 'center'], ...b.cols.map((_, i) => [b.cols, i]), ...b.rows.flatMap(r => r.map((_, i) => [r, i])), ...b.branches.flatMap(x => [[x, 'h'], [x, 't']]), ...b.steps.flatMap(x => [[x, 'h'], [x, 't']]), [b.poles, 'l'], [b.poles, 'm'], [b.poles, 'r'], ...b.scale.map(x => [x, 't']), ...b.nodes.flatMap(x => [[x, 'n'], [x, 'd']]), ...b.rels.map(x => [x, 't'])];
     case 'heading': case 'text': return [[b, 'text']];
+    case 'gsa': return [[b, 'title'], [b, 'words'], [b, 'text'], ...(b.items || []).map(x => [x, 't'])];
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
     case 'qr': return [[b, 'title'], [b, 'note']];
     case 'match': return [[b, 'title'], ...(b.sort ? [...(b.cats || []).map(c => [c, 't']), ...(b.words || []).map(w => [w, 't'])] : (b.pairs || []).flatMap(p => [[p, 'a'], [p, 'b']]))];
@@ -6771,6 +7011,7 @@ function newBlock(type) {
     case 'info': return { id, type, kind: 'Merke', title: '', text: '' };
     case 'table': return { id, type, title: '', cols: ['', '', ''], rows: [['', '', ''], ['', '', ''], ['', '', '']], rowHeight: 'normal', firstBold: false };
     case 'lines': return { id, type, count: 8, style: 'linien' };
+    case 'gsa': return { id, type, gk: 'kreuz', title: '', mode: '', items: [{ t: '', ok: true }, { t: '', ok: false }, { t: '', ok: true }], words: '', text: '', lin: '', mb: false, size: '10', dirs: 'hv', showList: true, count: true, per: '1', fh: '80', rows: 3, seed: 1 + Math.floor(Math.random() * 1e6), src: '', ex: '' };
     case 'quote': return { id, type, text: '', author: '' };
     case 'qr': return { id, type, url: '', title: '', note: '', size: 'M' };
     case 'match': { const du = state.sheet && state.sheet.meta && state.sheet.meta.anrede === 'du'; return { id, type, title: du ? 'Verbinde, was zusammengehört.' : 'Verbinden Sie, was zusammengehört.', mode: 'linien', seed: Math.floor(Math.random() * 1e9), pairs: Array.from({ length: 4 }, () => ({ a: '', b: '' })) }; }
@@ -7337,6 +7578,10 @@ function buildBlock(b, ctx) {
       if (tag) return { type: 'image', el: put(`<div class="blk blk-img lab"><div class="mat-head"><span class="mat-no">${designOf(meta) === 'akte' ? 'Anlage ' : ''}${tag}</span><span class="mat-title">${inlineHTML(b.caption) || '&nbsp;'}</span></div><div class="img-c">${img}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };
       return { type: 'image', el: put(`<div class="blk blk-img">${img}${b.caption ? `<div class="img-cap">${inlineHTML(b.caption)}</div>` : ''}${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };
     }
+    case 'gsa': {
+      const node = put(gsaHTML(b, ctx)); if (gsaK(b) === 'suchsel') return { type: 'gsa', el: node };
+      return { type: 'gsa', el: node, atoms: [...node.children], keepFirst: 2, keepLast: 1 };
+    }
     case 'lines': {
       const n = Math.max(1, Math.min(40, Number(b.count) || 1));
       if (b.style === 'rahmen') return { type: 'lines', el: put(`<div class="blk blk-lines"><div class="frame-area" style="height:${Math.min(n, 26) * 9}mm"></div></div>`) };
@@ -7344,11 +7589,12 @@ function buildBlock(b, ctx) {
         const h = Math.round(n * 9 / 5) * 5;
         return { type: 'lines', el: put(`<div class="blk blk-lines"><div class="grid-area" style="height:${h}mm;background-image:url(${gridTile()})"></div></div>`) };
       }
+      if (LIN[b.style]) { const node = put(`<div class="blk blk-lines">${linRow(b.style, b.mb).repeat(n)}</div>`); return { type: 'lines', el: node, atoms: [...node.children], keepFirst: 2, keepLast: 1 }; }
       const node = put(`<div class="blk blk-lines">${'<div class="wl"></div>'.repeat(n)}</div>`);
       return { type: 'lines', el: node, atoms: [...node.children], keepFirst: 2, keepLast: 1 };
     }
     case 'tasks': {
-      const show = meta.showAFB; const ITS = itemsFor(b, ctx.view); const anySoz = ITS.some(it => SOZ[it.soz]); const nArb = Math.max(0, ...ITS.map(it => arbOf(it).length)); const hasSoz = anySoz || nArb > 0;
+      const show = meta.showAFB && !isGS(); const ITS = itemsFor(b, ctx.view); const anySoz = ITS.some(it => SOZ[it.soz]); const nArb = Math.max(0, ...ITS.map(it => arbOf(it).length)); const hasSoz = anySoz || nArb > 0;
       const picW = (anySoz ? 8 : 0) + nArb * 6.2 + (anySoz && nArb ? 1 : 0);
       const items = ITS.map((it, i) => {
         const r = opsRange(detectOps(it.text));
@@ -7393,10 +7639,11 @@ function buildBlock(b, ctx) {
       const tailFor = (list, src, bank) => (list.length || src || (bank && bankH)) ? `<div class="mat-tail">${bank ? bankH : ''}${list.length ? `<div class="notes">${list.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${src ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
       const tail = tailFor(notes, !!b.source, true);
       const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
-      const fcls = poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '');
+      const fcls = (poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '')) + (fm.silben === 'boegen' ? ' sil-b' : fm.silben === 'farbe' ? ' sil-f' : '');
+      const silX = fm.silben ? silEx(fm.silx) : null; const wH = w => silX ? silHTML(w.h, silX) : w.h;
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fmtFF(fm.font)}${fm.margin ? `;--mrw:${fm.mrw}mm` : ''}`;
       const isPost = !!b.post && !poem; const two = fm.cols === 2 && !isPost;
-      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${w.h}</span>`).join(' '))}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
@@ -7641,6 +7888,7 @@ function layout() {
   const tag = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? grpName(meta, v.grp) : '', v.lvl !== 'all' ? LV[v.lvl].sym : ''].filter(Boolean).join(' · ');
   const out = pages.map((p, i) => {
     const pg = document.createElement('div'); pg.className = 'page'; setAccent(pg, meta); pg.classList.toggle('a5', a5);
+    if (isGS()) { const jg = gsJg(); pg.classList.add('gs'); pg.style.setProperty('--gsfs', (jg <= 2 ? 15 : jg <= 4 ? 13 : 12) + 'pt'); }
     pg.dataset.w = 210; pg.dataset.h = 297;
     const pb = document.createElement('div'); pb.className = 'pg-body'; pg.appendChild(pb);
     p.list.forEach(pl => pb.appendChild(pl.whole ? pl.it.el.cloneNode(true) : pl.it.assemble(pl.s, pl.e)));
@@ -7722,6 +7970,7 @@ function dzBodyHTML(z) {
     const isDef = JSON.stringify(f) === JSON.stringify(matFmt({})) && b.lineNumbers !== false; const nMat = state.sheet.blocks.filter(x => x.type === 'material').length;
     h = `${b.form === 'gedicht' ? '' : seg('align')}<div class="f"><span>Schrift</span>${fmtSel(b, 'font')}</div><div class="f"><span>Schriftgröße</span>${fmtSel(b, 'size')}</div>${seg('lh')}
       <div class="chks">${fCheck('lineNumbers', b.form === 'gedicht' ? 'Verszählung' : 'Zeilennummern', b.lineNumbers !== false)}${b.form === 'gedicht' ? '' : fCheck('fmt.indent', 'Einzug bei neuem Absatz', f.indent)}${f.cols === 2 ? '' : fCheck('fmt.margin', 'Rand für Notizen', f.margin)}</div>
+      ${seg('silben')}${f.silben ? `<label class="f"><span>Eigene Trennungen (optional)</span><input type="text" data-k="fmt.silx" value="${esc(f.silx)}" placeholder="z. B. Haus-auf-ga-be, The-a-ter"><small class="hint">Die App trennt nach Regeln; zusammengesetzte Wörter hier richtigstellen.</small></label>` : ''}
       ${f.margin ? `<div class="mrand-ed">${seg('mrw')}<label class="f"><span>Überschrift im Rand</span><input type="text" data-k="fmt.mrh" value="${esc(f.mrh)}" placeholder="z. B. Notizen, Stilmittel, Fragen an den Text"></label></div>` : ''}
       <div class="row" style="gap:6px 18px">${isDef ? '' : '<button class="link" type="button" data-act="fmt-reset">Standard</button>'}${nMat > 1 ? '<button class="link" type="button" data-act="fmt-all">Für alle Materialien übernehmen</button>' : ''}</div>`;
   } else if (b.type === 'info') h = stilTiles(b, ST_INFO); else if (b.type === 'text') h = stilTiles(b, ST_TEXT);
@@ -8193,8 +8442,8 @@ const fCheck = (k, label, v) => `<label class="chk"><input type="checkbox" data-
 const fSelect = (k, label, v, opts) => `<label class="f"><span>${label}</span><select data-k="${k}">${opts.map(([val, t]) => `<option value="${esc(val)}"${String(val) === String(v) ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
 
 function opSelect(i) {
-  const grp = (title, list) => `<optgroup label="${title}">${list.map(o => `<option value="${esc(o.op)}">${esc(o.op)} · AFB ${afbLabel(o.afb)}</option>`).join('')}</optgroup>`;
-  const L = curOps(); const F = fachInfo();
+  const grp = (title, list) => `<optgroup label="${title}">${list.map(o => `<option value="${esc(o.op)}">${esc(o.op)}${o.gs ? ' · ' + esc(o.tplDu) : ' · AFB ' + afbLabel(o.afb)}</option>`).join('')}</optgroup>`;
+  const L = curOps(); const F = L === OPS_GS ? { ops: 'Handlungsverben Grundschule' } : fachInfo();
   return `<select data-act="op" data-i="${i}" aria-label="Operator einsetzen"><option value="">Operator einsetzen …</option>${grp(F.ops, L.filter(o => o.iqb))}${grp('Ergänzend (Einstufung je nach Liste)', L.filter(o => !o.iqb))}</select>`;
 }
 function chipsHTML(text) {
@@ -8219,7 +8468,8 @@ function summary(b, num) {
     case 'a3': return `${A3_TPL[a3Tpl(b)].label}${tfStr(b.title).trim() ? ' · ' + plainText(b.title) : ''} · ${A3_TPL[a3Tpl(b)].o === 'q' && !(a3Tpl(b) === 'procon' && b.pcHoch) ? 'A3 quer' : 'A3 hoch'}`;
     case 'tafel': return `${TF_TPL[tfTpl(b)].label}${tfStr(b.title).trim() ? ' · ' + tfStrip(b.title) : ''}${(b.onSheet || 'luecke') === 'aus' ? ' · nur Tafel' : (b.onSheet || 'luecke') === 'luecke' ? ' · Lücken' : ''}`;
     case 'phrases': { const n = phrGroups(b).reduce((a, g) => a + g.lines.length, 0); return `${plainText(b.title || 'Formulierungshilfen')} · ${n} ${n === 1 ? 'Wendung' : 'Wendungen'}`; }
-    case 'lines': return b.style === 'rahmen' ? `freie Fläche · ${Math.min(+b.count || 1, 26) * 9} mm` : `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
+    case 'gsa': return gsaSummary(b);
+    case 'lines': if (LIN[b.style]) return `${b.count} Zeilen ${LIN[b.style].label.split(' (')[0]}`; return b.style === 'rahmen' ? `freie Fläche · ${Math.min(+b.count || 1, 26) * 9} mm` : `${b.count} ${b.style === 'kaestchen' ? 'Zeilen Kästchen' : 'Linien'}`;
     case 'heading': return b.text || 'leer';
     case 'text': return (plainText(b.text) || 'leer').slice(0, 60);
     case 'quote': return (plainText(b.text) || 'leer').slice(0, 60);
@@ -8266,7 +8516,7 @@ function bodyFor(b, num) {
           ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: nos[i] ? `Aufgabe ${nos[i]}` : 'Auftrag nur auf der Folie' })}
           <div class="chips" data-chips="${i}">${chipsHTML(it.text)}</div>
           <div class="soz-row"><div class="soz" role="group" aria-label="Sozialform">${Object.entries(SOZ).map(([k, sz]) => `<button type="button" data-act="soz" data-i="${i}" data-v="${k}" aria-pressed="${it.soz === k}" title="${sz.label}">${sozSVG(k, 'currentColor', 'var(--soz-bg)')}<span>${sz.short}</span></button>`).join('')}</div>${moreOn(`t:${b.id}:${i}`) ? grpCtl(i, it) + phCtl(i, it) : ''}</div>
-          <div class="soz arb" role="group" aria-label="Arbeitsform"><small class="arb-l">Arbeitsform</small>${Object.entries(ARB).map(([k, x]) => `<button type="button" data-act="arb" data-i="${i}" data-v="${k}" aria-pressed="${arbOf(it).includes(k)}" title="${x.label}">${arbSVG(k, 'currentColor')}<span>${x.label}</span></button>`).join('')}</div>
+          <div class="soz arb" role="group" aria-label="Arbeitsform"><small class="arb-l">Arbeitsform</small>${Object.entries(ARB).filter(([k, x]) => !x.gs || isGS() || arbOf(it).includes(k)).map(([k, x]) => `<button type="button" data-act="arb" data-i="${i}" data-v="${k}" aria-pressed="${arbOf(it).includes(k)}" title="${x.label}">${arbSVG(k, 'currentColor')}<span>${x.label}</span></button>`).join('')}</div>
           ${taskExtras(b, i, it)}
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
@@ -8316,7 +8566,8 @@ function bodyFor(b, num) {
         <div class="chks">${fCheck('cellLines', 'Schreiblinien in leeren Zellen', b.cellLines)}${fCheck('rowEach', 'Höhe je Zeile einzeln', each)}${fCheck('firstBold', 'Erste Spalte fett', b.firstBold)}</div>
         <p class="hint" style="margin:0">Leere Zellen bleiben zum Ausfüllen frei.${each ? ' Ein leeres Höhenfeld übernimmt den Schreibplatz von oben.' : ''} Sehr hohe Zeilen beginnen auf der nächsten Seite.</p>`;
     }
-    case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['rahmen', 'Freie Fläche (Rahmen)'], ['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)']])}
+    case 'gsa': return gsaEditor(b);
+    case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['rahmen', 'Freie Fläche (Rahmen)'], ['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)'], ...Object.entries(LIN).map(([v, x]) => [v, x.label])])}${LIN[b.style] && !LIN[b.style].x ? fCheck('mb', 'Mittelband farbig', b.mb) : ''}
       <label class="f narrow"><span>Zeilen</span><input type="number" min="1" max="40" data-k="count" value="${esc(b.count)}"></label></div>`;
     case 'match': {
       if (!Array.isArray(b.pairs) || !b.pairs.length) b.pairs = [{ a: '', b: '' }];
@@ -8680,6 +8931,10 @@ function onClick(e) {
     case 'rlp-sheet': openRlpDlg('sheet'); return;
     case 'pc-size': if (b) { b.pcW = +a.dataset.w; b.pcH = +a.dataset.h; changed(true); } return;
     case 'pc-fit': if (b) { b.pcFit = a.dataset.v; changed(true); } return;
+    case 'gs-set': if (b && b.type === 'gsa') { const k = a.dataset.k; b[k] = a.dataset.v; if (k === 'gk' && !Array.isArray(b.items)) b.items = [{ t: '' }]; changed(true); } return;
+    case 'gs-add': if (b && b.type === 'gsa') { (b.items = b.items || []).push({ t: '', ok: true }); changed(true); const f = [...document.querySelectorAll(`#editor [data-bid="${b.id}"] .gs-it .inp`)].pop(); if (f) f.focus(); } return;
+    case 'gs-del': if (b && b.type === 'gsa' && b.items && b.items.length > 1) { b.items.splice(+a.dataset.i, 1); changed(true); } return;
+    case 'gs-seed': if (b && b.type === 'gsa') { b.seed = 1 + Math.floor(Math.random() * 1e6); changed(true); } return;
     case 'fp-fill': if (b && b.photos && b.photos[+a.dataset.i]) { const N = +b.fpN || 4; const used = b.photos.reduce((x, o, j) => x + (j === +a.dataset.i || !o.src ? 0 : Math.max(1, Math.round(+o.n || 1))), 0); b.photos[+a.dataset.i].n = String(Math.max(1, Math.ceil((used + 1) / N) * N - used)); changed(true); renderEditor(); } return;
     case 'pc-set': if (b) { const k = a.dataset.k; if (k === 'pcHoch' || k === 'a3Flip') b[k] = !!a.dataset.v; else b[k] = a.dataset.v; if (k === 'pcRule') b.pcLines = a.dataset.v !== 'none'; changed(true); } return;
     case 'a3-tpl': { if (!A3_TPL[a.dataset.v]) return; b.tpl = a.dataset.v; a3Norm(b); changed(true); return; }
@@ -9286,7 +9541,7 @@ function pvShow(n) {
   [...ins.children].forEach(x => { const y = parseFloat(x.style.top); x.hidden = y < vr.top + 2 || y > vr.bottom - 2; });
 }
 function pvInsOpen(at, anchor) {
-  const L = paletteFor(); const Q = QUICK.map(k => L.find(t => t.k === k)).filter(Boolean); const pbE = L.find(t => t.type === 'pagebreak');
+  const L = paletteFor(); const Q = (isGS() && fachKey() === 'deutsch' ? QUICK_GS : QUICK).map(k => L.find(t => t.k === k)).filter(Boolean); const pbE = L.find(t => t.type === 'pagebreak');
   const pop = $('#pv-insp'); PVT.ins = at;
   pop.innerHTML = `<div class="pvp-h">Hier einfügen</div>${Q.map(t => `<button type="button" data-pvadd="${t.k}" data-type="${t.type}"><i>${typeIcon(t.ic)}</i><span>${esc(t.label)}</span></button>`).join('')}${pbE ? `<button type="button" data-pvadd="${pbE.k}" data-type="pagebreak"><i>${typeIcon(pbE.ic)}</i><span>Hier neue Seite beginnen</span></button>` : ''}<button type="button" data-pvadd="*" class="more"><span>Weitere Bausteine …</span></button>`;
   pop.hidden = false; const r = anchor.getBoundingClientRect();
@@ -9746,8 +10001,8 @@ function maybeSetup(afterLogin) { if (!state.needSetup || state.dlg) return; if 
 function openKlassen(setup, addFach) {
   const rows = (setup ? [] : KLASSEN).map(k => ({ ...k }));
   if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
-  if (setup) rows.push(normKlasse({ id: 'k1', label: '', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0));
-  if (addFach) rows[rows.length - 1].label = '';
+  if (setup) { rows.push(normKlasse({ id: 'k1', label: '', course: 'Deutsch', accent: 'tinte', anrede: 'du' }, 0)); rows[0].fresh = true; }
+  if (addFach) { rows[rows.length - 1].label = ''; rows[rows.length - 1].fresh = true; }
   state.dlg = { mode: 'klassen', setup: !!setup, rows, school: setup ? '' : null, wantFach: addFach || null };
   renderDlg();
 }
@@ -9760,6 +10015,8 @@ function klassenHTML() {
       <div class="kl-grid">
         <label class="f"><span>Kurs auf dem Blatt</span><input class="inp" data-kf="course" value="${esc(k.course)}" placeholder="z. B. Deutsch Klasse 8b" maxlength="80"></label>
         ${d.setup ? '' : `<label class="f"><span>Schule</span><input class="inp" data-kf="school" value="${esc(k.school)}" placeholder="Schule" maxlength="80"></label>`}
+        <div class="f kl-stufe"><span>Schulform</span><div class="seg sm" role="group"><button type="button" data-act="kl-set" data-f="stufe" data-v="gs" data-i="${i}" aria-pressed="${k.stufe === 'gs'}">Grundschule</button><button type="button" data-act="kl-set" data-f="stufe" data-v="os" data-i="${i}" aria-pressed="${k.stufe !== 'gs'}">Oberschule</button></div></div>
+        ${k.stufe === 'gs' ? `<div class="f kl-jg"><span>Klassenstufe</span><div class="seg sm" role="group">${[1, 2, 3, 4, 5, 6].map(n => `<button type="button" data-act="kl-set" data-f="jg" data-v="${n}" data-i="${i}" aria-pressed="${+k.jg === n}">${n}</button>`).join('')}</div><small class="hint">Bestimmt Lineatur und Schriftgröße neuer Bausteine.</small></div>` : ''}
         <div class="f kl-fach"><span>Fach</span><div class="seg sm" role="group">${Object.entries(FAECHER).map(([fk, f]) => `<button type="button" data-act="kl-set" data-f="fach" data-v="${fk}" data-i="${i}" aria-pressed="${k.fach === fk}">${f.label}</button>`).join('')}</div></div>
         <div class="f"><span>Anrede</span><div class="seg sm" role="group"><button type="button" data-act="kl-set" data-f="anrede" data-v="sie" data-i="${i}" aria-pressed="${k.anrede === 'sie'}">Sie</button><button type="button" data-act="kl-set" data-f="anrede" data-v="du" data-i="${i}" aria-pressed="${k.anrede === 'du'}">du</button></div></div>
         <div class="f"><span>Farbe</span><div class="kl-sw">${Object.entries(ACCENTS).map(([a, x]) => `<button type="button" class="kl-c" data-act="kl-set" data-f="accent" data-v="${a}" data-i="${i}" aria-pressed="${k.accent === a}" title="${x.name}" style="background:${x.c}"></button>`).join('')}</div></div>
@@ -10538,8 +10795,11 @@ async function onDlgClick(e) {
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
   if (state.dlg.mode === 'klassen') {
     const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
+    if (act === 'kl-set' && a.dataset.f === 'stufe') { const r = d.rows[i]; r.stufe = a.dataset.v; if (r.stufe === 'gs') { r.jg = +r.jg || jgGuess(r.label) || 3; r.anrede = 'du'; } else { r.jg = 0; if (!r.anTouch) r.anrede = anredeGuess(r.label, 'os'); } renderDlg(); return; }
+    if (act === 'kl-set' && a.dataset.f === 'jg') { d.rows[i].jg = +a.dataset.v; d.rows[i].jgTouch = true; renderDlg(); return; }
+    if (act === 'kl-set' && a.dataset.f === 'anrede') d.rows[i].anTouch = true;
     if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie', 'Englisch', 'Spanisch'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
-    if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach }, n)); d.rows[n].label = ''; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
+    if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach, stufe: (d.rows[n - 1] || {}).stufe, jg: (d.rows[n - 1] || {}).jg }, n)); d.rows[n].label = ''; d.rows[n].fresh = true; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
     if (act === 'kl-del') { d.rows.splice(i, 1); renderDlg(); return; }
     if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
     if (act === 'kl-save') { klassenSave(); return; }
@@ -11654,6 +11914,22 @@ async function exportDOCX() {
           } else parts.push(body);
           break;
         }
+        case 'gsa': {
+          // Grundschul-Formate im Word-Export: schlicht, aber vollständig (Kästchen, Gitter, Linien)
+          const k = gsaK(b), teach = !!v.lehrer; const SZ = 24; const ln = () => parts.push(xp('', { bdr: `<w:pBdr>${LINE('bottom', 6, RULE)}</w:pBdr>`, line: 560, rule: 'exact' }));
+          parts.push(xp(xrInline(gsaTask(b), { b: 1, sz: SZ }), { keepNext: true, before: 160, after: 100 }));
+          const box = on => xr(on ? '☒' : '☐', { sz: 30 });
+          if (k === 'kreuz') (b.items || []).filter(x => tfStr(x.t).trim()).forEach(x => parts.push(xp(b.mode === 'ja' ? box(teach && x.ok) + xr('  ', {}) + xrInline(x.t, { sz: SZ }) : xrInline(x.t, { sz: SZ }) + xr('\t', {}) + box(teach && x.ok) + xr(' richtig   ', { sz: 18 }) + box(teach && !x.ok) + xr(' falsch', { sz: 18 }), { tabs: `<w:tabs><w:tab w:val="right" w:pos="${TW(170)}"/></w:tabs>`, after: 80 })));
+          if (k === 'ordnen') gsShuffle((b.items || []).map((x, i) => ({ t: x.t, n: i + 1 })).filter(x => tfStr(x.t).trim()), b.seed || 3).forEach(x => parts.push(xp(xr(teach ? `[ ${x.n} ]` : '[    ]', { sz: SZ, b: 1 }) + xr('  ', {}) + xrInline(x.t, { sz: SZ }), { after: 100 })));
+          if (k === 'suchsel') { const S = suchselBuild(b); const cw = TW(Math.min(10, 170 / S.n)); const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(x => LINE(x, 6, '1C1F27')).join('');
+            parts.push(xtbl(Array(S.n).fill(cw), S.G.map(row => xtr(row.map(ch => xtc(xp(xr(ch, { b: 1, sz: 24 }), { jc: 'center' }), { w: cw })).join(''), { h: cw, rule: 'exact' })).join(''), bd));
+            if (b.showList !== false) parts.push(xp(xr(S.words.join('   ·   '), { b: 1, sz: SZ }), { jc: 'center', before: 120 })); }
+          if (k === 'silben') { const ex = silEx(b.ex); gsWords(b.words).forEach(w => { const S = silSplit(w, ex); parts.push(xp(xr(teach ? S.join(' · ') : w.replace(/-/g, ''), { sz: 32 }) + xr('\t', {}) + xr(Array.from({ length: Math.max(4, S.length + 1) }, (_, j) => teach && j < S.length ? '●' : '○').join(' '), { sz: 32 }), { tabs: `<w:tabs><w:tab w:val="right" w:pos="${TW(170)}"/></w:tabs>`, before: 120, after: 240 })); }); }
+          if (k === 'abschreib') String(b.text || '').split('\n').map(x => x.trim()).filter(Boolean).forEach(t => { parts.push(xp(xrInline(t, { sz: 26 }), { before: 120 })); for (let q = 0; q < Math.max(1, +b.per || 1); q++) ln(); });
+          if (k === 'bildschreib') { parts.push(xtbl([TW(170)], xtr(xtc(xp(''), { w: TW(170) }), { h: TW(Math.max(30, +b.fh || 80)), rule: 'exact' }), ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 6, '1C1F27')).join(''))); for (let q = 0; q < Math.max(1, +b.rows || 3); q++) ln(); }
+          if (k === 'selbst') (b.items || []).filter(x => tfStr(x.t).trim()).forEach(x => parts.push(xp(xrInline(x.t, { sz: SZ }) + xr('\t☺   😐   ☹', { sz: 32 }), { tabs: `<w:tabs><w:tab w:val="right" w:pos="${TW(170)}"/></w:tabs>`, after: 100 })));
+          break;
+        }
         case 'quote': {
           const lines = lineParas(b.text);
           lines.forEach((p, i) => parts.push(xp((i === 0 ? xr('„ ', { font: SERIF, b: 1, sz: 32, color: A }) : '') + xrLines(p, { font: SERIF, i: 1, sz: 25 }), { ind: `<w:ind w:left="${TW(10)}" w:right="${TW(6)}"/>`, keepNext: true })));
@@ -11975,6 +12251,10 @@ function boot() {
     if (t.id === 'kl-school') { d.school = t.value; return; }
     const r = t.closest('.kl-row'); if (!r || !t.dataset.kf) return; const row = d.rows[+r.dataset.i];
     const prevLabel = row.label; row[t.dataset.kf] = t.value;
+    // Neue Klasse: Anrede (und in der Grundschule die Klassenstufe) aus dem Namen vorschlagen, solange nicht selbst gewählt
+    if (t.dataset.kf === 'label' && row.fresh) { const setSeg = (f, v) => r.querySelectorAll(`[data-f="${f}"]`).forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === String(v))));
+      if (!row.anTouch) { row.anrede = anredeGuess(t.value, row.stufe); setSeg('anrede', row.anrede); }
+      if (row.stufe === 'gs') { const g = jgGuess(t.value); if (g && !row.jgTouch) { row.jg = g; setSeg('jg', g); } } }
     // Kurs automatisch vorschlagen, solange er dem Namen folgt
     if (t.dataset.kf === 'label' && d.setup) { const c = r.querySelector('[data-kf="course"]'); if (c && (!row.course || row.course === 'Deutsch' || row.course === 'Deutsch ' + prevLabel)) { row.course = t.value ? 'Deutsch ' + t.value : 'Deutsch'; c.value = row.course; } }
   });
