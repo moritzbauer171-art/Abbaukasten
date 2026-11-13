@@ -2267,7 +2267,7 @@ const PALETTE = {
   deutsch: ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)),
   get en() { return this.deutsch; }, get es() { return this.deutsch; },
   gp: [
-    PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Textquelle mit Zeilennummern (Q1)', ic: 'quelle', pre: { mk: 'q' } }),
+    PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Text- oder Bildquelle (Q1), im Baustein umschaltbar', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
     PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
@@ -6589,6 +6589,15 @@ function defaultMeta(nr, klasse) {
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     levelsOn: false, lvTip: true, groupsOn: false, groups: [{ k: 'A', name: '', add: 'für Gruppe 1 und 3' }, { k: 'B', name: '', add: 'für Gruppe 2 und 4' }], paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
+// Quelle oder Darstellung als Text oder als Bild: derselbe Baustein wechselt die Form, Nummer und Angaben bleiben
+const srcFormSeg = b => (b.mk === 'q' || b.mk === 'd') ? `<div class="f src-form"><span>${b.mk === 'q' ? 'Quelle als' : 'Darstellung als'}</span><div class="seg sm" role="group" aria-label="Form der Quelle"><button type="button" data-act="src-form" data-v="material" aria-pressed="${b.type === 'material'}">Text</button><button type="button" data-act="src-form" data-v="image" aria-pressed="${b.type === 'image'}">Bild</button></div></div>` : '';
+function srcFormSet(b, to) {
+  if (!b || b.type === to || !['material', 'image'].includes(to)) return;
+  const d = newBlock(to); for (const k of Object.keys(d)) if (k !== 'id' && k !== 'type' && b[k] === undefined) b[k] = d[k];
+  if (to === 'image' && !tfStr(b.caption).trim()) b.caption = b.title || '';
+  if (to === 'material' && !tfStr(b.title).trim()) b.title = b.caption || '';
+  b.type = to;
+}
 function newBlock(type) {
   const id = 'b' + uid();
   switch (type) {
@@ -8072,7 +8081,7 @@ function bodyFor(b, num) {
       const moreTop = `${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
       <div class="row" style="gap:8px 18px">${['deutsch', 'en', 'es'].includes(fachKey()) || poem ? `<div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>` : ''}
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>`;
-      return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}
+      return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}${srcFormSeg(b)}
       ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fWord('text', 'Gedicht', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Gedicht`, mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fWord('text', 'Text', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Text`, mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
@@ -8179,7 +8188,7 @@ function bodyFor(b, num) {
     case 'tafel': return tafelEditor(b);
     case 'a3': return a3Editor(b);
     case 'step': return stepEditor(b);
-    case 'image': return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+    case 'image': return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachKey() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachKey() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
@@ -8579,6 +8588,7 @@ function onClick(e) {
     case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
+    case 'src-form': srcFormSet(b, a.dataset.v); changed(true); renderEditor(); return;
     case 'mat-kind': case 'img-kind': if (a.dataset.v) b.mk = a.dataset.v; else delete b.mk; changed(true); renderEditor(); return;
     case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
