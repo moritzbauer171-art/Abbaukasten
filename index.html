@@ -1997,11 +1997,11 @@ body{transition:background-color .3s,border-color .25s}
 .kk-page.a5{width:210mm;height:148.5mm;padding:6mm}
 .kk-page.a5 .kk-frame{border-width:1.8mm;border-radius:5mm;padding:8mm 11mm}
 .kk-sheet{width:210mm;height:297mm;background:#FFFFFF;display:flex;flex-direction:column;position:relative}
-.kk-sheet>.kk-page{flex:0 0 148.5mm}
+.kk-sheet>.kk-page{flex:1 1 0;min-height:0;height:auto;break-inside:avoid}
 .kk-page.strip{width:297mm;height:105mm;padding:5mm}
 .kk-page.strip .kk-frame{border-width:1.8mm;border-radius:5mm;padding:6mm 12mm}
 .kk-sheet.quer{width:297mm;height:210mm}
-.kk-sheet.quer>.kk-page{flex:0 0 105mm}
+.kk-sheet.quer>.kk-page{flex:1 1 0}
 .kk-tip{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:12px;color:var(--muted);background:var(--tinte-soft);border-radius:7px;padding:6px 9px}
 .kk-tip .link{font-size:12px;padding:0}
 .kk-sheet::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:.3mm dashed #8E95A3}
@@ -2067,11 +2067,13 @@ body{transition:background-color .3s,border-color .25s}
 #printroot{display:none}
 @media print{
   @page{size:A4;margin:0}
-  body{padding:0!important;background:#fff}
+  body{padding:0!important;margin:0!important;border:0!important;background:#fff}
   #app,.toast,.overlay,.drawer,.scrim{display:none!important}
   #printroot{display:block}
-  #printroot>.pout{break-after:page;box-shadow:none}
+  #printroot>.pout{break-after:page;box-shadow:none;margin:0}
   #printroot>.pout:last-child{break-after:auto}
+  #printroot>.kk-sheet{overflow:hidden;break-inside:avoid;height:209.6mm}
+  #printroot>.kk-sheet:not(.quer){height:296.6mm}
   body>*:not(#printroot){display:none!important}
   #printroot .page{box-shadow:none}
 }
@@ -11523,7 +11525,8 @@ function preparePrint() {
   const pr = $('#printroot'); pr.innerHTML = '';
   const pages = [...document.querySelectorAll('#pages .pout')]; if (!pages.length) { toast('Es gibt noch nichts zu drucken.'); return null; }
   const w = +pages[0].dataset.w || 210, h = +pages[0].dataset.h || 297;
-  let st = document.getElementById('print-size'); if (!st) { st = document.createElement('style'); st.id = 'print-size'; document.head.appendChild(st); }
+  let st = document.getElementById('print-size'); if (!st) { st = document.createElement('style'); st.id = 'print-size'; }
+  document.body.appendChild(st); // ganz ans Ende: sonst gewinnt die allgemeine Druckregel (A4 hoch) und Querseiten werden geteilt oder verkleinert
   const key = p => `s${+p.dataset.w || 210}x${+p.dataset.h || 297}`; const keys = [...new Set(pages.map(key))];
   const mixed = keys.length > 1;
   st.textContent = mixed ? '@media print{@page{margin:0}' + keys.map(k => { const [a, z] = k.slice(1).split('x'); return `@page ${k}{size:${a}mm ${z}mm;margin:0}`; }).join('') + '}' : `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
