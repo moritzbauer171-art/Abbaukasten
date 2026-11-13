@@ -2164,6 +2164,9 @@ body.home-on{overflow:hidden}
 .don-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 .hd-coffee{background:#FFDD00;border-color:#E6C700;color:#1C1300;text-decoration:none;display:inline-grid;place-items:center}
 .hd-coffee:hover{background:#FFE84D;border-color:#D9BC00;color:#1C1300}
+.hd-coffee.wiggle{animation:cupWiggle 1.25s ease-in-out 2}
+@keyframes cupWiggle{0%,100%{transform:rotate(0)}10%{transform:rotate(-14deg) scale(1.08)}20%{transform:rotate(12deg) scale(1.08)}30%{transform:rotate(-10deg) scale(1.06)}40%{transform:rotate(8deg) scale(1.04)}50%{transform:rotate(-4deg)}60%{transform:rotate(0)}}
+@media (prefers-reduced-motion: reduce){.hd-coffee.wiggle{animation:none}}
 .hd-coffee svg{transition:transform .2s}.hd-coffee:hover svg{transform:rotate(-12deg) scale(1.08)}
 .donate{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:12px 14px;border:1px dashed var(--line-strong);border-radius:12px;color:var(--muted);font-size:13.5px;margin:6px 0}
 .donate-b{display:inline-flex;align-items:center;gap:7px;background:#FFDD00;color:#1C1300;border-color:#E6C700;font-weight:700;text-decoration:none;white-space:nowrap}
@@ -9744,9 +9747,19 @@ function donateOpen() {
   const close = () => { box.remove(); document.removeEventListener('keydown', key, true); if (prev && prev.focus) prev.focus(); };
   const key = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
   document.addEventListener('keydown', key, true);
-  box.addEventListener('click', e => { const a = e.target.closest('[data-don]'); if (!a) return; if (a.dataset.don === 'go') setTimeout(close, 50); else close(); });
+  box.addEventListener('click', e => { const a = e.target.closest('[data-don]'); if (!a) return; if (a.dataset.don === 'go') { lsSet(LS_CUPGO, Date.now()); setTimeout(close, 50); } else close(); });
   const f = box.querySelector('.don-go'); if (f) f.focus();
 }
+// Das Tassen-Symbol wackelt alle paar Tage einmal kurz (nicht nach einem Klick auf „Weiter zu PayPal“, nicht bei reduzierter Bewegung)
+const LS_CUPW = 'abw.cupWiggle', LS_CUPGO = 'abw.cupGo';
+function cupWiggleMaybe(tries = 0) {
+  const now = Date.now(), last = +(lsGet(LS_CUPW) || 0), go = +(lsGet(LS_CUPGO) || 0);
+  if (now - last < 3 * 864e5 || now - go < 30 * 864e5 || matchMedia('(prefers-reduced-motion: reduce)').matches || DG_VIEW || MAPPE_LOCK) return;
+  const c = document.getElementById('btn-coffee'); if (!c || !c.getClientRects().length) return;
+  if (state.dlg || hmS.open || (typeof tour !== 'undefined' && tour.i >= 0) || document.getElementById('don-ov') || state.needSetup) { if (tries < 40) setTimeout(() => cupWiggleMaybe(tries + 1), 15000); return; }
+  lsSet(LS_CUPW, now); c.classList.remove('wiggle'); void c.offsetWidth; c.classList.add('wiggle'); setTimeout(() => c.classList.remove('wiggle'), 2600);
+}
+setTimeout(() => cupWiggleMaybe(), 25000);
 document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('.hd-coffee, .donate .donate-b'); if (!a) return; e.preventDefault(); e.stopPropagation(); donateOpen(); }, true);
 const donateHTML = (lead = 'Gefällt Ihnen die AB-Werkstatt?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützen Sie die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
 const TOUR = [
