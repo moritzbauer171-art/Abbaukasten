@@ -8712,7 +8712,7 @@ function bodyFor(b, num) {
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
       ${b.post ? postEditor(b) : ''}
-      <div class="more-card">${moreBtn('b:' + b.id, mSum, 'Mehr: Lücken, Lesehilfe, Notiz')}${bm ? `<div class="more-in">${moreTop}<small class="hint dz-hint">Schrift, Größe, Zeilenabstand, Einzug und Rand: in der Vorschau auf das Material klicken.</small>${gapEditor(b)}${readEditor(b)}
+      <div class="more-card">${moreBtn('b:' + b.id, mSum, 'Mehr: Lücken, Lesehilfe, Notiz')}${bm ? `<div class="more-in">${moreTop}<small class="hint dz-hint">Schrift, Größe, Zeilenabstand, Einzug und Rand: in der Vorschau über das Material fahren und den Pinsel „Gestaltung“ wählen (am Tablet: Material antippen).</small>${gapEditor(b)}${readEditor(b)}
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}</div>` : ''}</div>`; }
     case 'tasks': {
       const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
@@ -8734,7 +8734,7 @@ function bodyFor(b, num) {
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS_BY[fachBase()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
-      <small class="hint dz-hint">Stil (Fläche, Rahmen, Linie, klein): in der Vorschau auf den Infokasten klicken.</small>
+      <small class="hint dz-hint">Stil (Fläche, Rahmen, Linie, klein): in der Vorschau über den Infokasten fahren und den Pinsel „Gestaltung“ wählen (am Tablet: antippen).</small>
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
     case 'phrases': {
       if (!Array.isArray(b.groups) || !b.groups.length) b.groups = [{ head: '', text: '' }];
@@ -9744,7 +9744,7 @@ const PVT_IC = {
   up: '<path d="M8 12.5V3.5M4 7.5l4-4 4 4"/>', down: '<path d="M8 3.5v9M4 8.5l4 4 4-4"/>',
   dup: '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v6.5a1 1 0 0 0 1 1h.5"/>',
   del: '<path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/>', edit: '<path d="M3 13l.7-3L10.8 2.9a1.4 1.4 0 0 1 2 2L5.8 12z"/>',
-  fol: '<rect x="1.8" y="3" width="12.4" height="8.4" rx="1.2"/><path d="M8 11.4V14M5.5 14h5"/>', insA: '<path d="M2.5 2.5h11"/><path d="M8 6.5v7M4.5 10h7"/>', insB: '<path d="M2.5 13.5h11"/><path d="M8 2.5v7M4.5 6h7"/>', res: '<path d="M3 3.5h10v9H3z"/><path d="M5.5 6.5h5M5.5 9.5h3"/><path d="M11.5 1.5v3M4.5 1.5v3"/>'
+  fol: '<rect x="1.8" y="3" width="12.4" height="8.4" rx="1.2"/><path d="M8 11.4V14M5.5 14h5"/>', dz: '<path d="M9.6 2.6l3.8 3.8-5.6 5.6-3.8-3.8z"/><path d="M4 8.2c-1.6.3-2.3 1.4-2.3 3 0 .9-.3 1.6-.9 2.2 2.6.4 4.6-.4 5.4-1.6"/>', insA: '<path d="M2.5 2.5h11"/><path d="M8 6.5v7M4.5 10h7"/>', insB: '<path d="M2.5 13.5h11"/><path d="M8 2.5v7M4.5 6h7"/>', res: '<path d="M3 3.5h10v9H3z"/><path d="M5.5 6.5h5M5.5 9.5h3"/><path d="M11.5 1.5v3M4.5 1.5v3"/>'
 };
 const pvI = k => `<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PVT_IC[k]}</svg>`;
 const pvOn = () => state.out === 'blatt' && !MAPPE_LOCK && !DG_VIEW && !state.gapEdit && !hmS.open && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -9757,7 +9757,8 @@ function pvShow(n) {
   const bid = n.dataset.bid; const b = state.sheet.blocks.find(x => x.id === bid); if (!b) return pvHide();
   const ord = pvOrder(); const k = ord.findIndex(([x]) => x.id === bid);
   if (PVT.bid !== bid) {
-    const extra = (PRES_OPT.has(b.type) ? `<button type="button" data-pv="pres-tg" class="${presOn(b) ? 'on' : ''}" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht auf einer Folie · klicken zum Entfernen' : 'Auf die Folie'}">${pvI('fol')}</button>` : '')
+    const dzB = DZ_TYPES.has(b.type) ? `<button type="button" data-pv="dz" class="${state.dz && state.dz.k === 'block' && state.dz.bid === bid ? 'on' : ''}" title="Gestaltung: ${b.type === 'material' ? 'Schrift, Größe, Zeilenabstand, Einzug, Rand' : 'Stil'}">${pvI('dz')}</button>` : '';
+    const extra = dzB + (PRES_OPT.has(b.type) ? `<button type="button" data-pv="pres-tg" class="${presOn(b) ? 'on' : ''}" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht auf einer Folie · klicken zum Entfernen' : 'Auf die Folie'}">${pvI('fol')}</button>` : '')
       + (b.type === 'tasks' ? `<button type="button" data-pv="res-tg" class="${isRes(b) ? 'on' : ''}" aria-pressed="${isRes(b)}" title="${isRes(b) ? 'Ist Reserve · klicken, um sie wieder normal zu zählen' : 'Als Reserve: auf den Folien, nicht in der Phasenleiste und nicht in der Stundenzeit'}">${pvI('res')}</button>` : '');
     t.innerHTML = `<span class="pvt-l">${esc(typeLabel(b))}</span><button type="button" data-pv="edit" title="Links bearbeiten">${pvI('edit')}</button><button type="button" data-pv="up" title="Nach oben"${k <= 0 ? ' disabled' : ''}>${pvI('up')}</button><button type="button" data-pv="down" title="Nach unten"${k < 0 || k >= ord.length - 1 ? ' disabled' : ''}>${pvI('down')}</button>${extra}<button type="button" data-pv="dup" title="Verdoppeln">${pvI('dup')}</button><span class="pvt-sep" aria-hidden="true"></span><button type="button" data-pv-ins="a" title="Darüber einen Baustein einfügen">${pvI('insA')}</button><button type="button" data-pv-ins="b" title="Darunter einen Baustein einfügen">${pvI('insB')}</button><span class="pvt-sep" aria-hidden="true"></span><button type="button" data-pv="del" class="danger" title="Löschen">${pvI('del')}</button>`;
   }
@@ -9785,6 +9786,7 @@ function pvInsert(at, pk, type) {
 }
 function pvAct(act) {
   const bid = PVT.bid; const blocks = state.sheet.blocks; const idx = blocks.findIndex(x => x.id === bid); const b = blocks[idx]; if (!b) return;
+  if (act === 'dz') { const n = PVT.el; if (state.dz && state.dz.k === 'block' && state.dz.bid === bid) dzClose(); else { state.sel = bid; markSel(); dzOpen('block', bid, n && n.isConnected ? n.getBoundingClientRect() : null); const tr = $('#pv-tools').getBoundingClientRect(); state.dz.x = Math.round(tr.right - Math.min(360, innerWidth - 24)); state.dz.y = Math.round(tr.bottom + 6); dzRender(); } const t = $('#pv-tools [data-pv="dz"]'); if (t) t.classList.toggle('on', !!state.dz); return; }
   if (act === 'edit') { state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed(); if (window.matchMedia('(max-width: 899px)').matches) setView('edit'); renderEditor(); const c = $(`#editor [data-bid="${bid}"]`); if (c) { c.scrollIntoView({ block: 'start', behavior: 'smooth' }); c.classList.add('flash'); setTimeout(() => c.classList.remove('flash'), 1200); } return; }
   if (act === 'up' || act === 'down') {
     const ord = pvOrder(); const k = ord.findIndex(([x]) => x.id === bid); const o = ord[act === 'up' ? k - 1 : k + 1]; if (!o) return;
@@ -12778,7 +12780,7 @@ function boot() {
   ed.addEventListener('click', e => { const bt = e.target.closest('.mw-wt [data-mwc]'); if (bt) { e.stopPropagation(); mwCmd(bt); } }, true);
   ed.addEventListener('input', e => { const w = e.target.closest && e.target.closest('.mw-word'); if (!w) return; const wc = w.querySelector('.mw-wc'); if (wc) wc.textContent = mwWords(e.target.innerText); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.dz && !state.mwBig) { e.preventDefault(); dzClose(); return; } }, true);
-  document.addEventListener('mousedown', e => { if (state.dz && !e.target.closest('#dz') && !e.target.closest('#pages') && !e.target.closest('[data-pv="dz-page"]')) dzClose(); });
+  document.addEventListener('mousedown', e => { if (state.dz && !e.target.closest('#dz') && !e.target.closest('#pages') && !e.target.closest('[data-pv="dz-page"]') && !e.target.closest('#pv-tools [data-pv="dz"]')) { dzClose(); const t = $('#pv-tools [data-pv="dz"]'); if (t) t.classList.remove('on'); } });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && state.mwBig) { e.preventDefault(); e.stopPropagation(); mwBigSet(null); } }, true);
   ed.addEventListener('scroll', () => { if (!rtb.hidden) rtBar(); }, { passive: true });
   window.addEventListener('resize', () => { if (!rtb.hidden) rtBar(); });
@@ -12909,8 +12911,8 @@ function boot() {
     if (wb) { selectQuiet(wb.dataset.bid); glossFromSpans(wb.dataset.bid, [w], rectOf(w)); return; }
     const n = e.target.closest('[data-bid]'); if (!n) return;
     const bid = n.dataset.bid; state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed();
-    const bb = state.sheet.blocks.find(x => x.id === bid); const dzOn = !!(bb && DZ_TYPES.has(bb.type) && state.out === 'blatt');
-    if (dzOn) dzOpen('block', bid, n.getBoundingClientRect()); else if (state.dz && state.dz.k === 'block') dzClose();
+    const bb = state.sheet.blocks.find(x => x.id === bid); const dzOn = !!(bb && DZ_TYPES.has(bb.type) && state.out === 'blatt' && !pvOn());
+    if (dzOn) dzOpen('block', bid, n.getBoundingClientRect()); else if (state.dz && state.dz.k === 'block' && state.dz.bid !== bid) { dzClose(); const t = $('#pv-tools [data-pv="dz"]'); if (t) t.classList.remove('on'); }
     if (dzOn && window.matchMedia('(max-width: 899px)').matches) { renderEditor(); markSel(); return; }
     if (state.wide) { state.wide = false; applyResponsive(); }
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
