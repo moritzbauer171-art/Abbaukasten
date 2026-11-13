@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen und als PDF oder Word speichern.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.45 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>AB-Werkstatt Deutsch</title>
+<title>AB-O-MAT</title>
 <meta name="author" content="Moritz Bauer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2150,6 +2150,10 @@ body.home-on{overflow:hidden}
 .hint.warn{color:#B42318}
 .kl-stufe .seg button{min-width:96px}
 
+/* Logo AB-O-MAT: das O als Drehknopf */
+.brand b.logo,.hm-brand b.logo{display:inline-flex;align-items:center;font-family:var(--f-ui);font-weight:800;letter-spacing:.01em;white-space:nowrap}
+.logo-o{width:.92em;height:.92em;margin:0 .04em;color:var(--tinte);flex:0 0 auto;transform:rotate(-35deg);transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+.brand:hover .logo-o{transform:rotate(35deg)}
 /* Kaffee spendieren */
 #don-ov{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px}
 .don-scrim{position:absolute;inset:0;background:rgba(15,20,40,.5)}
@@ -2363,14 +2367,14 @@ body.home-on{overflow:hidden}
 <body>
 <div id="app">
   <header class="bar">
-    <div class="brand"><div class="brand-t"><b>AB-Werkstatt</b><small class="brand-c">© 2026 Moritz Bauer</small></div><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
+    <div class="brand"><div class="brand-t"><b class="logo" aria-label="AB-O-MAT">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small class="brand-c">© 2026 Moritz Bauer</small></div><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
     <div class="tabs" role="group" aria-label="Ansicht">
       <button type="button" id="tab-edit" data-act="tab" data-v="edit" aria-pressed="true">Bearbeiten</button>
       <button type="button" id="tab-prev" data-act="tab" data-v="preview" aria-pressed="false">Vorschau</button>
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
-      <a class="btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt Ihnen die AB-Werkstatt? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
+      <a class="btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt Ihnen der AB-O-MAT? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
       <button class="btn ib-help" type="button" id="btn-home" data-act="home" title="Startseite: Fächer, Klassen, zuletzt bearbeitet, neu geteilt" aria-label="Startseite"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11h13V9"/><path d="M10 20v-5.5h4V20"/></svg></button>
       <button class="btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       <button class="btn rlp-btn" type="button" id="btn-rlp" data-act="rlp-view" title="Rahmenlehrplan Berlin für dieses Fach als PDF"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.6c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.6"/></svg><span>RLP</span></button>
@@ -5478,7 +5482,7 @@ async function exportVP() {
     const rels = `${XH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/></Relationships>`;
     const ct = `${XH}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
     const now = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
-    const core = `${XH}<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xesc('Verlaufsplan: ' + plainText(m.title || ''))}</dc:title><dc:creator>AB-Werkstatt</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
+    const core = `${XH}<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xesc('Verlaufsplan: ' + plainText(m.title || ''))}</dc:title><dc:creator>AB-O-MAT</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
     const rootRels = `${XH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
     const zip = new window.JSZip();
     zip.file('[Content_Types].xml', ct); zip.file('_rels/.rels', rootRels); zip.file('docProps/core.xml', core);
@@ -7659,7 +7663,7 @@ function setupPWA() {
   add('meta', { name: 'theme-color', content: '#2741B5' });
   add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
-  add('meta', { name: 'apple-mobile-web-app-title', content: 'AB-Werkstatt' });
+  add('meta', { name: 'apple-mobile-web-app-title', content: 'AB-O-MAT' });
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(r => { if (r.active) r.active.postMessage({ warm: [...Object.values(LIBS), 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'] }); }).catch(err => console.warn('Offline-Speicher nicht verfügbar', err)));
 }
 const isNarrow = () => window.matchMedia('(max-width: 899px)').matches;
@@ -9681,16 +9685,16 @@ function homeRenderNow() {
   if (!canShare()) shareH = `<div class="hm-empty"><p>Geteilte Stunden von Kolleginnen und Kollegen sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? `<button type="button" class="btn" data-hm="login">Anmelden</button>` : ''}</div>`;
   else if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; homeRender(); }), 0); } shareH = '<div class="hm-empty"><p>Wird geladen …</p></div>'; }
   else {
-    const L = [...state.shared].filter(x => !x.mine).sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt)).slice(0, 6);
+    const L = sharedVis().filter(x => !x.mine).sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt)).slice(0, 6);
     shareH = L.length ? `<ul class="hm-sh">${L.map(x => { const nu = +new Date(x.updatedAt) > hmS.seen; return `<li class="${nu ? 'nu' : ''}">
         <div class="hm-sh-h"><b>${esc(x.title)}</b>${nu ? '<span class="hm-new">neu</span>' : ''}</div>
         <div class="hm-sh-m">${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', relTime(+new Date(x.updatedAt))].filter(Boolean).join(' · '))}</div>
         ${x.text ? `<p>${esc(x.text.length > 140 ? x.text.slice(0, 138) + ' …' : x.text)}</p>` : ''}
         <div class="hm-sh-a">${hmS.busy === x.id ? '<small>Wird übernommen …</small>' : `<button type="button" class="link" data-hm="take" data-sid="${esc(x.id)}">${hmI('take')}In „${esc(KL(state.klasse).label)}“ übernehmen</button>`}</div></li>`; }).join('')}</ul>`
-      : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : 'Noch keine geteilten Stunden von anderen.'}</p></div>`;
+      : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : (state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt.' : 'Noch keine geteilten Stunden von anderen.')}</p></div>`;
   }
-  const nNew = canShare() && state.shared ? state.shared.filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
-  const html = `<div class="hm-top"><div class="hm-brand"><b>AB-Werkstatt</b><small>Startseite</small></div>
+  const nNew = canShare() && state.shared ? sharedVis().filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
+  const html = `<div class="hm-top"><div class="hm-brand"><b class="logo">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small>Startseite</small></div>
       <div class="hm-top-a">${cur ? `<button type="button" class="btn" data-hm="x">${hmI('go')}<span>Weiter${curT ? `<i>: ${esc(curT.length > 34 ? curT.slice(0, 32) + ' …' : curT)}</i>` : ''}</span></button>` : ''}
       <label class="hm-auto"><span>Von selbst zeigen</span><select data-hm="auto" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<option value="${v}"${homeMode() === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label></div></div>
     <div class="hm-wrap">
@@ -9826,8 +9830,8 @@ function donateOpen() {
   const box = document.createElement('div'); box.id = 'don-ov'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'don-t');
   box.innerHTML = `<div class="don-scrim" data-don="x"></div><div class="don-card">
     <div class="don-art" aria-hidden="true">${CUP_SVG.replace('width="18" height="18"', 'width="44" height="44"')}</div>
-    <h2 id="don-t">Danke, dass Sie die AB-Werkstatt unterstützen möchten!</h2>
-    <p>Die AB-Werkstatt ist kostenlos und ohne Werbung. Ich entwickle sie neben meinem Unterricht in meiner freien Zeit. Ihr Beitrag fließt in zwei Dinge:</p>
+    <h2 id="don-t">Danke, dass Sie den AB-O-MAT unterstützen möchten!</h2>
+    <p>Der AB-O-MAT ist kostenlos und ohne Werbung. Ich entwickle ihn neben meinem Unterricht in meiner freien Zeit. Ihr Beitrag fließt in zwei Dinge:</p>
     <ul class="don-l">
       <li><b>Arbeitszeit</b><span>für neue Bausteine und Vorlagen, Fehlerbehebungen und die Wünsche, die aus dem Kollegium kommen.</span></li>
       <li><b>Einen eigenen Server</b><span>in meinem Heimnetzwerk. Damit sollen Ihre Stunden und Materialien künftig nicht bei großen Cloud-Anbietern liegen, sondern geschützt auf eigener Hardware, die ich selbst betreue.</span></li>
@@ -9852,9 +9856,9 @@ function cupWiggleMaybe(tries = 0) {
 }
 setTimeout(() => cupWiggleMaybe(), 25000);
 document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('.hd-coffee, .donate .donate-b'); if (!a) return; e.preventDefault(); e.stopPropagation(); donateOpen(); }, true);
-const donateHTML = (lead = 'Gefällt Ihnen die AB-Werkstatt?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützen Sie die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
+const donateHTML = (lead = 'Gefällt Ihnen der AB-O-MAT?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützen Sie die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
 const TOUR = [
-  { t: 'Willkommen in der AB-Werkstatt', d: 'In gut einer Minute sehen Sie das Wichtigste. Links bauen Sie die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
+  { t: 'Willkommen beim AB-O-MAT', d: 'In gut einer Minute sehen Sie das Wichtigste. Links bauen Sie die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
   { sel: '#btn-fach', t: 'Fach wechseln', d: 'Hier wechseln Sie das Fach. Angezeigt werden nur Fächer, in denen Sie Klassen haben; darunter können Sie ein Fach hinzufügen.' },
   { sel: '#reiter', t: 'Ihre Klassen', d: 'Jede Klasse hat einen eigenen Reiter mit eigenen Stunden, Farbe, Anrede (du oder Sie) und Schulform. „+ Klassen“ legt neue an.' },
   { sel: '#editor .area-bar', prep: () => { if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); }, t: 'Arbeitsblatt und Präsentation', d: 'Oben schalten Sie zwischen Arbeitsblatt und Präsentation. Unter „Mehr“ liegen Tafelkarten und Druckvorlagen wie Placemat, Pro und Contra oder der Fotobogen.' },
@@ -9986,6 +9990,9 @@ function idleStatus() { setStatus(state.sheet.example ? 'example' : (backend ? b
 
 /* ---------- Geteilte Stunden ---------- */
 const canShare = () => !!(backend && backend.kind === 'supabase' && backend.shareList);
+/* Geteilte Stunden nur aus Fächern zeigen, in denen man selbst eine Klasse hat (eigene immer) */
+const myFaecher = () => new Set(KLASSEN.map(k => k.fach || 'deutsch'));
+const sharedVis = () => { const F = myFaecher(); return (state.shared || []).filter(x => x.mine || F.has(x.fach || 'deutsch')); };
 async function shareLoad(force) {
   if (!canShare()) { state.shared = null; return; }
   if (state.shared && !force && Date.now() - state.sharedAt < 60000) return;
@@ -9999,11 +10006,11 @@ function sharedListHTML() {
   if (!canShare()) return `<div class="lib-empty"><p>Geteilte Stunden sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? '<button class="btn primary" type="button" data-act="login">Anmelden</button>' : ''}</div>`;
   if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; }), 0); } return '<div class="lib-empty"><p>Wird geladen …</p></div>'; }
   const q = state.shareQuery.trim().toLowerCase(); const words = q ? q.split(/\s+/).filter(Boolean) : [];
-  const L = state.shared.filter(x => !words.length || words.every(w => (x.title + ' ' + x.klasse + ' ' + x.autor + ' ' + x.text + ' ' + x.q).toLowerCase().includes(w)));
+  const V = sharedVis(); const L = V.filter(x => !words.length || words.every(w => (x.title + ' ' + x.klasse + ' ' + x.autor + ' ' + x.text + ' ' + x.q).toLowerCase().includes(w)));
   const fmt = t => new Date(t).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const head = `${state.sharedErr ? `<div class="notice"><span>${esc(state.sharedErr)}</span></div>` : ''}<div class="row lib-tools"><input class="inp" id="share-q" type="search" placeholder="Geteilte Stunden durchsuchen" value="${esc(state.shareQuery)}" aria-label="Geteilte Stunden durchsuchen" style="flex:1"><button class="btn" type="button" data-act="share-reload" title="Neu laden">Aktualisieren</button></div>
-    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieser AB-Werkstatt teilen. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
-  if (!L.length) return head + `<div class="lib-empty"><p>${state.shared.length ? 'Keine geteilte Stunde passt zur Suche.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
+    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieses AB-O-MATs teilen. Angezeigt werden Stunden aus Ihren Fächern. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
+  if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche.' : state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen Sie eine Klasse haben.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
   return head + L.map(x => `<div class="lib-item share-item" data-sid="${esc(x.id)}">
       <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von Ihnen</em>' : ''}</div>
       <div class="m">${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
@@ -10029,7 +10036,7 @@ async function openShare(sheetId) {
 }
 function shareDlgHTML(d) {
   return `<h2 id="dlg-t">Stunde teilen</h2>
-    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieser AB-Werkstatt geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'Ihr Konto' : 'Ihr Konto'}.</p>
+    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieses AB-O-MATs geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'Ihr Konto' : 'Ihr Konto'}.</p>
     <label class="f"><span>Ihr Name, wie er bei der Stunde steht</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
     <label class="f"><span>Kurze Beschreibung (optional)</span><textarea class="inp" id="share-text" rows="3" maxlength="600" placeholder="Worum geht es, welche Klasse, was ist besonders?">${esc(d.text || '')}</textarea></label>
     ${d.sid ? '<small class="hint">Die Stunde ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand; Kopien, die andere schon übernommen haben, ändern sich nicht.</small>' : '<small class="hint">Später geänderte Stunden bleiben in der geteilten Fassung auf dem Stand von heute, bis Sie „Aktualisieren“ wählen.</small>'}
@@ -10318,7 +10325,7 @@ async function exportBackup() {
   if (!sheets.length && !userSnips().length) { toast('Es gibt noch keine gespeicherten Blätter.'); return; }
   const now = new Date(); const stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: now.toISOString(), sheets, snips: userSnips(), prefs: state.prefs });
-  await deliver(`AB-Werkstatt_Sicherung_${stamp}.json`, new Blob([data], { type: 'application/json' }));
+  await deliver(`AB-O-MAT_Sicherung_${stamp}.json`, new Blob([data], { type: 'application/json' }));
 }
 async function importBackup(file) {
   if (!backend) return;
@@ -10400,13 +10407,13 @@ function klassenHTML() {
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <div class="err" id="dlg-err" role="alert"></div>
     <div class="row"><button class="btn primary" type="button" data-act="kl-save">Klasse anlegen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
-  return `<h2 id="dlg-t">${d.setup ? 'Willkommen in der AB-Werkstatt' : 'Klassen'}</h2>
+  return `<h2 id="dlg-t">${d.setup ? 'Willkommen beim AB-O-MAT' : 'Klassen'}</h2>
     ${d.wantFach ? `<p class="kl-want">Neue Klasse für <b>${FAECHER[d.wantFach].label}</b>: unten Namen eintragen.</p>` : ''}<p>${d.setup ? 'Legen Sie Ihre Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
     ${d.setup ? `<label class="f"><span>Ihre Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
     <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
-    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">AB-Werkstatt · © 2026 Moritz Bauer</p>' : ''}`;
+    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">AB-O-MAT · © 2026 Moritz Bauer</p>' : ''}`;
 }
 function klassenSave() {
   const d = state.dlg; const school = d.setup ? dlgVal('#kl-school') : null;
@@ -10651,14 +10658,14 @@ function renderLib() {
   root.innerHTML = `<div class="scrim" data-act="lib-close"></div><aside class="drawer" role="dialog" aria-label="Meine Stunden">
     <div class="drawer-h"><div class="dh"><h2>Meine Stunden</h2><span>${esc(k.label)}</span></div><button class="ib" type="button" data-act="lib-close" title="Schließen">${I.x}</button></div>
     <div class="acct">${acct}</div>
-    <div class="lib-tabs" role="tablist" aria-label="Stunden"><button type="button" role="tab" data-act="lib-tab" data-v="mine" aria-selected="${state.libTab !== 'shared'}">Meine Stunden</button><button type="button" role="tab" data-act="lib-tab" data-v="shared" aria-selected="${state.libTab === 'shared'}">Geteilte Stunden${state.shared && state.shared.length ? ` <em>${state.shared.length}</em>` : ''}</button></div>
+    <div class="lib-tabs" role="tablist" aria-label="Stunden"><button type="button" role="tab" data-act="lib-tab" data-v="mine" aria-selected="${state.libTab !== 'shared'}">Meine Stunden</button><button type="button" role="tab" data-act="lib-tab" data-v="shared" aria-selected="${state.libTab === 'shared'}">Geteilte Stunden${state.shared && sharedVis().length ? ` <em>${sharedVis().length}</em>` : ''}</button></div>
     ${state.libTab === 'shared' ? `<div class="lib-list share-list">${sharedListHTML()}</div>` : `
     ${nLocal ? `<div class="notice"><span>${nLocal} ${nLocal === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser.</span><button class="link" type="button" data-act="lib-migrate">Online übernehmen</button></div>` : ''}
     <div class="row"><button class="btn primary" type="button" data-act="lib-new">Neue Stunde</button>${k.id === 'gk' ? '<button class="btn" type="button" data-act="lib-example">Beispielblatt</button>' : ''}<button class="btn lib-fadd" type="button" data-act="lib-fnew">${FOLDER_SVG}Neuer Ordner</button></div>
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>`}
-    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button><span class="copy-s">AB-Werkstatt · © 2026 Moritz Bauer</span></div></aside>`;
+    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button><span class="copy-s">AB-O-MAT · © 2026 Moritz Bauer</span></div></aside>`;
   const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   else if (state.fNew) { const i = $('#lib-fnew'); if (i) i.focus(); }
@@ -10748,7 +10755,7 @@ function authMsg(err) {
   if (c === 'user_already_exists' || /already (been )?registered/i.test(m)) return 'Für diese E-Mail gibt es schon ein Konto. Bitte melden Sie sich an.';
   if (c === 'weak_password' || /password should|at least 6/i.test(m)) return 'Das Passwort ist zu kurz oder zu einfach (mindestens 6 Zeichen).';
   if (/rate limit|too many/i.test(m) || /rate_limit/.test(c || '')) return 'Zu viele Versuche. Bitte in ein paar Minuten erneut versuchen.';
-  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die diese AB-Werkstatt betreut. Sie bekommen dann E-Mail und Passwort zum Anmelden.';
+  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die diesen AB-O-MAT betreut. Sie bekommen dann E-Mail und Passwort zum Anmelden.';
   if (c === 'email_address_not_authorized' || /not authorized/i.test(m)) return 'Die Bestätigungsmail kann an diese Adresse noch nicht verschickt werden. Bitte bei der Person melden, die diese AB-Werkstatt betreut.';
   if (c === 'over_email_send_rate_limit' || /email rate limit/i.test(m)) return 'Gerade wurden zu viele Mails verschickt. Bitte in einer Stunde erneut versuchen.';
   if (/failed to fetch|network|load failed/i.test(m)) return 'Keine Verbindung zum Server. Bitte die Internetverbindung prüfen.';
@@ -10829,7 +10836,7 @@ const HELP = [
     ['Foto oder PDF', 'In der Materialkarte „Text aus Foto oder PDF übernehmen“: Foto einer Buchseite, Screenshot oder PDF wählen, hineinziehen oder einfügen. Der Text kommt bereinigt ins Material (Trennstriche und Zeilennummern entfernt). Ein Bild direkt ins Textfeld einfügen startet die Erkennung ebenfalls.'],
     ['Gut zu wissen', 'Beim ersten Mal wird das deutsche Sprachpaket geladen (einige MB, dafür braucht es Internet). Danach geht es schneller. Bitte den Text immer gegenlesen.']]],
   ['Fächer', [
-    ['Fach wechseln', 'Auf die rote Randnotiz neben „AB-Werkstatt“ klicken: Deutsch, Geschichte/Politik oder Biologie. Die Reiter zeigen dann die Klassen dieses Fachs, die Seite bekommt die Farbe des Fachs.'],
+    ['Fach wechseln', 'Auf die rote Randnotiz neben „AB-O-MAT“ klicken: Deutsch, Geschichte/Politik oder Biologie. Die Reiter zeigen dann die Klassen dieses Fachs, die Seite bekommt die Farbe des Fachs.'],
     ['Fach einer Klasse', '„+ Klassen“ neben den Reitern. Operatoren, Vorlagen und Formulierungshilfen richten sich nach dem Fach.'],
     ['Quelle, Darstellung', 'In Geschichte/Politik wird ein Material zur Quelle (Q1) oder Darstellung (D1). Bilder bekommen auf Wunsch eine Nummer (M, Q, D) mit Titel.'],
     ['Biologie', 'Bilder als Abbildung nummerieren (Abb. 1), freie Fläche für Zeichnungen und Skizzen (Baustein Schreibfläche, Art „Freie Fläche“).'],
@@ -10923,9 +10930,9 @@ function rlpCopy() {
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
     <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
-    ${donateHTML('Hilft Ihnen die AB-Werkstatt?')}
+    ${donateHTML('Hilft Ihnen der AB-O-MAT?')}
     <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Funktionstour starten</button></div>
-    <p class="copy-l">AB-Werkstatt · © 2026 Moritz Bauer</p>`;
+    <p class="copy-l">AB-O-MAT · © 2026 Moritz Bauer</p>`;
 }
 const TIPS = [
   ['Bausteine einfügen und umsortieren', 'Mit „+“ zwischen zwei Karten fügen Sie einen Baustein genau dort ein. An der Kopfzeile einer Karte lässt sie sich verschieben.'],
@@ -11315,7 +11322,7 @@ async function exportStunde() {
     show('blatt', 'schueler');
     overlay('Präsentation …'); { const r = await capture(() => exportPPTX()); if (r) add(`${stem}_Praesentation.pptx`, r.blob, 'Präsentation (PowerPoint)'); else notes.push('Die PowerPoint-Datei fehlt: Dafür braucht der Browser Internet.'); }
     const title = stTitle(P); const folder = slug(title) ? (P.abs ? 'Stunde_' : (stNr(P) ? 'AB' + slug(String(stNr(P))) + '_' : '')) + slug(title) : 'Stunde';
-    const inhalt = [`Stunde: ${title}`, [P.meta.course, P.meta.school].filter(Boolean).join(' · '), `Zusammengestellt mit der AB-Werkstatt am ${new Date().toLocaleDateString('de-DE')}`, '', 'Inhalt:', ...files.map(f => `${f.name}  –  ${f.what}`), ...(notes.length ? ['', 'Hinweise:', ...notes] : [])].join('\r\n');
+    const inhalt = [`Stunde: ${title}`, [P.meta.course, P.meta.school].filter(Boolean).join(' · '), `Zusammengestellt mit dem AB-O-MAT am ${new Date().toLocaleDateString('de-DE')}`, '', 'Inhalt:', ...files.map(f => `${f.name}  –  ${f.what}`), ...(notes.length ? ['', 'Hinweise:', ...notes] : [])].join('\r\n');
     files.push({ name: '00_Inhalt.txt', blob: new Blob([inhalt], { type: 'text/plain' }) });
     overlay('Ordner wird gespeichert …');
     if (window.abDesktop && window.abDesktop.saveFolder) {
@@ -11420,7 +11427,7 @@ async function pagesToPdf(pages, name, props) {
       if (!pdf) pdf = new jsPDF({ unit: 'mm', format: pf, orientation: orient, compress: true }); else pdf.addPage(pf, orient);
       pdf.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
     }
-    pdf.setProperties({ title: props.title || '', subject: props.subject || '', creator: 'AB-Werkstatt' });
+    pdf.setProperties({ title: props.title || '', subject: props.subject || '', creator: 'AB-O-MAT' });
     overlay('');
     await deliver(name, pdf.output('blob'));
   } catch (err) { console.error(err); overlay(''); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
@@ -11783,7 +11790,7 @@ function dgRuntime(K) {
         if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: hmm > 297 ? [210, hmm] : 'a4', orientation: ori, compress: true }); else doc.addPage(hmm > 297 && wmm <= 210 ? [210, hmm] : 'a4', ori);
         doc.addImage(c.toDataURL('image/jpeg', .9), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
       }
-      doc.setProperties({ title: K.title || 'Arbeitsblatt', author: S.name || '', creator: 'AB-Werkstatt' });
+      doc.setProperties({ title: K.title || 'Arbeitsblatt', author: S.name || '', creator: 'AB-O-MAT' });
       const blob = doc.output('blob'); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName();
       document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
       res.hidden = false; res.classList.add('full'); res.textContent = 'PDF gespeichert: ' + a.download;

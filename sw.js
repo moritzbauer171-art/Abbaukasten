@@ -1,4 +1,4 @@
-/* AB-Werkstatt: Offline-Zwischenspeicher für die installierte Web-App.
+/* AB-O-MAT: Offline-Zwischenspeicher für die installierte Web-App.
    Die Seite selbst kommt zuerst aus dem Netz (damit Updates sofort da sind) und sonst aus dem Speicher.
    Bibliotheken und Schriften von den CDNs werden nach dem ersten Laden aus dem Speicher genommen.
    Nach dem Start schickt die Seite die Liste der Bibliotheken (PowerPoint, PDF, ZIP, Bilder, Online-Ablage);
