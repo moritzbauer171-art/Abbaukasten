@@ -1999,7 +1999,8 @@ body.home-on{overflow:hidden}
 .hm-brand{display:flex;align-items:baseline;gap:10px}.hm-brand b{font-size:17px;letter-spacing:-.01em}.hm-brand small{color:var(--muted);font-size:12.5px}
 .hm-top-a{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
 .hm-top-a .btn i{font-style:normal;color:var(--muted)}
-.hm-auto{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.hm-auto{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.hm-auto select{font:inherit;font-size:12.5px;color:var(--ink);background:var(--field);border:1px solid var(--line-strong);border-radius:7px;padding:3px 6px}
 .hm-wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px;display:flex;flex-direction:column;gap:28px}
 .hm .btn svg,.hm .link svg,.hm h2 svg{width:16px;height:16px;flex:0 0 auto}
 .hm .link{display:inline-flex;align-items:center;gap:6px}
@@ -3744,7 +3745,7 @@ function settingsHTML() {
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
   else c = `<div class="card set-card"><div class="card-b">
-      <div class="chks"><label class="chk"><input type="checkbox" data-act="home-pref"${homeOn() ? ' checked' : ''}>Startseite beim Öffnen zeigen</label></div>
+      <div class="f"><span>Startseite von selbst zeigen</span><div class="seg sm" role="group" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<button type="button" data-act="home-pref" data-v="${v}" aria-pressed="${homeMode() === v}">${l}</button>`).join('')}</div><small class="hint">„Nach einer Pause“: beim ersten Öffnen und wenn die App mindestens drei Stunden zu war. Über das Haus-Symbol kommen Sie jederzeit hin.</small></div>
       <div class="f"><span>Darstellung</span><div class="seg sm" role="group" aria-label="Darstellung">${[['light', 'Hell'], ['dark', 'Dunkel'], ['auto', 'Wie das Gerät']].map(([v, l]) => `<button type="button" data-act="theme-set" data-v="${v}" aria-pressed="${themePref() === v}">${l}</button>`).join('')}</div></div>
       <div class="f"><span>Ansicht</span><div class="set-chks">
         ${true ? '' : `<button type="button" class="link onecard" data-act="start-pref" aria-pressed="${String(lsGet(LS_START)) !== '0'}"><span class="cb" aria-hidden="true"></span>Beim Öffnen einer Stunde die Übersicht zeigen</button>`}
@@ -8484,7 +8485,7 @@ function onClick(e) {
     case 'settings-back': setArea(isBasis() ? 'blatt' : state.prevArea && state.prevArea !== 'einst' ? state.prevArea : 'blatt'); return;
     case 'set-tab': state.setTab = a.dataset.v; renderEditor(); return;
     case 'umfang': setUmfang(a.dataset.v); return;
-    case 'home-pref': lsSet(LS_HOME, a.checked ? '1' : '0'); return;
+    case 'home-pref': homeModeSet(a.dataset.v); renderEditor(); return;
     case 'theme-set': try { localStorage.setItem(LS_THEME, JSON.stringify(a.dataset.v)); } catch {} themeApply(); renderEditor(); renderPreview(); return;
     case 'area-more': state.areaMore = !state.areaMore; renderEditor(); return;
     case 'zw-ins': state.zwAt = +a.dataset.at; renderEditor(); return;
@@ -9031,7 +9032,17 @@ function newsMaybe() {
 
 /* ================= Startseite: Fächer und Klassen, zuletzt bearbeitet, neu geteilt ================= */
 const LS_HOME = 'abw.homeStart', LS_SHSEEN = 'abw.sharedSeen';
-const homeOn = () => lsGet(LS_HOME) !== '0';
+// Wann die Startseite von selbst kommt: 'pause' (Standard) beim ersten Mal und nach mindestens drei Stunden ohne die App, 'always' bei jedem Laden, '0' nie
+const LS_LASTSEEN = 'abw.lastSeen', HOME_PAUSE = 3 * 36e5;
+const homeMode = () => { const v = lsGet(LS_HOME); return v === '0' ? 'never' : v === 'always' ? 'always' : 'pause'; };
+const homeOn = () => homeMode() !== 'never';
+const HOME_MODES = [['pause', 'nach einer Pause'], ['always', 'immer'], ['never', 'nie']];
+const homeModeSet = v => lsSet(LS_HOME, v === 'never' ? '0' : v === 'always' ? 'always' : 'pause');
+function homeAutoDue() {
+  const m = homeMode(); if (m === 'never') return false; if (m === 'always') return true;
+  const t = +(lsGet(LS_LASTSEEN) || 0); return !t || Date.now() - t > HOME_PAUSE;
+}
+const homeTouch = () => lsSet(LS_LASTSEEN, Date.now());
 const hmS = { open: false, seen: 0, busy: '', hold: false, pend: false, raf: 0, html: '' };
 // Vorschau, die hinter der Startseite liegt, nachholen: im Leerlauf oder spätestens beim Schließen
 function homeFlushPreview() { hmS.hold = false; if (hmS.pend) { hmS.pend = false; renderPreview(); } }
@@ -9090,7 +9101,7 @@ function homeRenderNow() {
     : `<div class="hm-empty"><p>Noch keine gespeicherten Stunden.</p><button type="button" class="btn primary" data-hm="new" data-k="${esc(state.klasse)}">${hmI('plus')}Erste Stunde anlegen</button></div>`;
   let shareH;
   if (!canShare()) shareH = `<div class="hm-empty"><p>Geteilte Stunden von Kolleginnen und Kollegen sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? `<button type="button" class="btn" data-hm="login">Anmelden</button>` : ''}</div>`;
-  else if (!state.shared) shareH = '<div class="hm-empty"><p>Wird geladen …</p></div>';
+  else if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; homeRender(); }), 0); } shareH = '<div class="hm-empty"><p>Wird geladen …</p></div>'; }
   else {
     const L = [...state.shared].filter(x => !x.mine).sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt)).slice(0, 6);
     shareH = L.length ? `<ul class="hm-sh">${L.map(x => { const nu = +new Date(x.updatedAt) > hmS.seen; return `<li class="${nu ? 'nu' : ''}">
@@ -9103,7 +9114,7 @@ function homeRenderNow() {
   const nNew = canShare() && state.shared ? state.shared.filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
   const html = `<div class="hm-top"><div class="hm-brand"><b>AB-Werkstatt</b><small>Startseite</small></div>
       <div class="hm-top-a">${cur ? `<button type="button" class="btn" data-hm="x">${hmI('go')}<span>Weiter${curT ? `<i>: ${esc(curT.length > 34 ? curT.slice(0, 32) + ' …' : curT)}</i>` : ''}</span></button>` : ''}
-      <label class="hm-auto"><input type="checkbox" data-hm="auto"${homeOn() ? ' checked' : ''}> beim Öffnen zeigen</label></div></div>
+      <label class="hm-auto"><span>Von selbst zeigen</span><select data-hm="auto" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<option value="${v}"${homeMode() === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label></div></div>
     <div class="hm-wrap">
       <section class="hm-hero">
         <svg class="hm-art" viewBox="0 0 400 200" aria-hidden="true"><g fill="none" stroke="#fff" stroke-linecap="round">
@@ -9113,7 +9124,7 @@ function homeRenderNow() {
           <path d="M226 150c18-30 40-44 66-46" stroke="#FDE68A" stroke-width="5" stroke-opacity=".9"/><circle cx="296" cy="104" r="6" fill="#FDE68A" stroke="none"/></g></svg>
         <div class="hm-hero-in"><p class="hm-date">${esc(now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }))}</p>
           <h1 id="hm-t">${greet}${autor ? `, ${esc(autor)}` : ''}</h1>
-          <p class="hm-lead">${lib.length ? `${lib.length} ${lib.length === 1 ? 'Stunde' : 'Stunden'} in ${KLASSEN.length} ${KLASSEN.length === 1 ? 'Klasse' : 'Klassen'}${nNew ? ` · <b>${nNew} neu geteilt</b>` : ''}` : 'Legen Sie Ihre erste Stunde an.'}</p>
+          <p class="hm-lead">${lib.length ? `${lib.length} ${lib.length === 1 ? 'Stunde' : 'Stunden'} in ${KLASSEN.length} ${KLASSEN.length === 1 ? 'Klasse' : 'Klassen'}${nNew ? ` · <b>${nNew} neu geteilt</b>` : ''}` : `Legen Sie Ihre erste Stunde an${nNew ? ` · <b>${nNew} neu geteilt</b>` : '.'}`}</p>
           <div class="hm-hero-a"><button type="button" class="btn hm-cta" data-hm="new" data-k="${esc(state.klasse)}">${hmI('plus')}Neue Stunde in ${esc(KL(state.klasse).label)}</button>${cur ? `<button type="button" class="btn hm-ghost" data-hm="x">${hmI('go')}Weiterarbeiten</button>` : ''}</div></div>
       </section>
       <section class="hm-sec" aria-labelledby="hm-kt"><div class="hm-sec-h"><h2 id="hm-kt">Fächer und Klassen</h2><button type="button" class="link" data-hm="klassen">Klassen bearbeiten</button></div>
@@ -9131,7 +9142,7 @@ function homeRenderNow() {
 async function homeClick(e) {
   const a = e.target.closest('[data-hm]'); if (!a) return; const k = a.dataset.hm;
   const toKl = async kl => { if (kl && kl !== state.klasse) { if (savePending) saveNow(); state.klasse = kl; lsSet(LS.klasse, kl); state.libQuery = ''; renderTabs(); } };
-  if (k === 'auto') { lsSet(LS_HOME, a.checked ? '1' : '0'); return; }
+  if (k === 'auto') { if (e.type === 'change') homeModeSet(a.value); return; }
   if (k === 'x') return homeClose();
   if (k === 'kl') { const kl = a.dataset.k; homeClose(); if (kl === state.klasse) return; await switchKlasse(kl); return; }
   if (k === 'open') { const d = (state.lib || []).find(x => x.id === a.dataset.id); if (!d) return; homeClose(); await toKl(d.klasse); if (!state.sheet || state.sheet.id !== d.id) await openById(d.id); if (isNarrow()) setView('preview'); return; }
@@ -12061,14 +12072,16 @@ function boot() {
   window.addEventListener('focus', () => checkRemote());
   window.addEventListener('online', () => { flushPending().then(() => { if (state.sheet && !savePending) idleStatus(); }); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && savePending) saveNow(); });
-  window.addEventListener('pagehide', () => { if (savePending) saveNow(); });
+  window.addEventListener('pagehide', () => { homeTouch(); if (savePending) saveNow(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') homeTouch(); });
 
   // Erster Stand: zuletzt geöffnetes Blatt dieses Reiters aus dem Zwischenspeicher, sonst Entwurf
   const k = lsGet(LS.klasse); state.klasse = KLASSEN.some(x => x.id === k) ? k : KLASSEN[0].id;
   const cached = lsGet(LS.cur);
   const ok = cached && cached.sheet && cached.sheet.meta && Array.isArray(cached.sheet.blocks) && KL(cached.sheet.klasse).id === state.klasse;
   state.sheet = normalizeSheet(ok ? cached.sheet : draftFor(state.klasse));
-  if (homeOn() && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
+  if (homeAutoDue() && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
+  homeTouch(); setInterval(homeTouch, 5 * 6e4);
   renderTabs(); renderEditor(); applyResponsive(); renderPreview(); setStatus('pending');
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
@@ -12076,7 +12089,7 @@ function boot() {
   setupPWA(); setTimeout(newsMaybe, 1500);
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
-  if (homeOn() && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
+
   if (isNarrow()) setView(state.area === 'start' ? 'edit' : 'preview');
   $('#tip-root').addEventListener('click', e => { const b = e.target.closest('[data-tip]'); if (!b) return; const k = b.dataset.tip; showTip(k === 'close' ? -1 : k === 'prev' ? tipIdx - 1 : tipIdx + 1 < TIPS.length ? tipIdx + 1 : -1); });
   if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg && !lsGet(LS_TIPS)) showTip(0); }, 1800);
