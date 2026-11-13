@@ -1989,12 +1989,13 @@ body{transition:background-color .3s,border-color .25s}
 
 /* ===== Startseite ===== */
 #home-root:empty{display:none}
-.hm{position:fixed;inset:0;z-index:38;background:var(--desk);overflow:auto;-webkit-overflow-scrolling:touch;animation:hmIn .22s ease-out}
-#home-root.out .hm{animation:hmOut .2s ease-in forwards}
-@keyframes hmIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@keyframes hmOut{to{opacity:0;transform:translateY(6px)}}
+.hm{position:fixed;inset:0;z-index:38;background:var(--desk);overflow:auto;-webkit-overflow-scrolling:touch;contain:layout paint}
+#home-root.in .hm{animation:hmIn .18s ease-out}
+#home-root.out .hm{animation:hmOut .16s ease-in forwards}
+@keyframes hmIn{from{opacity:0}to{opacity:1}}
+@keyframes hmOut{to{opacity:0}}
 body.home-on{overflow:hidden}
-.hm-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px max(16px,calc((100vw - 1180px) / 2));background:color-mix(in srgb,var(--desk) 86%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hm-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px max(16px,calc((100vw - 1180px) / 2));background:var(--desk);border-bottom:1px solid var(--line)}
 .hm-brand{display:flex;align-items:baseline;gap:10px}.hm-brand b{font-size:17px;letter-spacing:-.01em}.hm-brand small{color:var(--muted);font-size:12.5px}
 .hm-top-a{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end}
 .hm-top-a .btn i{font-style:normal;color:var(--muted)}
@@ -7574,6 +7575,7 @@ function scheduleRender(ms = 220) { clearTimeout(renderTimer); renderTimer = set
 let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
   if (MAPPE_LOCK || DG_VIEW) return;
+  if (hmS.open && hmS.hold) { hmS.pend = true; return; }
   { const h = $('#pages'); if (h) h.lang = fachLang(); }
   if (state.out === 'vp' || state.out === 'pres') {
     const host = $('#pages'); host.style.removeProperty('zoom'); let n = 0;
@@ -9030,7 +9032,9 @@ function newsMaybe() {
 /* ================= Startseite: Fächer und Klassen, zuletzt bearbeitet, neu geteilt ================= */
 const LS_HOME = 'abw.homeStart', LS_SHSEEN = 'abw.sharedSeen';
 const homeOn = () => lsGet(LS_HOME) !== '0';
-const hmS = { open: false, seen: 0, busy: '' };
+const hmS = { open: false, seen: 0, busy: '', hold: false, pend: false, raf: 0, html: '' };
+// Vorschau, die hinter der Startseite liegt, nachholen: im Leerlauf oder spätestens beim Schließen
+function homeFlushPreview() { hmS.hold = false; if (hmS.pend) { hmS.pend = false; renderPreview(); } }
 function relTime(t) {
   t = +t || 0; if (!t) return ''; const d = Date.now() - t, m = 6e4, h = 36e5, D = 864e5;
   if (d < 2 * m) return 'gerade eben'; if (d < h) return `vor ${Math.round(d / m)} Min.`; if (d < D) return `vor ${Math.round(d / h)} Std.`;
@@ -9045,17 +9049,21 @@ const HM_IC = {
 const hmI = k => `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${HM_IC[k]}</svg>`;
 function homeOpen(auto) {
   if (DG_VIEW || MAPPE_LOCK) return;
-  closeGloss(); closeZl(); closeMenu(); hmS.open = true; hmS.seen = +(lsGet(LS_SHSEEN) || 0); hmS.auto = !!auto;
+  closeGloss(); closeZl(); closeMenu(); const was = hmS.open; hmS.open = true; hmS.seen = +(lsGet(LS_SHSEEN) || 0); hmS.auto = !!auto; hmS.html = '';
+  if (auto) { hmS.hold = true; const go = () => setTimeout(homeFlushPreview, 0); if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 2500 }); else setTimeout(go, 1200); }
   if (canShare()) shareLoad().then(homeRender).catch(() => {});
-  homeRender(); document.body.classList.add('home-on');
+  homeRenderNow(); if (!was) { const r = $('#home-root'); r.classList.remove('out'); r.classList.add('in'); setTimeout(() => r.classList.remove('in'), 260); } document.body.classList.add('home-on');
   setTimeout(() => { const f = document.querySelector('#home-root .hm-cta'); if (f && !auto) f.focus({ preventScroll: true }); }, 40);
 }
 function homeClose() {
   if (!hmS.open) return; hmS.open = false; document.body.classList.remove('home-on');
   if (state.shared && state.shared.length) lsSet(LS_SHSEEN, Math.max(...state.shared.map(x => +new Date(x.updatedAt) || 0)));
-  const r = $('#home-root'); r.classList.add('out'); setTimeout(() => { if (!hmS.open) { r.innerHTML = ''; r.classList.remove('out'); } }, 200);
+  cancelAnimationFrame(hmS.raf); hmS.raf = 0; homeFlushPreview();
+  const r = $('#home-root'); r.classList.add('out'); setTimeout(() => { if (!hmS.open) { r.innerHTML = ''; r.classList.remove('out'); hmS.html = ''; } }, 180);
 }
-function homeRender() {
+// Neu zeichnen gebündelt: mehrere Anlässe kurz hintereinander (Liste geladen, geteilte Stunden da) ergeben ein Zeichnen, gleicher Inhalt keines
+function homeRender() { if (!hmS.open || hmS.raf) return; hmS.raf = requestAnimationFrame(() => { hmS.raf = 0; homeRenderNow(); }); }
+function homeRenderNow() {
   const root = $('#home-root'); if (!root || !hmS.open) return;
   const now = new Date(), hr = now.getHours();
   const greet = hr < 11 ? 'Guten Morgen' : hr < 18 ? 'Guten Tag' : 'Guten Abend';
@@ -9093,8 +9101,7 @@ function homeRender() {
       : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : 'Noch keine geteilten Stunden von anderen.'}</p></div>`;
   }
   const nNew = canShare() && state.shared ? state.shared.filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
-  root.innerHTML = `<div class="hm" role="dialog" aria-modal="true" aria-labelledby="hm-t">
-    <div class="hm-top"><div class="hm-brand"><b>AB-Werkstatt</b><small>Startseite</small></div>
+  const html = `<div class="hm-top"><div class="hm-brand"><b>AB-Werkstatt</b><small>Startseite</small></div>
       <div class="hm-top-a">${cur ? `<button type="button" class="btn" data-hm="x">${hmI('go')}<span>Weiter${curT ? `<i>: ${esc(curT.length > 34 ? curT.slice(0, 32) + ' …' : curT)}</i>` : ''}</span></button>` : ''}
       <label class="hm-auto"><input type="checkbox" data-hm="auto"${homeOn() ? ' checked' : ''}> beim Öffnen zeigen</label></div></div>
     <div class="hm-wrap">
@@ -9116,7 +9123,10 @@ function homeRender() {
         <section class="hm-sec hm-card" aria-labelledby="hm-rt"><div class="hm-sec-h"><h2 id="hm-rt">Zuletzt bearbeitet</h2>${lib.length > 8 ? `<button type="button" class="link" data-hm="all" data-k="${esc(state.klasse)}">Alle Stunden</button>` : ''}</div>${recentH}</section>
         <section class="hm-sec hm-card" aria-labelledby="hm-st"><div class="hm-sec-h"><h2 id="hm-st">${hmI('share')}Neu geteilt${nNew ? ` <span class="hm-new">${nNew}</span>` : ''}</h2>${canShare() ? '<button type="button" class="link" data-hm="shared">Alle geteilten</button>' : ''}</div>${shareH}</section>
       </div>
-    </div></div>`;
+    </div>`;
+  if (html === hmS.html) return; hmS.html = html;
+  let box = root.querySelector('.hm'); if (!box) { root.innerHTML = '<div class="hm" role="dialog" aria-modal="true" aria-labelledby="hm-t"></div>'; box = root.firstChild; }
+  const st = box.scrollTop; box.innerHTML = html; box.scrollTop = st;
 }
 async function homeClick(e) {
   const a = e.target.closest('[data-hm]'); if (!a) return; const k = a.dataset.hm;
@@ -12058,6 +12068,7 @@ function boot() {
   const cached = lsGet(LS.cur);
   const ok = cached && cached.sheet && cached.sheet.meta && Array.isArray(cached.sheet.blocks) && KL(cached.sheet.klasse).id === state.klasse;
   state.sheet = normalizeSheet(ok ? cached.sheet : draftFor(state.klasse));
+  if (homeOn() && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
   renderTabs(); renderEditor(); applyResponsive(); renderPreview(); setStatus('pending');
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
@@ -12065,7 +12076,7 @@ function boot() {
   setupPWA(); setTimeout(newsMaybe, 1500);
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
-  if (homeOn() && !DG_VIEW && !MAPPE_LOCK && !location.hash) homeOpen(true);
+  if (homeOn() && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
   if (isNarrow()) setView(state.area === 'start' ? 'edit' : 'preview');
   $('#tip-root').addEventListener('click', e => { const b = e.target.closest('[data-tip]'); if (!b) return; const k = b.dataset.tip; showTip(k === 'close' ? -1 : k === 'prev' ? tipIdx - 1 : tipIdx + 1 < TIPS.length ? tipIdx + 1 : -1); });
   if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg && !lsGet(LS_TIPS)) showTip(0); }, 1800);
