@@ -9462,6 +9462,8 @@ function rlpJump(i) {
 const LS_NEWS = 'abw.news', NEWS_ID = 'rlp-2026-11';
 function newsMaybe() {
   if (DG_VIEW || MAPPE_LOCK || String(lsGet(LS_NEWS) || '') === NEWS_ID) return;
+  if (!state.klReady || state.needSetup) { setTimeout(newsMaybe, 1500); return; }
+  if (state.newAcct) { lsSet(LS_NEWS, NEWS_ID); return; }
   if (state.dlg || state.libOpen || document.querySelector('.pr-ov, #rlpv, .nw-ov')) { setTimeout(newsMaybe, 1500); return; }
   const box = document.createElement('div'); box.className = 'nw-ov'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'nw-t');
   box.innerHTML = `<div class="nw-scrim" data-nw="x"></div><div class="nw-card">
@@ -9716,7 +9718,8 @@ const tour = { i: -1 };
 const tourDue = () => !lsGet(LS_TOUR) && !lsGet(LS_TIPS);
 function tourMaybe(tries = 0) {
   if (!tourDue() || tour.i >= 0 || DG_VIEW || MAPPE_LOCK) return;
-  if (hmS.open || state.dlg || state.needSetup || [...document.querySelectorAll('.nw-ov, .rlpv')].some(x => x.offsetParent || x.getClientRects().length)) { if (tries < 400) setTimeout(() => tourMaybe(tries + 1), 1500); return; }
+  const uiReady = state.klReady && !!document.querySelector('#reiter .rt') && !document.querySelector('#dlg-root .dlg, #dlg-root [role="dialog"]');
+  if (!uiReady || hmS.open || state.dlg || state.needSetup || state.libOpen || [...document.querySelectorAll('.nw-ov, .rlpv')].some(x => x.offsetParent || x.getClientRects().length)) { if (tries < 400) setTimeout(() => tourMaybe(tries + 1), 1500); return; }
   tourStart();
 }
 function tourStart() { showTip(-1); lsSet(LS_TIPS, 1); if (hmS.open) homeClose(); if (isNarrow()) setView('edit'); tour.i = 0; tourShow(); }
@@ -10159,6 +10162,9 @@ function applyKlassen() {
   KLASSEN = ks; lsSet(LS_KLCACHE, ks);
   state.lib.forEach(d => { d.klasse = KL(d.kraw || d.klasse).id; });
   if (!KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); }
+  // Neues Konto: keine Hinweise auf frühere Neuerungen; Startseite und Tour erst nach der Einrichtung
+  if (state.needSetup) { state.newAcct = true; lsSet(LS_NEWS, NEWS_ID); }
+  state.klReady = true;
   renderTabs(); if (state.libOpen) renderLib();
 }
 // Ohne Anmeldung, aber mit Online-Ablage: erst anmelden lassen (die Einrichtung folgt nur für neue Konten)
@@ -10205,7 +10211,7 @@ function klassenSave() {
   state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
   if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
   renderTabs(); renderEditor(); if (state.libOpen) renderLib();
-  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); setTimeout(() => tourMaybe(), 900); }
+  if (setup) { lsSet(LS_NEWS, NEWS_ID); state.newAcct = true; if (hmS.open) homeClose(); toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); setTimeout(() => tourMaybe(), 900); }
   else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
   if (!setup && d.wantFach) { const k = KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
 }
@@ -12705,7 +12711,8 @@ function boot() {
   const cached = lsGet(LS.cur);
   const ok = cached && cached.sheet && cached.sheet.meta && Array.isArray(cached.sheet.blocks) && KL(cached.sheet.klasse).id === state.klasse;
   state.sheet = normalizeSheet(ok ? cached.sheet : draftFor(state.klasse));
-  if (homeAutoDue() && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
+  // Ganz neu (noch keine Klassen auf diesem Gerät): keine Startseite vor der Einrichtung
+  if (homeAutoDue() && (lsGet(LS_KLCACHE) || lsGet('abw.ordner')) && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
   homeTouch(); setInterval(homeTouch, 5 * 6e4);
   renderTabs(); renderEditor(); applyResponsive(); renderPreview(); setStatus('pending');
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
