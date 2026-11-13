@@ -919,6 +919,8 @@ body{border-top:3px solid var(--kl);transition:border-color .25s}
 .fach-pop{position:absolute;left:120px;top:calc(100% + 6px);z-index:45;background:var(--card);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;gap:2px}
 .fach-pop[hidden]{display:none}
 .fp-h{font-size:12px;font-weight:700;color:var(--muted);padding:4px 8px 6px}
+.fp-addl{display:flex;flex-direction:column;max-height:46vh;overflow:auto;margin:2px 0 4px;border-left:2px solid var(--line);margin-left:10px;padding-left:4px}
+.fp-add b{color:var(--tinte)}
 .fp-i{display:grid;grid-template-columns:12px 1fr auto;align-items:center;gap:10px;border:0;background:transparent;border-radius:8px;padding:8px 10px;text-align:left;cursor:pointer;color:var(--ink);font-size:14px}
 .fp-i i{width:10px;height:10px;border-radius:50%}
 .fp-i b{font-family:var(--f-text);font-size:16px;font-weight:700;white-space:nowrap}
@@ -1282,21 +1284,21 @@ body{transition:background-color .3s,border-color .25s}
 .page.a3-page{padding:10mm 12mm 7mm;display:flex;flex-direction:column}
 .page.a3-page.quer{width:420mm;height:297mm}.page.a3-page.hoch{width:297mm;height:420mm}
 .page.a3-page.a4{width:210mm;height:297mm;padding:7mm 8mm 5mm}
-.fp-grid{position:relative;flex:0 0 auto;display:flex;flex-wrap:wrap;align-content:flex-start;margin:0 auto}
-.fp-grid.cut{border-top:.3mm dashed #8A909C;border-left:.3mm dashed #8A909C}
-.fp-c{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;overflow:hidden}
-.fp-grid.cut .fp-c{border-right:.3mm dashed #8A909C;border-bottom:.3mm dashed #8A909C}
-.fp-a{display:flex;align-items:center;justify-content:center;flex:0 0 auto;overflow:hidden}
-.fp-i{position:relative;overflow:hidden;flex:0 0 auto}
-.fp-i img{position:absolute;display:block;max-width:none!important;max-height:none!important;min-width:0;min-height:0;object-fit:fill}
-.fp-cap{flex:0 0 5.5mm;width:100%;font-size:8pt;line-height:5.5mm;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3A3F4B}
-.fp-ed{gap:8px}
-.fp-ed-r{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
-.fp-ed-r>img,.fp-ed-ph{width:64px;height:64px;object-fit:cover;border-radius:6px;background:var(--line);display:block}
-.fp-ed-f{display:flex;flex-direction:column;gap:6px;min-width:0}
-.fp-n input{width:72px}
-.fp-add{display:inline-flex;align-items:center;gap:6px;cursor:pointer;align-self:flex-start;margin-top:8px}
-.fp-add svg{width:15px;height:15px}
+.fbo-grid{position:relative;flex:0 0 auto;display:flex;flex-wrap:wrap;align-content:flex-start;margin:0 auto}
+.fbo-grid.cut{border-top:.3mm dashed #8A909C;border-left:.3mm dashed #8A909C}
+.fbo-c{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.fbo-grid.cut .fbo-c{border-right:.3mm dashed #8A909C;border-bottom:.3mm dashed #8A909C}
+.fbo-a{display:flex;align-items:center;justify-content:center;flex:0 0 auto;overflow:hidden}
+.fbo-i{position:relative;overflow:hidden;flex:0 0 auto}
+.fbo-i img{position:absolute;display:block;max-width:none!important;max-height:none!important;min-width:0;min-height:0;object-fit:fill}
+.fbo-cap{flex:0 0 5.5mm;width:100%;font-size:8pt;line-height:5.5mm;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3A3F4B}
+.fbo-ed{gap:8px}
+.fbo-ed-r{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+.fbo-ed-r>img,.fbo-ed-ph{width:64px;height:64px;object-fit:cover;border-radius:6px;background:var(--line);display:block}
+.fbo-ed-f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fbo-n input{width:72px}
+.fbo-add{display:inline-flex;align-items:center;gap:6px;cursor:pointer;align-self:flex-start;margin-top:8px}
+.fbo-add svg{width:15px;height:15px}
 .tf-ed .chks .chk{justify-content:flex-start;text-align:left}
 .tf-ed .chks .chk input{flex:0 0 auto;width:17px}
 .a4 .a3-in{gap:2.5mm}
@@ -2147,6 +2149,19 @@ body.home-on{overflow:hidden}
 .gs-prev{font-family:var(--f-sans)}
 .hint.warn{color:#B42318}
 .kl-stufe .seg button{min-width:96px}
+
+/* Funktionstour */
+#tour-root:empty{display:none}
+.tour-spot{position:fixed;z-index:60;border-radius:12px;box-shadow:0 0 0 9999px rgba(15,20,40,.55),0 0 0 3px #FDE68A;pointer-events:none;transition:all .25s ease}
+.tour-dim{position:fixed;inset:0;z-index:60;background:rgba(15,20,40,.55)}
+.tour-card{position:fixed;z-index:61;width:min(380px,calc(100vw - 24px));background:var(--card);color:var(--ink);border-radius:14px;padding:16px 18px 14px;box-shadow:0 20px 50px -18px rgba(10,15,40,.6);animation:tourIn .2s ease-out}
+.tour-card.mid{left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 24px))}
+@keyframes tourIn{from{opacity:0}to{opacity:1}}
+.tour-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:6px}
+.tour-card h3{margin:0 0 6px;font-size:17px;letter-spacing:-.01em}
+.tour-card p{margin:0 0 12px;font-size:14px;line-height:1.5;color:var(--ink)}
+.tour-dots{display:flex;gap:5px;margin-bottom:12px}.tour-dots i{width:7px;height:7px;border-radius:50%;background:var(--line-strong)}.tour-dots i.on{background:var(--tinte);width:18px;border-radius:4px}
+.tour-acts{display:flex;justify-content:space-between;gap:10px}
 /* Tafelkarten */
 .kk-page{width:297mm;height:210mm;padding:9mm;background:#FFFFFF}
 .kk-frame{width:100%;height:100%;border:2.4mm solid var(--kc);border-radius:7mm;display:flex;align-items:center;justify-content:center;padding:12mm 16mm;overflow:hidden}
@@ -2345,11 +2360,32 @@ const DEFAULT_KLASSEN = [
 // Die Klassen gehören zum Konto (Einstellungen der Ablage). DEFAULT_KLASSEN sind die ursprünglichen drei Reiter.
 const LEGACY_IDS = ['gk', 'k10', 'k910'];
 const LS_KLCACHE = 'abw.klassen';
-const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && ['gp', 'bio', 'en', 'es'].includes(k.fach) ? k.fach : 'deutsch', stufe: k && k.stufe === 'gs' ? 'gs' : 'os', jg: k && k.stufe === 'gs' ? Math.max(1, Math.min(6, +k.jg || jgGuess(k.label) || 3)) : 0 });
+const normKlasse = (k, i) => ({ id: String(k && k.id || 'k' + (i + 1)), label: String(k && k.label || '').trim().slice(0, 40) || `Klasse ${i + 1}`, course: String(k && k.course || '').trim().slice(0, 80), school: String(k && k.school || '').trim().slice(0, 80), accent: ACCENTS[k && k.accent] ? k.accent : Object.keys(ACCENTS)[i % 3], anrede: k && k.anrede === 'du' ? 'du' : 'sie', fach: k && FAECHER[k.fach] ? k.fach : 'deutsch', stufe: k && k.stufe === 'gs' ? 'gs' : 'os', jg: k && k.stufe === 'gs' ? Math.max(1, Math.min(6, +k.jg || jgGuess(k.label) || 3)) : 0 });
 /* Fächer: bestimmen Operatoren, Vorlagen, Formulierungshilfen und Materialarten */
 const FAECHER = { deutsch: { label: 'Deutsch', course: 'Deutsch', ops: 'IQB-Grundstock Deutsch', opsShort: 'IQB-Grundstock' }, gp: { label: 'Geschichte/Politik', course: 'Geschichte', ops: 'KMK-Operatoren Geschichte', opsShort: 'KMK-Liste Geschichte' }, bio: { label: 'Biologie', course: 'Biologie', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' },
   en: { label: 'Englisch', course: 'Englisch', ops: 'Operatoren Englisch (KMK, Abitur)', opsShort: 'Operatoren Englisch', lang: 'en' },
-  es: { label: 'Spanisch', course: 'Spanisch', ops: 'Operatoren Spanisch (KMK, Abitur)', opsShort: 'Operatoren Spanisch', lang: 'es' } };
+  es: { label: 'Spanisch', course: 'Spanisch', ops: 'Operatoren Spanisch (KMK, Abitur)', opsShort: 'Operatoren Spanisch', lang: 'es' },
+  fr: { label: 'Französisch', course: 'Französisch', base: 'fr', ops: 'Opérateurs Französisch (KMK, Abitur)', opsShort: 'Operatoren Französisch', lang: 'fr' },
+  la: { label: 'Latein', course: 'Latein', base: 'deutsch', ops: 'Operatoren Latein', opsShort: 'Operatoren Latein' },
+  ma: { label: 'Mathematik', course: 'Mathematik', base: 'ma', ops: 'KMK-Operatoren Mathematik', opsShort: 'KMK-Liste Mathematik' },
+  inf: { label: 'Informatik', course: 'Informatik', base: 'ma', ops: 'KMK-Operatoren Informatik', opsShort: 'KMK-Liste Informatik' },
+  ph: { label: 'Physik', course: 'Physik', base: 'bio', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' },
+  ch: { label: 'Chemie', course: 'Chemie', base: 'bio', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' },
+  nawi: { label: 'Naturwissenschaften', course: 'Naturwissenschaften', base: 'bio', ops: 'KMK-Operatoren Naturwissenschaften', opsShort: 'KMK-Liste Naturwissenschaften' },
+  su: { label: 'Sachunterricht', course: 'Sachunterricht', base: 'bio', ops: 'Operatoren Sachunterricht', opsShort: 'Operatoren Sachunterricht' },
+  geo: { label: 'Geografie', course: 'Geografie', base: 'gp', ops: 'KMK-Operatoren Geografie', opsShort: 'KMK-Liste Geografie' },
+  pb: { label: 'Politische Bildung', course: 'Politische Bildung', base: 'gp', ops: 'KMK-Operatoren Politische Bildung', opsShort: 'KMK-Liste Politik' },
+  gewi: { label: 'Gesellschaftswissenschaften', course: 'Gesellschaftswissenschaften', base: 'gp', ops: 'KMK-Operatoren Gesellschaftswissenschaften', opsShort: 'KMK-Liste Gewi' },
+  wat: { label: 'Wirtschaft-Arbeit-Technik', course: 'WAT', base: 'gp', ops: 'Operatoren WAT', opsShort: 'Operatoren WAT' },
+  eth: { label: 'Ethik', course: 'Ethik', base: 'deutsch', ops: 'Operatoren Ethik/Philosophie', opsShort: 'Operatoren Ethik' },
+  phil: { label: 'Philosophie', course: 'Philosophie', base: 'deutsch', ops: 'Operatoren Philosophie (KMK)', opsShort: 'Operatoren Philosophie' },
+  reli: { label: 'Religion', course: 'Religion', base: 'deutsch', ops: 'Operatoren Religion', opsShort: 'Operatoren Religion' },
+  ku: { label: 'Kunst', course: 'Kunst', base: 'deutsch', ops: 'Operatoren Kunst', opsShort: 'Operatoren Kunst' },
+  mu: { label: 'Musik', course: 'Musik', base: 'deutsch', ops: 'Operatoren Musik', opsShort: 'Operatoren Musik' },
+  sp: { label: 'Sport', course: 'Sport', base: 'deutsch', ops: 'Operatoren Sport', opsShort: 'Operatoren Sport' },
+  th: { label: 'Theater / Darstellendes Spiel', course: 'Darstellendes Spiel', base: 'deutsch', ops: 'Operatoren Darstellendes Spiel', opsShort: 'Operatoren DS' } };
+// Fächer mit gleicher Arbeitsweise teilen Bausteine, Vorlagen, Formulierungshilfen und (wo es passt) Operatoren
+const fachBase = kl => { const k = fachKey(kl); return (FAECHER[k] || {}).base || k; };
 const fachLang = kl => (FAECHER[fachKey(kl)] || {}).lang || 'de';
 const fachKey = kl => KL(kl || (state.sheet ? state.sheet.klasse : state.klasse)).fach || 'deutsch';
 const fachInfo = kl => FAECHER[fachKey(kl)] || FAECHER.deutsch;
@@ -2430,7 +2466,14 @@ const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[t
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
   get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
-  get en() { return this.deutsch; }, get es() { return this.deutsch; },
+  get en() { return this.deutsch; }, get es() { return this.deutsch; }, get fr() { return this.deutsch; },
+  ma: [
+    PAL('tasks', { desc: 'mit Operator-Check (KMK Mathematik)' }), PAL('lines', { k: 'rechen', label: 'Rechenkästchen', desc: 'Kariertes Feld zum Rechnen', pre: { style: 'kaestchen', count: 8 } }),
+    PAL('table', { k: 'wertetabelle', label: 'Wertetabelle', desc: 'x und y zum Ausfüllen', pre: { cols: ['x', '', '', '', '', '', ''], rows: [['y', '', '', '', '', '', '']], rowHeight: 'normal', firstBold: true } }),
+    PAL('info', { desc: 'Merke, Satz, Definition, Beispiel' }), PAL('image', { k: 'abbildung', label: 'Abbildung', desc: 'Skizze, Graph, Diagramm (Abb. 1)', pre: { mk: 'a' } }),
+    PAL('material', { label: 'Sachtext', desc: 'Text zur Sachaufgabe (M1)' }), PAL('match'), PAL_SORT(), PAL('phrases'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('table'),
+    PAL('lines'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')
+  ],
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Text- oder Bildquelle (Q1), im Baustein umschaltbar', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
@@ -2454,7 +2497,7 @@ const PALETTE_GS = () => [PAL('material', { label: 'Lesetext', desc: 'Text zum L
   PAL('match', { label: 'Verbinden', desc: 'Wörter, Sätze oder Bilder mit Linien verbinden' }), PAL_SORT(), PAL('lines', { k: 'lineatur', label: 'Lineatur', desc: 'Schreiblinien passend zur Klassenstufe', pre: { count: 4 } }), PAL('lines', { k: 'malfeld', label: 'Malfeld', desc: 'Freie Fläche zum Malen', ic: 'zeichnung', pre: { style: 'rahmen', count: 9 } }),
   PAL('image'), PAL('info', { desc: 'Merke, Tipp' }), PAL('table'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')];
 let PAL_GS_CACHE = null;
-const paletteFor = () => fachKey() === 'deutsch' && isGS() ? (PAL_GS_CACHE = PAL_GS_CACHE || PALETTE_GS()) : PALETTE[fachKey()] || PALETTE.deutsch;
+const paletteFor = () => isGS() ? (PAL_GS_CACHE = PAL_GS_CACHE || PALETTE_GS()) : PALETTE[fachKey()] || PALETTE[fachBase()] || PALETTE.deutsch;
 function paletteBlock(k, type) {
   const e = paletteFor().find(x => x.k === k) || Object.values(PALETTE).flat().find(x => x.k === k);
   const nb = newBlock(e ? e.type : type);
@@ -2584,6 +2627,17 @@ const OPS_BIO_TABLE = [
 const opE = (op, a, b, tpl) => ({ op, afb: [a, b], iqb: 1, fl: 1, imp: op.split(' ')[0], tpl: tpl || cap0(op) + ' …', tplDu: tpl || cap0(op) + ' …' });
 const opS = (op, tu, ud, a, b, rest = ' …') => ({ op, afb: [a, b], iqb: 1, fl: 1, imp: tu, imp2: ud, tpl: cap0(ud) + rest, tplDu: cap0(tu) + rest });
 function cap0(x) { return x.charAt(0).toUpperCase() + x.slice(1); }
+const OPS_FR = [
+  opS('décrire', 'décris', 'décrivez', 1, 1), opS('résumer', 'résume', 'résumez', 1, 1), opS('présenter', 'présente', 'présentez', 1, 1), opS('relever', 'relève', 'relevez', 1, 1), opS('nommer', 'nomme', 'nommez', 1, 1), opS('indiquer', 'indique', 'indiquez', 1, 1),
+  opS('analyser', 'analyse', 'analysez', 2, 2), opS('caractériser', 'caractérise', 'caractérisez', 2, 2), opS('comparer', 'compare', 'comparez', 2, 2), opS('expliquer', 'explique', 'expliquez', 2, 2), opS('examiner', 'examine', 'examinez', 2, 2), opS('interpréter', 'interprète', 'interprétez', 2, 3),
+  opS('commenter', 'commente', 'commentez', 3, 3), opS('discuter', 'discute', 'discutez', 3, 3), opS('évaluer', 'évalue', 'évaluez', 3, 3), opS('justifier', 'justifie', 'justifiez', 3, 3), opS('juger', 'juge', 'jugez', 3, 3),
+  opS('rédiger', 'rédige', 'rédigez', 3, 3), opS('écrire', 'écris', 'écrivez', 3, 3), opS('imaginer', 'imagine', 'imaginez', 3, 3), opS('développer', 'développe', 'développez', 3, 3)
+];
+const OPS_FR_TABLE = [
+  ['décrire, présenter, résumer', 'I', 'présenter de façon claire et structurée l’essentiel d’un texte ou d’un document'], ['relever, nommer, indiquer', 'I', 'repérer des éléments précis dans un texte'],
+  ['analyser, examiner', 'II', 'étudier le contenu, la structure et la langue d’un texte et expliquer leurs effets'], ['caractériser', 'II', 'décrire et analyser les traits d’un personnage'], ['comparer', 'II', 'dégager des ressemblances et des différences'], ['expliquer', 'II', 'rendre compréhensible en donnant des raisons'],
+  ['commenter, discuter', 'III', 'exprimer et justifier un avis, peser le pour et le contre'], ['évaluer, juger', 'III', 'porter un jugement argumenté'], ['rédiger, écrire, imaginer', 'III', 'produire un texte d’un type donné']
+];
 const OPS_EN = [
   opE('describe', 1, 1), opE('outline', 1, 1), opE('point out', 1, 1), opE('state', 1, 1), opE('summarize', 1, 1), opE('present', 1, 2),
   opE('analyse', 2, 2), opE('analyze', 2, 2), opE('characterize', 2, 2), opE('compare', 2, 2), opE('contrast', 2, 2), opE('examine', 2, 2), opE('explain', 2, 2), opE('illustrate', 2, 2), opE('interpret', 2, 3), opE('show', 2, 2),
@@ -2604,15 +2658,32 @@ const OPS_ES_TABLE = [
   ['analizar', 'II', 'examinar y explicar con detalle aspectos del contenido, de la estructura y del lenguaje'], ['caracterizar', 'II', 'describir y analizar los rasgos de un personaje'], ['comparar', 'II', 'señalar semejanzas y diferencias'], ['explicar', 'II', 'exponer de forma razonada causas y relaciones'], ['situar', 'II', 'colocar un texto o un hecho en su contexto'], ['interpretar', 'II–III', 'aclarar el sentido de un texto y fundamentar la propia opinión'],
   ['comentar', 'III', 'expresar y fundamentar una opinión propia sobre un tema'], ['discutir', 'III', 'presentar argumentos a favor y en contra y llegar a una conclusión'], ['evaluar, valorar', 'III', 'emitir un juicio razonado considerando distintos aspectos'], ['justificar', 'III', 'fundamentar una decisión o una conclusión'], ['escribir, redactar, crear', 'III', 'producir un texto con determinadas características']
 ];
+const OPS_MA = [
+  { op:'angeben', afb:[1,1], iqb:1, verb:'geben', part:'an', end:1, tpl:'Geben Sie … an.' }, { op:'nennen', afb:[1,1], iqb:1 }, { op:'skizzieren', afb:[1,2], iqb:1 }, { op:'zeichnen', afb:[1,2], iqb:1 },
+  { op:'berechnen', afb:[1,2], iqb:1 }, { op:'bestimmen', afb:[1,2], iqb:1 }, { op:'ermitteln', afb:[1,2], iqb:1 }, { op:'lösen', afb:[1,2], iqb:1 }, { op:'beschreiben', afb:[1,2], iqb:1 },
+  { op:'darstellen', afb:[1,2], iqb:1, verb:'stellen', part:'dar', end:1, tpl:'Stellen Sie … dar.' }, { op:'abschätzen', afb:[2,2], iqb:1, verb:'schätzen', part:'ab', end:1, tpl:'Schätzen Sie … ab.' },
+  { op:'erklären', afb:[2,2], iqb:1 }, { op:'erläutern', afb:[2,2], iqb:1 }, { op:'untersuchen', afb:[2,3], iqb:1 }, { op:'vergleichen', afb:[2,2], iqb:1 }, { op:'zuordnen', afb:[1,2], iqb:1, verb:'ordnen', part:'zu', end:1, tpl:'Ordnen Sie … zu.' },
+  { op:'herleiten', afb:[2,3], iqb:1, verb:'leiten', part:'her', end:1, tpl:'Leiten Sie … her.' }, { op:'interpretieren', afb:[2,3], iqb:1 }, { op:'begründen', afb:[2,3], iqb:1 }, { op:'beweisen', afb:[3,3], iqb:1 },
+  { op:'widerlegen', afb:[3,3], iqb:1 }, { op:'zeigen', afb:[2,3], iqb:1 }, { op:'beurteilen', afb:[3,3], iqb:1 }, { op:'bewerten', afb:[3,3], iqb:1 }, { op:'entscheiden', afb:[2,3], iqb:1 },
+  { op:'prüfen', afb:[2,3], iqb:1 }, { op:'überprüfen', afb:[2,3], iqb:1 }, { op:'entwickeln', afb:[3,3], iqb:1 }, { op:'modellieren', afb:[3,3], iqb:1 }, { op:'implementieren', afb:[2,3] }, { op:'testen', afb:[2,2] }
+];
+const OPS_MA_TABLE = [
+  ['angeben, nennen', 'I', 'Ergebnisse, Begriffe oder Eigenschaften ohne Begründung aufschreiben'], ['skizzieren, zeichnen', 'I–II', 'Wesentliches grafisch darstellen, bei „zeichnen“ möglichst genau'],
+  ['berechnen, bestimmen, ermitteln', 'I–II', 'Ergebnisse mit Rechenweg gewinnen, bei „bestimmen“ auch ohne festgelegtes Verfahren'], ['beschreiben', 'I–II', 'Sachverhalt oder Vorgehen in eigenen Worten wiedergeben'],
+  ['erklären, erläutern', 'II', 'Sachverhalt nachvollziehbar machen, bei „erläutern“ mit Beispielen'], ['untersuchen', 'II–III', 'Eigenschaften oder Zusammenhänge herausfinden und darstellen'],
+  ['interpretieren', 'II–III', 'Ergebnisse auf die Ausgangssituation beziehen und deuten'], ['begründen, zeigen', 'II–III', 'Aussage durch Argumente oder Rechnung absichern'],
+  ['beweisen, widerlegen', 'III', 'mit mathematischen Mitteln lückenlos zeigen, dass eine Aussage gilt oder nicht gilt'], ['beurteilen, bewerten', 'III', 'zu einem begründeten Urteil kommen']
+];
+const OPS_LA = [...OPS.map(o => ({ ...o })), { op:'übersetzen', afb:[1,3], iqb:1 }, { op:'belegen', afb:[1,2], iqb:1 }, { op:'gliedern', afb:[1,2], iqb:1 }, { op:'bestimmen', afb:[1,1], iqb:1 }, { op:'paraphrasieren', afb:[1,2], iqb:1 }];
 const IRREG = { nehmen: 'nimm', geben: 'gib', entwerfen: 'entwirf', entwickeln: 'entwickle' };
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-[OPS, OPS_GP, OPS_BIO].forEach(L => L.forEach(o => {
+[OPS, OPS_GP, OPS_BIO, OPS_MA, OPS_LA].forEach(L => L.forEach(o => {
   if (!o.tpl) o.tpl = cap(o.op) + ' Sie …';
   const base = o.verb || o.op;
   o.imp = IRREG[base] || (base.endsWith('ern') ? base.slice(0, -1) + 'e' : base.slice(0, -2) + 'e');
   o.tplDu = cap(o.imp) + o.tpl.replace(/^\S+ Sie/, '').replace(/^ sich /, ' dich ');
 }));
-const curOps = () => (fachKey() === 'deutsch' && isGS() ? OPS_GS : ({ gp: OPS_GP, bio: OPS_BIO, en: OPS_EN, es: OPS_ES })[fachKey()] || OPS);
+const curOps = () => (isGS() ? OPS_GS : ({ en: OPS_EN, es: OPS_ES, fr: OPS_FR, la: OPS_LA })[fachKey()] || ({ gp: OPS_GP, bio: OPS_BIO, ma: OPS_MA })[fachBase()] || OPS);
 const impHit = (o, w) => o.imp === w || (!!o.imp2 && o.imp2 === w);
 // Abgetrenntes Teil am Ende eines (Teil-)Satzes, damit „zu“, „auf“, „ab“, „nach“ nicht überall zählen
 const partAtEnd = (s, p) => new RegExp('(^|[\\s(„])' + p + '(?=\\s*([,.;:!?)“”–—]|$|(und|oder|sowie|aber|denn)\\s))', 'i').test(s);
@@ -2778,7 +2849,7 @@ function parseNotes(t) {
 }
 
 /* ---------- Operator-Erkennung ---------- */
-const DU_LEAD = new Set(['und', 'oder', 'dann', 'danach', 'anschließend', 'abschließend', 'zunächst', 'außerdem', 'schließlich', 'nun', 'bitte',
+const DU_LEAD = new Set(['et', 'puis', 'ensuite', 'enfin', 'maintenant', 'd’abord', 'und', 'oder', 'dann', 'danach', 'anschließend', 'abschließend', 'zunächst', 'außerdem', 'schließlich', 'nun', 'bitte',
   'then', 'and', 'or', 'now', 'next', 'finally', 'afterwards', 'also', 'first', 'please', 'y', 'o', 'luego', 'después', 'finalmente', 'además', 'primero', 'ahora', 'por', 'favor']);
 function detectOps(text) {
   const found = [];
@@ -3367,7 +3438,7 @@ function designEditor(m) {
 }
 function headHTML(meta) {
   const d = designOf(meta);
-  const HL = ({ en: ['Name', 'Date'], es: ['Nombre', 'Fecha'] })[fachLang()] || ['Name', 'Datum'];
+  const HL = ({ en: ['Name', 'Date'], es: ['Nombre', 'Fecha'], fr: ['Nom', 'Date'] })[fachLang()] || ['Name', 'Datum'];
   const fields = (meta.showName ? `<span>${HL[0]}<i></i></span>` : '') + (meta.showDate ? `<span class="dt">${HL[1]}<i></i></span>` : '');
   const title = esc(deQuoteStr(meta.title || 'Ohne Titel'));
   if (d === 'akte') {
@@ -3934,9 +4005,10 @@ function areaBarHTML() {
     ${mo ? `<div class="area-mp" role="menu">${AREAS_MORE.map(([k, l]) => `<button type="button" role="menuitem" data-act="area-set" data-v="${k}"${A === k ? ' aria-current="true"' : ''}><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}${more ? `<button type="button" role="menuitem" data-act="area-set" data-v="blatt"><i>${areaIc('blatt')}</i><span>Zurück zum Arbeitsblatt</span></button>` : ''}</div>` : ''}</div>${A === 'blatt' ? quickBarHTML() : ''}</nav>`;
 }
 // Die meistgenutzten Bausteine immer griffbereit; der Rest unter „Weitere“ (mit Suche)
+const QUICK_MA = ['tasks', 'rechen', 'wertetabelle', 'info', 'abbildung', 'lines'];
 const QUICK = ['material', 'tasks', 'info', 'phrases', 'table', 'lines'], QUICK_GS = ['material', 'tasks', 'gs-kreuz', 'gs-ordnen', 'lineatur', 'image'];
 function quickBarHTML() {
-  const P = paletteFor(); const L = (isGS() && fachKey() === 'deutsch' ? QUICK_GS : QUICK).map(k => P.find(t => t.k === k)).filter(Boolean);
+  const P = paletteFor(); const L = (isGS() ? QUICK_GS : fachBase() === 'ma' ? QUICK_MA : QUICK).map(k => P.find(t => t.k === k)).filter(Boolean);
   return `<div class="qbar" role="toolbar" aria-label="Baustein hinzufügen">${L.map(t => `<button type="button" class="qb" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)} · wird hinter dem gewählten Baustein eingefügt"><i>${typeIcon(t.ic)}</i><span>${esc(t.label)}</span></button>`).join('')}<button type="button" class="qb qb-more" data-act="bk-open" title="Alle Bausteine mit Suche (Strg+K)"><b>+</b><span>Weitere</span></button></div>`;
 }
 function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras') { const SB = stBlocks(); return SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4') ? 'a4' : SB.some(b => b.type === 'a3') ? 'a3' : exitSteps().length ? 'exit' : 'a4'; } return L[0]; }
@@ -4903,16 +4975,16 @@ function fpPages(b, hd) {
     fpGrids(N).forEach(([c, r]) => { const cw = (W - g * (c - 1)) / c - 2 * pad, ch = (H - g * (r - 1)) / r - 2 * pad - capH; [a, b.fpRot !== false ? 1 / a : a].forEach(ia => { const ar = fpFitArea(cw, ch, ia); if (!best || ar > best.ar + .01) best = { c, r, ar }; }); });
     const { c, r } = best; const cellW = (W - g * (c - 1)) / c, cellH = (H - g * (r - 1)) / r; const bw = cellW - 2 * pad, bh = cellH - 2 * pad - capH;
     const cells = Array.from({ length: c * r }, (_, k) => {
-      const o = L[k]; if (!o) return `<div class="fp-c empty" style="width:${cellW}mm;height:${cellH}mm"></div>`;
+      const o = L[k]; if (!o) return `<div class="fbo-c empty" style="width:${cellW}mm;height:${cellH}mm"></div>`;
       const oa = fpAspect(o); let rot = b.fpRot !== false && fpFitArea(bw, bh, 1 / oa) > fpFitArea(bw, bh, oa) * 1.02;
       let src = o.src; if (rot) { const rs = fpRotSrc(o); if (rs) src = rs; else rot = false; }
       const ia = rot ? 1 / oa : oa; const cover = b.fpFit === 'cover';
       const iw = cover ? Math.max(bw, bh * ia) : Math.min(bw, bh * ia), ih = iw / ia;
-      const box = cover ? `<div class="fp-i" style="width:${bw.toFixed(2)}mm;height:${bh.toFixed(2)}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;left:${((bw - iw) / 2).toFixed(2)}mm;top:${((bh - ih) / 2).toFixed(2)}mm"></div>`
-        : `<div class="fp-i" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;left:0;top:0"></div>`;
-      return `<div class="fp-c" style="width:${cellW}mm;height:${cellH}mm;padding:${pad}mm"><div class="fp-a" style="width:${bw.toFixed(2)}mm;height:${bh.toFixed(2)}mm">${box}</div>${capH ? `<div class="fp-cap">${inlineHTML(tfStr(o.cap))}</div>` : ''}</div>`;
+      const box = cover ? `<div class="fbo-i" style="width:${bw.toFixed(2)}mm;height:${bh.toFixed(2)}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;left:${((bw - iw) / 2).toFixed(2)}mm;top:${((bh - ih) / 2).toFixed(2)}mm"></div>`
+        : `<div class="fbo-i" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;left:0;top:0"></div>`;
+      return `<div class="fbo-c" style="width:${cellW}mm;height:${cellH}mm;padding:${pad}mm"><div class="fbo-a" style="width:${bw.toFixed(2)}mm;height:${bh.toFixed(2)}mm">${box}</div>${capH ? `<div class="fbo-cap">${inlineHTML(tfStr(o.cap))}</div>` : ''}</div>`;
     });
-    return a3Page(b, (head ? hd(pages.length > 1 ? `${pi + 1}/${pages.length}` : '') : '') + `<div class="fp-grid${cut ? ' cut' : ''}" style="width:${W}mm;height:${H}mm;gap:${g}mm">${cut ? '<span class="a4-sc" aria-hidden="true">✂</span>' : ''}${cells.join('')}</div>`, pages.length > 1 ? `${pi + 1}/${pages.length}` : '');
+    return a3Page(b, (head ? hd(pages.length > 1 ? `${pi + 1}/${pages.length}` : '') : '') + `<div class="fbo-grid${cut ? ' cut' : ''}" style="width:${W}mm;height:${H}mm;gap:${g}mm">${cut ? '<span class="a4-sc" aria-hidden="true">✂</span>' : ''}${cells.join('')}</div>`, pages.length > 1 ? `${pi + 1}/${pages.length}` : '');
   });
 }
 function a4Pages(b) {
@@ -4999,8 +5071,8 @@ function a4Editor(b, tpl, inp, del, add) {
     <div class="f"><span>Begriff · Erklärung</span><div class="tf-ed-list a4-ed">${b.pairs.map((x, i) => `<div class="a4-ed-r"><span class="a4-ed-n">${i + 1}</span><div class="a4-ed-f">${inp(`pairs.${i}.f`, x.f, 'Vorderseite, z. B. Metapher')}${ta(`pairs.${i}.r`, x.r, 'Rückseite: Erklärung')}</div>${del('pairs', i, b.pairs.length <= 1)}</div>`).join('')}</div><div class="tf-ed-acts">${add('pairs', 'Karte', b.pairs.length >= 60)}</div></div>`;
   if (tpl === 'fotos') { const seg = (k, label, opts) => `<div class="f"><span>${label}</span><div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-act="pc-set" data-k="${k}" data-v="${v}" aria-pressed="${String(b[k]) === v}">${l}</button>`).join('')}</div></div>`;
     const P = b.photos; const n = P.reduce((x, o) => x + (o.src ? Math.max(1, Math.round(+o.n || 1)) : 0), 0); const pg = Math.ceil(n / (+b.fpN || 4));
-    return `<div class="f"><span>Fotos</span><div class="tf-ed-list fp-ed">${P.map((o, i) => `<div class="fp-ed-r">${o.src ? `<img src="${esc(o.src)}" alt="">` : '<i class="fp-ed-ph">…</i>'}<div class="fp-ed-f"><div class="row" style="gap:6px 10px;align-items:flex-end"><label class="f fp-n"><span>Anzahl</span><input type="number" min="1" max="99" data-k="photos.${i}.n" value="${esc(o.n || 1)}"></label><button class="link" type="button" data-act="fp-fill" data-i="${i}" title="So oft, dass eine Seite voll wird">Seite füllen</button></div>${inp(`photos.${i}.cap`, o.cap, 'Bildunterschrift (optional)')}</div>${del('photos', i)}</div>`).join('')}</div>
-      <label class="btn sm fp-add">${hmI('plus')}Fotos hinzufügen<input type="file" accept="image/*" multiple data-act="fp-add" hidden></label>${n ? `<small class="hint">${n} ${n === 1 ? 'Foto' : 'Fotos'} auf ${pg} ${pg === 1 ? 'Seite' : 'Seiten'} A4</small>` : ''}</div>
+    return `<div class="f"><span>Fotos</span><div class="tf-ed-list fbo-ed">${P.map((o, i) => `<div class="fbo-ed-r">${o.src ? `<img src="${esc(o.src)}" alt="">` : '<i class="fbo-ed-ph">…</i>'}<div class="fbo-ed-f"><div class="row" style="gap:6px 10px;align-items:flex-end"><label class="f fbo-n"><span>Anzahl</span><input type="number" min="1" max="99" data-k="photos.${i}.n" value="${esc(o.n || 1)}"></label><button class="link" type="button" data-act="fp-fill" data-i="${i}" title="So oft, dass eine Seite voll wird">Seite füllen</button></div>${inp(`photos.${i}.cap`, o.cap, 'Bildunterschrift (optional)')}</div>${del('photos', i)}</div>`).join('')}</div>
+      <label class="btn sm fbo-add">${hmI('plus')}Fotos hinzufügen<input type="file" accept="image/*" multiple data-act="fp-add" hidden></label>${n ? `<small class="hint">${n} ${n === 1 ? 'Foto' : 'Fotos'} auf ${pg} ${pg === 1 ? 'Seite' : 'Seiten'} A4</small>` : ''}</div>
       ${seg('fpN', 'Fotos pro Seite', FP_N.map(x => [String(x), String(x)]))}
       ${seg('fpFit', 'Foto im Feld', [['contain', 'ganz zeigen'], ['cover', 'Feld füllen (Ränder abschneiden)']])}
       ${seg('fpGap', 'Abstand', [['0', 'ohne (am sparsamsten)'], ['3', 'mit Abstand']])}
@@ -6330,12 +6402,15 @@ function kkWarn(c, kk, i) {
 const LS_SNIP = 'abw.snips';
 const userSnips = () => { const s = lsGet(LS_SNIP); return Array.isArray(s) ? s.filter(x => x && x.block && TYPES[x.block.type]) : []; };
 function opsTableBlock() {
-  if (fachKey() === 'bio') return { ...newBlock('table'), title: 'Operatoren Biologie (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_BIO_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
+  const F = fachInfo();
+  if (fachBase() === 'ma') return { ...newBlock('table'), title: F.ops, cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_MA_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
+  if (fachKey() === 'fr') return { ...newBlock('table'), title: 'Opérateurs', cols: ['Opérateur · AFB', 'Ce qu’il faut faire'], rows: OPS_FR_TABLE.map(([o, a, d]) => [o + ' · ' + a, d]), rowHeight: 'normal', firstBold: true };
+  if (fachBase() === 'bio') return { ...newBlock('table'), title: fachKey() === 'bio' ? 'Operatoren Biologie (KMK)' : F.ops, cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_BIO_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
   if (fachKey() === 'en' || fachKey() === 'es') { const en = fachKey() === 'en'; return { ...newBlock('table'), title: en ? 'Operators' : 'Operadores', cols: [en ? 'Operator · AFB' : 'Operador · AFB', en ? 'What you do' : 'Qué hay que hacer'], rows: (en ? OPS_EN_TABLE : OPS_ES_TABLE).map(([o, a, d]) => [o + ' · ' + a, d]), rowHeight: 'normal', firstBold: true }; }
-  if (fachKey() === 'gp') return { ...newBlock('table'), title: 'Operatoren Geschichte (KMK)', cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_GP_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
+  if (fachBase() === 'gp') return { ...newBlock('table'), title: fachKey() === 'gp' ? 'Operatoren Geschichte (KMK)' : F.ops, cols: ['Operator · Anforderungsbereich', 'Das heißt …'], rows: OPS_GP_TABLE.map(([o, a, d]) => [o + ' · AFB ' + a, d]), rowHeight: 'normal', firstBold: true, cw: [40, 60] };
   return { ...newBlock('table'), title: 'Operatoren (IQB-Grundstock Deutsch)', cols: ['Operator', 'Anforderungsbereich'], rows: OPS.filter(o => o.iqb).map(o => [o.op, 'AFB ' + afbLabel(o.afb)]), rowHeight: 'normal', firstBold: true };
 }
-function allSnips() { return [{ id: 'builtin-self', name: 'Selbsteinschätzung zum Ankreuzen', type: 'table', builtin: true }, { id: 'builtin-ops', name: ({ gp: 'Operatorenübersicht (KMK Geschichte)', bio: 'Operatorenübersicht (KMK Biologie)' })[fachKey()] || 'Operatorenübersicht (IQB-Grundstock)', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
+function allSnips() { return [{ id: 'builtin-self', name: 'Selbsteinschätzung zum Ankreuzen', type: 'table', builtin: true }, { id: 'builtin-ops', name: fachKey() === 'deutsch' ? 'Operatorenübersicht (IQB-Grundstock)' : 'Operatorenübersicht (' + fachInfo().opsShort + ')', type: 'table', builtin: true }, ...userSnips().map(s => ({ ...s, type: s.block.type }))]; }
 /* Tabellen: Spaltenbreiten in Prozent (b.cw), Ankreuzspalten (b.ck), Kästchen [ ] und [x] in Zellen */
 const CW_MIN = 6;
 function tbWidths(b) {
@@ -7062,7 +7137,7 @@ const TPL_BIO = [
   { k: 'stationen', label: 'Stationenarbeit', d: 'Drei Stationen mit Material und Aufgaben, je eine Seite', ic: 'tasks' },
   { k: 'b-klausur', label: 'Klausur', d: 'Deckblatt, Material und Abbildung, drei Aufgaben (AFB I–III)', ic: 'meta' }
 ];
-const tplsFor = kl => ({ gp: TPL_GP, bio: TPL_BIO })[fachKey(kl)] || TPL;
+const tplsFor = kl => ({ gp: TPL_GP, bio: TPL_BIO })[fachBase(kl)] || TPL;
 const isKlausurTpl = k => k === 'klausur' || k === 'g-klausur' || k === 'b-klausur';
 function tplSheet(key, kl) {
   const sh = blankSheet(nextNr(kl), kl); const du = sh.meta.anrede === 'du'; const T = (sie, d) => (du ? d : sie);
@@ -8390,6 +8465,19 @@ const ST_INFO = {
   klein: { label: 'Klein', d: 'Fläche mit kleinerer Schrift', pic: '<rect x="6" y="6" width="52" height="28" rx="2" fill="#DCE3F5"/><rect x="6" y="6" width="3.2" height="28" fill="#1F4FA0"/>' + stL(14, [12, 16.5, 21, 25.5], 38, 22, 1.8, '#5A6170') }
 };
 /* ---------- Formulierungshilfen: Vorlagen ---------- */
+const PHRASE_SETS_FR = [
+  { head: 'Présenter un texte', lines: ['Le texte … de … (publié en …) traite de …', 'L’auteur / l’autrice montre que …', 'Dans cet extrait, il s’agit de …'] },
+  { head: 'Décrire et analyser', lines: ['Le texte se compose de … parties.', 'L’auteur utilise … pour …', 'Cela montre / souligne que …', 'Il faut noter que …'] },
+  { head: 'Comparer', lines: ['Comme …, …', 'Contrairement à …, …', 'Alors que …, …', 'De la même manière, …'] },
+  { head: 'Donner son avis', lines: ['À mon avis, …', 'Je pense que …, parce que …', 'D’un côté …, de l’autre …', 'En conclusion, …'] },
+  { head: 'Relier les idées', lines: ['D’abord, …', 'De plus, …', 'Cependant, …', 'C’est pourquoi …', 'Pour conclure, …'] }
+];
+const PHRASE_SETS_MA = [
+  { head: 'Aufgabe verstehen', lines: ['Gegeben ist …, gesucht ist …', 'Ich vermute, dass …', 'Ich gehe so vor: Zuerst …, dann …'] },
+  { head: 'Rechnen und begründen', lines: ['Daraus folgt …', 'Das gilt, weil …', 'Wenn …, dann …', 'Nach dem Satz des … gilt …'] },
+  { head: 'Ergebnis deuten', lines: ['Das Ergebnis bedeutet, dass …', 'Im Sachzusammenhang heißt das …', 'Das Ergebnis ist (nicht) sinnvoll, weil …'] },
+  { head: 'Prüfen', lines: ['Ich überprüfe mein Ergebnis, indem …', 'Die Probe ergibt …', 'Ein Gegenbeispiel ist …'] }
+];
 const PHRASE_SETS_GP = [
   { head: 'Quelle einleiten', lines: ['Bei der Quelle handelt es sich um … (Quellengattung) von … aus dem Jahr …', 'Der Verfasser … war zu dieser Zeit …', 'Die Quelle richtet sich an …', 'Anlass war …', 'Thema der Quelle ist …'] },
   { head: 'Aussagen wiedergeben', lines: ['Der Verfasser vertritt die Auffassung, dass …', 'Er begründet dies damit, dass … (Z. …).', 'Er fordert, dass …', 'Seine Absicht ist es, …', 'Das zeigt sich in der Formulierung „…“ (Z. …).'] },
@@ -8422,8 +8510,8 @@ const PHRASE_SETS_ES = [
   { head: 'Dar tu opinión', lines: ['En mi opinión, …', 'Estoy convencido/-a de que …, porque …', 'Por un lado …, por otro lado …', 'En resumen, …'] },
   { head: 'Conectar ideas', lines: ['En primer lugar, …', 'Además, …', 'Sin embargo, …', 'Por eso, …', 'Para concluir, …'] }
 ];
-const phraseSets = () => fachKey() === 'en' ? PHRASE_SETS_EN : fachKey() === 'es' ? PHRASE_SETS_ES : fachKey() === 'gp' ? [...PHRASE_SETS_GP, ...PHRASE_SETS.filter(p => p.head === 'Argumentieren' || p.head === 'Vergleichen')]
-  : fachKey() === 'bio' ? [...PHRASE_SETS_BIO, ...PHRASE_SETS.filter(p => p.head === 'Vergleichen')] : PHRASE_SETS;
+const phraseSets = () => fachKey() === 'en' ? PHRASE_SETS_EN : fachKey() === 'es' ? PHRASE_SETS_ES : fachKey() === 'fr' ? PHRASE_SETS_FR : fachBase() === 'ma' ? [...PHRASE_SETS_MA, ...PHRASE_SETS.filter(p => p.head === 'Vergleichen')] : fachBase() === 'gp' ? [...PHRASE_SETS_GP, ...PHRASE_SETS.filter(p => p.head === 'Argumentieren' || p.head === 'Vergleichen')]
+  : fachBase() === 'bio' ? [...PHRASE_SETS_BIO, ...PHRASE_SETS.filter(p => p.head === 'Vergleichen')] : PHRASE_SETS;
 const PHRASE_SETS = [
   { head: 'Einleitung', lines: ['In dem Text „…“ von … (…) geht es um …', 'Der Text „…“ wurde … veröffentlicht und thematisiert …', 'Im Mittelpunkt steht …', 'Die Kernaussage lautet, dass …'] },
   { head: 'Sprachliche Mittel deuten', lines: ['Auffällig ist die Verwendung von …', 'Durch die Metapher „…“ (Z. …) wird verdeutlicht, dass …', 'Die Wiederholung von … unterstreicht …', 'Der Satzbau wirkt …, weil …', 'Dies lässt sich so deuten, dass …'] },
@@ -8491,12 +8579,12 @@ function bodyFor(b, num) {
       <div class="row">${[['padTop', 'Abstand davor'], ['padBot', 'Abstand danach']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="blk-set" data-f="${f}" data-v="${v}" aria-pressed="${(b[f] || '') === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>`;
     case 'text': return `${fRich('text', 'Text', b.text, { rows: 4, ph: 'Einleitung oder Hinweis', hint: RT_HINT })}`;
     case 'material': { const poem = b.form === 'gedicht'; const bm = moreOn('b:' + b.id);
-      const mSum = [fachKey() === 'gp' && b.mk ? ({ q: 'Quelle', d: 'Darstellung' })[b.mk] : '', matFmt(b).cols === 2 ? 'zwei Spalten' : ''].filter(Boolean).join(' · ');
-      const moreTop = `${fachKey() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
+      const mSum = [fachBase() === 'gp' && b.mk ? ({ q: 'Quelle', d: 'Darstellung' })[b.mk] : '', matFmt(b).cols === 2 ? 'zwei Spalten' : ''].filter(Boolean).join(' · ');
+      const moreTop = `${fachBase() === 'gp' || b.mk ? `<div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Materials">${[['', 'Material (M)'], ['q', 'Quelle (Q)'], ['d', 'Darstellung (D)']].map(([v, l]) => `<button type="button" data-act="mat-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}">${l}</button>`).join('')}</div></div>` : ''}
       <div class="row" style="gap:8px 18px">${['deutsch', 'en', 'es'].includes(fachKey()) || poem ? `<div class="f"><span>Textform</span><div class="seg sm" role="group" aria-label="Textform"><button type="button" data-act="mat-form" data-v="" aria-pressed="${!poem}">Prosa</button><button type="button" data-act="mat-form" data-v="gedicht" aria-pressed="${poem}">Gedicht</button></div></div>` : ''}
         <div class="f"><span>Spalten</span><div class="seg sm cols-seg" role="group" aria-label="Spalten">${[['', 'eine', '<path d="M5.5 2.5h12.5M5.5 6h12.5M5.5 9.5h12.5M5.5 13h9"/><path d="M1.6 6h1.4" stroke-width="1.3"/>'], ['2', 'zwei', '<path d="M4 2.5h5.5M4 6h5.5M4 9.5h5.5M4 13h4M13 2.5h5.5M13 6h5.5M13 9.5h5.5M13 13h3.5"/><path d="M1 6h1.4M10 6h1.4" stroke-width="1.3"/>']].map(([v, l, d]) => `<button type="button" data-act="fmt" data-f="cols" data-v="${v}" aria-pressed="${(matFmt(b).cols === 2 ? '2' : '') === v}"><svg viewBox="0 0 20 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">${d}</svg>${l}</button>`).join('')}</div></div></div>`;
       return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}${srcFormSeg(b)}
-      ${fText('title', fachKey() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachKey() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachKey() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
+      ${fText('title', fachBase() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachBase() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachBase() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fWord('text', 'Gedicht', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Gedicht`, mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fWord('text', 'Text', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Text`, mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button>${poem ? '' : '<button class="link" type="button" data-act="mat-h" title="Neue Zwischenüberschrift an der Schreibmarke (sonst am Ende)">+ Zwischenüberschrift</button>'}</div>
@@ -8525,7 +8613,7 @@ function bodyFor(b, num) {
         <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div></div>` : ''}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
-    case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
+    case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS_BY[fachBase()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
       <small class="hint dz-hint">Stil (Fläche, Rahmen, Linie, klein): in der Vorschau auf den Infokasten klicken.</small>
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
     case 'phrases': {
@@ -8605,7 +8693,7 @@ function bodyFor(b, num) {
     case 'step': return stepEditor(b);
     case 'image': return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
-      <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachKey() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachKey() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
+      <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachBase() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachBase() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
       <div class="row">${fSelect('width', 'Breite', b.width, [[40, '40 %'], [60, '60 %'], [80, '80 %'], [100, 'volle Breite']])}</div>`;
     default: return '<p class="hint" style="margin:0">Alles danach beginnt auf einer neuen Seite.</p>';
@@ -9248,12 +9336,33 @@ const RLP_DOCS = {
   en: { s1: [['mf1', 'Moderne Fremdsprachen · Jahrgangsstufen 1–10 · Teil C', RLP_BE + 'klasse-1-10/moderne-fremdsprachen-teil-c.pdf']], go: [['engo', 'Englisch · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-englisch-go-teil-c.pdf']] },
   es: { s1: [['mf1', 'Moderne Fremdsprachen · Jahrgangsstufen 1–10 · Teil C', RLP_BE + 'klasse-1-10/moderne-fremdsprachen-teil-c.pdf']], go: [['esgo', 'Spanisch · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-spanisch-go-teil-c.pdf']] }
 };
+Object.assign(RLP_DOCS, {
+  fr: { s1: [['mf1', 'Moderne Fremdsprachen · Jahrgangsstufen 1–10 · Teil C', RLP_BE + 'klasse-1-10/moderne-fremdsprachen-teil-c.pdf']], go: [['frgo', 'Französisch · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-franzoesisch-go-teil-c.pdf']] },
+  la: { s1: [['la1', 'Latein · Jahrgangsstufen 5–10 · Teil C', RLP_BBB + 'Teil_C_Latein_2015_11_10.pdf']], go: [['lago', 'Latein · gymnasiale Oberstufe · Teil C', RLP_BE + 'oberstufe/rlp-go-teil-c-latein-neu_25-26.pdf']] },
+  ma: { s1: [['ma1', 'Mathematik · Jahrgangsstufen 1–10 · Teil C', RLP_BE + 'rahmenlehrplan-teil-c_mathe-1-10.pdf']], go: [['mago', 'Mathematik · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-mathematik_go-teil-c.pdf']] },
+  inf: { s1: [['in1', 'Informatik · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Informatik_2015_11_10.pdf']], go: [['ingo', 'Informatik · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-informatik-go-teil-c.pdf']] },
+  ph: { s1: [['ph1', 'Physik · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Physik_2015_11_16.pdf']], go: [['phgo', 'Physik · gymnasiale Oberstufe · Teil C', RLP_BE + 'rlp_go_teil_c_physik_2021.pdf']] },
+  ch: { s1: [['ch1', 'Chemie · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Chemie_2015_11_10.pdf']], go: [['chgo', 'Chemie · gymnasiale Oberstufe · Teil C', RLP_BE + 'rlp_go_teil_c-chemie_2021.pdf']] },
+  nawi: { s1: [['nw56', 'Naturwissenschaften · Jahrgangsstufen 5–6 · Teil C', RLP_BBB + 'Teil_C_Nawi_5-6_2015_11_16.pdf'], ['nw710', 'Naturwissenschaften (Wahlpflicht) · 7–10 · Teil C', RLP_BBB + 'Teil_C_Nawi_7-10_2015_11_16.pdf']] },
+  su: { s1: [['su1', 'Sachunterricht · Jahrgangsstufen 1–4 · Teil C', RLP_BBB + 'Teil_C_Sachunterricht_2015_11_16.pdf']] },
+  geo: { s1: [['geo1', 'Geografie · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Geografie_2015_11_10.pdf']], go: [['geogo', 'Geografie · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-geografie-go-teil-c.pdf'], ['geogo26', 'Geografie · Oberstufe · neu ab 2026/27 (Klasse 11)', RLP_BE + 'oberstufe/rlp-go-teil-c-geografie-neu_26-27.pdf']] },
+  pb: { s1: [['pb1', 'Politische Bildung · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Politische_Bildung_2015_11_16.pdf']], go: [['pbgo26', 'Politische Bildung · Oberstufe · neu ab 2026/27 (Klasse 11)', RLP_BE + 'oberstufe/rlp-go-teil-c-politische_-bildung-neu_26-27.pdf'], ['pwgo', 'Politikwissenschaft · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-politikwissenschaft-go-teil-c.pdf']] },
+  gewi: { s1: [['gw56', 'Gesellschaftswissenschaften · Jahrgangsstufen 5–6 · Teil C', RLP_BBB + 'Teil_C_Gesellschaftswissenschaften_2015_11_10.pdf']] },
+  wat: { s1: [['wat1', 'Wirtschaft-Arbeit-Technik · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_WAT_2015_11_10.pdf']], go: [['wwgo', 'Wirtschaftswissenschaft · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-wirtschaftswissenschaft-go-teil-c.pdf']] },
+  eth: { s1: [['et1', 'Ethik · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Ethik_2015_11_10.pdf']], go: [['phgo2', 'Philosophie · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-philosophie-go-teil-c.pdf']] },
+  phil: { s1: [['phi1', 'Philosophie (Wahlpflicht) · 9–10 · Teil C', RLP_BBB + 'Teil_C_Philosophie_2015_11_16.pdf']], go: [['phigo', 'Philosophie · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-philosophie-go-teil-c.pdf'], ['phigo26', 'Philosophie · Oberstufe · neu ab 2026/27 (Klasse 11)', RLP_BE + 'oberstufe/rlp-go-teil-c-philosophie-neu_26-27.pdf']] },
+  reli: { s1: [['reli', 'Religion · Lehrplan der Kirche oder Religionsgemeinschaft (bitte als PDF hinterlegen)', RLP_BE + 'klasse-1-10/']] },
+  ku: { s1: [['ku1', 'Kunst · Jahrgangsstufen 1–10 · Teil C', RLP_BBB + 'Teil_C_Kunst_2015_11_10.pdf']], go: [['kugo', 'Bildende Kunst · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-bildende-kunst-go-teil-c.pdf']] },
+  mu: { s1: [['mu1', 'Musik · Jahrgangsstufen 1–10 · Teil C', RLP_BBB + 'Teil_C_Musik_2015_11_16.pdf']], go: [['mugo', 'Musik · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-musik-go-teil-c.pdf']] },
+  sp: { s1: [['sp1', 'Sport · Jahrgangsstufen 1–10 · Teil C', RLP_BBB + 'Teil_C_Sport_2015_11_16.pdf']], go: [['spgo', 'Sport · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-sport-go-teil-c.pdf']] },
+  th: { s1: [['th1', 'Theater · Jahrgangsstufen 7–10 · Teil C', RLP_BBB + 'Teil_C_Theater_2015_11_10.pdf']], go: [['dsgo', 'Darstellendes Spiel · gymnasiale Oberstufe · Teil C', RLP_BE + 'rahmenlehrplan-darstellendes-spiel-go-teil-c.pdf']] }
+});
 const RLP_TB = { s1: ['Teil B · fachübergreifend (1–10)', RLP_BBB + 'Teil_B_2015_11_10.pdf'], go: ['Teil B · fachübergreifend (Oberstufe)', RLP_BE + 'rlp_go_teil_b_2021.pdf'] };
 const RLP_OVR = { s1: RLP_BE + 'klasse-1-10/', go: RLP_BE + 'oberstufe/' };
 const LS_RLPV = 'abw.rlpv';
 const rlpv = { open: false, doc: null, rec: null, url: '', busy: false, err: '' };
 const rlpGO = kl => /grundkurs|leistungskurs|oberstufe|e-?phase|einführungsphase|\bq[1-4]\b|\b(11|12|13)\b|\bgk\b|\blk\b/i.test((kl.course || '') + ' ' + (kl.label || ''));
-function rlpSel() { const kl = KL(state.sheet.klasse); const v = (lsGet(LS_RLPV) || {})[kl.id] || {}; const st = v.st || (rlpGO(kl) ? 'go' : 's1'); const L = (RLP_DOCS[fachKey(kl.id)] || RLP_DOCS.deutsch)[st]; const d = L.find(x => x[0] === v.d) || L[0]; return { kl, st, L, d }; }
+function rlpSel() { const kl = KL(state.sheet.klasse); const v = (lsGet(LS_RLPV) || {})[kl.id] || {}; const st = v.st || (rlpGO(kl) ? 'go' : 's1'); const D = RLP_DOCS[fachKey(kl.id)] || RLP_DOCS.deutsch; const L = D[st] || D.s1 || D.go; const d = L.find(x => x[0] === v.d) || L[0]; return { kl, st, L, d }; }
 function rlpSave(o) { const kl = KL(state.sheet.klasse); const all = lsGet(LS_RLPV) || {}; all[kl.id] = { ...(all[kl.id] || {}), ...o }; lsSet(LS_RLPV, all); }
 // Angezeigt wird die PDF selbst: die in diesem Browser gespeicherte Fassung (geht auch offline) oder die amtliche Fassung von berlin.de
 async function rlpLoad() {
@@ -9541,7 +9650,7 @@ function pvShow(n) {
   [...ins.children].forEach(x => { const y = parseFloat(x.style.top); x.hidden = y < vr.top + 2 || y > vr.bottom - 2; });
 }
 function pvInsOpen(at, anchor) {
-  const L = paletteFor(); const Q = (isGS() && fachKey() === 'deutsch' ? QUICK_GS : QUICK).map(k => L.find(t => t.k === k)).filter(Boolean); const pbE = L.find(t => t.type === 'pagebreak');
+  const L = paletteFor(); const Q = (isGS() ? QUICK_GS : fachBase() === 'ma' ? QUICK_MA : QUICK).map(k => L.find(t => t.k === k)).filter(Boolean); const pbE = L.find(t => t.type === 'pagebreak');
   const pop = $('#pv-insp'); PVT.ins = at;
   pop.innerHTML = `<div class="pvp-h">Hier einfügen</div>${Q.map(t => `<button type="button" data-pvadd="${t.k}" data-type="${t.type}"><i>${typeIcon(t.ic)}</i><span>${esc(t.label)}</span></button>`).join('')}${pbE ? `<button type="button" data-pvadd="${pbE.k}" data-type="pagebreak"><i>${typeIcon(pbE.ic)}</i><span>Hier neue Seite beginnen</span></button>` : ''}<button type="button" data-pvadd="*" class="more"><span>Weitere Bausteine …</span></button>`;
   pop.hidden = false; const r = anchor.getBoundingClientRect();
@@ -9586,6 +9695,57 @@ function pvInit() {
   sc.addEventListener('scroll', () => { if (PVT.ins != null) pvInsClose(); const f = PVT.bid || PVT.follow; if (!f) return; const n = PVT.el && PVT.el.isConnected ? PVT.el : $(`#pages [data-bid="${f}"]`); if (n) { const keepB = PVT.el === n ? PVT.bid : null; PVT.bid = null; pvShow(n); if (keepB) PVT.bid = keepB; } else if (!PVT.follow) pvHide(); }, { passive: true });
   // Nach dem Neuzeichnen: Leiste beim selben Baustein halten (etwa nach „nach oben“)
   let mo = 0; new MutationObserver(() => { clearTimeout(mo); mo = setTimeout(() => { const f = PVT.follow || PVT.bid; if (!f) return; const el = PVT.el; if (el && el.isConnected && !PVT.follow) return; let tries = 0; const look = () => { const n = $(`#pages [data-bid="${f}"]`); if (n && pvOn()) { PVT.follow = null; PVT.bid = null; pvShow(n); return; } if (++tries < 12) { setTimeout(look, 90); return; } PVT.follow = null; pvHide(); }; look(); }, 60); }).observe(pages, { childList: true });
+}
+
+/* ================= Funktionstour beim ersten Mal ================= */
+const LS_TOUR = 'abw.tour';
+const TOUR = [
+  { t: 'Willkommen in der AB-Werkstatt', d: 'In gut einer Minute sehen Sie das Wichtigste. Links bauen Sie die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
+  { sel: '#btn-fach', t: 'Fach wechseln', d: 'Hier wechseln Sie das Fach. Angezeigt werden nur Fächer, in denen Sie Klassen haben; darunter können Sie ein Fach hinzufügen.' },
+  { sel: '#reiter', t: 'Ihre Klassen', d: 'Jede Klasse hat einen eigenen Reiter mit eigenen Stunden, Farbe, Anrede (du oder Sie) und Schulform. „+ Klassen“ legt neue an.' },
+  { sel: '#editor .area-bar', prep: () => { if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); }, t: 'Arbeitsblatt und Präsentation', d: 'Oben schalten Sie zwischen Arbeitsblatt und Präsentation. Unter „Mehr“ liegen Tafelkarten und Druckvorlagen wie Placemat, Pro und Contra oder der Fotobogen.' },
+  { sel: '#editor .qbar', t: 'Bausteine einfügen', d: 'Die meistgebrauchten Bausteine liegen hier griffbereit: Material, Aufgaben, Infokasten und mehr. „Weitere“ (oder Strg+K) zeigt alle, mit Suche.' },
+  { sel: '#editor .card[data-bid]:not([data-bid="meta"])', t: 'Karten bearbeiten', d: 'Jeder Baustein ist eine Karte. Aufklappen, Text eingeben, Phase und Zeit festlegen. Aufgaben prüfen die Operatoren und bekommen auf Wunsch Sozialform und Arbeitsform.' },
+  { sel: '#preview-scroll', t: 'Die Vorschau zum Anfassen', d: 'Ein Klick auf ein Wort im Material legt eine Worterklärung an, ein Klick auf eine Zeilennummer eine Zeilenangabe. Mit der Maus über einem Baustein erscheint eine kleine Leiste zum Verschieben, Verdoppeln und Löschen, an den Kanten ein „+“ zum Einfügen.' },
+  { sel: '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation starten Sie im Bereich Präsentation.' },
+  { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier finden Sie Ihre Stunden je Klasse, Ordner und mit Anmeldung auch die Stunden, die Kolleginnen und Kollegen geteilt haben.' },
+  { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite mit Klassen, zuletzt bearbeiteten und neu geteilten Stunden. Daneben öffnet „RLP“ den Rahmenlehrplan Ihres Fachs.' },
+  { sel: '#btn-help', t: 'Fertig!', d: 'Unter „?“ finden Sie alle Kniffe und können diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
+];
+const tour = { i: -1 };
+const tourDue = () => !lsGet(LS_TOUR) && !lsGet(LS_TIPS);
+function tourMaybe(tries = 0) {
+  if (!tourDue() || tour.i >= 0 || DG_VIEW || MAPPE_LOCK) return;
+  if (hmS.open || state.dlg || state.needSetup || [...document.querySelectorAll('.nw-ov, .rlpv')].some(x => x.offsetParent || x.getClientRects().length)) { if (tries < 400) setTimeout(() => tourMaybe(tries + 1), 1500); return; }
+  tourStart();
+}
+function tourStart() { showTip(-1); lsSet(LS_TIPS, 1); if (hmS.open) homeClose(); if (isNarrow()) setView('edit'); tour.i = 0; tourShow(); }
+function tourEnd() { tour.i = -1; lsSet(LS_TOUR, 1); const r = $('#tour-root'); if (r) r.innerHTML = ''; document.body.classList.remove('tour-on'); }
+function tourShow() {
+  const r = $('#tour-root'); const st = TOUR[tour.i]; if (!st) return tourEnd();
+  if (st.prep) try { st.prep(); } catch {}
+  const el = st.sel ? [...document.querySelectorAll(st.sel)].find(x => { const b = x.getBoundingClientRect(); return b.width > 4 && b.height > 4; }) : null;
+  if (el && el.scrollIntoView) { const b0 = el.getBoundingClientRect(); if (b0.top < 0 || b0.bottom > innerHeight) el.scrollIntoView({ block: 'center' }); }
+  const b = el ? el.getBoundingClientRect() : null; const pad = 6;
+  const spot = b ? `<div class="tour-spot" style="left:${b.left - pad}px;top:${b.top - pad}px;width:${b.width + 2 * pad}px;height:${Math.min(b.height, innerHeight - 20) + 2 * pad}px"></div>` : '<div class="tour-dim"></div>';
+  const n = TOUR.length; const last = tour.i === n - 1;
+  r.innerHTML = `${spot}<div class="tour-card${b ? '' : ' mid'}" role="dialog" aria-modal="true" aria-labelledby="tour-t"><div class="tour-top"><span>${tour.i + 1} / ${n}</span><button type="button" class="link" data-tour="end">${last ? 'Schließen' : 'Tour beenden'}</button></div>
+    <h3 id="tour-t">${esc(st.t)}</h3><p>${esc(st.d)}</p>
+    <div class="tour-dots">${TOUR.map((_, k) => `<i class="${k === tour.i ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="tour-acts">${tour.i > 0 ? '<button type="button" class="btn" data-tour="prev">Zurück</button>' : '<span></span>'}<button type="button" class="btn primary" data-tour="${last ? 'end' : 'next'}">${last ? 'Los geht’s' : tour.i === 0 ? 'Tour starten' : 'Weiter'}</button></div></div>`;
+  document.body.classList.add('tour-on');
+  const c = r.querySelector('.tour-card');
+  if (b) { const cw = c.offsetWidth, ch = c.offsetHeight; let left = Math.min(Math.max(12, b.left), innerWidth - cw - 12); let top = b.bottom + 14;
+    if (top + ch > innerHeight - 12) top = b.top - ch - 14; if (top < 12) { top = Math.min(innerHeight - ch - 12, Math.max(12, b.top + 20)); left = b.right + 14 + cw < innerWidth ? b.right + 14 : Math.max(12, b.left - cw - 14); }
+    c.style.left = left + 'px'; c.style.top = top + 'px'; }
+  const f = c.querySelector('.btn.primary'); if (f) f.focus({ preventScroll: true });
+}
+function tourInit() {
+  const r = document.createElement('div'); r.id = 'tour-root'; document.body.append(r);
+  r.addEventListener('click', e => { const a = e.target.closest('[data-tour]'); if (!a) return; const k = a.dataset.tour; if (k === 'end') tourEnd(); else { tour.i += k === 'next' ? 1 : -1; tourShow(); } });
+  document.addEventListener('keydown', e => { if (tour.i < 0) return; if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); tourEnd(); } else if (e.key === 'ArrowRight') { tour.i = Math.min(TOUR.length - 1, tour.i + 1); tourShow(); } else if (e.key === 'ArrowLeft' && tour.i > 0) { tour.i--; tourShow(); } }, true);
+  window.addEventListener('resize', () => { if (tour.i >= 0) tourShow(); });
+  setTimeout(() => tourMaybe(), 1200);
 }
 async function rlpOpen() { rlpv.open = true; rlpv.err = ''; await rlpLoad(); rlpRender(); }
 function rlpClose() { rlpv.open = false; rlpRender(); if (rlpv.url) { URL.revokeObjectURL(rlpv.url); rlpv.url = ''; } }
@@ -9699,16 +9859,21 @@ function setKlColor() {
 }
 try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (state.sheet) setKlColor(); }); } catch {}
 const LS_FACHKL = 'abw.fachkl';
-const FACH_DOT = { deutsch: '#2741B5', gp: '#7A4E1D', bio: '#2E6B3A', en: '#9B2335', es: '#B4530C' };
+const FACH_DOT = { deutsch: '#2741B5', gp: '#7A4E1D', bio: '#2E6B3A', en: '#9B2335', es: '#B4530C', fr: '#1F5FA8', la: '#6B4E9B', ma: '#0E7490', inf: '#334155', ph: '#1D4ED8', ch: '#B45309', nawi: '#15803D', su: '#65A30D', geo: '#0F766E', pb: '#BE123C', gewi: '#9A3412', wat: '#4D7C0F', eth: '#7C3AED', phil: '#5B21B6', reli: '#A16207', ku: '#DB2777', mu: '#C026D3', sp: '#EA580C', th: '#9F1239' };
+const FACH_ORDER = ['deutsch', 'ma', 'en', 'fr', 'es', 'la', 'gp', 'geo', 'pb', 'gewi', 'eth', 'phil', 'reli', 'bio', 'ph', 'ch', 'nawi', 'su', 'inf', 'wat', 'ku', 'mu', 'sp', 'th'];
+let fachAddOpen = false;
 function fachPopHTML() {
-  const cur = fachKey(state.klasse);
-  const row = ([k, f]) => { const n = KLASSEN.filter(x => x.fach === k).length; return `<button type="button" class="fp-i" data-fach="${k}" aria-pressed="${k === cur}"><i style="background:${FACH_DOT[k]}"></i><b>${f.label}</b><small>${n ? n + (n === 1 ? ' Klasse' : ' Klassen') : 'Klasse anlegen'}</small></button>`; };
-  return `<div class="fp-h">Fach wechseln</div>${Object.entries(FAECHER).map(row).join('')}<div class="fp-sep"></div><button type="button" class="fp-i fp-kl" data-fach-act="klassen">Klassen und Fächer verwalten …</button>`;
+  const cur = fachKey(state.klasse); const mine = FACH_ORDER.filter(k => KLASSEN.some(x => x.fach === k)); const rest = FACH_ORDER.filter(k => !mine.includes(k));
+  const row = k => { const n = KLASSEN.filter(x => x.fach === k).length; return `<button type="button" class="fp-i" data-fach="${k}" aria-pressed="${k === cur}"><i style="background:${FACH_DOT[k] || '#64748B'}"></i><b>${esc(FAECHER[k].label)}</b><small>${n + (n === 1 ? ' Klasse' : ' Klassen')}</small></button>`; };
+  return `<div class="fp-h">Fach wechseln</div>${mine.map(row).join('')}<div class="fp-sep"></div>
+    <button type="button" class="fp-i fp-add" data-fach-act="add" aria-expanded="${fachAddOpen}"><b>+ Fach hinzufügen</b></button>
+    ${fachAddOpen ? `<div class="fp-addl">${rest.map(k => `<button type="button" class="fp-i fp-new" data-fach="${k}"><i style="background:${FACH_DOT[k] || '#64748B'}"></i><b>${esc(FAECHER[k].label)}</b><small>Klasse anlegen</small></button>`).join('')}</div>` : ''}
+    <button type="button" class="fp-i fp-kl" data-fach-act="klassen">Klassen und Fächer verwalten …</button>`;
 }
 function toggleFachPop(open) {
   const p = $('#fach-pop'), b = $('#btn-fach'); if (!p) return;
   const on = open === undefined ? p.hidden : open;
-  if (on) { p.innerHTML = fachPopHTML(); const br = b.getBoundingClientRect(), pr = p.parentElement.getBoundingClientRect(); const w = Math.min(310, window.innerWidth - 24); p.style.left = Math.max(8 - pr.left, Math.min(br.left - pr.left, window.innerWidth - 12 - w - pr.left)) + 'px'; p.style.width = w + 'px'; }
+  if (on) { if (open === undefined || open === true) fachAddOpen = fachAddOpen && !p.hidden; p.innerHTML = fachPopHTML(); const br = b.getBoundingClientRect(), pr = p.parentElement.getBoundingClientRect(); const w = Math.min(310, window.innerWidth - 24); p.style.left = Math.max(8 - pr.left, Math.min(br.left - pr.left, window.innerWidth - 12 - w - pr.left)) + 'px'; p.style.width = w + 'px'; }
   p.hidden = !on; b.setAttribute('aria-expanded', String(on));
   if (on) { const f = p.querySelector('[aria-pressed="true"]') || p.querySelector('.fp-i'); if (f) f.focus(); }
 }
@@ -10000,7 +10165,7 @@ function applyKlassen() {
 function maybeSetup(afterLogin) { if (!state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
 function openKlassen(setup, addFach) {
   const rows = (setup ? [] : KLASSEN).map(k => ({ ...k }));
-  if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
+  if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach] || Object.keys(ACCENTS)[FACH_ORDER.indexOf(addFach) % Object.keys(ACCENTS).length], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
   if (setup) { rows.push(normKlasse({ id: 'k1', label: '', course: 'Deutsch', accent: 'tinte', anrede: 'du' }, 0)); rows[0].fresh = true; }
   if (addFach) { rows[rows.length - 1].label = ''; rows[rows.length - 1].fresh = true; }
   state.dlg = { mode: 'klassen', setup: !!setup, rows, school: setup ? '' : null, wantFach: addFach || null };
@@ -10017,7 +10182,7 @@ function klassenHTML() {
         ${d.setup ? '' : `<label class="f"><span>Schule</span><input class="inp" data-kf="school" value="${esc(k.school)}" placeholder="Schule" maxlength="80"></label>`}
         <div class="f kl-stufe"><span>Schulform</span><div class="seg sm" role="group"><button type="button" data-act="kl-set" data-f="stufe" data-v="gs" data-i="${i}" aria-pressed="${k.stufe === 'gs'}">Grundschule</button><button type="button" data-act="kl-set" data-f="stufe" data-v="os" data-i="${i}" aria-pressed="${k.stufe !== 'gs'}">Oberschule</button></div></div>
         ${k.stufe === 'gs' ? `<div class="f kl-jg"><span>Klassenstufe</span><div class="seg sm" role="group">${[1, 2, 3, 4, 5, 6].map(n => `<button type="button" data-act="kl-set" data-f="jg" data-v="${n}" data-i="${i}" aria-pressed="${+k.jg === n}">${n}</button>`).join('')}</div><small class="hint">Bestimmt Lineatur und Schriftgröße neuer Bausteine.</small></div>` : ''}
-        <div class="f kl-fach"><span>Fach</span><div class="seg sm" role="group">${Object.entries(FAECHER).map(([fk, f]) => `<button type="button" data-act="kl-set" data-f="fach" data-v="${fk}" data-i="${i}" aria-pressed="${k.fach === fk}">${f.label}</button>`).join('')}</div></div>
+        <label class="f kl-fach"><span>Fach</span><select class="inp" data-kf="fach" aria-label="Fach">${FACH_ORDER.map(fk => `<option value="${fk}"${k.fach === fk ? ' selected' : ''}>${esc(FAECHER[fk].label)}</option>`).join('')}</select></label>
         <div class="f"><span>Anrede</span><div class="seg sm" role="group"><button type="button" data-act="kl-set" data-f="anrede" data-v="sie" data-i="${i}" aria-pressed="${k.anrede === 'sie'}">Sie</button><button type="button" data-act="kl-set" data-f="anrede" data-v="du" data-i="${i}" aria-pressed="${k.anrede === 'du'}">du</button></div></div>
         <div class="f"><span>Farbe</span><div class="kl-sw">${Object.entries(ACCENTS).map(([a, x]) => `<button type="button" class="kl-c" data-act="kl-set" data-f="accent" data-v="${a}" data-i="${i}" aria-pressed="${k.accent === a}" title="${x.name}" style="background:${x.c}"></button>`).join('')}</div></div>
       </div></div>`;
@@ -10040,7 +10205,7 @@ function klassenSave() {
   state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
   if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
   renderTabs(); renderEditor(); if (state.libOpen) renderLib();
-  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg) showTip(0); }, 900); }
+  if (setup) { toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); setTimeout(() => tourMaybe(), 900); }
   else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
   if (!setup && d.wantFach) { const k = KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
 }
@@ -10542,7 +10707,7 @@ function rlpCopy() {
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
     <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
-    <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Tipps noch einmal zeigen</button></div>
+    <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Funktionstour starten</button></div>
     <p class="copy-l">AB-Werkstatt · © 2026 Moritz Bauer</p>`;
 }
 const TIPS = [
@@ -10797,7 +10962,7 @@ async function onDlgClick(e) {
     const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
     if (act === 'kl-set' && a.dataset.f === 'stufe') { const r = d.rows[i]; r.stufe = a.dataset.v; if (r.stufe === 'gs') { r.jg = +r.jg || jgGuess(r.label) || 3; r.anrede = 'du'; } else { r.jg = 0; if (!r.anTouch) r.anrede = anredeGuess(r.label, 'os'); } renderDlg(); return; }
     if (act === 'kl-set' && a.dataset.f === 'jg') { d.rows[i].jg = +a.dataset.v; d.rows[i].jgTouch = true; renderDlg(); return; }
-    if (act === 'kl-set' && a.dataset.f === 'anrede') d.rows[i].anTouch = true;
+      if (act === 'kl-set' && a.dataset.f === 'anrede') d.rows[i].anTouch = true;
     if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie', 'Englisch', 'Spanisch'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
     if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach, stufe: (d.rows[n - 1] || {}).stufe, jg: (d.rows[n - 1] || {}).jg }, n)); d.rows[n].label = ''; d.rows[n].fresh = true; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
     if (act === 'kl-del') { d.rows.splice(i, 1); renderDlg(); return; }
@@ -10811,7 +10976,7 @@ async function onDlgClick(e) {
     if (act === 'nw-paper') { d.paper = a.dataset.v; renderDlg(); return; }
     if (act === 'nw-go') { newGo(); return; }
   }
-  if (act === 'tips-again') { closeDlg(); showTip(0); return; }
+  if (act === 'tips-again') { closeDlg(); setTimeout(tourStart, 120); return; }
   if (state.dlg.mode === 'dg') {
     const d = state.dlg; const m = state.sheet.meta;
     if (act === 'dg-set') { dgRead(); d[a.dataset.f] = a.dataset.v; lsSet(LS_DGOPT, { lvl: d.lvl, sol: d.sol, ans: d.ans, tips: d.tips }); renderDlg(); return; }
@@ -11058,12 +11223,12 @@ function ocrProg(msg, p) {
 }
 let ocrLang = '';
 async function ocrWorker() {
-  const want = ({ en: 'eng', es: 'spa' })[fachLang()] || 'deu';
+  const want = ({ en: 'eng', es: 'spa', fr: 'fra' })[fachLang()] || 'deu';
   if (ocrW && ocrLang !== want) { try { await ocrW.terminate(); } catch {} ocrW = null; }
   if (ocrW) return ocrW; ocrLang = want;
   await loadScript(OCR_LIBS.tess);
   if (!window.Tesseract || !window.Tesseract.createWorker) throw new Error('Tesseract fehlt');
-  ocrW = await window.Tesseract.createWorker(({ en: 'eng', es: 'spa' })[fachLang()] || 'deu', 1, { logger: m => { if (m && m.status) ocrProg(OCR_ST[m.status] || 'Texterkennung …', m.progress); } });
+  ocrW = await window.Tesseract.createWorker(({ en: 'eng', es: 'spa', fr: 'fra' })[fachLang()] || 'deu', 1, { logger: m => { if (m && m.status) ocrProg(OCR_ST[m.status] || 'Texterkennung …', m.progress); } });
   return ocrW;
 }
 function ocrStop() { const w = ocrW; ocrW = null; if (w) { try { w.terminate(); } catch {} } }
@@ -12250,7 +12415,8 @@ function boot() {
     const t = e.target; const d = state.dlg; if (!d || d.mode !== 'klassen') return;
     if (t.id === 'kl-school') { d.school = t.value; return; }
     const r = t.closest('.kl-row'); if (!r || !t.dataset.kf) return; const row = d.rows[+r.dataset.i];
-    const prevLabel = row.label; row[t.dataset.kf] = t.value;
+    const prevLabel = row.label; const prevFach = row.fach; row[t.dataset.kf] = t.value;
+    if (t.dataset.kf === 'fach') { const old = FAECHER[prevFach] || {}; if (!String(row.course || '').trim() || row.course === old.course || row.course === old.label || row.course === (old.course || '') + ' ' + row.label) { row.course = FAECHER[t.value].course + (row.label ? ' ' + row.label : ''); const c = r.querySelector('[data-kf="course"]'); if (c) c.value = row.course; } return; }
     // Neue Klasse: Anrede (und in der Grundschule die Klassenstufe) aus dem Namen vorschlagen, solange nicht selbst gewählt
     if (t.dataset.kf === 'label' && row.fresh) { const setSeg = (f, v) => r.querySelectorAll(`[data-f="${f}"]`).forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === String(v))));
       if (!row.anTouch) { row.anrede = anredeGuess(t.value, row.stufe); setSeg('anrede', row.anrede); }
@@ -12270,7 +12436,7 @@ function boot() {
   });
   $('#import-file').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) importBackup(f); });
   $('#btn-fach').addEventListener('click', e => { e.stopPropagation(); toggleFachPop(); });
-  $('#fach-pop').addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('[data-fach]'); if (b) { chooseFach(b.dataset.fach); return; } if (e.target.closest('[data-fach-act="klassen"]')) { toggleFachPop(false); openKlassen(false); } });
+  $('#fach-pop').addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('#fach-pop [data-fach]'); if (b) { fachAddOpen = false; chooseFach(b.dataset.fach); return; } if (e.target.closest('[data-fach-act="add"]')) { fachAddOpen = !fachAddOpen; const p = $('#fach-pop'); p.innerHTML = fachPopHTML(); const f = p.querySelector(fachAddOpen ? '.fp-new' : '.fp-add'); if (f) f.focus(); return; } if (e.target.closest('[data-fach-act="klassen"]')) { toggleFachPop(false); openKlassen(false); } });
   $('#fach-pop').addEventListener('keydown', e => { const items = [...$('#fach-pop').querySelectorAll('.fp-i')]; const i = items.indexOf(document.activeElement); if (e.key === 'ArrowDown') { e.preventDefault(); (items[i + 1] || items[0]).focus(); } else if (e.key === 'ArrowUp') { e.preventDefault(); (items[i - 1] || items[items.length - 1]).focus(); } });
   document.addEventListener('click', e => { const p = $('#fach-pop'); if (p && !p.hidden && !e.target.closest('#fach-pop, #btn-fach')) toggleFachPop(false); });
   $('#reiter').addEventListener('click', e => { if (e.target.closest('[data-kl]')) { openKlassen(false); return; } const b = e.target.closest('[data-k]'); if (b) switchKlasse(b.dataset.k); });
@@ -12545,13 +12711,13 @@ function boot() {
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
-  setupPWA(); setTimeout(newsMaybe, 1500); pvInit();
+  setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit();
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
 
   if (isNarrow()) setView(state.area === 'start' ? 'edit' : 'preview');
   $('#tip-root').addEventListener('click', e => { const b = e.target.closest('[data-tip]'); if (!b) return; const k = b.dataset.tip; showTip(k === 'close' ? -1 : k === 'prev' ? tipIdx - 1 : tipIdx + 1 < TIPS.length ? tipIdx + 1 : -1); });
-  if (!lsGet(LS_TIPS)) setTimeout(() => { if (!state.dlg && !lsGet(LS_TIPS)) showTip(0); }, 1800);
+
 }
 boot();
 
