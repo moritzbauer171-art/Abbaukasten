@@ -1286,9 +1286,9 @@ body{transition:background-color .3s,border-color .25s}
 .fp-grid.cut{border-top:.3mm dashed #8A909C;border-left:.3mm dashed #8A909C}
 .fp-c{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;overflow:hidden}
 .fp-grid.cut .fp-c{border-right:.3mm dashed #8A909C;border-bottom:.3mm dashed #8A909C}
-.fp-grid.cut .fp-c .fp-i{margin:-.15mm}
+.fp-a{display:flex;align-items:center;justify-content:center;flex:0 0 auto;overflow:hidden}
 .fp-i{position:relative;overflow:hidden;flex:0 0 auto}
-.fp-i img{display:block}
+.fp-i img{position:absolute;display:block;max-width:none!important;max-height:none!important;min-width:0;min-height:0;object-fit:fill}
 .fp-cap{flex:0 0 5.5mm;width:100%;font-size:8pt;line-height:5.5mm;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3A3F4B}
 .fp-ed{gap:8px}
 .fp-ed-r{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:start;padding:8px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
@@ -4615,10 +4615,18 @@ function a4Strips(b) {
 const FP_N = [1, 2, 4, 6, 8, 9, 12, 16];
 const fpGrids = N => { const L = []; for (let c = 1; c <= N; c++) if (N % c === 0) L.push([c, N / c]); return L; };
 const fpFitArea = (cw, ch, a) => { const w = Math.min(cw, ch * a); return w * (w / a); };
-const FP_ROT = new Map();
+const FP_ROT = new Map(), FP_DIM = new Map();
+// Seitenverhältnis immer am geladenen Bild messen: gespeicherte Maße können fehlen oder nicht passen
+function fpAspect(o) {
+  const k = o.src; const d = FP_DIM.get(k);
+  if (d && d !== 1) { if (Math.abs((+o.w || 0) / (+o.h || 1) - d[0] / d[1]) > .01) { o.w = d[0]; o.h = d[1]; } return d[0] / d[1]; }
+  if (!d && k) { FP_DIM.set(k, 1); imgSize(k).then(([w, h]) => { if (w > 4 && h > 4) { FP_DIM.set(k, [w, h]); const old = (+o.w || 0) / (+o.h || 1); if (Math.abs(old - w / h) > .01) { o.w = w; o.h = h; scheduleRender(30); } } }); }
+  return (+o.w > 0 && +o.h > 0) ? +o.w / +o.h : 4 / 3;
+}
+const fpLoad = src => new Promise((res, rej) => { const i = new Image(); if (/^https?:/.test(src)) i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = rej; i.src = src; });
 function fpRotSrc(o) {
-  const k = o.src; if (!k) return ''; const hit = FP_ROT.get(k); if (hit && hit !== 1) return hit;
-  if (!hit) { FP_ROT.set(k, 1); loadImg(k).then(img => { const c = document.createElement('canvas'); c.width = img.naturalHeight; c.height = img.naturalWidth; const x = c.getContext('2d'); x.translate(c.width, 0); x.rotate(Math.PI / 2); x.drawImage(img, 0, 0); FP_ROT.set(k, c.toDataURL('image/jpeg', .88)); scheduleRender(30); }).catch(() => FP_ROT.delete(k)); }
+  const k = o.src; if (!k) return ''; const hit = FP_ROT.get(k); if (hit && hit !== 1 && hit !== 2) return hit; if (hit === 2) return '';
+  if (!hit) { FP_ROT.set(k, 1); fpLoad(k).then(img => { const c = document.createElement('canvas'); c.width = img.naturalHeight; c.height = img.naturalWidth; const x = c.getContext('2d'); x.translate(c.width, 0); x.rotate(Math.PI / 2); x.drawImage(img, 0, 0); FP_ROT.set(k, c.toDataURL('image/jpeg', .88)); scheduleRender(30); }).catch(() => FP_ROT.set(k, 2)); }
   return '';
 }
 function fpPages(b, hd) {
@@ -4628,18 +4636,20 @@ function fpPages(b, hd) {
   const W = 194, H = 277 - (head ? 11.5 : 0), pad = cut ? 1.5 : 0;
   const pages = []; for (let i = 0; i < seq.length; i += N) pages.push(seq.slice(i, i + N));
   return pages.map((L, pi) => {
-    const capH = L.some(o => tfStr(o.cap).trim()) ? 5.5 : 0; const a = (L[0].w || 4) / (L[0].h || 3);
+    const capH = L.some(o => tfStr(o.cap).trim()) ? 5.5 : 0; const a = fpAspect(L[0]);
     // Raster: die Fläche des ersten Fotos zählt; gedreht, wenn erlaubt und es dann größer wird
     let best = null;
     fpGrids(N).forEach(([c, r]) => { const cw = (W - g * (c - 1)) / c - 2 * pad, ch = (H - g * (r - 1)) / r - 2 * pad - capH; [a, b.fpRot !== false ? 1 / a : a].forEach(ia => { const ar = fpFitArea(cw, ch, ia); if (!best || ar > best.ar + .01) best = { c, r, ar }; }); });
     const { c, r } = best; const cellW = (W - g * (c - 1)) / c, cellH = (H - g * (r - 1)) / r; const bw = cellW - 2 * pad, bh = cellH - 2 * pad - capH;
     const cells = Array.from({ length: c * r }, (_, k) => {
       const o = L[k]; if (!o) return `<div class="fp-c empty" style="width:${cellW}mm;height:${cellH}mm"></div>`;
-      const oa = (o.w || 4) / (o.h || 3); let rot = b.fpRot !== false && fpFitArea(bw, bh, 1 / oa) > fpFitArea(bw, bh, oa) * 1.02;
+      const oa = fpAspect(o); let rot = b.fpRot !== false && fpFitArea(bw, bh, 1 / oa) > fpFitArea(bw, bh, oa) * 1.02;
       let src = o.src; if (rot) { const rs = fpRotSrc(o); if (rs) src = rs; else rot = false; }
       const ia = rot ? 1 / oa : oa; const cover = b.fpFit === 'cover';
       const iw = cover ? Math.max(bw, bh * ia) : Math.min(bw, bh * ia), ih = iw / ia;
-      return `<div class="fp-c" style="width:${cellW}mm;height:${cellH}mm;padding:${pad}mm"><div class="fp-i" style="width:${bw}mm;height:${bh}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;margin-left:${((bw - iw) / 2).toFixed(2)}mm;margin-top:${((bh - ih) / 2).toFixed(2)}mm"></div>${capH ? `<div class="fp-cap">${inlineHTML(tfStr(o.cap))}</div>` : ''}</div>`;
+      const box = cover ? `<div class="fp-i" style="width:${bw.toFixed(2)}mm;height:${bh.toFixed(2)}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;left:${((bw - iw) / 2).toFixed(2)}mm;top:${((bh - ih) / 2).toFixed(2)}mm"></div>`
+        : `<div class="fp-i" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm"><img src="${esc(src)}" alt="" style="width:${iw.toFixed(2)}mm;height:${ih.toFixed(2)}mm;left:0;top:0"></div>`;
+      return `<div class="fp-c" style="width:${cellW}mm;height:${cellH}mm;padding:${pad}mm"><div class="fp-a" style="width:${bw.toFixed(2)}mm;height:${bh.toFixed(2)}mm">${box}</div>${capH ? `<div class="fp-cap">${inlineHTML(tfStr(o.cap))}</div>` : ''}</div>`;
     });
     return a3Page(b, (head ? hd(pages.length > 1 ? `${pi + 1}/${pages.length}` : '') : '') + `<div class="fp-grid${cut ? ' cut' : ''}" style="width:${W}mm;height:${H}mm;gap:${g}mm">${cut ? '<span class="a4-sc" aria-hidden="true">✂</span>' : ''}${cells.join('')}</div>`, pages.length > 1 ? `${pi + 1}/${pages.length}` : '');
   });
