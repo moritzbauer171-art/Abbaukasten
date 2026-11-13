@@ -2080,6 +2080,7 @@ body.home-on{overflow:hidden}
 #pv-tools button:hover:not(:disabled){background:var(--panel);color:var(--tinte)}
 #pv-tools button:disabled{opacity:.3;cursor:default}
 #pv-tools button.on{background:var(--tinte-soft);color:var(--tinte)}
+#pv-tools .pvt-sep{width:1px;height:18px;background:var(--line);margin:0 3px}
 #pv-tools button.danger:hover{color:#B42318;background:#FDECEA}
 #pv-ins{position:fixed;inset:0;pointer-events:none;z-index:29}
 .pvi{position:fixed;pointer-events:auto;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:1.5px solid var(--tinte);background:var(--card);color:var(--tinte);font:700 15px/1 var(--f-ui);display:grid;place-items:center;cursor:pointer;opacity:.75;box-shadow:0 2px 8px -3px rgba(20,30,60,.35);transition:opacity .12s,transform .12s}
@@ -9743,7 +9744,7 @@ const PVT_IC = {
   up: '<path d="M8 12.5V3.5M4 7.5l4-4 4 4"/>', down: '<path d="M8 3.5v9M4 8.5l4 4 4-4"/>',
   dup: '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v6.5a1 1 0 0 0 1 1h.5"/>',
   del: '<path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/>', edit: '<path d="M3 13l.7-3L10.8 2.9a1.4 1.4 0 0 1 2 2L5.8 12z"/>',
-  fol: '<rect x="1.8" y="3" width="12.4" height="8.4" rx="1.2"/><path d="M8 11.4V14M5.5 14h5"/>', res: '<path d="M3 3.5h10v9H3z"/><path d="M5.5 6.5h5M5.5 9.5h3"/><path d="M11.5 1.5v3M4.5 1.5v3"/>'
+  fol: '<rect x="1.8" y="3" width="12.4" height="8.4" rx="1.2"/><path d="M8 11.4V14M5.5 14h5"/>', insA: '<path d="M2.5 2.5h11"/><path d="M8 6.5v7M4.5 10h7"/>', insB: '<path d="M2.5 13.5h11"/><path d="M8 2.5v7M4.5 6h7"/>', res: '<path d="M3 3.5h10v9H3z"/><path d="M5.5 6.5h5M5.5 9.5h3"/><path d="M11.5 1.5v3M4.5 1.5v3"/>'
 };
 const pvI = k => `<svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${PVT_IC[k]}</svg>`;
 const pvOn = () => state.out === 'blatt' && !MAPPE_LOCK && !DG_VIEW && !state.gapEdit && !hmS.open && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -9758,7 +9759,7 @@ function pvShow(n) {
   if (PVT.bid !== bid) {
     const extra = (PRES_OPT.has(b.type) ? `<button type="button" data-pv="pres-tg" class="${presOn(b) ? 'on' : ''}" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht auf einer Folie · klicken zum Entfernen' : 'Auf die Folie'}">${pvI('fol')}</button>` : '')
       + (b.type === 'tasks' ? `<button type="button" data-pv="res-tg" class="${isRes(b) ? 'on' : ''}" aria-pressed="${isRes(b)}" title="${isRes(b) ? 'Ist Reserve · klicken, um sie wieder normal zu zählen' : 'Als Reserve: auf den Folien, nicht in der Phasenleiste und nicht in der Stundenzeit'}">${pvI('res')}</button>` : '');
-    t.innerHTML = `<span class="pvt-l">${esc(typeLabel(b))}</span><button type="button" data-pv="edit" title="Links bearbeiten">${pvI('edit')}</button><button type="button" data-pv="up" title="Nach oben"${k <= 0 ? ' disabled' : ''}>${pvI('up')}</button><button type="button" data-pv="down" title="Nach unten"${k < 0 || k >= ord.length - 1 ? ' disabled' : ''}>${pvI('down')}</button>${extra}<button type="button" data-pv="dup" title="Verdoppeln">${pvI('dup')}</button><button type="button" data-pv="del" class="danger" title="Löschen">${pvI('del')}</button>`;
+    t.innerHTML = `<span class="pvt-l">${esc(typeLabel(b))}</span><button type="button" data-pv="edit" title="Links bearbeiten">${pvI('edit')}</button><button type="button" data-pv="up" title="Nach oben"${k <= 0 ? ' disabled' : ''}>${pvI('up')}</button><button type="button" data-pv="down" title="Nach unten"${k < 0 || k >= ord.length - 1 ? ' disabled' : ''}>${pvI('down')}</button>${extra}<button type="button" data-pv="dup" title="Verdoppeln">${pvI('dup')}</button><span class="pvt-sep" aria-hidden="true"></span><button type="button" data-pv-ins="a" title="Darüber einen Baustein einfügen">${pvI('insA')}</button><button type="button" data-pv-ins="b" title="Darunter einen Baustein einfügen">${pvI('insB')}</button><span class="pvt-sep" aria-hidden="true"></span><button type="button" data-pv="del" class="danger" title="Löschen">${pvI('del')}</button>`;
   }
   PVT.bid = bid; PVT.el = n; t.hidden = false; ins.hidden = false;
   const r = n.getBoundingClientRect(), pr = (n.closest('.page, .pout') || n).getBoundingClientRect(), vr = $('#preview-scroll').getBoundingClientRect();
@@ -9766,10 +9767,7 @@ function pvShow(n) {
   let left = pr.right + 8; if (left + tw > vr.right - 4) left = Math.max(vr.left + 4, r.right - tw);
   let top = Math.max(vr.top + 4, Math.min(r.top, vr.bottom - th - 4)); if (left < pr.right) top = Math.max(vr.top + 4, r.top - th - 4);
   t.style.left = left + 'px'; t.style.top = top + 'px';
-  // „+“ an der oberen und unteren Kante
-  const cx = r.left + r.width / 2;
-  ins.innerHTML = `<button type="button" class="pvi" data-at="${k <= 0 ? ord[0] ? ord[0][1] : 0 : ord[k][1]}" title="Hier einen Baustein einfügen (davor)" style="left:${cx}px;top:${r.top}px">+</button><button type="button" class="pvi" data-at="${ord[k][1] + 1}" title="Hier einen Baustein einfügen (danach)" style="left:${cx}px;top:${r.bottom}px">+</button>`;
-  [...ins.children].forEach(x => { const y = parseFloat(x.style.top); x.hidden = y < vr.top + 2 || y > vr.bottom - 2; });
+  ins.innerHTML = ''; ins.hidden = true;
 }
 function pvInsOpen(at, anchor) {
   const L = paletteFor(); const Q = (isGS() ? QUICK_GS : fachBase() === 'ma' ? QUICK_MA : QUICK).map(k => L.find(t => t.k === k)).filter(Boolean); const pbE = L.find(t => t.type === 'pagebreak');
@@ -9779,7 +9777,7 @@ function pvInsOpen(at, anchor) {
   let left = r.left - pop.offsetWidth / 2, top = r.bottom + 6; left = Math.max(8, Math.min(left, innerWidth - pop.offsetWidth - 8)); if (top + pop.offsetHeight > innerHeight - 8) top = Math.max(8, r.top - pop.offsetHeight - 6);
   pop.style.left = left + 'px'; pop.style.top = top + 'px'; const f = pop.querySelector('button'); if (f) f.focus({ preventScroll: true });
 }
-const pvInsClose = () => { const p = $('#pv-insp'); if (p) { p.hidden = true; p.innerHTML = ''; } PVT.ins = null; };
+const pvInsClose = () => { const p = $('#pv-insp'); if (p) { p.hidden = true; p.innerHTML = ''; } PVT.ins = null; document.querySelectorAll('#pv-tools [data-pv-ins].on').forEach(x => x.classList.remove('on')); };
 function pvInsert(at, pk, type) {
   const blocks = state.sheet.blocks; const nb = paletteBlock(pk, type); at = Math.max(0, Math.min(blocks.length, at));
   blocks.splice(at, 0, nb); state.sel = nb.id; openOnly(nb.id); saveClosed(); changed(true);
@@ -9807,12 +9805,14 @@ function pvInit() {
     const n = t.closest && t.closest('#pages') ? pvBlockEl(t) : null;
     if (n) { if (!pvOn()) return pvHide(); keep(); if (n !== PVT.el) pvShow(n); } else if (PVT.bid || PVT.el) later();
   }, { passive: true });
-  $('#pv-tools').addEventListener('click', e => { const a = e.target.closest('[data-pv]'); if (a && !a.disabled) { e.stopPropagation(); pvAct(a.dataset.pv); } });
+  $('#pv-tools').addEventListener('click', e => { const ia = e.target.closest('[data-pv-ins]');
+    if (ia) { e.stopPropagation(); keep(); const ord = pvOrder(), k = ord.findIndex(([x]) => x.id === PVT.bid); if (k < 0) return; if (PVT.ins != null && ia.classList.contains('on')) { pvInsClose(); return; } pvInsClose(); ia.classList.add('on'); pvInsOpen(ord[k][1] + (ia.dataset.pvIns === 'b' ? 1 : 0), ia); return; }
+    const a = e.target.closest('[data-pv]'); if (a && !a.disabled) { e.stopPropagation(); pvAct(a.dataset.pv); } });
   $('#pv-ins').addEventListener('click', e => { const a = e.target.closest('.pvi'); if (a) { e.stopPropagation(); keep(); pvInsOpen(+a.dataset.at, a); } });
   $('#pv-insp').addEventListener('click', e => { const a = e.target.closest('[data-pvadd]'); if (!a) return; const at = PVT.ins; pvInsClose(); pvHide();
     if (a.dataset.pvadd === '*') { state.insAt = at; if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); bkOpen(); return; }
     pvInsert(at, a.dataset.pvadd, a.dataset.type); });
-  document.addEventListener('mousedown', e => { if (PVT.ins != null && !e.target.closest('#pv-insp, #pv-ins')) { pvInsClose(); later(); } }, true);
+  document.addEventListener('mousedown', e => { if (PVT.ins != null && !e.target.closest('#pv-insp, #pv-ins, #pv-tools [data-pv-ins]')) { pvInsClose(); later(); } }, true);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && PVT.ins != null) { pvInsClose(); pvHide(); } });
   sc.addEventListener('scroll', () => { if (PVT.ins != null) pvInsClose(); const f = PVT.bid || PVT.follow; if (!f) return; const n = PVT.el && PVT.el.isConnected ? PVT.el : $(`#pages [data-bid="${f}"]`); if (n) { const keepB = PVT.el === n ? PVT.bid : null; PVT.bid = null; pvShow(n); if (keepB) PVT.bid = keepB; } else if (!PVT.follow) pvHide(); }, { passive: true });
   // Nach dem Neuzeichnen: Leiste beim selben Baustein halten (etwa nach „nach oben“)
