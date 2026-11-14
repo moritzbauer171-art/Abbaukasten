@@ -4266,7 +4266,7 @@ function qzEditor(b) {
         : `<div class="qz-ed-o">${x.o.map((o, j) => `<div class="qz-ed-r"><button type="button" class="qz-ok-b" data-act="qz-ok" data-i="${i}" data-v="${j}" aria-pressed="${x.ok === j}" title="${x.ok === j ? 'Richtige Antwort' : 'Als richtige Antwort markieren'}">${QZ_L[j]}</button><input type="text" data-k="qz.${i}.o.${j}" value="${esc(tfStr(o))}" placeholder="Antwort ${QZ_L[j]}${j > 1 ? ' (optional)' : ''}"></div>`).join('')}</div><small class="hint">Buchstaben anklicken, um die richtige Antwort zu markieren.</small>`}
     </div>`).join('')}</div><div class="tf-ed-acts"><button class="link" type="button" data-act="qz-add"${Q.length >= 15 ? ' disabled' : ''}>+ Frage</button></div></div>`;
 }
-/* YouTube-Video auf einer Folie: Link erkennen, Start/Ende, Einbettung über youtube-nocookie.com erst beim Klick */
+/* YouTube-Video auf einer Folie: Link erkennen, Start/Ende, Einbettung über youtube.com erst beim Klick (so gilt eine Anmeldung im Browser, z. B. Premium) */
 function ytId(u) {
   const t = String(u || '').trim(); if (!t) return '';
   const m = t.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/) || (/^[A-Za-z0-9_-]{11}$/.test(t) ? [0, t] : null);
@@ -4285,7 +4285,7 @@ function ytInfo(b) {
   const st = ytSec(b.ytS) || ytSec(urlT), en = ytSec(b.ytE);
   return { id, st, en: en > st ? en : 0, watch: `https://www.youtube.com/watch?v=${id}${st ? '&t=' + st + 's' : ''}` };
 }
-const ytEmbed = (v, auto) => `https://www.youtube-nocookie.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
+const ytEmbed = (v, auto) => `https://www.youtube.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
 function stepSlideFol(b) {
   const f = stepFol(b); const t = tfStr(b.text).trim();
   if (f === 'aus') return '';
@@ -4318,7 +4318,7 @@ function stepEditor(b) {
       <div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>
       ${fText('cap', 'Überschrift auf der Folie (optional)', b.cap, 'z. B. Erklärvideo: Die Weimarer Verfassung')}
       ${ta('text', 'Beobachtungsauftrag (optional, steht über dem Video)', 2, m.anrede === 'du' ? 'z. B. Achte darauf, wie …' : 'z. B. Achten Sie darauf, wie …')}
-      <small class="hint">${v ? `Erkannt: Video ${esc(v.id)}${v.st ? ', ab ' + ytFmt(v.st) : ''}${v.en ? ' bis ' + ytFmt(v.en) : ''}. ` : ''}Das Video läuft in der Präsentation direkt auf der Folie, sobald du auf den Play-Knopf klickst. Es braucht Internet; geladen wird erst beim Klick, über den datenschutzfreundlicheren Modus von YouTube. Werbung blendet YouTube selbst ein.</small>`; })() : ''}
+      <small class="hint">${v ? `Erkannt: Video ${esc(v.id)}${v.st ? ', ab ' + ytFmt(v.st) : ''}${v.en ? ' bis ' + ytFmt(v.en) : ''}. ` : ''}Das Video läuft in der Präsentation direkt auf der Folie, sobald du auf den Play-Knopf klickst. Es braucht Internet und lädt erst beim Klick. Bist du im selben Browser bei YouTube angemeldet, erkennt der Player das meist (in Chrome und Edge, in Safari kaum), etwa für Premium ohne Werbung.</small>`; })() : ''}
     ${fol === 'aus' || fol === 'video' ? '' : fText('link', 'Link, z. B. zu einem Video (erscheint als QR-Code auf der Folie)', b.link, 'https://…')}
     ${ta('note', 'Was ich tue (Notiz, auch in den PowerPoint-Notizen)', 2, 'z. B. Bild kommentarlos zeigen, Äußerungen sammeln')}
     ${ta('eh', 'Erwartetes Schülerverhalten', 2, 'eine Zeile je Punkt')}
