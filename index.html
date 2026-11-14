@@ -765,6 +765,31 @@ body.mw-max-on{overflow:hidden}
 .rk-all{font-size:12px;white-space:nowrap;align-self:center}
 .hm-give .rk-line{margin:8px 0 0;background:rgba(0,0,0,.04)}
 .hm-give-hero .rk-line{background:rgba(255,255,255,.12)}.hm-give-hero .rk-line b{color:#fff}.hm-give-hero .rk-line small{color:rgba(255,255,255,.8)}.hm-give-hero .rk-bar{background:rgba(255,255,255,.25)}.hm-give-hero .rk-bar i{background:#FDE68A}.hm-give-hero .rk-all{color:#FDE68A}.hm-give-hero .rk-none{border-color:rgba(255,255,255,.5)}
+.hm-give-bs{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:6px}.hm-give-bs .hm-give-b{margin-top:0}
+.hm-fame{display:inline-flex;align-items:center;gap:5px;font-weight:700}.hm-fame .fame-i{width:16px;height:16px}
+.hm-give-hero .hm-fame{color:#FDE68A}
+.rk-fame{opacity:1!important;filter:none!important;border:1px dashed #E0A526}.rk-fame .fame-i{width:34px;height:34px;color:#E0A526;flex:0 0 auto}.rk-fame div{flex:1 1 auto}.rk-fame:not(.got) .fame-i{opacity:.55}
+.fame-ov{position:fixed;inset:0;z-index:110;display:grid;place-items:center;padding:16px;background:rgba(20,24,32,.55)}
+.fame{width:min(980px,100%);max-height:calc(100% - 16px);overflow:auto;background:linear-gradient(180deg,#2A2116 0%,#3B2D1C 100%);color:#F7EBD3;border-radius:16px;padding:20px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.fame-h{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}.fame-h>.fame-i{width:40px;height:40px;color:#E8B44A;flex:0 0 auto}.fame-h>div{flex:1 1 auto}
+.fame-h h2{margin:0;font-size:24px;letter-spacing:.02em;color:#F2C766}.fame-h p{margin:3px 0 0;color:#D9C8A6;font-size:13.5px}
+.fame-x{color:#F7EBD3}
+.fame-wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:22px 18px;padding:8px 2px 16px}
+.fame-f{margin:0;text-align:center}
+.fame-pic{aspect-ratio:1;padding:9px;background:linear-gradient(135deg,#F2C766,#B98A2E 45%,#F7DC8E 60%,#A57A26);border-radius:4px;box-shadow:0 8px 18px rgba(0,0,0,.45),inset 0 0 0 2px rgba(255,255,255,.25);transform:rotate(-1.2deg)}
+.fame-f:nth-child(2n) .fame-pic{transform:rotate(1.4deg)}.fame-f:nth-child(3n) .fame-pic{transform:rotate(-.4deg)}
+.fame-pic img{width:100%;height:100%;object-fit:cover;display:block;border:3px solid #2A2116}
+.fame-f figcaption{margin-top:9px;display:flex;flex-direction:column;align-items:center}.fame-f figcaption b{font-size:14px;color:#FFF3D6}.fame-f figcaption small{color:#C9B48C;font-size:12px}
+.fame-f.me .fame-pic{box-shadow:0 0 0 3px #FDE68A,0 8px 18px rgba(0,0,0,.45)}
+.fame-del{color:#F2C766;font-size:12px;margin-top:2px}
+.fame-empty{grid-column:1/-1;text-align:center;color:#D9C8A6;padding:26px 0;font-size:15px}
+.fame-me{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.07);border:1px dashed rgba(242,199,102,.5)}
+.fame-me .f{flex:1 1 220px;margin:0}.fame-me .f span{color:#D9C8A6}.fame-me .inp{background:#fff;color:#1F2533}
+.fame-me .hint{flex:1 1 100%;color:#C9B48C}
+.fame .fame-up{cursor:pointer;background:#F2C766;border-color:#F2C766;color:#2A2116}
+.fame-cheer{flex:1 1 100%;margin:0;font-weight:800;color:#FDE68A;font-size:16px}
+.fame-wait{display:block}.fame-wait p{margin:0 0 6px}.fame-wait .rk-bar{background:rgba(255,255,255,.18)}.fame-wait .rk-bar i{background:#F2C766}
+.fame-load{color:#D9C8A6}
 .rk-mini{width:13px;height:15px;vertical-align:-2px;margin-right:4px}
 .rk-ov{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:16px;background:rgba(20,24,32,.5);animation:rkIn .2s ease}
 .rk-card{position:relative;overflow:hidden;width:min(440px,100%);max-height:calc(100% - 20px);overflow-y:auto;background:var(--panel);color:var(--ink);border-radius:16px;padding:22px 22px 16px;box-shadow:var(--shadow)}
@@ -9924,7 +9949,7 @@ function homeRenderNow() {
   const giveH = cls => `<div class="hm-give ${cls}"><svg class="hm-give-ic" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="17" height="22" rx="3" fill="#fff" stroke="currentColor" stroke-width="2"/><rect x="18" y="5" width="17" height="22" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2"/><path d="M9 16h9M9 20.5h7M9 25h8M22 12h9M22 16.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M26 30.5c-1.8-1.3-4-3-4-5a2 2 0 0 1 4-.6 2 2 0 0 1 4 .6c0 2-2.2 3.7-4 5z" fill="#E0565B"/></svg>
     <div class="hm-give-t"><b>Spar deinen Kolleg*innen einen Abend Arbeit!</b><p>Eine Stunde, die bei dir gut lief, hilft anderen beim Vorbereiten, und beim nächsten Mal profitierst du selbst. Geteilt wird nur, was du auswählst; dein Original bleibt bei dir.</p>
     ${canShare() && state.shared ? rankLine(nMine, true) : ''}</div>
-    <button type="button" class="btn hm-give-b" data-hm="${canShare() ? 'give' : 'login'}">${hmI('share')}${canShare() ? 'Eine Stunde teilen' : 'Anmelden und teilen'}</button></div>`;
+    <div class="hm-give-bs"><button type="button" class="btn hm-give-b" data-hm="${canShare() ? 'give' : 'login'}">${hmI('share')}${canShare() ? 'Eine Stunde teilen' : 'Anmelden und teilen'}</button>${canShare() ? `<button type="button" class="link hm-fame" data-fame-open="1">${trophyI}Wall of Fame</button>` : ''}</div></div>`;
   const nNew = canShare() && state.shared ? sharedVis().filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
   const html = `<div class="hm-top"><div class="hm-brand"><b class="logo">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small>Startseite</small></div>
       <div class="hm-top-a">${cur ? `<button type="button" class="btn" data-hm="x">${hmI('go')}<span>Weiter${curT ? `<i>: ${esc(curT.length > 34 ? curT.slice(0, 32) + ' …' : curT)}</i>` : ''}</span></button>` : ''}
@@ -10294,7 +10319,7 @@ function rankPop(mode, i) {
   const old = document.getElementById('rk-ov'); if (old) old.remove();
   const n = myShareN(), R = rankOf(n);
   const body = mode === 'up' ? `<div class="rk-up">${rankBadge(i, 'rk-big')}<p class="rk-kick">Aufgestiegen!</p><h2>Du bist jetzt „${esc(RANKS[i].name)}“</h2><p>${esc(RANKS[i].d)}</p>${RANKS[i + 1] ? `<p class="rk-nx">Nächster Rang: „${esc(RANKS[i + 1].name)}“ ab ${RANKS[i + 1].n} geteilten Stunden.</p>` : ''}</div>`
-    : `<h2>Ränge fürs Teilen</h2><p class="rk-sub">Je mehr Stunden du mit dem Kollegium teilst, desto höher steigst du auf. Dein Rang steht bei deinen geteilten Stunden neben deinem Namen.</p><ol class="rk-list">${RANKS.map((r, k) => `<li class="${k <= R.i ? 'got' : ''}${k === R.i ? ' cur' : ''}">${rankBadge(k)}<div><b>${esc(r.name)}</b><small>ab ${r.n} ${r.n === 1 ? 'geteilten Stunde' : 'geteilten Stunden'}${k === R.i ? ' · dein Rang' : ''}</small></div></li>`).join('')}</ol>`;
+    : `<h2>Ränge fürs Teilen</h2><p class="rk-sub">Je mehr Stunden du mit dem Kollegium teilst, desto höher steigst du auf. Dein Rang steht bei deinen geteilten Stunden neben deinem Namen.</p><ol class="rk-list">${RANKS.map((r, k) => `<li class="${k <= R.i ? 'got' : ''}${k === R.i ? ' cur' : ''}">${rankBadge(k)}<div><b>${esc(r.name)}</b><small>ab ${r.n} ${r.n === 1 ? 'geteilten Stunde' : 'geteilten Stunden'}${k === R.i ? ' · dein Rang' : ''}</small></div></li>`).join('')}<li class="rk-fame${n >= FAME_N ? ' got' : ''}">${trophyI}<div><b>Wall of Fame</b><small>ab ${FAME_N} geteilten Stunden: ein eigenes Bild an der Wand</small></div><button type="button" class="link" data-fame-open="1">Ansehen</button></li></ol>`;
   const ov = el(`<div id="rk-ov" class="rk-ov${mode === 'up' ? ' up' : ''}" role="dialog" aria-modal="true" aria-label="Ränge"><div class="rk-card">${mode === 'up' ? '<div class="rk-conf" aria-hidden="true">' + Array.from({ length: 26 }, (_, k) => `<i style="--x:${(k * 37) % 100}%;--d:${(k % 7) * .12}s;--c:${['#E0A526', '#2741B5', '#E0565B', '#1E9E8F', '#7A4FD0'][k % 5]}"></i>`).join('') + '</div>' : ''}${body}<div class="row"><button type="button" class="btn primary" data-rk="x">${mode === 'up' ? 'Weiter so!' : 'Schließen'}</button></div></div></div>`);
   document.body.appendChild(ov);
   ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-rk="x"]')) ov.remove(); });
@@ -10302,6 +10327,64 @@ function rankPop(mode, i) {
 }
 document.addEventListener('click', e => { const a = e.target.closest('[data-rk="all"]'); if (a) { e.preventDefault(); rankPop('all'); } });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { const o = document.getElementById('rk-ov'); if (o) { e.stopPropagation(); o.remove(); } } }, true);
+/* ---------- Wall of Fame: ab 50 geteilten Stunden ein Bild aufhängen (Tabelle ab_fame, Regeln in der Datenbank) ---------- */
+const FAME_N = 50;
+const FAME = { list: null, err: '', busy: false };
+const trophyI = '<svg class="fame-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0z" fill="currentColor"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 13v4M8.5 20h7M10 17h4v3h-4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+async function fameLoad() {
+  FAME.err = '';
+  try { const r = await store.sb.from('ab_fame').select('user_id,name,bild,updated_at').order('updated_at', { ascending: false }).limit(200); if (r.error) throw r.error; FAME.list = r.data || []; }
+  catch (e) { console.error(e); FAME.list = []; FAME.err = 'Die Wall of Fame ließ sich gerade nicht laden.'; }
+}
+function fameImg(file) {
+  return new Promise((res, rej) => { const fr = new FileReader(); fr.onerror = rej; fr.onload = () => { const im = new Image(); im.onerror = rej; im.onload = () => {
+    const S = 480, c = document.createElement('canvas'); c.width = S; c.height = S; const k = Math.max(S / im.width, S / im.height), w = im.width * k, h = im.height * k;
+    const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, S, S); g.drawImage(im, (S - w) / 2, (S - h) / 2, w, h); res(c.toDataURL('image/jpeg', .82)); }; im.src = fr.result; }; fr.readAsDataURL(file); });
+}
+async function fameOpen(cheer) {
+  if (!canShare()) { toast('Die Wall of Fame gibt es mit Anmeldung.'); return; }
+  const old = document.getElementById('fame-ov'); if (old) old.remove();
+  const ov = el('<div id="fame-ov" class="fame-ov" role="dialog" aria-modal="true" aria-label="Wall of Fame"><div class="fame"></div></div>'); document.body.appendChild(ov);
+  ov.dataset.cheer = cheer ? '1' : '';
+  ov.querySelector('.fame').innerHTML = '<p class="fame-load">Lädt …</p>';
+  await Promise.all([fameLoad(), state.shared ? null : shareLoad()]); fameRender();
+  ov.addEventListener('click', fameClick); ov.addEventListener('change', fameChange);
+}
+function fameRender() {
+  const ov = document.getElementById('fame-ov'); if (!ov) return;
+  const me = store.user && store.user.id, n = myShareN(), mine = (FAME.list || []).find(x => x.user_id === me);
+  const cnt = uid => (state.shared || []).filter(y => y.uid === uid).length;
+  const frames = (FAME.list || []).map(x => { const R = rankOf(cnt(x.user_id)); return `<figure class="fame-f${x.user_id === me ? ' me' : ''}"><div class="fame-pic"><img src="${esc(x.bild)}" alt="${esc(x.name || 'Bild')}"></div><figcaption><b>${R.r ? rankBadge(R.i, 'rk-mini') : ''}${esc(x.name || 'Ohne Namen')}</b><small>${cnt(x.user_id)} Stunden geteilt</small></figcaption>${ADM.is || x.user_id === me ? `<button type="button" class="link fame-del" data-fame="del" data-uid="${esc(x.user_id)}">${x.user_id === me ? 'Mein Bild abhängen' : 'Abhängen'}</button>` : ''}</figure>`; }).join('');
+  const myBox = n >= FAME_N ? `<div class="fame-me">${ov.dataset.cheer ? `<p class="fame-cheer">${n} geteilte Stunden! Dein Platz an der Wall of Fame wartet.</p>` : ''}
+      <label class="f"><span>Name unter dem Bild</span><input class="inp" id="fame-name" maxlength="80" value="${esc((mine && mine.name) || state.prefs.autor || '')}"></label>
+      <label class="btn primary fame-up">${mine ? 'Neues Bild aufhängen' : 'Bild aufhängen'}<input type="file" accept="image/*" data-fame="file" hidden></label>
+      <small class="hint">Das Bild wird quadratisch zugeschnitten und ist für alle angemeldeten Konten sichtbar. Ein Foto, ein Avatar oder dein Lieblingsmeme.</small></div>`
+    : `<div class="fame-me fame-wait"><p>Ab <b>${FAME_N} geteilten Stunden</b> darfst du hier ein Bild aufhängen. Du hast ${n}, noch <b>${FAME_N - n}</b>.</p><span class="rk-bar"><i style="width:${Math.min(100, Math.round(n / FAME_N * 100))}%"></i></span></div>`;
+  ov.querySelector('.fame').innerHTML = `<div class="fame-h">${trophyI}<div><h2>Wall of Fame</h2><p>Hier hängen alle, die ${FAME_N} oder mehr Stunden mit dem Kollegium geteilt haben.</p></div><button type="button" class="ib fame-x" data-fame="x" aria-label="Schließen">${I.x}</button></div>
+    ${FAME.err ? `<p class="adm-err">${esc(FAME.err)}</p>` : ''}
+    <div class="fame-wall">${frames || '<p class="fame-empty">Die Wand ist noch leer. Wer hängt hier als erstes?</p>'}</div>
+    ${myBox}${FAME.busy ? '<p class="fame-load">Wird aufgehängt …</p>' : ''}`;
+}
+async function fameChange(e) {
+  const t = e.target;
+  if (t.id === 'fame-name') { const me = store.user && store.user.id, mine = (FAME.list || []).find(x => x.user_id === me); if (mine && t.value.trim() !== mine.name) { try { const r = await store.sb.from('ab_fame').upsert({ user_id: me, name: t.value.trim().slice(0, 80), bild: mine.bild, updated_at: mine.updated_at }, { onConflict: 'user_id' }); if (r.error) throw r.error; await fameLoad(); fameRender(); toast('Name geändert.'); } catch { toast('Der Name ließ sich nicht ändern.'); } } return; }
+  if (t.dataset.fame !== 'file' || !t.files || !t.files[0]) return;
+  const f = t.files[0]; t.value = '';
+  const name = (($('#fame-name') || {}).value || '').trim().slice(0, 80);
+  FAME.busy = true; fameRender();
+  try { const bild = await fameImg(f); const r = await store.sb.from('ab_fame').upsert({ user_id: store.user.id, name, bild, updated_at: new Date().toISOString() }, { onConflict: 'user_id' }); if (r.error) throw r.error; await fameLoad(); toast('Dein Bild hängt jetzt an der Wall of Fame.'); }
+  catch (err) { console.error(err); toast(/security|policy|rls/i.test(String(err && err.message)) ? `Aufhängen geht erst ab ${FAME_N} geteilten Stunden.` : 'Das Bild ließ sich nicht aufhängen. Bitte ein anderes versuchen.'); }
+  FAME.busy = false; fameRender();
+}
+async function fameClick(e) {
+  const ov = document.getElementById('fame-ov'); if (e.target === ov) { ov.remove(); return; }
+  const a = e.target.closest('[data-fame]'); if (!a) return; const k = a.dataset.fame;
+  if (k === 'x') { ov.remove(); return; }
+  if (k === 'del') { if (a.dataset.sure !== '1') { a.dataset.sure = '1'; a.textContent = 'Wirklich abhängen?'; return; }
+    try { const r = await store.sb.from('ab_fame').delete().eq('user_id', a.dataset.uid); if (r.error) throw r.error; await fameLoad(); fameRender(); toast('Bild abgehängt.'); } catch (err) { console.error(err); toast('Das hat nicht geklappt.'); } }
+}
+document.addEventListener('click', e => { const a = e.target.closest('[data-fame-open]'); if (a) { e.preventDefault(); const o = document.getElementById('rk-ov'); if (o) o.remove(); fameOpen(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const o = document.getElementById('fame-ov'); if (o && !document.getElementById('rk-ov')) { e.stopPropagation(); o.remove(); } } }, true);
 // Rang eines anderen Kontos (aus den geteilten Stunden gezählt)
 const rankOfUid = uid => rankOf((state.shared || []).filter(y => y.uid && y.uid === uid).length);
 const autorBadge = x => { if (!x.uid) return ''; const R = rankOfUid(x.uid); return R.r ? rankBadge(R.i, 'rk-mini') : ''; };
@@ -10356,7 +10439,8 @@ async function shareGo() {
     const sh = state.sheet && state.sheet.id === d.sheetId ? clone(state.sheet) : await backend.load(d.sheetId); if (!sh) throw new Error('fehlt');
     await backend.sharePut(sh, { id: d.sid, text, autor }); state.dlg = null; renderDlg(); await shareLoad(true);
     const r0 = rankOf(before), r1 = rankOf(myShareN());
-    if (!d.sid && r1.i > r0.i) rankPop('up', r1.i);
+    if (!d.sid && before < FAME_N && myShareN() >= FAME_N) fameOpen(true);
+    else if (!d.sid && r1.i > r0.i) rankPop('up', r1.i);
     else toast(d.sid ? 'Geteilte Fassung aktualisiert' : `Stunde geteilt. Danke!${r1.next ? ` Noch ${r1.need} bis „${r1.next.name}“.` : ''}`);
     if (hmS.open) homeRender();
   } catch (err) { console.error(err); toast(/too large|payload|413/i.test(String(err && err.message)) ? 'Die Stunde ist zu groß zum Teilen. Bitte Bilder verkleinern.' : 'Teilen hat nicht geklappt. Bitte erneut versuchen.'); }
