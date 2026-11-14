@@ -10254,7 +10254,8 @@ const TOUR = [
   { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier findest du deine Stunden je Klasse und in Ordnern, dazu die Stunden, die Kolleginnen und Kollegen geteilt haben, mit Filter nach Klassenstufe und Kategorie, etwa „Vertretungsstunde“.' },
   { t: 'Teilen spart Abende', d: 'Über „Teilen“ gibst du eine Stunde ans Kollegium weiter: erst Stunde wählen, dann Klassenstufe und Kategorien. Wer teilt, steigt auf, vom „Abendspender“ bis zur „Absoluten Lehrlegende“. Ab 50 geteilten Stunden darfst du ein Bild an die Wall of Fame hängen.' },
   { sel: () => isPhone() ? '#btn-mmore' : '#btn-forum', t: 'Lehrerzimmer', d: 'Das Forum fürs Kollegium: Fragen stellen, Material suchen, Tipps teilen, nach Fach und Art sortiert. Ein roter Zähler zeigt neue Beiträge. Auf dem Handy liegt es unter den drei Punkten.' },
-  { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite: Klassen, zuletzt bearbeitete und neu geteilte Stunden, dein Rang und die neuesten Themen aus dem Lehrerzimmer. „RLP“ öffnet den Rahmenlehrplan deines Fachs.' },
+  { sel: '#btn-home', t: 'Startseite', d: 'Das Haus führt zur Startseite: deine Klassen, zuletzt bearbeitete und neu geteilte Stunden, dein Rang und die neuesten Themen aus dem Lehrerzimmer.' },
+  { sel: () => isPhone() ? '#btn-mmore' : '#btn-rlp', t: 'Rahmenlehrplan', d: '„RLP“ öffnet den Berliner Rahmenlehrplan für das Fach der Klasse, in der du gerade bist, mit Suche. Auf dem Handy liegt er unter den drei Punkten.' },
   { sel: () => isPhone() ? '#btn-mmore' : '#btn-help', t: 'Fertig!', d: 'Unter „?“ (auf dem Handy unter den drei Punkten) findest du alle Kniffe und kannst diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
 ];
 const tour = { i: -1 };
