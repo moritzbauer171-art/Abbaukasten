@@ -751,6 +751,17 @@ body.mw-max-on{overflow:hidden}
 .dlg.dlg-kl{width:min(640px,calc(100% - 32px))}
 .kl-list{display:flex;flex-direction:column;gap:10px}
 .sp-lead{margin:0 0 10px}
+.sp-cat{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.sp-st select{width:auto;min-width:11em}
+.sp-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sp-chip{border:1px solid var(--line-strong);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 11px;font:500 13px/1.3 var(--f-ui);cursor:pointer}
+.sp-chip[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.sh-tags{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 2px}
+.sh-tag{font-size:11.5px;font-weight:600;line-height:1.3;border-radius:999px;padding:1px 8px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.sh-tag.st{background:var(--tinte-soft);color:var(--tinte);border-color:transparent}
+.sh-tag.vt{background:#FFF1D6;color:#8A5A00;border-color:#F1D39A}
+.sh-tag.more{background:none}
+.sh-filt{gap:8px;flex-wrap:wrap;margin-top:6px}.sh-filt select{width:auto;flex:0 1 auto;min-width:0}
 .sp-g button.on{border-color:var(--tinte);background:var(--tinte-soft);box-shadow:inset 0 0 0 1px var(--tinte)}
 .sp-form{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.sp-form.off{opacity:.55}
 .sp-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:10px}
@@ -807,7 +818,7 @@ body.mw-max-on{overflow:hidden}
 @keyframes rkPop{from{transform:scale(.3) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
 @keyframes rkIn{from{opacity:0}}
 @media (prefers-reduced-motion:reduce){.rk-conf{display:none}.rk-big{animation:none}}
-.sp-list{max-height:min(52vh,460px);overflow:auto;margin:10px 0 6px;display:flex;flex-direction:column;gap:12px}
+.sp-list{max-height:min(34vh,340px);overflow:auto;margin:10px 0 6px;display:flex;flex-direction:column;gap:12px}
 .sp-g h3{display:flex;align-items:center;gap:7px;margin:0 0 6px;font-size:13px}.sp-g h3 i{width:9px;height:9px;border-radius:50%}.sp-g h3 small{font-weight:500;color:var(--faint)}
 .sp-g ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
 .sp-g li[hidden],.sp-g[hidden]{display:none}
@@ -9625,13 +9636,13 @@ function supaB(sb, user) {
     async loadPrefs() { const d = chk(await sb.from('ab_einstellungen').select('data').maybeSingle()); return d ? d.data : null; },
     async savePrefs(p) { chk(await sb.from('ab_einstellungen').upsert({ user_id: user.id, data: p, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })); },
     async shareList() {
-      const rows = chk(await sb.from('ab_geteilt').select('id,user_id,sheet_id,title,klasse,fach,beschreibung,autor,updated_at,suchtext').order('updated_at', { ascending: false }).limit(500)) || [];
-      return rows.map(r => ({ id: r.id, sheetId: r.sheet_id, mine: r.user_id === user.id, uid: r.user_id, title: r.title || 'Ohne Titel', klasse: r.klasse || '', fach: r.fach || '', text: r.beschreibung || '', autor: r.autor || '', q: r.suchtext || '', updatedAt: Date.parse(r.updated_at) || 0 }));
+      const rows = chk(await sb.from('ab_geteilt').select('id,user_id,sheet_id,title,klasse,fach,beschreibung,autor,updated_at,suchtext,kategorien,stufe').order('updated_at', { ascending: false }).limit(500)) || [];
+      return rows.map(r => ({ id: r.id, sheetId: r.sheet_id, mine: r.user_id === user.id, uid: r.user_id, title: r.title || 'Ohne Titel', klasse: r.klasse || '', fach: r.fach || '', text: r.beschreibung || '', autor: r.autor || '', q: r.suchtext || '', cats: Array.isArray(r.kategorien) ? r.kategorien : [], stufe: r.stufe || '', updatedAt: Date.parse(r.updated_at) || 0 }));
     },
     async shareGet(id) { const d = chk(await sb.from('ab_geteilt').select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
     async sharePut(sh, info) {
       const rid = info.id || Array.from(crypto.getRandomValues(new Uint8Array(14)), x => 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'[x % 56]).join('');
-      chk(await sb.from('ab_geteilt').upsert({ id: rid, user_id: user.id, sheet_id: sh.id, title: stTitle(sh) || 'Ohne Titel', klasse: KL(sh.klasse).label || '', fach: fachKey(sh.klasse), beschreibung: String(info.text || '').slice(0, 600), autor: String(info.autor || '').slice(0, 80), suchtext: searchText(sh), data: sh, updated_at: new Date().toISOString() }, { onConflict: 'user_id,sheet_id' }));
+      chk(await sb.from('ab_geteilt').upsert({ id: rid, user_id: user.id, sheet_id: sh.id, title: stTitle(sh) || 'Ohne Titel', klasse: KL(sh.klasse).label || '', fach: fachKey(sh.klasse), beschreibung: String(info.text || '').slice(0, 600), autor: String(info.autor || '').slice(0, 80), kategorien: (info.cats || []).map(x => String(x).slice(0, 40)).slice(0, 12), stufe: String(info.stufe || '').slice(0, 4), suchtext: searchText(sh) + ' ' + (info.cats || []).join(' ').toLowerCase(), data: sh, updated_at: new Date().toISOString() }, { onConflict: 'user_id,sheet_id' }));
     },
     async shareDel(id) { chk(await sb.from('ab_geteilt').delete().eq('id', id)); }
   };
@@ -9940,7 +9951,7 @@ function homeRenderNow() {
     const L = sharedVis().filter(x => !x.mine).sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt)).slice(0, 6);
     shareH = L.length ? `<ul class="hm-sh">${L.map(x => { const nu = +new Date(x.updatedAt) > hmS.seen; return `<li class="${nu ? 'nu' : ''}">
         <div class="hm-sh-h"><b>${esc(x.title)}</b>${nu ? '<span class="hm-new">neu</span>' : ''}</div>
-        <div class="hm-sh-m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', relTime(+new Date(x.updatedAt))].filter(Boolean).join(' · '))}</div>
+        ${shareTags(x, 4)}<div class="hm-sh-m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', relTime(+new Date(x.updatedAt))].filter(Boolean).join(' · '))}</div>
         ${x.text ? `<p>${esc(x.text.length > 140 ? x.text.slice(0, 138) + ' …' : x.text)}</p>` : ''}
         <div class="hm-sh-a">${hmS.busy === x.id ? '<small>Wird übernommen …</small>' : `<button type="button" class="link" data-hm="take" data-sid="${esc(x.id)}">${hmI('take')}In „${esc(KL(state.klasse).label)}“ übernehmen</button>`}</div></li>`; }).join('')}</ul>`
       : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : (state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt.' : 'Noch keine geteilten Stunden von anderen.')}</p></div>`;
@@ -10267,14 +10278,17 @@ function sharedListHTML() {
   if (!canShare()) return `<div class="lib-empty"><p>Geteilte Stunden sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? '<button class="btn primary" type="button" data-act="login">Anmelden</button>' : ''}</div>`;
   if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; }), 0); } return '<div class="lib-empty"><p>Wird geladen …</p></div>'; }
   const q = state.shareQuery.trim().toLowerCase(); const words = q ? q.split(/\s+/).filter(Boolean) : [];
-  const V = sharedVis(); const L = V.filter(x => !words.length || words.every(w => (x.title + ' ' + x.klasse + ' ' + x.autor + ' ' + x.text + ' ' + x.q).toLowerCase().includes(w)));
+  const F = state.shareF || (state.shareF = { stufe: '', cat: '' });
+  const V = sharedVis(); const L = V.filter(x => (!words.length || words.every(w => (x.title + ' ' + x.klasse + ' ' + x.autor + ' ' + x.text + ' ' + x.q + ' ' + (x.cats || []).join(' ')).toLowerCase().includes(w))) && (!F.stufe || x.stufe === F.stufe) && (!F.cat || (x.cats || []).includes(F.cat)));
+  const usedCats = [...new Set([...SHARE_CATS.filter(c => V.some(x => (x.cats || []).includes(c))), ...V.flatMap(x => x.cats || []).filter(c => !SHARE_CATS.includes(c))])];
+  const filt = `<div class="row sh-filt"><select class="inp" id="share-fst" aria-label="Klassenstufe">${STUFEN.map(([v, l]) => `<option value="${v}"${F.stufe === v ? ' selected' : ''}>${v ? l : 'Alle Klassenstufen'}</option>`).join('')}</select><select class="inp" id="share-fcat" aria-label="Kategorie"><option value="">Alle Kategorien</option>${usedCats.map(c => `<option${F.cat === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select>${F.stufe || F.cat ? '<button class="link" type="button" data-act="share-fx">Filter zurücksetzen</button>' : ''}</div>`;
   const fmt = t => new Date(t).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  const head = `${state.sharedErr ? `<div class="notice"><span>${esc(state.sharedErr)}</span></div>` : ''}<div class="row lib-tools"><input class="inp" id="share-q" type="search" placeholder="Geteilte Stunden durchsuchen" value="${esc(state.shareQuery)}" aria-label="Geteilte Stunden durchsuchen" style="flex:1"><button class="btn" type="button" data-act="share-reload" title="Neu laden">Aktualisieren</button></div>
+  const head = `${state.sharedErr ? `<div class="notice"><span>${esc(state.sharedErr)}</span></div>` : ''}<div class="row lib-tools"><input class="inp" id="share-q" type="search" placeholder="Geteilte Stunden durchsuchen" value="${esc(state.shareQuery)}" aria-label="Geteilte Stunden durchsuchen" style="flex:1"><button class="btn" type="button" data-act="share-reload" title="Neu laden">Aktualisieren</button></div>${filt}
     <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieses AB-O-MATs teilen. Angezeigt werden Stunden aus Ihren Fächern. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
-  if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche.' : state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen Sie eine Klasse haben.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
+  if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche oder zum Filter.' : state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen Sie eine Klasse haben.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
   return head + L.map(x => `<div class="lib-item share-item" data-sid="${esc(x.id)}">
       <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von Ihnen</em>' : ''}</div>
-      <div class="m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
+      ${shareTags(x)}<div class="m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
       ${x.text ? `<div class="share-text">${esc(x.text)}</div>` : ''}
       <div class="a">${state.shareBusy === x.id ? '<span class="m">Wird übernommen …</span>' : `<button class="link" type="button" data-act="share-take">Übernehmen</button>${x.mine ? '<button class="link" type="button" data-act="share-edit">Bearbeiten</button>' : ''}`}</div>
     </div>`).join('');
@@ -10389,6 +10403,18 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { const o = 
 const rankOfUid = uid => rankOf((state.shared || []).filter(y => y.uid && y.uid === uid).length);
 const autorBadge = x => { if (!x.uid) return ''; const R = rankOfUid(x.uid); return R.r ? rankBadge(R.i, 'rk-mini') : ''; };
 
+/* Kategorien für geteilte Stunden */
+const SHARE_CATS = ['Vertretungsstunde', 'Einstieg in ein Thema', 'Erarbeitung', 'Übung und Wiederholung', 'Klassenarbeit vorbereiten', 'Prüfung (MSA, Abitur)', 'Doppelstunde', 'Projekt', 'Digital / Tablet', 'Differenziert', 'Gruppenarbeit', 'Ohne Material einsetzbar'];
+const STUFEN = [['', 'keine Angabe'], ...Array.from({ length: 10 }, (_, k) => [String(k + 1), 'Klasse ' + (k + 1)]), ['OS', 'Oberstufe']];
+const stufeLabel = v => v === 'OS' ? 'Oberstufe' : v ? 'Klasse ' + v : '';
+function stufeGuess(klId) {
+  const k = KL(klId); if (k.stufe === 'gs' && +k.jg) return String(+k.jg);
+  const t = (k.label + ' ' + (k.course || '')).toLowerCase();
+  if (/grundkurs|leistungskurs|\b(gk|lk)\b|\bq[1-4]\b|oberstufe|\b1[123]\b|sek ?ii|einführungsphase/.test(t)) return 'OS';
+  const m = t.match(/(?:^|\D)(10|[1-9])(?!\d)/); return m ? m[1] : '';
+}
+const shareTags = (x, max) => { const T = [...(x.stufe ? [`<span class="sh-tag st">${esc(stufeLabel(x.stufe))}</span>`] : []), ...(x.cats || []).map(c => `<span class="sh-tag${c === 'Vertretungsstunde' ? ' vt' : ''}">${esc(c)}</span>`)]; if (!T.length) return ''; const more = max && T.length > max ? T.length - max : 0; return `<div class="sh-tags">${(max ? T.slice(0, max) : T).join('')}${more ? `<span class="sh-tag more">+${more}</span>` : ''}</div>`; };
+
 /* Auswahl: welche eigene Stunde teilen? */
 async function openSharePick(pre) {
   if (!canShare()) { toast('Zum Teilen bitte anmelden.'); return; }
@@ -10398,10 +10424,12 @@ async function openSharePick(pre) {
 }
 function spPick(id) {
   const d = state.dlg; if (!d || d.mode !== 'sharepick') return; spKeep();
-  const ex = sharedOf(id); d.pick = id; if (ex) { d.text = ex.text || ''; if (ex.autor) d.autor = ex.autor; } else if (d.pickWas && sharedOf(d.pickWas)) d.text = '';
+  const ex = sharedOf(id); const e = (state.lib || []).find(x => x.id === id); d.pick = id; d.own = null;
+  if (ex) { d.text = ex.text || ''; if (ex.autor) d.autor = ex.autor; d.cats = [...(ex.cats || [])]; d.stufe = ex.stufe || (e ? stufeGuess(e.klasse) : ''); }
+  else { if (d.pickWas && sharedOf(d.pickWas)) { d.text = ''; d.cats = []; } d.cats = d.cats || []; d.stufe = e ? stufeGuess(e.klasse) : ''; }
   d.pickWas = id; renderDlg(); setTimeout(() => { const q = $('#sp-q'); if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true })); const t = $('#share-text'); const sel = document.querySelector('#dlg-root .sp-g button.on'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' }); if (t && !isNarrow()) t.focus(); }, 20);
 }
-const spKeep = () => { const d = state.dlg; if (!d) return; const a = $('#share-autor'), t = $('#share-text'), q = $('#sp-q'); if (a) d.autor = a.value; if (t) d.text = t.value; if (q) d.q = q.value; };
+const spKeep = () => { const d = state.dlg; if (!d) return; const a = $('#share-autor'), t = $('#share-text'), q = $('#sp-q'), st = $('#sp-stufe'), ow = $('#sp-own'); if (a) d.autor = a.value; if (t) d.text = t.value; if (q) d.q = q.value; if (st) d.stufe = st.value; if (ow) d.own = ow.value; };
 function sharePickHTML() {
   const d = state.dlg; const L = (state.lib || []).slice().sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
   const groups = KLASSEN.map(k => [k, L.filter(d => d.klasse === k.id)]).filter(([, A]) => A.length);
@@ -10415,6 +10443,9 @@ function sharePickHTML() {
     <div class="sp-form${P ? '' : ' off'}">
       <div class="sp-two"><label class="f"><span>Dein Name bei der Stunde</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
       <label class="f"><span>Kurz: worum geht es? (optional)</span><input class="inp" id="share-text" type="text" maxlength="600" value="${esc(d.text || '')}" placeholder="z. B. Einstieg Kurzgeschichte, GA, 45 Min."></label></div>
+      <div class="sp-cat"><label class="f sp-st"><span>Klassenstufe</span><select class="inp" id="sp-stufe">${STUFEN.map(([v, l]) => `<option value="${v}"${(d.stufe || '') === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
+        <div class="f"><span>Kategorien (mehrere möglich)</span><div class="sp-chips">${SHARE_CATS.map(c => `<button type="button" class="sp-chip" data-act="sp-cat" data-v="${esc(c)}" aria-pressed="${(d.cats || []).includes(c)}">${esc(c)}</button>`).join('')}</div></div>
+        <label class="f sp-ownf"><span>Eigene Schlagworte (optional, mit Komma)</span><input class="inp" id="sp-own" type="text" maxlength="120" value="${esc(d.own != null ? d.own : (d.cats || []).filter(c => !SHARE_CATS.includes(c)).join(', '))}" placeholder="z. B. Lyrik, Romantik"></label></div>
       <small class="hint">${P ? (ex ? `„${esc(P.title)}“ ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand.` : `„${esc(P.title)}“ wird mit allen Konten geteilt, so wie sie jetzt gespeichert ist. Andere können eine eigene Kopie übernehmen; dein Original bleibt bei dir.`) : 'Erst oben eine Stunde antippen.'}</small>
     </div>
     <div class="row"><button class="btn primary" type="button" data-act="sp-go"${P ? '' : ' disabled'}>${ex ? 'Aktualisieren' : 'Teilen'}</button>${ex ? '<button class="btn danger" type="button" data-act="sp-del">Nicht mehr teilen</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
@@ -10437,7 +10468,9 @@ async function shareGo() {
   try {
     if (state.sheet && state.sheet.id === d.sheetId) await saveNow();
     const sh = state.sheet && state.sheet.id === d.sheetId ? clone(state.sheet) : await backend.load(d.sheetId); if (!sh) throw new Error('fehlt');
-    await backend.sharePut(sh, { id: d.sid, text, autor }); state.dlg = null; renderDlg(); await shareLoad(true);
+    const cats = d0.mode === 'sharepick' ? [...new Set([...(d0.cats || []).filter(c => SHARE_CATS.includes(c)), ...String(d0.own != null ? d0.own : (d0.cats || []).filter(c => !SHARE_CATS.includes(c)).join(',')).split(',').map(x => x.trim()).filter(Boolean)])].slice(0, 12) : ((sharedOf(d.sheetId) || {}).cats || []);
+    const stufe = d0.mode === 'sharepick' ? (d0.stufe || '') : ((sharedOf(d.sheetId) || {}).stufe || '');
+    await backend.sharePut(sh, { id: d.sid, text, autor, cats, stufe }); state.dlg = null; renderDlg(); await shareLoad(true);
     const r0 = rankOf(before), r1 = rankOf(myShareN());
     if (!d.sid && before < FAME_N && myShareN() >= FAME_N) fameOpen(true);
     else if (!d.sid && r1.i > r0.i) rankPop('up', r1.i);
@@ -11206,6 +11239,7 @@ async function onLibClick(e) {
     case 'share-take': { const it = a.closest('[data-sid]'); if (it) shareTake(it.dataset.sid); break; }
     case 'share-edit': { const it = a.closest('[data-sid]'); const x = it && (state.shared || []).find(y => y.id === it.dataset.sid); if (x) { if (!state.lib.some(dd => dd.id === x.sheetId)) { toast('Die Original-Stunde liegt nicht mehr in Ihren Stunden. Sie können die geteilte Fassung trotzdem zurückziehen.'); } openShare(x.sheetId); } break; }
     case 'lib-share': if (id) { closeLib(); openSharePick(id); } break;
+    case 'share-fx': state.shareF = { stufe: '', cat: '' }; renderLib(); break;
     case 'lib-copy-to':
       if (!id) break;
       if (a.dataset.kl && a.dataset.kl !== KL(state.klasse).id) { libToKlasse(id, a.dataset.kl, true); break; }
@@ -11683,6 +11717,7 @@ async function onDlgClick(e) {
   if (act === 'sa-file') { saveAsFile(); return; }
   if (act === 'sp-pick') { spPick(a.dataset.id); return; }
   if (act === 'sp-go') { spKeep(); shareGo(); return; }
+  if (act === 'sp-cat') { spKeep(); const d = state.dlg, v = a.dataset.v; d.cats = d.cats || []; d.cats = d.cats.includes(v) ? d.cats.filter(x => x !== v) : [...d.cats, v]; renderDlg(); return; }
   if (act === 'sp-del') { const d = state.dlg; const ex = d && sharedOf(d.pick); if (ex) { d.sid = ex.id; shareDelGo(true); } return; }
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
   if (state.dlg.mode === 'klassen') {
@@ -13112,7 +13147,7 @@ function boot() {
   document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.key === 'k' || e.key === 'K') && !state.dlg && !document.querySelector('.pr-ov, .lib-open')) { e.preventDefault(); bkOpen(); } });
   $('#lib-root').addEventListener('click', onLibClick);
   $('#lib-root').addEventListener('input', e => { if (e.target.id === 'lib-q') { state.libQuery = e.target.value; renderLib(); } if (e.target.id === 'share-q') { state.shareQuery = e.target.value; const l = $('#lib-root .share-list'); if (l) { l.innerHTML = sharedListHTML(); const i = $('#share-q'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } } } });
-  $('#lib-root').addEventListener('change', e => { if (e.target.id === 'lib-sort') { if (e.target.value === 'eigen') freezeOrder(KL(state.klasse).id); else lsSet(LS_SORT, e.target.value); savePrefs(); renderLib(); } });
+  $('#lib-root').addEventListener('change', e => { if (e.target.id === 'share-fst' || e.target.id === 'share-fcat') { state.shareF = state.shareF || { stufe: '', cat: '' }; state.shareF[e.target.id === 'share-fst' ? 'stufe' : 'cat'] = e.target.value; renderLib(); return; } if (e.target.id === 'lib-sort') { if (e.target.value === 'eigen') freezeOrder(KL(state.klasse).id); else lsSet(LS_SORT, e.target.value); savePrefs(); renderLib(); } });
   $('#lib-root').addEventListener('keydown', e => {
     const t = e.target;
     if (t.id === 'lib-fnew') { if (e.key === 'Enter') { e.preventDefault(); newFolder(t.value); } else if (e.key === 'Escape') { e.stopPropagation(); state.fNew = false; renderLib(); } }
