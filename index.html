@@ -2546,7 +2546,7 @@ body.home-on{overflow:hidden}
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
-      <a class="btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt Ihnen der AB-O-MAT? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
+      <a class="btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt dir der AB-O-MAT? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
       <button class="btn ib-help" type="button" id="btn-home" data-act="home" title="Startseite: Fächer, Klassen, zuletzt bearbeitet, neu geteilt" aria-label="Startseite"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11h13V9"/><path d="M10 20v-5.5h4V20"/></svg></button>
       <button class="btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       <button class="btn rlp-btn" type="button" id="btn-rlp" data-act="rlp-view" title="Rahmenlehrplan Berlin für dieses Fach als PDF"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.6c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.6"/></svg><span>RLP</span></button>
@@ -4100,7 +4100,7 @@ function ablaufOf(sh) {
 }
 function ablaufHTML() {
   const sh = state.sheet, m = sh.meta; const A = ablaufOf({ meta: m, blocks: stBlocks() }); const L0 = Number(m.lesson) || 45;
-  if (!A.any) return `<div class="f abl-sum"><span>Stundenablauf</span><div class="abl-tot"><b>0 von</b><select data-k="lesson" aria-label="Länge der Stunde">${[...new Set([45, 60, 75, 90, 135, L0])].sort((a, b) => a - b).map(n => `<option value="${n}"${n === L0 ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b><small>Zeiten tragen Sie an den Aufgaben-Bausteinen und Unterrichtsschritten ein.</small></div></div>`;
+  if (!A.any) return `<div class="f abl-sum"><span>Stundenablauf</span><div class="abl-tot"><b>0 von</b><select data-k="lesson" aria-label="Länge der Stunde">${[...new Set([45, 60, 75, 90, 135, L0])].sort((a, b) => a - b).map(n => `<option value="${n}"${n === L0 ? ' selected' : ''}>${n}</option>`).join('')}</select><b>Min.</b><small>Zeiten trägst du an den Aufgaben-Bausteinen und Unterrichtsschritten ein.</small></div></div>`;
   const L = Number(m.lesson) || 45; const base = Math.max(L, A.total) || 1;
   const segs = Object.entries(PHASEN).filter(([k]) => k !== 'ha' && A.by[k]).map(([k, x]) => `<i style="width:${(A.by[k] / base * 100).toFixed(2)}%;background:${x.c}" title="${x.label}: ${Math.round(A.by[k])} Min."></i>`).join('')
     + (A.open ? `<i style="width:${(A.open / base * 100).toFixed(2)}%;background:#B7BCC6" title="ohne Phase: ${Math.round(A.open)} Min."></i>` : '');
@@ -4149,7 +4149,7 @@ function grpEdHTML(m) {
   const L = grpList(m);
   return `<div class="f grp-ed"><span>Gruppen</span>${L.map((g, i) => `<div class="grp-ed-row"><b>${g.k}</b><input type="text" data-k="groups.${i}.name" value="${esc(g.name)}" placeholder="Name, z. B. Wandseite" aria-label="Name von Gruppe ${g.k}"><input type="text" data-k="groups.${i}.add" value="${esc(g.add)}" placeholder="Zusatz, z. B. Tische 1 bis 3" aria-label="Zusatz zu Gruppe ${g.k}"><button class="ib" type="button" data-act="grp-del" data-i="${i}" title="Gruppe entfernen" aria-label="Gruppe ${g.k} entfernen"${L.length <= 2 ? ' disabled' : ''}>${I.x}</button></div>`).join('')}
     <div class="tf-ed-acts"><button class="link" type="button" data-act="grp-add"${L.length >= GRP_KEYS.length ? ' disabled' : ''}>+ Gruppe</button></div></div>
-    <small class="hint">Einzelne Aufgaben ordnen Sie direkt unter der Aufgabe einer Gruppe zu, ganze Bausteine über ⋯ an der Karte. Ohne Zuordnung gilt etwas für alle. Über der Vorschau wählen Sie das Blatt einer Gruppe; in der Präsentation stehen die Aufgaben der Gruppen nebeneinander.</small>`;
+    <small class="hint">Einzelne Aufgaben ordnest du direkt unter der Aufgabe einer Gruppe zu, ganze Bausteine über ⋯ an der Karte. Ohne Zuordnung gilt etwas für alle. Über der Vorschau wählst du das Blatt einer Gruppe; in der Präsentation stehen die Aufgaben der Gruppen nebeneinander.</small>`;
 }
 function grpRemove(i) {
   const m = state.sheet.meta; const L = grpList(m); if (L.length <= 2 || !L[i]) return;
@@ -4335,7 +4335,7 @@ function setArea(a) {
 function areaGo(ar, bid, k) {
   ar = areaNorm(ar); state.areaMore = false;
   if (ar === 'pres' && bid) state.zwOpen = bid;
-  if (isBasis() && ar !== 'blatt') { toast('Das bearbeiten Sie im Modus „Experte“ (Einstellungen ⚙ → App).'); return; }
+  if (isBasis() && ar !== 'blatt') { toast('Das bearbeitest du im Modus „Experte“ (Einstellungen ⚙ → App).'); return; }
   const P = state.sheet;
   if (P.abs && Number.isFinite(k) && k !== (P.abActive || 0)) { abSwitch(k); state.closed = defaultClosed(); state.taskOpen = new Set(); }
   const b = bid ? P.blocks.find(x => x.id === bid) : null;
@@ -4382,8 +4382,8 @@ function settingsHTML() {
       <div class="row">${fText('course', 'Kurs', m.course, '')}${fText('school', 'Schule', m.school, '')}</div>
       <div class="row">${fSelect('klasse', 'Reiter', state.sheet.klasse, KLASSEN.map(k => [k.id, k.label]))}${fSelect('anrede', 'Anrede in Aufgaben', m.anrede, [['sie', 'Sie'], ['du', 'du']])}</div>
       <div class="chks x-wrap x-pro${m.levelsOn ? ' used' : ''}">${fCheck('levelsOn', 'Niveaustufen ★ Basis · ★★ Standard · ★★★ Experte', m.levelsOn)}</div>
-      ${m.levelsOn ? `<div class="chks">${fCheck('lvTip', 'Im Basis-Blatt steht der erste Tipp direkt unter der Aufgabe', m.lvTip !== false)}</div><small class="hint">Bausteine ordnen Sie über ⋯ an der Karte den Stufen zu. Bei jeder Aufgabe gibt es unter „Mehr“ → „Niveaus“ eigene Fassungen für Basis und Experte.</small>` : ''}
-      ${basis ? '' : '<small class="hint">Gruppen, Stundenziel und Stundenlänge stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="stunde">Stunde</button> ein.</small>'}
+      ${m.levelsOn ? `<div class="chks">${fCheck('lvTip', 'Im Basis-Blatt steht der erste Tipp direkt unter der Aufgabe', m.lvTip !== false)}</div><small class="hint">Bausteine ordnest du über ⋯ an der Karte den Stufen zu. Bei jeder Aufgabe gibt es unter „Mehr“ → „Niveaus“ eigene Fassungen für Basis und Experte.</small>` : ''}
+      ${basis ? '' : '<small class="hint">Gruppen, Stundenziel und Stundenlänge stellst du im Bereich <button class="link" type="button" data-act="area-set" data-v="stunde">Stunde</button> ein.</small>'}
     </div></div>`;
   else if (tab === 'blatt') c = `<div class="card set-card" data-bid="meta"><div class="card-b">
       <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
@@ -4391,9 +4391,9 @@ function settingsHTML() {
       <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
       <small class="hint">Gilt für ${state.sheet.abs ? 'alle Arbeitsblätter der Stunde' : 'das Arbeitsblatt'}.</small>
     </div></div>`;
-  else if (tab === 'design') { const sc = seiteCard(); c = sc.replace('<div class="card', '<div class="card set-card').replace(/<div class="card-h"[\s\S]*?<\/div>\s*<div class="card-b">/, '<div class="card-b">').replace(' closed', ''); c = (state.sheet.abs ? `<small class="hint">Design und Papier gelten für ${esc(abLabel(m, state.sheet.abActive || 0))}; die anderen Arbeitsblätter stellen Sie jeweils dort ein.</small>` : '') + c; }
+  else if (tab === 'design') { const sc = seiteCard(); c = sc.replace('<div class="card', '<div class="card set-card').replace(/<div class="card-h"[\s\S]*?<\/div>\s*<div class="card-b">/, '<div class="card-b">').replace(' closed', ''); c = (state.sheet.abs ? `<small class="hint">Design und Papier gelten für ${esc(abLabel(m, state.sheet.abActive || 0))}; die anderen Arbeitsblätter stellst du jeweils dort ein.</small>` : '') + c; }
   else if (tab === 'zeiten') c = `<div class="card set-card"><div class="card-b">
-      <small class="hint">Start und Ende der Unterrichtsstunden je Schule. In der Karte „Stunde“ wählen Sie dann das Zeitfenster; Beginn und Länge werden übernommen, und die Timer der Präsentation richten sich nach der Uhr. Gespeichert wird mit Ihrem Konto.</small>
+      <small class="hint">Start und Ende der Unterrichtsstunden je Schule. In der Karte „Stunde“ wählst du dann das Zeitfenster; Beginn und Länge werden übernommen, und die Timer der Präsentation richten sich nach der Uhr. Gespeichert wird mit deinem Konto.</small>
       ${zeitSchulen().map(sch => { const L = zeitenOf(sch); return `<div class="zt-sch"><b>${esc(sch)}</b>${L.length ? `<div class="zt-list">${L.map((z, i) => { const d = hm(z.e) - hm(z.s); return `<div class="zt-row"><input type="text" data-zt="${esc(sch)}|${i}|l" value="${esc(z.l)}" placeholder="Bezeichnung, z. B. 1./2. Stunde" aria-label="Bezeichnung"><input type="time" data-zt="${esc(sch)}|${i}|s" value="${esc(z.s)}" aria-label="Beginn"><span>bis</span><input type="time" data-zt="${esc(sch)}|${i}|e" value="${esc(z.e)}" aria-label="Ende"><small class="zt-d">${d > 0 ? d + ' Min.' : ''}</small><button class="ib" type="button" data-act="zt-del" data-sch="${esc(sch)}" data-i="${i}" title="Entfernen" aria-label="Entfernen">${I.x}</button></div>`; }).join('')}</div>` : '<small class="hint">Noch keine Zeiten.</small>'}<button class="link" type="button" data-act="zt-add" data-sch="${esc(sch)}">+ Zeitfenster</button></div>`; }).join('')}
     </div></div>`;
   else if (tab === 'pres') c = `<div class="card set-card"><div class="card-b">
@@ -4404,10 +4404,10 @@ function settingsHTML() {
       <div class="f"><span>Größe des Timers auf den Folien</span><div class="seg sm" role="group" aria-label="Größe des Timers">${Object.entries(TM_SIZES).map(([k, v]) => `<button type="button" data-act="tm-size" data-v="${k}" aria-pressed="${tmSize() === k}">${v.label}</button>`).join('')}</div><small>Gilt für alle Stunden, im Browser und in PowerPoint. „klein“ ist so groß wie die übrigen Angaben oben rechts.</small></div>
       <div class="f"><span>Sicherungen</span>
         <label class="chk"><input type="checkbox" data-pref="sichLast"${sichLastOn() ? ' checked' : ''}><span>In der Phasenleiste nur die letzte Sicherung der Stunde zeigen; bei den Sicherungen davor bleibt die vorige Phase hervorgehoben</span></label></div>
-      <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellen Sie im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
+      <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellst du im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
   else c = `<div class="card set-card"><div class="card-b">
-      <div class="f"><span>Startseite von selbst zeigen</span><div class="seg sm" role="group" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<button type="button" data-act="home-pref" data-v="${v}" aria-pressed="${homeMode() === v}">${l}</button>`).join('')}</div><small class="hint">„Nach einer Pause“: beim ersten Öffnen und wenn die App mindestens drei Stunden zu war. Über das Haus-Symbol kommen Sie jederzeit hin.</small></div>
+      <div class="f"><span>Startseite von selbst zeigen</span><div class="seg sm" role="group" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<button type="button" data-act="home-pref" data-v="${v}" aria-pressed="${homeMode() === v}">${l}</button>`).join('')}</div><small class="hint">„Nach einer Pause“: beim ersten Öffnen und wenn die App mindestens drei Stunden zu war. Über das Haus-Symbol kommst du jederzeit hin.</small></div>
       <div class="f"><span>Darstellung</span><div class="seg sm" role="group" aria-label="Darstellung">${[['light', 'Hell'], ['dark', 'Dunkel'], ['auto', 'Wie das Gerät']].map(([v, l]) => `<button type="button" data-act="theme-set" data-v="${v}" aria-pressed="${themePref() === v}">${l}</button>`).join('')}</div></div>
       <div class="f"><span>Ansicht</span><div class="set-chks">
         ${true ? '' : `<button type="button" class="link onecard" data-act="start-pref" aria-pressed="${String(lsGet(LS_START)) !== '0'}"><span class="cb" aria-hidden="true"></span>Beim Öffnen einer Stunde die Übersicht zeigen</button>`}
@@ -4464,11 +4464,11 @@ function bkList() {
     // Treffer im Namen zuerst, dann im Stichwort, dann in der Beschreibung
     const sc = x => { const l = bkNorm(x.label), k = bkNorm(x.kw + ' ' + x.g); return words.reduce((n, w) => n + (l.startsWith(w) ? 0 : l.includes(w) ? 1 : k.includes(w) ? 2 : 3), 0); };
     L = L.map((x, i) => [sc(x), i, x]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(z => z[2]);
-    if (!L.length) return '<div class="bk-none">Kein Baustein gefunden. Versuchen Sie ein anderes Wort, etwa „Tabelle“, „Karten“ oder „Einstieg“.</div>';
+    if (!L.length) return '<div class="bk-none">Kein Baustein gefunden. Versuch es mit einem anderen Wort, etwa „Tabelle“, „Karten“ oder „Einstieg“.</div>';
     const order = [...new Set(L.map(x => x.g))];
     return order.map(g => bkGroup(g, L.filter(x => x.g === g), A)).join('');
   }
-  if (!L.length) return '<div class="bk-none">Kein Baustein gefunden. Versuchen Sie ein anderes Wort, etwa „Tabelle“, „Karten“ oder „Einstieg“.</div>';
+  if (!L.length) return '<div class="bk-none">Kein Baustein gefunden. Versuch es mit einem anderen Wort, etwa „Tabelle“, „Karten“ oder „Einstieg“.</div>';
   // aktueller Bereich zuerst
   const order = [...new Set([...L.filter(x => x.ar === A).map(x => x.g), ...L.map(x => x.g)])];
   return order.map(g => bkGroup(g, L.filter(x => x.g === g), A)).join('');
@@ -4544,7 +4544,7 @@ function stundeCard() {
 // Bereich „Stunde“: Ablauf aller Bausteine in Reihenfolge; Unterrichtsschritte werden hier bearbeitet
 function flowHTML(num) {
   const P = state.sheet; const A = stABs(); const multi = A.length > 1; const act = P.abActive || 0;
-  let h = `<div class="flow-h"><b>Ablauf der Stunde</b><small>Unterrichtsschritte bearbeiten Sie hier, mit ↑ ↓ setzen Sie sie an die richtige Stelle. Alles andere öffnet sich in seinem Bereich.</small><button class="btn sm" type="button" data-act="sich-fill" title="Nach jeder Erarbeitung, Vertiefung und jedem Transfer ohne folgende Sicherung einen Schritt „Ergebnisse vergleichen“ einfügen">Fehlende Sicherungen ergänzen</button></div>`;
+  let h = `<div class="flow-h"><b>Ablauf der Stunde</b><small>Unterrichtsschritte bearbeitest du hier, mit ↑ ↓ setzt du sie an die richtige Stelle. Alles andere öffnet sich in seinem Bereich.</small><button class="btn sm" type="button" data-act="sich-fill" title="Nach jeder Erarbeitung, Vertiefung und jedem Transfer ohne folgende Sicherung einen Schritt „Ergebnisse vergleichen“ einfügen">Fehlende Sicherungen ergänzen</button></div>`;
   A.forEach(x => {
     if (multi) h += `<div class="flow-ab${x.k === act ? ' on' : ''}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}</span>${x.k === act ? '' : `<button class="link" type="button" data-act="abx-go" data-abk="${x.k}">Schritte hier bearbeiten</button>`}</div>`;
     let numX = num; if (x.k !== act) { try { numX = numbering({ ...P, meta: x.meta, blocks: x.blocks }); } catch { numX = {}; } }
@@ -4642,7 +4642,7 @@ function presEditorHTML() {
   if (!state.stInit) { state.stInit = true; state.closed.add('stunde'); }
   return `<div class="fm-top"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><button class="btn" type="button" data-act="pres-pptx">PowerPoint</button><button class="btn" type="button" data-act="settings" data-tab="pres" title="Phasenleiste, Timergröße, Uhrzeit, Sicherungen">Folien-Einstellungen</button></div>
     ${(state.sheet.abs ? abBarHTML() : '') + stundeCard()}
-    <div class="fm"><div class="fm-h"><b>Folien</b><small>In der Reihenfolge der Stunde. Mit „+ Zwischenfolie“ fügen Sie Folien ein, die nur in der Präsentation stehen. Phase und Zeit tragen Sie direkt ein.</small>${planNote}</div>${list}
+    <div class="fm"><div class="fm-h"><b>Folien</b><small>In der Reihenfolge der Stunde. Mit „+ Zwischenfolie“ fügst du Folien ein, die nur in der Präsentation stehen. Phase und Zeit trägst du direkt ein.</small>${planNote}</div>${list}
       ${any ? '' : '<small class="hint">Noch keine Aufgaben auf dem Arbeitsblatt.</small>'}
       <button class="link fm-fine-b" type="button" data-act="sub-toggle" data-key="fmfine" aria-expanded="${fine}">${fine ? '▾' : '▸'} Einzelne Folien an- und abwählen</button>${fine ? `<div class="fm-fine">${presPickHTML()}</div>` : ''}
       <button class="link" type="button" data-act="sich-fill">Fehlende Sicherungen ergänzen</button></div>`;
@@ -4833,9 +4833,9 @@ function tfLabel(it) {
 }
 function tfSuggest(b) {
   tfNorm(b); const tpl = tfTpl(b); const sh = state.sheet, v = sheetView();
-  if (tpl === 'figuren') { toast('Für die Figurenkonstellation gibt es keinen automatischen Vorschlag. Tragen Sie die Figuren und Beziehungen ein.'); return -1; }
+  if (tpl === 'figuren') { toast('Für die Figurenkonstellation gibt es keinen automatischen Vorschlag. Trag die Figuren und Beziehungen ein.'); return -1; }
   const gs = []; sh.blocks.forEach(x => { if (x.type !== 'tasks' || !blockVisible(x, v)) return; itemsFor(x, v).forEach(it => { const eh = ehLines(it); if (eh.length) gs.push({ h: tfLabel(it), items: eh.map(z => tfStr(z).trim()).filter(Boolean) }); }); });
-  if (!gs.length) { toast('Es gibt noch keine Erwartungen. Tragen Sie unter den Aufgaben bei „Erwartung“ die erwarteten Ergebnisse ein, dann entsteht daraus der Vorschlag.'); return -1; }
+  if (!gs.length) { toast('Es gibt noch keine Erwartungen. Trag unter den Aufgaben bei „Erwartung“ die erwarteten Ergebnisse ein, dann entsteht daraus der Vorschlag.'); return -1; }
   if (tpl === 'gegen') { b.cols = ['', '']; b.rows = []; } else if (tpl === 'drei') b.rows = []; else if (tpl === 'cluster') b.branches = []; else if (tpl === 'ablauf') b.steps = []; else if (tpl === 'skala') b.scale = [];
   tfFill(b, tpl, gs);
   if (!tfStr(b.title).trim()) b.title = tfStr(sh.meta.title).trim();
@@ -4858,7 +4858,7 @@ function layoutTafel() {
 /* Beamer: Tafelbild bildschirmfüllend, Schritt für Schritt aufdecken */
 function tfBeamer(bid) {
   const v = sheetView(); const list = stBlocks().filter(x => x.type === 'tafel' && blockVisible(x, v));
-  if (!list.length) { toast('Es gibt noch kein Tafelbild. Fügen Sie unten bei den Bausteinen „Tafelbild“ hinzu.'); return; }
+  if (!list.length) { toast('Es gibt noch kein Tafelbild. Füg unten bei den Bausteinen „Tafelbild“ hinzu.'); return; }
   const S = { k: Math.max(0, list.findIndex(x => x.id === bid)), cur: 0, max: 0, gaps: false, board: false };
   try { S.board = localStorage.getItem('abw.tfboard') === '1'; } catch {}
   const ov = el(`<div class="tf-beam${S.board ? ' board' : ''}" role="dialog" aria-label="Tafelbild am Beamer" tabindex="-1"><div class="tf-bm-stage"></div>
@@ -4935,7 +4935,7 @@ function tafelEditor(b) {
     <div class="f"><span>Auf dem Arbeitsblatt</span><div class="seg sm" role="group" aria-label="Auf dem Arbeitsblatt">${[['luecke', 'Lückentafelbild'], ['voll', 'Vollständig'], ['aus', 'Nur Tafel und Beamer']].map(([v, l]) => `<button type="button" data-act="tf-on" data-v="${v}" aria-pressed="${on === v}">${l}</button>`).join('')}</div></div>
     ${on === 'luecke' ? `<div class="f"><span>Lücken</span><div class="seg sm" role="group" aria-label="Lücken">${[['eintrag', 'Ganze Einträge'], ['wort', 'Nur markierte Wörter']].map(([v, l]) => `<button type="button" data-act="tf-gm" data-v="${v}" aria-pressed="${gm === v}">${l}</button>`).join('')}</div></div>
       ${gm === 'eintrag' ? `<div class="chks">${fCheck('keepFirst', 'Erster Eintrag bleibt als Beispiel stehen', b.keepFirst)}</div>` : ''}
-      <small class="hint">${gm === 'wort' ? 'Setzen Sie die Wörter, die zur Lücke werden, in eckige Klammern, etwa: Der Politiker [duzt] seine Follower.' : 'Überschriften und Begriffe bleiben stehen, die Einträge werden zu Schreibzeilen.'} In der Lehrerfassung stehen die Lösungen farbig.</small>` : ''}`;
+      <small class="hint">${gm === 'wort' ? 'Setz die Wörter, die zur Lücke werden, in eckige Klammern, etwa: Der Politiker [duzt] seine Follower.' : 'Überschriften und Begriffe bleiben stehen, die Einträge werden zu Schreibzeilen.'} In der Lehrerfassung stehen die Lösungen farbig.</small>` : ''}`;
 }
 
 /* ================= Präsentation: Folien aus dem Arbeitsblatt (im Browser und als PowerPoint) =================
@@ -5100,7 +5100,7 @@ function presPick() {
 function presPickHTML() {
   const L = presPick(); const off = new Set(state.sheet.meta.presOff || []); const isOn = x => (x.opt ? presOn(x.opt) && !off.has(x.key) : !off.has(x.key)); const on = L.filter(isOn).length;
   return `<div class="f pr-pick-f"><span>Folien <small id="pr-pick-n">${on} von ${L.length} ausgewählt</small></span>
-    <small class="hint">Titelfolie, Aufgaben und Unterrichtsschritte stehen von selbst auf den Folien. Material, Tafelbild, Bilder, Zitate und andere Bausteine kommen nur auf eine Folie, wenn Sie sie hier oder mit „Auf die Folie“ an der Karte auswählen.</small>
+    <small class="hint">Titelfolie, Aufgaben und Unterrichtsschritte stehen von selbst auf den Folien. Material, Tafelbild, Bilder, Zitate und andere Bausteine kommen nur auf eine Folie, wenn du sie hier oder mit „Auf die Folie“ an der Karte auswählen.</small>
     <div class="pr-pick">${L.map(x => `<label class="chk${x.task ? ' pk-sub' : ''}${x.head ? ' pk-head' : ''}${x.opt ? ' pk-opt' : ''}"><input type="checkbox" data-prk="${esc(x.key)}"${x.opt ? ` data-prb="${esc(x.opt.id)}"` : ''}${isOn(x) ? ' checked' : ''}><span>${esc(x.label)}</span></label>`).join('')}</div>
     <div class="pr-pick-a"><button class="link" type="button" data-act="pr-pick" data-v="all">Alle</button><button class="link" type="button" data-act="pr-pick" data-v="tasks">Nur Aufgaben</button><button class="link" type="button" data-act="pr-pick" data-v="none">Keine</button></div>
     <small class="hint pr-ph-note">Phasenleiste: ${state.sheet.meta.presPhase === false ? 'aus' : 'an, Schrift ' + (PH_SIZES[state.sheet.meta.presPhSize] || PH_SIZES.m).label} · ändern unter <button class="link" type="button" data-act="settings" data-tab="pres">Einstellungen</button></small>
@@ -5278,7 +5278,7 @@ function fpRotSrc(o) {
 }
 function fpPages(b, hd) {
   const P = b.photos.filter(o => o && o.src); const seq = []; P.forEach(o => { for (let i = 0; i < Math.max(1, Math.min(99, Math.round(+o.n || 1))); i++) seq.push(o); });
-  if (!seq.length) return [a3Page(b, hd() + '<div class="a3-empty">Fügen Sie links Fotos hinzu und legen Sie fest, wie oft jedes gedruckt wird.</div>')];
+  if (!seq.length) return [a3Page(b, hd() + '<div class="a3-empty">Füg links Fotos hinzu und leg fest, wie oft jedes gedruckt wird.</div>')];
   const N = +b.fpN || 4, g = +b.fpGap || 0, cut = b.fpCut !== false, head = !!tfStr(b.title).trim();
   const W = 194, H = 277 - (head ? 11.5 : 0), pad = cut ? 1.5 : 0;
   const pages = []; for (let i = 0; i < seq.length; i += N) pages.push(seq.slice(i, i + N));
@@ -5312,7 +5312,7 @@ function a4Pages(b) {
     const [c, r] = a4Grid(b); const per = c * r; const cw = GW / c, ch = GH / r;
     if (tpl === 'karten') {
       const L = b.cards.filter(x => tfStr(x.t).trim() || tfStr(x.h).trim()); const all = tfStr(b.cardHead).trim();
-      if (!L.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links Texte für die Karten ein.</div>')];
+      if (!L.length) return [a3Page(b, hd() + '<div class="a3-empty">Trag links Texte für die Karten ein.</div>')];
       const pages = []; for (let i = 0; i < L.length; i += per) pages.push(L.slice(i, i + per));
       // eine Schriftgröße pro Seite, damit die Karten einheitlich wirken
       const fsOf = x => a4Fs(x.t, cw - 10, ch - 10 - (all || tfStr(x.h).trim() || b.cnum ? 9 : 0));
@@ -5320,7 +5320,7 @@ function a4Pages(b) {
         return `<div class="a4c">${h.length || b.cnum ? `<div class="a4c-h">${b.cnum ? `<span class="a4c-no">${no}</span>` : ''}${h.map(inlineHTML).join(' · ')}</div>` : ''}<div class="a4c-t" style="font-size:${fs.toFixed(1)}pt">${parasHTML(x.t || '')}</div></div>`; }), c, r), pages.length > 1 ? `${pi + 1}/${pages.length}` : ''); });
     }
     const L = b.pairs.filter(x => tfStr(x.f).trim() || tfStr(x.r).trim());
-    if (!L.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links Begriffe und Erklärungen ein oder übernehmen Sie die Worterklärungen.</div>')];
+    if (!L.length) return [a3Page(b, hd() + '<div class="a3-empty">Trag links Begriffe und Erklärungen ein oder übernimm die Worterklärungen.</div>')];
     const out = [];
     for (let i = 0; i < L.length; i += per) {
       const P = L.slice(i, i + per); const part = L.length > per ? ` · ${i / per + 1}/${Math.ceil(L.length / per)}` : '';
@@ -5334,7 +5334,7 @@ function a4Pages(b) {
   if (tpl === 'fotos') return fpPages(b, hd);
   if (tpl === 'streifen') {
     const { lines, order, letter, sol } = a4Strips(b);
-    if (!lines.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links die Sätze oder Textteile ein, je einen pro Zeile, in der richtigen Reihenfolge.</div>')];
+    if (!lines.length) return [a3Page(b, hd() + '<div class="a3-empty">Trag links die Sätze oder Textteile ein, je einen pro Zeile, in der richtigen Reihenfolge.</div>')];
     const maxLen = Math.max(...lines.map(l => plainText(l).length)); const n = lines.length;
     const stripH = Math.max(12, Math.min(34, GH / Math.min(n, 14))); const fs = Math.max(10, Math.min(17, Math.min(stripH * 0.42 / 0.3528 / 1.25, Math.sqrt((GW - 22) * (stripH - 4) * 0.62 / (Math.max(20, maxLen) * 0.0809)))));
     const per = Math.max(1, Math.floor(GH / stripH)); const out = [];
@@ -5346,7 +5346,7 @@ function a4Pages(b) {
   }
   // Tandembogen: A fragt bei ungeraden, B bei geraden Nummern; die Lösung steht jeweils beim anderen
   const Q = b.tq.filter(x => tfStr(x.q).trim());
-  if (!Q.length) return [a3Page(b, hd() + '<div class="a3-empty">Tragen Sie links Fragen und Lösungen ein.</div>')];
+  if (!Q.length) return [a3Page(b, hd() + '<div class="a3-empty">Trag links Fragen und Lösungen ein.</div>')];
   const rule = du ? 'Lies deine Frage vor. Dein Partner antwortet, du prüfst mit der Lösung und hilfst, wenn nötig. Dann ist dein Partner dran.' : 'Lesen Sie Ihre Frage vor. Ihr Partner antwortet, Sie prüfen mit der Lösung und helfen, wenn nötig. Dann ist Ihr Partner dran.';
   const side = who => Q.map((x, i) => { const mine = (i % 2 === 0) === (who === 'A'); return `<div class="a4t-r${mine ? ' q' : ' a'}"><span class="a4t-n">${i + 1}</span><div>${mine ? `<small>Frage</small>${inlineHTML(x.q)}` : `<small>Lösung zu Frage ${i + 1}</small>${inlineHTML(x.a || '')}`}</div></div>`; }).join('');
   const fsT = Math.max(9.5, Math.min(14, 14 - Math.max(0, Q.length - 6) * 0.5));
@@ -5622,7 +5622,7 @@ function vpTableHTML() {
 function vpHTML() {
   const m = state.sheet.meta, vp = vpOf();
   return `<h2 id="dlg-t">Verlaufsplan</h2>
-    <p class="rlp-stat">Entsteht aus Phase, Zeit, Sozialform, Arbeitsauftrag und Erwartung der Aufgaben. Phase und Zeit tragen Sie neben den Sozialformen jeder Aufgabe ein; in Word lässt sich alles weiter bearbeiten.</p>
+    <p class="rlp-stat">Entsteht aus Phase, Zeit, Sozialform, Arbeitsauftrag und Erwartung der Aufgaben. Phase und Zeit trägst du neben den Sozialformen jeder Aufgabe ein; in Word lässt sich alles weiter bearbeiten.</p>
     <div class="row vp-meta"><label class="f"><span>Datum</span><input type="text" data-vp="datum" value="${esc(vp.datum || '')}" placeholder="z. B. 12.11.2026"></label><label class="f narrow"><span>Beginn</span><input type="text" data-vp="start" value="${esc(vp.start || '')}" placeholder="08:00"></label><label class="f narrow"><span>Länge</span><select data-vp="lesson">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === (Number(m.lesson) || 45) ? ' selected' : ''}>${n} Min.</option>`).join('')}</select></label></div>
     <label class="f"><span>Stundenziel</span><textarea data-vp="ziel" rows="2" placeholder="Die Schülerinnen und Schüler …">${esc(vp.ziel || '')}</textarea></label>
     <label class="f"><span>Stundenfrage</span><input type="text" data-vp="frage" value="${esc(tfStr(m.frage))}" placeholder="optional, z. B. Wie erzeugen Politikerinnen und Politiker in sozialen Medien Nähe?"></label>
@@ -6542,7 +6542,7 @@ function rlpPanel(b, i, it) {
   const own = rlpOwnList(fach); if (own.length) GR.push({ head: 'Eigene Standards', rows: own.map(t => ['~' + t, rlpInfo('~' + t), true]) });
   direct = !!q && GR.some(g => g.rows.some(([, x]) => rlpHit(q, rs(x))));
   let list = GR.map(grp).join('');
-  list += own.length ? '' : (cat && ph !== 'own' ? '' : '<div class="rlp-none">Noch keine eigenen Standards. Tragen Sie unten welche ein, zum Beispiel aus Ihrem Fachlehrplan. Mehrere auf einmal: einen pro Zeile.</div>');
+  list += own.length ? '' : (cat && ph !== 'own' ? '' : '<div class="rlp-none">Noch keine eigenen Standards. Trag unten welche ein, zum Beispiel aus deinem Fachlehrplan. Mehrere auf einmal: einen pro Zeile.</div>');
   const sugg = rlpSuggest(it, ph);
   return `<div class="f tx-f rlp-f"><span>Standards${cat ? ' aus dem Rahmenlehrplan' : ''}</span>
     ${cur.length ? `<div class="rlp-chosen">${cur.map(chip).join('')}</div>` : ''}
@@ -6913,7 +6913,7 @@ function adderHTML(A = 'blatt') {
   return `<div class="adder"><span class="lbl">Baustein hinzufügen</span>${['Material', 'Aufgaben und Übungen', 'Gestaltung'].map((g, gi) => { const T = L.filter(t => PAL_GRP(t) === gi); return T.length ? `<div class="adder-g"><small>${g}</small><div class="adder-grid">${T.map(tile).join('')}</div></div>` : ''; }).join('')}
     ${(() => { const open = state.fmtOpen.has('snips'); const n = allSnips().length; return `<button type="button" class="link snips-h" data-act="sub-toggle" data-key="snips" aria-expanded="${open}">${open ? '▾' : '▸'} Aus der Sammlung · ${n}</button>`; })()}
     <div class="snips"${state.fmtOpen.has('snips') ? '' : ' hidden'}>${allSnips().map(s => `<div class="snip"><button type="button" class="snip-add" data-act="snip-add" data-id="${esc(s.id)}"><b>${esc(s.name)}</b><span>${s.builtin ? 'vorbereitet' : esc((TYPES[s.type] || {}).label || '')}</span></button>${s.builtin ? '' : `<button class="ib" type="button" data-act="snip-del" data-id="${esc(s.id)}" title="Aus der Sammlung entfernen">${I.x}</button>`}</div>`).join('')}
-      <small class="hint">Eigene Bausteine speichern Sie über ⋯ an der jeweiligen Karte.</small></div></div>`;
+      <small class="hint">Eigene Bausteine speicherst du über ⋯ an der jeweiligen Karte.</small></div></div>`;
 }
 
 /* ================= Menü an der Karte (⋯) ================= */
@@ -7864,7 +7864,7 @@ function exampleSheet() {
         text: 'Was ich zu berichten beabsichtige, ist mir vor reichlich einem halben Jahrhundert im Hause meiner Urgroßmutter, der alten Frau Senator Feddersen, kundgeworden, während ich, an ihrem Lehnstuhl sitzend, mich mit dem Lesen eines in blaue Pappe eingebundenen Zeitschriftenheftes beschäftigte; ich vermag mich nicht mehr zu entsinnen, ob von den »Leipziger« oder von »Pappes Hamburger Lesefrüchten«. Noch fühl ich es gleich einem Schauer, wie dabei die linde Hand der über Achtzigjährigen mitunter liebkosend über das Haupthaar ihres Urenkels hinglitt. Sie selbst und jene Zeit sind längst begraben; vergebens habe ich seitdem jenen Blättern nachgeforscht, und ich kann daher um so weniger weder die Wahrheit der Tatsachen verbürgen, als, wenn jemand sie bestreiten wollte, dafür aufstehen; nur so viel kann ich versichern, daß ich sie seit jener Zeit, obgleich sie durch keinen äußeren Anlaß in mir aufs neue belebt wurden, niemals aus dem Gedächtnis verloren habe.',
         glossary: [{ term: 'kundgeworden', n: 0, text: 'bekannt geworden' }, { term: 'linde', n: 0, text: 'sanft, zart' }, { term: 'verbürgen', n: 0, text: 'für die Richtigkeit einstehen' }],
         source: 'Theodor Storm: Der Schimmelreiter. Novelle (1888). Textgrundlage: Projekt Gutenberg-DE.',
-        memo: 'Beispieltext: Wortlaut vor dem Einsatz mit Ihrer Textausgabe abgleichen.' }),
+        memo: 'Beispieltext: Wortlaut vor dem Einsatz mit deiner Textausgabe abgleichen.' }),
       b('tasks', { title: 'Arbeitsaufträge', items: [
         { text: 'Fassen Sie zusammen, was der Erzähler über die Herkunft seiner Geschichte mitteilt.', tag: '' },
         { text: 'Analysieren Sie den Auszug mithilfe der Merkmale der Sprache der Distanz und halten Sie Ihre Ergebnisse in der Tabelle fest. Belegen Sie mit Zeilenangaben.', tag: '' }] }),
@@ -8392,7 +8392,7 @@ function renderPreview() {
   let out;
   try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : state.out === 'a3' || state.out === 'a4' ? layoutA3() : state.out === 'exit' ? layoutExit() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
   const host = $('#pages'); host.innerHTML = '';
-  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'exit' ? 'Noch kein Exit-Ticket. Legen Sie links unter „Exit-Tickets“ eines an und tragen Sie die Fragen ein.' : state.out === 'a3' ? 'Noch keine A3-Vorlage. Wählen Sie links unter „A3-Vorlagen“ eine Vorlage, etwa Placemat oder Lernplakat.' : state.out === 'a4' ? 'Noch keine A4-Vorlage. Wählen Sie links unter „A4-Vorlagen“ eine Vorlage, etwa Karten zum Ausschneiden.' : state.out === 'tafel' ? 'Noch kein Tafelbild. Fügen Sie links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffnen Sie unter einer Aufgabe „Tipps“ und tragen Sie bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Legen Sie links mit „+ Begriff“ die erste Karte an.'}</div>`));
+  if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'exit' ? 'Noch kein Exit-Ticket. Leg links unter „Exit-Tickets“ eines an und trag die Fragen ein.' : state.out === 'a3' ? 'Noch keine A3-Vorlage. Wähl links unter „A3-Vorlagen“ eine Vorlage, etwa Placemat oder Lernplakat.' : state.out === 'a4' ? 'Noch keine A4-Vorlage. Wähl links unter „A4-Vorlagen“ eine Vorlage, etwa Karten zum Ausschneiden.' : state.out === 'tafel' ? 'Noch kein Tafelbild. Füg links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffne unter einer Aufgabe „Tipps“ und trag bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Leg links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
     pg.classList.add('pout');
     const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(pg);
@@ -9100,7 +9100,7 @@ function metaCard() {
       ${isK ? `<div class="row">${fText('exam.label', 'Bezeichnung', ex.label, 'Klausur')}${fText('exam.halbjahr', 'Kurshalbjahr', ex.halbjahr, 'z. B. 1. Kurshalbjahr')}</div>
         <div class="row">${fText('exam.datum', 'Datum', ex.datum, 'leer = zum Ausfüllen')}${fText('exam.zeit', 'Bearbeitungszeit', ex.zeit, 'z. B. 135 Minuten')}</div>
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
-        <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung tragen Sie bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
+        <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung trägst du bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum x-pro"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
       <button type="button" class="set-link" data-act="settings" data-tab="kurs"><i>${areaIc('einst')}</i><span><b>Einstellungen</b><small>${esc([isK ? 'Klausur' : '', m.course, m.anrede === 'du' ? 'du' : 'Sie', DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[m.paper || 'a4']].filter(Boolean).join(' · '))}</small></span><em>›</em></button>
     </div></div>`;
@@ -9132,7 +9132,7 @@ function renderEditor(focusSel) {
   else {
     enforceOne();
     const num = numbering(state.sheet); const blocks = state.sheet.blocks;
-    const intro = state.out === 'exit' ? '<div class="memo-flag">Exit-Tickets entstehen aus Unterrichtsschritten mit „Exit-Ticket zum Ausdrucken“. Jede Seite enthält dasselbe Ticket mehrmals zum Ausschneiden.</div>' : state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffnen Sie dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'a3' ? '<div class="memo-flag">A3-Vorlagen und Exit-Tickets gehören zur Stunde, nicht aufs Arbeitsblatt. A3 sehen Sie rechts in A3; „2 × A4 zum Kleben“ verteilt jede Seite auf zwei A4-Blätter mit Schnittlinie.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Tafelbilder der Stunde. Rechts stehen sie auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt sie Schritt für Schritt auf. Die Tafelkarten wählen Sie rechts oben.</div>' : '';
+    const intro = state.out === 'exit' ? '<div class="memo-flag">Exit-Tickets entstehen aus Unterrichtsschritten mit „Exit-Ticket zum Ausdrucken“. Jede Seite enthält dasselbe Ticket mehrmals zum Ausschneiden.</div>' : state.out === 'tipps' ? '<div class="memo-flag">Tippkarten entstehen aus den gestuften Hilfen. Öffne dazu unter einer Aufgabe „Tipps“.</div>' : state.out === 'a3' ? '<div class="memo-flag">A3-Vorlagen und Exit-Tickets gehören zur Stunde, nicht aufs Arbeitsblatt. A3 siehst du rechts in A3; „2 × A4 zum Kleben“ verteilt jede Seite auf zwei A4-Blätter mit Schnittlinie.</div>' : state.out === 'tafel' ? '<div class="memo-flag">Tafelbilder der Stunde. Rechts stehen sie auf A4 quer, vollständig oder als Lückenfassung; „Am Beamer zeigen“ deckt sie Schritt für Schritt auf. Die Tafelkarten wählst du rechts oben.</div>' : '';
     const fold = `<div class="fold-bar"><div class="hist-b"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.8 6.5H10a3.5 3.5 0 0 1 0 7H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 3.5 3 3-3 3"/><path d="M13.2 6.5H6a3.5 3.5 0 0 0 0 7h3"/></svg></button></div><button type="button" class="link" data-act="fold-all">Alle zuklappen</button><span aria-hidden="true">·</span><button type="button" class="link" data-act="unfold-all">Alle aufklappen</button></div>`;
     let body;
     if (A === 'start') body = startHTML();
@@ -9400,10 +9400,10 @@ function onClick(e) {
       ls.forEach(t => { if (!L.includes(t)) L.push(t); }); savePrefs();
       if (ls.length === 1 && it) { const id = '~' + ls[0]; const cur = rlpOf(it); if (!cur.includes(id)) it.rlp = [...cur, id]; }
       state.rlpQ = ''; rlpKeep(bid, i, () => changed(true), true);
-      toast(ls.length === 1 ? 'Eigener Standard angelegt und zugeordnet' : `${ls.length} eigene Standards in Ihre Liste übernommen`); return; }
+      toast(ls.length === 1 ? 'Eigener Standard angelegt und zugeordnet' : `${ls.length} eigene Standards in deine Liste übernommen`); return; }
     case 'rlp-own-del': { const i = +a.dataset.i; const fach = fachKey(state.sheet.klasse); const L = rlpOwnList(fach); const t = a.dataset.v; const j = L.indexOf(t); if (j < 0) return;
       L.splice(j, 1); savePrefs(); rlpKeep(bid, i, () => renderEditor());
-      toast('Aus Ihrer Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
+      toast('Aus deiner Liste entfernt. Zugeordnete Aufgaben behalten den Standard.', 'Rückgängig', () => { L.splice(j, 0, t); savePrefs(); renderEditor(); }); return; }
     case 'rlp-sheet': openRlpDlg('sheet'); return;
     case 'pc-size': if (b) { b.pcW = +a.dataset.w; b.pcH = +a.dataset.h; changed(true); } return;
     case 'pc-fit': if (b) { b.pcFit = a.dataset.v; changed(true); } return;
@@ -9493,7 +9493,7 @@ function onClick(e) {
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
     case 'phr-del': { const g = b.groups || []; g.splice(+a.dataset.i, 1); if (!g.length) g.push({ head: '', text: '' }); changed(true); return; }
     case 'phr-up': { const g = b.groups || [], i = +a.dataset.i; if (i > 0) [g[i - 1], g[i]] = [g[i], g[i - 1]]; changed(true); return; }
-    case 'onecard': lsSet(LS_ONECARD, oneCard() ? 0 : 1); state.allOpen = false; if (oneCard()) enforceOne(); saveClosed(); renderEditor(); toast(oneCard() ? 'Beim Öffnen einer Karte schließen sich die anderen.' : 'Karten bleiben offen, bis Sie sie schließen.'); return;
+    case 'onecard': lsSet(LS_ONECARD, oneCard() ? 0 : 1); state.allOpen = false; if (oneCard()) enforceOne(); saveClosed(); renderEditor(); toast(oneCard() ? 'Beim Öffnen einer Karte schließen sich die anderen.' : 'Karten bleiben offen, bis du sie schließt.'); return;
     case 'undo': histUndo(); return;
     case 'redo': histRedo(); return;
     case 'fold-all': state.allOpen = false; state.closed = new Set(['meta', 'seite', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
@@ -9785,7 +9785,7 @@ function rlpRender0() {
       <span class="rlp-acts"><a class="btn sm" href="${esc(rlpv.url || d[2])}" target="_blank" rel="noopener">In neuem Tab ↗</a></span></div>
     ${R ? `<div class="rlpv-s"><input id="rlpv-q" class="inp" type="search" placeholder="Im Rahmenlehrplan suchen" aria-label="Im Rahmenlehrplan suchen" autocomplete="off"><span class="rlp-hn" id="rlp-hn"></span><button type="button" class="ib" data-rlp="hp" title="Voriger Treffer" aria-label="Voriger Treffer">‹</button><button type="button" class="ib" data-rlp="hx" title="Nächster Treffer" aria-label="Nächster Treffer">›</button><span class="rlp-zm"><button type="button" class="ib" data-rlp="zo" title="Kleiner" aria-label="Kleiner">−</button><button type="button" class="ib" data-rlp="zi" title="Größer" aria-label="Größer">+</button></span></div>
       <div class="rlpv-b rlp-view" id="rlp-view"><div class="rlp-load">PDF wird geladen …</div></div>`
-      : RLP_MOBILE() ? `<div class="rlpv-b rlp-nomob"><div><b>Auf diesem Gerät kann der Browser die PDF nicht im Fenster zeigen.</b><p>Öffnen Sie sie mit „In neuem Tab“ oder laden Sie sie einmal herunter und speichern Sie sie hier mit „PDF hier speichern“. Dann zeigt das Fenster sie mit Suche, auch offline.</p><a class="btn" href="${esc(d[2])}" target="_blank" rel="noopener">PDF öffnen ↗</a></div></div>`
+      : RLP_MOBILE() ? `<div class="rlpv-b rlp-nomob"><div><b>Auf diesem Gerät kann der Browser die PDF nicht im Fenster zeigen.</b><p>Öffne sie mit „In neuem Tab“ oder lade sie einmal herunter und speichere sie hier mit „PDF hier speichern“. Dann zeigt das Fenster sie mit Suche, auch offline.</p><a class="btn" href="${esc(d[2])}" target="_blank" rel="noopener">PDF öffnen ↗</a></div></div>`
       : `<div class="rlpv-b"><iframe class="rlp-pdf" src="${esc(src)}" title="${esc(d[1])}"></iframe></div>`}
     <div class="rlpv-f">${R ? `<span>Gespeicherte Fassung vom ${new Date(R.at).toLocaleDateString('de-DE')} (${esc(R.name)}) · geht auch offline</span><label class="link">ersetzen<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label><button type="button" class="link" data-rlp="del">entfernen</button>`
       : `<span>Amtliche Fassung von berlin.de. Suchen mit Strg+F im Dokument. Leer? Dann „In neuem Tab“ oder die PDF einmal hier ablegen:</span><label class="link">PDF hier speichern (auch offline)<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label>`}
@@ -9864,11 +9864,11 @@ function newsMaybe() {
       <g class="nw-lens"><circle cx="224" cy="96" r="24" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-width="5"/><path d="M241 113l20 20" stroke="#fff" stroke-width="8" stroke-linecap="round"/></g>
     </svg><span class="nw-badge">Neu</span></div>
     <div class="nw-in"><h2 id="nw-t">Der Rahmenlehrplan auf Knopfdruck</h2>
-      <p class="nw-lead">Oben in der Leiste gibt es jetzt <b class="nw-k">RLP</b>. Ein Klick öffnet den Berliner Rahmenlehrplan für das Fach der Klasse, in der Sie gerade sind.</p>
+      <p class="nw-lead">Oben in der Leiste gibt es jetzt <b class="nw-k">RLP</b>. Ein Klick öffnet den Berliner Rahmenlehrplan für das Fach der Klasse, in der du gerade bist.</p>
       <ul class="nw-list">
-        <li><i>1</i><span><b>Passend zur Klasse.</b> Deutsch, Geschichte, Politik, Biologie, Englisch, Spanisch. Oben wechseln Sie zwischen Klasse 1–10 und Oberstufe.</span></li>
+        <li><i>1</i><span><b>Passend zur Klasse.</b> Deutsch, Geschichte, Politik, Biologie, Englisch, Spanisch. Oben wechselst du zwischen Klasse 1–10 und Oberstufe.</span></li>
         <li><i>2</i><span><b>Einmal speichern, überall lesen.</b> Amtliche PDF herunterladen und ins Fenster ziehen: Dann öffnet sie sich hier sofort, auch auf Handy und Tablet und ohne Internet.</span></li>
-        <li><i>3</i><span><b>Suchen statt blättern.</b> Begriff eintippen, Fundstellen leuchten gelb, mit ‹ › springen Sie von Treffer zu Treffer. Mit − + zoomen.</span></li>
+        <li><i>3</i><span><b>Suchen statt blättern.</b> Begriff eintippen, Fundstellen leuchten gelb, mit ‹ › springst du von Treffer zu Treffer. Mit − + zoomen.</span></li>
       </ul>
       <div class="nw-acts"><button type="button" class="btn primary" data-nw="go">Jetzt ausprobieren</button><button type="button" class="btn" data-nw="x">Später</button></div></div></div>`;
   document.body.appendChild(box);
@@ -9951,7 +9951,7 @@ function homeRenderNow() {
       <span class="hm-rec-m"><i></i>${esc(k.label)}${d.abs > 1 ? ` · ${d.abs} Arbeitsblätter` : ''}</span><time>${esc(relTime(d.updatedAt))}</time></button></li>`; }).join('')}</ol>`
     : `<div class="hm-empty"><p>Noch keine gespeicherten Stunden.</p><button type="button" class="btn primary" data-hm="new" data-k="${esc(state.klasse)}">${hmI('plus')}Erste Stunde anlegen</button></div>`;
   let shareH;
-  if (!canShare()) shareH = `<div class="hm-empty"><p>Geteilte Stunden von Kolleginnen und Kollegen sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? `<button type="button" class="btn" data-hm="login">Anmelden</button>` : ''}</div>`;
+  if (!canShare()) shareH = `<div class="hm-empty"><p>Geteilte Stunden von Kolleginnen und Kollegen siehst du, wenn du angemeldet bist.</p>${store.sb ? `<button type="button" class="btn" data-hm="login">Anmelden</button>` : ''}</div>`;
   else if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; homeRender(); }), 0); } shareH = '<div class="hm-empty"><p>Wird geladen …</p></div>'; }
   else {
     const L = sharedVis().filter(x => !x.mine).sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt)).slice(0, 6);
@@ -9960,7 +9960,7 @@ function homeRenderNow() {
         ${shareTags(x, 4)}<div class="hm-sh-m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', relTime(+new Date(x.updatedAt))].filter(Boolean).join(' · '))}</div>
         ${x.text ? `<p>${esc(x.text.length > 140 ? x.text.slice(0, 138) + ' …' : x.text)}</p>` : ''}
         <div class="hm-sh-a">${hmS.busy === x.id ? '<small>Wird übernommen …</small>' : `<button type="button" class="link" data-hm="take" data-sid="${esc(x.id)}">${hmI('take')}In „${esc(KL(state.klasse).label)}“ übernehmen</button>`}</div></li>`; }).join('')}</ul>`
-      : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : (state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt.' : 'Noch keine geteilten Stunden von anderen.')}</p></div>`;
+      : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : (state.shared.length ? 'In deinen Fächern hat noch niemand eine Stunde geteilt.' : 'Noch keine geteilten Stunden von anderen.')}</p></div>`;
   }
   const nMine = canShare() && state.shared ? state.shared.filter(x => x.mine).length : 0;
   const giveH = cls => `<div class="hm-give ${cls}"><svg class="hm-give-ic" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="17" height="22" rx="3" fill="#fff" stroke="currentColor" stroke-width="2"/><rect x="18" y="5" width="17" height="22" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2"/><path d="M9 16h9M9 20.5h7M9 25h8M22 12h9M22 16.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M26 30.5c-1.8-1.3-4-3-4-5a2 2 0 0 1 4-.6 2 2 0 0 1 4 .6c0 2-2.2 3.7-4 5z" fill="#E0565B"/></svg>
@@ -9980,7 +9980,7 @@ function homeRenderNow() {
           <path d="M226 150c18-30 40-44 66-46" stroke="#FDE68A" stroke-width="5" stroke-opacity=".9"/><circle cx="296" cy="104" r="6" fill="#FDE68A" stroke="none"/></g></svg>
         <div class="hm-hero-in"><p class="hm-date">${esc(now.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }))}</p>
           <h1 id="hm-t">${greet}${autor ? `, ${esc(autor)}` : ''}</h1>
-          <p class="hm-lead">${lib.length ? `${lib.length} ${lib.length === 1 ? 'Stunde' : 'Stunden'} in ${KLASSEN.length} ${KLASSEN.length === 1 ? 'Klasse' : 'Klassen'}${nNew ? ` · <b>${nNew} neu geteilt</b>` : ''}` : `Legen Sie Ihre erste Stunde an${nNew ? ` · <b>${nNew} neu geteilt</b>` : '.'}`}</p>
+          <p class="hm-lead">${lib.length ? `${lib.length} ${lib.length === 1 ? 'Stunde' : 'Stunden'} in ${KLASSEN.length} ${KLASSEN.length === 1 ? 'Klasse' : 'Klassen'}${nNew ? ` · <b>${nNew} neu geteilt</b>` : ''}` : `Leg deine erste Stunde an${nNew ? ` · <b>${nNew} neu geteilt</b>` : '.'}`}</p>
           <div class="hm-hero-a"><button type="button" class="btn hm-cta" data-hm="new" data-k="${esc(state.klasse)}">${hmI('plus')}Neue Stunde in ${esc(KL(state.klasse).label)}</button>${cur ? `<button type="button" class="btn hm-ghost" data-hm="x">${hmI('go')}Weiterarbeiten</button>` : ''}</div></div>
         ${giveH('hm-give-hero')}
       </section>
@@ -10107,11 +10107,11 @@ function donateOpen() {
   const box = document.createElement('div'); box.id = 'don-ov'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'don-t');
   box.innerHTML = `<div class="don-scrim" data-don="x"></div><div class="don-card">
     <div class="don-art" aria-hidden="true">${CUP_SVG.replace('width="18" height="18"', 'width="44" height="44"')}</div>
-    <h2 id="don-t">Danke, dass Sie den AB-O-MAT unterstützen möchten!</h2>
-    <p>Der AB-O-MAT ist kostenlos und ohne Werbung. Ich entwickle ihn neben meinem Unterricht in meiner freien Zeit. Ihr Beitrag fließt in zwei Dinge:</p>
+    <h2 id="don-t">Danke, dass du den AB-O-MAT unterstützen möchtest!</h2>
+    <p>Der AB-O-MAT ist kostenlos und ohne Werbung. Ich entwickle ihn neben meinem Unterricht in meiner freien Zeit. Dein Beitrag fließt in zwei Dinge:</p>
     <ul class="don-l">
       <li><b>Arbeitszeit</b><span>für neue Bausteine und Vorlagen, Fehlerbehebungen und die Wünsche, die aus dem Kollegium kommen.</span></li>
-      <li><b>Einen eigenen Server</b><span>in meinem Heimnetzwerk. Damit sollen Ihre Stunden und Materialien künftig nicht bei großen Cloud-Anbietern liegen, sondern geschützt auf eigener Hardware, die ich selbst betreue.</span></li>
+      <li><b>Einen eigenen Server</b><span>in meinem Heimnetzwerk. Damit sollen deine Stunden und Materialien künftig nicht bei großen Cloud-Anbietern liegen, sondern geschützt auf eigener Hardware, die ich selbst betreue.</span></li>
     </ul>
     <p class="don-s">Jeder Betrag hilft, und alles ist freiwillig: Die App bleibt für alle kostenlos.<br>Moritz Bauer</p>
     <div class="don-acts"><a class="btn donate-b don-go" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer" data-don="go">${CUP_SVG}Weiter zu PayPal</a><button type="button" class="btn" data-don="x">Bruder, lass ma’</button></div></div>`;
@@ -10133,19 +10133,19 @@ function cupWiggleMaybe(tries = 0) {
 }
 setTimeout(() => cupWiggleMaybe(), 25000);
 document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('.hd-coffee, .donate .donate-b'); if (!a) return; e.preventDefault(); e.stopPropagation(); donateOpen(); }, true);
-const donateHTML = (lead = 'Gefällt Ihnen der AB-O-MAT?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützen Sie die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
+const donateHTML = (lead = 'Gefällt dir der AB-O-MAT?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützt du die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
 const TOUR = [
-  { t: 'Willkommen beim AB-O-MAT', d: 'In gut einer Minute sehen Sie das Wichtigste. Links bauen Sie die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
-  { sel: '#btn-fach', t: 'Fach wechseln', d: 'Hier wechseln Sie das Fach. Angezeigt werden nur Fächer, in denen Sie Klassen haben; darunter können Sie ein Fach hinzufügen.' },
-  { sel: '#reiter', t: 'Ihre Klassen', d: 'Jede Klasse hat einen eigenen Reiter mit eigenen Stunden, Farbe, Anrede (du oder Sie) und Schulform. „+ Klassen“ legt neue an.' },
-  { sel: '#editor .area-bar', prep: () => { if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); }, t: 'Arbeitsblatt und Präsentation', d: 'Oben schalten Sie zwischen Arbeitsblatt und Präsentation. Unter „Mehr“ liegen Tafelkarten und Druckvorlagen wie Placemat, Pro und Contra oder der Fotobogen.' },
+  { t: 'Willkommen beim AB-O-MAT', d: 'In gut einer Minute siehst du das Wichtigste. Links baust du die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
+  { sel: '#btn-fach', t: 'Fach wechseln', d: 'Hier wechselst du das Fach. Angezeigt werden nur Fächer, in denen du Klassen hast; darunter kannst du ein Fach hinzufügen.' },
+  { sel: '#reiter', t: 'Deine Klassen', d: 'Jede Klasse hat einen eigenen Reiter mit eigenen Stunden, Farbe, Anrede (du oder Sie) und Schulform. „+ Klassen“ legt neue an.' },
+  { sel: '#editor .area-bar', prep: () => { if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); }, t: 'Arbeitsblatt und Präsentation', d: 'Oben schaltest du zwischen Arbeitsblatt und Präsentation. Unter „Mehr“ liegen Tafelkarten und Druckvorlagen wie Placemat, Pro und Contra oder der Fotobogen.' },
   { sel: '#editor .qbar', t: 'Bausteine einfügen', d: 'Die meistgebrauchten Bausteine liegen hier griffbereit: Material, Aufgaben, Infokasten und mehr. „Weitere“ (oder Strg+K) zeigt alle, mit Suche.' },
   { sel: '#editor .card[data-bid]:not([data-bid="meta"])', t: 'Karten bearbeiten', d: 'Jeder Baustein ist eine Karte. Aufklappen, Text eingeben, Phase und Zeit festlegen. Aufgaben prüfen die Operatoren und bekommen auf Wunsch Sozialform und Arbeitsform.' },
   { sel: '#preview-scroll', t: 'Die Vorschau zum Anfassen', d: 'Ein Klick auf ein Wort im Material legt eine Worterklärung an, ein Klick auf eine Zeilennummer eine Zeilenangabe. Mit der Maus über einem Baustein erscheint eine kleine Leiste zum Verschieben, Verdoppeln und Löschen, an den Kanten ein „+“ zum Einfügen.' },
-  { sel: () => getComputedStyle(document.getElementById('mbar')).display !== 'none' ? '#mbar [data-mb="out"]' : '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation starten Sie im Bereich Präsentation.' },
-  { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier finden Sie Ihre Stunden je Klasse, Ordner und mit Anmeldung auch die Stunden, die Kolleginnen und Kollegen geteilt haben.' },
-  { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite mit Klassen, zuletzt bearbeiteten und neu geteilten Stunden. Daneben öffnet „RLP“ den Rahmenlehrplan Ihres Fachs.' },
-  { sel: () => isPhone() ? '#btn-mmore' : '#btn-help', t: 'Fertig!', d: 'Unter „?“ (auf dem Handy unter den drei Punkten) finden Sie alle Kniffe und können diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
+  { sel: () => getComputedStyle(document.getElementById('mbar')).display !== 'none' ? '#mbar [data-mb="out"]' : '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation startest du im Bereich Präsentation.' },
+  { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier findest du deine Stunden je Klasse, Ordner und mit Anmeldung auch die Stunden, die Kolleginnen und Kollegen geteilt haben.' },
+  { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite mit Klassen, zuletzt bearbeiteten und neu geteilten Stunden. Daneben öffnet „RLP“ den Rahmenlehrplan deines Fachs.' },
+  { sel: () => isPhone() ? '#btn-mmore' : '#btn-help', t: 'Fertig!', d: 'Unter „?“ (auf dem Handy unter den drei Punkten) findest du alle Kniffe und kannst diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
 ];
 const tour = { i: -1 };
 const tourDue = () => !lsGet(LS_TOUR) && !lsGet(LS_TIPS);
@@ -10281,7 +10281,7 @@ async function shareLoad(force) {
 }
 const sharedOf = sheetId => (state.shared || []).find(x => x.mine && x.sheetId === sheetId);
 function sharedListHTML() {
-  if (!canShare()) return `<div class="lib-empty"><p>Geteilte Stunden sehen Sie, wenn Sie angemeldet sind.</p>${store.sb ? '<button class="btn primary" type="button" data-act="login">Anmelden</button>' : ''}</div>`;
+  if (!canShare()) return `<div class="lib-empty"><p>Geteilte Stunden siehst du, wenn du angemeldet bist.</p>${store.sb ? '<button class="btn primary" type="button" data-act="login">Anmelden</button>' : ''}</div>`;
   if (!state.shared) { if (!state.shareLoading) { state.shareLoading = true; setTimeout(() => shareLoad(true).finally(() => { state.shareLoading = false; }), 0); } return '<div class="lib-empty"><p>Wird geladen …</p></div>'; }
   const q = state.shareQuery.trim().toLowerCase(); const words = q ? q.split(/\s+/).filter(Boolean) : [];
   const F = state.shareF || (state.shareF = { stufe: '', cat: '' });
@@ -10290,10 +10290,10 @@ function sharedListHTML() {
   const filt = `<div class="row sh-filt"><select class="inp" id="share-fst" aria-label="Klassenstufe">${STUFEN.map(([v, l]) => `<option value="${v}"${F.stufe === v ? ' selected' : ''}>${v ? l : 'Alle Klassenstufen'}</option>`).join('')}</select><select class="inp" id="share-fcat" aria-label="Kategorie"><option value="">Alle Kategorien</option>${usedCats.map(c => `<option${F.cat === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select>${F.stufe || F.cat ? '<button class="link" type="button" data-act="share-fx">Filter zurücksetzen</button>' : ''}</div>`;
   const fmt = t => new Date(t).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const head = `${state.sharedErr ? `<div class="notice"><span>${esc(state.sharedErr)}</span></div>` : ''}<div class="row lib-tools"><input class="inp" id="share-q" type="search" placeholder="Geteilte Stunden durchsuchen" value="${esc(state.shareQuery)}" aria-label="Geteilte Stunden durchsuchen" style="flex:1"><button class="btn" type="button" data-act="share-reload" title="Neu laden">Aktualisieren</button></div>${filt}
-    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieses AB-O-MATs teilen. Angezeigt werden Stunden aus Ihren Fächern. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
-  if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche oder zum Filter.' : state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen Sie eine Klasse haben.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
+    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieses AB-O-MATs teilen. Angezeigt werden Stunden aus deinen Fächern. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
+  if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche oder zum Filter.' : state.shared.length ? 'In deinen Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen du eine Klasse hast.' : 'Noch keine geteilten Stunden. Teile eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
   return head + L.map(x => `<div class="lib-item share-item" data-sid="${esc(x.id)}">
-      <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von Ihnen</em>' : ''}</div>
+      <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von dir</em>' : ''}</div>
       ${shareTags(x)}<div class="m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
       ${x.text ? `<div class="share-text">${esc(x.text)}</div>` : ''}
       <div class="a">${state.shareBusy === x.id ? '<span class="m">Wird übernommen …</span>' : `<button class="link" type="button" data-act="share-take">Übernehmen</button>${x.mine ? '<button class="link" type="button" data-act="share-edit">Bearbeiten</button>' : ''}`}</div>
@@ -10306,7 +10306,7 @@ async function shareTake(sid) {
     const src = await backend.shareGet(sid); if (!src) throw new Error('fehlt');
     const c = normalizeSheet(src); c.id = 'ab-' + uid(); c.example = false; c.klasse = KL(state.klasse).id; c.updatedAt = Date.now();
     state.shareBusy = null; state.libOpen = false; state.libTab = 'mine'; renderLib(); openSheet(c); saveNow();
-    toast(`„${x.title}“ übernommen${x.autor ? ' (von ' + x.autor + ')' : ''} · Ihre Kopie liegt in „Meine Stunden“`);
+    toast(`„${x.title}“ übernommen${x.autor ? ' (von ' + x.autor + ')' : ''} · Deine Kopie liegt in „Meine Stunden“`);
   } catch (err) { console.error(err); state.shareBusy = null; renderLib(); toast('Übernehmen hat nicht geklappt. Bitte erneut versuchen.'); }
 }
 // Fenster „Stunde teilen“
@@ -10463,10 +10463,10 @@ function sharePickHTML() {
 }
 function shareDlgHTML(d) {
   return `<h2 id="dlg-t">Stunde teilen</h2>
-    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieses AB-O-MATs geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'Ihr Konto' : 'Ihr Konto'}.</p>
-    <label class="f"><span>Ihr Name, wie er bei der Stunde steht</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
+    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieses AB-O-MATs geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'dein Konto' : 'dein Konto'}.</p>
+    <label class="f"><span>Dein Name, wie er bei der Stunde steht</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
     <label class="f"><span>Kurze Beschreibung (optional)</span><textarea class="inp" id="share-text" rows="3" maxlength="600" placeholder="Worum geht es, welche Klasse, was ist besonders?">${esc(d.text || '')}</textarea></label>
-    ${d.sid ? '<small class="hint">Die Stunde ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand; Kopien, die andere schon übernommen haben, ändern sich nicht.</small>' : '<small class="hint">Später geänderte Stunden bleiben in der geteilten Fassung auf dem Stand von heute, bis Sie „Aktualisieren“ wählen.</small>'}
+    ${d.sid ? '<small class="hint">Die Stunde ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand; Kopien, die andere schon übernommen haben, ändern sich nicht.</small>' : '<small class="hint">Später geänderte Stunden bleiben in der geteilten Fassung auf dem Stand von heute, bis du „Aktualisieren“ wählst.</small>'}
     <div class="row"><button class="btn primary" type="button" data-act="share-go">${d.sid ? 'Aktualisieren' : 'Teilen'}</button>${d.sid ? '<button class="btn danger" type="button" data-act="share-del">Nicht mehr teilen</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
 }
 async function shareGo() {
@@ -10474,7 +10474,7 @@ async function shareGo() {
   const d = d0.mode === 'sharepick' ? { ...d0, sheetId: d0.pick, sid: (sharedOf(d0.pick) || {}).id || '' } : d0; if (!d.sheetId) return;
   const before = myShareN();
   const autor = (($('#share-autor') || {}).value || '').trim(), text = (($('#share-text') || {}).value || '').trim();
-  if (!autor) { toast(d0.mode === 'sharepick' ? 'Bitte deinen Namen eintragen, damit andere wissen, von wem die Stunde ist.' : 'Bitte Ihren Namen eintragen, damit andere wissen, von wem die Stunde ist.'); const i = $('#share-autor'); if (i) i.focus(); return; }
+  if (!autor) { toast(d0.mode === 'sharepick' ? 'Bitte deinen Namen eintragen, damit andere wissen, von wem die Stunde ist.' : 'Bitte deinen Namen eintragen, damit andere wissen, von wem die Stunde ist.'); const i = $('#share-autor'); if (i) i.focus(); return; }
   if (state.prefs.autor !== autor) { state.prefs.autor = autor; savePrefs(); }
   try {
     if (state.sheet && state.sheet.id === d.sheetId) await saveNow();
@@ -10677,7 +10677,7 @@ async function useBackend(b) {
     return;
   }
   await loadPrefs(b); applyKlassen(); if (state.libOpen) renderLib();
-  if (state.offline) toast(`Offline: Sie arbeiten mit dem Stand ${offDate(state.offline.at) ? 'vom ' + offDate(state.offline.at) : 'aus diesem Browser'}. Änderungen werden nachgetragen, sobald wieder Verbindung besteht.`);
+  if (state.offline) toast(`Offline: Du arbeitest mit dem Stand ${offDate(state.offline.at) ? 'vom ' + offDate(state.offline.at) : 'aus diesem Browser'}. Änderungen werden nachgetragen, sobald wieder Verbindung besteht.`);
   if (!state.offline) await flushPending();
   if (t !== backendToken) return;
   if (state.touched && !state.sheet.example && KLASSEN.some(k => k.id === state.sheet.klasse)) await saveNow();
@@ -10848,8 +10848,8 @@ function klassenHTML() {
     <div class="err" id="dlg-err" role="alert"></div>
     <div class="row"><button class="btn primary" type="button" data-act="kl-save">Klasse anlegen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
   return `<h2 id="dlg-t">${d.setup ? 'Willkommen beim AB-O-MAT' : 'Klassen'}</h2>
-    ${d.wantFach ? `<p class="kl-want">Neue Klasse für <b>${FAECHER[d.wantFach].label}</b>: unten Namen eintragen.</p>` : ''}<p>${d.setup ? 'Legen Sie Ihre Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
-    ${d.setup ? `<label class="f"><span>Ihre Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
+    ${d.wantFach ? `<p class="kl-want">Neue Klasse für <b>${FAECHER[d.wantFach].label}</b>: unten Namen eintragen.</p>` : ''}<p>${d.setup ? 'Leg deine Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
+    ${d.setup ? `<label class="f"><span>Deine Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
     <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
@@ -11059,7 +11059,7 @@ function libListHTML(k, q) {
   };
   const loose = sortLibList(all.filter(d => !folderOf(d.id, k.id) && match(d)), '', k.id);
   const folders = fs.map(sec).join('');
-  if (!all.length && !fs.length) return `<div class="empty">Noch keine Blätter unter ${esc(k.label)}. Sobald Sie ein Blatt bearbeiten, erscheint es hier.</div>`;
+  if (!all.length && !fs.length) return `<div class="empty">Noch keine Blätter unter ${esc(k.label)}. Sobald du ein Blatt bearbeitest, erscheint es hier.</div>`;
   if (q && !folders && !loose.length) return '<div class="empty">Keine Treffer.</div>';
   return folders + ((loose.length || fs.length) && !(q && !loose.length) ? `<section class="lib-fs lib-loose open" data-fid="">${fs.length ? '<div class="lib-f lib-lh" data-fid="">Ohne Ordner</div>' : ''}<div class="lib-fb" data-fid="">${loose.length ? loose.map(item).join('') : '<div class="lib-fe">Hierher ziehen, um ein Blatt aus seinem Ordner zu nehmen</div>'}</div></section>` : '');
 }
@@ -11140,13 +11140,13 @@ function admRender() {
     <div class="adm-wrap"><table class="adm-t"><thead><tr><th>Konto</th><th>Angelegt</th><th>Zuletzt angemeldet</th><th class="n">Blätter</th><th class="n">Geteilt</th><th class="n">Digital</th><th>Zuletzt bearbeitet</th><th></th></tr></thead><tbody>
     ${U.map(u => { const self = u.id === me, prot = self || u.is_admin; const c = ADM.conf && ADM.conf.id === u.id ? ADM.conf : null;
       const T = ADM.titles[u.id];
-      return `<tr class="${u.banned ? 'ban' : ''}"><td><b>${esc(u.email || '(ohne E-Mail)')}</b>${u.is_admin ? ' <span class="adm-b adm-b-a">Admin</span>' : ''}${self ? ' <span class="adm-b">Sie</span>' : ''}${u.banned ? ' <span class="adm-b adm-b-x">gesperrt</span>' : ''}</td>
+      return `<tr class="${u.banned ? 'ban' : ''}"><td><b>${esc(u.email || '(ohne E-Mail)')}</b>${u.is_admin ? ' <span class="adm-b adm-b-a">Admin</span>' : ''}${self ? ' <span class="adm-b">Du</span>' : ''}${u.banned ? ' <span class="adm-b adm-b-x">gesperrt</span>' : ''}</td>
       <td>${admDate(u.created_at)}</td><td>${admDate(u.last_sign_in_at, 1)}</td><td class="n">${u.n_sheets}</td><td class="n">${u.n_shared}</td><td class="n">${u.n_digital}</td><td>${admDate(u.last_edit, 1)}</td>
       <td class="adm-a">${u.n_sheets ? `<button type="button" class="link" data-adm="titles" data-id="${u.id}">${ADM.show === u.id ? 'Titel ausblenden' : 'Titel'}</button>` : ''}${prot ? '' : `<button type="button" class="link" data-adm="ban" data-id="${u.id}" data-v="${u.banned ? 0 : 1}">${u.banned ? 'Entsperren' : 'Sperren'}</button><button type="button" class="link danger" data-adm="del" data-id="${u.id}">Löschen</button>`}</td></tr>
       ${ADM.show === u.id ? `<tr class="adm-sub"><td colspan="8">${!T ? 'Lädt …' : !T.length ? 'Keine Blätter.' : `<ul class="adm-ti">${T.map(x => `<li><span>${esc(x.title || 'Ohne Titel')}${x.nr ? ` <small>AB ${esc(x.nr)}</small>` : ''}</span><small>${esc((KLASSEN.find(k => k.id === x.klasse) || {}).label || '')}${(KLASSEN.find(k => k.id === x.klasse) || {}).label ? ' · ' : ''}${admDate(x.updated_at)}</small></li>`).join('')}</ul>`}</td></tr>` : ''}
       ${c ? `<tr class="adm-sub adm-conf"><td colspan="8"><b>Konto ${esc(u.email)} endgültig löschen?</b> Dabei verschwinden auch ${u.n_sheets} Blätter, ${u.n_shared} geteilte Stunden und ${u.n_digital} digitale Fassungen. Das lässt sich nicht rückgängig machen.<div class="adm-cr"><input class="inp" type="text" id="adm-conf-in" placeholder="Zur Bestätigung die E-Mail eintippen" autocomplete="off" value="${esc(c.typed || '')}"><button type="button" class="btn danger" data-adm="del-yes" data-id="${u.id}"${(c.typed || '').trim().toLowerCase() === String(u.email || '').toLowerCase() ? '' : ' disabled'}>Endgültig löschen</button><button type="button" class="btn" data-adm="no">Abbrechen</button></div></td></tr>` : ''}`; }).join('')}
     </tbody></table></div>
-    <p class="adm-note">Gesperrte Konten können sich nicht mehr anmelden; ihre Blätter bleiben erhalten. Ihr eigenes Konto und andere Admin-Konten lassen sich hier weder sperren noch löschen.</p>`;
+    <p class="adm-note">Gesperrte Konten können sich nicht mehr anmelden; ihre Blätter bleiben erhalten. Dein eigenes Konto und andere Admin-Konten lassen sich hier weder sperren noch löschen.</p>`;
   } else {
     body = !G.length ? '<p class="adm-note">Es gibt keine geteilten Stunden.</p>' : `<div class="adm-wrap"><table class="adm-t"><thead><tr><th>Stunde</th><th>Fach · Klasse</th><th>Von</th><th>Geteilt</th><th></th></tr></thead><tbody>
     ${G.map(g => { const c = ADM.conf && ADM.conf.sid === g.id; return `<tr><td><b>${esc(g.title || 'Ohne Titel')}</b>${g.beschreibung ? `<small class="adm-d">${esc(g.beschreibung)}</small>` : ''}</td><td>${esc((FAECHER[g.fach] && FAECHER[g.fach].label) || g.fach || 'Deutsch')}${g.klasse ? ' · ' + esc(g.klasse) : ''}</td><td>${esc(g.autor || '–')}<small class="adm-d">${esc(g.email || '')}</small></td><td>${admDate(g.updated_at)}</td>
@@ -11190,9 +11190,9 @@ function renderLib() {
   const q = state.libQuery.trim().toLowerCase();
   let acct;
   if (backend && backend.kind === 'supabase') { admCheck(); acct = `<span>Online gespeichert für <b>${esc(store.user && store.user.email || '')}</b></span>${ADM.is ? '<button class="link adm-link" type="button" data-act="admin-open">Adminbereich</button>' : ''}<button class="link" type="button" data-act="logout">Abmelden</button>`; }
-  else if (backend && backend.kind === 'claude') acct = '<span>Ihre Blätter liegen in Ihrem claude.ai-Konto und sind nur für Sie sichtbar.</span>';
-  else if (store.sb) acct = '<span>Ihre Blätter liegen nur in diesem Browser.</span><button class="link" type="button" data-act="login">Anmelden für die Online-Ablage</button>';
-  else acct = '<span>Ihre Blätter liegen nur in diesem Browser. Sichern Sie sie ab und zu als Datei.</span>';
+  else if (backend && backend.kind === 'claude') acct = '<span>Deine Blätter liegen in deinem claude.ai-Konto und sind nur für dich sichtbar.</span>';
+  else if (store.sb) acct = '<span>Deine Blätter liegen nur in diesem Browser.</span><button class="link" type="button" data-act="login">Anmelden für die Online-Ablage</button>';
+  else acct = '<span>Deine Blätter liegen nur in diesem Browser. Sichere sie ab und zu als Datei.</span>';
   const nLocal = backend && backend.kind === 'supabase' ? Object.keys(localLib()).length : 0;
   const keep = document.activeElement && document.activeElement.id === 'lib-q';
   const oldList = root.querySelector('.lib-list'); const scroll = oldList ? oldList.scrollTop : 0;
@@ -11248,7 +11248,7 @@ async function onLibClick(e) {
     case 'lib-tab': state.libTab = a.dataset.v === 'shared' ? 'shared' : 'mine'; renderLib(); if (state.libTab === 'shared') shareLoad(); break;
     case 'share-reload': state.shared = null; renderLib(); shareLoad(true); break;
     case 'share-take': { const it = a.closest('[data-sid]'); if (it) shareTake(it.dataset.sid); break; }
-    case 'share-edit': { const it = a.closest('[data-sid]'); const x = it && (state.shared || []).find(y => y.id === it.dataset.sid); if (x) { if (!state.lib.some(dd => dd.id === x.sheetId)) { toast('Die Original-Stunde liegt nicht mehr in Ihren Stunden. Sie können die geteilte Fassung trotzdem zurückziehen.'); } openShare(x.sheetId); } break; }
+    case 'share-edit': { const it = a.closest('[data-sid]'); const x = it && (state.shared || []).find(y => y.id === it.dataset.sid); if (x) { if (!state.lib.some(dd => dd.id === x.sheetId)) { toast('Die Original-Stunde liegt nicht mehr in deinen Stunden. Du kannst die geteilte Fassung trotzdem zurückziehen.'); } openShare(x.sheetId); } break; }
     case 'lib-share': if (id) { closeLib(); openSharePick(id); } break;
     case 'share-fx': state.shareF = { stufe: '', cat: '' }; renderLib(); break;
     case 'lib-copy-to':
@@ -11294,11 +11294,11 @@ async function onLibClick(e) {
 function authMsg(err) {
   const m = String((err && (err.message || err.error_description)) || err || ''); const c = err && err.code;
   if (c === 'invalid_credentials' || /invalid login credentials/i.test(m)) return 'E-Mail oder Passwort stimmt nicht.';
-  if (c === 'email_not_confirmed' || /email not confirmed/i.test(m)) return 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse über den Link in der Bestätigungsmail.';
-  if (c === 'user_already_exists' || /already (been )?registered/i.test(m)) return 'Für diese E-Mail gibt es schon ein Konto. Bitte melden Sie sich an.';
+  if (c === 'email_not_confirmed' || /email not confirmed/i.test(m)) return 'Bitte bestätige zuerst deine E-Mail-Adresse über den Link in der Bestätigungsmail.';
+  if (c === 'user_already_exists' || /already (been )?registered/i.test(m)) return 'Für diese E-Mail gibt es schon ein Konto. Bitte melde dich an.';
   if (c === 'weak_password' || /password should|at least 6/i.test(m)) return 'Das Passwort ist zu kurz oder zu einfach (mindestens 6 Zeichen).';
   if (/rate limit|too many/i.test(m) || /rate_limit/.test(c || '')) return 'Zu viele Versuche. Bitte in ein paar Minuten erneut versuchen.';
-  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die diesen AB-O-MAT betreut. Sie bekommen dann E-Mail und Passwort zum Anmelden.';
+  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die diesen AB-O-MAT betreut. Du bekommst dann E-Mail und Passwort zum Anmelden.';
   if (c === 'email_address_not_authorized' || /not authorized/i.test(m)) return 'Die Bestätigungsmail kann an diese Adresse noch nicht verschickt werden. Bitte bei der Person melden, die diese AB-Werkstatt betreut.';
   if (c === 'over_email_send_rate_limit' || /email rate limit/i.test(m)) return 'Gerade wurden zu viele Mails verschickt. Bitte in einer Stunde erneut versuchen.';
   if (/failed to fetch|network|load failed/i.test(m)) return 'Keine Verbindung zum Server. Bitte die Internetverbindung prüfen.';
@@ -11312,11 +11312,11 @@ function closeDlg() { const d = state.dlg; if (d && d.mode === 'klassen' && d.se
 function conflictHTML() {
   const t = new Date(state.dlg.remote).toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   return `<h2 id="dlg-t">Auf einem anderen Gerät geändert</h2>
-    <p>„${esc(state.sheet.meta.title || 'Ohne Titel')}“ wurde inzwischen woanders gespeichert (${esc(t)}). Ihre Änderungen hier sind noch nicht gespeichert. Was soll gelten?</p>
+    <p>„${esc(state.sheet.meta.title || 'Ohne Titel')}“ wurde inzwischen woanders gespeichert (${esc(t)}). Deine Änderungen hier sind noch nicht gespeichert. Was soll gelten?</p>
     <div class="cf-opts">
-      <button type="button" class="tpl" data-act="cf-theirs"><span><b>Neuere Fassung laden</b><span>Die Änderungen vom anderen Gerät übernehmen. Was Sie hier geändert haben, verfällt.</span></span></button>
-      <button type="button" class="tpl" data-act="cf-both"><span><b>Beide behalten</b><span>Ihre Fassung wird als Kopie gespeichert, das Blatt behält die Änderungen vom anderen Gerät.</span></span></button>
-      <button type="button" class="tpl" data-act="cf-mine"><span><b>Meine Fassung behalten</b><span>Ihre Fassung überschreibt die Änderungen vom anderen Gerät.</span></span></button>
+      <button type="button" class="tpl" data-act="cf-theirs"><span><b>Neuere Fassung laden</b><span>Die Änderungen vom anderen Gerät übernehmen. Was du hier geändert hast, verfällt.</span></span></button>
+      <button type="button" class="tpl" data-act="cf-both"><span><b>Beide behalten</b><span>Deine Fassung wird als Kopie gespeichert, das Blatt behält die Änderungen vom anderen Gerät.</span></span></button>
+      <button type="button" class="tpl" data-act="cf-mine"><span><b>Meine Fassung behalten</b><span>Deine Fassung überschreibt die Änderungen vom anderen Gerät.</span></span></button>
     </div>`;
 }
 async function conflictResolve(how) {
@@ -11329,7 +11329,7 @@ async function conflictResolve(how) {
   }
   savePending = false; clearTimeout(saveTimer); state.conflict = null;
   if (theirs) openSheet(theirs, { keepArea: true }); else idleStatus();
-  toast(how === 'both' ? 'Ihre Fassung liegt jetzt als Kopie in „Meine Stunden“.' : 'Die neuere Fassung ist geladen.');
+  toast(how === 'both' ? 'Deine Fassung liegt jetzt als Kopie in „Meine Stunden“.' : 'Die neuere Fassung ist geladen.');
 }
 // Beim Zurückkehren zur Seite: neuere Fassung still übernehmen, wenn hier nichts Ungespeichertes ist
 let lastStampCheck = 0;
@@ -11453,11 +11453,11 @@ function rlpDlgHTML() {
   const row = id => { const x = rlpInfo(id), c = C.cov[id]; return `<div class="rlp-orow${c ? '' : ' off'}"><code>${esc(x.own ? 'eigen' : x.code)}</code><div><div>${esc(x.t)}${x.lk ? ' <em class="lk" title="nur Leistungskurs">LK</em>' : ''}</div>${c ? `<div class="by">${by(c)}</div>` : ''}</div><b>${c ? c.n + '×' : '–'}</b></div>`; };
   const stat = [multi ? `${d.sheets.length} ${d.sheets.length === 1 ? 'Blatt' : 'Blätter'}` : '', `${C.nTagged} von ${C.nTasks} Aufgaben zugeordnet`, total ? `${nPh} von ${total} Standards der ${RLP_DE[d.ph].name} abgedeckt` : `${ids.length} ${ids.length === 1 ? 'Standard' : 'Standards'} abgedeckt`].filter(Boolean).join(' · ');
   const body = G.length ? G.map(g => `<div class="rlp-gh">${esc(g.h)}</div>${g.rows.map(row).join('')}`).join('')
-    : `<div class="rlp-none">${!C.nTasks ? 'Hier gibt es noch keine Aufgaben.' : 'Noch keine Aufgabe hat einen Standard. Öffnen Sie dazu unter einer Aufgabe „Standards“.'}</div>`;
+    : `<div class="rlp-none">${!C.nTasks ? 'Hier gibt es noch keine Aufgaben.' : 'Noch keine Aufgabe hat einen Standard. Öffne dazu unter einer Aufgabe „Standards“.'}</div>`;
   return `<h2 id="dlg-t">${head}</h2><p class="rlp-stat">${esc(stat)}</p>${total ? `<div class="rlp-bar" title="${Math.round(nPh / total * 100)} %"><i style="width:${Math.round(nPh / total * 100)}%"></i></div>` : ''}
     <div class="row rlp-dtools"><div class="seg sm" role="group" aria-label="Anzeige"><button type="button" data-act="rlp-show" data-v="cov" aria-pressed="${d.show !== 'all'}">Abgedeckt</button><button type="button" data-act="rlp-show" data-v="all" aria-pressed="${d.show === 'all'}">${cat ? 'Alle, mit Lücken' : 'Alle eigenen'}</button></div>${cat && d.show === 'all' ? `<div class="seg sm" role="group" aria-label="Phase">${RLP_PH.filter(([v]) => v !== 'own').map(([v, t]) => `<button type="button" data-act="rlp-dph" data-v="${v}" aria-pressed="${d.ph === v}">${t}</button>`).join('')}</div>` : ''}</div>
     <div class="rlp-ov">${body}</div>
-    ${cat ? '' : `<p class="hint">Für ${esc(FAECHER[fach].label)} ist kein Rahmenlehrplan hinterlegt. Eigene Standards legen Sie bei einer Aufgabe unter „Standards“ an.</p>`}
+    ${cat ? '' : `<p class="hint">Für ${esc(FAECHER[fach].label)} ist kein Rahmenlehrplan hinterlegt. Eigene Standards legst du bei einer Aufgabe unter „Standards“ an.</p>`}
     <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="btn" type="button" data-act="rlp-copy">Als Text kopieren</button></div>`;
 }
 function rlpDlgText(d) {
@@ -11475,17 +11475,17 @@ function rlpCopy() {
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
     <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
-    ${donateHTML('Hilft Ihnen der AB-O-MAT?')}
+    ${donateHTML('Hilft dir der AB-O-MAT?')}
     <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Funktionstour starten</button></div>
     <p class="copy-l">AB-O-MAT · © 2026 Moritz Bauer</p>`;
 }
 const TIPS = [
-  ['Bausteine einfügen und umsortieren', 'Mit „+“ zwischen zwei Karten fügen Sie einen Baustein genau dort ein. An der Kopfzeile einer Karte lässt sie sich verschieben.'],
-  ['Worterklärung per Klick', 'Klicken Sie in der Vorschau auf ein Wort im Material. Die Erklärung erscheint als Fußnote.'],
-  ['Zeilenangaben per Klick', 'Klicken Sie in der Vorschau auf eine Zeilennummer, für einen Bereich auf eine zweite. „Einfügen“ setzt die Angabe in die Aufgabe.'],
+  ['Bausteine einfügen und umsortieren', 'Mit „+“ zwischen zwei Karten fügst du einen Baustein genau dort ein. An der Kopfzeile einer Karte lässt sie sich verschieben.'],
+  ['Worterklärung per Klick', 'Klick in der Vorschau auf ein Wort im Material. Die Erklärung erscheint als Fußnote.'],
+  ['Zeilenangaben per Klick', 'Klick in der Vorschau auf eine Zeilennummer, für einen Bereich auf eine zweite. „Einfügen“ setzt die Angabe in die Aufgabe.'],
   ['Ausgeben', 'PDF, Word oder Drucken stecken jetzt in einem Fenster, mit Fassung, Papier und einer kurzen Prüfung vor dem Druck.'],
-  ['Baustein suchen', '„+ Baustein hinzufügen“ unter den Karten oder Strg+K: tippen Sie, was Sie brauchen, etwa „Tabelle“ oder „Karten“.'],
-  ['Rückgängig und Hilfe', 'Strg+Z oder der Pfeil über den Karten macht Schritte rückgängig. Alle Kniffe finden Sie oben unter „?“, Einstellungen unter dem Zahnrad.']
+  ['Baustein suchen', '„+ Baustein hinzufügen“ unter den Karten oder Strg+K: tipp ein, was du brauchst, etwa „Tabelle“ oder „Karten“.'],
+  ['Rückgängig und Hilfe', 'Strg+Z oder der Pfeil über den Karten macht Schritte rückgängig. Alle Kniffe findest du oben unter „?“, Einstellungen unter dem Zahnrad.']
 ];
 const LS_TIPS = 'abw.tips';
 let tipIdx = -1;
@@ -11531,7 +11531,7 @@ function outChecks() {
       if (!blockVisible(b, v)) return;
       if (b.type === 'material') {
         const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';
-        if (String(b.memo || '').trim()) warn(`${lab}: Ihre Notiz „${String(b.memo).trim().slice(0, 90)}“`);
+        if (String(b.memo || '').trim()) warn(`${lab}: Deine Notiz „${String(b.memo).trim().slice(0, 90)}“`);
         if (!String(b.text || '').trim()) warn(`${lab} hat noch keinen Text.`);
         if (!String(b.source || '').trim()) note(`${lab} hat keine Quellenangabe.`);
       }
@@ -11566,7 +11566,7 @@ function outHTML() {
     ${W.map(([g, L]) => `<small class="ow-g">${g}</small>${L.map(([k, l, n, always]) => `<button type="button" class="ow" data-act="out-set" data-f="out" data-v="${k}" aria-pressed="${!d.whole && state.out === k}"${!always && !n ? ' disabled title="Noch nichts angelegt"' : ''}><b>${l}</b>${n ? `<em>${n}</em>` : ''}</button>`).join('')}`).join('')}</nav>`;
   if (d.whole) { const A = stABs(); const SB2 = stBlocks();
     const L = [...A.map(x => `${esc(abLabel(x.meta, x.k))}: Schüler- und Lehrerfassung als PDF und Word, Erwartungshorizont${tipCards().length ? ', Tippkarten' : ''}, digitale Fassung`), nTf ? 'Tafelbild, vollständig und als Lückenfassung' : '', nK ? 'Tafelkarten' : '', nA4 ? 'A4-Vorlagen' : '', nA3 ? 'A3-Vorlagen in A3 und auf 2 × A4' : '', nE ? 'Exit-Tickets' : '', 'PowerPoint mit allen Folien', 'Inhaltsliste'].filter(Boolean);
-    return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how"><div class="out-whole"><b>Ganze Stunde als Ordner</b><p>${window.abw ? 'Sie wählen einen Ort, der Ordner wird dort angelegt.' : 'Der Ordner kommt als ZIP-Datei.'} Die Dateien sind durchnummeriert:</p><ul>${L.map(x => `<li>${x}</li>`).join('')}</ul></div>
+    return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how"><div class="out-whole"><b>Ganze Stunde als Ordner</b><p>${window.abw ? 'Du wählst einen Ort, der Ordner wird dort angelegt.' : 'Der Ordner kommt als ZIP-Datei.'} Die Dateien sind durchnummeriert:</p><ul>${L.map(x => `<li>${x}</li>`).join('')}</ul></div>
       <div class="row"><button class="btn primary" type="button" data-act="out-stunde">Ordner erstellen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div></div></div>`; }
   return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how">
     <div class="out-g">
@@ -11600,14 +11600,14 @@ function saveAsHTML() {
   const was = (m.nr ? (isK ? 'Nr. ' : 'AB ') + m.nr + ' · ' : '') + (m.title || 'Ohne Titel');
   const title = m.title && !(fresh && m.title === 'Neues Arbeitsblatt') ? m.title : '';
   return `<h2 id="dlg-t">Speichern unter</h2>
-    <p>${fresh ? 'Das Blatt wird unter diesem Namen in „Meine Stunden“ gespeichert.' : 'Es entsteht ein neues Blatt mit dem jetzigen Stand. Danach arbeiten Sie im neuen Blatt weiter.'}</p>
+    <p>${fresh ? 'Das Blatt wird unter diesem Namen in „Meine Stunden“ gespeichert.' : 'Es entsteht ein neues Blatt mit dem jetzigen Stand. Danach arbeitest du im neuen Blatt weiter.'}</p>
     <form id="dlg-form" data-mode="saveas" novalidate>
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" id="sa-nr" value="${esc(m.nr || '')}" placeholder="7"></label>
         <label class="f" style="flex:1"><span>Titel</span><input type="text" id="sa-title" value="${esc(title)}" placeholder="Titel des Arbeitsblatts"></label></div>
       <div class="row"><label class="f" style="flex:1"><span>Reiter</span><select id="sa-kl">${Object.entries(FAECHER).filter(([fk]) => KLASSEN.some(k => k.fach === fk)).map(([fk, f]) => `<optgroup label="${f.label}">${KLASSEN.filter(k => k.fach === fk).map(k => `<option value="${k.id}"${k.id === sh.klasse ? ' selected' : ''}>${esc(k.label)}</option>`).join('')}</optgroup>`).join('')}</select></label>
         <label class="f" style="flex:1"><span>Ordner</span><select id="sa-f">${saFolderOpts(sh.klasse, folderOf(sh.id, sh.klasse))}</select></label></div>
       ${dirty ? `<label class="chk sa-keep"><input type="checkbox" id="sa-keep" checked><span>Das bisherige Blatt „${esc(was)}“ so lassen, wie es beim Öffnen war</span></label>
-        <small class="sa-hint">Ihre Änderungen seit dem Öffnen stehen dann nur im neuen Blatt. Ohne Haken behält auch das bisherige Blatt die Änderungen.</small>` : ''}
+        <small class="sa-hint">Deine Änderungen seit dem Öffnen stehen dann nur im neuen Blatt. Ohne Haken behält auch das bisherige Blatt die Änderungen.</small>` : ''}
       <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
       <div class="row"><button class="btn primary" type="submit">Speichern</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>
       <div class="sa-file"><div><b>Als Datei</b><span>Zum Ablegen in einem Ordner oder Weitergeben. Öffnen über „Meine Stunden“ → „Sicherung oder Datei laden“.</span></div>
@@ -11672,18 +11672,18 @@ function renderDlg() {
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
   const body = d.mode === 'sharepick' ? sharePickHTML() : d.mode === 'share' ? shareDlgHTML(d) : d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
-    ? `<h2 id="dlg-t">Neues Passwort</h2><p>Legen Sie ein neues Passwort für Ihr Konto fest.</p>
+    ? `<h2 id="dlg-t">Neues Passwort</h2><p>Leg ein neues Passwort für dein Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
         ${msgs}<div class="row"><button class="btn primary" type="submit">Speichern</button></div></form>`
-    : `<h2 id="dlg-t">Anmelden</h2><p>Mit einem Konto liegen Ihre Arbeitsblätter online und sind auf jedem Gerät da. Noch kein Konto? Mit den Zugangsdaten anmelden, die Sie bekommen haben, oder „Konto anlegen“ wählen.</p>
+    : `<h2 id="dlg-t">Anmelden</h2><p>Mit einem Konto liegen deine Arbeitsblätter online und sind auf jedem Gerät da. Noch kein Konto? Mit den Zugangsdaten anmelden, die du bekommen hast, oder „Konto anlegen“ wählen.</p>
       <form id="dlg-form" data-mode="login" novalidate>
         <label class="f"><span>E-Mail</span><input class="inp" id="dlg-email" type="email" autocomplete="username" value="${esc(d.email)}"></label>
         <label class="f"><span>Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="current-password"></label>
         ${msgs}
         <div class="row"><button class="btn primary" type="submit">Anmelden</button><button class="btn" type="button" data-act="dlg-signup">Konto anlegen</button></div>
         <div class="links"><button class="link" type="button" data-act="dlg-reset">Passwort vergessen?</button></div>
-        <small class="hint dlg-must-h">Der AB-O-MAT funktioniert mit einem kostenlosen Konto. So sind Ihre Stunden sicher gespeichert, auf jedem Gerät da, und Sie können mit dem Kollegium teilen.</small>
+        <small class="hint dlg-must-h">Der AB-O-MAT funktioniert mit einem kostenlosen Konto. So sind deine Stunden sicher gespeichert, auf jedem Gerät da, und du kannst mit dem Kollegium teilen.</small>
       </form>`;
   const od = r.querySelector('.dlg'), same = od && r.dataset.mode === d.mode, oy = same ? od.scrollTop : 0, inner = same ? [...od.querySelectorAll('*')].filter(x => x.scrollTop > 0).map(x => [x.className, x.scrollTop]) : [];
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`; r.dataset.mode = d.mode;
@@ -11819,10 +11819,10 @@ async function onDlgClick(e) {
     const { data, error } = await authCall(() => store.sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: location.origin + location.pathname } }));
     if (error) return dlgMsg(authMsg(error));
     if (data && data.session) { closeDlg(); return; }
-    dlgMsg('', `Fast geschafft: Wir haben eine Bestätigungsmail an ${email} geschickt. Nach dem Klick auf den Link können Sie sich hier anmelden.`);
+    dlgMsg('', `Fast geschafft: Wir haben eine Bestätigungsmail an ${email} geschickt. Nach dem Klick auf den Link kannst du dich hier anmelden.`);
   }
   if (act === 'dlg-reset') {
-    if (!email) return dlgMsg('Bitte zuerst Ihre E-Mail-Adresse eintragen.');
+    if (!email) return dlgMsg('Bitte zuerst deine E-Mail-Adresse eintragen.');
     state.dlg.email = email;
     const { error } = await authCall(() => store.sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname }));
     if (error) return dlgMsg(authMsg(error));
@@ -11924,7 +11924,7 @@ async function deliver(name, blob) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000); toast('Download gestartet'); return;
   }
-  toast('Dateien lassen sich in dieser Ansicht nicht speichern. Öffnen Sie die Seite in claude.ai.');
+  toast('Dateien lassen sich in dieser Ansicht nicht speichern. Öffne die Seite in claude.ai.');
 }
 async function fontsIn(doc) { const specs = FONT_SPECS.concat(DESIGN_FONTS[designOf(state.sheet.meta)] || [], EXTRA_FONTS); try { await Promise.race([Promise.all(specs.map(f => doc.fonts.load(f))), wait(3500)]); } catch {} }
 
