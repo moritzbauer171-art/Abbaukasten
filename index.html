@@ -751,6 +751,9 @@ body.mw-max-on{overflow:hidden}
 .dlg.dlg-kl{width:min(640px,calc(100% - 32px))}
 .kl-list{display:flex;flex-direction:column;gap:10px}
 .sp-lead{margin:0 0 10px}
+.sp-head{display:flex;justify-content:space-between;align-items:center;margin:-4px 0 6px}.sp-back{font-size:13px}.sp-stepn{font-size:12px;color:var(--faint)}
+.sp-meta{margin:-4px 0 6px;color:var(--muted);font-size:13px}
+.sp-step1{justify-content:space-between;align-items:center;gap:10px}.sp-step1 .hint{flex:1 1 auto}
 .sp-cat{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .sp-st select{width:auto;min-width:11em}
 .sp-chips{display:flex;flex-wrap:wrap;gap:6px}
@@ -763,10 +766,10 @@ body.mw-max-on{overflow:hidden}
 .sh-tag.more{background:none}
 .sh-filt{gap:8px;flex-wrap:wrap;margin-top:6px}.sh-filt select{width:auto;flex:0 1 auto;min-width:0}
 .sp-g button.on{border-color:var(--tinte);background:var(--tinte-soft);box-shadow:inset 0 0 0 1px var(--tinte)}
-.sp-form{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.sp-form.off{opacity:.55}
+.sp-form{margin-top:6px}.sp-form.off{opacity:.55}
 .sp-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:10px}
 @media (max-width:560px){.sp-two{grid-template-columns:1fr}}
-.dlg:has(.sp-list){width:min(560px,calc(100% - 32px))}
+.dlg:has(.sp-list),.dlg:has(.sp-form){width:min(560px,calc(100% - 32px))}
 .rk-line{display:flex;align-items:center;gap:10px;margin:6px 0 10px;padding:8px 10px;border-radius:10px;background:var(--bg)}
 .rk-line .rk-b{width:30px;height:34px;flex:0 0 auto}
 .rk-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}.rk-line b{font-size:14px}.rk-line small{font-size:12px;color:var(--muted)}
@@ -10427,7 +10430,7 @@ function spPick(id) {
   const ex = sharedOf(id); const e = (state.lib || []).find(x => x.id === id); d.pick = id; d.own = null;
   if (ex) { d.text = ex.text || ''; if (ex.autor) d.autor = ex.autor; d.cats = [...(ex.cats || [])]; d.stufe = ex.stufe || (e ? stufeGuess(e.klasse) : ''); }
   else { if (d.pickWas && sharedOf(d.pickWas)) { d.text = ''; d.cats = []; } d.cats = d.cats || []; d.stufe = e ? stufeGuess(e.klasse) : ''; }
-  d.pickWas = id; renderDlg(); setTimeout(() => { const q = $('#sp-q'); if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true })); const t = $('#share-text'); const sel = document.querySelector('#dlg-root .sp-g button.on'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' }); if (t && !isNarrow()) t.focus(); }, 20);
+  d.pickWas = id; d.step = 'form'; renderDlg(); setTimeout(() => { const q = $('#sp-q'); if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true })); const t = $('#share-text'); const sel = document.querySelector('#dlg-root .sp-g button.on'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' }); if (t && !isNarrow()) t.focus(); }, 20);
 }
 const spKeep = () => { const d = state.dlg; if (!d) return; const a = $('#share-autor'), t = $('#share-text'), q = $('#sp-q'), st = $('#sp-stufe'), ow = $('#sp-own'); if (a) d.autor = a.value; if (t) d.text = t.value; if (q) d.q = q.value; if (st) d.stufe = st.value; if (ow) d.own = ow.value; };
 function sharePickHTML() {
@@ -10435,12 +10438,17 @@ function sharePickHTML() {
   const groups = KLASSEN.map(k => [k, L.filter(d => d.klasse === k.id)]).filter(([, A]) => A.length);
   const item = d => { const sh = sharedOf(d.id); return `<li data-q="${esc((d.title + ' ' + (d.nr || '') + ' ' + KL(d.klasse).label).toLowerCase())}"><button type="button" data-act="sp-pick" data-id="${esc(d.id)}"${state.dlg.pick === d.id ? ' class="on" aria-pressed="true"' : ''}>${d.nr && d.nr !== '0' ? `<em>AB ${esc(d.nr)}</em>` : ''}<b>${esc(d.title || 'Ohne Titel')}</b><small>${esc(relTime(d.updatedAt))}</small>${sh ? '<span class="sp-on">schon geteilt</span>' : ''}</button></li>`; };
   const P = d.pick && L.find(x => x.id === d.pick); const ex = P && sharedOf(P.id);
-  return `<h2 id="dlg-t">Stunde teilen</h2>
+  if (d.step !== 'form' || !P) return `<h2 id="dlg-t">Welche Stunde möchtest du teilen?</h2>
     ${rankLine(myShareN(), true)}
     ${L.length ? `<input class="inp" id="sp-q" type="search" placeholder="Stunde suchen …" autocomplete="off" aria-label="Stunden durchsuchen" value="${esc(d.q || '')}">
     <div class="sp-list">${groups.map(([k, A]) => `<section class="sp-g"><h3><i style="background:${ACCENTS[k.accent] ? ACCENTS[k.accent].c : 'var(--tinte)'}"></i>${esc(k.label)} <small>${esc((FAECHER[k.fach] || FAECHER.deutsch).label)}</small></h3><ul>${A.map(item).join('')}</ul></section>`).join('')}</div>
     <p class="sp-none" hidden>Keine Stunde passt zur Suche.</p>` : '<p class="sp-none">Du hast noch keine gespeicherten Stunden.</p>'}
-    <div class="sp-form${P ? '' : ' off'}">
+    <div class="row sp-step1"><small class="hint">Tippe eine Stunde an. Im nächsten Schritt kommen Klassenstufe und Kategorien.</small><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+  // Schritt 2: Angaben und Kategorien
+  return `<div class="sp-head"><button type="button" class="link sp-back" data-act="sp-back">‹ Andere Stunde wählen</button><span class="sp-stepn">Schritt 2 von 2</span></div>
+    <h2 id="dlg-t">„${esc(P.title || 'Ohne Titel')}“ teilen</h2>
+    <p class="sp-meta">${esc(KL(P.klasse).label)}${P.nr && P.nr !== '0' ? ' · AB ' + esc(P.nr) : ''}${ex ? ' · <b>schon geteilt</b>' : ''}</p>
+    <div class="sp-form">
       <div class="sp-two"><label class="f"><span>Dein Name bei der Stunde</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
       <label class="f"><span>Kurz: worum geht es? (optional)</span><input class="inp" id="share-text" type="text" maxlength="600" value="${esc(d.text || '')}" placeholder="z. B. Einstieg Kurzgeschichte, GA, 45 Min."></label></div>
       <div class="sp-cat"><label class="f sp-st"><span>Klassenstufe</span><select class="inp" id="sp-stufe">${STUFEN.map(([v, l]) => `<option value="${v}"${(d.stufe || '') === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label>
@@ -11717,6 +11725,7 @@ async function onDlgClick(e) {
   if (act === 'sa-file') { saveAsFile(); return; }
   if (act === 'sp-pick') { spPick(a.dataset.id); return; }
   if (act === 'sp-go') { spKeep(); shareGo(); return; }
+  if (act === 'sp-back') { spKeep(); state.dlg.step = 'pick'; renderDlg(); setTimeout(() => { const sel = document.querySelector('#dlg-root .sp-g button.on'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' }); const q = $('#sp-q'); if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true })); }, 20); return; }
   if (act === 'sp-cat') { spKeep(); const d = state.dlg, v = a.dataset.v; d.cats = d.cats || []; d.cats = d.cats.includes(v) ? d.cats.filter(x => x !== v) : [...d.cats, v]; renderDlg(); return; }
   if (act === 'sp-del') { const d = state.dlg; const ex = d && sharedOf(d.pick); if (ex) { d.sid = ex.id; shareDelGo(true); } return; }
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
