@@ -1820,6 +1820,26 @@ body{transition:background-color .3s,border-color .25s}
 .pr-match li{display:flex;gap:.6em;border:2px solid #C9CED8;border-radius:.4em;padding:.25em .5em}
 .pr-match li b{color:var(--acc);min-width:1em}
 .pr-qrb{align-items:center;gap:20px;font-size:24px;color:#5A606E}.pr-qrb img{width:420px;height:420px;image-rendering:pixelated}
+.pr-side{display:none}
+.pr.pr-ref{display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,30vw,460px);grid-template-rows:minmax(0,1fr) auto}
+.pr.pr-ref .pr-stage{grid-column:1;grid-row:1}
+.pr.pr-ref .pr-bar{grid-column:1/-1;grid-row:2}
+.pr.pr-ref .pr-side{display:flex;flex-direction:column;gap:10px;grid-column:2;grid-row:1;min-height:0;overflow:auto;padding:16px;background:#262B34;color:#E8EBF0;font:14px/1.45 var(--f-ui);border-left:1px solid #3A404C;white-space:normal;overflow-wrap:break-word}
+.pr.pr-ref .pr-side>*{flex:0 0 auto;max-width:100%}
+.prs-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.prs-clock{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#fff}
+.prs-top span{color:#AEB5C2;font-weight:600}
+.prs-tm{min-height:1.2em;font-weight:700;color:#9FD3B0;font-variant-numeric:tabular-nums}.prs-tm.low{color:#F2B84B}
+.prs-h{margin-top:6px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8F97A6}.prs-h small{font-weight:600;letter-spacing:0;text-transform:none;margin-left:6px}
+.prs-next{cursor:default;border-color:#4A5160}.prs-next:hover{outline:none}
+.prs-step{color:#F2D48A;font-weight:600}
+.prs-end,.prs-none,.prs-aw{color:#AEB5C2;margin:0}
+.prs-notes>div{position:static;max-width:none;width:auto;margin:0 0 8px;padding:10px 12px;border-radius:8px;color:#1C1F27;font-size:14px;line-height:1.45;box-shadow:none;transform:none}
+.prs-notes .prs-later{opacity:.6}
+.pr-aud .pr-stage{cursor:none}
+.pr-aud-hint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 20px;border-radius:12px;background:rgba(20,23,30,.88);color:#fff;font:16px/1.35 var(--f-ui);text-align:center;pointer-events:none}
+.pr-aud-hint[hidden]{display:none}
+@media (pointer:coarse) and (max-width:899px){.pr-bar [data-p="ref"]{display:none}}
 .pr-bar{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 8px;padding:8px 12px;background:#2B303A}
 .pr-bar button{border:1px solid #4A5160;background:#363C48;color:#F1F3F6;border-radius:8px;padding:6px 12px;font:600 14px/1.2 var(--f-ui);cursor:pointer}
 .pr-bar button[data-p="prev"],.pr-bar button[data-p="next"]{font-size:20px;padding:2px 14px}
@@ -4683,7 +4703,8 @@ function tfBeamer(bid) {
   const show = () => { stage.innerHTML = tafelHTML(list[S.k], { gaps: S.gaps, steps: true }); const tf = stage.querySelector('.tf'); S.max = Math.max(0, ...[...tf.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); fit(); };
   const next = () => { if (S.cur < S.max) { S.cur++; apply(); } else if (S.k < list.length - 1) { S.k++; S.cur = 0; show(); } };
   const prev = () => { if (S.cur > 0) { S.cur--; apply(); } else if (S.k > 0) { S.k--; show(); S.cur = S.max; apply(); } };
-  const close = () => { document.removeEventListener('keydown', key, true); window.removeEventListener('resize', onRs); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const wake = keepAwake();
+  const close = () => { wake(); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', onRs); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
     if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.tf-bm-bar button')) return;
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); next(); }
@@ -5493,6 +5514,15 @@ async function exportVP() {
   } catch (err) { console.error(err); overlay(''); toast('Der Verlaufsplan ließ sich nicht erstellen. Bitte erneut versuchen.'); }
   finally { overlay(''); busy = false; }
 }
+/* Bildschirm wach halten, solange präsentiert wird (Screen Wake Lock); holt die Sperre nach dem Zurückkehren ins Fenster neu */
+function keepAwake(win = window, quiet = false) {
+  let lock = null, off = false; const nav = win.navigator, doc = win.document;
+  if (!nav || !('wakeLock' in nav)) { if (!quiet && !keepAwake.warned) { keepAwake.warned = true; toast('Dieser Browser kann den Standby nicht verhindern. In Chrome, Edge, Firefox oder Safari (aktuell) bleibt der Bildschirm an.'); } return () => {}; }
+  const get = async () => { if (off || lock || doc.visibilityState !== 'visible') return; try { lock = await nav.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); if (off) { lock.release(); lock = null; } } catch {} };
+  const vis = () => { if (doc.visibilityState === 'visible') get(); };
+  doc.addEventListener('visibilitychange', vis); win.addEventListener('focus', vis); get();
+  return () => { off = true; doc.removeEventListener('visibilitychange', vis); win.removeEventListener('focus', vis); try { if (lock) lock.release(); } catch {} lock = null; };
+}
 function openPres(start) {
   let S; try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
   if (!S.length) { toast('Es ist keine Folie ausgewählt. Im Bereich „Präsentation“ lassen sich Folien wählen.'); return; }
@@ -5501,12 +5531,12 @@ function openPres(start) {
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
     <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
-    <button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div></div>`);
+    <button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
   setAccent(ov, m);
   // Zeit ausblenden (für Klassen, die Zeitdruck stresst): Timer laufen weiter, sind aber unsichtbar; gemerkt je Klasse
   const ntKey = KL(state.sheet.klasse).id;
   const ntSet = on => { ov.classList.toggle('pr-notime', on); const bt = ov.querySelector('[data-p="notime"]'); bt.setAttribute('aria-pressed', String(on)); bt.textContent = on ? 'Zeit einblenden' : 'Zeit ausblenden'; };
-  const ntToggle = () => { const on = !ov.classList.contains('pr-notime'); ntSet(on); if (!state.prefs.noTime) state.prefs.noTime = {}; if (on) state.prefs.noTime[ntKey] = true; else delete state.prefs.noTime[ntKey]; savePrefs(); };
+  const ntToggle = () => { const on = !ov.classList.contains('pr-notime'); ntSet(on); mirror(); if (!state.prefs.noTime) state.prefs.noTime = {}; if (on) state.prefs.noTime[ntKey] = true; else delete state.prefs.noTime[ntKey]; savePrefs(); };
   ntSet(!!(state.prefs && state.prefs.noTime && state.prefs.noTime[ntKey])); document.body.appendChild(ov);
   const stage = ov.querySelector('.pr-stage'), slide = ov.querySelector('.pr-slide'), $p = q => ov.querySelector(q);
   const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
@@ -5534,7 +5564,7 @@ function openPres(start) {
     $p('[data-p="prev"]').disabled = !P.i && !P.cur; $p('[data-p="next"]').disabled = P.i >= S.length - 1 && P.cur >= P.max;
     const tips = slide.querySelector('.pr-tips'); $p('[data-p="tip"]').hidden = !tips; if (tips) $p('[data-p="tip"]').disabled = !tips.querySelector('[hidden]');
     const eh = slide.querySelector('.pr-eh'); $p('[data-p="eh"]').hidden = !eh; if (eh) $p('[data-p="eh"]').setAttribute('aria-pressed', String(!eh.hidden));
-    tmShow();
+    tmShow(); mirror(); refSide();
   };
   const tmShow = () => {
     const el2 = slide.querySelector('.pr-timer'); const mine = T.slide === P.i;
@@ -5550,7 +5580,70 @@ function openPres(start) {
     $p('[data-p="timer"]').disabled = !el2 && !T.run;
     $p('.pr-tl').textContent = T.run && !mine ? '⏱ ' + fmt(T.left) + ' · bis ' + hhmm(T.end) : ''; $p('.pr-tl').classList.toggle('low', T.run && !mine && T.left <= T.full * 0.3);
     if (W) { const l = W.el.querySelector('.pr-warn-l'); if (l) l.textContent = fmt(T.left); }
+    mirrorT();
   };
+  /* ---------- Zweiter Bildschirm: Beamerfenster zeigt die Folie, dieses Fenster die Referentenansicht ---------- */
+  let AW = null, awPoll = 0, awWake = null, sideKey = '';
+  const awOk = () => !!(AW && !AW.closed && AW.document && AW.document.querySelector('.pr-slide'));
+  const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = `translate(-50%,-50%) scale(${k})`; };
+  const mirror = () => { if (!awOk()) return; const d = AW.document, sl = d.querySelector('.pr-slide'); sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
+  const mirrorT = () => { if (!awOk()) return; const d = AW.document; ['.pr-timer', '.pr-tbar'].forEach(q => { const a = slide.querySelector(q), b = d.querySelector('.pr-slide ' + q); if (a && b) { b.className = a.className; b.innerHTML = a.innerHTML; } }); d.querySelector('.pr-slide').className = slide.className; };
+  const refSide = () => {
+    if (!ov.classList.contains('pr-ref')) return; const sd = $p('.pr-side'); const nx = S[P.i + 1];
+    const notes = []; const eh = slide.querySelector('.pr-eh'), tp = slide.querySelector('.pr-tips');
+    [tp, eh].forEach(n => { if (!n) return; const c = n.cloneNode(true); c.hidden = false; c.classList.remove('pr-pop'); c.querySelectorAll('[hidden]').forEach(x => { x.hidden = false; x.classList.add('prs-later'); }); notes.push(c.outerHTML); });
+    const key = P.i + '|' + P.cur + '|' + S.length + '|' + sd.clientWidth;
+    if (key !== sideKey) {
+      sideKey = key; const w = Math.max(160, sd.clientWidth - 32); const bar = S.bar || [];
+      const nxt = P.cur < P.max ? `<div class="prs-step">Noch ${P.max - P.cur} ${P.max - P.cur === 1 ? 'Schritt' : 'Schritte'} auf dieser Folie</div>` : '';
+      sd.innerHTML = `<div class="prs-top"><b class="prs-clock"></b><span>Folie ${P.i + 1} von ${S.length}</span></div><div class="prs-tm"></div>
+        <div class="prs-h">Als Nächstes</div>${nxt}${nx ? `<div class="pr-thumb prs-next" style="--tw:${w}px;--k:${(w / 1600).toFixed(4)}"><div class="pr-slide pr-k-${nx.k}${bar.length ? ' has-bar' : ''}"><div class="pr-accent"></div>${presSlideHTML(nx, bar)}${presBarHTML(bar, nx.bi)}<div class="pr-foot"><span></span><span>${P.i + 2}</span></div></div></div>` : '<div class="prs-end">Das ist die letzte Folie.</div>'}
+        <div class="prs-h">Notizen <small>nur hier sichtbar</small></div><div class="prs-notes">${notes.join('') || '<p class="prs-none">Zu dieser Folie gibt es keine Tipps oder Erwartungen.</p>'}</div>
+        <div class="prs-h">Beamer</div><div class="prs-aw">${awOk() ? 'Die Folie läuft im Beamerfenster. Dort einmal klicken für Vollbild. Tasten und Presenter funktionieren in beiden Fenstern.' : 'Das Beamerfenster ist zu.'}</div>`;
+      const ns = sd.querySelector('.prs-next .pr-slide'); if (ns) { const f = ns.querySelector('.pr-fit'), body = ns.querySelector('.pr-body'); try { if (f && body && PR_MAX[nx.k]) fitUp(f, body, PR_MAX[nx.k]); tfDraw(ns); phbFit(ns); } catch {} }
+    }
+    refClock();
+  };
+  const refClock = () => {
+    if (!ov.classList.contains('pr-ref')) return; const c = $p('.prs-clock'); if (c) c.textContent = hhmm(Date.now()) + ' Uhr';
+    const t = $p('.prs-tm'); if (t) { t.textContent = T.run || (T.slide >= 0 && T.full && T.left < T.full) ? `Timer${T.slide !== P.i ? ' (Folie ' + (T.slide + 1) + ')' : ''}: ${fmt(T.left)}${T.run ? ' · bis ' + hhmm(T.end) : ' · angehalten'}` : (PLAN ? 'Stundenende ' + hmFmt(PLAN.end) + ' Uhr' : ''); t.classList.toggle('low', T.run && T.full > 0 && T.left <= T.full * 0.3); }
+  };
+  const refUi = on => { ov.classList.toggle('pr-ref', on); const b = $p('[data-p="ref"]'); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Beamerfenster schließen' : 'Referentenansicht'; sideKey = ''; scale(); if (on) refSide(); };
+  const refClose = () => { clearInterval(awPoll); awPoll = 0; if (awWake) { awWake(); awWake = null; } try { if (AW && !AW.closed) AW.close(); } catch {} AW = null; refUi(false); ov.focus(); };
+  const awBuild = (hint) => {
+    const d = AW.document; d.open(); d.write('<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AB-O-MAT · Beamer</title></head><body></body></html>'); d.close();
+    [...document.documentElement.attributes].forEach(a => { if (a.name !== 'style') d.documentElement.setAttribute(a.name, a.value); });
+    document.querySelectorAll('style, link[rel="stylesheet"]').forEach(n => d.head.appendChild(d.importNode(n, true)));
+    d.body.style.cssText = 'margin:0;background:#000;overflow:hidden';
+    d.body.innerHTML = `<div class="pr pr-aud" style="${esc(ov.style.cssText)}"><div class="pr-stage"><div class="pr-slide"></div></div><div class="pr-aud-hint"><b>Beamerfenster</b><span>${hint}</span></div></div>`;
+    const hd = () => { const h = d.querySelector('.pr-aud-hint'); if (h) h.hidden = !!d.fullscreenElement; awScale(); };
+    d.addEventListener('fullscreenchange', hd);
+    d.addEventListener('click', () => { if (!d.fullscreenElement && d.documentElement.requestFullscreen) { d.documentElement.requestFullscreen().catch(() => {}); return; } next(); });
+    d.addEventListener('keydown', e => { if (e.key === 'Escape' && d.fullscreenElement) return; key(e); });
+    AW.addEventListener('resize', awScale);
+    AW.addEventListener('pagehide', () => setTimeout(() => { if (!AW || AW.closed) refClose(); }, 300));
+    mirror(); setTimeout(awScale, 60);
+    awWake = keepAwake(AW, true);
+  };
+  const refOpen = async () => {
+    if (AW && !AW.closed) { refClose(); return; }
+    let other = null, many = null, perm = null;
+    try { if ('getScreenDetails' in window && navigator.permissions) { perm = (await navigator.permissions.query({ name: 'window-management' })).state; if (perm === 'granted') { const sd = await window.getScreenDetails(); many = sd.screens.length; other = sd.screens.find(x => x !== sd.currentScreen) || null; } } } catch {}
+    const feat = other ? `popup,left=${other.availLeft},top=${other.availTop},width=${other.availWidth},height=${other.availHeight},fullscreen` : `popup,width=${Math.min(1280, screen.availWidth)},height=${Math.min(760, screen.availHeight)}`;
+    AW = window.open('', 'abomat-beamer', feat);
+    if (!AW) { toast('Das Beamerfenster wurde blockiert. Bitte Pop-ups für diese Seite erlauben und erneut versuchen.'); return; }
+    const api = 'getScreenDetails' in window;
+    awBuild(other ? 'Einmal klicken: Vollbild.' : api ? 'Einmal klicken: Vollbild. Steht dieses Fenster nicht auf dem Beamer, zuerst hinüberziehen.' : 'Dieses Fenster auf den Beamer ziehen und dort einmal klicken: Vollbild.');
+    refUi(true);
+    awPoll = setInterval(() => { if (!AW || AW.closed) refClose(); else refClock(); }, 1000);
+    if (api && !other && perm !== 'denied') {
+      try { const sd = await window.getScreenDetails(); many = sd.screens.length; other = sd.screens.find(x => x !== sd.currentScreen) || null;
+        if (other && AW && !AW.closed) { AW.moveTo(other.availLeft, other.availTop); AW.resizeTo(other.availWidth, other.availHeight); const h = AW.document.querySelector('.pr-aud-hint span'); if (h) h.textContent = 'Einmal klicken: Vollbild.'; } } catch {}
+    }
+    if (many === 1) toast('Es ist nur ein Bildschirm angeschlossen. Am Beamer unter Windows mit Win+P „Erweitern“ wählen, am Mac in den Displays „Spiegeln“ ausschalten.');
+    sideKey = ''; refSide();
+  };
+  window.addEventListener('pagehide', () => { try { if (AW && !AW.closed) AW.close(); } catch {} });
   if (PLAN) T.cid = setInterval(() => { if (!T.run) tmShow(); }, 15000);
   const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000)); if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
   const tmToggle = () => {
@@ -5591,7 +5684,8 @@ function openPres(start) {
   const tip = () => { const tp = slide.querySelector('.pr-tips'); if (!tp) return; const h = tp.querySelector('[hidden]'); tp.hidden = false; if (h) h.hidden = false; apply(); };
   const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
   const close = () => tmWarn('Beim Beenden der Präsentation wird er abgebrochen.', 'Präsentation beenden', closeNow);
-  const closeNow = () => { clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const wake = keepAwake();
+  const closeNow = () => { wake(); refClose(); clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.pr-bar button')) return;
@@ -5614,10 +5708,11 @@ function openPres(start) {
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
+    else if (k === 'ref') refOpen();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
-  document.addEventListener('keydown', key, true); window.addEventListener('resize', scale);
+  document.addEventListener('keydown', key, true); window.addEventListener('resize', () => { scale(); sideKey = ''; refSide(); });
   scale(); show(); ov.focus();
 }
 
