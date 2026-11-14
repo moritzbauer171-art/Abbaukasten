@@ -751,6 +751,37 @@ body.mw-max-on{overflow:hidden}
 .dlg.dlg-kl{width:min(640px,calc(100% - 32px))}
 .kl-list{display:flex;flex-direction:column;gap:10px}
 .sp-lead{margin:0 0 10px}
+.sp-g button.on{border-color:var(--tinte);background:var(--tinte-soft);box-shadow:inset 0 0 0 1px var(--tinte)}
+.sp-form{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.sp-form.off{opacity:.55}
+.sp-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:10px}
+@media (max-width:560px){.sp-two{grid-template-columns:1fr}}
+.dlg:has(.sp-list){width:min(560px,calc(100% - 32px))}
+.rk-line{display:flex;align-items:center;gap:10px;margin:6px 0 10px;padding:8px 10px;border-radius:10px;background:var(--bg)}
+.rk-line .rk-b{width:30px;height:34px;flex:0 0 auto}
+.rk-txt{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}.rk-line b{font-size:14px}.rk-line small{font-size:12px;color:var(--muted)}
+.rk-0>div{flex:1 1 auto;display:flex;flex-direction:column}
+.rk-none{width:26px;height:26px;border-radius:50%;border:2px dashed var(--line-strong);flex:0 0 auto}
+.rk-bar{display:block;height:5px;border-radius:3px;background:var(--line);margin-top:5px;overflow:hidden}.rk-bar i{display:block;height:100%;background:var(--tinte);border-radius:3px}
+.rk-all{font-size:12px;white-space:nowrap;align-self:center}
+.hm-give .rk-line{margin:8px 0 0;background:rgba(0,0,0,.04)}
+.hm-give-hero .rk-line{background:rgba(255,255,255,.12)}.hm-give-hero .rk-line b{color:#fff}.hm-give-hero .rk-line small{color:rgba(255,255,255,.8)}.hm-give-hero .rk-bar{background:rgba(255,255,255,.25)}.hm-give-hero .rk-bar i{background:#FDE68A}.hm-give-hero .rk-all{color:#FDE68A}.hm-give-hero .rk-none{border-color:rgba(255,255,255,.5)}
+.rk-mini{width:13px;height:15px;vertical-align:-2px;margin-right:4px}
+.rk-ov{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:16px;background:rgba(20,24,32,.5);animation:rkIn .2s ease}
+.rk-card{position:relative;overflow:hidden;width:min(440px,100%);max-height:calc(100% - 20px);overflow-y:auto;background:var(--panel);color:var(--ink);border-radius:16px;padding:22px 22px 16px;box-shadow:var(--shadow)}
+.rk-card h2{margin:0 0 6px;font-size:20px}.rk-sub{margin:0 0 12px;color:var(--muted);font-size:13.5px}
+.rk-list{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px}
+.rk-list li{display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:10px;opacity:.5;filter:grayscale(.7)}
+.rk-list li.got{opacity:1;filter:none}.rk-list li.cur{background:var(--tinte-soft)}
+.rk-list .rk-b{width:34px;height:39px;flex:0 0 auto}.rk-list li div{display:flex;flex-direction:column}.rk-list small{color:var(--faint);font-size:12px}
+.rk-up{text-align:center;padding-top:6px}.rk-big{width:96px;height:110px;animation:rkPop .6s cubic-bezier(.3,1.6,.5,1)}
+.rk-kick{margin:6px 0 0;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--tinte)}
+.rk-up p{margin:6px 0}.rk-nx{color:var(--faint);font-size:13px}
+.rk-card .row{justify-content:center}
+.rk-conf{position:absolute;inset:0;pointer-events:none}.rk-conf i{position:absolute;top:-10px;left:var(--x);width:7px;height:11px;background:var(--c);border-radius:2px;animation:rkFall 1.8s var(--d) ease-in forwards}
+@keyframes rkFall{to{transform:translateY(420px) rotate(540deg);opacity:0}}
+@keyframes rkPop{from{transform:scale(.3) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes rkIn{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rk-conf{display:none}.rk-big{animation:none}}
 .sp-list{max-height:min(52vh,460px);overflow:auto;margin:10px 0 6px;display:flex;flex-direction:column;gap:12px}
 .sp-g h3{display:flex;align-items:center;gap:7px;margin:0 0 6px;font-size:13px}.sp-g h3 i{width:9px;height:9px;border-radius:50%}.sp-g h3 small{font-weight:500;color:var(--faint)}
 .sp-g ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
@@ -9570,7 +9601,7 @@ function supaB(sb, user) {
     async savePrefs(p) { chk(await sb.from('ab_einstellungen').upsert({ user_id: user.id, data: p, updated_at: new Date().toISOString() }, { onConflict: 'user_id' })); },
     async shareList() {
       const rows = chk(await sb.from('ab_geteilt').select('id,user_id,sheet_id,title,klasse,fach,beschreibung,autor,updated_at,suchtext').order('updated_at', { ascending: false }).limit(500)) || [];
-      return rows.map(r => ({ id: r.id, sheetId: r.sheet_id, mine: r.user_id === user.id, title: r.title || 'Ohne Titel', klasse: r.klasse || '', fach: r.fach || '', text: r.beschreibung || '', autor: r.autor || '', q: r.suchtext || '', updatedAt: Date.parse(r.updated_at) || 0 }));
+      return rows.map(r => ({ id: r.id, sheetId: r.sheet_id, mine: r.user_id === user.id, uid: r.user_id, title: r.title || 'Ohne Titel', klasse: r.klasse || '', fach: r.fach || '', text: r.beschreibung || '', autor: r.autor || '', q: r.suchtext || '', updatedAt: Date.parse(r.updated_at) || 0 }));
     },
     async shareGet(id) { const d = chk(await sb.from('ab_geteilt').select('data').eq('id', id).maybeSingle()); return d && d.data ? d.data : null; },
     async sharePut(sh, info) {
@@ -9884,7 +9915,7 @@ function homeRenderNow() {
     const L = sharedVis().filter(x => !x.mine).sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt)).slice(0, 6);
     shareH = L.length ? `<ul class="hm-sh">${L.map(x => { const nu = +new Date(x.updatedAt) > hmS.seen; return `<li class="${nu ? 'nu' : ''}">
         <div class="hm-sh-h"><b>${esc(x.title)}</b>${nu ? '<span class="hm-new">neu</span>' : ''}</div>
-        <div class="hm-sh-m">${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', relTime(+new Date(x.updatedAt))].filter(Boolean).join(' · '))}</div>
+        <div class="hm-sh-m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', relTime(+new Date(x.updatedAt))].filter(Boolean).join(' · '))}</div>
         ${x.text ? `<p>${esc(x.text.length > 140 ? x.text.slice(0, 138) + ' …' : x.text)}</p>` : ''}
         <div class="hm-sh-a">${hmS.busy === x.id ? '<small>Wird übernommen …</small>' : `<button type="button" class="link" data-hm="take" data-sid="${esc(x.id)}">${hmI('take')}In „${esc(KL(state.klasse).label)}“ übernehmen</button>`}</div></li>`; }).join('')}</ul>`
       : `<div class="hm-empty"><p>${state.sharedErr ? esc(state.sharedErr) : (state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt.' : 'Noch keine geteilten Stunden von anderen.')}</p></div>`;
@@ -9892,7 +9923,7 @@ function homeRenderNow() {
   const nMine = canShare() && state.shared ? state.shared.filter(x => x.mine).length : 0;
   const giveH = cls => `<div class="hm-give ${cls}"><svg class="hm-give-ic" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="17" height="22" rx="3" fill="#fff" stroke="currentColor" stroke-width="2"/><rect x="18" y="5" width="17" height="22" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2"/><path d="M9 16h9M9 20.5h7M9 25h8M22 12h9M22 16.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M26 30.5c-1.8-1.3-4-3-4-5a2 2 0 0 1 4-.6 2 2 0 0 1 4 .6c0 2-2.2 3.7-4 5z" fill="#E0565B"/></svg>
     <div class="hm-give-t"><b>Spar deinen Kolleg*innen einen Abend Arbeit!</b><p>Eine Stunde, die bei dir gut lief, hilft anderen beim Vorbereiten, und beim nächsten Mal profitierst du selbst. Geteilt wird nur, was du auswählst; dein Original bleibt bei dir.</p>
-    ${nMine ? `<p class="hm-give-n">Du hast schon ${nMine} ${nMine === 1 ? 'Stunde' : 'Stunden'} geteilt. Danke!</p>` : ''}</div>
+    ${canShare() && state.shared ? rankLine(nMine, true) : ''}</div>
     <button type="button" class="btn hm-give-b" data-hm="${canShare() ? 'give' : 'login'}">${hmI('share')}${canShare() ? 'Eine Stunde teilen' : 'Anmelden und teilen'}</button></div>`;
   const nNew = canShare() && state.shared ? sharedVis().filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
   const html = `<div class="hm-top"><div class="hm-brand"><b class="logo">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small>Startseite</small></div>
@@ -10218,7 +10249,7 @@ function sharedListHTML() {
   if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche.' : state.shared.length ? 'In Ihren Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen Sie eine Klasse haben.' : 'Noch keine geteilten Stunden. Teilen Sie eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
   return head + L.map(x => `<div class="lib-item share-item" data-sid="${esc(x.id)}">
       <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von Ihnen</em>' : ''}</div>
-      <div class="m">${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
+      <div class="m">${autorBadge(x)}${esc([(FAECHER[x.fach] || {}).label, x.klasse, x.autor ? 'von ' + x.autor : '', 'geteilt ' + fmt(x.updatedAt)].filter(Boolean).join(' · '))}</div>
       ${x.text ? `<div class="share-text">${esc(x.text)}</div>` : ''}
       <div class="a">${state.shareBusy === x.id ? '<span class="m">Wird übernommen …</span>' : `<button class="link" type="button" data-act="share-take">Übernehmen</button>${x.mine ? '<button class="link" type="button" data-act="share-edit">Bearbeiten</button>' : ''}`}</div>
     </div>`).join('');
@@ -10239,22 +10270,72 @@ async function openShare(sheetId) {
   await shareLoad(); const ex = sharedOf(sheetId); const e = state.lib.find(d => d.id === sheetId);
   state.dlg = { mode: 'share', sheetId, title: (e && e.title) || stTitle(state.sheet), sid: ex ? ex.id : '', text: ex ? ex.text : '', autor: ex ? ex.autor : (state.prefs.autor || '') }; renderDlg();
 }
+/* ---------- Ränge fürs Teilen ---------- */
+const RANKS = [
+  { n: 1, name: 'Kreidekrümel', c: '#C0834A', d: 'Die erste Stunde ist geteilt. Der Anfang ist gemacht!' },
+  { n: 3, name: 'Tafelheld*in', c: '#8E9BAD', d: 'Drei Stunden für andere. Das spricht sich im Lehrerzimmer herum.' },
+  { n: 5, name: 'Kopierkönig*in', c: '#E0A526', d: 'Fünf geteilte Stunden. Der Kopierer verneigt sich.' },
+  { n: 10, name: 'Fachschaftsstar', c: '#1E9E8F', d: 'Zehn Stunden! Ganze Fachschaften planen mit deinem Material.' },
+  { n: 20, name: 'Kollegiumslegende', c: '#7A4FD0', d: 'Zwanzig Stunden. Man erzählt sich Geschichten über dich.' },
+  { n: 40, name: 'Lehrerzimmer-Ikone', c: '#D6457A', d: 'Vierzig Stunden. Ab jetzt gibt es den Kaffee für dich umsonst.' }
+];
+const rankOf = n => { let i = -1; RANKS.forEach((r, k) => { if (n >= r.n) i = k; }); const nx = RANKS[i + 1] || null; return { i, r: RANKS[i] || null, next: nx, need: nx ? nx.n - n : 0, prev: i >= 0 ? RANKS[i].n : 0 }; };
+const myShareN = () => (state.shared || []).filter(x => x.mine).length;
+function rankBadge(i, cls) {
+  const r = RANKS[i]; if (!r) return '';
+  return `<svg class="rk-b ${cls || ''}" viewBox="0 0 40 46" role="img" aria-label="Rang: ${esc(r.name)}"><title>${esc(r.name)}</title><path d="M12 28 7 44l6-3 4 5 4-14z" fill="${r.c}" opacity=".75"/><path d="M28 28l5 16-6-3-4 5-4-14z" fill="${r.c}" opacity=".75"/><circle cx="20" cy="18" r="16" fill="${r.c}"/><circle cx="20" cy="18" r="12.5" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/>${i >= 3 ? `<path d="M20 8.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="#fff"/>` : `<text x="20" y="${18 + 5.5}" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="system-ui,sans-serif">${i + 1}</text>`}</svg>`;
+}
+function rankLine(n, du) {
+  const R = rankOf(n);
+  if (!R.r) return `<div class="rk-line rk-0"><span class="rk-none" aria-hidden="true"></span><div><b>${du ? 'Noch kein Rang' : 'Noch kein Rang'}</b><small>${du ? 'Teile deine erste Stunde und werde ' : 'Mit der ersten geteilten Stunde wird man '}„${esc(RANKS[0].name)}“.</small></div><button type="button" class="link rk-all" data-rk="all">Alle Ränge</button></div>`;
+  const pct = R.next ? Math.round((n - R.prev) / (R.next.n - R.prev) * 100) : 100;
+  return `<div class="rk-line">${rankBadge(R.i)}<div class="rk-txt"><b>${esc(R.r.name)}</b><small>${n} ${n === 1 ? 'Stunde' : 'Stunden'} geteilt${R.next ? ` · noch ${R.need} bis „${esc(R.next.name)}“` : ' · höchster Rang. Danke!'}</small>${R.next ? `<span class="rk-bar"><i style="width:${pct}%"></i></span>` : ''}</div><button type="button" class="link rk-all" data-rk="all">Alle Ränge</button></div>`;
+}
+function rankPop(mode, i) {
+  const old = document.getElementById('rk-ov'); if (old) old.remove();
+  const n = myShareN(), R = rankOf(n);
+  const body = mode === 'up' ? `<div class="rk-up">${rankBadge(i, 'rk-big')}<p class="rk-kick">Aufgestiegen!</p><h2>Du bist jetzt „${esc(RANKS[i].name)}“</h2><p>${esc(RANKS[i].d)}</p>${RANKS[i + 1] ? `<p class="rk-nx">Nächster Rang: „${esc(RANKS[i + 1].name)}“ ab ${RANKS[i + 1].n} geteilten Stunden.</p>` : ''}</div>`
+    : `<h2>Ränge fürs Teilen</h2><p class="rk-sub">Je mehr Stunden du mit dem Kollegium teilst, desto höher steigst du auf. Dein Rang steht bei deinen geteilten Stunden neben deinem Namen.</p><ol class="rk-list">${RANKS.map((r, k) => `<li class="${k <= R.i ? 'got' : ''}${k === R.i ? ' cur' : ''}">${rankBadge(k)}<div><b>${esc(r.name)}</b><small>ab ${r.n} ${r.n === 1 ? 'geteilten Stunde' : 'geteilten Stunden'}${k === R.i ? ' · dein Rang' : ''}</small></div></li>`).join('')}</ol>`;
+  const ov = el(`<div id="rk-ov" class="rk-ov${mode === 'up' ? ' up' : ''}" role="dialog" aria-modal="true" aria-label="Ränge"><div class="rk-card">${mode === 'up' ? '<div class="rk-conf" aria-hidden="true">' + Array.from({ length: 26 }, (_, k) => `<i style="--x:${(k * 37) % 100}%;--d:${(k % 7) * .12}s;--c:${['#E0A526', '#2741B5', '#E0565B', '#1E9E8F', '#7A4FD0'][k % 5]}"></i>`).join('') + '</div>' : ''}${body}<div class="row"><button type="button" class="btn primary" data-rk="x">${mode === 'up' ? 'Weiter so!' : 'Schließen'}</button></div></div></div>`);
+  document.body.appendChild(ov);
+  ov.addEventListener('click', e => { if (e.target === ov || e.target.closest('[data-rk="x"]')) ov.remove(); });
+  const b = ov.querySelector('[data-rk="x"]'); if (b) b.focus();
+}
+document.addEventListener('click', e => { const a = e.target.closest('[data-rk="all"]'); if (a) { e.preventDefault(); rankPop('all'); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { const o = document.getElementById('rk-ov'); if (o) { e.stopPropagation(); o.remove(); } } }, true);
+// Rang eines anderen Kontos (aus den geteilten Stunden gezählt)
+const rankOfUid = uid => rankOf((state.shared || []).filter(y => y.uid && y.uid === uid).length);
+const autorBadge = x => { if (!x.uid) return ''; const R = rankOfUid(x.uid); return R.r ? rankBadge(R.i, 'rk-mini') : ''; };
+
 /* Auswahl: welche eigene Stunde teilen? */
-async function openSharePick() {
+async function openSharePick(pre) {
   if (!canShare()) { toast('Zum Teilen bitte anmelden.'); return; }
-  state.dlg = { mode: 'sharepick' }; renderDlg(); await shareLoad(); if (state.dlg && state.dlg.mode === 'sharepick') renderDlg();
+  state.dlg = { mode: 'sharepick', pick: '', autor: state.prefs.autor || '', text: '' }; renderDlg(); await shareLoad();
+  if (state.dlg && state.dlg.mode === 'sharepick') { if (pre) spPick(pre); else renderDlg(); }
   setTimeout(() => { const f = $('#sp-q'); if (f && !isNarrow()) f.focus(); }, 30);
 }
+function spPick(id) {
+  const d = state.dlg; if (!d || d.mode !== 'sharepick') return; spKeep();
+  const ex = sharedOf(id); d.pick = id; if (ex) { d.text = ex.text || ''; if (ex.autor) d.autor = ex.autor; } else if (d.pickWas && sharedOf(d.pickWas)) d.text = '';
+  d.pickWas = id; renderDlg(); setTimeout(() => { const q = $('#sp-q'); if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true })); const t = $('#share-text'); const sel = document.querySelector('#dlg-root .sp-g button.on'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' }); if (t && !isNarrow()) t.focus(); }, 20);
+}
+const spKeep = () => { const d = state.dlg; if (!d) return; const a = $('#share-autor'), t = $('#share-text'), q = $('#sp-q'); if (a) d.autor = a.value; if (t) d.text = t.value; if (q) d.q = q.value; };
 function sharePickHTML() {
-  const L = (state.lib || []).slice().sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  const d = state.dlg; const L = (state.lib || []).slice().sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
   const groups = KLASSEN.map(k => [k, L.filter(d => d.klasse === k.id)]).filter(([, A]) => A.length);
-  const item = d => { const sh = sharedOf(d.id); return `<li data-q="${esc((d.title + ' ' + (d.nr || '') + ' ' + KL(d.klasse).label).toLowerCase())}"><button type="button" data-act="sp-pick" data-id="${esc(d.id)}">${d.nr && d.nr !== '0' ? `<em>AB ${esc(d.nr)}</em>` : ''}<b>${esc(d.title || 'Ohne Titel')}</b><small>${esc(relTime(d.updatedAt))}</small>${sh ? '<span class="sp-on">geteilt · bearbeiten</span>' : ''}</button></li>`; };
-  return `<h2 id="dlg-t">Welche Stunde möchtest du teilen?</h2>
-    <p class="sp-lead">Wähle eine deiner Stunden. Im nächsten Schritt kannst du noch eine kurze Beschreibung ergänzen.</p>
-    ${L.length ? `<input class="inp" id="sp-q" type="search" placeholder="Suchen …" autocomplete="off" aria-label="Stunden durchsuchen">
+  const item = d => { const sh = sharedOf(d.id); return `<li data-q="${esc((d.title + ' ' + (d.nr || '') + ' ' + KL(d.klasse).label).toLowerCase())}"><button type="button" data-act="sp-pick" data-id="${esc(d.id)}"${state.dlg.pick === d.id ? ' class="on" aria-pressed="true"' : ''}>${d.nr && d.nr !== '0' ? `<em>AB ${esc(d.nr)}</em>` : ''}<b>${esc(d.title || 'Ohne Titel')}</b><small>${esc(relTime(d.updatedAt))}</small>${sh ? '<span class="sp-on">schon geteilt</span>' : ''}</button></li>`; };
+  const P = d.pick && L.find(x => x.id === d.pick); const ex = P && sharedOf(P.id);
+  return `<h2 id="dlg-t">Stunde teilen</h2>
+    ${rankLine(myShareN(), true)}
+    ${L.length ? `<input class="inp" id="sp-q" type="search" placeholder="Stunde suchen …" autocomplete="off" aria-label="Stunden durchsuchen" value="${esc(d.q || '')}">
     <div class="sp-list">${groups.map(([k, A]) => `<section class="sp-g"><h3><i style="background:${ACCENTS[k.accent] ? ACCENTS[k.accent].c : 'var(--tinte)'}"></i>${esc(k.label)} <small>${esc((FAECHER[k.fach] || FAECHER.deutsch).label)}</small></h3><ul>${A.map(item).join('')}</ul></section>`).join('')}</div>
     <p class="sp-none" hidden>Keine Stunde passt zur Suche.</p>` : '<p class="sp-none">Du hast noch keine gespeicherten Stunden.</p>'}
-    <div class="row"><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
+    <div class="sp-form${P ? '' : ' off'}">
+      <div class="sp-two"><label class="f"><span>Dein Name bei der Stunde</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
+      <label class="f"><span>Kurz: worum geht es? (optional)</span><input class="inp" id="share-text" type="text" maxlength="600" value="${esc(d.text || '')}" placeholder="z. B. Einstieg Kurzgeschichte, GA, 45 Min."></label></div>
+      <small class="hint">${P ? (ex ? `„${esc(P.title)}“ ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand.` : `„${esc(P.title)}“ wird mit allen Konten geteilt, so wie sie jetzt gespeichert ist. Andere können eine eigene Kopie übernehmen; dein Original bleibt bei dir.`) : 'Erst oben eine Stunde antippen.'}</small>
+    </div>
+    <div class="row"><button class="btn primary" type="button" data-act="sp-go"${P ? '' : ' disabled'}>${ex ? 'Aktualisieren' : 'Teilen'}</button>${ex ? '<button class="btn danger" type="button" data-act="sp-del">Nicht mehr teilen</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
 }
 function shareDlgHTML(d) {
   return `<h2 id="dlg-t">Stunde teilen</h2>
@@ -10265,15 +10346,20 @@ function shareDlgHTML(d) {
     <div class="row"><button class="btn primary" type="button" data-act="share-go">${d.sid ? 'Aktualisieren' : 'Teilen'}</button>${d.sid ? '<button class="btn danger" type="button" data-act="share-del">Nicht mehr teilen</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
 }
 async function shareGo() {
-  const d = state.dlg; if (!d || d.mode !== 'share') return;
+  const d0 = state.dlg; if (!d0 || (d0.mode !== 'share' && d0.mode !== 'sharepick')) return;
+  const d = d0.mode === 'sharepick' ? { ...d0, sheetId: d0.pick, sid: (sharedOf(d0.pick) || {}).id || '' } : d0; if (!d.sheetId) return;
+  const before = myShareN();
   const autor = (($('#share-autor') || {}).value || '').trim(), text = (($('#share-text') || {}).value || '').trim();
-  if (!autor) { toast('Bitte Ihren Namen eintragen, damit andere wissen, von wem die Stunde ist.'); const i = $('#share-autor'); if (i) i.focus(); return; }
+  if (!autor) { toast(d0.mode === 'sharepick' ? 'Bitte deinen Namen eintragen, damit andere wissen, von wem die Stunde ist.' : 'Bitte Ihren Namen eintragen, damit andere wissen, von wem die Stunde ist.'); const i = $('#share-autor'); if (i) i.focus(); return; }
   if (state.prefs.autor !== autor) { state.prefs.autor = autor; savePrefs(); }
   try {
     if (state.sheet && state.sheet.id === d.sheetId) await saveNow();
     const sh = state.sheet && state.sheet.id === d.sheetId ? clone(state.sheet) : await backend.load(d.sheetId); if (!sh) throw new Error('fehlt');
     await backend.sharePut(sh, { id: d.sid, text, autor }); state.dlg = null; renderDlg(); await shareLoad(true);
-    toast(d.sid ? 'Geteilte Fassung aktualisiert' : 'Stunde geteilt · für alle Konten unter „Geteilte Stunden“ zu finden');
+    const r0 = rankOf(before), r1 = rankOf(myShareN());
+    if (!d.sid && r1.i > r0.i) rankPop('up', r1.i);
+    else toast(d.sid ? 'Geteilte Fassung aktualisiert' : `Stunde geteilt. Danke!${r1.next ? ` Noch ${r1.need} bis „${r1.next.name}“.` : ''}`);
+    if (hmS.open) homeRender();
   } catch (err) { console.error(err); toast(/too large|payload|413/i.test(String(err && err.message)) ? 'Die Stunde ist zu groß zum Teilen. Bitte Bilder verkleinern.' : 'Teilen hat nicht geklappt. Bitte erneut versuchen.'); }
 }
 async function shareDelGo() {
@@ -11036,7 +11122,7 @@ async function onLibClick(e) {
     case 'share-reload': state.shared = null; renderLib(); shareLoad(true); break;
     case 'share-take': { const it = a.closest('[data-sid]'); if (it) shareTake(it.dataset.sid); break; }
     case 'share-edit': { const it = a.closest('[data-sid]'); const x = it && (state.shared || []).find(y => y.id === it.dataset.sid); if (x) { if (!state.lib.some(dd => dd.id === x.sheetId)) { toast('Die Original-Stunde liegt nicht mehr in Ihren Stunden. Sie können die geteilte Fassung trotzdem zurückziehen.'); } openShare(x.sheetId); } break; }
-    case 'lib-share': if (id) openShare(id); break;
+    case 'lib-share': if (id) { closeLib(); openSharePick(id); } break;
     case 'lib-copy-to':
       if (!id) break;
       if (a.dataset.kl && a.dataset.kl !== KL(state.klasse).id) { libToKlasse(id, a.dataset.kl, true); break; }
@@ -11512,7 +11598,9 @@ async function onDlgClick(e) {
   const act = a.dataset.act;
   if (act === 'dlg-close') { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
   if (act === 'sa-file') { saveAsFile(); return; }
-  if (act === 'sp-pick') { openShare(a.dataset.id); return; }
+  if (act === 'sp-pick') { spPick(a.dataset.id); return; }
+  if (act === 'sp-go') { spKeep(); shareGo(); return; }
+  if (act === 'sp-del') { const d = state.dlg; const ex = d && sharedOf(d.pick); if (ex) { d.sid = ex.id; shareDelGo(true); } return; }
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
   if (state.dlg.mode === 'klassen') {
     const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
