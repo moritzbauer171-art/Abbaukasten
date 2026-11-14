@@ -754,6 +754,11 @@ body.mw-max-on{overflow:hidden}
 .kl-delask-a{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 4px}
 .kl-delask-to{display:flex;align-items:center;gap:6px;font-size:13px}.kl-delask-to select{width:auto;min-width:9em}
 .kl-del-hard{color:#B42318;border-color:#E8B4AD}
+.kl-puz{margin:8px 0 4px;padding:9px 11px;border-radius:8px;background:#fff;border:1px dashed #E8B4AD}
+.kl-puz-r{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 4px}
+.kl-puz-q{font-weight:700;font-size:15px}
+.kl-puz-r .inp{width:9em}
+.kl-puz-err{color:#B42318;font-weight:600}
 .kl-row{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px 10px;display:flex;flex-direction:column;gap:8px}
 .kl-top{display:flex;align-items:center;gap:6px}
 .kl-top .inp{flex:1;min-width:0;font-weight:700}
@@ -10586,7 +10591,8 @@ function klassenHTML() {
         ${d.single ? '' : `<button type="button" class="ib" data-act="kl-del" data-i="${i}" title="${d.rows.length < 2 ? 'Die letzte Klasse lässt sich nicht entfernen' : 'Klasse entfernen'}"${d.rows.length < 2 ? ' disabled' : ''}>${I.del}</button>`}</div>
       ${k.delAsk ? (() => { const n = cnt(k.id), T = d.rows.filter((x, j) => j !== i && String(x.label).trim()); return `<div class="kl-delask"><b>„${esc(k.label || 'Ohne Namen')}“ enthält ${n} ${n === 1 ? 'Blatt' : 'Blätter'}.</b> Was soll damit passieren?
         <div class="kl-delask-a">${T.length ? `<label class="kl-delask-to">Verschieben nach <select class="inp" data-kdel-to="${i}">${T.map(x => `<option value="${esc(x.id)}">${esc(x.label)}${x.fach && x.fach !== k.fach ? ' (' + esc((FAECHER[x.fach] || {}).label || '') + ')' : ''}</option>`).join('')}</select></label><button type="button" class="btn primary" data-act="kl-del-move" data-i="${i}">Verschieben und Klasse entfernen</button>` : ''}
-        <button type="button" class="btn kl-del-hard" data-act="kl-del-all" data-i="${i}">Klasse samt ${n} ${n === 1 ? 'Blatt' : 'Blättern'} löschen</button><button type="button" class="btn" data-act="kl-del-no" data-i="${i}">Abbrechen</button></div>
+        ${k.puz ? '' : `<button type="button" class="btn kl-del-hard" data-act="kl-del-all" data-i="${i}">Klasse samt ${n} ${n === 1 ? 'Blatt' : 'Blättern'} löschen</button>`}<button type="button" class="btn" data-act="kl-del-no" data-i="${i}">Abbrechen</button></div>
+        ${k.puz ? `<div class="kl-puz"><b>Kleines Rätsel, bevor ${n} Blätter verschwinden:</b><div class="kl-puz-r"><span class="kl-puz-q">${esc(k.puz.q)}</span><input class="inp" type="text" inputmode="numeric" autocomplete="off" data-kpuz="${i}" value="${esc(k.puz.typed || '')}" aria-label="Lösung"><button type="button" class="btn kl-del-hard" data-act="kl-del-puz" data-i="${i}">Lösen und löschen</button></div>${k.puz.err ? `<small class="kl-puz-err">${esc(k.puz.err)}</small>` : '<small class="hint">Nur wer das löst, löscht wirklich.</small>'}</div>` : ''}
         <small class="hint">Ausgeführt wird erst beim Speichern.</small></div>`; })() : ''}
       <div class="kl-grid">
         <label class="f"><span>Kurs auf dem Blatt</span><input class="inp" data-kf="course" value="${esc(k.course)}" placeholder="z. B. Deutsch Klasse 8b" maxlength="80"></label>
@@ -10627,6 +10633,18 @@ function klassenSave() {
   else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
   if (!setup && d.wantFach) { const nk = d.single && d.rows[0] ? ks.find(x => !oldIds.has(x.id) && x.fach === d.wantFach) : null; const k = nk || KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
   if (jobs.length) klDropSheets(jobs);
+}
+// Minirätsel vor dem Löschen einer Klasse mit mehreren Blättern
+function klPuzzle() {
+  const r = n => Math.floor(Math.random() * n), pick = A => A[r(A.length)];
+  const kinds = [
+    () => { const a = 3 + r(7), b = 3 + r(7); return { q: `${a} × ${b} =`, ok: [String(a * b)] }; },
+    () => { const a = 12 + r(30), b = 5 + r(20); return { q: `${a} + ${b} =`, ok: [String(a + b)] }; },
+    () => { const s = 2 + r(5), d = 2 + r(4); const L = [s, s + d, s + 2 * d, s + 3 * d]; return { q: `Wie geht es weiter? ${L.join(', ')}, …`, ok: [String(s + 4 * d)] }; },
+    () => { const w = pick(['Tafel', 'Kreide', 'Pause', 'Heft', 'Note', 'Klasse', 'Schule']); return { q: `Wie viele Buchstaben hat das Wort „${w}“?`, ok: [String(w.length)] }; },
+    () => { const w = pick(['Lehrer', 'Tafel', 'Kreide', 'Heft', 'Pause']); const x = w.split('').reverse().join('').toLowerCase(); return { q: `Rückwärts gelesen: „${x}“. Welches Wort ist das?`, ok: [w.toLowerCase()] }; }
+  ];
+  return pick(kinds)();
 }
 // Blätter einer entfernten Klasse verschieben oder löschen (läuft nach dem Speichern der Klassen)
 async function klDropSheets(jobs) {
@@ -11474,8 +11492,12 @@ async function onDlgClick(e) {
     if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie', 'Englisch', 'Spanisch'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
     if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach, stufe: (d.rows[n - 1] || {}).stufe, jg: (d.rows[n - 1] || {}).jg }, n)); d.rows[n].label = ''; d.rows[n].fresh = true; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
     if (act === 'kl-del') { const k = d.rows[i]; const n = state.lib.filter(x => x.klasse === k.id).length; if (n) { d.rows.forEach(x => { x.delAsk = false; }); k.delAsk = true; renderDlg(); return; } d.rows.splice(i, 1); renderDlg(); return; }
-    if (act === 'kl-del-no') { d.rows[i].delAsk = false; renderDlg(); return; }
-    if (act === 'kl-del-move' || act === 'kl-del-all') { const k = d.rows[i]; const sel = document.querySelector(`#dlg-root [data-kdel-to="${i}"]`); (d.kldel = d.kldel || []).push(act === 'kl-del-move' ? { from: k.id, label: k.label, to: sel ? sel.value : '' } : { from: k.id, label: k.label, del: true }); d.rows.splice(i, 1); renderDlg(); return; }
+    if (act === 'kl-del-no') { d.rows[i].delAsk = false; d.rows[i].puz = null; renderDlg(); return; }
+    if (act === 'kl-del-all' && state.lib.filter(x => x.klasse === d.rows[i].id).length > 1 && !d.rows[i].puzOk) { d.rows[i].puz = klPuzzle(); renderDlg(); setTimeout(() => { const f = document.querySelector(`#dlg-root [data-kpuz="${i}"]`); if (f) f.focus(); }, 20); return; }
+    if (act === 'kl-del-puz') { const k = d.rows[i]; const f = document.querySelector(`#dlg-root [data-kpuz="${i}"]`); const v = String(f ? f.value : '').trim().toLowerCase().replace(/\s+/g, ' ');
+      if (!k.puz || !k.puz.ok.includes(v)) { const nw = klPuzzle(); nw.err = v ? 'Leider falsch. Hier ist ein neues Rätsel.' : 'Bitte zuerst die Lösung eintragen.'; if (!v) { nw.q = k.puz.q; nw.ok = k.puz.ok; } k.puz = nw; renderDlg(); setTimeout(() => { const g = document.querySelector(`#dlg-root [data-kpuz="${i}"]`); if (g) g.focus(); }, 20); return; }
+      k.puzOk = true; k.puz = null; }
+    if (act === 'kl-del-move' || act === 'kl-del-all' || act === 'kl-del-puz') { const k = d.rows[i]; const sel = document.querySelector(`#dlg-root [data-kdel-to="${i}"]`); (d.kldel = d.kldel || []).push(act === 'kl-del-move' && sel ? { from: k.id, label: k.label, to: sel ? sel.value : '' } : { from: k.id, label: k.label, del: true }); d.rows.splice(i, 1); renderDlg(); return; }
     if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
     if (act === 'kl-save') { klassenSave(); return; }
   }
