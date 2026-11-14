@@ -10272,12 +10272,11 @@ async function openShare(sheetId) {
 }
 /* ---------- Ränge fürs Teilen ---------- */
 const RANKS = [
-  { n: 1, name: 'Kreidekrümel', c: '#C0834A', d: 'Die erste Stunde ist geteilt. Der Anfang ist gemacht!' },
-  { n: 3, name: 'Tafelheld*in', c: '#8E9BAD', d: 'Drei Stunden für andere. Das spricht sich im Lehrerzimmer herum.' },
-  { n: 5, name: 'Kopierkönig*in', c: '#E0A526', d: 'Fünf geteilte Stunden. Der Kopierer verneigt sich.' },
-  { n: 10, name: 'Fachschaftsstar', c: '#1E9E8F', d: 'Zehn Stunden! Ganze Fachschaften planen mit deinem Material.' },
-  { n: 20, name: 'Kollegiumslegende', c: '#7A4FD0', d: 'Zwanzig Stunden. Man erzählt sich Geschichten über dich.' },
-  { n: 40, name: 'Lehrerzimmer-Ikone', c: '#D6457A', d: 'Vierzig Stunden. Ab jetzt gibt es den Kaffee für dich umsonst.' }
+  { n: 1, name: 'Abendspender', c: '#C0834A', d: 'Deine erste Stunde ist geteilt. Irgendwo hat jemand heute Abend frei.' },
+  { n: 3, name: 'Gönnjamin', c: '#8E9BAD', d: 'Drei geteilte Stunden. Du gönnst, und das Kollegium dankt.' },
+  { n: 5, name: 'Lehrerzimmerheld', c: '#E0A526', d: 'Fünf Stunden für andere. Im Lehrerzimmer wird dein Name geflüstert.' },
+  { n: 10, name: 'Held des Lehrens', c: '#1E9E8F', d: 'Zehn Stunden! Ganze Fachschaften planen mit deinem Material.' },
+  { n: 20, name: 'Absolute Lehrlegende', c: '#7A4FD0', d: 'Zwanzig Stunden. Mehr geht nicht: Du bist eine absolute Lehrlegende.' }
 ];
 const rankOf = n => { let i = -1; RANKS.forEach((r, k) => { if (n >= r.n) i = k; }); const nx = RANKS[i + 1] || null; return { i, r: RANKS[i] || null, next: nx, need: nx ? nx.n - n : 0, prev: i >= 0 ? RANKS[i].n : 0 }; };
 const myShareN = () => (state.shared || []).filter(x => x.mine).length;
