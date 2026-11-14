@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen und als PDF oder Word speichern.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.45 system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>AB-O-MAT</title>
+<title>LehrWerk</title>
 <meta name="author" content="Moritz Bauer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1918,6 +1918,17 @@ body{transition:background-color .3s,border-color .25s}
 .pr.pr-ref .pr-bar{grid-column:1/-1;grid-row:2}
 .pr.pr-ref .pr-side{display:flex;flex-direction:column;gap:10px;grid-column:2;grid-row:1;min-height:0;overflow:auto;padding:16px;background:#262B34;color:#E8EBF0;font:14px/1.45 var(--f-ui);border-left:1px solid #3A404C;white-space:normal;overflow-wrap:break-word}
 .pr.pr-ref .pr-side>*{flex:0 0 auto;max-width:100%}
+.pr-vidb{display:flex;align-items:stretch;justify-content:center;padding-bottom:6px}
+.pr-yt{position:relative;flex:1 1 auto;max-width:calc((100% - 0px));aspect-ratio:16/9;max-height:100%;margin:0 auto;border-radius:14px;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,#2B3140 0%,#11141B 70%);box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.pr-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pr-yt-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:20px}
+.pr-yt-go{border:0;background:none;padding:0;cursor:pointer;width:150px;transition:transform .2s}.pr-yt-go:hover{transform:scale(1.08)}.pr-yt-go svg{width:100%;display:block}
+.pr-yt-t{font:700 34px/1.2 var(--f-ui)}.pr-yt-t small{font-weight:500;opacity:.75;margin-left:8px}
+.pr-yt-s{font:500 20px/1.3 var(--f-ui);opacity:.6}
+.pr-yt-qr{position:absolute;right:18px;bottom:18px;display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border-radius:10px;padding:8px 8px 6px;color:#333;font:500 13px/1.2 var(--f-ui)}.pr-yt-qr img{width:110px;height:110px;display:block}
+.pr-yt.on .pr-yt-qr,.pr-yt.on .pr-yt-ph{display:none}
+.pr-yt-x{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:28px;line-height:1;cursor:pointer;opacity:0;transition:opacity .2s}.pr-yt:hover .pr-yt-x{opacity:1}
+.pr-yt.remote .pr-yt-qr{display:none}.pr-yt-ctl{display:flex;gap:12px}.pr .pr-yt-ctl .btn{font:600 22px/1.2 var(--f-ui);padding:10px 20px;background:#fff;color:#1F2533;border:0;border-radius:10px;cursor:pointer}.pr .pr-yt-ctl .btn:hover{background:#E8ECF5}
 .prs-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .prs-clock{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#fff}
 .prs-top span{color:#AEB5C2;font-weight:600}
@@ -2289,10 +2300,12 @@ body.home-on{overflow:hidden}
 .hint.warn{color:#B42318}
 .kl-stufe .seg button{min-width:96px}
 
-/* Logo AB-O-MAT: das O als Drehknopf */
+/* Logo LehrWerk */
 .brand b.logo,.hm-brand b.logo{display:inline-flex;align-items:center;font-family:var(--f-ui);font-weight:800;letter-spacing:.01em;white-space:nowrap}
-.logo-o{width:.92em;height:.92em;margin:0 .04em;color:var(--tinte);flex:0 0 auto;transform:rotate(-35deg);transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
-.brand:hover .logo-o{transform:rotate(35deg)}
+.logo-i{width:1.12em;height:1.12em;margin-right:.3em;color:var(--tinte);flex:0 0 auto;transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.brand:hover .logo-i{transform:rotate(-8deg) scale(1.06)}
+.brand b.logo span.logo-l,.brand b.logo span.logo-w,.hm-brand b.logo span.logo-l,.hm-brand b.logo span.logo-w{font-family:var(--f-ui);font-size:inherit;letter-spacing:-.005em;text-transform:none;line-height:inherit;transform:none;display:inline;color:var(--ink);font-weight:600}
+.brand b.logo span.logo-w,.hm-brand b.logo span.logo-w{font-weight:850;color:var(--tinte)}
 /* Lehrerzimmer */
 .fo-btn{position:relative;display:inline-flex;align-items:center;gap:6px}.fo-btn svg{flex:0 0 auto}
 .fo-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#E0565B;color:#fff;font:700 11px/18px var(--f-ui);font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--panel)}
@@ -2574,14 +2587,14 @@ body.home-on{overflow:hidden}
 <body>
 <div id="app">
   <header class="bar">
-    <div class="brand"><div class="brand-t"><b class="logo" aria-label="AB-O-MAT">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small class="brand-c">© 2026 Moritz Bauer</small></div><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
+    <div class="brand"><div class="brand-t"><b class="logo" aria-label="LehrWerk"><svg class="logo-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="currentColor"/><path d="M7.2 16.8 13.9 10.1M13.9 10.1l2.6-2.6a1.3 1.3 0 0 1 1.8 0l.0 0a1.3 1.3 0 0 1 0 1.8l-2.6 2.6M7.2 16.8l-.6 1.9 1.9-.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.6" cy="6.4" r="1.6" fill="#F5B400"/></svg><span class="logo-l">Lehr</span><span class="logo-w">Werk</span></b><small class="brand-c">© 2026 Moritz Bauer</small></div><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
     <div class="tabs" role="group" aria-label="Ansicht">
       <button type="button" id="tab-edit" data-act="tab" data-v="edit" aria-pressed="true">Bearbeiten</button>
       <button type="button" id="tab-prev" data-act="tab" data-v="preview" aria-pressed="false">Vorschau</button>
     </div>
     <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
     <div class="actions">
-      <a class="btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt dir der AB-O-MAT? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
+      <a class="btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt dir das LehrWerk? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
       <button class="btn ib-help" type="button" id="btn-home" data-act="home" title="Startseite: Fächer, Klassen, zuletzt bearbeitet, neu geteilt" aria-label="Startseite"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11h13V9"/><path d="M10 20v-5.5h4V20"/></svg></button>
       <button class="btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
       <button class="btn rlp-btn" type="button" id="btn-rlp" data-act="rlp-view" title="Rahmenlehrplan Berlin für dieses Fach als PDF"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.6c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.6"/></svg><span>RLP</span></button>
@@ -4227,7 +4240,7 @@ const STEP_TPL = {
   ausblick: { g: 'end', label: 'Ausblick', ph: 'refl', soz: 'pl', min: 3, fol: 'text', head: 'Ausblick', text: 'In der nächsten Stunde …', note: '', eh: '' },
   frei: { g: '', label: 'Eigener Schritt', ph: '', soz: '', min: '', fol: 'text', head: '', text: '', note: '', eh: '' }
 };
-const STEP_FOL = [['titel', 'Großer Titel (schlicht)'], ['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['aus', 'keine Folie']];
+const STEP_FOL = [['titel', 'Großer Titel (schlicht)'], ['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['video', 'Video (YouTube)'], ['aus', 'keine Folie']];
 const QZ_L = 'ABCD';
 const qzNew = (t = 'mc') => ({ t, q: '', o: ['', '', '', ''], ok: 0, a: '' });
 function qzNorm(b) { if (!Array.isArray(b.qz) || !b.qz.length) b.qz = [qzNew(), qzNew(), qzNew()]; b.qz = b.qz.map(x => ({ ...qzNew(), ...(x && typeof x === 'object' ? x : {}), o: [0, 1, 2, 3].map(i => String(((x && x.o) || [])[i] || '')) })); return b.qz; }
@@ -4251,6 +4264,26 @@ function qzEditor(b) {
         : `<div class="qz-ed-o">${x.o.map((o, j) => `<div class="qz-ed-r"><button type="button" class="qz-ok-b" data-act="qz-ok" data-i="${i}" data-v="${j}" aria-pressed="${x.ok === j}" title="${x.ok === j ? 'Richtige Antwort' : 'Als richtige Antwort markieren'}">${QZ_L[j]}</button><input type="text" data-k="qz.${i}.o.${j}" value="${esc(tfStr(o))}" placeholder="Antwort ${QZ_L[j]}${j > 1 ? ' (optional)' : ''}"></div>`).join('')}</div><small class="hint">Buchstaben anklicken, um die richtige Antwort zu markieren.</small>`}
     </div>`).join('')}</div><div class="tf-ed-acts"><button class="link" type="button" data-act="qz-add"${Q.length >= 15 ? ' disabled' : ''}>+ Frage</button></div></div>`;
 }
+/* YouTube-Video auf einer Folie: Link erkennen, Start/Ende, Einbettung über youtube-nocookie.com erst beim Klick */
+function ytId(u) {
+  const t = String(u || '').trim(); if (!t) return '';
+  const m = t.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|shorts\/|live\/|v\/))([A-Za-z0-9_-]{11})/) || (/^[A-Za-z0-9_-]{11}$/.test(t) ? [0, t] : null);
+  return m ? m[1] : '';
+}
+function ytSec(v) {
+  const t = String(v || '').trim().toLowerCase(); if (!t) return 0;
+  if (/^\d+(:\d{1,2}){1,2}$/.test(t)) return t.split(':').reduce((a, x) => a * 60 + +x, 0);
+  const h = t.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/); if (h && (h[1] || h[2] || h[3])) return (+h[1] || 0) * 3600 + (+h[2] || 0) * 60 + (+h[3] || 0);
+  return 0;
+}
+const ytFmt = n => { n = Math.max(0, n | 0); const h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), x = n % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
+function ytInfo(b) {
+  const id = ytId(b.yt); if (!id) return null;
+  const urlT = (String(b.yt).match(/[?&#](?:t|start)=([0-9hms:]+)/) || [])[1];
+  const st = ytSec(b.ytS) || ytSec(urlT), en = ytSec(b.ytE);
+  return { id, st, en: en > st ? en : 0, watch: `https://www.youtube.com/watch?v=${id}${st ? '&t=' + st + 's' : ''}` };
+}
+const ytEmbed = (v, auto) => `https://www.youtube-nocookie.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
 function stepSlideFol(b) {
   const f = stepFol(b); const t = tfStr(b.text).trim();
   if (f === 'aus') return '';
@@ -4259,6 +4292,7 @@ function stepSlideFol(b) {
   if (f === 'zitat' && !tfStr(b.quote).trim()) return t ? 'text' : '';
   if (f === 'text' && !t && !tfStr(b.head).trim() && !tfStr(b.link).trim()) return '';
   if (f === 'quiz' && !qzList(b).length) return t ? 'text' : '';
+  if (f === 'video' && !ytId(b.yt)) return t ? 'text' : '';
   return f;
 }
 function stepEditor(b) {
@@ -4278,7 +4312,11 @@ function stepEditor(b) {
     ${fol === 'quiz' ? fText('head', 'Überschrift auf der Folie', b.head, 'Quiz') + qzEditor(b) : ''}
     ${fol === 'zitat' ? ta('quote', 'Zitat', 3, '') + fText('author', 'Quelle oder Autor', b.author, '') : ''}
     ${fol === 'bild' ? `<div class="f"><span>Bild</span>${b.src ? `<div class="st-img"><img src="${esc(b.src)}" alt=""><button class="link" type="button" data-act="st-img-del">Bild entfernen</button></div>` : ''}<input type="file" accept="image/*" data-act="img" aria-label="${b.src ? 'Bild ersetzen' : 'Bild wählen'}"></div>${fText('cap', 'Bildunterschrift (optional)', b.cap, '')}` : ''}
-    ${fol === 'aus' ? '' : fText('link', 'Link, z. B. zu einem Video (erscheint als QR-Code auf der Folie)', b.link, 'https://…')}
+    ${fol === 'video' ? (() => { const v = ytInfo(b); return `${fText('yt', 'YouTube-Link', b.yt, 'https://www.youtube.com/watch?v=…')}${tfStr(b.yt).trim() && !v ? '<small class="hint warn">Das sieht nicht nach einem YouTube-Link aus. Kopiere die Adresse aus der Adresszeile oder über „Teilen“.</small>' : ''}
+      <div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>
+      ${fText('cap', 'Überschrift auf der Folie (optional)', b.cap, 'z. B. Erklärvideo: Die Weimarer Verfassung')}
+      <small class="hint">${v ? `Erkannt: Video ${esc(v.id)}${v.st ? ', ab ' + ytFmt(v.st) : ''}${v.en ? ' bis ' + ytFmt(v.en) : ''}. ` : ''}Das Video läuft in der Präsentation direkt auf der Folie, sobald du auf den Play-Knopf klickst. Es braucht Internet; geladen wird erst beim Klick, über den datenschutzfreundlicheren Modus von YouTube. Werbung blendet YouTube selbst ein.</small>`; })() : ''}
+    ${fol === 'aus' || fol === 'video' ? '' : fText('link', 'Link, z. B. zu einem Video (erscheint als QR-Code auf der Folie)', b.link, 'https://…')}
     ${ta('note', 'Was ich tue (Notiz, auch in den PowerPoint-Notizen)', 2, 'z. B. Bild kommentarlos zeigen, Äußerungen sammeln')}
     ${ta('eh', 'Erwartetes Schülerverhalten', 2, 'eine Zeile je Punkt')}
     ${fText('media', 'Medien', b.media, 'z. B. Beamer, Tafel, Karten')}
@@ -5581,6 +5619,8 @@ function presSlideHTML(s, bar) {
       const head = tfStr(b.head).trim() ? inlineHTML(b.head) : esc(stepHeadDef(b));
       if (s.fol === 'titel') return (chips ? presHead('', '', chips) : '') + `<div class="pr-body pr-zw${hq}"><div class="pr-zw-h">${head}</div>${tfStr(b.text).trim() ? `<div class="pr-zw-t">${inlineHTML(b.text)}</div>` : ''}${qr}</div>` + pops;
       if (s.fol === 'zitat') return `<div class="pr-body st-zitat${hq}"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(b.quote)}</div>${b.author ? `<div class="pr-auth">${inlineHTML(b.author)}</div>` : ''}</div>${qr}</div>` + pops;
+      if (s.fol === 'video') { const v = ytInfo(b);
+        return presHead('', b.cap ? inlineHTML(b.cap) : 'Video', chips) + `<div class="pr-body pr-vidb"><div class="pr-yt" data-yt="${esc(v.id)}" data-src="${esc(ytEmbed(v, true))}"><div class="pr-yt-ph"><button type="button" class="pr-yt-go" aria-label="Video abspielen"><svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7c-.8-2.9-2.5-5.4-5.4-6.2C55.8.1 34 0 34 0S12.2.1 6.9 1.5C4 2.3 2.3 4.8 1.5 7.7.1 13 0 24 0 24s.1 11 1.5 16.3c.8 2.9 2.5 5.4 5.4 6.2C12.2 47.9 34 48 34 48s21.8-.1 27.1-1.5c2.9-.8 4.6-3.3 5.4-6.2C67.9 35 68 24 68 24s-.1-11-1.5-16.3z" fill="#E33"/><path d="M45 24 27 14v20" fill="#fff"/></svg></button><span class="pr-yt-t">Video abspielen${v.st || v.en ? ` <small>${v.st ? ytFmt(v.st) : '0:00'}${v.en ? '–' + ytFmt(v.en) : ''}</small>` : ''}</span><span class="pr-yt-s">Lädt erst beim Klick von YouTube</span></div><div class="pr-yt-qr"><img src="${QR.dataURL(v.watch, 8)}" alt="QR-Code zum Video"><span>${esc(linkShort(v.watch))}</span></div></div></div>` + pops; }
       if (s.fol === 'bild') return (b.cap ? presHead('', inlineHTML(b.cap), chips) : '') + `<div class="pr-body pr-imgb${hq}"><img class="pr-img" src="${esc(b.src)}" alt="${esc(plainText(b.cap || 'Bild'))}">${qr}</div>` + pops;
       if (s.fol === 'quiz') { const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [o, j]).filter(([o]) => tfStr(o).trim());
         const body = open ? `<div class="qz-q">${inlineHTML(x.q)}</div>${tfStr(x.a).trim() ? `<div class="qz-a" data-st="1"><small>Lösung</small>${parasHTML(x.a)}</div>` : ''}`
@@ -5714,7 +5754,7 @@ async function exportVP() {
     const rels = `${XH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/></Relationships>`;
     const ct = `${XH}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
     const now = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
-    const core = `${XH}<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xesc('Verlaufsplan: ' + plainText(m.title || ''))}</dc:title><dc:creator>AB-O-MAT</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
+    const core = `${XH}<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xesc('Verlaufsplan: ' + plainText(m.title || ''))}</dc:title><dc:creator>LehrWerk</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`;
     const rootRels = `${XH}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
     const zip = new window.JSZip();
     zip.file('[Content_Types].xml', ct); zip.file('_rels/.rels', rootRels); zip.file('docProps/core.xml', core);
@@ -5796,7 +5836,7 @@ function openPres(start) {
   let AW = null, awPoll = 0, awWake = null, sideKey = '';
   const awOk = () => !!(AW && !AW.closed && AW.document && AW.document.querySelector('.pr-slide'));
   const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = `translate(-50%,-50%) scale(${k})`; };
-  const mirror = () => { if (!awOk()) return; const d = AW.document, sl = d.querySelector('.pr-slide'); sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
+  const mirror = () => { if (!awOk()) return; const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
   const mirrorT = () => { if (!awOk()) return; const d = AW.document; ['.pr-timer', '.pr-tbar'].forEach(q => { const a = slide.querySelector(q), b = d.querySelector('.pr-slide ' + q); if (a && b) { b.className = a.className; b.innerHTML = a.innerHTML; } }); d.querySelector('.pr-slide').className = slide.className; };
   const refSide = () => {
     if (!ov.classList.contains('pr-ref')) return; const sd = $p('.pr-side'); const nx = S[P.i + 1];
@@ -5821,14 +5861,15 @@ function openPres(start) {
   const refUi = on => { ov.classList.toggle('pr-ref', on); const b = $p('[data-p="ref"]'); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Beamerfenster schließen' : 'Referentenansicht'; sideKey = ''; scale(); if (on) refSide(); };
   const refClose = () => { clearInterval(awPoll); awPoll = 0; if (awWake) { awWake(); awWake = null; } try { if (AW && !AW.closed) AW.close(); } catch {} AW = null; refUi(false); ov.focus(); };
   const awBuild = (hint) => {
-    const d = AW.document; d.open(); d.write('<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AB-O-MAT · Beamer</title></head><body></body></html>'); d.close();
+    const d = AW.document; d.open(); d.write('<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LehrWerk · Beamer</title></head><body></body></html>'); d.close();
     [...document.documentElement.attributes].forEach(a => { if (a.name !== 'style') d.documentElement.setAttribute(a.name, a.value); });
     document.querySelectorAll('style, link[rel="stylesheet"]').forEach(n => d.head.appendChild(d.importNode(n, true)));
     d.body.style.cssText = 'margin:0;background:#000;overflow:hidden';
     d.body.innerHTML = `<div class="pr pr-aud" style="${esc(ov.style.cssText)}"><div class="pr-stage"><div class="pr-slide"></div></div><div class="pr-aud-hint"><b>Beamerfenster</b><span>${hint}</span></div></div>`;
     const hd = () => { const h = d.querySelector('.pr-aud-hint'); if (h) h.hidden = !!d.fullscreenElement; awScale(); };
     d.addEventListener('fullscreenchange', hd);
-    d.addEventListener('click', () => { if (!d.fullscreenElement && d.documentElement.requestFullscreen) { d.documentElement.requestFullscreen().catch(() => {}); return; } next(); });
+    d.addEventListener('click', e => { if (e.target.closest('.pr-yt-go')) { ytPlay(); return; } if (e.target.closest('.pr-yt.on')) return; if (!d.fullscreenElement && d.documentElement.requestFullscreen) { d.documentElement.requestFullscreen().catch(() => {}); return; } next(); });
+    AW.addEventListener('blur', () => setTimeout(() => { try { const a = AW.document.activeElement; if (a && a.tagName === 'IFRAME') a.blur(); } catch {} }, 60));
     d.addEventListener('keydown', e => { if (e.key === 'Escape' && d.fullscreenElement) return; key(e); });
     AW.addEventListener('resize', awScale);
     AW.addEventListener('pagehide', () => setTimeout(() => { if (!AW || AW.closed) refClose(); }, 300));
@@ -5880,6 +5921,7 @@ function openPres(start) {
   const tmResetNow = () => { clearInterval(T.id); T.run = false; const el2 = slide.querySelector('.pr-timer'); T.slide = el2 ? P.i : -1; T.full = T.left = el2 ? +el2.dataset.min * 60 : 0; tmShow(); };
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); phbFit(slide); apply(); };
   const show = () => {
+    if (ytOn !== P.i) ytOn = -1;
     const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
     slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.bi) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
@@ -5912,7 +5954,24 @@ function openPres(start) {
     else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === '+' || k === '=') { stop(); tmAdj(1); } else if (k === '-' || k === '_') { stop(); tmAdj(-1); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'z' || k === 'Z') { stop(); ntToggle(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
     else if (k === 'Escape') { stop(); if (!document.fullscreenElement) close(); }
   };
+  /* Video: auf der Folie abspielen; mit Beamerfenster nur dort, hier bleibt die Steuerung */
+  let ytOn = -1;
+  const ytCmd = (doc, func) => { const f = doc && doc.querySelector('.pr-slide .pr-yt iframe'); if (f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*'); };
+  const ytPlay = () => {
+    const box = slide.querySelector('.pr-yt'); if (!box) return; ytOn = P.i;
+    const ifr = `<iframe src="${esc(box.dataset.src)}" title="YouTube-Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    if (awOk()) { const ab = AW.document.querySelector('.pr-slide .pr-yt'); if (ab) { ab.classList.add('on'); ab.innerHTML = ifr; }
+      box.classList.add('remote'); box.querySelector('.pr-yt-ph').innerHTML = `<span class="pr-yt-t">Läuft im Beamerfenster</span><span class="pr-yt-ctl"><button type="button" class="btn" data-yt="pause">Pause</button><button type="button" class="btn" data-yt="play">Weiter</button><button type="button" class="btn" data-yt="stop">Video schließen</button></span>`; }
+    else { box.classList.add('on'); box.innerHTML = ifr + '<button type="button" class="pr-yt-x" data-yt="stop" title="Video schließen">×</button>'; }
+    setTimeout(() => ov.focus(), 400);
+  };
+  const ytStop = () => { ytOn = -1; show(); if (awOk()) mirror(); };
+  // Klick in den Player zieht den Fokus ins Video: zurückholen, damit Presenter und Pfeiltasten weiter schalten
+  window.addEventListener('blur', () => setTimeout(() => { if (document.body.contains(ov) && document.activeElement && document.activeElement.tagName === 'IFRAME') ov.focus(); }, 60));
   ov.addEventListener('click', e => {
+    const yb = e.target.closest('.pr-yt-go, [data-yt]');
+    if (yb) { e.stopPropagation(); const a = yb.dataset.yt; if (!a) ytPlay(); else if (a === 'stop') ytStop(); else ytCmd(awOk() ? AW.document : document, a === 'pause' ? 'pauseVideo' : 'playVideo'); return; }
+    if (e.target.closest('.pr-slide .pr-yt.on, .pr-slide .pr-yt.remote')) return;
     if (W) { const wb = e.target.closest('[data-w]'); if (wb) { const f = W.ok, ok = wb.dataset.w === 'ok'; warnClose(); if (ok) f(); } else if (!e.target.closest('.pr-warn-c')) warnClose(); return; }
     if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
@@ -6119,10 +6178,14 @@ async function exportPPTX() {
         const nt = notesOf(s.items.map(x => [tsLab(x, s, m), x.it])); const phs = s.phs || []; if (phs.length || mn) nt.push([phs.length ? 'Phase: ' + phs.map(k => PHASEN[k].label).join(', ') : '', mn ? 'Zeit: ' + mn + ' Min.' + (tsCols(s) ? ' (Gruppen parallel)' : '') : ''].filter(Boolean).join(' · '));
         if (nt.length) sl.addNotes(nt.join('\n\n'));
       } else if (s.k === 'step') {
-        const b = s.b, ph = itPh(b), mn = itMin(b); const link = tfStr(b.link).trim(); const qrW = link ? 3.0 : 0; const tw = CW - (qrW ? qrW + 0.4 : 0);
+        const b = s.b, ph = itPh(b), mn = itMin(b); const yv = s.fol === 'video' ? ytInfo(b) : null; const link = yv ? yv.watch : tfStr(b.link).trim(); const qrW = link ? 3.0 : 0; const tw = CW - (qrW ? qrW + 0.4 : 0);
         const addQR = (y0, h0) => { if (!link) return; const sz = Math.min(2.7, h0 - 0.6); const qy = y0 + (h0 - sz - 0.45) / 2; sl.addImage({ data: QR.dataURL(link, 8), x: X + CW - qrW + (qrW - sz) / 2, y: qy, w: sz, h: sz }); sl.addText([{ text: linkShort(link), options: { hyperlink: { url: link } } }], { x: X + CW - qrW, y: qy + sz + 0.08, w: qrW, h: 0.32, fontFace: F, fontSize: 11, color: ACC, align: 'center', margin: 0, fit: 'shrink' }); };
         const head1 = tfStr(b.head).trim() ? plainText(b.head) : stepHeadDef(b);
-        if (s.fol === 'quiz') {
+        if (s.fol === 'video' && yv) {
+          head(sl, '', b.cap ? plainText(b.cap) : 'Video', chipsOf(b, ph, mn, b.timer));
+          sl.addText([{ text: '▶  Video auf YouTube öffnen', options: { hyperlink: { url: link }, bold: true, color: ACC } }, { text: (yv.st || yv.en ? `Ausschnitt ${yv.st ? ytFmt(yv.st) : '0:00'}${yv.en ? '–' + ytFmt(yv.en) : ''}` : ''), options: { breakLine: false, color: GREY, fontSize: 18 } }], { x: X, y: Y0 + 0.4, w: tw, h: 1.4, fontFace: F, fontSize: 28, valign: 'middle', margin: 0 });
+          addQR(Y0, BOT - Y0);
+        } else if (s.fol === 'quiz') {
           const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [plainText(o).trim(), j]).filter(([o]) => o);
           const draw = (z, sol) => { head(z, `Frage ${s.qi + 1} von ${s.qn}${sol ? ' · Lösung' : ''}`, head1, s.qi || sol ? [] : chipsOf(b, ph, mn, b.timer));
             const q = plainText(x.q).trim(); const fq = q.length < 70 ? 34 : q.length < 140 ? 28 : 24; const hq = Math.min(2.2, needH([q.length], tw, fq) + 0.25);
@@ -7969,7 +8032,7 @@ function setupPWA() {
   add('meta', { name: 'theme-color', content: '#2741B5' });
   add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
-  add('meta', { name: 'apple-mobile-web-app-title', content: 'AB-O-MAT' });
+  add('meta', { name: 'apple-mobile-web-app-title', content: 'LehrWerk' });
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').then(() => navigator.serviceWorker.ready).then(r => { if (r.active) r.active.postMessage({ warm: [...Object.values(LIBS), 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js', 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'] }); }).catch(err => console.warn('Offline-Speicher nicht verfügbar', err)));
 }
 const isNarrow = () => window.matchMedia('(max-width: 899px)').matches;
@@ -9902,7 +9965,7 @@ function newsMaybe() {
       <g class="nw-lens"><circle cx="150" cy="118" r="13" fill="#E0A526"/><circle cx="150" cy="118" r="9" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"/><path d="M142 128l-4 14 6-3 3 5 3-12M158 128l4 14-6-3-3 5-3-12" fill="#E0A526" opacity=".85"/></g>
     </svg><span class="nw-badge">Neu</span></div>
     <div class="nw-in"><h2 id="nw-t">Neu: das Lehrerzimmer</h2>
-      <p class="nw-lead">Der AB-O-MAT wird zum Treffpunkt fürs Kollegium. Oben in der Leiste öffnen die Sprechblasen das <b class="nw-k">Lehrerzimmer</b> (am Handy unter ⋯).</p>
+      <p class="nw-lead">Das LehrWerk wird zum Treffpunkt fürs Kollegium. Oben in der Leiste öffnen die Sprechblasen das <b class="nw-k">Lehrerzimmer</b> (am Handy unter ⋯).</p>
       <ul class="nw-list">
         <li><i>1</i><span><b>Fragen, Tipps, Austausch.</b> Ein Forum nach Fach und Art sortiert, etwa „Vertretung“ oder „Material gesucht“. Ein roter Zähler zeigt neue Beiträge.</span></li>
         <li><i>2</i><span><b>Teilen in zwei Schritten.</b> Stunde wählen, dann Klassenstufe und Kategorien. Unter „Geteilte Stunden“ lässt sich danach filtern.</span></li>
@@ -10006,7 +10069,7 @@ function homeRenderNow() {
     ${canShare() && state.shared ? rankLine(nMine, true) : ''}</div>
     <div class="hm-give-bs"><button type="button" class="btn hm-give-b" data-hm="${canShare() ? 'give' : 'login'}">${hmI('share')}${canShare() ? 'Eine Stunde teilen' : 'Anmelden und teilen'}</button>${canShare() ? `<button type="button" class="link hm-fame" data-fame-open="1">${trophyI}Wall of Fame</button>` : ''}</div></div>`;
   const nNew = canShare() && state.shared ? sharedVis().filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
-  const html = `<div class="hm-top"><div class="hm-brand"><b class="logo">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small>Startseite</small></div>
+  const html = `<div class="hm-top"><div class="hm-brand"><b class="logo" aria-label="LehrWerk"><svg class="logo-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="currentColor"/><path d="M7.2 16.8 13.9 10.1M13.9 10.1l2.6-2.6a1.3 1.3 0 0 1 1.8 0l.0 0a1.3 1.3 0 0 1 0 1.8l-2.6 2.6M7.2 16.8l-.6 1.9 1.9-.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.6" cy="6.4" r="1.6" fill="#F5B400"/></svg><span class="logo-l">Lehr</span><span class="logo-w">Werk</span></b><small>Startseite</small></div>
       <div class="hm-top-a">${cur ? `<button type="button" class="btn" data-hm="x">${hmI('go')}<span>Weiter${curT ? `<i>: ${esc(curT.length > 34 ? curT.slice(0, 32) + ' …' : curT)}</i>` : ''}</span></button>` : ''}
       <label class="hm-auto"><span>Von selbst zeigen</span><select data-hm="auto" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<option value="${v}"${homeMode() === v ? ' selected' : ''}>${l}</option>`).join('')}</select></label></div></div>
     <div class="hm-wrap">
@@ -10152,8 +10215,8 @@ function donateOpen() {
   const box = document.createElement('div'); box.id = 'don-ov'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', 'don-t');
   box.innerHTML = `<div class="don-scrim" data-don="x"></div><div class="don-card">
     <div class="don-art" aria-hidden="true">${CUP_SVG.replace('width="18" height="18"', 'width="44" height="44"')}</div>
-    <h2 id="don-t">Danke, dass du den AB-O-MAT unterstützen möchtest!</h2>
-    <p>Der AB-O-MAT ist kostenlos und ohne Werbung. Ich entwickle ihn neben meinem Unterricht in meiner freien Zeit. Dein Beitrag fließt in zwei Dinge:</p>
+    <h2 id="don-t">Danke, dass du das LehrWerk unterstützen möchtest!</h2>
+    <p>Das LehrWerk ist kostenlos und ohne Werbung. Ich entwickle es neben meinem Unterricht in meiner freien Zeit. Dein Beitrag fließt in zwei Dinge:</p>
     <ul class="don-l">
       <li><b>Arbeitszeit</b><span>für neue Bausteine und Vorlagen, Fehlerbehebungen und die Wünsche, die aus dem Kollegium kommen.</span></li>
       <li><b>Einen eigenen Server</b><span>in meinem Heimnetzwerk. Damit sollen deine Stunden und Materialien künftig nicht bei großen Cloud-Anbietern liegen, sondern geschützt auf eigener Hardware, die ich selbst betreue.</span></li>
@@ -10178,9 +10241,9 @@ function cupWiggleMaybe(tries = 0) {
 }
 setTimeout(() => cupWiggleMaybe(), 25000);
 document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('.hd-coffee, .donate .donate-b'); if (!a) return; e.preventDefault(); e.stopPropagation(); donateOpen(); }, true);
-const donateHTML = (lead = 'Gefällt dir der AB-O-MAT?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützt du die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
+const donateHTML = (lead = 'Gefällt dir das LehrWerk?') => `<div class="donate"><span>${lead} Mit einem Kaffee unterstützt du die Weiterentwicklung.</span><a class="btn donate-b" href="${DONATE_URL}" target="_blank" rel="noopener noreferrer">${CUP_SVG}Einen Kaffee spendieren</a></div>`;
 const TOUR = [
-  { t: 'Willkommen beim AB-O-MAT', d: 'In gut einer Minute siehst du das Wichtigste. Links baust du die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
+  { t: 'Willkommen beim LehrWerk', d: 'In gut einer Minute siehst du das Wichtigste. Links baust du die Stunde aus Bausteinen, rechts entsteht das fertige Arbeitsblatt.' },
   { sel: '#btn-fach', t: 'Fach wechseln', d: 'Hier wechselst du das Fach. Angezeigt werden nur Fächer, in denen du Klassen hast; darunter kannst du ein Fach hinzufügen.' },
   { sel: '#reiter', t: 'Deine Klassen', d: 'Jede Klasse hat einen eigenen Reiter mit eigenen Stunden, Farbe, Anrede (du oder Sie) und Schulform. „+ Klassen“ legt neue an.' },
   { sel: '#editor .area-bar', prep: () => { if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); }, t: 'Arbeitsblatt und Präsentation', d: 'Oben schaltest du zwischen Arbeitsblatt und Präsentation. Unter „Mehr“ liegen Tafelkarten und Druckvorlagen wie Placemat, Pro und Contra oder der Fotobogen.' },
@@ -10339,7 +10402,7 @@ function sharedListHTML() {
   const filt = `<div class="row sh-filt"><select class="inp" id="share-fst" aria-label="Klassenstufe">${STUFEN.map(([v, l]) => `<option value="${v}"${F.stufe === v ? ' selected' : ''}>${v ? l : 'Alle Klassenstufen'}</option>`).join('')}</select><select class="inp" id="share-fcat" aria-label="Kategorie"><option value="">Alle Kategorien</option>${usedCats.map(c => `<option${F.cat === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select>${F.stufe || F.cat ? '<button class="link" type="button" data-act="share-fx">Filter zurücksetzen</button>' : ''}</div>`;
   const fmt = t => new Date(t).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const head = `${state.sharedErr ? `<div class="notice"><span>${esc(state.sharedErr)}</span></div>` : ''}<div class="row lib-tools"><input class="inp" id="share-q" type="search" placeholder="Geteilte Stunden durchsuchen" value="${esc(state.shareQuery)}" aria-label="Geteilte Stunden durchsuchen" style="flex:1"><button class="btn" type="button" data-act="share-reload" title="Neu laden">Aktualisieren</button></div>${filt}
-    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieses AB-O-MATs teilen. Angezeigt werden Stunden aus deinen Fächern. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
+    <small class="hint share-hint">Hier stehen Stunden, die Kolleginnen und Kollegen mit allen Konten dieses LehrWerks teilen. Angezeigt werden Stunden aus deinen Fächern. „Übernehmen“ legt eine eigene Kopie in „${esc(KL(state.klasse).label)}“ an; das Original bleibt unverändert.</small>`;
   if (!L.length) return head + `<div class="lib-empty"><p>${V.length ? 'Keine geteilte Stunde passt zur Suche oder zum Filter.' : state.shared.length ? 'In deinen Fächern hat noch niemand eine Stunde geteilt. Angezeigt werden nur Stunden aus Fächern, in denen du eine Klasse hast.' : 'Noch keine geteilten Stunden. Teile eine eigene Stunde über „Teilen“ in der Liste „Meine Stunden“.'}</p></div>`;
   return head + L.map(x => `<div class="lib-item share-item" data-sid="${esc(x.id)}">
       <div class="t"><span>${esc(x.title)}</span>${x.mine ? '<em class="share-mine">von dir</em>' : ''}</div>
@@ -10512,7 +10575,7 @@ function sharePickHTML() {
 }
 function shareDlgHTML(d) {
   return `<h2 id="dlg-t">Stunde teilen</h2>
-    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieses AB-O-MATs geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'dein Konto' : 'dein Konto'}.</p>
+    <p class="dlg-sub">„${esc(d.title)}“ wird mit allen Konten dieses LehrWerks geteilt: alle Arbeitsblätter, Unterrichtsschritte, Tafelbilder, Druckvorlagen und die Präsentation, so wie sie jetzt gespeichert sind. Andere können sie ansehen und eine eigene Kopie übernehmen; ändern kann die geteilte Fassung nur ${d.sid ? 'dein Konto' : 'dein Konto'}.</p>
     <label class="f"><span>Dein Name, wie er bei der Stunde steht</span><input class="inp" id="share-autor" type="text" maxlength="80" value="${esc(d.autor || '')}" placeholder="z. B. M. Bauer"></label>
     <label class="f"><span>Kurze Beschreibung (optional)</span><textarea class="inp" id="share-text" rows="3" maxlength="600" placeholder="Worum geht es, welche Klasse, was ist besonders?">${esc(d.text || '')}</textarea></label>
     ${d.sid ? '<small class="hint">Die Stunde ist schon geteilt. „Aktualisieren“ ersetzt die geteilte Fassung durch den jetzigen Stand; Kopien, die andere schon übernommen haben, ändern sich nicht.</small>' : '<small class="hint">Später geänderte Stunden bleiben in der geteilten Fassung auf dem Stand von heute, bis du „Aktualisieren“ wählst.</small>'}
@@ -10809,7 +10872,7 @@ async function exportBackup() {
   if (!sheets.length && !userSnips().length) { toast('Es gibt noch keine gespeicherten Blätter.'); return; }
   const now = new Date(); const stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const data = JSON.stringify({ app: 'AB-Werkstatt', version: 1, exportedAt: now.toISOString(), sheets, snips: userSnips(), prefs: state.prefs });
-  await deliver(`AB-O-MAT_Sicherung_${stamp}.json`, new Blob([data], { type: 'application/json' }));
+  await deliver(`LehrWerk_Sicherung_${stamp}.json`, new Blob([data], { type: 'application/json' }));
 }
 async function importBackup(file) {
   if (!backend) return;
@@ -10896,13 +10959,13 @@ function klassenHTML() {
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <div class="err" id="dlg-err" role="alert"></div>
     <div class="row"><button class="btn primary" type="button" data-act="kl-save">Klasse anlegen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
-  return `<h2 id="dlg-t">${d.setup ? 'Willkommen beim AB-O-MAT' : 'Klassen'}</h2>
+  return `<h2 id="dlg-t">${d.setup ? 'Willkommen beim LehrWerk' : 'Klassen'}</h2>
     ${d.wantFach ? `<p class="kl-want">Neue Klasse für <b>${FAECHER[d.wantFach].label}</b>: unten Namen eintragen.</p>` : ''}<p>${d.setup ? 'Leg deine Klassen oder Kurse an. Jede bekommt einen eigenen Reiter mit eigener Ablage, eigenem Kurs im Kopf des Blatts und der passenden Anrede in den Aufgaben. Später lässt sich alles ändern.' : 'Reiter umbenennen, ergänzen, umsortieren. Änderungen an Kurs und Schule gelten für neue Blätter; vorhandene Blätter behalten ihre Angaben.'}</p>
     ${d.setup ? `<label class="f"><span>Deine Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
     <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
-    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">AB-O-MAT · © 2026 Moritz Bauer</p>' : ''}`;
+    <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">LehrWerk · © 2026 Moritz Bauer</p>' : ''}`;
 }
 function klassenSave() {
   const d = state.dlg; const jobs = (d.kldel || []).map(j => ({ ...j, ids: state.lib.filter(x => x.klasse === j.from).map(x => x.id) })).filter(j => j.ids.length); const school = d.setup ? dlgVal('#kl-school') : null;
@@ -11160,7 +11223,7 @@ function libTarget(e) {
 }
 
 /* ================= Lehrerzimmer: Forum (Tabellen ab_forum_*, Rechte in der Datenbank) ================= */
-const FORUM_CATS = ['Frage', 'Material gesucht', 'Idee und Tipp', 'Vertretung', 'Austausch', 'Technik und AB-O-MAT'];
+const FORUM_CATS = ['Frage', 'Material gesucht', 'Idee und Tipp', 'Vertretung', 'Austausch', 'Technik und LehrWerk'];
 const LS_FSEEN = 'abw.forumSeen';
 const FO = { open: false, view: 'list', threads: null, posts: {}, tid: '', q: '', fach: 'mine', cat: '', err: '', busy: false, reports: null, edit: '', draft: {}, loadedAt: 0 };
 const foSeen = () => { const S = lsGet(LS_FSEEN); if (S && S.base) return S; const n = { base: Date.now(), t: {} }; lsSet(LS_FSEEN, n); return n; };
@@ -11411,7 +11474,7 @@ function renderLib() {
     <div class="row lib-tools"><input class="inp" id="lib-q" type="search" placeholder="Suchen in Titeln und Inhalten" value="${esc(state.libQuery)}" aria-label="Blätter durchsuchen" style="flex:1"><select class="inp lib-sort" id="lib-sort" aria-label="Sortierung" title="Sortierung">${LIB_SORT.map(([v, t]) => `<option value="${v}"${libSort() === v ? ' selected' : ''}>${t}</option>`).join('')}</select></div>
     ${state.fNew ? '<div class="lib-fnew">' + FOLDER_SVG + '<input class="inp" id="lib-fnew" type="text" maxlength="60" placeholder="Name des Ordners, z. B. Lyrik" aria-label="Name des neuen Ordners"><button class="btn primary" type="button" data-act="lib-fnew-ok">Anlegen</button><button class="btn" type="button" data-act="lib-fnew-no">Abbrechen</button></div>' : ''}
     <div class="lib-list">${libListHTML(k, q)}</div>`}
-    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button><span class="copy-s">AB-O-MAT · © 2026 Moritz Bauer</span></div></aside>`;
+    <div class="drawer-foot"><button class="link x-pro" type="button" data-act="lib-krlp">Standards der Klasse</button><button class="link" type="button" data-act="backup">Alle Blätter sichern (.json)</button><button class="link" type="button" data-act="restore">Sicherung oder Datei laden</button><span class="copy-s">LehrWerk · © 2026 Moritz Bauer</span></div></aside>`;
   const nl = root.querySelector('.lib-list'); if (nl) nl.scrollTop = scroll;
   if (keep) { const i = $('#lib-q'); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
   else if (state.fNew) { const i = $('#lib-fnew'); if (i) i.focus(); }
@@ -11503,7 +11566,7 @@ function authMsg(err) {
   if (c === 'user_already_exists' || /already (been )?registered/i.test(m)) return 'Für diese E-Mail gibt es schon ein Konto. Bitte melde dich an.';
   if (c === 'weak_password' || /password should|at least 6/i.test(m)) return 'Das Passwort ist zu kurz oder zu einfach (mindestens 6 Zeichen).';
   if (/rate limit|too many/i.test(m) || /rate_limit/.test(c || '')) return 'Zu viele Versuche. Bitte in ein paar Minuten erneut versuchen.';
-  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die diesen AB-O-MAT betreut. Du bekommst dann E-Mail und Passwort zum Anmelden.';
+  if (c === 'signup_disabled' || /signups? not allowed|signup is disabled/i.test(m)) return 'Neue Konten legt die Person an, die dieses LehrWerk betreut. Du bekommst dann E-Mail und Passwort zum Anmelden.';
   if (c === 'email_address_not_authorized' || /not authorized/i.test(m)) return 'Die Bestätigungsmail kann an diese Adresse noch nicht verschickt werden. Bitte bei der Person melden, die diese AB-Werkstatt betreut.';
   if (c === 'over_email_send_rate_limit' || /email rate limit/i.test(m)) return 'Gerade wurden zu viele Mails verschickt. Bitte in einer Stunde erneut versuchen.';
   if (/failed to fetch|network|load failed/i.test(m)) return 'Keine Verbindung zum Server. Bitte die Internetverbindung prüfen.';
@@ -11586,7 +11649,7 @@ const HELP = [
     ['Foto oder PDF', 'In der Materialkarte „Text aus Foto oder PDF übernehmen“: Foto einer Buchseite, Screenshot oder PDF wählen, hineinziehen oder einfügen. Der Text kommt bereinigt ins Material (Trennstriche und Zeilennummern entfernt). Ein Bild direkt ins Textfeld einfügen startet die Erkennung ebenfalls.'],
     ['Gut zu wissen', 'Beim ersten Mal wird das deutsche Sprachpaket geladen (einige MB, dafür braucht es Internet). Danach geht es schneller. Bitte den Text immer gegenlesen.']]],
   ['Fächer', [
-    ['Fach wechseln', 'Auf die rote Randnotiz neben „AB-O-MAT“ klicken: Deutsch, Geschichte/Politik oder Biologie. Die Reiter zeigen dann die Klassen dieses Fachs, die Seite bekommt die Farbe des Fachs.'],
+    ['Fach wechseln', 'Auf die rote Randnotiz neben „LehrWerk“ klicken: Deutsch, Geschichte/Politik oder Biologie. Die Reiter zeigen dann die Klassen dieses Fachs, die Seite bekommt die Farbe des Fachs.'],
     ['Fach einer Klasse', '„+ Klassen“ neben den Reitern. Operatoren, Vorlagen und Formulierungshilfen richten sich nach dem Fach.'],
     ['Quelle, Darstellung', 'In Geschichte/Politik wird ein Material zur Quelle (Q1) oder Darstellung (D1). Bilder bekommen auf Wunsch eine Nummer (M, Q, D) mit Titel.'],
     ['Biologie', 'Bilder als Abbildung nummerieren (Abb. 1), freie Fläche für Zeichnungen und Skizzen (Baustein Schreibfläche, Art „Freie Fläche“).'],
@@ -11680,9 +11743,9 @@ function rlpCopy() {
 function helpHTML() {
   return `<h2 id="dlg-t">Hilfe und Kniffe</h2>
     <div class="help">${HELP.map(([h, rows]) => `<section><h3>${h}</h3><dl>${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></section>`).join('')}</div>
-    ${donateHTML('Hilft dir der AB-O-MAT?')}
+    ${donateHTML('Hilft dir das LehrWerk?')}
     <div class="row"><button class="btn primary" type="button" data-act="dlg-close">Schließen</button><button class="link" type="button" data-act="tips-again">Funktionstour starten</button></div>
-    <p class="copy-l">AB-O-MAT · © 2026 Moritz Bauer</p>`;
+    <p class="copy-l">LehrWerk · © 2026 Moritz Bauer</p>`;
 }
 const TIPS = [
   ['Bausteine einfügen und umsortieren', 'Mit „+“ zwischen zwei Karten fügst du einen Baustein genau dort ein. An der Kopfzeile einer Karte lässt sie sich verschieben.'],
@@ -11888,7 +11951,7 @@ function renderDlg() {
         ${msgs}
         <div class="row"><button class="btn primary" type="submit">Anmelden</button><button class="btn" type="button" data-act="dlg-signup">Konto anlegen</button></div>
         <div class="links"><button class="link" type="button" data-act="dlg-reset">Passwort vergessen?</button></div>
-        <small class="hint dlg-must-h">Der AB-O-MAT funktioniert mit einem kostenlosen Konto. So sind deine Stunden sicher gespeichert, auf jedem Gerät da, und du kannst mit dem Kollegium teilen.</small>
+        <small class="hint dlg-must-h">Das LehrWerk funktioniert mit einem kostenlosen Konto. So sind deine Stunden sicher gespeichert, auf jedem Gerät da, und du kannst mit dem Kollegium teilen.</small>
       </form>`;
   const od = r.querySelector('.dlg'), same = od && r.dataset.mode === d.mode, oy = same ? od.scrollTop : 0, inner = same ? [...od.querySelectorAll('*')].filter(x => x.scrollTop > 0).map(x => [x.className, x.scrollTop]) : [];
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`; r.dataset.mode = d.mode;
@@ -12087,7 +12150,7 @@ async function exportStunde() {
     show('blatt', 'schueler');
     overlay('Präsentation …'); { const r = await capture(() => exportPPTX()); if (r) add(`${stem}_Praesentation.pptx`, r.blob, 'Präsentation (PowerPoint)'); else notes.push('Die PowerPoint-Datei fehlt: Dafür braucht der Browser Internet.'); }
     const title = stTitle(P); const folder = slug(title) ? (P.abs ? 'Stunde_' : (stNr(P) ? 'AB' + slug(String(stNr(P))) + '_' : '')) + slug(title) : 'Stunde';
-    const inhalt = [`Stunde: ${title}`, [P.meta.course, P.meta.school].filter(Boolean).join(' · '), `Zusammengestellt mit dem AB-O-MAT am ${new Date().toLocaleDateString('de-DE')}`, '', 'Inhalt:', ...files.map(f => `${f.name}  –  ${f.what}`), ...(notes.length ? ['', 'Hinweise:', ...notes] : [])].join('\r\n');
+    const inhalt = [`Stunde: ${title}`, [P.meta.course, P.meta.school].filter(Boolean).join(' · '), `Zusammengestellt mit dem LehrWerk am ${new Date().toLocaleDateString('de-DE')}`, '', 'Inhalt:', ...files.map(f => `${f.name}  –  ${f.what}`), ...(notes.length ? ['', 'Hinweise:', ...notes] : [])].join('\r\n');
     files.push({ name: '00_Inhalt.txt', blob: new Blob([inhalt], { type: 'text/plain' }) });
     overlay('Ordner wird gespeichert …');
     if (window.abDesktop && window.abDesktop.saveFolder) {
@@ -12192,7 +12255,7 @@ async function pagesToPdf(pages, name, props) {
       if (!pdf) pdf = new jsPDF({ unit: 'mm', format: pf, orientation: orient, compress: true }); else pdf.addPage(pf, orient);
       pdf.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
     }
-    pdf.setProperties({ title: props.title || '', subject: props.subject || '', creator: 'AB-O-MAT' });
+    pdf.setProperties({ title: props.title || '', subject: props.subject || '', creator: 'LehrWerk' });
     overlay('');
     await deliver(name, pdf.output('blob'));
   } catch (err) { console.error(err); overlay(''); toast('PDF konnte nicht erstellt werden. Bitte erneut versuchen.'); }
@@ -12555,7 +12618,7 @@ function dgRuntime(K) {
         if (!doc) doc = new window.jspdf.jsPDF({ unit: 'mm', format: hmm > 297 ? [210, hmm] : 'a4', orientation: ori, compress: true }); else doc.addPage(hmm > 297 && wmm <= 210 ? [210, hmm] : 'a4', ori);
         doc.addImage(c.toDataURL('image/jpeg', .9), 'JPEG', 0, 0, wmm, hmm, undefined, 'FAST');
       }
-      doc.setProperties({ title: K.title || 'Arbeitsblatt', author: S.name || '', creator: 'AB-O-MAT' });
+      doc.setProperties({ title: K.title || 'Arbeitsblatt', author: S.name || '', creator: 'LehrWerk' });
       const blob = doc.output('blob'); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName();
       document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
       res.hidden = false; res.classList.add('full'); res.textContent = 'PDF gespeichert: ' + a.download;

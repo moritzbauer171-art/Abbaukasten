@@ -1,6 +1,6 @@
 {
-  "name": "AB-O-MAT",
-  "short_name": "AB-O-MAT",
+  "name": "LehrWerk",
+  "short_name": "LehrWerk",
   "description": "Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen und als PDF oder Word ausgeben.",
   "lang": "de",
   "start_url": "./",
