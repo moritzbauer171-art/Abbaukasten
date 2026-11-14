@@ -2183,6 +2183,39 @@ body.home-on{overflow:hidden}
 .brand b.logo,.hm-brand b.logo{display:inline-flex;align-items:center;font-family:var(--f-ui);font-weight:800;letter-spacing:.01em;white-space:nowrap}
 .logo-o{width:.92em;height:.92em;margin:0 .04em;color:var(--tinte);flex:0 0 auto;transform:rotate(-35deg);transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
 .brand:hover .logo-o{transform:rotate(35deg)}
+/* Adminbereich */
+.adm-ov{position:fixed;inset:0;z-index:60;background:rgba(20,24,32,.45)}
+.adm{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:61;width:min(1080px,calc(100% - 32px));max-height:calc(100% - 40px);display:flex;flex-direction:column;background:var(--panel);color:var(--ink);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+.adm-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line)}
+.adm-h h2{margin:0;font-size:18px;margin-right:auto}
+.adm-tabs{display:flex;gap:4px}
+.adm-tab{border:1px solid var(--line-strong);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;font:600 13.5px/1.2 var(--f-ui);cursor:pointer}
+.adm-tab[aria-pressed="true"]{background:var(--tinte);border-color:var(--tinte);color:#fff}
+.adm-tab em{font-style:normal;opacity:.75;margin-left:2px}
+.adm-body{overflow:auto;padding:12px 18px 16px}
+.adm-note{margin:6px 0 10px;color:var(--faint);font-size:13px}
+.adm-err{color:#B42318;font-weight:600}
+.adm-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.adm-t{width:100%;border-collapse:collapse;font-size:13.5px}
+.adm-t th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--faint);background:var(--bg);padding:8px 10px;white-space:nowrap}
+.adm-t td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.adm-t td:not(:first-child){white-space:nowrap}
+.adm-t .n{text-align:right;font-variant-numeric:tabular-nums}
+.adm-t tr.ban td{color:var(--faint)}
+.adm-a{text-align:right}.adm-a .link{margin-left:10px}
+.adm-a .danger,.adm .btn.danger{color:#B42318}
+.adm .btn.danger:not(:disabled){background:#B42318;border-color:#B42318;color:#fff}
+.adm-b{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:1px 7px;background:var(--bg);color:var(--faint);vertical-align:1px}
+.adm-b-a{background:#E4E9FB;color:#2741B5}.adm-b-x{background:#FDE7E5;color:#B42318}
+.adm-sub td{background:var(--bg)}
+.adm-ti{margin:0;padding:0;list-style:none;display:grid;gap:4px;white-space:normal}
+.adm-ti li{display:flex;justify-content:space-between;gap:12px}.adm-ti small{color:var(--faint)}
+.adm-conf td{white-space:normal!important;background:#FFF4F2}
+.adm-cr{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.adm-cr .inp{flex:1 1 260px}
+.adm-d{display:block;color:var(--faint);font-size:12px;white-space:normal;max-width:420px}
+.adm-q{font-weight:600;margin-right:4px}
+.adm-link{font-weight:700}
+@media (max-width:640px){.adm{width:100%;max-height:100%;border-radius:0;top:0;left:0;transform:none;height:100%}.adm-body{padding:10px 12px}}
 /* Kaffee spendieren */
 #don-ov{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:16px}
 .don-scrim{position:absolute;inset:0;background:rgba(15,20,40,.5)}
@@ -2449,6 +2482,7 @@ body.home-on{overflow:hidden}
 <div id="mmore-pop" class="mm-pop" hidden role="menu"></div>
 <div id="home-root"></div>
 <div id="lib-root"></div>
+<div id="adm-root"></div>
 <div id="dlg-root"></div>
 <div id="gl-root"></div>
 <div id="zl-root"></div>
@@ -10051,6 +10085,7 @@ function mmoreToggle(open) {
 }
 // Zurück-Geste auf dem Handy: erst Fenster schließen, dann von der Vorschau zurück zum Bearbeiten
 function backClose() {
+  if (ADM.open) { admClose(); return true; }
   if (document.getElementById('don-ov')) { document.getElementById('don-ov').remove(); return true; }
   if (typeof tour !== 'undefined' && tour.i >= 0) { tourEnd(); return true; }
   if (!$('#mmore-pop').hidden) { mmoreToggle(false); return true; }
@@ -10767,6 +10802,75 @@ function libTarget(e) {
   return { el: secEl, cls: 'drop-into', fid: secEl.dataset.fid };
 }
 
+/* ---------- Adminbereich: Konten (nur Metadaten), sperren, löschen, geteilte Stunden moderieren. Rechte prüft die Datenbank (ab_admins). ---------- */
+const ADM = { is: false, for: '', open: false, tab: 'konten', users: null, shared: null, err: '', busy: false, titles: {}, show: '', conf: null };
+async function admCheck() {
+  const uid = store.user && store.user.id; if (!uid || !store.sb) { ADM.is = false; ADM.for = ''; return; }
+  if (ADM.for === uid) return; ADM.for = uid; ADM.is = false;
+  try { const r = await store.sb.rpc('ab_is_admin'); if (!r.error && r.data === true && store.user && store.user.id === uid) { ADM.is = true; if (state.libOpen) renderLib(); } } catch {}
+}
+const admRpc = async (fn, args) => { const r = await store.sb.rpc(fn, args || {}); if (r.error) throw r.error; return r.data; };
+const admDate = (v, t) => { if (!v) return '–'; const d = new Date(v); return isNaN(d) ? '–' : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }) + (t ? ' ' + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : ''); };
+async function admLoad() {
+  ADM.busy = true; ADM.err = ''; admRender();
+  try { const [u, g] = await Promise.all([admRpc('ab_admin_users'), admRpc('ab_admin_shared')]); ADM.users = u || []; ADM.shared = g || []; }
+  catch (e) { ADM.err = e && e.code === '42501' ? 'Dieses Konto hat keine Admin-Rechte.' : 'Laden hat nicht geklappt: ' + ((e && e.message) || 'unbekannter Fehler'); }
+  ADM.busy = false; admRender();
+}
+function admOpen() { ADM.open = true; ADM.conf = null; ADM.show = ''; admLoad(); }
+function admClose() { ADM.open = false; ADM.conf = null; admRender(); }
+function admRender() {
+  const root = $('#adm-root'); if (!ADM.open) { root.innerHTML = ''; return; }
+  const me = store.user && store.user.id; const U = ADM.users || [], G = ADM.shared || [];
+  const tab = (k, l, n) => `<button type="button" class="adm-tab" data-adm="tab" data-v="${k}" aria-pressed="${ADM.tab === k}">${l}${n != null ? ` <em>${n}</em>` : ''}</button>`;
+  let body = '';
+  if (ADM.err) body = `<p class="adm-err">${esc(ADM.err)}</p>`;
+  else if (!ADM.users) body = '<p class="adm-note">Lädt …</p>';
+  else if (ADM.tab === 'konten') {
+    const tot = U.reduce((a, u) => a + (u.n_sheets || 0), 0);
+    body = `<p class="adm-note">${U.length} Konten · ${tot} Blätter · ${U.filter(u => u.banned).length} gesperrt. Inhalte der Blätter sind hier bewusst nicht einsehbar, nur Titel und Zahlen.</p>
+    <div class="adm-wrap"><table class="adm-t"><thead><tr><th>Konto</th><th>Angelegt</th><th>Zuletzt angemeldet</th><th class="n">Blätter</th><th class="n">Geteilt</th><th class="n">Digital</th><th>Zuletzt bearbeitet</th><th></th></tr></thead><tbody>
+    ${U.map(u => { const self = u.id === me, prot = self || u.is_admin; const c = ADM.conf && ADM.conf.id === u.id ? ADM.conf : null;
+      const T = ADM.titles[u.id];
+      return `<tr class="${u.banned ? 'ban' : ''}"><td><b>${esc(u.email || '(ohne E-Mail)')}</b>${u.is_admin ? ' <span class="adm-b adm-b-a">Admin</span>' : ''}${self ? ' <span class="adm-b">Sie</span>' : ''}${u.banned ? ' <span class="adm-b adm-b-x">gesperrt</span>' : ''}</td>
+      <td>${admDate(u.created_at)}</td><td>${admDate(u.last_sign_in_at, 1)}</td><td class="n">${u.n_sheets}</td><td class="n">${u.n_shared}</td><td class="n">${u.n_digital}</td><td>${admDate(u.last_edit, 1)}</td>
+      <td class="adm-a">${u.n_sheets ? `<button type="button" class="link" data-adm="titles" data-id="${u.id}">${ADM.show === u.id ? 'Titel ausblenden' : 'Titel'}</button>` : ''}${prot ? '' : `<button type="button" class="link" data-adm="ban" data-id="${u.id}" data-v="${u.banned ? 0 : 1}">${u.banned ? 'Entsperren' : 'Sperren'}</button><button type="button" class="link danger" data-adm="del" data-id="${u.id}">Löschen</button>`}</td></tr>
+      ${ADM.show === u.id ? `<tr class="adm-sub"><td colspan="8">${!T ? 'Lädt …' : !T.length ? 'Keine Blätter.' : `<ul class="adm-ti">${T.map(x => `<li><span>${esc(x.title || 'Ohne Titel')}${x.nr ? ` <small>AB ${esc(x.nr)}</small>` : ''}</span><small>${esc((KLASSEN.find(k => k.id === x.klasse) || {}).label || '')}${(KLASSEN.find(k => k.id === x.klasse) || {}).label ? ' · ' : ''}${admDate(x.updated_at)}</small></li>`).join('')}</ul>`}</td></tr>` : ''}
+      ${c ? `<tr class="adm-sub adm-conf"><td colspan="8"><b>Konto ${esc(u.email)} endgültig löschen?</b> Dabei verschwinden auch ${u.n_sheets} Blätter, ${u.n_shared} geteilte Stunden und ${u.n_digital} digitale Fassungen. Das lässt sich nicht rückgängig machen.<div class="adm-cr"><input class="inp" type="text" id="adm-conf-in" placeholder="Zur Bestätigung die E-Mail eintippen" autocomplete="off" value="${esc(c.typed || '')}"><button type="button" class="btn danger" data-adm="del-yes" data-id="${u.id}"${(c.typed || '').trim().toLowerCase() === String(u.email || '').toLowerCase() ? '' : ' disabled'}>Endgültig löschen</button><button type="button" class="btn" data-adm="no">Abbrechen</button></div></td></tr>` : ''}`; }).join('')}
+    </tbody></table></div>
+    <p class="adm-note">Gesperrte Konten können sich nicht mehr anmelden; ihre Blätter bleiben erhalten. Ihr eigenes Konto und andere Admin-Konten lassen sich hier weder sperren noch löschen.</p>`;
+  } else {
+    body = !G.length ? '<p class="adm-note">Es gibt keine geteilten Stunden.</p>' : `<div class="adm-wrap"><table class="adm-t"><thead><tr><th>Stunde</th><th>Fach · Klasse</th><th>Von</th><th>Geteilt</th><th></th></tr></thead><tbody>
+    ${G.map(g => { const c = ADM.conf && ADM.conf.sid === g.id; return `<tr><td><b>${esc(g.title || 'Ohne Titel')}</b>${g.beschreibung ? `<small class="adm-d">${esc(g.beschreibung)}</small>` : ''}</td><td>${esc((FAECHER[g.fach] && FAECHER[g.fach].label) || g.fach || 'Deutsch')}${g.klasse ? ' · ' + esc(g.klasse) : ''}</td><td>${esc(g.autor || '–')}<small class="adm-d">${esc(g.email || '')}</small></td><td>${admDate(g.updated_at)}</td>
+      <td class="adm-a">${c ? `<span class="adm-q">Wirklich entfernen?</span><button type="button" class="link danger" data-adm="sdel-yes" data-id="${esc(g.id)}">Ja, entfernen</button><button type="button" class="link" data-adm="no">Nein</button>` : `<button type="button" class="link danger" data-adm="sdel" data-id="${esc(g.id)}">Entfernen</button>`}</td></tr>`; }).join('')}
+    </tbody></table></div><p class="adm-note">Entfernen nimmt die Stunde aus „Geteilte Stunden“. Das Original-Blatt im Konto der Person bleibt unberührt.</p>`;
+  }
+  const keep = document.activeElement && document.activeElement.id === 'adm-conf-in' ? document.activeElement.selectionStart : null;
+  root.innerHTML = `<div class="adm-ov" data-adm="bg"></div><section class="adm" role="dialog" aria-modal="true" aria-label="Adminbereich"><header class="adm-h"><h2>Adminbereich</h2><div class="adm-tabs" role="group">${tab('konten', 'Konten', ADM.users ? ADM.users.length : null)}${tab('geteilt', 'Geteilte Stunden', ADM.shared ? ADM.shared.length : null)}</div><button type="button" class="link" data-adm="reload"${ADM.busy ? ' disabled' : ''}>Aktualisieren</button><button type="button" class="ib" data-adm="x" aria-label="Schließen">${I.x}</button></header><div class="adm-body">${body}</div></section>`;
+  if (keep != null) { const i = $('#adm-conf-in'); if (i) { i.focus(); try { i.setSelectionRange(keep, keep); } catch {} } }
+}
+function admInit() {
+  const root = $('#adm-root');
+  root.addEventListener('input', e => { if (e.target.id === 'adm-conf-in' && ADM.conf) { ADM.conf.typed = e.target.value; admRender(); } });
+  document.addEventListener('keydown', e => { if (ADM.open && e.key === 'Escape') { e.stopPropagation(); if (ADM.conf) { ADM.conf = null; admRender(); } else admClose(); } });
+  root.addEventListener('click', async e => {
+    const t = e.target.closest('[data-adm]'); if (!t) return; const a = t.dataset.adm, id = t.dataset.id;
+    if (a === 'x' || a === 'bg') { admClose(); return; }
+    if (a === 'tab') { ADM.tab = t.dataset.v; ADM.conf = null; admRender(); return; }
+    if (a === 'reload') { admLoad(); return; }
+    if (a === 'no') { ADM.conf = null; admRender(); return; }
+    if (a === 'titles') { if (ADM.show === id) { ADM.show = ''; admRender(); return; } ADM.show = id; admRender(); try { ADM.titles[id] = await admRpc('ab_admin_titles', { uid: id }) || []; } catch { ADM.titles[id] = []; toast('Titel ließen sich nicht laden.'); } admRender(); return; }
+    if (a === 'del') { ADM.conf = { id, typed: '' }; admRender(); const i = $('#adm-conf-in'); if (i) i.focus(); return; }
+    if (a === 'sdel') { ADM.conf = { sid: id }; admRender(); return; }
+    try {
+      if (a === 'ban') { const on = t.dataset.v === '1'; await admRpc('ab_admin_ban', { uid: id, sperren: on }); toast(on ? 'Konto gesperrt.' : 'Konto entsperrt.'); }
+      if (a === 'del-yes') { t.disabled = true; await admRpc('ab_admin_delete_user', { uid: id }); ADM.conf = null; toast('Konto gelöscht.'); }
+      if (a === 'sdel-yes') { await admRpc('ab_admin_shared_delete', { sid: id }); ADM.conf = null; toast('Geteilte Stunde entfernt.'); try { state.shared = await backend.shareList(); } catch {} }
+    } catch (err) { toast((err && err.message) || 'Das hat nicht geklappt.'); }
+    admLoad();
+  });
+}
+
 /* ---------- Meine Blätter ---------- */
 function renderLib() {
   const root = $('#lib-root');
@@ -10774,7 +10878,7 @@ function renderLib() {
   const k = KL(state.klasse);
   const q = state.libQuery.trim().toLowerCase();
   let acct;
-  if (backend && backend.kind === 'supabase') acct = `<span>Online gespeichert für <b>${esc(store.user && store.user.email || '')}</b></span><button class="link" type="button" data-act="logout">Abmelden</button>`;
+  if (backend && backend.kind === 'supabase') { admCheck(); acct = `<span>Online gespeichert für <b>${esc(store.user && store.user.email || '')}</b></span>${ADM.is ? '<button class="link adm-link" type="button" data-act="admin-open">Adminbereich</button>' : ''}<button class="link" type="button" data-act="logout">Abmelden</button>`; }
   else if (backend && backend.kind === 'claude') acct = '<span>Ihre Blätter liegen in Ihrem claude.ai-Konto und sind nur für Sie sichtbar.</span>';
   else if (store.sb) acct = '<span>Ihre Blätter liegen nur in diesem Browser.</span><button class="link" type="button" data-act="login">Anmelden für die Online-Ablage</button>';
   else acct = '<span>Ihre Blätter liegen nur in diesem Browser. Sichern Sie sie ab und zu als Datei.</span>';
@@ -10866,6 +10970,7 @@ async function onLibClick(e) {
     case 'lib-del-no': state.confirmDel = null; renderLib(); break;
     case 'lib-del-yes': deleteSheet(id); break;
     case 'login': closeLib(); openDlg('login'); break;
+    case 'admin-open': closeLib(); admOpen(); break;
     case 'logout': closeLib(); if (savePending) saveNow(); await saveChain; try { await store.sb.auth.signOut({ scope: 'local' }); } catch {} try { localStorage.removeItem(LS_OFFUSER); indexedDB.deleteDatabase('abw-offline'); } catch {} break;
     case 'lib-migrate': migrateLocal(); break;
     case 'backup': exportBackup(); break;
@@ -13064,7 +13169,7 @@ function boot() {
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
-  setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit(); mobileInit();
+  setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit(); mobileInit(); admInit();
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
 
