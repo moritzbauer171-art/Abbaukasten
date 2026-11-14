@@ -9,7 +9,7 @@
 <meta name="author" content="Moritz Bauer">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400;1,7..72,600&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=UnifrakturMaguntia&family=Caveat:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400;1,7..72,600&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=UnifrakturMaguntia&family=Caveat:wght@500;700&family=Andika:wght@400;700&family=Fredoka:wght@500;600;700&display=swap">
 <style>
 /* Layout: Arbeitspult – links die Bausteine (Editor), rechts das Papier (A4-Vorschau). Papier bleibt in beiden Themes weiß. */
 :root{
@@ -1317,6 +1317,56 @@ body{transition:background-color .3s,border-color .25s}
 .d-tagebuch .info-kind{font-family:var(--f-disp);font-size:14pt;letter-spacing:0;text-transform:none;font-weight:700}
 .d-tagebuch .mat-no{border-radius:1.4mm;font-family:var(--f-disp);font-size:12pt;padding:0 2mm}
 .d-tagebuch .q-mark{font-family:var(--f-disp)}
+
+/* ===== Grundschul-Designs: Fibel, Entdecker, Bunt ===== */
+.page.d-fibel,.page.d-entdecker,.page.d-bunt{--f-text:"Andika","Atkinson Hyperlegible",system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-ui:var(--f-text);font-family:var(--f-text);--f-disp:"Andika","Atkinson Hyperlegible",sans-serif}
+.page.d-entdecker,.page.d-bunt{--f-disp:"Fredoka","Andika",system-ui,sans-serif}
+.gsh{position:relative;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.gsh-top{display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;font-size:8.5pt;color:var(--paper-muted);padding:0 1mm 1.6mm}
+.gsh-top .hd-fields{font-size:11pt;color:var(--paper-ink)}.gsh-top .hd-fields i{border-bottom:.35mm solid var(--paper-ink);height:5mm}
+.gsh-main{position:relative;display:flex;align-items:center;gap:4mm;padding:3.6mm 5mm;border-radius:5mm}
+.gsh-t{flex:1 1 auto;min-width:0}
+.gsh h1{margin:0;font-family:var(--f-disp);font-weight:700;font-size:21pt;line-height:1.15;color:var(--acc)}
+.gsh p{margin:1mm 0 0;font-size:11pt;color:var(--paper-muted)}
+.gsh-nr{flex:0 0 auto;min-width:12mm;height:12mm;padding:0 2mm;border-radius:6mm;display:flex;align-items:center;justify-content:center;font-family:var(--f-disp);font-weight:700;font-size:15pt;background:var(--acc);color:#fff}
+.gs-deco{flex:0 0 auto;width:15mm;height:15mm}
+/* Fibel: freundlich, ruhig, abgerundet */
+.gsh-fibel .gsh-main{background:var(--acc-tint);border:.5mm solid var(--acc)}
+.gsh-fibel .gs-deco{fill:#F5B400;stroke:#F5B400}
+.d-fibel .task-no{border-radius:50%;font-family:var(--f-disp)}
+.d-fibel .blk-info{border-left:0;border:.45mm dashed var(--acc);border-radius:4mm;background:var(--acc-tint)}
+.d-fibel .tasks-title{font-family:var(--f-disp);font-size:13pt;letter-spacing:0;text-transform:none}
+.d-fibel .mat-no{border-radius:3mm;font-family:var(--f-disp)}
+.d-fibel .blk-h h2{font-family:var(--f-disp);font-size:16pt}
+/* Entdecker: Forscherheft mit Stern und Karteikarten */
+.gsh-entdecker .gsh-main{background:#fff;border:.6mm solid var(--acc);box-shadow:1.4mm 1.4mm 0 var(--acc-tint)}
+.gsh-entdecker .gs-deco{fill:#F5B400;transform:rotate(-12deg)}
+.gsh-entdecker .gsh-nr{border-radius:2mm;transform:rotate(-4deg)}
+.d-entdecker .task-no{border-radius:1.6mm;transform:rotate(-4deg);font-family:var(--f-disp)}
+.d-entdecker .blk-info{border-left:0;border-radius:2.4mm;background:#FFF8DD;border:.35mm solid #EBC75A;box-shadow:.8mm .8mm 0 rgba(0,0,0,.06)}
+.d-entdecker .tasks-title{font-family:var(--f-disp);font-size:13pt;letter-spacing:.02em;text-transform:none}
+.d-entdecker .tasks-title::before{content:"🔍 ";font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.d-entdecker .blk-h h2{font-family:var(--f-disp);font-size:16pt}
+.d-entdecker .mat-no{border-radius:1.4mm;font-family:var(--f-disp)}
+/* Bunt: Regenbogen, jede Aufgabe in eigener Farbe */
+.gsh-bunt .gsh-main{background:#fff;border-radius:4mm;padding-top:5.6mm;overflow:hidden;border:.4mm solid #E4E6EC}
+.gsh-bunt .gsh-main::before{content:"";position:absolute;left:0;right:0;top:0;height:2.4mm;background:linear-gradient(90deg,#E5484D 0 16.6%,#F5A524 0 33.3%,#F5D90A 0 50%,#30A46C 0 66.6%,#3E8ED0 0 83.3%,#8E4EC6 0)}
+.gsh-bunt h1{color:var(--paper-ink)}
+.d-bunt .task{--tc:#3E8ED0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.d-bunt .task:nth-of-type(5n+1){--tc:#E5484D}.d-bunt .task:nth-of-type(5n+2){--tc:#F08C00}.d-bunt .task:nth-of-type(5n+3){--tc:#30A46C}.d-bunt .task:nth-of-type(5n+4){--tc:#3E8ED0}.d-bunt .task:nth-of-type(5n){--tc:#8E4EC6}
+.d-bunt .task-no{background:var(--tc);border-radius:50%;font-family:var(--f-disp)}
+.d-bunt .blk-info{border-left:0;border-radius:4mm;background:#F3F0FF;border:.35mm solid #C9BFF5}
+.d-bunt .tasks-title{font-family:var(--f-disp);font-size:13pt;letter-spacing:0;text-transform:none;color:var(--paper-ink)}
+.d-bunt .blk-h h2{font-family:var(--f-disp);font-size:16pt}
+.d-bunt .mat-no{border-radius:3mm;font-family:var(--f-disp)}
+/* Vorschau-Kacheln */
+.dz-h{grid-column:1/-1;font-size:11px;font-weight:700;color:var(--faint);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 -2px}
+.dzf-b{font-family:"Andika",sans-serif;font-weight:700;font-size:13px;color:#1F4FA0;background:#E7EEFB;border:1.5px solid #1F4FA0;border-radius:7px;padding:1px 6px;width:max-content}
+.dzf-r{display:flex;align-items:center;gap:4px}.dzf-r i{width:7px;height:7px;border-radius:50%;background:#1F4FA0;flex:0 0 auto}.dzf-r .dz-l{flex:1 1 auto;height:3px;width:auto}.dzf-r .dz-l.s{flex:0 0 55%}
+.dze-b{font-family:"Fredoka",sans-serif;font-weight:700;font-size:11px;color:#0D6767;border:1.5px solid #0D6767;border-radius:4px;padding:0 5px;width:max-content;box-shadow:2px 2px 0 #CDE7E7}.dze-b i{font-style:normal;color:#F5B400;margin-right:3px}
+.dzb-rb{height:4px;margin:-7px -7px 0 -8px;background:linear-gradient(90deg,#E5484D 0 20%,#F5A524 0 40%,#30A46C 0 60%,#3E8ED0 0 80%,#8E4EC6 0)}
+.dzb-t{font-family:"Fredoka",sans-serif;font-weight:700;font-size:14px;line-height:1}
+.dzb-c{display:flex;gap:4px}.dzb-c i{width:9px;height:9px;border-radius:50%;background:#E5484D}.dzb-c i:nth-child(2){background:#F08C00}.dzb-c i:nth-child(3){background:#30A46C}
 
 /* Lehrerfassung, Gruppen, Klausur */
 .t-ph,.t-min{white-space:nowrap}
@@ -3755,12 +3805,18 @@ const DESIGNS = {
   klar: { label: 'Klar' },
   akte: { label: 'Akte', mono: { c: '#2B2925', t: '#E9E1CE' } },
   zeitung: { label: 'Zeitung', mono: { c: '#161616', t: '#ECECEC' } },
-  tagebuch: { label: 'Tagebuch' }
+  tagebuch: { label: 'Tagebuch' },
+  fibel: { label: 'Fibel', gs: true },
+  entdecker: { label: 'Entdecker', gs: true },
+  bunt: { label: 'Bunt', gs: true }
 };
 const DESIGN_FONTS = {
   akte: ['400 11pt "Special Elite"', '400 11pt "Courier Prime"', '700 11pt "Courier Prime"', 'italic 400 11pt "Courier Prime"'],
   zeitung: ['400 20pt "UnifrakturMaguntia"', '800 11pt "Playfair Display"', '700 11pt "Playfair Display"', 'italic 600 11pt "Playfair Display"'],
-  tagebuch: ['700 11pt "Caveat"', '500 11pt "Caveat"']
+  tagebuch: ['700 11pt "Caveat"', '500 11pt "Caveat"'],
+  fibel: ['400 11pt "Andika"', '700 11pt "Andika"'],
+  entdecker: ['400 11pt "Andika"', '700 11pt "Andika"', '700 11pt "Fredoka"'],
+  bunt: ['400 11pt "Andika"', '700 11pt "Andika"', '700 11pt "Fredoka"']
 };
 const designOf = meta => DESIGNS[meta && meta.design] ? meta.design : 'klar';
 function pageAcc(meta) { return DESIGNS[designOf(meta)].mono || ACCENTS[meta.accent] || ACCENTS.tinte; }
@@ -3773,11 +3829,16 @@ const DZ_PREV = {
   klar: '<span class="dzk-bar"></span><span class="dzk-t">Titel</span><span class="dz-l"></span><span class="dz-l s"></span>',
   akte: '<span class="dza-tab">AKTE</span><span class="dza-st">GEHEIM</span><span class="dz-l"></span><span class="dz-l s"></span>',
   zeitung: '<span class="dzz-r"></span><span class="dzz-m">Zeitung</span><span class="dzz-r b"></span><span class="dz-l s"></span>',
-  tagebuch: '<span class="dzt-t">Tagebuch</span><span class="dz-l"></span><span class="dz-l s"></span>'
+  tagebuch: '<span class="dzt-t">Tagebuch</span><span class="dz-l"></span><span class="dz-l s"></span>',
+  fibel: '<span class="dzf-b">Fibel</span><span class="dzf-r"><i></i><span class="dz-l"></span></span><span class="dzf-r"><i></i><span class="dz-l s"></span></span>',
+  entdecker: '<span class="dze-b"><i>★</i>Entdecker</span><span class="dz-l"></span><span class="dz-l s"></span>',
+  bunt: '<span class="dzb-rb"></span><span class="dzb-t">Bunt</span><span class="dzb-c"><i></i><i></i><i></i></span>'
 };
 function designEditor(m) {
   const d = designOf(m);
-  const tiles = Object.entries(DESIGNS).map(([k, x]) => `<button type="button" class="dz" data-act="design" data-v="${k}" aria-pressed="${d === k}"><span class="dz-p dz-${k}" aria-hidden="true">${DZ_PREV[k]}</span><b>${x.label}</b></button>`).join('');
+  const tile = ([k, x]) => `<button type="button" class="dz" data-act="design" data-v="${k}" aria-pressed="${d === k}"><span class="dz-p dz-${k}" aria-hidden="true">${DZ_PREV[k]}</span><b>${x.label}</b></button>`;
+  const gs = isGS() || DESIGNS[d].gs; const E = Object.entries(DESIGNS);
+  const tiles = gs ? `<small class="dz-h">Für die Grundschule</small>${E.filter(([, x]) => x.gs).map(tile).join('')}<small class="dz-h">Weitere</small>${E.filter(([, x]) => !x.gs).map(tile).join('')}` : E.filter(([, x]) => !x.gs).map(tile).join('');
   let opts = '';
   if (d === 'akte') opts = `${fText('stamp', 'Stempel', m.stamp == null ? 'VERTRAULICH' : m.stamp, 'leer = kein Stempel')}<div class="chks">${fCheck('tone', 'Papierton (braucht mehr Toner)', m.tone !== false)}</div>`;
   if (d === 'zeitung') opts = fText('masthead', 'Zeitungsname', m.masthead || '', m.course || 'Kurszeitung');
@@ -3808,6 +3869,13 @@ function headHTML(meta) {
       <h1 class="zt-title">${title}</h1>${meta.topic ? `<p class="zt-deck">${esc(deQuoteStr(meta.topic))}</p>` : ''}</div>`;
   }
   const course = [meta.course, meta.school].filter(Boolean).map(esc).join(' · ');
+  if (d === 'fibel' || d === 'entdecker' || d === 'bunt') {
+    const deco = d === 'entdecker' ? '<svg class="gs-deco" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3l4.9 10.2 11.1 1.5-8.1 7.7 2 11-9.9-5.4-9.9 5.4 2-11-8.1-7.7 11.1-1.5z"/></svg>'
+      : d === 'fibel' ? '<svg class="gs-deco" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="8.5"/><g stroke-width="2.6" stroke-linecap="round"><path d="M20 4v5M20 31v5M4 20h5M31 20h5M8.7 8.7l3.5 3.5M27.8 27.8l3.5 3.5M8.7 31.3l3.5-3.5M27.8 12.2l3.5-3.5"/></g></svg>' : '';
+    return `<div class="blk blk-head gsh gsh-${d}" data-bid="meta">
+      <div class="gsh-top"><span class="gsh-course">${course || '&nbsp;'}</span><span class="hd-fields">${fields}</span></div>
+      <div class="gsh-main">${meta.nr ? `<span class="gsh-nr">${esc(meta.nr)}</span>` : ''}<div class="gsh-t"><h1>${title}</h1>${meta.topic ? `<p>${esc(deQuoteStr(meta.topic))}</p>` : ''}</div>${deco}</div></div>`;
+  }
   if (d === 'tagebuch') {
     return `<div class="blk blk-head tg" data-bid="meta">
       <div class="tg-top"><span class="tg-course">${course || '&nbsp;'}</span><span class="hd-fields">${fields}</span></div>
@@ -7555,7 +7623,7 @@ function setOut(k) {
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: k.school,
-    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: 'klar', headGap: 'm', botGap: 'm',
+    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: k.stufe === 'gs' ? 'fibel' : 'klar', headGap: 'm', botGap: 'm',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     levelsOn: false, lvTip: true, groupsOn: false, groups: [{ k: 'A', name: '', add: 'für Gruppe 1 und 3' }, { k: 'B', name: '', add: 'für Gruppe 2 und 4' }], paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
@@ -12458,7 +12526,7 @@ function ocrHTML() {
    Lücken, Zuordnen, Ankreuzfelder, Tabellenzellen und Schreibflächen werden darin ausfüllbar; „Prüfen“ vergleicht mit den Lösungen.
    Online: Tabelle ab_digital, Schüler lesen nur über ab_digital_get mit der ID aus dem Link. */
 const DG_BASE = 'https://moritzbauer171-art.github.io/Abbaukasten/';
-const DG_FONTS = 'https://' + 'fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400;1,7..72,600&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=UnifrakturMaguntia&family=Caveat:wght@500;700&display=swap';
+const DG_FONTS = 'https://' + 'fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400;1,7..72,600&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=UnifrakturMaguntia&family=Caveat:wght@500;700&family=Andika:wght@400;700&family=Fredoka:wght@500;600;700&display=swap';
 const LS_DGOPT = 'abw.dgopt';
 const dgLink = id => DG_BASE + '#d=' + id;
 const dgOnline = () => !!(backend && backend.kind === 'supabase' && store.sb);
