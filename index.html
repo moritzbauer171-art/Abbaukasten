@@ -720,6 +720,9 @@ body.mw-max-on{overflow:hidden}
 .notice{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;font-size:12.5px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:8px 10px;margin-bottom:10px}
 .drawer-foot{border-top:1px solid var(--line);padding-top:10px;display:flex;gap:6px 18px;flex-wrap:wrap}
 .dlg-scrim{z-index:50}
+#dlg-root.dlg-must .dlg-scrim{z-index:150;background:rgba(10,14,24,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#dlg-root.dlg-must .dlg{z-index:151}
+.dlg-must-h{display:block;margin-top:10px}
 .dlg{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:51;width:min(420px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;background:var(--panel);border-radius:14px;box-shadow:var(--shadow);padding:22px 22px 18px;display:flex;flex-direction:column;gap:12px}
 .dlg h2{font-family:var(--f-text);font-size:21px;margin:0}
 .dlg>p{margin:0;color:var(--muted);font-size:13.5px}
@@ -10702,7 +10705,7 @@ async function initBackend() {
       if (!store.user && !navigator.onLine && ou && ou.id) { await useBackend(offlineOnlyB(ou)); return; }
       await useBackend(store.user ? supaB(sb, store.user) : localB);
       if (store.user) offerMigration();
-      else if (!lsGet(LS.skip)) openDlg('login');
+      else openDlg('login');
       return;
     } catch (err) {
       console.error(err); store.sb = null; store.user = null;
@@ -10722,7 +10725,7 @@ function onAuth(ev, session) {
     useBackend(supaB(store.sb, user)).then(offerMigration);
   } else if (!user && cur) {
     store.user = null; lsDel(LS.cur); state.touched = false;
-    useBackend(localB);
+    useBackend(localB).then(() => openDlg('login'));
   }
   updateAccountUI();
 }
@@ -11301,8 +11304,10 @@ function authMsg(err) {
   if (/failed to fetch|network|load failed/i.test(m)) return 'Keine Verbindung zum Server. Bitte die Internetverbindung prüfen.';
   return 'Das hat nicht geklappt: ' + m;
 }
+/* Anmeldung ist Pflicht: solange Online-Ablage verfügbar und niemand angemeldet ist, bleibt nur das Anmeldefenster */
+const loginForced = () => !!(store.sb && !store.user && backend && backend.kind === 'local');
 function openDlg(mode) { if (!store.sb) return; state.dlg = { mode, email: (state.dlg && state.dlg.email) || '' }; renderDlg(); }
-function closeDlg() { const d = state.dlg; if (d && d.mode === 'klassen' && d.setup) return; if (d && d.mode === 'ocr') { ocrRun++; ocrStop(); if (d.url) URL.revokeObjectURL(d.url); } if (d && d.mode === 'dg') dgRead(); if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); if (d && d.mode === 'login') setTimeout(() => maybeSetup(true), 0); }
+function closeDlg() { const d = state.dlg; if (d && d.mode === 'klassen' && d.setup) return; if (d && d.mode === 'login' && loginForced()) return; if (d && d.mode === 'ocr') { ocrRun++; ocrStop(); if (d.url) URL.revokeObjectURL(d.url); } if (d && d.mode === 'dg') dgRead(); if (d && d.mode === 'out' && !d.done && d.orig) { state.dlg = null; outApply(d.orig); renderOut(); } state.dlg = null; renderDlg(); if (d && d.mode === 'login') setTimeout(() => maybeSetup(true), 0); }
 /* ---------- Geändert auf einem anderen Gerät ---------- */
 function conflictHTML() {
   const t = new Date(state.dlg.remote).toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
@@ -11662,7 +11667,8 @@ async function saveAsFile() {
   await deliver(name, new Blob([data], { type: 'application/json' }));
 }
 function renderDlg() {
-  const r = $('#dlg-root'); const d = state.dlg;
+  if (loginForced() && (!state.dlg || !['login', 'newpw'].includes(state.dlg.mode))) state.dlg = { mode: 'login', email: (state.dlg && state.dlg.email) || '' };
+  const r = $('#dlg-root'); const d = state.dlg; r.classList.toggle('dlg-must', !!(d && d.mode === 'login' && loginForced()));
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
   const body = d.mode === 'sharepick' ? sharePickHTML() : d.mode === 'share' ? shareDlgHTML(d) : d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
@@ -11676,7 +11682,8 @@ function renderDlg() {
         <label class="f"><span>Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="current-password"></label>
         ${msgs}
         <div class="row"><button class="btn primary" type="submit">Anmelden</button><button class="btn" type="button" data-act="dlg-signup">Konto anlegen</button></div>
-        <div class="links"><button class="link" type="button" data-act="dlg-reset">Passwort vergessen?</button><button class="link" type="button" data-act="dlg-close">Ohne Anmeldung weiter</button></div>
+        <div class="links"><button class="link" type="button" data-act="dlg-reset">Passwort vergessen?</button></div>
+        <small class="hint dlg-must-h">Der AB-O-MAT funktioniert mit einem kostenlosen Konto. So sind Ihre Stunden sicher gespeichert, auf jedem Gerät da, und Sie können mit dem Kollegium teilen.</small>
       </form>`;
   const od = r.querySelector('.dlg'), same = od && r.dataset.mode === d.mode, oy = same ? od.scrollTop : 0, inner = same ? [...od.querySelectorAll('*')].filter(x => x.scrollTop > 0).map(x => [x.className, x.scrollTop]) : [];
   r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`; r.dataset.mode = d.mode;
@@ -11721,7 +11728,7 @@ async function onDlgSubmit(e) {
 async function onDlgClick(e) {
   const a = e.target.closest('[data-act]'); if (!a || !state.dlg) return;
   const act = a.dataset.act;
-  if (act === 'dlg-close') { if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
+  if (act === 'dlg-close') { if (state.dlg.mode === 'login' && loginForced()) return; closeDlg(); return; }
   if (act === 'sa-file') { saveAsFile(); return; }
   if (act === 'sp-pick') { spPick(a.dataset.id); return; }
   if (act === 'sp-go') { spKeep(); shareGo(); return; }
@@ -13385,7 +13392,7 @@ function boot() {
     if (menu.open) { closeMenu(); return; }
     if (zl.open) { closeZl(); return; }
     if (gl.open) { closeGloss(); return; }
-    if (state.dlg) { if (state.dlg.mode === 'conflict' || (state.dlg.mode === 'klassen' && state.dlg.setup)) return; if (state.dlg.mode === 'login') lsSet(LS.skip, true); closeDlg(); return; }
+    if (state.dlg) { if (state.dlg.mode === 'conflict' || (state.dlg.mode === 'klassen' && state.dlg.setup)) return; if (state.dlg.mode === 'login' && loginForced()) return; closeDlg(); return; }
     if (state.libOpen) { if (state.fMenu || state.fDel || state.moveOpen) { state.fMenu = state.fDel = state.moveOpen = null; renderLib(); return; } state.libOpen = false; state.confirmDel = null; state.fNew = false; state.fEdit = null; renderLib(); }
   });
   $('.bar').addEventListener('click', e => {
