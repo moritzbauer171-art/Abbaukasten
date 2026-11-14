@@ -9884,7 +9884,7 @@ function rlpJump(i) {
   const hn = document.getElementById('rlp-hn'); if (hn) hn.textContent = `${rpv.hi + 1} von ${rpv.hits.length}`;
 }
 // Einmaliger Hinweis auf Neues: erscheint beim nächsten Laden genau einmal
-const LS_NEWS = 'abw.news', NEWS_ID = 'rlp-2026-11';
+const LS_NEWS = 'abw.news', NEWS_ID = 'kollegium-2026-11';
 function newsMaybe() {
   if (DG_VIEW || MAPPE_LOCK || String(lsGet(LS_NEWS) || '') === NEWS_ID) return;
   if (!state.klReady || state.needSetup) { setTimeout(newsMaybe, 1500); return; }
@@ -9895,26 +9895,27 @@ function newsMaybe() {
     <div class="nw-art" aria-hidden="true"><svg viewBox="0 0 320 150" fill="none">
       <defs><linearGradient id="nwg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity=".04"/></linearGradient></defs>
       <circle class="nw-dot d1" cx="44" cy="34" r="5" fill="#FDE68A"/><circle class="nw-dot d2" cx="276" cy="28" r="4" fill="#fff"/><circle class="nw-dot d3" cx="290" cy="112" r="6" fill="#FDE68A" opacity=".8"/><circle class="nw-dot d1" cx="30" cy="118" r="3" fill="#fff"/>
-      <g class="nw-book"><path d="M70 34c26-12 54-12 90 4v92c-36-16-64-16-90-4z" fill="url(#nwg)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/><path d="M250 34c-26-12-54-12-90 4v92c36-16 64-16 90-4z" fill="url(#nwg)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M86 56c18-6 36-5 56 3M86 72c18-6 36-5 56 3M86 88c18-6 36-5 56 3M178 59c20-8 38-9 56-3M178 75c20-8 38-9 56-3" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
-        <path d="M178 91c20-8 38-9 56-3" stroke="#FDE68A" stroke-width="7" stroke-linecap="round" opacity=".9"/></g>
-      <g class="nw-lens"><circle cx="224" cy="96" r="24" fill="#fff" fill-opacity=".14" stroke="#fff" stroke-width="5"/><path d="M241 113l20 20" stroke="#fff" stroke-width="8" stroke-linecap="round"/></g>
+      <g class="nw-book"><path d="M58 40h120a14 14 0 0 1 14 14v40a14 14 0 0 1-14 14H104l-28 22v-22H58a14 14 0 0 1-14-14V54a14 14 0 0 1 14-14z" fill="url(#nwg)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M66 62h96M66 78h70" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+        <path d="M206 64h50a12 12 0 0 1 12 12v32a12 12 0 0 1-12 12h-6v18l-22-18h-22a12 12 0 0 1-12-12V76a12 12 0 0 1 12-12z" fill="url(#nwg)" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M216 86h38" stroke="#FDE68A" stroke-width="6" stroke-linecap="round"/></g>
+      <g class="nw-lens"><circle cx="150" cy="118" r="13" fill="#E0A526"/><circle cx="150" cy="118" r="9" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"/><path d="M142 128l-4 14 6-3 3 5 3-12M158 128l4 14-6-3-3 5-3-12" fill="#E0A526" opacity=".85"/></g>
     </svg><span class="nw-badge">Neu</span></div>
-    <div class="nw-in"><h2 id="nw-t">Der Rahmenlehrplan auf Knopfdruck</h2>
-      <p class="nw-lead">Oben in der Leiste gibt es jetzt <b class="nw-k">RLP</b>. Ein Klick öffnet den Berliner Rahmenlehrplan für das Fach der Klasse, in der du gerade bist.</p>
+    <div class="nw-in"><h2 id="nw-t">Neu: das Lehrerzimmer</h2>
+      <p class="nw-lead">Der AB-O-MAT wird zum Treffpunkt fürs Kollegium. Oben in der Leiste öffnen die Sprechblasen das <b class="nw-k">Lehrerzimmer</b> (am Handy unter ⋯).</p>
       <ul class="nw-list">
-        <li><i>1</i><span><b>Passend zur Klasse.</b> Deutsch, Geschichte, Politik, Biologie, Englisch, Spanisch. Oben wechselst du zwischen Klasse 1–10 und Oberstufe.</span></li>
-        <li><i>2</i><span><b>Einmal speichern, überall lesen.</b> Amtliche PDF herunterladen und ins Fenster ziehen: Dann öffnet sie sich hier sofort, auch auf Handy und Tablet und ohne Internet.</span></li>
-        <li><i>3</i><span><b>Suchen statt blättern.</b> Begriff eintippen, Fundstellen leuchten gelb, mit ‹ › springst du von Treffer zu Treffer. Mit − + zoomen.</span></li>
+        <li><i>1</i><span><b>Fragen, Tipps, Austausch.</b> Ein Forum nach Fach und Art sortiert, etwa „Vertretung“ oder „Material gesucht“. Ein roter Zähler zeigt neue Beiträge.</span></li>
+        <li><i>2</i><span><b>Teilen in zwei Schritten.</b> Stunde wählen, dann Klassenstufe und Kategorien. Unter „Geteilte Stunden“ lässt sich danach filtern.</span></li>
+        <li><i>3</i><span><b>Aufsteigen.</b> Wer teilt, wird vom „Abendspender“ zur „Absoluten Lehrlegende“. Ab 50 geteilten Stunden gibt es einen Platz an der Wall of Fame.</span></li>
       </ul>
-      <div class="nw-acts"><button type="button" class="btn primary" data-nw="go">Jetzt ausprobieren</button><button type="button" class="btn" data-nw="x">Später</button></div></div></div>`;
+      <div class="nw-acts"><button type="button" class="btn primary" data-nw="go">Lehrerzimmer öffnen</button><button type="button" class="btn" data-nw="tour">Kurze Tour</button><button type="button" class="btn" data-nw="x">Später</button></div></div></div>`;
   document.body.appendChild(box);
   const close = go => { lsSet(LS_NEWS, NEWS_ID); box.classList.add('out'); setTimeout(() => box.remove(), 220); document.removeEventListener('keydown', onK, true);
-    const b = $('#btn-rlp'); if (b) { b.classList.add('nw-pulse'); setTimeout(() => b.classList.remove('nw-pulse'), 4200); }
-    if (go) setTimeout(rlpOpen, 230); };
+    const b = $('#btn-forum'); if (b) { b.classList.add('nw-pulse'); setTimeout(() => b.classList.remove('nw-pulse'), 4200); }
+    if (go === 'go') setTimeout(() => forumOpen(), 230); if (go === 'tour') setTimeout(tourStart, 260); };
   const onK = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(false); } };
   document.addEventListener('keydown', onK, true);
-  box.addEventListener('click', e => { const a = e.target.closest('[data-nw]'); if (a) close(a.dataset.nw === 'go'); });
+  box.addEventListener('click', e => { const a = e.target.closest('[data-nw]'); if (a) close(a.dataset.nw); });
   setTimeout(() => { const g = box.querySelector('[data-nw="go"]'); if (g) g.focus(); }, 60);
 }
 
@@ -10185,10 +10186,12 @@ const TOUR = [
   { sel: '#editor .area-bar', prep: () => { if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); }, t: 'Arbeitsblatt und Präsentation', d: 'Oben schaltest du zwischen Arbeitsblatt und Präsentation. Unter „Mehr“ liegen Tafelkarten und Druckvorlagen wie Placemat, Pro und Contra oder der Fotobogen.' },
   { sel: '#editor .qbar', t: 'Bausteine einfügen', d: 'Die meistgebrauchten Bausteine liegen hier griffbereit: Material, Aufgaben, Infokasten und mehr. „Weitere“ (oder Strg+K) zeigt alle, mit Suche.' },
   { sel: '#editor .card[data-bid]:not([data-bid="meta"])', t: 'Karten bearbeiten', d: 'Jeder Baustein ist eine Karte. Aufklappen, Text eingeben, Phase und Zeit festlegen. Aufgaben prüfen die Operatoren und bekommen auf Wunsch Sozialform und Arbeitsform.' },
-  { sel: '#preview-scroll', t: 'Die Vorschau zum Anfassen', d: 'Ein Klick auf ein Wort im Material legt eine Worterklärung an, ein Klick auf eine Zeilennummer eine Zeilenangabe. Mit der Maus über einem Baustein erscheint eine kleine Leiste zum Verschieben, Verdoppeln und Löschen, an den Kanten ein „+“ zum Einfügen.' },
-  { sel: () => getComputedStyle(document.getElementById('mbar')).display !== 'none' ? '#mbar [data-mb="out"]' : '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation startest du im Bereich Präsentation.' },
-  { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier findest du deine Stunden je Klasse, Ordner und mit Anmeldung auch die Stunden, die Kolleginnen und Kollegen geteilt haben.' },
-  { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite mit Klassen, zuletzt bearbeiteten und neu geteilten Stunden. Daneben öffnet „RLP“ den Rahmenlehrplan deines Fachs.' },
+  { sel: '#preview-scroll', t: 'Die Vorschau zum Anfassen', d: 'Ein Klick auf ein Wort im Material legt eine Worterklärung an, ein Klick auf eine Zeilennummer eine Zeilenangabe. Mit der Maus über einem Baustein erscheint eine kleine Leiste: verschieben, gestalten (Pinsel), darüber oder darunter einfügen, verdoppeln, löschen.' },
+  { sel: () => getComputedStyle(document.getElementById('mbar')).display !== 'none' ? '#mbar [data-mb="out"]' : '#btn-out', t: 'Ausgeben', d: 'PDF, Word oder Drucken, als Schüler- oder Lehrerfassung, auf A4 oder A5. Die Präsentation startest du im Bereich Präsentation, mit zwei Bildschirmen auch mit Referentenansicht.' },
+  { sel: '#btn-lib', t: 'Meine Stunden', d: 'Alles wird von selbst gespeichert. Hier findest du deine Stunden je Klasse und in Ordnern, dazu die Stunden, die Kolleginnen und Kollegen geteilt haben, mit Filter nach Klassenstufe und Kategorie, etwa „Vertretungsstunde“.' },
+  { t: 'Teilen spart Abende', d: 'Über „Teilen“ gibst du eine Stunde ans Kollegium weiter: erst Stunde wählen, dann Klassenstufe und Kategorien. Wer teilt, steigt auf, vom „Abendspender“ bis zur „Absoluten Lehrlegende“. Ab 50 geteilten Stunden darfst du ein Bild an die Wall of Fame hängen.' },
+  { sel: () => isPhone() ? '#btn-mmore' : '#btn-forum', t: 'Lehrerzimmer', d: 'Das Forum fürs Kollegium: Fragen stellen, Material suchen, Tipps teilen, nach Fach und Art sortiert. Ein roter Zähler zeigt neue Beiträge. Auf dem Handy liegt es unter den drei Punkten.' },
+  { sel: '#btn-home', t: 'Startseite und Rahmenlehrplan', d: 'Das Haus führt zur Startseite: Klassen, zuletzt bearbeitete und neu geteilte Stunden, dein Rang und die neuesten Themen aus dem Lehrerzimmer. „RLP“ öffnet den Rahmenlehrplan deines Fachs.' },
   { sel: () => isPhone() ? '#btn-mmore' : '#btn-help', t: 'Fertig!', d: 'Unter „?“ (auf dem Handy unter den drei Punkten) findest du alle Kniffe und kannst diese Tour jederzeit noch einmal starten. Viel Freude beim Bauen!' }
 ];
 const tour = { i: -1 };
