@@ -2121,6 +2121,14 @@ body.home-on{overflow:hidden}
 .gl>i.bl{border-top:.3mm solid #5F6B7E}
 .gl>b.mb{position:absolute;left:0;right:0;background:#FFF2BF}
 .gl4>i.hl{border-top:.2mm dashed #B9C0CC}
+.gl.gl-heft{width:auto;margin-left:var(--gg);margin-right:var(--gg);background:#fff;box-shadow:0 0 0 calc(var(--gg) + .2mm) #D9EDCB;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.gl>b.mb{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.gl.gl-heft>i{border-top-color:#A9B0BB}.gl.gl-heft>i.mi{border-top-color:#C3C8D0}.gl.gl-heft>i.bl{border-top-color:#7D8796}
+.gl.gl-h>i,.gl.gl-h>b.mb{left:var(--hw);right:var(--hw)}
+.gl.gl-heft>i,.gl.gl-heft>b.mb,.gl.gl-heft>.gl-haus{z-index:1}
+.gl-haus{position:absolute;top:0;overflow:visible;fill:none;stroke:#7D8796;stroke-width:.25;stroke-linejoin:round}
+.gl-haus.l{left:0}.gl-haus.r{right:0}
+.gl-haus .eg,.gl-haus .hd{fill:#fff}.gl-haus .kl{stroke-dasharray:.7 .5}.gl-haus .tr{stroke-width:.2}
 .blk-lines .gl:last-child{margin-bottom:0}
 .sb{display:inline}
 .sil-f .mat-body .sb.s0,.gsa-sbw.sil-f .sb.s0{color:#1F4FB4}.sil-f .mat-body .sb.s1,.gsa-sbw.sil-f .sb.s1{color:#C0262D}
@@ -2645,6 +2653,10 @@ function paletteBlock(k, type) {
   if (isGS()) { const jg = gsJg();
     if (nb.type === 'material' && !(e && e.pre && e.pre.fmt)) nb.fmt = { ...(nb.fmt || {}), font: 'sans', size: jg <= 2 ? 'G20' : jg <= 4 ? 'G16' : 'XXL', lh: 'weit', align: 'left' };
     if (nb.type === 'lines' && !(e && e.pre && e.pre.style)) nb.style = linForJg(jg); }
+  { const lm = linMem(); if (lm) {
+    if (nb.type === 'lines' && !(e && e.pre && e.pre.style) && (isGS() || (e && e.k === 'lineatur')) && LIN[lm.style]) nb.style = lm.style;
+    if (nb.type === 'gsa' && (lm.style === '' || lm.style === 'linien' || LIN[lm.style])) nb.lin = lm.style;
+    if ((nb.type === 'lines' && LIN[nb.style]) || nb.type === 'gsa') { nb.mb = !!lm.mb; nb.heft = lm.heft !== false; nb.haus = !!lm.haus; } } }
   if (nb.type === 'match' && nb.sort) { nb.title = MT_DEF(true, nb.mode, state.sheet && state.sheet.meta && state.sheet.meta.anrede === 'du'); nb.cats.forEach(c => { const o = c.id; c.id = mtCid(); nb.words.forEach(w => { if (w.c === o) w.c = c.id; }); }); }
   return nb;
 }
@@ -3660,13 +3672,30 @@ const LIN = {
 };
 const linForJg = jg => jg === 1 ? 'lin1' : jg === 2 ? 'lin2' : jg === 3 ? 'lin3' : jg === 4 ? 'lin4' : 'linien';
 const linAuto = s => (s && (LIN[s] || s === 'linien') ? s : (gsJg() ? linForJg(gsJg()) : 'linien'));
-function linRow(st, mb) {
-  if (st === 'linien' || !LIN[st]) return '<div class="wl"></div>';
-  const L = LIN[st];
-  if (L.x) return `<div class="gl gl4" style="height:${L.x}mm"><i class="hl" style="bottom:${L.hl}mm"></i><i class="bl" style="bottom:0"></i></div>`;
-  const H = L.o + L.m + L.u;
-  return `<div class="gl" style="height:${H}mm;margin-bottom:${L.g}mm">${mb ? `<b class="mb" style="top:${L.o}mm;height:${L.m}mm"></b>` : ''}<i style="top:0"></i><i class="mi" style="top:${L.o}mm"></i><i class="bl" style="top:${L.o + L.m}mm"></i><i style="top:${H}mm"></i></div>`;
+// Haus am Zeilenanfang und -ende: Dach im Oberband, Erdgeschoss im Mittelband, Keller im Unterband
+function linHaus(L, hw, side) {
+  const H = L.o + L.m + L.u, w = hw, x0 = .25, x1 = w - .25, dw = w * .26, dx = (w - dw) / 2, y1 = L.o, y2 = L.o + L.m, n = 3, sw = (x1 - x0 - .6) / n, sh = (L.u - .5) / n;
+  let st = `M${(x0 + .3).toFixed(2)} ${(H - .25).toFixed(2)}`; for (let i = 0; i < n; i++) st += ` v-${sh.toFixed(2)} h${sw.toFixed(2)}`;
+  return `<svg class="gl-haus ${side}" viewBox="0 0 ${w.toFixed(2)} ${H}" style="width:${w.toFixed(2)}mm;height:${H}mm" aria-hidden="true"><path class="hd" d="M${x0} ${y1} L${(w / 2).toFixed(2)} .3 L${x1.toFixed(2)} ${y1} Z"/><rect class="eg" x="${x0}" y="${y1}" width="${(x1 - x0).toFixed(2)}" height="${L.m}"/><rect class="tr" x="${dx.toFixed(2)}" y="${(y1 + L.m * .4).toFixed(2)}" width="${dw.toFixed(2)}" height="${(L.m * .6).toFixed(2)}"/><rect class="kl" x="${x0}" y="${y2}" width="${(x1 - x0).toFixed(2)}" height="${(L.u - .25).toFixed(2)}"/><path class="kl" d="${st}"/></svg>`;
 }
+function linRow(st, mb, o) {
+  if (st === 'linien' || !LIN[st]) return '<div class="wl"></div>';
+  const L = LIN[st]; o = o || {};
+  if (L.x) return `<div class="gl gl4" style="height:${L.x}mm"><i class="hl" style="bottom:${L.hl}mm"></i><i class="bl" style="bottom:0"></i></div>`;
+  const H = L.o + L.m + L.u, heft = o.heft !== false, hw = o.haus ? H * .45 : 0;
+  return `<div class="gl${heft ? ' gl-heft' : ''}${hw ? ' gl-h' : ''}" style="height:${H}mm;margin-bottom:${L.g}mm${heft ? `;margin-top:${L.g}mm;--gg:${(L.g / 2).toFixed(2)}mm` : ''}${hw ? `;--hw:${hw.toFixed(2)}mm` : ''}">${mb ? `<b class="mb" style="top:${L.o}mm;height:${L.m}mm"></b>` : ''}<i style="top:0"></i><i class="mi" style="top:${L.o}mm"></i><i class="bl" style="top:${L.o + L.m}mm"></i><i style="top:${H}mm"></i>${hw ? linHaus(L, hw, 'l') + linHaus(L, hw, 'r') : ''}</div>`;
+}
+/* Zuletzt gewählte Lineatur merken, nur innerhalb der jeweiligen Klasse */
+const LS_LIN = 'abw.lineatur';
+const linMemAll = () => { try { return JSON.parse(localStorage.getItem(LS_LIN) || '{}') || {}; } catch { return {}; } };
+const linMem = () => { const A = linMemAll(), k = state.sheet ? state.sheet.klasse : state.klasse; return A['k:' + k] || null; };
+function linRemember(b, k) {
+  if (!b) return; let m = null;
+  if (b.type === 'lines' && ['style', 'mb', 'heft', 'haus'].includes(k) && LIN[b.style]) m = { style: b.style, mb: !!b.mb, heft: b.heft !== false, haus: !!b.haus };
+  if (b.type === 'gsa' && ['lin', 'mb', 'heft', 'haus'].includes(k)) m = { style: b.lin || '', mb: !!b.mb, heft: b.heft !== false, haus: !!b.haus };
+  if (!m) return; const A = linMemAll(), kk = state.sheet ? state.sheet.klasse : state.klasse; A['k:' + kk] = m; delete A._; try { localStorage.setItem(LS_LIN, JSON.stringify(A)); } catch {}
+}
+const linOpts = b => { const L = LIN[b.type === 'gsa' ? linAuto(b.lin) : b.style]; if (!L || L.x) return ''; return fCheck('heft', 'wie im Heft (grüner Grund)', b.heft !== false) + fCheck('haus', 'mit Häusern (Dach, Erdgeschoss, Keller)', b.haus); };
 const linRowMM = st => { const L = LIN[st]; return !L ? 9 : L.x ? L.x : L.o + L.m + L.u + L.g; };
 
 /* ---------- Silben: regelbasiert (deutsche Silbentrennung, vereinfacht); eigene Trennungen mit „-“ ---------- */
@@ -3772,11 +3801,11 @@ function gsaHTML(b, ctx) {
       rows.push(`<div class="gsa-sb"><span class="gsa-sbw${teach ? ' sil-b' : ''}">${teach ? S.map((x, j) => `<span class="sb s${j % 2}">${esc(x)}</span>`).join('') : esc(shown)}</span>${b.count !== false ? `<span class="gsa-sbc">${Array.from({ length: nC }, (_, j) => `<i class="${teach && j < S.length ? 'on' : ''}"></i>`).join('')}</span>` : ''}</div>`); });
   } else if (k === 'abschreib') {
     const L = String(b.text || '').split('\n').map(x => x.trim()).filter(Boolean); const per = Math.max(1, Math.min(3, +b.per || 1));
-    (L.length ? L : ['Text zum Abschreiben']).forEach(t => { rows.push(`<div class="gsa-ab">${inlineHTML(t)}</div>`); for (let q = 0; q < per; q++) rows.push(`<div class="gsa-ln">${linRow(lin, b.mb)}</div>`); });
+    (L.length ? L : ['Text zum Abschreiben']).forEach(t => { rows.push(`<div class="gsa-ab">${inlineHTML(t)}</div>`); for (let q = 0; q < per; q++) rows.push(`<div class="gsa-ln">${linRow(lin, b.mb, b)}</div>`); });
   } else if (k === 'bildschreib') {
     const hmm = Math.max(30, Math.min(150, +b.fh || 80));
     rows.push(b.src ? `<div class="gsa-img"><img src="${esc(b.src)}" alt="" style="max-height:${hmm}mm"></div>` : `<div class="gsa-frame" style="height:${hmm}mm"></div>`);
-    for (let q = 0; q < Math.max(1, Math.min(12, +b.rows || 3)); q++) rows.push(`<div class="gsa-ln">${linRow(lin, b.mb)}</div>`);
+    for (let q = 0; q < Math.max(1, Math.min(12, +b.rows || 3)); q++) rows.push(`<div class="gsa-ln">${linRow(lin, b.mb, b)}</div>`);
   } else if (k === 'selbst') {
     const It = (b.items || []).filter(x => tfStr(x.t).trim());
     rows.push(`<div class="gsa-se gsa-seh"><span></span><b>${faceSVG(0)}</b><b>${faceSVG(1)}</b><b>${faceSVG(2)}</b></div>`.replace(/<b>/g, '<b class="hd">'));
@@ -3788,7 +3817,7 @@ function gsaHTML(b, ctx) {
 
 function gsaEditor(b) {
   const k = gsaK(b), d = GSA[k]; const seg = (key, label, opts) => `<div class="f"><span>${label}</span><div class="seg sm" role="group" aria-label="${label}">${opts.map(([v, l]) => `<button type="button" data-act="gs-set" data-k="${key}" data-v="${v}" aria-pressed="${String(b[key] == null ? '' : b[key]) === v}">${l}</button>`).join('')}</div></div>`;
-  const linSel = () => fSelect('lin', 'Lineatur', b.lin || '', [['', `passend zur Klasse (${linAuto('') === 'linien' ? 'Linien' : LIN[linAuto('')].label.split(' (')[0]})`], ...Object.entries(LIN).map(([v, x]) => [v, x.label]), ['linien', 'einfache Linien (9 mm)']]) + (LIN[linAuto(b.lin)] && !LIN[linAuto(b.lin)].x ? fCheck('mb', 'Mittelband farbig', b.mb) : '');
+  const linSel = () => fSelect('lin', 'Lineatur', b.lin || '', [['', `passend zur Klasse (${linAuto('') === 'linien' ? 'Linien' : LIN[linAuto('')].label.split(' (')[0]})`], ...Object.entries(LIN).map(([v, x]) => [v, x.label]), ['linien', 'einfache Linien (9 mm)']]) + (LIN[linAuto(b.lin)] && !LIN[linAuto(b.lin)].x ? fCheck('mb', 'Mittelband farbig', b.mb) + linOpts(b) : '');
   const items = (ph, extra) => `<div class="f"><span>${k === 'ordnen' ? 'Sätze in der richtigen Reihenfolge' : k === 'selbst' ? 'Was die Kinder einschätzen' : 'Aussagen'}</span><div class="gs-items">${(b.items || []).map((it, i) => `<div class="gs-it">${k === 'ordnen' ? `<span class="gs-no">${i + 1}</span>` : ''}<input class="inp" type="text" data-k="items.${i}.t" value="${esc(it.t || '')}" placeholder="${esc(ph)}">${extra ? extra(it, i) : ''}<button class="ib" type="button" data-act="gs-del" data-i="${i}" title="Entfernen"${(b.items || []).length < 2 ? ' disabled' : ''}>${I.x}</button></div>`).join('')}</div><button class="link" type="button" data-act="gs-add">+ ${k === 'ordnen' ? 'Satz' : k === 'selbst' ? 'Zeile' : 'Aussage'}</button></div>`;
   let h = `<div class="f gs-kind"><span>Format</span><div class="seg sm" role="group" aria-label="Format">${Object.entries(GSA).map(([v, x]) => `<button type="button" data-act="gs-set" data-k="gk" data-v="${v}" aria-pressed="${k === v}">${x.label}</button>`).join('')}</div></div>`
     + fText('title', 'Arbeitsauftrag', b.title, gsaTask({ ...b, title: '' }));
@@ -7879,7 +7908,7 @@ function buildBlock(b, ctx) {
         const h = Math.round(n * 9 / 5) * 5;
         return { type: 'lines', el: put(`<div class="blk blk-lines"><div class="grid-area" style="height:${h}mm;background-image:url(${gridTile()})"></div></div>`) };
       }
-      if (LIN[b.style]) { const node = put(`<div class="blk blk-lines">${linRow(b.style, b.mb).repeat(n)}</div>`); return { type: 'lines', el: node, atoms: [...node.children], keepFirst: 2, keepLast: 1 }; }
+      if (LIN[b.style]) { const node = put(`<div class="blk blk-lines">${linRow(b.style, b.mb, b).repeat(n)}</div>`); return { type: 'lines', el: node, atoms: [...node.children], keepFirst: 2, keepLast: 1 }; }
       const node = put(`<div class="blk blk-lines">${'<div class="wl"></div>'.repeat(n)}</div>`);
       return { type: 'lines', el: node, atoms: [...node.children], keepFirst: 2, keepLast: 1 };
     }
@@ -8870,7 +8899,7 @@ function bodyFor(b, num) {
         <p class="hint" style="margin:0">Leere Zellen bleiben zum Ausfüllen frei.${each ? ' Ein leeres Höhenfeld übernimmt den Schreibplatz von oben.' : ''} Sehr hohe Zeilen beginnen auf der nächsten Seite.</p>`;
     }
     case 'gsa': return gsaEditor(b);
-    case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['rahmen', 'Freie Fläche (Rahmen)'], ['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)'], ...Object.entries(LIN).map(([v, x]) => [v, x.label])])}${LIN[b.style] && !LIN[b.style].x ? fCheck('mb', 'Mittelband farbig', b.mb) : ''}
+    case 'lines': return `<div class="row">${fSelect('style', 'Art', b.style, [['rahmen', 'Freie Fläche (Rahmen)'], ['linien', 'Linien (9 mm)'], ['kaestchen', 'Kästchen (5 mm)'], ...Object.entries(LIN).map(([v, x]) => [v, x.label])])}${LIN[b.style] && !LIN[b.style].x ? fCheck('mb', 'Mittelband farbig', b.mb) + linOpts(b) : ''}
       <label class="f narrow"><span>Zeilen</span><input type="number" min="1" max="40" data-k="count" value="${esc(b.count)}"></label></div>`;
     case 'match': {
       if (!Array.isArray(b.pairs) || !b.pairs.length) b.pairs = [{ a: '', b: '' }];
@@ -9086,7 +9115,7 @@ function onChange(e) {
   if (/^items\.\d+\.min$/.test(k) || k === 'min') { const n = parseInt(String(v).replace(/\D/g, ''), 10); v = n > 0 ? String(Math.min(n, 999)) : ''; t.value = v; }
   if (k === 'vp.start') { setPath(target(card.dataset.bid), k, v); timeSync(null); changed(true); return; }
   if (k === 'until') { v = hmOk(v); if (!v) { const bb = target(card.dataset.bid); if (bb) { delete bb.until; delete bb.untilAuto; delete bb.minAuto; } changed(true); return; } }
-  setPath(target(card.dataset.bid), k, v);
+  setPath(target(card.dataset.bid), k, v); linRemember(target(card.dataset.bid), k);
   if (k === 'until' || k === 'min') { const bb = target(card.dataset.bid); if (bb && (bb.type === 'tasks' || bb.type === 'step')) { const ok = timeSync(bb, k); if (!ok && k === 'until') toast('Für die Dauer aus der Uhrzeit braucht die Stunde einen Beginn (Bereich „Stunde“).'); } changed(true); return; }
   if (/^words\.\d+\.c$/.test(k)) { const r = t.closest('.mt-ed-w'); if (r) r.classList.toggle('dist', !v); }
   if (k === 'groupsOn' && !v) state.grp = 'all';
