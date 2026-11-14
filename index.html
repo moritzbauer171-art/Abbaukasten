@@ -750,6 +750,10 @@ body.mw-max-on{overflow:hidden}
 .cf-opts{display:flex;flex-direction:column;gap:8px}
 .dlg.dlg-kl{width:min(640px,calc(100% - 32px))}
 .kl-list{display:flex;flex-direction:column;gap:10px}
+.kl-delask{border:1px solid #F1C2BC;background:#FFF5F3;border-radius:8px;padding:9px 11px;font-size:13.5px;line-height:1.4}
+.kl-delask-a{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0 4px}
+.kl-delask-to{display:flex;align-items:center;gap:6px;font-size:13px}.kl-delask-to select{width:auto;min-width:9em}
+.kl-del-hard{color:#B42318;border-color:#E8B4AD}
 .kl-row{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px 10px;display:flex;flex-direction:column;gap:8px}
 .kl-top{display:flex;align-items:center;gap:6px}
 .kl-top .inp{flex:1;min-width:0;font-weight:700}
@@ -2086,6 +2090,19 @@ body.home-on{overflow:hidden}
 .hm-give-t b{font-size:14.5px}.hm-give-t p{margin:3px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
 .hm-give-t .hm-give-n{color:var(--ink);font-weight:600}
 .hm-give-b{grid-column:2;justify-self:start;margin-top:6px}
+.hm-give-hero{display:none}
+@media (min-width:760px){
+  .hm-hero{display:flex;align-items:center;gap:24px}.hm-hero-in{flex:1 1 auto;min-width:0}
+  .hm-hero .hm-art{display:none}
+  .hm-give-card{display:none}
+  .hm-give-hero{display:grid;position:relative;flex:0 0 clamp(270px,36%,380px);margin:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#fff;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+  .hm-give-hero .hm-give-ic{color:#fff}
+  .hm-give-hero .hm-give-t b{font-size:16px;line-height:1.25;color:#fff}
+  .hm-give-hero .hm-give-t p{color:rgba(255,255,255,.82)}
+  .hm-give-hero .hm-give-t .hm-give-n{color:#FDE68A}
+  .hm-give-hero .hm-give-b{background:#FDE68A;border-color:#FDE68A;color:#1B2F86}
+  .hm-give-hero .hm-give-b:hover{background:#FFF1B8}
+}
 .hm-sh{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .hm-sh li{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:var(--panel)}
 .hm-sh li.nu{border-color:color-mix(in srgb,var(--tinte) 45%,var(--line));background:var(--tinte-soft)}
@@ -9859,9 +9876,9 @@ function homeRenderNow() {
   }
   const nMine = canShare() && state.shared ? state.shared.filter(x => x.mine).length : 0;
   const curGive = !!(cur && (state.lib || []).some(d => d.id === cur.id) && !(state.shared || []).some(x => x.mine && x.sheetId === cur.id));
-  const giveH = `<div class="hm-give"><svg class="hm-give-ic" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="17" height="22" rx="3" fill="#fff" stroke="currentColor" stroke-width="2"/><rect x="18" y="5" width="17" height="22" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2"/><path d="M9 16h9M9 20.5h7M9 25h8M22 12h9M22 16.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M26 30.5c-1.8-1.3-4-3-4-5a2 2 0 0 1 4-.6 2 2 0 0 1 4 .6c0 2-2.2 3.7-4 5z" fill="#E0565B"/></svg>
-    <div class="hm-give-t"><b>Gemeinsam vorbereiten</b><p>Eine Stunde, die bei Ihnen gut lief, kann einer Kollegin oder einem Kollegen einen Abend Arbeit sparen. Und beim nächsten Mal profitieren Sie selbst. Geteilt wird nur, was Sie auswählen; Ihr Original bleibt bei Ihnen.</p>
-    ${nMine ? `<p class="hm-give-n">Sie haben schon ${nMine} ${nMine === 1 ? 'Stunde' : 'Stunden'} geteilt. Danke!</p>` : ''}</div>
+  const giveH = cls => `<div class="hm-give ${cls}"><svg class="hm-give-ic" viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="17" height="22" rx="3" fill="#fff" stroke="currentColor" stroke-width="2"/><rect x="18" y="5" width="17" height="22" rx="3" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2"/><path d="M9 16h9M9 20.5h7M9 25h8M22 12h9M22 16.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M26 30.5c-1.8-1.3-4-3-4-5a2 2 0 0 1 4-.6 2 2 0 0 1 4 .6c0 2-2.2 3.7-4 5z" fill="#E0565B"/></svg>
+    <div class="hm-give-t"><b>Spar deinen Kolleg*innen einen Abend Arbeit!</b><p>Eine Stunde, die bei dir gut lief, hilft anderen beim Vorbereiten, und beim nächsten Mal profitierst du selbst. Geteilt wird nur, was du auswählst; dein Original bleibt bei dir.</p>
+    ${nMine ? `<p class="hm-give-n">Du hast schon ${nMine} ${nMine === 1 ? 'Stunde' : 'Stunden'} geteilt. Danke!</p>` : ''}</div>
     <button type="button" class="btn hm-give-b" data-hm="${canShare() ? 'give' : 'login'}">${hmI('share')}${canShare() ? (curGive ? `„${esc(curT.length > 28 ? curT.slice(0, 26) + ' …' : curT)}“ teilen` : 'Eine Stunde teilen') : 'Anmelden und teilen'}</button></div>`;
   const nNew = canShare() && state.shared ? sharedVis().filter(x => !x.mine && +new Date(x.updatedAt) > hmS.seen).length : 0;
   const html = `<div class="hm-top"><div class="hm-brand"><b class="logo">AB-<svg class="logo-o" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="4.2"/><circle cx="12" cy="12" r="3.2" fill="#F5B400"/><path d="M12 3.6v5" stroke="#F5B400" stroke-width="2.6" stroke-linecap="round"/></svg>-MAT</b><small>Startseite</small></div>
@@ -9878,13 +9895,14 @@ function homeRenderNow() {
           <h1 id="hm-t">${greet}${autor ? `, ${esc(autor)}` : ''}</h1>
           <p class="hm-lead">${lib.length ? `${lib.length} ${lib.length === 1 ? 'Stunde' : 'Stunden'} in ${KLASSEN.length} ${KLASSEN.length === 1 ? 'Klasse' : 'Klassen'}${nNew ? ` · <b>${nNew} neu geteilt</b>` : ''}` : `Legen Sie Ihre erste Stunde an${nNew ? ` · <b>${nNew} neu geteilt</b>` : '.'}`}</p>
           <div class="hm-hero-a"><button type="button" class="btn hm-cta" data-hm="new" data-k="${esc(state.klasse)}">${hmI('plus')}Neue Stunde in ${esc(KL(state.klasse).label)}</button>${cur ? `<button type="button" class="btn hm-ghost" data-hm="x">${hmI('go')}Weiterarbeiten</button>` : ''}</div></div>
+        ${giveH('hm-give-hero')}
       </section>
       <section class="hm-sec" aria-labelledby="hm-kt"><div class="hm-sec-h"><h2 id="hm-kt">Fächer und Klassen</h2><button type="button" class="link" data-hm="klassen">Klassen bearbeiten</button></div>
         ${fachs.map(f => `<div class="hm-fach"><h3>${esc((FAECHER[f] || FAECHER.deutsch).label)}</h3><div class="hm-kls">${KLASSEN.filter(k => (k.fach || 'deutsch') === f).map(klCard).join('')}</div></div>`).join('')}
       </section>
       <div class="hm-cols">
         <section class="hm-sec hm-card" aria-labelledby="hm-rt"><div class="hm-sec-h"><h2 id="hm-rt">Zuletzt bearbeitet</h2>${lib.length > 8 ? `<button type="button" class="link" data-hm="all" data-k="${esc(state.klasse)}">Alle Stunden</button>` : ''}</div>${recentH}</section>
-        <section class="hm-sec hm-card" aria-labelledby="hm-st"><div class="hm-sec-h"><h2 id="hm-st">${hmI('share')}Neu geteilt${nNew ? ` <span class="hm-new">${nNew}</span>` : ''}</h2>${canShare() ? '<button type="button" class="link" data-hm="shared">Alle geteilten</button>' : ''}</div>${giveH}${shareH}</section>
+        <section class="hm-sec hm-card" aria-labelledby="hm-st"><div class="hm-sec-h"><h2 id="hm-st">${hmI('share')}Neu geteilt${nNew ? ` <span class="hm-new">${nNew}</span>` : ''}</h2>${canShare() ? '<button type="button" class="link" data-hm="shared">Alle geteilten</button>' : ''}</div>${giveH('hm-give-card')}${shareH}</section>
       </div>
       ${donateHTML()}
     </div>`;
@@ -10565,7 +10583,11 @@ function klassenHTML() {
   const row = (k, i) => `<div class="kl-row" data-i="${i}">
       <div class="kl-top"><span class="kl-dot" style="background:${ACCENTS[k.accent].c}"></span><input class="inp" data-kf="label" value="${esc(k.label)}" placeholder="Name des Reiters, z. B. 8b oder LK ${esc((FAECHER[k.fach] || FAECHER.deutsch).label)}" maxlength="40" aria-label="Name des Reiters">
         ${d.setup || d.single ? '' : `<button type="button" class="ib" data-act="kl-up" data-i="${i}" title="Nach vorn"${i === 0 ? ' disabled' : ''}>${I.up}</button><button type="button" class="ib" data-act="kl-down" data-i="${i}" title="Nach hinten"${i === d.rows.length - 1 ? ' disabled' : ''}>${I.down}</button>`}
-        ${d.single ? '' : `<button type="button" class="ib" data-act="kl-del" data-i="${i}" title="${cnt(k.id) ? `Enthält ${cnt(k.id)} Blätter – erst verschieben oder löschen` : 'Entfernen'}"${(cnt(k.id) || d.rows.length < 2) ? ' disabled' : ''}>${I.del}</button>`}</div>
+        ${d.single ? '' : `<button type="button" class="ib" data-act="kl-del" data-i="${i}" title="${d.rows.length < 2 ? 'Die letzte Klasse lässt sich nicht entfernen' : 'Klasse entfernen'}"${d.rows.length < 2 ? ' disabled' : ''}>${I.del}</button>`}</div>
+      ${k.delAsk ? (() => { const n = cnt(k.id), T = d.rows.filter((x, j) => j !== i && String(x.label).trim()); return `<div class="kl-delask"><b>„${esc(k.label || 'Ohne Namen')}“ enthält ${n} ${n === 1 ? 'Blatt' : 'Blätter'}.</b> Was soll damit passieren?
+        <div class="kl-delask-a">${T.length ? `<label class="kl-delask-to">Verschieben nach <select class="inp" data-kdel-to="${i}">${T.map(x => `<option value="${esc(x.id)}">${esc(x.label)}${x.fach && x.fach !== k.fach ? ' (' + esc((FAECHER[x.fach] || {}).label || '') + ')' : ''}</option>`).join('')}</select></label><button type="button" class="btn primary" data-act="kl-del-move" data-i="${i}">Verschieben und Klasse entfernen</button>` : ''}
+        <button type="button" class="btn kl-del-hard" data-act="kl-del-all" data-i="${i}">Klasse samt ${n} ${n === 1 ? 'Blatt' : 'Blättern'} löschen</button><button type="button" class="btn" data-act="kl-del-no" data-i="${i}">Abbrechen</button></div>
+        <small class="hint">Ausgeführt wird erst beim Speichern.</small></div>`; })() : ''}
       <div class="kl-grid">
         <label class="f"><span>Kurs auf dem Blatt</span><input class="inp" data-kf="course" value="${esc(k.course)}" placeholder="z. B. Deutsch Klasse 8b" maxlength="80"></label>
         ${d.setup ? '' : `<label class="f"><span>Schule</span><input class="inp" data-kf="school" value="${esc(k.school)}" placeholder="Schule" maxlength="80"></label>`}
@@ -10589,7 +10611,7 @@ function klassenHTML() {
     <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">AB-O-MAT · © 2026 Moritz Bauer</p>' : ''}`;
 }
 function klassenSave() {
-  const d = state.dlg; const school = d.setup ? dlgVal('#kl-school') : null;
+  const d = state.dlg; const jobs = (d.kldel || []).map(j => ({ ...j, ids: state.lib.filter(x => x.klasse === j.from).map(x => x.id) })).filter(j => j.ids.length); const school = d.setup ? dlgVal('#kl-school') : null;
   const rows = [...(d.single ? KLASSEN.map(k => ({ ...k })) : []), ...d.rows.filter(k => String(k.label).trim())];
   if (d.single && !d.rows.some(k => String(k.label).trim())) { dlgMsg('Bitte der neuen Klasse einen Namen geben, z. B. 8b oder Q1 Mathe.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
   if (!rows.length) { dlgMsg('Bitte mindestens einer Klasse einen Namen geben.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
@@ -10604,6 +10626,23 @@ function klassenSave() {
   else if (d.single) { const nk = ks.find(x => !oldIds.has(x.id)); toast(nk ? `„${nk.label}“ in ${FAECHER[nk.fach].label} angelegt` : 'Klasse angelegt'); }
   else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
   if (!setup && d.wantFach) { const nk = d.single && d.rows[0] ? ks.find(x => !oldIds.has(x.id) && x.fach === d.wantFach) : null; const k = nk || KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
+  if (jobs.length) klDropSheets(jobs);
+}
+// Blätter einer entfernten Klasse verschieben oder löschen (läuft nach dem Speichern der Klassen)
+async function klDropSheets(jobs) {
+  await saveChain; let nm = 0, nd = 0, bad = 0;
+  for (const j of jobs) {
+    const K = j.to && KLASSEN.find(x => x.id === j.to);
+    for (const id of j.ids) {
+      try {
+        if (K) { const src = state.sheet && state.sheet.id === id ? clone(state.sheet) : await backend.load(id); if (!src) throw new Error('fehlt'); const c = normalizeSheet(src); klasseSwap(c, K.id); c.updatedAt = Date.now(); await backend.save(c); upsertLib(entryOf(c)); dropPlace(id); nm++; }
+        else { await backend.remove(id); if (backend.kind !== 'local') dropPending(backend, id); state.lib = state.lib.filter(x => x.id !== id); dropPlace(id); const cur = lsGet(LS.cur); if (cur && cur.sheet && cur.sheet.id === id) lsDel(LS.cur); nd++; }
+      } catch (err) { console.error(err); bad++; }
+    }
+  }
+  renderTabs(); if (state.libOpen) renderLib(); if (hmS.open) homeRender();
+  const K0 = jobs.find(j => j.to) && KLASSEN.find(x => x.id === jobs.find(j => j.to).to);
+  toast([nm ? `${nm} ${nm === 1 ? 'Blatt' : 'Blätter'} nach „${K0 ? K0.label : 'die neue Klasse'}“ verschoben` : '', nd ? `${nd} ${nd === 1 ? 'Blatt' : 'Blätter'} gelöscht` : '', bad ? `${bad} nicht geklappt, bitte erneut versuchen` : ''].filter(Boolean).join(' · '));
 }
 
 /* ---------- Ordner in „Meine Stunden“ ---------- */
@@ -11381,7 +11420,9 @@ function renderDlg() {
         <div class="row"><button class="btn primary" type="submit">Anmelden</button><button class="btn" type="button" data-act="dlg-signup">Konto anlegen</button></div>
         <div class="links"><button class="link" type="button" data-act="dlg-reset">Passwort vergessen?</button><button class="link" type="button" data-act="dlg-close">Ohne Anmeldung weiter</button></div>
       </form>`;
-  r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`;
+  const od = r.querySelector('.dlg'), same = od && r.dataset.mode === d.mode, oy = same ? od.scrollTop : 0, inner = same ? [...od.querySelectorAll('*')].filter(x => x.scrollTop > 0).map(x => [x.className, x.scrollTop]) : [];
+  r.innerHTML = `<div class="scrim dlg-scrim" data-act="dlg-close"></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dlg-t">${body}</div>`; r.dataset.mode = d.mode;
+  if (same) { const nd = r.querySelector('.dlg'); nd.scrollTop = oy; inner.forEach(([c, y]) => { if (!c || typeof c !== 'string') return; const x = nd.querySelector('.' + c.trim().split(/\s+/).join('.')); if (x) x.scrollTop = y; }); }
   if (d.mode === 'saveas') { const t = $('#sa-title'); if (t) { t.focus(); t.select(); } return; }
   if (d.mode === 'help') { r.querySelector('.dlg').classList.add('dlg-help'); return; }
   if (d.mode === 'mappe') { r.querySelector('.dlg').classList.add('dlg-mappe'); return; }
@@ -11432,7 +11473,9 @@ async function onDlgClick(e) {
       if (act === 'kl-set' && a.dataset.f === 'anrede') d.rows[i].anTouch = true;
     if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie', 'Englisch', 'Spanisch'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
     if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach, stufe: (d.rows[n - 1] || {}).stufe, jg: (d.rows[n - 1] || {}).jg }, n)); d.rows[n].label = ''; d.rows[n].fresh = true; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
-    if (act === 'kl-del') { d.rows.splice(i, 1); renderDlg(); return; }
+    if (act === 'kl-del') { const k = d.rows[i]; const n = state.lib.filter(x => x.klasse === k.id).length; if (n) { d.rows.forEach(x => { x.delAsk = false; }); k.delAsk = true; renderDlg(); return; } d.rows.splice(i, 1); renderDlg(); return; }
+    if (act === 'kl-del-no') { d.rows[i].delAsk = false; renderDlg(); return; }
+    if (act === 'kl-del-move' || act === 'kl-del-all') { const k = d.rows[i]; const sel = document.querySelector(`#dlg-root [data-kdel-to="${i}"]`); (d.kldel = d.kldel || []).push(act === 'kl-del-move' ? { from: k.id, label: k.label, to: sel ? sel.value : '' } : { from: k.id, label: k.label, del: true }); d.rows.splice(i, 1); renderDlg(); return; }
     if (act === 'kl-up' || act === 'kl-down') { const j = act === 'kl-up' ? i - 1 : i + 1; if (j < 0 || j >= d.rows.length) return; [d.rows[i], d.rows[j]] = [d.rows[j], d.rows[i]]; renderDlg(); return; }
     if (act === 'kl-save') { klassenSave(); return; }
   }
