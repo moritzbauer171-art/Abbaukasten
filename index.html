@@ -1918,7 +1918,9 @@ body{transition:background-color .3s,border-color .25s}
 .pr.pr-ref .pr-bar{grid-column:1/-1;grid-row:2}
 .pr.pr-ref .pr-side{display:flex;flex-direction:column;gap:10px;grid-column:2;grid-row:1;min-height:0;overflow:auto;padding:16px;background:#262B34;color:#E8EBF0;font:14px/1.45 var(--f-ui);border-left:1px solid #3A404C;white-space:normal;overflow-wrap:break-word}
 .pr.pr-ref .pr-side>*{flex:0 0 auto;max-width:100%}
-.pr-vidb{display:flex;align-items:stretch;justify-content:center;padding-bottom:6px}
+.pr-vidb{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:14px;padding-bottom:6px}
+.pr-yt-auf{font:600 30px/1.3 var(--f-ui);color:var(--ink);padding:10px 18px;border-left:6px solid var(--acc,var(--tinte));background:var(--tinte-soft);border-radius:6px}
+.pr-vidb .pr-yt{min-height:0}
 .pr-yt{position:relative;flex:1 1 auto;max-width:calc((100% - 0px));aspect-ratio:16/9;max-height:100%;margin:0 auto;border-radius:14px;overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,#2B3140 0%,#11141B 70%);box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .pr-yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .pr-yt-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:20px}
@@ -4221,7 +4223,7 @@ const STEP_TPL = {
   linie: { g: 'ein', label: 'Meinungslinie', ph: 'ein', soz: 'pl', min: 7, fol: 'text', head: '{Positioniere dich|Positionieren Sie sich}', text: '{Stelle dich|Stellen Sie sich} auf der Linie zwischen „stimme zu“ und „stimme nicht zu“ auf: …\n{Begründe|Begründen Sie} {deine|Ihre} Position in einem Satz.', note: 'These nennen, Linie im Raum markieren, einzelne Positionen begründen lassen.', eh: 'beziehen Position und begründen sie' },
   wdh: { g: 'ein', label: 'Wiederholung', ph: 'ein', soz: 'pl', min: 5, fol: 'text', head: 'Was wissen wir schon?', text: '{Fasse|Fassen Sie} die Ergebnisse der letzten Stunde in drei Sätzen zusammen.', note: 'Ergebnisse der letzten Stunde reaktivieren, Hausaufgabe aufgreifen.', eh: 'fassen die Ergebnisse der letzten Stunde zusammen' },
   equiz: { g: 'ein', label: 'Quiz zum Einstieg', ph: 'ein', soz: 'ea', min: 5, fol: 'quiz', head: 'Was {weißt du|wissen Sie} schon?', text: '{Beantworte|Beantworten Sie} die Fragen, ohne nachzuschlagen:\n1. …\n2. …\n3. …', note: 'Vorwissen oder die letzte Stunde abfragen, Antworten kurz vergleichen, Lücken als Anlass für die Stundenfrage nutzen. Für ein digitales Quiz (z. B. Kahoot, Oncoo, Mentimeter) den Link eintragen: er erscheint als QR-Code auf der Folie.', eh: 'aktivieren Vorwissen und beantworten die Fragen\nbenennen offene Fragen' },
-  video: { g: 'ein', label: 'Kurzvideo', ph: 'ein', soz: 'pl', min: 8, fol: 'text', head: 'Beobachtungsauftrag', text: '{Achte|Achten Sie} beim Ansehen darauf, wie …', note: 'Video zeigen; der Link steht als QR-Code auf der Folie.', eh: '' },
+  video: { g: 'ein', label: 'Kurzvideo', ph: 'ein', soz: 'pl', min: 8, fol: 'video', cap: 'Kurzvideo', text: '{Achte|Achten Sie} beim Ansehen darauf, wie …', note: 'YouTube-Link eintragen; das Video läuft direkt auf der Folie.', eh: '' },
   vergl: { g: 'sich', label: 'Ergebnisse vergleichen', ph: 'sich', soz: 'pa', min: 7, fol: 'text', head: 'Ergebnisse vergleichen', text: '{Vergleiche|Vergleichen Sie} {deine|Ihre} Ergebnisse mit {deinem Partner oder deiner Partnerin|Ihrem Partner oder Ihrer Partnerin}.\n{Ergänze|Ergänzen Sie} Fehlendes in einer anderen Farbe.', note: 'Partnervergleich vor der Besprechung im Plenum; offene Fragen sammeln.', eh: 'vergleichen ihre Ergebnisse\nergänzen und korrigieren sie' },
   praes: { g: 'sich', label: 'Ergebnisse vorstellen', ph: 'sich', soz: 'pl', min: 10, fol: 'text', head: 'Ergebnisse vorstellen', text: '{Stelle|Stellen Sie} {deine|Ihre} Ergebnisse vor.\nDie Zuhörenden achten darauf, ob …', note: 'Zwei bis drei Gruppen stellen vor, die anderen ergänzen und geben Rückmeldung nach dem Beobachtungsauftrag.', eh: 'präsentieren ihre Ergebnisse\nergänzen und geben begründet Rückmeldung' },
   galerie: { g: 'sich', label: 'Galeriegang', ph: 'sich', soz: 'gr', min: 10, fol: 'text', head: 'Galeriegang', text: '{Gehe|Gehen Sie} herum und {lies|lesen Sie} die Ergebnisse der anderen Gruppen.\n{Notiere|Notieren Sie} auf Klebezetteln eine Frage oder Ergänzung.', note: 'Plakate aushängen; danach Rückfragen und Gemeinsamkeiten im Plenum klären.', eh: 'nehmen die Ergebnisse anderer Gruppen wahr\nformulieren Rückfragen und Ergänzungen' },
@@ -4315,6 +4317,7 @@ function stepEditor(b) {
     ${fol === 'video' ? (() => { const v = ytInfo(b); return `${fText('yt', 'YouTube-Link', b.yt, 'https://www.youtube.com/watch?v=…')}${tfStr(b.yt).trim() && !v ? '<small class="hint warn">Das sieht nicht nach einem YouTube-Link aus. Kopiere die Adresse aus der Adresszeile oder über „Teilen“.</small>' : ''}
       <div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>
       ${fText('cap', 'Überschrift auf der Folie (optional)', b.cap, 'z. B. Erklärvideo: Die Weimarer Verfassung')}
+      ${ta('text', 'Beobachtungsauftrag (optional, steht über dem Video)', 2, m.anrede === 'du' ? 'z. B. Achte darauf, wie …' : 'z. B. Achten Sie darauf, wie …')}
       <small class="hint">${v ? `Erkannt: Video ${esc(v.id)}${v.st ? ', ab ' + ytFmt(v.st) : ''}${v.en ? ' bis ' + ytFmt(v.en) : ''}. ` : ''}Das Video läuft in der Präsentation direkt auf der Folie, sobald du auf den Play-Knopf klickst. Es braucht Internet; geladen wird erst beim Klick, über den datenschutzfreundlicheren Modus von YouTube. Werbung blendet YouTube selbst ein.</small>`; })() : ''}
     ${fol === 'aus' || fol === 'video' ? '' : fText('link', 'Link, z. B. zu einem Video (erscheint als QR-Code auf der Folie)', b.link, 'https://…')}
     ${ta('note', 'Was ich tue (Notiz, auch in den PowerPoint-Notizen)', 2, 'z. B. Bild kommentarlos zeigen, Äußerungen sammeln')}
@@ -4328,6 +4331,7 @@ function stepTpl(b, k, idx, noSnap) {
   if (!noSnap) snapshot(); const du = state.sheet.meta.anrede === 'du'; const first = !b.tpl; const had = !first && (tfStr(b.text).trim() || tfStr(b.note).trim());
   Object.assign(b, { tpl: k, title: k === 'frei' ? '' : x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: x.fol === 'quiz' ? '' : duSie(x.text, du), note: x.note, eh: x.eh, exit: !!x.exit, ...(x.qs && !tfStr(b.qs).trim() ? { qs: x.qs } : {}), ...(x.res ? { res: true } : {}) });
   if (x.fol === 'quiz') qzNorm(b);
+  if (x.cap && !tfStr(b.cap).trim()) b.cap = x.cap;
   // Frisch unten angefügt und als Einstieg gewählt: an den Anfang des Blatts
   let moved = ''; const fc = blocks.findIndex(z => z.type === 'material' || z.type === 'tasks'); let lt = -1; blocks.forEach((z, i) => { if (z.type === 'tasks') lt = i; });
   if (first && x.g === 'ein' && fc >= 0 && idx > fc) { let j = 0; while (j < fc && blocks[j].type === 'step') j++; blocks.splice(idx, 1); blocks.splice(j, 0, b); moved = 'Als Einstieg vor das Material verschoben'; }
@@ -4666,7 +4670,7 @@ function sichFill(quiet) {
   if (n) { changed(true); if (!quiet) toast(n === 1 ? 'Sicherung nach der Arbeitsphase eingefügt (Bereich „Stunde“)' : `${n} Sicherungen nach den Arbeitsphasen eingefügt`, 'Rückgängig', histUndo); }
   return n;
 }
-function stepTplQuiet(b, k) { const x = STEP_TPL[k]; if (!x) return; const du = state.sheet.meta.anrede === 'du'; Object.assign(b, { tpl: k, title: x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: duSie(x.text, du), note: x.note, eh: x.eh, exit: false }); }
+function stepTplQuiet(b, k) { const x = STEP_TPL[k]; if (!x) return; const du = state.sheet.meta.anrede === 'du'; Object.assign(b, { tpl: k, title: x.label, ph: x.ph, soz: x.soz, min: x.min ? String(x.min) : '', fol: x.fol, head: duSie(x.head, du), text: duSie(x.text, du), note: x.note, eh: x.eh, exit: false }); if (x.cap && !tfStr(b.cap).trim()) b.cap = x.cap; }
 function stepNew(k) {
   const x = STEP_TPL[k]; if (!x) return; const blocks = state.sheet.blocks;
   let at = blocks.length; if (x.g === 'ein') { at = 0; while (at < blocks.length && blocks[at].type === 'step' && !(STEP_TPL[blocks[at].tpl] && STEP_TPL[blocks[at].tpl].g === 'end')) at++; }
@@ -4678,12 +4682,12 @@ function stepNew(k) {
 }
 // Bereich „Präsentation“
 // Zwischenfolien = Unterrichtsschritte, die nur in der Präsentation stehen
-const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
+const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['video', 'Video', 'YouTube-Link, läuft auf der Folie'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
 function zwNew(k, at) {
   const blocks = state.sheet.blocks; at = Math.max(0, Math.min(blocks.length, +at || 0));
   snapshot(); const nb = paletteBlock('step', 'step'); nb.tpl = 'frei'; blocks.splice(at, 0, nb);
-  const tk = k === 'zitat' || k === 'frei' ? 'frei' : k === 'bild' ? 'impuls' : k; stepTpl(nb, tk, at, true);
-  if (k === 'zitat') Object.assign(nb, { fol: 'zitat', title: 'Zitat' }); if (k === 'frei') nb.title = 'Impuls';
+  const tk = k === 'zitat' || k === 'frei' || k === 'video' ? 'frei' : k === 'bild' ? 'impuls' : k; stepTpl(nb, tk, at, true);
+  if (k === 'zitat') Object.assign(nb, { fol: 'zitat', title: 'Zitat' }); if (k === 'video') Object.assign(nb, { fol: 'video', title: 'Video' }); if (k === 'frei') nb.title = 'Impuls';
   state.zwAt = null; state.zwOpen = (k === 'sichs' || k === 'kapitel' || k === 'vergl' || k === 'reserve' || k === 'frage') ? null : nb.id; changed(true);
   toast(`Zwischenfolie „${ZW_KINDS.find(x => x[0] === k)[1]}“ eingefügt`, 'Rückgängig', histUndo);
 }
@@ -5620,7 +5624,7 @@ function presSlideHTML(s, bar) {
       if (s.fol === 'titel') return (chips ? presHead('', '', chips) : '') + `<div class="pr-body pr-zw${hq}"><div class="pr-zw-h">${head}</div>${tfStr(b.text).trim() ? `<div class="pr-zw-t">${inlineHTML(b.text)}</div>` : ''}${qr}</div>` + pops;
       if (s.fol === 'zitat') return `<div class="pr-body st-zitat${hq}"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(b.quote)}</div>${b.author ? `<div class="pr-auth">${inlineHTML(b.author)}</div>` : ''}</div>${qr}</div>` + pops;
       if (s.fol === 'video') { const v = ytInfo(b);
-        return presHead('', b.cap ? inlineHTML(b.cap) : 'Video', chips) + `<div class="pr-body pr-vidb"><div class="pr-yt" data-yt="${esc(v.id)}" data-src="${esc(ytEmbed(v, true))}"><div class="pr-yt-ph"><button type="button" class="pr-yt-go" aria-label="Video abspielen"><svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7c-.8-2.9-2.5-5.4-5.4-6.2C55.8.1 34 0 34 0S12.2.1 6.9 1.5C4 2.3 2.3 4.8 1.5 7.7.1 13 0 24 0 24s.1 11 1.5 16.3c.8 2.9 2.5 5.4 5.4 6.2C12.2 47.9 34 48 34 48s21.8-.1 27.1-1.5c2.9-.8 4.6-3.3 5.4-6.2C67.9 35 68 24 68 24s-.1-11-1.5-16.3z" fill="#E33"/><path d="M45 24 27 14v20" fill="#fff"/></svg></button><span class="pr-yt-t">Video abspielen${v.st || v.en ? ` <small>${v.st ? ytFmt(v.st) : '0:00'}${v.en ? '–' + ytFmt(v.en) : ''}</small>` : ''}</span><span class="pr-yt-s">Lädt erst beim Klick von YouTube</span></div><div class="pr-yt-qr"><img src="${QR.dataURL(v.watch, 8)}" alt="QR-Code zum Video"><span>${esc(linkShort(v.watch))}</span></div></div></div>` + pops; }
+        return presHead('', b.cap ? inlineHTML(b.cap) : 'Video', chips) + `<div class="pr-body pr-vidb">${tfStr(b.text).trim() ? `<div class="pr-yt-auf">${inlineHTML(b.text)}</div>` : ''}<div class="pr-yt" data-yt="${esc(v.id)}" data-src="${esc(ytEmbed(v, true))}"><div class="pr-yt-ph"><button type="button" class="pr-yt-go" aria-label="Video abspielen"><svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7c-.8-2.9-2.5-5.4-5.4-6.2C55.8.1 34 0 34 0S12.2.1 6.9 1.5C4 2.3 2.3 4.8 1.5 7.7.1 13 0 24 0 24s.1 11 1.5 16.3c.8 2.9 2.5 5.4 5.4 6.2C12.2 47.9 34 48 34 48s21.8-.1 27.1-1.5c2.9-.8 4.6-3.3 5.4-6.2C67.9 35 68 24 68 24s-.1-11-1.5-16.3z" fill="#E33"/><path d="M45 24 27 14v20" fill="#fff"/></svg></button><span class="pr-yt-t">Video abspielen${v.st || v.en ? ` <small>${v.st ? ytFmt(v.st) : '0:00'}${v.en ? '–' + ytFmt(v.en) : ''}</small>` : ''}</span><span class="pr-yt-s">Lädt erst beim Klick von YouTube</span></div><div class="pr-yt-qr"><img src="${QR.dataURL(v.watch, 8)}" alt="QR-Code zum Video"><span>${esc(linkShort(v.watch))}</span></div></div></div>` + pops; }
       if (s.fol === 'bild') return (b.cap ? presHead('', inlineHTML(b.cap), chips) : '') + `<div class="pr-body pr-imgb${hq}"><img class="pr-img" src="${esc(b.src)}" alt="${esc(plainText(b.cap || 'Bild'))}">${qr}</div>` + pops;
       if (s.fol === 'quiz') { const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [o, j]).filter(([o]) => tfStr(o).trim());
         const body = open ? `<div class="qz-q">${inlineHTML(x.q)}</div>${tfStr(x.a).trim() ? `<div class="qz-a" data-st="1"><small>Lösung</small>${parasHTML(x.a)}</div>` : ''}`
@@ -9365,7 +9369,7 @@ function onChange(e) {
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || k === 'yt' || k === 'ytS' || k === 'ytE' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;
