@@ -9868,8 +9868,40 @@ async function rlpImport(file) {
   rlpv.err = ''; await OFF.set('rlp:' + rlpv.doc, { name: file.name, at: Date.now(), blob: file }); await rlpLoad(); rlpRender();
   toast('Gespeichert: Der Rahmenlehrplan öffnet sich jetzt aus diesem Browser, auch ohne Internet.');
 }
+/* Stelle merken: je Plan Seite und Position. Innerhalb von 2 Stunden geht es dort weiter, danach beim ersten Kompetenzstandard. */
+const LS_RLPPOS = 'abw.rlpPos', RLP_KEEP = 2 * 3600e3;
+const rlpPosAll = () => lsGet(LS_RLPPOS) || {};
+function rlpPosSave() {
+  const host = document.getElementById('rlp-view'); if (!host || !rpv.pages.length || !rlpv.doc || host.dataset.ready !== '1') return;
+  const y = host.scrollTop; let p = 1; rpv.pages.forEach((x, i) => { if (x.el.offsetTop <= y + 2) p = i + 1; });
+  const el = rpv.pages[p - 1].el; const f = Math.max(0, Math.min(1, (y - el.offsetTop) / (el.offsetHeight || 1)));
+  const A = rlpPosAll(); A[rlpv.doc] = { p, f: +f.toFixed(4), at: Date.now(), q: rpv.q || '' }; lsSet(LS_RLPPOS, A);
+}
+// Erste Seite mit Kompetenzstandards: Überschriften wie „3.2 Abschlussorientierte Standards“ oder „2 Kompetenzen und Standards“, Inhaltsverzeichnis übersprungen
+async function rlpStdPage() {
+  try {
+    const T = await rlpText(); const pages = T.map(items => items.map(it => it.n).join(' ').replace(/\s+/g, ' '));
+    const toc = t => (t.match(/\.{6,}/g) || []).length >= 3 || /inhaltsverzeichnis/.test(t);
+    const pats = [/\b\d(\.\d){0,2}\s+abschlussorientierte standards\b/, /\b\d(\.\d){0,2}\s+(fachbezogene )?kompetenzen und standards\b/, /\b\d(\.\d){0,2}\s+standards\b/, /\bstandards?\b.*\bdie schulerinnen und schuler konnen\b/];
+    for (const re of pats) { const i = pages.findIndex(t => !toc(t) && re.test(t)); if (i >= 0) return i + 1; }
+  } catch (e) { console.error(e); }
+  return 0;
+}
 function rlpRender() {
-  rlpRender0(); if (rlpv.open && rlpv.rec && rlpv.rec.blob) rlpViewer().then(() => { if (rpv.q) { const qi = document.getElementById('rlpv-q'); if (qi) qi.value = rpv.q; rlpSearch(rpv.q); } });
+  rlpRender0(); if (!(rlpv.open && rlpv.rec && rlpv.rec.blob)) return;
+  const P = rlpPosAll()[rlpv.doc], fresh = P && Date.now() - P.at < RLP_KEEP;
+  rlpViewer().then(async () => {
+    const host = document.getElementById('rlp-view'); if (!host || !rpv.pages.length) return;
+    if (fresh) {
+      const x = rpv.pages[Math.min(rpv.pages.length, P.p) - 1]; host.scrollTop = x.el.offsetTop + P.f * x.el.offsetHeight;
+      const q = rpv.q || P.q; if (q) { const qi = document.getElementById('rlpv-q'); if (qi) qi.value = q; rlpSearch(q, true); }
+    } else {
+      rpv.q = ''; const n = await rlpStdPage();
+      if (n && rpv.pages[n - 1]) { host.scrollTop = Math.max(0, rpv.pages[n - 1].el.offsetTop - 2); toast('Rahmenlehrplan: Start beim ersten Kompetenzstandard (S. ' + n + ').'); }
+    }
+    host.dataset.ready = '1'; rlpPosSave();
+    if (!host.dataset.pos) { host.dataset.pos = '1'; let tm = 0; host.addEventListener('scroll', () => { clearTimeout(tm); tm = setTimeout(rlpPosSave, 400); }, { passive: true }); }
+  });
 }
 function rlpRender0() {
   let box = document.getElementById('rlpv');
@@ -9892,7 +9924,7 @@ function rlpRender0() {
       : RLP_MOBILE() ? `<div class="rlpv-b rlp-nomob"><div><b>Auf diesem Gerät kann der Browser die PDF nicht im Fenster zeigen.</b><p>Öffne sie mit „In neuem Tab“ oder lade sie einmal herunter und speichere sie hier mit „PDF hier speichern“. Dann zeigt das Fenster sie mit Suche, auch offline.</p><a class="btn" href="${esc(d[2])}" target="_blank" rel="noopener">PDF öffnen ↗</a></div></div>`
       : `<div class="rlpv-b"><iframe class="rlp-pdf" src="${esc(src)}" title="${esc(d[1])}"></iframe></div>`}
     <div class="rlpv-f">${R ? `<span>Gespeicherte Fassung vom ${new Date(R.at).toLocaleDateString('de-DE')} (${esc(R.name)}) · geht auch offline</span><label class="link">ersetzen<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label><button type="button" class="link" data-rlp="del">entfernen</button>`
-      : `<span>Amtliche Fassung von berlin.de. Suchen mit Strg+F im Dokument. Leer? Dann „In neuem Tab“ oder die PDF einmal hier ablegen:</span><label class="link">PDF hier speichern (auch offline)<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label>`}
+      : `<span>Amtliche Fassung von berlin.de. Suchen mit Strg+F im Dokument. Leer? Dann „In neuem Tab“ oder die PDF einmal hier ablegen. Gespeichert gibt es Suche, und das LehrWerk merkt sich die Stelle:</span><label class="link">PDF hier speichern (auch offline)<input type="file" accept="application/pdf,.pdf" data-rlp-file hidden></label>`}
       <a href="${esc(RLP_TB[st][1])}" target="_blank" rel="noopener">${esc(RLP_TB[st][0])} ↗</a><a href="${esc(RLP_OVR[st])}" target="_blank" rel="noopener">Alle Pläne ↗</a>${rlpv.err ? `<b class="rlp-err">${esc(rlpv.err)}</b>` : ''}</div>`;
 }
 const RLP_MOBILE = () => /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
@@ -9930,13 +9962,14 @@ async function rlpText() {
   return (rpv.text = T);
 }
 // Treffer je Textstück; Wörter über mehrere Stücke werden über den Seitentext gefunden und am ersten Wort markiert
-async function rlpSearch(q) {
+async function rlpSearch(q, noJump) {
   const w = rlpNorm(q).trim(); rpv.hits = []; rpv.hi = -1; rpv.q = w;
   if (w.length > 1) { const T = await rlpText(); const first = w.split(/\s+/)[0];
     T.forEach((items, pi) => { const page = items.map(it => it.n).join(' ').replace(/\s+/g, ' '); if (!page.includes(w)) return; items.forEach((it, k) => { if (it.n.includes(first)) rpv.hits.push({ p: pi + 1, k }); }); }); }
   rpv.pages.forEach((x, i) => rlpMarks(i + 1));
   const hn = document.getElementById('rlp-hn'); if (hn) hn.textContent = w.length > 1 ? (rpv.hits.length ? `${rpv.hits.length} Treffer` : 'kein Treffer') : '';
-  if (rpv.hits.length) rlpJump(0);
+  if (rpv.hits.length && !noJump) rlpJump(0);
+  rlpPosSave();
 }
 function rlpMarks(n) {
   const x = rpv.pages[n - 1]; if (!x || !x.vp) return; x.el.querySelectorAll('.rlp-mk').forEach(m => m.remove());
@@ -10352,8 +10385,17 @@ function mobileInit() {
   }
   mbarSync();
 }
-async function rlpOpen() { rlpv.open = true; rlpv.err = ''; await rlpLoad(); rlpRender(); }
-function rlpClose() { rlpv.open = false; rlpRender(); if (rlpv.url) { URL.revokeObjectURL(rlpv.url); rlpv.url = ''; } }
+async function rlpOpen() { rlpv.open = true; rlpv.err = ''; await rlpLoad(); rlpRender(); if (!rlpv.rec) rlpAutoFetch(); }
+// Ohne gespeicherte PDF einmal versuchen, sie selbst zu laden (geht nur, wenn der Server das erlaubt); dann gibt es Suche und „Stelle merken“
+async function rlpAutoFetch() {
+  const { d } = rlpSel(); if (!/\.pdf$/i.test(d[2]) || rlpAutoFetch.tried[d[0]]) return; rlpAutoFetch.tried[d[0]] = 1;
+  try { const ac = new AbortController(); const to = setTimeout(() => ac.abort(), 20000); const r = await fetch(d[2], { mode: 'cors', signal: ac.signal }); clearTimeout(to);
+    if (!r.ok) return; const b = await r.blob(); if (b.size < 20000 || !/pdf/i.test(b.type || 'application/pdf')) return;
+    await OFF.set('rlp:' + d[0], { name: d[2].split('/').pop(), at: Date.now(), blob: b }); if (rlpv.open && rlpv.doc === d[0]) { await rlpLoad(); rlpRender(); }
+  } catch {}
+}
+rlpAutoFetch.tried = {};
+function rlpClose() { rlpPosSave(); rlpv.open = false; rlpRender(); if (rlpv.url) { URL.revokeObjectURL(rlpv.url); rlpv.url = ''; } }
 async function rlpClick(e) {
   const a = e.target.closest('[data-rlp]'); if (!a) return; const k = a.dataset.rlp;
   if (k === 'x') return rlpClose();
