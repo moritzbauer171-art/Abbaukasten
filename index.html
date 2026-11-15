@@ -1337,6 +1337,12 @@ body{transition:background-color .3s,border-color .25s}
 .pp-g .pp-pat{border:1px solid #CBD1DB;background-color:#fff}
 .pp-g .pp-pat.pat-kariert{background-image:linear-gradient(#9DB7E0 1px,transparent 1px),linear-gradient(90deg,#9DB7E0 1px,transparent 1px);background-size:7px 7px}
 .pp-g .pp-pat.pat-liniert{background-image:linear-gradient(transparent 6px,#9DB7E0 6px 7px);background-size:100% 8px}
+.pr-tafelbtn{position:absolute;left:14px;bottom:14px;z-index:6;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:0;border-radius:999px;background:rgba(28,31,39,.86);color:#fff;font:700 15px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.55;transition:opacity .2s,background .2s}
+.pr-tafelbtn:hover,.pr-tafelbtn:focus-visible,.pr-tafelbtn[aria-pressed="true"]{opacity:1}
+.pr-tafelbtn[aria-pressed="true"]{background:#2741B5}
+.pr-aud .pr-tafelbtn{display:none}
+.pp-g .pp-pat[aria-pressed="true"]{background-color:#fff;box-shadow:0 0 0 2px #1C1F27}
+.pp-back{display:flex;gap:4px;font-size:13px!important}
 .pr-slide.pr-k-blank{padding:0}
 .pr-k-blank .pr-accent,.pr-k-blank .pr-foot,.pr-k-blank .pr-phb,.pr-k-blank .pr-tbar{display:none}
 .pr-blank{position:absolute;inset:0;background:#fff}
@@ -6343,6 +6349,7 @@ const INK_TOOLS = {
   circ: { l: 'Kreis', g: '<ellipse cx="12" cy="12" rx="8.5" ry="7"/>' },
   er: { l: 'Radierer', g: '<path d="M8.5 19.5h11"/><path d="M4.6 14.8l8.9-8.9a2 2 0 0 1 2.8 0l2.8 2.8a2 2 0 0 1 0 2.8l-7.3 7.3a2 2 0 0 1-1.4.6H9.3a2 2 0 0 1-1.4-.6l-3.3-3.3a1.9 1.9 0 0 1 0-.7z"/><path d="M9.2 10.2l5.6 5.6"/>' }
 };
+const TAFEL_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M8 21l2-4.5M16 21l-2-4.5"/><path d="M6.5 12.5c1.6-2.6 3-3.6 4.2-2.4 1 1 2 .9 3.3-.6"/></svg>';
 const INK_PATS = { kariert: 'Kariert', liniert: 'Liniert', weiss: 'Weiß' };
 const inkKey = s => (!s ? '' : s.k === 'blank' ? s.id : `${s.k}:${s.b ? s.b.id : s.bid || ''}:${s.part || s.qi || 0}`);
 const inkSvg = g => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g}</svg>`;
@@ -6387,8 +6394,8 @@ function inkLayer(X) {
     <div class="pp-g pp-cols">${INK_COLS.map(c => `<button type="button" data-ink="col" data-v="${c}" style="--pc:${c}" title="Farbe" aria-label="Farbe ${c}"><i></i></button>`).join('')}</div>
     <div class="pp-g pp-w">${Object.entries(INK_W).map(([k, w]) => `<button type="button" data-ink="w" data-v="${k}" title="Stärke ${k === 's' ? 'dünn' : k === 'm' ? 'mittel' : 'dick'}" aria-label="Stärke"><i style="width:${w + 3}px;height:${w + 3}px"></i></button>`).join('')}</div>
     <div class="pp-g"><button type="button" data-ink="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig">${inkSvg('<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>')}</button><button type="button" data-ink="clr" title="Diese Folie leeren" aria-label="Diese Folie leeren">${inkSvg('<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>')}</button><button type="button" data-ink="clrall" class="pp-txt" title="Notizen auf allen Folien löschen">alle</button></div>
-    <div class="pp-g pp-pg"><small>Leere Seite</small>${Object.entries(INK_PATS).map(([k, l]) => `<button type="button" data-ink="page" data-v="${k}" class="pp-pat pat-${k}" title="${l}e Seite nach dieser einfügen" aria-label="${l}e Seite einfügen"></button>`).join('')}</div>
-    <div class="pp-g"><button type="button" data-ink="off" title="Stift aus (P)" aria-label="Stift aus">${inkSvg('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div></div>`);
+    <div class="pp-g pp-pg"><small>Hintergrund</small>${Object.entries(INK_PATS).map(([k, l]) => `<button type="button" data-ink="pat" data-v="${k}" class="pp-pat pat-${k}" title="${l}" aria-label="Hintergrund ${l}"></button>`).join('')}${X.addPage ? '<button type="button" data-ink="page" class="pp-txt" title="Neue leere Seite nach dieser">+ Seite</button>' : ''}</div>
+    ${X.close ? `<div class="pp-g"><button type="button" data-ink="off" class="pp-txt pp-back" title="Tafel schließen, zurück zur Folie (Esc oder B)">${inkSvg('<path d="M15 18l-6-6 6-6"/>')}Folie</button></div>` : ''}</div>`);
   X.ov.appendChild(bar);
   const M = () => (X.tafel() ? { s: 0.74, x: 24, y: 24 } : { s: 1, x: 0, y: 0 });
   const list = () => (store[st.key] = store[st.key] || []);
@@ -6412,6 +6419,7 @@ function inkLayer(X) {
     bar.querySelectorAll('[data-ink="tool"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === st.tool)));
     bar.querySelectorAll('[data-ink="col"]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.v === colOf(st.tool))); b.disabled = st.tool === 'er'; });
     bar.querySelectorAll('[data-ink="w"]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.v === st.w)); b.disabled = st.tool === 'er'; });
+    bar.querySelectorAll('[data-ink="pat"]').forEach(b => b.setAttribute('aria-pressed', String(!!X.curPat && b.dataset.v === X.curPat())));
     bar.querySelector('[data-ink="undo"]').disabled = !H().length; bar.querySelector('[data-ink="clr"]').disabled = !list().length;
     const ca = bar.querySelector('[data-ink="clrall"]'); ca.textContent = st.clrAll > Date.now() ? 'wirklich alle?' : 'alle'; ca.disabled = !Object.values(store).some(l => l && l.length);
   };
@@ -6461,8 +6469,9 @@ function inkLayer(X) {
     else if (a === 'undo') { undo(); return; }
     else if (a === 'clr') { const L = list(); if (L.length) { H().push({ t: 'clr', L: L.slice() }); store[st.key] = []; changed(); } return; }
     else if (a === 'clrall') { if (st.clrAll > Date.now()) { Object.keys(store).forEach(k => delete store[k]); Object.keys(hist).forEach(k => delete hist[k]); st.clrAll = 0; changed(); toast('Alle Notizen dieser Präsentation gelöscht'); } else { st.clrAll = Date.now() + 3000; sync(); setTimeout(sync, 3100); } return; }
-    else if (a === 'page') { X.addPage(v); return; }
-    else if (a === 'off') { setOn(false); X.ov.focus(); return; }
+    else if (a === 'page') { X.addPage(); return; }
+    else if (a === 'pat') { X.setPat(v); return; }
+    else if (a === 'off') { X.close(); return; }
     sync();
   });
   return {
@@ -6482,7 +6491,7 @@ function openPres(start, opts = {}) {
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
     <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
-    <button type="button" data-p="ink" aria-pressed="false" title="Stift: auf Folie und Tafel schreiben, markieren, Formen (P)">Stift</button><button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
+    <button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
   setAccent(ov, m);
   // Zeit ausblenden (für Klassen, die Zeitdruck stresst): Timer laufen weiter, sind aber unsichtbar; gemerkt je Klasse
   const ntKey = KL(state.sheet.klasse).id;
@@ -6493,9 +6502,13 @@ function openPres(start, opts = {}) {
   const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
   const TBo = tafelBoard({ ov, stage, slide, S, meta: m, klId: ntKey, gs: KL(state.sheet.klasse).stufe === 'gs', on: presModeOf(state.sheet.klasse) === 'tafel', idx: () => P.i, go: i => { P.i = i; show(); }, awOk: () => awOk(), aw: () => AW, rescale: () => { scale(); awScale(); INK.draw(); } });
   // Stift: Notizen je Folie, mit der Stunde gespeichert (leere Tafelseiten und die freie Tafel nur für diese Präsentation)
-  const inkStore = opts.board ? {} : { ...(state.sheet.ink && typeof state.sheet.ink === 'object' ? state.sheet.ink : {}) };
-  const inkSaved = () => { if (opts.board) return; const keep = {}; Object.entries(inkStore).forEach(([k, l]) => { if (!/^bl-/.test(k) && Array.isArray(l) && l.length) keep[k] = l; }); if (Object.keys(keep).length) state.sheet.ink = keep; else delete state.sheet.ink; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
-  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn(), awOk: () => awOk(), aw: () => AW, saved: inkSaved, addPage: pat => { S.splice(P.i + 1, 0, { k: 'blank', pat, id: 'bl-' + uid() }); P.i++; show(); } });
+  // Tafel über der Präsentation: eigene leere Seite, die beim Schließen bis zum Ende der Präsentation erhalten bleibt
+  const BOARD = { open: false, s: { k: 'blank', pat: 'kariert', id: 'bl-tafel' } };
+  const curSl = () => (BOARD.open ? BOARD.s : S[P.i]);
+  const boardSet = on => { if (opts.board) return; BOARD.open = on; ov.classList.toggle('pr-boarding', on); const b = $p('.pr-tafelbtn'); if (b) { b.setAttribute('aria-pressed', String(on)); b.querySelector('span').textContent = on ? 'Zurück zur Folie' : 'Tafel'; } show(); ov.focus(); };
+  const INK = inkLayer({ ov, stage, store: {}, tafel: () => TBo.isOn(), awOk: () => awOk(), aw: () => AW, saved: () => {},
+    addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
+    setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
   const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1, cid: 0 };
   // Uhrzeit-Plan der Stunde; gilt nur, solange die Uhr in der Stundenzeit liegt (sonst wie bisher Minuten herunterzählen)
   const PLAN = uhrOn() ? stPlan() : null;
@@ -6628,17 +6641,19 @@ function openPres(start, opts = {}) {
   const fit = () => { const f = slide.querySelector('.pr-fit'), body = slide.querySelector('.pr-body'); slide.querySelectorAll('.tf-hid').forEach(e => e.classList.remove('tf-hid')); if (f && body && PR_MAX[S[P.i].k]) fitUp(f, body, PR_MAX[S[P.i].k]); tfDraw(slide); phbFit(slide); apply(); };
   const show = () => {
     if (ytOn !== P.i) ytOn = -1;
-    const sl = S[P.i]; const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
+    const sl = curSl(); const bar = S.bar || []; slide.className = 'pr-slide pr-k-' + sl.k + (prMin(sl) ? ' has-timer' : '') + (bar.length ? ' has-bar' : '');
     slide.innerHTML = '<div class="pr-accent"></div>' + presSlideHTML(sl, bar) + presBarHTML(bar, sl.bi) + `<div class="pr-foot"><span>${foot}${sl.ab && sl.k !== 'abhead' ? ' · ' + esc(sl.ab) : ''}</span><span>${P.i + 1}</span></div>`;
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
-    fit(); TBo.slide(P.i); INK.slide(sl);
+    fit(); TBo.slide(P.i); INK.slide(sl); INK.on(sl.k === 'blank');
     warnClose();
     if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
   };
-  const next = () => { if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
-  const prev = () => { if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
+  // Laser an/aus; auf einer Tafelseite ist danach wieder der Stift aktiv
+  const laserT = () => { INK.laser(); if (curSl().k === 'blank' && !INK.active()) INK.on(true); };
+  const next = () => { if (BOARD.open) { boardSet(false); return; } if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
+  const prev = () => { if (BOARD.open) { boardSet(false); return; } if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
   const tip = () => { const tp = slide.querySelector('.pr-tips'); if (!tp) return; const h = tp.querySelector('[hidden]'); tp.hidden = false; if (h) h.hidden = false; apply(); };
   const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
   const close = () => tmWarn('Beim Beenden der Präsentation wird er abgebrochen.', 'Präsentation beenden', closeNow);
@@ -6660,8 +6675,8 @@ function openPres(start, opts = {}) {
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
     else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === '+' || k === '=') { stop(); tmAdj(1); } else if (k === '-' || k === '_') { stop(); tmAdj(-1); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'z' || k === 'Z') { stop(); ntToggle(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
-    else if (k === 'p' || k === 'P') { stop(); INK.toggle(); } else if (k === 'l' || k === 'L') { stop(); INK.laser(); }
-    else if (k === 'Escape') { stop(); if (INK.active()) { INK.on(false); if (INK.active()) INK.laser(); return; } if (!document.fullscreenElement) close(); }
+    else if (k === 'b' || k === 'B') { stop(); boardSet(!BOARD.open); } else if (k === 'l' || k === 'L') { stop(); laserT(); }
+    else if (k === 'Escape') { stop(); if (ov.querySelector('[data-p="laser"][aria-pressed="true"]')) { laserT(); return; } if (BOARD.open) { boardSet(false); return; } if (!document.fullscreenElement) close(); }
   };
   /* Video: auf der Folie abspielen; mit Beamerfenster nur dort, hier bleibt die Steuerung */
   let ytOn = -1;
@@ -6688,12 +6703,13 @@ function openPres(start, opts = {}) {
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
-    else if (k === 'ref') refOpen(); else if (k === 'ink') INK.toggle(); else if (k === 'laser') INK.laser();
+    else if (k === 'ref') refOpen(); else if (k === 'board') boardSet(!BOARD.open); else if (k === 'laser') laserT();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
   document.addEventListener('keydown', key, true); window.addEventListener('resize', () => { scale(); sideKey = ''; refSide(); });
-  scale(); show(); ov.focus(); if (opts.board) INK.on(true);
+  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<button type="button" class="pr-tafelbtn" data-p="board" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>`);
+  scale(); show(); ov.focus();
 }
 
 /* PowerPoint: dieselben Folien als bearbeitbare Textfelder und Tabellen (PptxGenJS); Erwartung und Tipps stehen in den Notizen */
