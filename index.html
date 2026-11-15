@@ -1318,6 +1318,30 @@ body{transition:background-color .3s,border-color .25s}
 .d-tagebuch .mat-no{border-radius:1.4mm;font-family:var(--f-disp);font-size:12pt;padding:0 2mm}
 .d-tagebuch .q-mark{font-family:var(--f-disp)}
 
+.pr-ink{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);transform-origin:center;pointer-events:none;z-index:4;touch-action:none}
+.pr-ink.on{pointer-events:auto;cursor:crosshair}.pr-ink.laser{cursor:none}
+.pr-aud .pr-ink{pointer-events:none}
+.tb{z-index:3}
+.pr-pen{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:7;display:flex;flex-direction:column;gap:8px;padding:8px;background:#fff;color:#1C1F27;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-height:calc(100% - 84px);overflow:auto}
+.pr-pen[hidden]{display:none}
+.pp-g{display:grid;grid-template-columns:repeat(2,36px);gap:4px;padding-bottom:8px;border-bottom:1px solid #E6E8EE}.pp-g:last-child{border:0;padding:0}
+.pp-g button{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:#1C1F27;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.pp-g button:hover{background:#EEF0F4}
+.pp-g button[aria-pressed="true"]{background:#1C1F27;color:#fff}
+.pp-g button:disabled{opacity:.3;cursor:default;background:transparent}
+.pp-cols button i{width:20px;height:20px;border-radius:50%;background:var(--pc);box-shadow:inset 0 0 0 1px rgba(0,0,0,.22)}
+.pp-cols button[aria-pressed="true"]{background:#fff;box-shadow:inset 0 0 0 2px #1C1F27}
+.pp-w button i{border-radius:50%;background:currentColor}
+.pp-g .pp-txt{grid-column:span 2;width:auto;height:28px;font:700 12px var(--f-ui)}
+.pp-pg small{grid-column:span 2;font:700 10px var(--f-ui);text-transform:uppercase;letter-spacing:.06em;color:#5B6271;text-align:center}
+.pp-g .pp-pat{border:1px solid #CBD1DB;background-color:#fff}
+.pp-g .pp-pat.pat-kariert{background-image:linear-gradient(#9DB7E0 1px,transparent 1px),linear-gradient(90deg,#9DB7E0 1px,transparent 1px);background-size:7px 7px}
+.pp-g .pp-pat.pat-liniert{background-image:linear-gradient(transparent 6px,#9DB7E0 6px 7px);background-size:100% 8px}
+.pr-slide.pr-k-blank{padding:0}
+.pr-k-blank .pr-accent,.pr-k-blank .pr-foot,.pr-k-blank .pr-phb,.pr-k-blank .pr-tbar{display:none}
+.pr-blank{position:absolute;inset:0;background:#fff}
+.pr-blank.pat-kariert{background-image:linear-gradient(#CCD8EE 1px,transparent 1px),linear-gradient(90deg,#CCD8EE 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
+.pr-blank.pat-liniert{background-image:linear-gradient(transparent 58px,#C4D2EC 58px 60px);background-size:100% 60px;background-position:0 20px}
 /* ===== Tafelansicht ===== */
 .pr.pr-tafel .pr-stage{background:var(--tbg,#DDF0FF)}
 .pr.pr-tafel>.pr-stage>.pr-slide{border-radius:34px;box-shadow:0 18px 50px rgba(15,25,45,.28)}
@@ -2615,7 +2639,7 @@ body.home-on{overflow:hidden}
   .actions{grid-area:actions;gap:6px;flex-wrap:nowrap;justify-content:flex-end}
   .status{grid-area:status;align-self:center;min-width:0}
   .bar .tabs{display:none!important}
-  #btn-out,#btn-saveas,#btn-help,#btn-set,#btn-rlp,#btn-login,#btn-forum{display:none!important}
+  #btn-out,#btn-saveas,#btn-help,#btn-set,#btn-rlp,#btn-login,#btn-forum,#btn-tafel{display:none!important}
   #btn-mmore{display:inline-grid;place-items:center}
   .actions .btn,.actions .ib-help{min-width:44px;height:44px;padding:0 10px;border-radius:12px}
   .actions .ib-help{width:44px;padding:0}
@@ -2789,6 +2813,7 @@ body.home-on{overflow:hidden}
       <button class="btn rlp-btn" type="button" id="btn-rlp" data-act="rlp-view" title="Rahmenlehrplan Berlin für dieses Fach als PDF"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.6c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.6"/></svg><span>RLP</span></button>
       <button class="btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
       <button class="btn ib-help" type="button" id="btn-mmore" aria-haspopup="true" aria-expanded="false" title="Weitere: Rahmenlehrplan, Speichern unter, Einstellungen, Hilfe" aria-label="Weitere Funktionen"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18.5" cy="12" r="1.8"/></svg></button>
+      <button class="btn ib-help" type="button" id="btn-tafel" data-act="tafel-open" title="Tafel öffnen: leere Seite mit Stift, Laser und Werkzeugen wie Timer und Ampel" aria-label="Tafel öffnen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M8 21l2-4.5M16 21l-2-4.5"/><path d="M6.5 12.5c1.6-2.6 3-3.6 4.2-2.4 1 1 2 .9 3.3-.6"/></svg></button>
       <button class="btn ib-help fo-btn" type="button" id="btn-forum" data-act="forum" title="Lehrerzimmer: Forum für Fragen, Tipps und Austausch" aria-label="Lehrerzimmer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M19 9h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v2.5L16 19h-4"/></svg><em class="fo-badge" hidden></em></button>
       <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
       <button class="btn btn-new" type="button" id="btn-new" data-act="new" title="Neue Stunde anlegen">
@@ -5805,6 +5830,7 @@ function presSlideHTML(s, bar) {
   const phChip = ph => (s.res ? '<span class="pr-chip res">Reserve</span>' : '') + (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
   const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn} Min.</span>` : `<span class="pr-chip pr-min">${mn} Min.</span>`);
   switch (s.k) {
+    case 'blank': return `<div class="pr-blank pat-${INK_PATS[s.pat] ? s.pat : 'weiss'}" aria-label="Leere Tafelseite"></div>`;
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
       return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
@@ -6036,11 +6062,11 @@ const tbStripLab = s => {
     case 'step': return s.fol === 'video' ? 'Video' : s.fol === 'quiz' ? 'Quiz' : s.fol === 'zitat' ? 'Zitat' : s.fol === 'bild' ? 'Bild' : s.fol === 'frage' ? 'Stundenfrage' : plainText(tfStr(s.b.head).trim() || stepHeadDef(s.b));
     case 'mat': return (s.tag || 'Material') + (matTitle(s.b) ? ' · ' + plainText(matTitle(s.b)) : '');
     case 'tafel': return 'Tafelbild'; case 'info': return s.b.kind || 'Info'; case 'quote': return 'Zitat'; case 'image': return 'Bild';
-    case 'table': return 'Tabelle'; case 'phr': return 'Wortspeicher'; case 'match': return s.b.sort ? 'Sortieren' : 'Zuordnen'; case 'qr': return 'QR-Code';
+    case 'blank': return 'Tafelseite'; case 'table': return 'Tabelle'; case 'phr': return 'Wortspeicher'; case 'match': return s.b.sort ? 'Sortieren' : 'Zuordnen'; case 'qr': return 'QR-Code';
   }
   return 'Folie';
 };
-const tbStripIc = s => (s.k === 'tasks' ? '✏️' : s.k === 'step' ? ({ video: '▶️', quiz: '❓', zitat: '💬', bild: '🖼️', frage: '❔' }[s.fol] || '💡') : { mat: '📄', tafel: '🖍️', info: '💡', quote: '💬', image: '🖼️', table: '📋', phr: '🗂️', match: '🔗', qr: '🔳' }[s.k] || '•');
+const tbStripIc = s => (s.k === 'tasks' ? '✏️' : s.k === 'step' ? ({ video: '▶️', quiz: '❓', zitat: '💬', bild: '🖼️', frage: '❔' }[s.fol] || '💡') : { blank: '✍️', mat: '📄', tafel: '🖍️', info: '💡', quote: '💬', image: '🖼️', table: '📋', phr: '🗂️', match: '🔗', qr: '🔳' }[s.k] || '•');
 const tbSoz = s => (!s ? '' : s.k === 'tasks' ? tsSoz(s) : s.k === 'step' && s.b && SOZ[s.b.soz] ? s.b.soz : '');
 
 function tafelBoard(X) {
@@ -6301,19 +6327,162 @@ function tafelBoard(X) {
   return {
     slideTf: k => (st.on ? `translate(calc(-50% + ${(OX * k).toFixed(2)}px), calc(-50% + ${(OY * k).toFixed(2)}px)) scale(${(k * SK).toFixed(5)})` : `translate(-50%,-50%) scale(${k})`),
     place: k => { K = k; tb.style.transform = `translate(-50%,-50%) scale(${k})`; },
-    placeAw, mirror, click, keyIgnore, slide: onSlide,
+    placeAw, mirror, click, keyIgnore, slide: onSlide, isOn: () => st.on,
     destroy: () => { clearInterval(tick); st.w.forEach(w => { if (KW[w.k].stop) KW[w.k].stop(w, R[w.id]); }); save(); }
   };
 }
-function openPres(start) {
-  let S; try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
+/* ================= Stift beim Präsentieren: auf Folie und Tafel schreiben, Textmarker, Formen, Laserpointer, leere Tafelseiten ================= */
+const INK_COLS = ['#1C1F27', '#E5484D', '#2F6FDB', '#1E9E5A', '#FFC21A', '#FFFFFF'];
+const INK_W = { s: 3, m: 6, l: 12 };
+const INK_TOOLS = {
+  pen: { l: 'Stift', g: '<path d="M4 20l1.2-4.6L15.6 5a2.1 2.1 0 0 1 3 3L8.2 18.4z"/><path d="M13.8 6.8l3 3"/>' },
+  hl: { l: 'Textmarker', g: '<path d="M8.5 14.5l7.6-9.6 4 4-9.6 7.6z"/><path d="M8.5 14.5L6 17.4h3.6l.9-1.3"/><path d="M3 21h18" style="stroke-width:3.4;opacity:.45"/>' },
+  line: { l: 'Linie', g: '<path d="M5 19L19 5"/>' },
+  arrow: { l: 'Pfeil', g: '<path d="M5 19L19 5"/><path d="M10 5h9v9"/>' },
+  rect: { l: 'Rechteck', g: '<rect x="4" y="6" width="16" height="12" rx="1"/>' },
+  circ: { l: 'Kreis', g: '<ellipse cx="12" cy="12" rx="8.5" ry="7"/>' },
+  er: { l: 'Radierer', g: '<path d="M8.5 19.5h11"/><path d="M4.6 14.8l8.9-8.9a2 2 0 0 1 2.8 0l2.8 2.8a2 2 0 0 1 0 2.8l-7.3 7.3a2 2 0 0 1-1.4.6H9.3a2 2 0 0 1-1.4-.6l-3.3-3.3a1.9 1.9 0 0 1 0-.7z"/><path d="M9.2 10.2l5.6 5.6"/>' }
+};
+const INK_PATS = { kariert: 'Kariert', liniert: 'Liniert', weiss: 'Weiß' };
+const inkKey = s => (!s ? '' : s.k === 'blank' ? s.id : `${s.k}:${s.b ? s.b.id : s.bid || ''}:${s.part || s.qi || 0}`);
+const inkSvg = g => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g}</svg>`;
+function inkDraw(g, s) {
+  const pts = s.p; if (!pts || pts.length < 2) return;
+  g.save(); g.lineCap = g.lineJoin = 'round'; g.strokeStyle = g.fillStyle = s.c;
+  if (s.t === 'hl') { g.globalAlpha = 0.38; g.lineWidth = s.w * 4 + 8; }
+  else g.lineWidth = s.w;
+  const st = s.pr ? 3 : 2;
+  if (s.t === 'pen' || s.t === 'hl') {
+    if (pts.length <= st) { g.beginPath(); g.arc(pts[0], pts[1], g.lineWidth / 2, 0, 7); g.fill(); g.restore(); return; }
+    if (s.pr && s.t === 'pen') { for (let i = st; i < pts.length; i += st) { g.beginPath(); g.lineWidth = s.w * (0.35 + (pts[i + 2] || 50) / 80); g.moveTo(pts[i - st], pts[i - st + 1]); g.lineTo(pts[i], pts[i + 1]); g.stroke(); } }
+    else { g.beginPath(); g.moveTo(pts[0], pts[1]); for (let i = st; i < pts.length; i += st) g.lineTo(pts[i], pts[i + 1]); g.stroke(); }
+  } else {
+    const [x0, y0, x1, y1] = pts; g.beginPath();
+    if (s.t === 'line' || s.t === 'arrow') { g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+      if (s.t === 'arrow') { const a = Math.atan2(y1 - y0, x1 - x0), L = 14 + s.w * 3; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x1 - L * Math.cos(a - 0.45), y1 - L * Math.sin(a - 0.45)); g.moveTo(x1, y1); g.lineTo(x1 - L * Math.cos(a + 0.45), y1 - L * Math.sin(a + 0.45)); g.stroke(); } }
+    else if (s.t === 'rect') { g.strokeRect(Math.min(x0, x1), Math.min(y0, y1), Math.abs(x1 - x0), Math.abs(y1 - y0)); }
+    else if (s.t === 'circ') { g.ellipse((x0 + x1) / 2, (y0 + y1) / 2, Math.abs(x1 - x0) / 2 || 1, Math.abs(y1 - y0) / 2 || 1, 0, 0, 7); g.stroke(); }
+  }
+  g.restore();
+}
+// Abstand Punkt–Strich (für den Radierer, Strich-weise)
+function inkHit(s, x, y, r) {
+  const p = s.p, st = s.pr ? 3 : 2; const seg = (ax, ay, bx, by) => { const dx = bx - ax, dy = by - ay, l2 = dx * dx + dy * dy || 1; const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / l2)); return Math.hypot(x - ax - t * dx, y - ay - t * dy); };
+  const rr = r + (s.t === 'hl' ? s.w * 2 + 4 : s.w / 2);
+  if (s.t === 'pen' || s.t === 'hl') { if (p.length <= st) return Math.hypot(x - p[0], y - p[1]) < rr; for (let i = st; i < p.length; i += st) if (seg(p[i - st], p[i - st + 1], p[i], p[i + 1]) < rr) return true; return false; }
+  const [x0, y0, x1, y1] = p;
+  if (s.t === 'line' || s.t === 'arrow') return seg(x0, y0, x1, y1) < rr;
+  if (s.t === 'rect') return [[x0, y0, x1, y0], [x1, y0, x1, y1], [x1, y1, x0, y1], [x0, y1, x0, y0]].some(q => seg(...q) < rr);
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, rx = Math.abs(x1 - x0) / 2 || 1, ry = Math.abs(y1 - y0) / 2 || 1; const d = Math.hypot((x - cx) / rx, (y - cy) / ry); return Math.abs(d - 1) * Math.min(rx, ry) < rr;
+}
+function inkLayer(X) {
+  const RS = 1.5; // Auflösung der Zeichenfläche
+  const store = X.store; const hist = {};
+  const st = { on: false, laser: false, tool: 'pen', col: { pen: INK_COLS[0], hl: INK_COLS[4], line: INK_COLS[1], arrow: INK_COLS[1], rect: INK_COLS[1], circ: INK_COLS[1] }, w: 'm', key: '', cur: null, lz: [], raf: 0, clrAll: 0 };
+  const cv = el(`<canvas class="pr-ink" width="${1600 * RS}" height="${900 * RS}" aria-hidden="true"></canvas>`); X.stage.appendChild(cv);
+  const g = cv.getContext('2d');
+  const colOf = t => st.col[t] || INK_COLS[0];
+  const bar = el(`<div class="pr-pen" role="toolbar" aria-label="Stift und Formen" hidden>
+    <div class="pp-g">${Object.entries(INK_TOOLS).map(([k, x]) => `<button type="button" data-ink="tool" data-v="${k}" title="${x.l}" aria-label="${x.l}">${inkSvg(x.g)}</button>`).join('')}</div>
+    <div class="pp-g pp-cols">${INK_COLS.map(c => `<button type="button" data-ink="col" data-v="${c}" style="--pc:${c}" title="Farbe" aria-label="Farbe ${c}"><i></i></button>`).join('')}</div>
+    <div class="pp-g pp-w">${Object.entries(INK_W).map(([k, w]) => `<button type="button" data-ink="w" data-v="${k}" title="Stärke ${k === 's' ? 'dünn' : k === 'm' ? 'mittel' : 'dick'}" aria-label="Stärke"><i style="width:${w + 3}px;height:${w + 3}px"></i></button>`).join('')}</div>
+    <div class="pp-g"><button type="button" data-ink="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig">${inkSvg('<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>')}</button><button type="button" data-ink="clr" title="Diese Folie leeren" aria-label="Diese Folie leeren">${inkSvg('<path d="M4 7h16"/><path d="M10 11v6M14 11v6"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>')}</button><button type="button" data-ink="clrall" class="pp-txt" title="Notizen auf allen Folien löschen">alle</button></div>
+    <div class="pp-g pp-pg"><small>Leere Seite</small>${Object.entries(INK_PATS).map(([k, l]) => `<button type="button" data-ink="page" data-v="${k}" class="pp-pat pat-${k}" title="${l}e Seite nach dieser einfügen" aria-label="${l}e Seite einfügen"></button>`).join('')}</div>
+    <div class="pp-g"><button type="button" data-ink="off" title="Stift aus (P)" aria-label="Stift aus">${inkSvg('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div></div>`);
+  X.ov.appendChild(bar);
+  const M = () => (X.tafel() ? { s: 0.74, x: 24, y: 24 } : { s: 1, x: 0, y: 0 });
+  const list = () => (store[st.key] = store[st.key] || []);
+  const H = () => (hist[st.key] = hist[st.key] || []);
+  const renderTo = (gg, w) => {
+    gg.setTransform(1, 0, 0, 1, 0, 0); gg.clearRect(0, 0, w.width, w.height); const m = M(); const f = w.width / 1600;
+    gg.setTransform(f * m.s, 0, 0, f * m.s, f * m.x, f * m.y);
+    (store[st.key] || []).forEach(s => inkDraw(gg, s)); if (st.cur) inkDraw(gg, st.cur);
+    if (st.lz.length) { const now = performance.now(); const L = st.lz.filter(p => now - p.t < 650);
+      gg.save(); gg.lineCap = gg.lineJoin = 'round'; for (let i = 1; i < L.length; i++) { const a = 1 - (now - L[i].t) / 650; gg.strokeStyle = `rgba(255,40,40,${(a * 0.85).toFixed(3)})`; gg.lineWidth = 4 + 8 * a; gg.beginPath(); gg.moveTo(L[i - 1].x, L[i - 1].y); gg.lineTo(L[i].x, L[i].y); gg.stroke(); }
+      const p = L[L.length - 1]; if (p) { gg.shadowColor = 'rgba(255,0,0,.9)'; gg.shadowBlur = 18; gg.fillStyle = '#FF2A2A'; gg.beginPath(); gg.arc(p.x, p.y, 9, 0, 7); gg.fill(); } gg.restore(); }
+  };
+  const awCv = () => { if (!X.awOk()) return null; const d = X.aw().document, stg = d.querySelector('.pr-stage'); if (!stg) return null; let c = stg.querySelector(':scope > .pr-ink');
+    if (!c) { c = d.createElement('canvas'); c.className = 'pr-ink'; c.width = 1600 * RS; c.height = 900 * RS; stg.appendChild(c); placeAw(d, Math.min(stg.clientWidth / 1600, stg.clientHeight / 900)); } return c; };
+  const draw = () => { renderTo(g, cv); const c = awCv(); if (c) renderTo(c.getContext('2d'), c); };
+  const placeAw = (d, k) => { const c = d.querySelector('.pr-stage > .pr-ink'); if (c) c.style.transform = `translate(-50%,-50%) scale(${k})`; };
+  const laserLoop = () => { st.raf = 0; draw(); if (st.lz.length && performance.now() - st.lz[st.lz.length - 1].t < 700) st.raf = requestAnimationFrame(laserLoop); else st.lz = []; };
+  const sync = () => {
+    X.ov.classList.toggle('pr-inking', st.on || st.laser); cv.classList.toggle('on', st.on || st.laser); cv.classList.toggle('laser', st.laser); bar.hidden = !st.on;
+    const b1 = X.ov.querySelector('[data-p="ink"]'), b2 = X.ov.querySelector('[data-p="laser"]'); if (b1) b1.setAttribute('aria-pressed', String(st.on)); if (b2) b2.setAttribute('aria-pressed', String(st.laser));
+    bar.querySelectorAll('[data-ink="tool"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === st.tool)));
+    bar.querySelectorAll('[data-ink="col"]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.v === colOf(st.tool))); b.disabled = st.tool === 'er'; });
+    bar.querySelectorAll('[data-ink="w"]').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.v === st.w)); b.disabled = st.tool === 'er'; });
+    bar.querySelector('[data-ink="undo"]').disabled = !H().length; bar.querySelector('[data-ink="clr"]').disabled = !list().length;
+    const ca = bar.querySelector('[data-ink="clrall"]'); ca.textContent = st.clrAll > Date.now() ? 'wirklich alle?' : 'alle'; ca.disabled = !Object.values(store).some(l => l && l.length);
+  };
+  const changed = () => { draw(); sync(); X.saved(); };
+  const toSlide = e => { const r = cv.getBoundingClientRect(); const bx = (e.clientX - r.left) / r.width * 1600, by = (e.clientY - r.top) / r.height * 900; const m = M(); return [(bx - m.x) / m.s, (by - m.y) / m.s]; };
+  const r1 = v => Math.round(v * 10) / 10;
+  let erased = null;
+  cv.addEventListener('pointerdown', e => {
+    if (!(st.on || st.laser)) return; e.preventDefault(); e.stopPropagation(); try { cv.setPointerCapture(e.pointerId); } catch {}
+    const [x, y] = toSlide(e);
+    if (st.laser) { st.lz.push({ x, y, t: performance.now() }); st.down = true; if (!st.raf) st.raf = requestAnimationFrame(laserLoop); return; }
+    if (st.tool === 'er') { erased = []; eraseAt(x, y); return; }
+    const pr = e.pointerType === 'pen' && e.pressure > 0; const t = st.tool;
+    st.cur = { t, c: colOf(t), w: INK_W[st.w], p: t === 'pen' || t === 'hl' ? (pr && t === 'pen' ? [r1(x), r1(y), Math.round(e.pressure * 100)] : [r1(x), r1(y)]) : [r1(x), r1(y), r1(x), r1(y)], ...(pr && t === 'pen' ? { pr: 1 } : {}) };
+    draw();
+  });
+  const eraseAt = (x, y) => { const L = list(); const m = M(); for (let i = L.length - 1; i >= 0; i--) if (inkHit(L[i], x, y, 12 / m.s)) { erased.push({ s: L[i], i }); L.splice(i, 1); } draw(); };
+  cv.addEventListener('pointermove', e => {
+    if (st.laser) { if (e.pointerType === 'mouse' || st.down) { const [x, y] = toSlide(e); st.lz.push({ x, y, t: performance.now() }); if (st.lz.length > 80) st.lz.splice(0, st.lz.length - 80); if (!st.raf) st.raf = requestAnimationFrame(laserLoop); } return; }
+    if (erased) { const [x, y] = toSlide(e); eraseAt(x, y); return; }
+    if (!st.cur) return; const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e]; const s = st.cur;
+    (evs.length ? evs : [e]).forEach(ev => { const [x, y] = toSlide(ev);
+      if (s.t === 'pen' || s.t === 'hl') { const st2 = s.pr ? 3 : 2; const lx = s.p[s.p.length - st2], ly = s.p[s.p.length - st2 + 1]; if (Math.hypot(x - lx, y - ly) < 1.5) return; s.p.push(r1(x), r1(y)); if (s.pr) s.p.push(Math.round((ev.pressure || 0.5) * 100)); }
+      else { let x1 = x, y1 = y; if (ev.shiftKey && (s.t === 'rect' || s.t === 'circ')) { const d = Math.max(Math.abs(x - s.p[0]), Math.abs(y - s.p[1])); x1 = s.p[0] + Math.sign(x - s.p[0]) * d; y1 = s.p[1] + Math.sign(y - s.p[1]) * d; } s.p[2] = r1(x1); s.p[3] = r1(y1); } });
+    draw();
+  });
+  const up = () => {
+    st.down = false;
+    if (erased) { if (erased.length) H().push({ t: 'del', L: erased }); erased = null; changed(); return; }
+    const s = st.cur; if (!s) return; st.cur = null;
+    if (!(s.t !== 'pen' && s.t !== 'hl' && Math.hypot(s.p[2] - s.p[0], s.p[3] - s.p[1]) < 4)) { list().push(s); H().push({ t: 'add', s }); }
+    changed();
+  };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('pointerleave', () => { if (st.laser && !st.down) { /* Spur verblasst von selbst */ } });
+  const undo = () => { const h = H().pop(); if (!h) return; const L = list();
+    if (h.t === 'add') { const i = L.lastIndexOf(h.s); if (i >= 0) L.splice(i, 1); }
+    else if (h.t === 'del') h.L.slice().reverse().forEach(x => L.splice(Math.min(x.i, L.length), 0, x.s));
+    else if (h.t === 'clr') store[st.key] = h.L.slice();
+    changed(); };
+  const setOn = on => { st.on = on; if (on) st.laser = false; sync(); draw(); };
+  const setLaser = on => { st.laser = on; if (on) st.on = false; st.lz = []; sync(); draw(); };
+  bar.addEventListener('click', e => {
+    const b = e.target.closest('[data-ink]'); if (!b) return; e.stopPropagation(); const a = b.dataset.ink, v = b.dataset.v;
+    if (a === 'tool') st.tool = v;
+    else if (a === 'col') st.col[st.tool] = v;
+    else if (a === 'w') st.w = v;
+    else if (a === 'undo') { undo(); return; }
+    else if (a === 'clr') { const L = list(); if (L.length) { H().push({ t: 'clr', L: L.slice() }); store[st.key] = []; changed(); } return; }
+    else if (a === 'clrall') { if (st.clrAll > Date.now()) { Object.keys(store).forEach(k => delete store[k]); Object.keys(hist).forEach(k => delete hist[k]); st.clrAll = 0; changed(); toast('Alle Notizen dieser Präsentation gelöscht'); } else { st.clrAll = Date.now() + 3000; sync(); setTimeout(sync, 3100); } return; }
+    else if (a === 'page') { X.addPage(v); return; }
+    else if (a === 'off') { setOn(false); X.ov.focus(); return; }
+    sync();
+  });
+  return {
+    place: k => { cv.style.transform = `translate(-50%,-50%) scale(${k})`; }, placeAw, draw,
+    slide: s => { st.key = inkKey(s); st.cur = null; erased = null; draw(); sync(); },
+    toggle: () => setOn(!st.on), laser: () => setLaser(!st.laser), on: setOn, undo,
+    active: () => st.on || st.laser,
+    eats: e => !!((st.on || st.laser) && e.target.closest('.pr-ink, .pr-pen')) || !!e.target.closest('.pr-pen'),
+    destroy: () => { cancelAnimationFrame(st.raf); }
+  };
+}
+function openPres(start, opts = {}) {
+  let S; if (opts.board) { S = [{ k: 'blank', pat: 'kariert', id: 'bl-' + uid() }]; S.bar = []; } else try { S = presSlides(); } catch (err) { console.error(err); toast('Die Präsentation ließ sich nicht erstellen.'); return; }
   if (!S.length) { toast('Es ist keine Folie ausgewählt. Im Bereich „Präsentation“ lassen sich Folien wählen.'); return; }
-  const m = state.sheet.meta; const foot = esc(state.sheet.abs ? stTitle(state.sheet) : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
+  const m = state.sheet.meta; const foot = opts.board ? '' : esc(state.sheet.abs ? stTitle(state.sheet) : [m.nr ? 'AB ' + m.nr : '', plainText(m.title || '')].filter(Boolean).join(' · '));
   const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
     <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><span class="pr-tl"></span></span><span class="sep"></span>
-    <button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
+    <button type="button" data-p="ink" aria-pressed="false" title="Stift: auf Folie und Tafel schreiben, markieren, Formen (P)">Stift</button><button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
   setAccent(ov, m);
   // Zeit ausblenden (für Klassen, die Zeitdruck stresst): Timer laufen weiter, sind aber unsichtbar; gemerkt je Klasse
   const ntKey = KL(state.sheet.klasse).id;
@@ -6322,7 +6491,11 @@ function openPres(start) {
   ntSet(!!(state.prefs && state.prefs.noTime && state.prefs.noTime[ntKey])); document.body.appendChild(ov);
   const stage = ov.querySelector('.pr-stage'), slide = ov.querySelector('.pr-slide'), $p = q => ov.querySelector(q);
   const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
-  const TBo = tafelBoard({ ov, stage, slide, S, meta: m, klId: ntKey, gs: KL(state.sheet.klasse).stufe === 'gs', on: presModeOf(state.sheet.klasse) === 'tafel', idx: () => P.i, go: i => { P.i = i; show(); }, awOk: () => awOk(), aw: () => AW, rescale: () => { scale(); awScale(); } });
+  const TBo = tafelBoard({ ov, stage, slide, S, meta: m, klId: ntKey, gs: KL(state.sheet.klasse).stufe === 'gs', on: presModeOf(state.sheet.klasse) === 'tafel', idx: () => P.i, go: i => { P.i = i; show(); }, awOk: () => awOk(), aw: () => AW, rescale: () => { scale(); awScale(); INK.draw(); } });
+  // Stift: Notizen je Folie, mit der Stunde gespeichert (leere Tafelseiten und die freie Tafel nur für diese Präsentation)
+  const inkStore = opts.board ? {} : { ...(state.sheet.ink && typeof state.sheet.ink === 'object' ? state.sheet.ink : {}) };
+  const inkSaved = () => { if (opts.board) return; const keep = {}; Object.entries(inkStore).forEach(([k, l]) => { if (!/^bl-/.test(k) && Array.isArray(l) && l.length) keep[k] = l; }); if (Object.keys(keep).length) state.sheet.ink = keep; else delete state.sheet.ink; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
+  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn(), awOk: () => awOk(), aw: () => AW, saved: inkSaved, addPage: pat => { S.splice(P.i + 1, 0, { k: 'blank', pat, id: 'bl-' + uid() }); P.i++; show(); } });
   const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1, cid: 0 };
   // Uhrzeit-Plan der Stunde; gilt nur, solange die Uhr in der Stundenzeit liegt (sonst wie bisher Minuten herunterzählen)
   const PLAN = uhrOn() ? stPlan() : null;
@@ -6340,7 +6513,7 @@ function openPres(start) {
     const w = el(`<div class="pr-warn" role="alertdialog" aria-modal="true" aria-labelledby="pr-warn-t" aria-describedby="pr-warn-d"><div class="pr-warn-c"><b id="pr-warn-t">Der Timer${other} läuft noch</b><p id="pr-warn-d">Noch <span class="pr-warn-l">${fmt(T.left)}</span> ${msg}</p><div class="pr-warn-a"><button type="button" data-w="ok">${okLabel}</button><button type="button" data-w="keep">Weiterlaufen lassen</button></div></div></div>`);
     ov.appendChild(w); W = { el: w, ok: onOk }; w.querySelector('[data-w="keep"]').focus();
   };
-  const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = TBo.slideTf(k); TBo.place(k); };
+  const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = TBo.slideTf(k); TBo.place(k); INK.place(k); };
   const apply = () => {
     slide.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > P.cur));
     $p('.pr-n').textContent = `${P.i + 1} / ${S.length}` + (P.max ? ` · Schritt ${P.cur} von ${P.max}` : '');
@@ -6368,8 +6541,8 @@ function openPres(start) {
   /* ---------- Zweiter Bildschirm: Beamerfenster zeigt die Folie, dieses Fenster die Referentenansicht ---------- */
   let AW = null, awPoll = 0, awWake = null, sideKey = '';
   const awOk = () => !!(AW && !AW.closed && AW.document && AW.document.querySelector('.pr-slide'));
-  const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = TBo.slideTf(k); TBo.placeAw(d, k); };
-  const mirror = () => { if (!awOk()) return; TBo.mirror(); const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
+  const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = TBo.slideTf(k); TBo.placeAw(d, k); INK.placeAw(d, k); };
+  const mirror = () => { if (!awOk()) return; TBo.mirror(); INK.draw(); const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
   const mirrorT = () => { if (!awOk()) return; const d = AW.document; ['.pr-timer', '.pr-tbar'].forEach(q => { const a = slide.querySelector(q), b = d.querySelector('.pr-slide ' + q); if (a && b) { b.className = a.className; b.innerHTML = a.innerHTML; } }); d.querySelector('.pr-slide').className = slide.className; };
   const refSide = () => {
     if (!ov.classList.contains('pr-ref')) return; const sd = $p('.pr-side'); const nx = S[P.i + 1];
@@ -6460,7 +6633,7 @@ function openPres(start) {
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
-    fit(); TBo.slide(P.i);
+    fit(); TBo.slide(P.i); INK.slide(sl);
     warnClose();
     if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
   };
@@ -6470,9 +6643,10 @@ function openPres(start) {
   const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
   const close = () => tmWarn('Beim Beenden der Präsentation wird er abgebrochen.', 'Präsentation beenden', closeNow);
   const wake = keepAwake();
-  const closeNow = () => { TBo.destroy(); wake(); refClose(); clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const closeNow = () => { TBo.destroy(); INK.destroy(); wake(); refClose(); clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
     if (TBo.keyIgnore(e)) return;
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'z' || e.key === 'Z') && INK.active()) { e.preventDefault(); e.stopPropagation(); INK.undo(); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     if ((e.key === ' ' || e.key === 'Enter') && e.target.closest && e.target.closest('.pr-bar button')) return;
     const k = e.key; const stop = () => { e.preventDefault(); e.stopPropagation(); };
@@ -6486,7 +6660,8 @@ function openPres(start) {
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
     else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === '+' || k === '=') { stop(); tmAdj(1); } else if (k === '-' || k === '_') { stop(); tmAdj(-1); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'z' || k === 'Z') { stop(); ntToggle(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
-    else if (k === 'Escape') { stop(); if (!document.fullscreenElement) close(); }
+    else if (k === 'p' || k === 'P') { stop(); INK.toggle(); } else if (k === 'l' || k === 'L') { stop(); INK.laser(); }
+    else if (k === 'Escape') { stop(); if (INK.active()) { INK.on(false); if (INK.active()) INK.laser(); return; } if (!document.fullscreenElement) close(); }
   };
   /* Video: auf der Folie abspielen; mit Beamerfenster nur dort, hier bleibt die Steuerung */
   let ytOn = -1;
@@ -6508,16 +6683,17 @@ function openPres(start) {
     if (e.target.closest('.pr-slide .pr-yt.on, .pr-slide .pr-yt.remote')) return;
     if (W) { const wb = e.target.closest('[data-w]'); if (wb) { const f = W.ok, ok = wb.dataset.w === 'ok'; warnClose(); if (ok) f(); } else if (!e.target.closest('.pr-warn-c')) warnClose(); return; }
     if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
+    if (INK.eats(e)) return;
     if (TBo.click(e)) return;
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
-    else if (k === 'ref') refOpen();
+    else if (k === 'ref') refOpen(); else if (k === 'ink') INK.toggle(); else if (k === 'laser') INK.laser();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
   document.addEventListener('keydown', key, true); window.addEventListener('resize', () => { scale(); sideKey = ''; refSide(); });
-  scale(); show(); ov.focus();
+  scale(); show(); ov.focus(); if (opts.board) INK.on(true);
 }
 
 /* PowerPoint: dieselben Folien als bearbeitbare Textfelder und Tabellen (PptxGenJS); Erwartung und Tipps stehen in den Notizen */
@@ -10873,6 +11049,7 @@ function mmoreHTML() {
     + it('btn-saveas', '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 2.5h8.3l2.7 2.7v8.3h-11z"/><path d="M5.2 2.5v3.2h4.6V2.5"/></svg>', 'Speichern unter …')
     + it('btn-set', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></svg>', 'Einstellungen')
     + it('btn-forum', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M19 9h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v2.5L16 19h-4"/></svg>', 'Lehrerzimmer')
+    + it('btn-tafel', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M8 21l2-4.5M16 21l-2-4.5"/><path d="M6.5 12.5c1.6-2.6 3-3.6 4.2-2.4 1 1 2 .9 3.3-.6"/></svg>', 'Tafel öffnen')
     + it('btn-help', '<b>?</b>', 'Hilfe und Kniffe')
     + (document.getElementById('btn-login') && !document.getElementById('btn-login').hidden ? it('btn-login', '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.5" r="2.8"/><path d="M2.8 14c.8-2.8 2.8-4 5.2-4s4.4 1.2 5.2 4"/></svg>', 'Anmelden') : '');
 }
@@ -14268,6 +14445,7 @@ function boot() {
     if (act === 'new') openNew();
     if (act === 'home') homeOpen();
     if (act === 'forum') forumOpen();
+    if (act === 'tafel-open') openPres(0, { board: true });
     if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
     if (act === 'rlp-view') rlpOpen();
     if (act === 'settings') openSettings();
