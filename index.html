@@ -1340,13 +1340,13 @@ body{transition:background-color .3s,border-color .25s}
 .pr.pr-boarding .tb{display:none}
 .pr.pr-boarding>.pr-stage>.pr-slide{border-radius:0;box-shadow:none}
 .pr.pr-boarding .pr-stage{background:#fff}
-.pr-more{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 8px;border:0;border-radius:14px;background:rgba(28,31,39,.86);color:#fff;font:700 12px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.6}
+.pr-more{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:6px;padding:8px 16px 8px 12px;border:0;border-radius:14px;background:rgba(28,31,39,.86);color:#fff;font:700 12px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.6}
 .pr-more:hover,.pr-more:focus-visible{opacity:1}
-.pr-hscroll{position:absolute;left:210px;right:90px;bottom:22px;height:16px;z-index:6;border-radius:999px;background:rgba(28,31,39,.18);cursor:pointer;touch-action:none}
-.pr-hscroll[hidden]{display:none}
-.pr-hscroll i{position:absolute;top:2px;bottom:2px;min-width:30px;border-radius:999px;background:rgba(28,31,39,.65);cursor:grab}
-.pr:not(.pr-blankcur) .pr-more,.pr:not(.pr-blankcur) .pr-hscroll{display:none}
-.pr-aud .pr-more,.pr-aud .pr-hscroll{display:none}
+.pr-vscroll{position:absolute;right:16px;top:24px;bottom:24px;width:16px;z-index:6;border-radius:999px;background:rgba(28,31,39,.18);cursor:pointer;touch-action:none}
+.pr-vscroll[hidden]{display:none}
+.pr-vscroll i{position:absolute;left:2px;right:2px;min-height:30px;border-radius:999px;background:rgba(28,31,39,.65);cursor:grab}
+.pr:not(.pr-blankcur) .pr-more,.pr:not(.pr-blankcur) .pr-vscroll{display:none}
+.pr-aud .pr-more,.pr-aud .pr-vscroll{display:none}
 .pr-tafelbtn{position:absolute;left:14px;bottom:14px;z-index:6;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:0;border-radius:999px;background:rgba(28,31,39,.86);color:#fff;font:700 15px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.55;transition:opacity .2s,background .2s}
 .pr-tafelbtn:hover,.pr-tafelbtn:focus-visible,.pr-tafelbtn[aria-pressed="true"]{opacity:1}
 .pr-tafelbtn[aria-pressed="true"]{background:#2741B5}
@@ -6360,8 +6360,8 @@ const INK_TOOLS = {
   er: { l: 'Radierer', g: '<path d="M8.5 19.5h11"/><path d="M4.6 14.8l8.9-8.9a2 2 0 0 1 2.8 0l2.8 2.8a2 2 0 0 1 0 2.8l-7.3 7.3a2 2 0 0 1-1.4.6H9.3a2 2 0 0 1-1.4-.6l-3.3-3.3a1.9 1.9 0 0 1 0-.7z"/><path d="M9.2 10.2l5.6 5.6"/>' }
 };
 const TAFEL_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M8 21l2-4.5M16 21l-2-4.5"/><path d="M6.5 12.5c1.6-2.6 3-3.6 4.2-2.4 1 1 2 .9 3.3-.6"/></svg>';
-// Hintergrund einer Tafelseite mitscrollen (die Seite kann nach rechts erweitert werden)
-const inkBgPos = s => (s.pat === 'kariert' ? `${-1 - (s.sx || 0)}px -1px` : s.pat === 'liniert' ? `${-(s.sx || 0)}px 20px` : '');
+// Hintergrund einer Tafelseite mitscrollen (die Seite kann nach unten erweitert werden)
+const inkBgPos = s => (s.pat === 'kariert' ? `-1px ${-1 - (s.sy || 0)}px` : s.pat === 'liniert' ? `0 ${20 - (s.sy || 0)}px` : '');
 const INK_PATS = { kariert: 'Kariert', liniert: 'Liniert', weiss: 'Weiß' };
 const inkKey = s => (!s ? '' : s.k === 'blank' ? s.id : `${s.k}:${s.b ? s.b.id : s.bid || ''}:${s.part || s.qi || 0}`);
 const inkSvg = g => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g}</svg>`;
@@ -6414,7 +6414,7 @@ function inkLayer(X) {
   const H = () => (hist[st.key] = hist[st.key] || []);
   const renderTo = (gg, w) => {
     gg.setTransform(1, 0, 0, 1, 0, 0); gg.clearRect(0, 0, w.width, w.height); const m = M(); const f = w.width / 1600;
-    gg.setTransform(f * m.s, 0, 0, f * m.s, f * m.x, f * m.y); gg.translate(-(X.off ? X.off() : 0), 0);
+    gg.setTransform(f * m.s, 0, 0, f * m.s, f * m.x, f * m.y); gg.translate(0, -(X.off ? X.off() : 0));
     (store[st.key] || []).forEach(s => inkDraw(gg, s)); if (st.cur) inkDraw(gg, st.cur);
     if (st.lz.length) { const now = performance.now(); const L = st.lz.filter(p => now - p.t < 650);
       gg.save(); gg.lineCap = gg.lineJoin = 'round'; for (let i = 1; i < L.length; i++) { const a = 1 - (now - L[i].t) / 650; gg.strokeStyle = `rgba(255,40,40,${(a * 0.85).toFixed(3)})`; gg.lineWidth = 4 + 8 * a; gg.beginPath(); gg.moveTo(L[i - 1].x, L[i - 1].y); gg.lineTo(L[i].x, L[i].y); gg.stroke(); }
@@ -6436,7 +6436,7 @@ function inkLayer(X) {
     const ca = bar.querySelector('[data-ink="clrall"]'); ca.textContent = st.clrAll > Date.now() ? 'wirklich alle?' : 'alle'; ca.disabled = !Object.values(store).some(l => l && l.length);
   };
   const changed = () => { draw(); sync(); X.saved(); };
-  const toSlide = e => { const r = cv.getBoundingClientRect(); const bx = (e.clientX - r.left) / r.width * 1600, by = (e.clientY - r.top) / r.height * 900; const m = M(); return [(bx - m.x) / m.s + (X.off ? X.off() : 0), (by - m.y) / m.s]; };
+  const toSlide = e => { const r = cv.getBoundingClientRect(); const bx = (e.clientX - r.left) / r.width * 1600, by = (e.clientY - r.top) / r.height * 900; const m = M(); return [(bx - m.x) / m.s, (by - m.y) / m.s + (X.off ? X.off() : 0)]; };
   const r1 = v => Math.round(v * 10) / 10;
   let erased = null;
   cv.addEventListener('pointerdown', e => {
@@ -6523,7 +6523,7 @@ function openPres(start, opts = {}) {
   const boardSet = on => { if (opts.board) return; BOARD.open = on; ov.classList.toggle('pr-boarding', on); boardFull(on); scale(); awScale(); const b = $p('.pr-tafelbtn'); if (b) { b.setAttribute('aria-pressed', String(on)); b.querySelector('span').textContent = on ? 'Zurück zur Folie' : 'Tafel'; } show(); ov.focus(); };
   const INK = inkLayer({ ov, stage, store: {}, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: () => {},
     addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
-    off: () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2.sx || 0 : 0; },
+    off: () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2.sy || 0 : 0; },
     setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
   const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1, cid: 0 };
   // Uhrzeit-Plan der Stunde; gilt nur, solange die Uhr in der Stundenzeit liegt (sonst wie bisher Minuten herunterzählen)
@@ -6666,14 +6666,14 @@ function openPres(start, opts = {}) {
     warnClose();
     if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
   };
-  // Tafel nach rechts erweitern; darunter erscheint eine Scrollleiste
+  // Tafel nach unten erweitern; rechts erscheint eine Scrollleiste
   const bl = () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2 : null; };
-  const hsSync = () => { const hs = $p('.pr-hscroll'); if (!hs) return; const b2 = bl(); const W = b2 ? b2.w || 1600 : 1600; hs.hidden = !b2 || W <= 1600; if (hs.hidden) return; const th = hs.firstElementChild; th.style.width = (1600 / W * 100).toFixed(3) + '%'; th.style.left = ((b2.sx || 0) / W * 100).toFixed(3) + '%'; };
-  const blankScroll = x => { const b2 = bl(); if (!b2) return; b2.sx = Math.round(Math.max(0, Math.min((b2.w || 1600) - 1600, x))); const d = slide.querySelector('.pr-blank'); if (d) d.style.backgroundPosition = inkBgPos(b2) || '0 0';
+  const hsSync = () => { const hs = $p('.pr-vscroll'); if (!hs) return; const b2 = bl(); const H = b2 ? b2.h || 900 : 900; hs.hidden = !b2 || H <= 900; if (hs.hidden) return; const th = hs.firstElementChild; th.style.height = (900 / H * 100).toFixed(3) + '%'; th.style.top = ((b2.sy || 0) / H * 100).toFixed(3) + '%'; };
+  const blankScroll = y => { const b2 = bl(); if (!b2) return; b2.sy = Math.round(Math.max(0, Math.min((b2.h || 900) - 900, y))); const d = slide.querySelector('.pr-blank'); if (d) d.style.backgroundPosition = inkBgPos(b2) || '0 0';
     if (awOk()) { const ad = AW.document.querySelector('.pr-slide .pr-blank'); if (ad) ad.style.backgroundPosition = inkBgPos(b2) || '0 0'; } hsSync(); INK.draw(); };
-  const blankMore = () => { const b2 = bl(); if (!b2) return; b2.w = (b2.w || 1600) + 1600; const from = b2.sx || 0, to = Math.min(b2.w - 1600, from + 1200), t0 = performance.now();
+  const blankMore = () => { const b2 = bl(); if (!b2) return; b2.h = (b2.h || 900) + 900; const from = b2.sy || 0, to = Math.min(b2.h - 900, from + 680), t0 = performance.now();
     const step = t => { const f = Math.min(1, (t - t0) / 350); blankScroll(from + (to - from) * (1 - Math.pow(1 - f, 3))); if (f < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); };
-  stage.addEventListener('wheel', e => { const b2 = bl(); if (!b2 || (b2.w || 1600) <= 1600) return; e.preventDefault(); const k = slide.getBoundingClientRect().width / 1600 || 1; blankScroll((b2.sx || 0) + (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) / k); }, { passive: false });
+  stage.addEventListener('wheel', e => { const b2 = bl(); if (!b2 || (b2.h || 900) <= 900) return; e.preventDefault(); const k = slide.getBoundingClientRect().height / 900 || 1; blankScroll((b2.sy || 0) + e.deltaY / k); }, { passive: false });
   // Laser an/aus; auf einer Tafelseite ist danach wieder der Stift aktiv
   const laserT = () => { INK.laser(); if (curSl().k === 'blank' && !INK.active()) INK.on(true); };
   const next = () => { if (BOARD.open) { boardSet(false); return; } if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
@@ -6723,7 +6723,7 @@ function openPres(start, opts = {}) {
     if (W) { const wb = e.target.closest('[data-w]'); if (wb) { const f = W.ok, ok = wb.dataset.w === 'ok'; warnClose(); if (ok) f(); } else if (!e.target.closest('.pr-warn-c')) warnClose(); return; }
     if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
     if (e.target.closest('.pr-more')) { blankMore(); return; }
-    if (e.target.closest('.pr-hscroll')) return;
+    if (e.target.closest('.pr-vscroll')) return;
     if (INK.eats(e)) return;
     if (TBo.click(e)) return;
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
@@ -6735,12 +6735,12 @@ function openPres(start, opts = {}) {
   });
   document.addEventListener('keydown', key, true); window.addEventListener('resize', () => { scale(); sideKey = ''; refSide(); });
   if (opts.board) { ov.classList.add('pr-boarding'); boardFull(true); }
-  stage.insertAdjacentHTML('beforeend', '<button type="button" class="pr-more" title="Tafel nach rechts erweitern" aria-label="Mehr Platz rechts"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Platz</span></button><div class="pr-hscroll" hidden role="scrollbar" aria-label="Tafel verschieben" aria-orientation="horizontal"><i></i></div>');
-  { const hs = $p('.pr-hscroll'); let dr = null;
-    hs.addEventListener('pointerdown', e => { const b2 = bl(); if (!b2) return; e.preventDefault(); e.stopPropagation(); const r = hs.getBoundingClientRect(), W = b2.w || 1600;
-      if (e.target === hs) blankScroll((e.clientX - r.left) / r.width * W - 800);
-      try { hs.setPointerCapture(e.pointerId); } catch {} dr = { x: e.clientX, sx: b2.sx || 0, k: W / r.width }; });
-    hs.addEventListener('pointermove', e => { if (dr) blankScroll(dr.sx + (e.clientX - dr.x) * dr.k); });
+  stage.insertAdjacentHTML('beforeend', '<button type="button" class="pr-more" title="Tafel nach unten erweitern" aria-label="Mehr Platz unten"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Platz</span></button><div class="pr-vscroll" hidden role="scrollbar" aria-label="Tafel verschieben" aria-orientation="vertical"><i></i></div>');
+  { const hs = $p('.pr-vscroll'); let dr = null;
+    hs.addEventListener('pointerdown', e => { const b2 = bl(); if (!b2) return; e.preventDefault(); e.stopPropagation(); const r = hs.getBoundingClientRect(), H = b2.h || 900;
+      if (e.target === hs) blankScroll((e.clientY - r.top) / r.height * H - 450);
+      try { hs.setPointerCapture(e.pointerId); } catch {} dr = { y: e.clientY, sy: b2.sy || 0, k: H / r.height }; });
+    hs.addEventListener('pointermove', e => { if (dr) blankScroll(dr.sy + (e.clientY - dr.y) * dr.k); });
     const end = () => { dr = null; }; hs.addEventListener('pointerup', end); hs.addEventListener('pointercancel', end); }
   if (!opts.board) stage.insertAdjacentHTML('beforeend', `<button type="button" class="pr-tafelbtn" data-p="board" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>`);
   scale(); show(); ov.focus();
