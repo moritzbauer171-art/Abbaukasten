@@ -11330,7 +11330,7 @@ async function deleteSheet(id) {
 /* ---------- Speicherort wählen ---------- */
 async function useBackend(b) {
   const t = ++backendToken;
-  b = withOffline(b); backend = b; state.offline = null;
+  b = withOffline(b); backend = b; state.offline = null; state.klReady = false; state.needSetup = false; state.prefsFail = false;
   if (b.kind === 'supabase' && !b.offOnly && store.user) lsSet(LS_OFFUSER, { id: store.user.id }); setStatus('pending'); state.shared = null; state.sharedAt = 0;
   let listed = true;
   try { await refreshLib(); } catch (err) { console.error(err); listed = false; }
@@ -11467,6 +11467,13 @@ function applyKlassen() {
     const localLegacy = backend && backend.kind !== 'local' && Object.values(localLib()).some(x => x && x.sheet && LEGACY_IDS.includes(x.sheet.klasse));
     if (lp && lp.klassen) { ks = lp.klassen; state.prefs.klassen = ks; savePrefs(); }
     else if (legacy || localLegacy) { ks = DEFAULT_KLASSEN.map(normKlasse); state.prefs.klassen = ks; savePrefs(); }
+    else if (state.prefsFail || state.lib.length) {
+      // Einstellungen fehlen, aber es gibt Blätter: Reiter aus den Blättern ableiten statt neu einrichten (wird nicht gespeichert, solange das Laden fehlschlug)
+      const cache = (lsGet(LS_KLCACHE) || []).filter(k => k && k.id);
+      const ids = [...new Set(state.lib.map(d => d.kraw || d.klasse).filter(Boolean))];
+      ks = ids.length ? ids.map((id, i) => normKlasse(cache.find(k => k.id === id) || { id, label: 'Klasse ' + (i + 1) }, i)) : cache.length ? cache.map(normKlasse) : [normKlasse({ id: 'k1', label: 'Meine Klasse', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0)];
+      if (!state.prefsFail) { state.prefs.klassen = ks; savePrefs(); }
+    }
     else { ks = [normKlasse({ id: 'k1', label: 'Meine Klasse', course: 'Deutsch', accent: 'tinte', anrede: 'sie' }, 0)]; state.needSetup = true; }
   }
   KLASSEN = ks; lsSet(LS_KLCACHE, ks);
@@ -11475,10 +11482,11 @@ function applyKlassen() {
   // Neues Konto: keine Hinweise auf frühere Neuerungen; Startseite und Tour erst nach der Einrichtung
   if (state.needSetup) { state.newAcct = true; lsSet(LS_NEWS, NEWS_ID); }
   state.klReady = true;
+  if (!state.needSetup && state.dlg && state.dlg.mode === 'klassen' && state.dlg.setup) { state.dlg = null; renderDlg(); }
   renderTabs(); if (state.libOpen) renderLib();
 }
 // Ohne Anmeldung, aber mit Online-Ablage: erst anmelden lassen (die Einrichtung folgt nur für neue Konten)
-function maybeSetup(afterLogin) { if (!state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
+function maybeSetup(afterLogin) { if (!state.klReady || !state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
 function openKlassen(setup, addFach) {
   const rows = (setup || addFach ? [] : KLASSEN).map(k => ({ ...k }));
   if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach] || Object.keys(ACCENTS)[FACH_ORDER.indexOf(addFach) % Object.keys(ACCENTS).length], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
@@ -11520,8 +11528,12 @@ function klassenHTML() {
     <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
     <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">LehrWerk · © 2026 Moritz Bauer</p>' : ''}`;
 }
-function klassenSave() {
-  const d = state.dlg; const jobs = (d.kldel || []).map(j => ({ ...j, ids: state.lib.filter(x => x.klasse === j.from).map(x => x.id) })).filter(j => j.ids.length); const school = d.setup ? dlgVal('#kl-school') : null;
+async function klassenSave() {
+  const d = state.dlg;
+  if (d.setup && backend && backend.kind !== 'local' && backend.loadPrefs) {
+    let p = null; try { p = await backend.loadPrefs(); } catch (err) { console.error(err); dlgMsg('Dein Konto ist gerade nicht erreichbar. Bitte gleich noch einmal versuchen.'); return; }
+    if (p && Array.isArray(p.klassen) && p.klassen.length) { state.prefs = normPrefs(p); state.dlg = null; renderDlg(); applyKlassen(); await openForKlasse(state.klasse); toast('Deine Klassen sind schon im Konto gespeichert und wurden geladen.'); return; }
+  } const jobs = (d.kldel || []).map(j => ({ ...j, ids: state.lib.filter(x => x.klasse === j.from).map(x => x.id) })).filter(j => j.ids.length); const school = d.setup ? dlgVal('#kl-school') : null;
   const rows = [...(d.single ? KLASSEN.map(k => ({ ...k })) : []), ...d.rows.filter(k => String(k.label).trim())];
   if (d.single && !d.rows.some(k => String(k.label).trim())) { dlgMsg('Bitte der neuen Klasse einen Namen geben, z. B. 8b oder Q1 Mathe.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
   if (!rows.length) { dlgMsg('Bitte mindestens einer Klasse einen Namen geben.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
@@ -11631,11 +11643,11 @@ let prefsTimer = null;
 function savePrefs() {
   clearTimeout(prefsTimer); const b = backend;
   prefsTimer = setTimeout(async () => {
-    if (!b || !b.savePrefs || b !== backend) return;
+    if (!b || !b.savePrefs || b !== backend || state.prefsFail || !state.klReady) return;
     try { await b.savePrefs(clone(state.prefs)); } catch (err) { console.error(err); toast('Die Ordner konnten gerade nicht gespeichert werden. Die nächste Änderung versucht es erneut.'); }
   }, 250);
 }
-async function loadPrefs(b) { let p = null; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); } if (b === backend) { state.prefs = normPrefs(p); tmApply(); } }
+async function loadPrefs(b) { let p = null, fail = false; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); fail = true; } if (b === backend) { state.prefs = normPrefs(p); state.prefsFail = fail && b.kind !== 'local'; tmApply(); if (state.prefsFail) toast('Deine Einstellungen ließen sich gerade nicht laden. Bis zum Neuladen speichert LehrWerk keine Änderungen an Klassen und Ordnern.'); } }
 function mergePrefs(p) {
   const lp = normPrefs(p); if (!lp.folders.length && !Object.keys(lp.place).length && !lp.klassen) return false;
   const ids = new Set(state.prefs.folders.map(f => f.id));
