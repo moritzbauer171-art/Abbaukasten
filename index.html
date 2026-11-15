@@ -1337,6 +1337,9 @@ body{transition:background-color .3s,border-color .25s}
 .pp-g .pp-pat{border:1px solid #CBD1DB;background-color:#fff}
 .pp-g .pp-pat.pat-kariert{background-image:linear-gradient(#9DB7E0 1px,transparent 1px),linear-gradient(90deg,#9DB7E0 1px,transparent 1px);background-size:7px 7px}
 .pp-g .pp-pat.pat-liniert{background-image:linear-gradient(transparent 6px,#9DB7E0 6px 7px);background-size:100% 8px}
+.pr.pr-boarding .tb{display:none}
+.pr.pr-boarding>.pr-stage>.pr-slide{border-radius:0;box-shadow:none}
+.pr.pr-boarding .pr-stage{background:#fff}
 .pr-tafelbtn{position:absolute;left:14px;bottom:14px;z-index:6;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:0;border-radius:999px;background:rgba(28,31,39,.86);color:#fff;font:700 15px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.55;transition:opacity .2s,background .2s}
 .pr-tafelbtn:hover,.pr-tafelbtn:focus-visible,.pr-tafelbtn[aria-pressed="true"]{opacity:1}
 .pr-tafelbtn[aria-pressed="true"]{background:#2741B5}
@@ -6505,8 +6508,11 @@ function openPres(start, opts = {}) {
   // Tafel über der Präsentation: eigene leere Seite, die beim Schließen bis zum Ende der Präsentation erhalten bleibt
   const BOARD = { open: false, s: { k: 'blank', pat: 'kariert', id: 'bl-tafel' } };
   const curSl = () => (BOARD.open ? BOARD.s : S[P.i]);
-  const boardSet = on => { if (opts.board) return; BOARD.open = on; ov.classList.toggle('pr-boarding', on); const b = $p('.pr-tafelbtn'); if (b) { b.setAttribute('aria-pressed', String(on)); b.querySelector('span').textContent = on ? 'Zurück zur Folie' : 'Tafel'; } show(); ov.focus(); };
-  const INK = inkLayer({ ov, stage, store: {}, tafel: () => TBo.isOn(), awOk: () => awOk(), aw: () => AW, saved: () => {},
+  const boarding = () => BOARD.open || !!opts.board;
+  // Tafel immer bildschirmfüllend: ohne Tafelansicht-Rahmen und, ohne Beamerfenster, im Vollbild des Browsers
+  const boardFull = on => { try { if (on && !awOk() && !document.fullscreenElement && ov.requestFullscreen) { BOARD.fs = true; ov.requestFullscreen().catch(() => { BOARD.fs = false; }); } else if (!on && BOARD.fs) { BOARD.fs = false; if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } } catch {} };
+  const boardSet = on => { if (opts.board) return; BOARD.open = on; ov.classList.toggle('pr-boarding', on); boardFull(on); scale(); awScale(); const b = $p('.pr-tafelbtn'); if (b) { b.setAttribute('aria-pressed', String(on)); b.querySelector('span').textContent = on ? 'Zurück zur Folie' : 'Tafel'; } show(); ov.focus(); };
+  const INK = inkLayer({ ov, stage, store: {}, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: () => {},
     addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
     setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
   const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1, cid: 0 };
@@ -6526,7 +6532,7 @@ function openPres(start, opts = {}) {
     const w = el(`<div class="pr-warn" role="alertdialog" aria-modal="true" aria-labelledby="pr-warn-t" aria-describedby="pr-warn-d"><div class="pr-warn-c"><b id="pr-warn-t">Der Timer${other} läuft noch</b><p id="pr-warn-d">Noch <span class="pr-warn-l">${fmt(T.left)}</span> ${msg}</p><div class="pr-warn-a"><button type="button" data-w="ok">${okLabel}</button><button type="button" data-w="keep">Weiterlaufen lassen</button></div></div></div>`);
     ov.appendChild(w); W = { el: w, ok: onOk }; w.querySelector('[data-w="keep"]').focus();
   };
-  const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = TBo.slideTf(k); TBo.place(k); INK.place(k); };
+  const scale = () => { const k = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900); slide.style.transform = boarding() ? `translate(-50%,-50%) scale(${k})` : TBo.slideTf(k); TBo.place(k); INK.place(k); };
   const apply = () => {
     slide.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > P.cur));
     $p('.pr-n').textContent = `${P.i + 1} / ${S.length}` + (P.max ? ` · Schritt ${P.cur} von ${P.max}` : '');
@@ -6554,8 +6560,8 @@ function openPres(start, opts = {}) {
   /* ---------- Zweiter Bildschirm: Beamerfenster zeigt die Folie, dieses Fenster die Referentenansicht ---------- */
   let AW = null, awPoll = 0, awWake = null, sideKey = '';
   const awOk = () => !!(AW && !AW.closed && AW.document && AW.document.querySelector('.pr-slide'));
-  const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = TBo.slideTf(k); TBo.placeAw(d, k); INK.placeAw(d, k); };
-  const mirror = () => { if (!awOk()) return; TBo.mirror(); INK.draw(); const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
+  const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = boarding() ? `translate(-50%,-50%) scale(${k})` : TBo.slideTf(k); TBo.placeAw(d, k); INK.placeAw(d, k); d.querySelector('.pr').classList.toggle('pr-boarding', boarding()); };
+  const mirror = () => { if (!awOk()) return; TBo.mirror(); AW.document.querySelector('.pr').classList.toggle('pr-boarding', boarding()); INK.draw(); const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
   const mirrorT = () => { if (!awOk()) return; const d = AW.document; ['.pr-timer', '.pr-tbar'].forEach(q => { const a = slide.querySelector(q), b = d.querySelector('.pr-slide ' + q); if (a && b) { b.className = a.className; b.innerHTML = a.innerHTML; } }); d.querySelector('.pr-slide').className = slide.className; };
   const refSide = () => {
     if (!ov.classList.contains('pr-ref')) return; const sd = $p('.pr-side'); const nx = S[P.i + 1];
@@ -6708,6 +6714,7 @@ function openPres(start, opts = {}) {
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
   document.addEventListener('keydown', key, true); window.addEventListener('resize', () => { scale(); sideKey = ''; refSide(); });
+  if (opts.board) { ov.classList.add('pr-boarding'); boardFull(true); }
   if (!opts.board) stage.insertAdjacentHTML('beforeend', `<button type="button" class="pr-tafelbtn" data-p="board" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>`);
   scale(); show(); ov.focus();
 }
