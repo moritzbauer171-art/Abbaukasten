@@ -1321,7 +1321,7 @@ body{transition:background-color .3s,border-color .25s}
 .pr-ink{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);transform-origin:center;pointer-events:none;z-index:4;touch-action:none}
 .pr-ink.on{pointer-events:auto;cursor:crosshair}.pr-ink.laser{cursor:none}
 .pr-aud .pr-ink{pointer-events:none}
-.tb{z-index:3}
+.tfl{z-index:3}
 .pr-pen{position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:7;display:flex;flex-direction:column;gap:8px;padding:8px;background:#fff;color:#1C1F27;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-height:calc(100% - 84px);overflow:auto}
 .pr-pen[hidden]{display:none}
 .pp-g{display:grid;grid-template-columns:repeat(2,36px);gap:4px;padding-bottom:8px;border-bottom:1px solid #E6E8EE}.pp-g:last-child{border:0;padding:0}
@@ -1337,7 +1337,7 @@ body{transition:background-color .3s,border-color .25s}
 .pp-g .pp-pat{border:1px solid #CBD1DB;background-color:#fff}
 .pp-g .pp-pat.pat-kariert{background-image:linear-gradient(#9DB7E0 1px,transparent 1px),linear-gradient(90deg,#9DB7E0 1px,transparent 1px);background-size:7px 7px}
 .pp-g .pp-pat.pat-liniert{background-image:linear-gradient(transparent 6px,#9DB7E0 6px 7px);background-size:100% 8px}
-.pr.pr-boarding .tb{display:none}
+.pr.pr-boarding .tfl{display:none}
 .pr.pr-boarding>.pr-stage>.pr-slide{border-radius:0;box-shadow:none}
 .pr.pr-boarding .pr-stage{background:#fff}
 .pr-more{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:6px;padding:8px 16px 8px 12px;border:0;border-radius:14px;background:rgba(28,31,39,.86);color:#fff;font:700 12px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.6}
@@ -1361,19 +1361,19 @@ body{transition:background-color .3s,border-color .25s}
 /* ===== Tafelansicht ===== */
 .pr.pr-tafel .pr-stage{background:var(--tbg,#DDF0FF)}
 .pr.pr-tafel>.pr-stage>.pr-slide{border-radius:34px;box-shadow:0 18px 50px rgba(15,25,45,.28)}
-.tb{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);transform-origin:center;pointer-events:none;font-family:"Andika","Atkinson Hyperlegible",system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";color:#1C1F27;cursor:default}
-.pr:not(.pr-tafel) .tb{display:none}
-.tb-ws{position:absolute;inset:0}
-.tb-strip{position:absolute;left:24px;top:722px;width:1552px;height:154px;display:flex;gap:14px;align-items:stretch;justify-content:center;pointer-events:auto}
-.tb-strip[hidden]{display:none}
-.tb-it{flex:1 1 0;min-width:0;max-width:250px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;padding:12px 10px 10px;border-radius:22px;background:rgba(255,255,255,.9);border:0;border-top:10px solid var(--phc);font-family:inherit;font-size:22px;font-weight:700;line-height:1.15;color:#1C1F27;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(15,25,45,.14);transition:transform .25s,opacity .25s}
-.tb-ic{font-size:40px;line-height:1;height:48px;display:flex;align-items:center;justify-content:center}.tb-ic img{height:48px;width:auto}
-.tb-l{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%}
-.tb-strip.many .tb-it{font-size:17px;padding:10px 6px 8px;border-radius:18px}.tb-strip.many .tb-ic{font-size:30px;height:36px}.tb-strip.many .tb-ic img{height:36px}
-.tb-it.done{opacity:.6}
-.tb-it.done::after{content:"✓";position:absolute;right:10px;top:2px;font-size:30px;color:#1E7A46}
-.tb-it.on{background:#fff;transform:translateY(-8px) scale(1.05);box-shadow:0 0 0 5px var(--phc),0 12px 28px rgba(15,25,45,.28)}
-.tb-it.on::before{content:"Wir sind hier";position:absolute;left:50%;top:-40px;transform:translateX(-50%);white-space:nowrap;font-size:17px;color:#fff;background:var(--phc);padding:3px 12px;border-radius:999px}
+.tfl{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%);transform-origin:center;pointer-events:none;font-family:"Andika","Atkinson Hyperlegible",system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";color:#1C1F27;cursor:default}
+.pr:not(.pr-tafel) .tfl{display:none}
+.tfl-ws{position:absolute;inset:0}
+.tfl-strip{position:absolute;left:24px;top:722px;width:1552px;height:154px;display:flex;gap:14px;align-items:stretch;justify-content:center;pointer-events:auto}
+.tfl-strip[hidden]{display:none}
+.tfl-it{flex:1 1 0;min-width:0;max-width:250px;position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px;padding:12px 10px 10px;border-radius:22px;background:rgba(255,255,255,.9);border:0;border-top:10px solid var(--phc);font-family:inherit;font-size:22px;font-weight:700;line-height:1.15;color:#1C1F27;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(15,25,45,.14);transition:transform .25s,opacity .25s}
+.tfl-ic{font-size:40px;line-height:1;height:48px;display:flex;align-items:center;justify-content:center}.tfl-ic img{height:48px;width:auto}
+.tfl-l{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%}
+.tfl-strip.many .tfl-it{font-size:17px;padding:10px 6px 8px;border-radius:18px}.tfl-strip.many .tfl-ic{font-size:30px;height:36px}.tfl-strip.many .tfl-ic img{height:36px}
+.tfl-it.done{opacity:.6}
+.tfl-it.done::after{content:"✓";position:absolute;right:10px;top:2px;font-size:30px;color:#1E7A46}
+.tfl-it.on{background:#fff;transform:translateY(-8px) scale(1.05);box-shadow:0 0 0 5px var(--phc),0 12px 28px rgba(15,25,45,.28)}
+.tfl-it.on::before{content:"Wir sind hier";position:absolute;left:50%;top:-40px;transform:translateX(-50%);white-space:nowrap;font-size:17px;color:#fff;background:var(--phc);padding:3px 12px;border-radius:999px}
 .tw{position:absolute;pointer-events:auto;display:flex;flex-direction:column;background:#fff;border-radius:24px;box-shadow:0 10px 30px rgba(15,25,45,.24);overflow:hidden}
 .tw-h{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;height:42px;padding:0 8px 0 18px;font-size:17px;color:#5B6271;cursor:grab;user-select:none;touch-action:none}
 .tw-h b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1396,7 +1396,7 @@ body{transition:background-color .3s,border-color .25s}
 .tw-rs{position:absolute;right:0;bottom:0;width:26px;height:26px;cursor:nwse-resize;touch-action:none;background:linear-gradient(135deg,transparent 52%,#C3C8D2 52% 60%,transparent 60% 70%,#C3C8D2 70% 78%,transparent 78%)}
 .pr-aud .tw-ctl{display:none!important}
 .pr-aud .tw-h{cursor:default}
-.tb-dark .tb-it:not(.on){background:rgba(255,255,255,.82)}
+.tfl-dark .tfl-it:not(.on){background:rgba(255,255,255,.82)}
 /* Timer */
 .tw-tm{position:relative;width:min(100cqw,100cqh);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
 .tw-tm svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
@@ -1476,24 +1476,24 @@ body{transition:background-color .3s,border-color .25s}
 .pr-tmenu .tm-note{margin:10px 0 0;font-size:12px;color:#5B6271}
 .pr:not(.pr-tafel) [data-p="tools"]{display:none}
 /* Tafel in der Oberschule: sachlicher, ohne Emojis und Kinderschrift */
-.tb-ph{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--phc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tfl-ph{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--phc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .pr.pr-tafel.pr-tos>.pr-stage>.pr-slide{border-radius:14px;box-shadow:0 8px 30px rgba(15,25,45,.22)}
-.tb-os{font-family:var(--f-ui)}
-.tb-os .tb-strip{top:740px;height:118px}
-.tb-os .tb-it{border-radius:10px;border-top-width:6px;font-size:19px;gap:4px;align-items:flex-start;text-align:left;padding:12px 14px 10px;background:#fff;box-shadow:0 2px 8px rgba(15,25,45,.12)}
-.tb-os .tb-it .tb-ic{height:30px}.tb-os .tb-it .tb-ic img{height:30px}
-.tb-os .tb-it.on{transform:none;box-shadow:0 0 0 3px var(--phc),0 6px 18px rgba(15,25,45,.2)}
-.tb-os .tb-it.on::before{content:"Jetzt";top:-30px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:5px;padding:2px 9px}
-.tb-os .tb-it.done{opacity:.5}.tb-os .tb-it.done::after{font-size:20px;top:6px}
-.tb-os .tw{border-radius:12px;box-shadow:0 4px 18px rgba(15,25,45,.18)}
-.tb-os .tw-h{height:36px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding-left:14px}
-.tb-os .tw-h button{width:26px;height:26px;font-size:18px}
-.tb-os .tw-c button{border-radius:7px}
-.tb-os .tw-lm-f{display:none}.tb-os .tw-lm-bar{height:22cqh;border-radius:6px}.tb-os .tw-lm-bar i{border-radius:0}
-.tb-os .tw-tm circle{stroke-width:6}.tb-os .tw-tm .fg{stroke-linecap:butt}
-.tb-os .tw-d{border-radius:12%}
-.tb-os .tw-sy-i{height:54cqh}
-.tb-os .tw-gr>div{border-radius:8px}
+.tfl-os{font-family:var(--f-ui)}
+.tfl-os .tfl-strip{top:740px;height:118px}
+.tfl-os .tfl-it{border-radius:10px;border-top-width:6px;font-size:19px;gap:4px;align-items:flex-start;text-align:left;padding:12px 14px 10px;background:#fff;box-shadow:0 2px 8px rgba(15,25,45,.12)}
+.tfl-os .tfl-it .tfl-ic{height:30px}.tfl-os .tfl-it .tfl-ic img{height:30px}
+.tfl-os .tfl-it.on{transform:none;box-shadow:0 0 0 3px var(--phc),0 6px 18px rgba(15,25,45,.2)}
+.tfl-os .tfl-it.on::before{content:"Jetzt";top:-30px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:5px;padding:2px 9px}
+.tfl-os .tfl-it.done{opacity:.5}.tfl-os .tfl-it.done::after{font-size:20px;top:6px}
+.tfl-os .tw{border-radius:12px;box-shadow:0 4px 18px rgba(15,25,45,.18)}
+.tfl-os .tw-h{height:36px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding-left:14px}
+.tfl-os .tw-h button{width:26px;height:26px;font-size:18px}
+.tfl-os .tw-c button{border-radius:7px}
+.tfl-os .tw-lm-f{display:none}.tfl-os .tw-lm-bar{height:22cqh;border-radius:6px}.tfl-os .tw-lm-bar i{border-radius:0}
+.tfl-os .tw-tm circle{stroke-width:6}.tfl-os .tw-tm .fg{stroke-linecap:butt}
+.tfl-os .tw-d{border-radius:12%}
+.tfl-os .tw-sy-i{height:54cqh}
+.tfl-os .tw-gr>div{border-radius:8px}
 .pr-tos .pr-tmenu .tm-g button i{display:none}.pr-tos .pr-tmenu .tm-g button{padding:10px 4px}
 /* ===== Grundschul-Designs: Fibel, Entdecker, Bunt ===== */
 .page.d-fibel,.page.d-entdecker,.page.d-bunt{--f-text:"Andika","Atkinson Hyperlegible",system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-ui:var(--f-text);font-family:var(--f-text);--f-disp:"Andika","Atkinson Hyperlegible",sans-serif}
@@ -6092,9 +6092,9 @@ function tafelBoard(X) {
   const st = { on: !!X.on, bg: (L && L.bg) || (os ? 'papier' : 'himmel'), img: null, w: [], seq: 0 };
   if (st.bg === 'bild') { st.img = lsGet('abw.tafelBild.' + kid); if (!st.img) st.bg = 'himmel'; }
   if (!TB_BG[st.bg] && st.bg !== 'bild') st.bg = 'himmel';
-  const tb = el('<div class="tb"><div class="tb-ws"></div><div class="tb-strip" role="navigation" aria-label="Ablauf der Stunde"></div></div>');
+  const tb = el('<div class="tfl"><div class="tfl-ws"></div><div class="tfl-strip" role="navigation" aria-label="Ablauf der Stunde"></div></div>');
   X.stage.appendChild(tb);
-  const ws = tb.querySelector('.tb-ws'), strip = tb.querySelector('.tb-strip');
+  const ws = tb.querySelector('.tfl-ws'), strip = tb.querySelector('.tfl-strip');
   const mn = el(`<div class="pr-tmenu" hidden role="dialog" aria-label="Werkzeuge für die Tafel"><h3>Werkzeug dazunehmen</h3><div class="tm-g">${Object.entries(TW_KINDS).map(([k, x]) => `<button type="button" data-tadd="${k}"><i>${x.ic}</i>${esc(x.t)}</button>`).join('')}</div>
     <h3>Hintergrund</h3><div class="tm-bg">${Object.entries(TB_BG).map(([k, x]) => `<button type="button" data-tbg="${k}" style="background:${x.c};color:${x.dark ? '#fff' : '#1C1F27'}">${esc(x.l)}</button>`).join('')}<button type="button" data-tbg="bild" class="tm-img">Eigenes Bild …</button></div><input type="file" accept="image/*" hidden class="tm-file">
     <div class="tm-row"><button type="button" data-tclear>Alle Werkzeuge entfernen</button><button type="button" data-tdef>Standard wiederherstellen</button></div><p class="tm-note">Ziehen am Titel verschiebt ein Werkzeug, die Ecke unten rechts ändert die Größe. Die Anordnung wird je Klasse gemerkt.</p></div>`);
@@ -6250,15 +6250,15 @@ function tafelBoard(X) {
     const items = []; X.S.forEach((s, j) => { if (s.k === 'title' || s.k === 'abhead') return; const key = s.b ? 'b:' + s.b.id : s.bid ? 'b:' + s.bid : 'i' + j; const last = items[items.length - 1]; if (last && last.key === key) { last.i1 = j; return; } items.push({ key, i0: j, i1: j, s }); });
     strip.hidden = !items.length; strip.classList.toggle('many', items.length > 8);
     strip.innerHTML = items.map(it => { const s = it.s; const on = i >= it.i0 && i <= it.i1, done = it.i1 < i; const ph = s.ph && PHASEN[s.ph] ? PHASEN[s.ph].c : '#9AA1AE'; const z = tbSoz(s); const lab = tbStripLab(s);
-      return `<button type="button" class="tb-it${on ? ' on' : ''}${done ? ' done' : ''}" data-tb-go="${it.i0}" style="--phc:${ph}" title="${esc(lab)}${s.ph && PHASEN[s.ph] ? ' · ' + PHASEN[s.ph].label : ''}">${os ? `<small class="tb-ph">${s.ph && PHASEN[s.ph] ? PHASEN[s.ph].label : '&nbsp;'}</small>` : ''}${z ? `<span class="tb-ic"><img src="${sozURI(z, acc(), '#fff')}" alt=""></span>` : os ? '' : `<span class="tb-ic">${tbStripIc(s)}</span>`}<span class="tb-l">${esc(lab)}</span></button>`; }).join('');
+      return `<button type="button" class="tfl-it${on ? ' on' : ''}${done ? ' done' : ''}" data-tfl-go="${it.i0}" style="--phc:${ph}" title="${esc(lab)}${s.ph && PHASEN[s.ph] ? ' · ' + PHASEN[s.ph].label : ''}">${os ? `<small class="tfl-ph">${s.ph && PHASEN[s.ph] ? PHASEN[s.ph].label : '&nbsp;'}</small>` : ''}${z ? `<span class="tfl-ic"><img src="${sozURI(z, acc(), '#fff')}" alt=""></span>` : os ? '' : `<span class="tfl-ic">${tbStripIc(s)}</span>`}<span class="tfl-l">${esc(lab)}</span></button>`; }).join('');
   };
-  const applyBg = () => { X.ov.style.setProperty('--tbg', bgCss()); tb.classList.toggle('tb-dark', !!(TB_BG[st.bg] || {}).dark); mn.querySelectorAll('[data-tbg]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tbg === st.bg))); };
+  const applyBg = () => { X.ov.style.setProperty('--tbg', bgCss()); tb.classList.toggle('tfl-dark', !!(TB_BG[st.bg] || {}).dark); mn.querySelectorAll('[data-tbg]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tbg === st.bg))); };
   // ---------- Beamerfenster: Tafel mitschicken (ohne Bedienelemente) ----------
-  const placeAw = (d, k) => { const t = d.querySelector('.pr-stage > .tb'); if (t) t.style.transform = `translate(-50%,-50%) scale(${k})`; };
+  const placeAw = (d, k) => { const t = d.querySelector('.pr-stage > .tfl'); if (t) t.style.transform = `translate(-50%,-50%) scale(${k})`; };
   function mirror() {
     if (!X.awOk()) return; const d = X.aw().document; const pr = d.querySelector('.pr'), stg = d.querySelector('.pr-stage'); if (!pr || !stg) return;
     const was = pr.classList.contains('pr-tafel'); pr.classList.toggle('pr-tafel', st.on); pr.classList.toggle('pr-tos', os); pr.style.setProperty('--tbg', bgCss());
-    let t = stg.querySelector(':scope > .tb'); if (!t) { t = d.createElement('div'); stg.appendChild(t); }
+    let t = stg.querySelector(':scope > .tfl'); if (!t) { t = d.createElement('div'); stg.appendChild(t); }
     t.className = tb.className; t.innerHTML = tb.innerHTML; t.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable')); t.querySelectorAll('.tw-nl').forEach(e => e.remove());
     const a = tb.querySelectorAll('canvas'), b = t.querySelectorAll('canvas'); a.forEach((cv, i) => { const c2 = b[i]; if (!c2) return; c2.width = cv.width; c2.height = cv.height; try { c2.getContext('2d').drawImage(cv, 0, 0); } catch {} });
     placeAw(d, Math.min(stg.clientWidth / 1600, stg.clientHeight / 900));
@@ -6313,7 +6313,7 @@ function tafelBoard(X) {
       else if (t.closest('[data-tdef]')) { st.w.slice().forEach(remove); defLayout().forEach(o => add(o.k, o)); save(); sync(); menu(false); }
       return true;
     }
-    const go = t.closest('[data-tb-go]'); if (go) { X.go(+go.dataset.tbGo); return true; }
+    const go = t.closest('[data-tfl-go]'); if (go) { X.go(+go.dataset.tflGo); return true; }
     const wEl = t.closest('.tw'); if (!wEl) return false;
     const w = wOf(wEl); if (!w) return true; const b = t.closest('[data-ta]'); if (!b || b.tagName === 'SELECT' || b.tagName === 'INPUT' || b.tagName === 'TEXTAREA' || b.isContentEditable) return true;
     const a = b.dataset.ta; if (a === 'x') { remove(w); save(); sync(); return true; }
@@ -6339,7 +6339,7 @@ function tafelBoard(X) {
     sync();
   };
   const OX = -184, OY = -93, SK = 0.74;
-  X.ov.classList.toggle('pr-tafel', st.on); X.ov.classList.toggle('pr-tos', os); tb.classList.toggle('tb-os', os); applyBg(); modeBtn();
+  X.ov.classList.toggle('pr-tafel', st.on); X.ov.classList.toggle('pr-tos', os); tb.classList.toggle('tfl-os', os); applyBg(); modeBtn();
   return {
     slideTf: k => (st.on ? `translate(calc(-50% + ${(OX * k).toFixed(2)}px), calc(-50% + ${(OY * k).toFixed(2)}px)) scale(${(k * SK).toFixed(5)})` : `translate(-50%,-50%) scale(${k})`),
     place: k => { K = k; tb.style.transform = `translate(-50%,-50%) scale(${k})`; },
