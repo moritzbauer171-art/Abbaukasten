@@ -1,7 +1,7 @@
-"""Baut die AB-Werkstatt als Windows-Desktop-App (Electron, portabel, ohne Installation).
+"""Baut LehrWerk als Windows-Desktop-App (Electron, portabel, ohne Installation).
 
 Aufruf (im Ordner desktop/):  python3 build_desktop.py [--linux]
-Ergebnis: out/AB-Werkstatt-<Version>-Windows-x64.zip  (mit --linux zusätzlich out/linux/ zum Testen)
+Ergebnis: out/LehrWerk-<Version>-Windows-x64.zip  (mit --linux zusätzlich out/linux/ zum Testen)
 
 Grundlage ist ../index.html. Schriften und Bibliotheken werden lokal gebündelt, damit die App
 ohne Internet läuft. Benötigt: Python 3 mit Pillow, git, unzip. Alles Weitere lädt das Skript
@@ -23,7 +23,7 @@ def get(url, dst):
     with urllib.request.urlopen(url) as r, open(tmp, 'wb') as f: shutil.copyfileobj(r, f)
     tmp.replace(dst)
 def sparse(repo, dst, paths, tag=None):
-    if dst.exists(): return
+    if dst.exists(): subprocess.run(['git', '-C', str(dst), 'sparse-checkout', 'set'] + paths, check=True); return
     cmd = ['git', 'clone', '-q', '--depth', '1', '--filter=blob:none', '--sparse'] + (['--branch', tag] if tag else []) + [repo, str(dst)]
     subprocess.run(cmd, check=True); subprocess.run(['git', '-C', str(dst), 'sparse-checkout', 'set'] + paths, check=True)
 DL.mkdir(exist_ok=True)
@@ -33,7 +33,7 @@ get('https://github.com/niklasvh/html2canvas/releases/download/v1.4.1/html2canva
 sparse('https://github.com/parallax/jsPDF', DL / 'jspdf', ['dist'], 'v2.5.1')
 sparse('https://github.com/Stuk/jszip', DL / 'jszip', ['dist'], 'v3.10.1')
 sparse('https://github.com/gitbrent/PptxGenJS', DL / 'pptxgenjs', ['dist'], 'v3.12.0')
-sparse('https://github.com/google/fonts', DL / 'gfonts', ['ofl/atkinsonhyperlegible', 'ofl/literata', 'apache/specialelite', 'ofl/courierprime', 'ofl/playfairdisplay', 'ofl/unifrakturmaguntia', 'ofl/caveat'])
+sparse('https://github.com/google/fonts', DL / 'gfonts', ['ofl/atkinsonhyperlegible', 'ofl/literata', 'apache/specialelite', 'ofl/courierprime', 'ofl/playfairdisplay', 'ofl/unifrakturmaguntia', 'ofl/caveat', 'ofl/andika', 'ofl/fredoka'])
 if not (DL / 'pefile-src').exists(): subprocess.run(['git', 'clone', '-q', '--depth', '1', 'https://github.com/erocarrera/pefile', str(DL / 'pefile-src')], check=True)
 for f, src in (('jspdf.umd.min.js', DL / 'jspdf' / 'dist' / 'jspdf.umd.min.js'), ('jszip.min.js', DL / 'jszip' / 'dist' / 'jszip.min.js'), ('pptxgen.bundle.js', DL / 'pptxgenjs' / 'dist' / 'pptxgen.bundle.js')):
     if not (DL / f).exists(): shutil.copy(src, DL / f)
@@ -77,6 +77,9 @@ FONTS = [  # (Familie, Datei, Zieldatei, Gewicht, Stil)
     ('Playfair Display', 'playfairdisplay/PlayfairDisplay-Italic[wght].ttf', 'PlayfairDisplay-Italic-VF.ttf', '400 900', 'italic'),
     ('UnifrakturMaguntia', 'unifrakturmaguntia/UnifrakturMaguntia-Book.ttf', None, '400', 'normal'),
     ('Caveat', 'caveat/Caveat[wght].ttf', 'Caveat-VF.ttf', '400 700', 'normal'),
+    ('Andika', 'andika/Andika-Regular.ttf', None, '400', 'normal'),
+    ('Andika', 'andika/Andika-Bold.ttf', None, '700', 'normal'),
+    ('Fredoka', 'fredoka/Fredoka[wdth,wght].ttf', 'Fredoka-VF.ttf', '300 700', 'normal'),
 ]
 css = ['/* Schriften lokal (SIL Open Font License bzw. Apache 2.0, siehe Lizenzdateien) */']
 for fam, src, dst, w, sty in FONTS:
@@ -92,7 +95,7 @@ css.append('@font-face{font-family:"Special Elite";src:url("SpecialElite-Regular
 
 # ---------- 2. Programmdateien zusammenstellen ----------
 def assemble(platform, zipname, exe_from, exe_to):
-    tgt = OUT / platform / 'AB-Werkstatt'
+    tgt = OUT / platform / 'LehrWerk'
     if tgt.parent.exists(): shutil.rmtree(tgt.parent)
     tgt.mkdir(parents=True)
     subprocess.run(['unzip', '-q', '-o', str(DL / zipname), '-d', str(tgt)], check=True)
@@ -105,7 +108,7 @@ def assemble(platform, zipname, exe_from, exe_to):
         if f.name not in keep and f.suffix == '.pak': f.unlink()
     dst = tgt / 'resources' / 'app'
     dst.mkdir()
-    for f in ('main.js', 'preload.js'): shutil.copy(SRC / f, dst / f)
+    for f in ('main.js', 'preload.js', 'offline.html'): shutil.copy(SRC / f, dst / f)
     (dst / 'package.json').write_text(json.dumps({**PKG, 'version': VERSION}, ensure_ascii=False, indent=2))
     shutil.copytree(app, dst / 'app')
     (dst / 'build').mkdir()
@@ -124,8 +127,8 @@ def version_resource(ver):
     a, b, c = (int(x) for x in ver.split('.'))
     ms, ls = (a << 16) | b, (c << 16)
     ffi = struct.pack('<13I', 0xFEEF04BD, 0x00010000, ms, ls, ms, ls, 0x3F, 0, 0x40004, 1, 0, 0, 0)
-    strs = [('CompanyName', 'Moritz Bauer'), ('FileDescription', 'AB-Werkstatt'), ('FileVersion', ver), ('InternalName', 'AB-Werkstatt'), ('LegalCopyright', '© 2026 Moritz Bauer'),
-            ('OriginalFilename', 'AB-Werkstatt.exe'), ('ProductName', 'AB-Werkstatt'), ('ProductVersion', ver)]
+    strs = [('CompanyName', 'Moritz Bauer'), ('FileDescription', 'LehrWerk'), ('FileVersion', ver), ('InternalName', 'LehrWerk'), ('LegalCopyright', '© 2026 Moritz Bauer'),
+            ('OriginalFilename', 'LehrWerk.exe'), ('ProductName', 'LehrWerk'), ('ProductVersion', ver)]
     table = vnode('040904B0', children=[vnode(k, (v + '\0').encode('utf-16le')) for k, v in strs])
     sfi = vnode('StringFileInfo', children=[table])
     vfi = vnode('VarFileInfo', children=[vnode('Translation', struct.pack('<HH', 0x0409, 0x04B0), wtype=0)])
@@ -186,20 +189,20 @@ def zipdir(folder, zpath):
         for f in sorted(folder.rglob('*')):
             z.write(f, f.relative_to(folder.parent))
 
-win = assemble('win', f'electron-{EV}-win32-x64.zip', 'electron.exe', 'AB-Werkstatt.exe')
-patch_exe(win / 'AB-Werkstatt.exe')
+win = assemble('win', f'electron-{EV}-win32-x64.zip', 'electron.exe', 'LehrWerk.exe')
+patch_exe(win / 'LehrWerk.exe')
 (win / 'LIESMICH.txt').write_text(
-    'AB-Werkstatt für Windows\r\n========================\r\n\r\n'
-    'Starten: Doppelklick auf AB-Werkstatt.exe. Eine Installation ist nicht nötig.\r\n'
+    'LehrWerk für Windows\r\n========================\r\n\r\n'
+    'Starten: Doppelklick auf LehrWerk.exe. Eine Installation ist nicht nötig.\r\n'
     'Den ganzen Ordner zusammenlassen, die .exe allein läuft nicht.\r\n\r\n'
     'Beim ersten Start fragt die App, ob sie Verknüpfungen auf dem Desktop und im Startmenü anlegen soll.\r\n\r\n'
     'Falls Windows "Der Computer wurde durch Windows geschützt" meldet: auf "Weitere Informationen"\r\n'
     'und dann "Trotzdem ausführen" klicken. Die Meldung kommt, weil die App nicht kostenpflichtig signiert ist.\r\n\r\n'
-    'Ihre Blätter liegen in %APPDATA%\\AB-Werkstatt (Hilfe > Datenordner öffnen).\r\n'
-    'Eine neue Version einfach über den alten Ordner entpacken oder daneben legen; die Blätter bleiben erhalten.\r\n', encoding='utf-8')
-zp = OUT / 'AB-Werkstatt-Windows-x64.zip'
+    'Die App lädt immer die aktuelle Online-Version mit deinem Konto. Ohne Internet laufen die zuletzt geöffneten Stunden weiter.\r\n'
+    'Neue Funktionen kommen automatisch, ein neuer Download ist nur selten nötig.\r\n', encoding='utf-8')
+zp = OUT / 'LehrWerk-Windows-x64.zip'
 zipdir(win, zp)
 print('Windows:', zp, round(zp.stat().st_size / 1e6, 1), 'MB')
 if '--linux' in sys.argv:
-    lin = assemble('linux', f'electron-{EV}-linux-x64.zip', 'electron', 'ab-werkstatt')
+    lin = assemble('linux', f'electron-{EV}-linux-x64.zip', 'electron', 'lehrwerk')
     print('Linux (Test):', lin)

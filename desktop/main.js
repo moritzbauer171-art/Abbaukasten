@@ -1,15 +1,18 @@
 'use strict';
-// AB-Werkstatt als Desktop-App (Electron). Die Oberfläche ist dieselbe wie auf GitHub Pages,
-// nur ohne Internet: Schriften und Bibliotheken liegen im Ordner app/.
+// LehrWerk als Windows-App (Electron). Die App lädt die aktuelle Online-Version (immer auf dem neuesten Stand,
+// mit Konto, Videos und Lehrerzimmer). Ohne Internet startet die mitgelieferte Kopie im Ordner app/.
 const { app, BrowserWindow, Menu, dialog, ipcMain, shell, session, net } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-const APP_NAME = 'AB-Werkstatt';
+const APP_NAME = 'LehrWerk';
 const ONLINE_URL = 'https://moritzbauer171-art.github.io/Abbaukasten/';
 app.setName(APP_NAME);
-if (process.platform === 'win32') app.setAppUserModelId('de.abwerkstatt.app');
+if (process.platform === 'win32') app.setAppUserModelId('de.lehrwerk.app');
+const ONLINE = new URL(ONLINE_URL);
+const isOurs = u => { try { const x = new URL(u); return x.protocol === 'file:' || (x.origin === ONLINE.origin && x.pathname.startsWith(ONLINE.pathname)); } catch { return false; } };
+
 
 if (!app.requestSingleInstanceLock()) { app.quit(); return; }
 
@@ -35,8 +38,17 @@ function createWindow() {
   win.on('page-title-updated', e => e.preventDefault());
 
   // Links nach außen im Standardbrowser öffnen, die App selbst nie wegnavigieren
-  win.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:/i.test(url)) shell.openExternal(url); return { action: 'deny' }; });
-  win.webContents.on('will-navigate', (e, url) => { if (!url.startsWith('file:')) { e.preventDefault(); if (/^https?:/i.test(url)) shell.openExternal(url); } });
+  // Beamerfenster der Referentenansicht (leeres Fenster der Seite) zulassen, alles andere im Standardbrowser
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (!url || url === 'about:blank' || isOurs(url)) return { action: 'allow', overrideBrowserWindowOptions: { autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#000000', title: APP_NAME + ' – Beamer' } };
+    if (/^https?:/i.test(url)) shell.openExternal(url); return { action: 'deny' };
+  });
+  win.webContents.on('will-navigate', (e, url) => { if (!isOurs(url)) { e.preventDefault(); if (/^https?:/i.test(url)) shell.openExternal(url); } });
+  // Ohne Internet und ohne Zwischenspeicher: Hinweisseite mit „Erneut versuchen“
+  win.webContents.on('did-fail-load', (e, code, desc, url, isMain) => {
+    if (!isMain || !/^https:/i.test(url) || code === -3) return;
+    win.loadFile(path.join(__dirname, 'offline.html'));
+  });
 
   // Rechtsklick: Rechtschreibvorschläge, Ausschneiden, Kopieren, Einfügen
   win.webContents.on('context-menu', (e, p) => {
@@ -51,7 +63,7 @@ function createWindow() {
     if (items.length) Menu.buildFromTemplate(items).popup({ window: win });
   });
 
-  win.loadFile(path.join(__dirname, 'app', 'index.html'));
+  win.loadURL(ONLINE_URL);
 }
 
 // Beim ersten Start Verknüpfungen auf dem Desktop und im Startmenü anbieten (nur Windows)
@@ -72,7 +84,7 @@ async function firstRun() {
   if (prefs.shortcutAsked) return;
   writeJSON(prefsPath(), { ...prefs, shortcutAsked: true });
   const r = await dialog.showMessageBox(win, { type: 'question', title: APP_NAME, buttons: ['Verknüpfungen anlegen', 'Nicht jetzt'], defaultId: 0, cancelId: 1, noLink: true,
-    message: 'AB-Werkstatt auf dem Desktop und im Startmenü ablegen?',
+    message: 'LehrWerk auf dem Desktop und im Startmenü ablegen?',
     detail: 'Dann starten Sie die App künftig mit einem Klick. Das geht auch später über „Datei → Verknüpfungen anlegen“.' });
   if (r.response === 0) makeShortcuts();
 }
@@ -113,7 +125,7 @@ ipcMain.handle('ab:savefolder', async (e, name, files) => {
 ipcMain.handle('ab:print', async (e, info) => {
   // Gemischte Hoch- und Querseiten lassen sich nicht in einem Druckauftrag ausrichten: dann über das PDF
   if (info && info.mixed) {
-    const p = path.join(os.tmpdir(), 'AB-Werkstatt-Druck-' + Date.now() + '.pdf');
+    const p = path.join(os.tmpdir(), 'LehrWerk-Druck-' + Date.now() + '.pdf');
     fs.writeFileSync(p, await makePdf()); shell.openPath(p); return 'pdf';
   }
   return new Promise(res => win.webContents.print({ silent: false, printBackground: true, landscape: !!(info && info.landscape), pageSize: (info && info.size) || 'A4', margins: { marginType: 'none' } }, ok => res(ok ? 'ok' : 'abgebrochen')));
@@ -124,7 +136,7 @@ ipcMain.handle('ab:json', async (e, url) => {
   let u; try { u = new URL(String(url)); } catch { return null; }
   if (u.protocol !== 'https:' || !NET_OK.includes(u.hostname)) return null;
   try {
-    const r = await net.fetch(u.href, { headers: { 'User-Agent': 'AB-Werkstatt/1.0 (Arbeitsblaetter fuer den Unterricht)', Accept: 'application/json' } });
+    const r = await net.fetch(u.href, { headers: { 'User-Agent': 'LehrWerk/1.0 (Arbeitsblaetter fuer den Unterricht)', Accept: 'application/json' } });
     return r.ok ? await r.json() : null;
   } catch { return null; }
 });
@@ -162,8 +174,14 @@ function menu() {
       { label: 'Online-Version öffnen', click: () => shell.openExternal(ONLINE_URL) },
       { label: 'Datenordner öffnen', click: () => shell.openPath(app.getPath('userData')) },
       { type: 'separator' },
-      { label: 'Über AB-Werkstatt', click: () => dialog.showMessageBox(win, { type: 'info', title: APP_NAME, icon: iconPath(), message: `${APP_NAME} ${app.getVersion()}`,
-        detail: `Arbeitsblätter, Tippkarten und Tafelkarten setzen und drucken.\n\n© 2026 Moritz Bauer\n\nIhre Blätter liegen auf diesem Computer im Datenordner der App. Sichern Sie sie ab und zu über „Meine Blätter → Alle Blätter sichern“.\n\nElectron ${process.versions.electron} · Chromium ${process.versions.chrome}` }) }
+      { label: 'Über LehrWerk', click: () => dialog.showMessageBox(win, { type: 'info', title: APP_NAME, icon: iconPath(), message: `${APP_NAME} ${app.getVersion()}`,
+        detail: `Arbeitsblätter, Stunden und Präsentationen für den Unterricht.
+
+© 2026 Moritz Bauer
+
+Die App lädt die aktuelle Online-Version; deine Stunden liegen in deinem Konto. Ohne Internet laufen die zuletzt geöffneten Stunden weiter.
+
+Electron ${process.versions.electron} · Chromium ${process.versions.chrome}` }) }
     ] }
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(tpl));
@@ -172,6 +190,10 @@ function menu() {
 app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
 app.whenReady().then(() => {
   try { session.defaultSession.setSpellCheckerLanguages(['de-DE']); } catch {}
+  // Mikrofon (Lautstärke-Ampel), zweiter Bildschirm (Referentenansicht), Bildschirm wach halten, Vollbild: nur für LehrWerk selbst
+  const OK = new Set(['media', 'window-management', 'fullscreen', 'screen-wake-lock', 'clipboard-sanitized-write', 'clipboard-read', 'notifications']);
+  session.defaultSession.setPermissionRequestHandler((wc, perm, cb, d) => cb(OK.has(perm) && isOurs((d && (d.requestingUrl || d.securityOrigin)) || wc.getURL())));
+  session.defaultSession.setPermissionCheckHandler((wc, perm, origin) => OK.has(perm) && (isOurs(origin) || (wc && isOurs(wc.getURL()))));
   // Downloads, die nicht über die Brücke laufen, trotzdem mit Speichern-Dialog
   session.defaultSession.on('will-download', (e, item) => { item.setSaveDialogOptions({ defaultPath: path.join(app.getPath('documents'), safeName(item.getFilename())) }); });
   menu(); createWindow();

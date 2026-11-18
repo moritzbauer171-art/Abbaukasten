@@ -9309,7 +9309,7 @@ themeApply();
 const isFramed = (() => { try { return window.top !== window.self; } catch { return true; } })();
 // Installierbar als App (Startbildschirm, Vollbild, offline) nur auf der eigenen Online-Seite, nicht in Claude und nicht in der Windows-App
 function setupPWA() {
-  if (location.protocol !== 'https:' || isFramed || window.claude || window.abDesktop || !('serviceWorker' in navigator)) return;
+  if (location.protocol !== 'https:' || isFramed || window.claude || !('serviceWorker' in navigator)) return;
   const add = (tag, attrs) => { const n = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); document.head.appendChild(n); };
   add('link', { rel: 'manifest', href: 'manifest.webmanifest' });
   add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' });

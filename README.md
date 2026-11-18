@@ -157,13 +157,11 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Windows-App
 
-Die AB-Werkstatt gibt es auch als Programm für Windows 10 und 11. Es läuft ohne Internet, weil alle Schriften und Hilfsprogramme mitgeliefert werden.
+LehrWerk gibt es auch als Programm für Windows 10 und 11. Die App lädt immer die aktuelle Online-Version: neue Funktionen kommen automatisch, ohne neuen Download. Konto, Stunden, Videos, Lehrerzimmer und Kanban sind dieselben wie im Browser. Nach dem ersten Start funktioniert sie auch ohne Internet mit den zuletzt geöffneten Stunden.
 
-Hinweis: Die Windows-App bleibt vorerst auf dem Stand vor der Überarbeitung der Oberfläche (Übersicht, „+ Baustein hinzufügen“, „Mehr“, Einstellungen, neues Ausgabefenster, Druck-Extras nach A4 und A3). Änderungen an der Website bauen die App nicht mehr automatisch neu; ein neuer Build entsteht bei Änderungen im Ordner `desktop` oder von Hand unter Actions → „Windows-App“ → „Run workflow“.
-
-1. [AB-Werkstatt-Windows-x64.zip herunterladen](https://github.com/moritzbauer171-art/Abbaukasten/releases/latest/download/AB-Werkstatt-Windows-x64.zip) (etwa 150 MB). Der Link bleibt gleich und liefert immer die neueste Version.
-2. Die ZIP-Datei entpacken, etwa nach `Dokumente\AB-Werkstatt`. Der Ordner muss zusammenbleiben.
-3. `AB-Werkstatt.exe` doppelklicken. Beim ersten Start fragt die App, ob sie Verknüpfungen auf dem Desktop und im Startmenü anlegen soll.
+1. [LehrWerk-Windows-x64.zip herunterladen](https://github.com/moritzbauer171-art/Abbaukasten/releases/latest/download/LehrWerk-Windows-x64.zip) (etwa 150 MB). Der Link bleibt gleich und liefert immer die neueste Version.
+2. Die ZIP-Datei entpacken, etwa nach `Dokumente\LehrWerk`. Der Ordner muss zusammenbleiben.
+3. `LehrWerk.exe` doppelklicken. Beim ersten Start fragt die App, ob sie Verknüpfungen auf dem Desktop und im Startmenü anlegen soll.
 
 Meldet Windows „Der Computer wurde durch Windows geschützt“, auf „Weitere Informationen“ und dann „Trotzdem ausführen“ klicken. Die Meldung erscheint, weil die App keine kostenpflichtige Signatur hat.
 
@@ -173,10 +171,10 @@ Unterschiede zur Webseite:
 - **Speichern** fragt immer nach dem Ort (Standard: Dokumente). Danach lässt sich die Datei direkt öffnen oder der Ordner anzeigen.
 - **Drucken** öffnet den Windows-Druckdialog mit der richtigen Ausrichtung. Bei gemischten Hoch- und Querseiten öffnet sich stattdessen das PDF zum Drucken.
 - **Rechtschreibprüfung** auf Deutsch mit Vorschlägen per Rechtsklick.
-- Mit Anmeldung (EduFire-Konto) liegen die Blätter online wie auf der Seite; dafür braucht die App Internet. Ohne Anmeldung liegen sie in `%APPDATA%\AB-Werkstatt` (Menü Hilfe → Datenordner öffnen), getrennt von den Blättern im Browser. Umziehen geht über „Meine Blätter → Alle Blätter sichern“ und in der App „Sicherung oder Datei laden“.
-- Neue Versionen aktualisieren sich nicht von selbst. Die neue ZIP-Datei über den alten Ordner entpacken; die Blätter bleiben erhalten. Die Versionsnummer steht unter Hilfe → Über AB-Werkstatt.
+- **Referentenansicht** öffnet das Beamerfenster wie im Browser; Mikrofon (Lautstärke-Ampel), Bildschirm wach halten und Vollbild sind für LehrWerk freigegeben.
+- Links nach außen öffnen sich im Standardbrowser.
 
-Die ZIP-Datei baut GitHub nach jeder Änderung an `index.html` oder `desktop/` selbst neu (Reiter „Actions“, Ablauf „Windows-App“). Von Hand bauen: im Ordner `desktop/` `python3 build_desktop.py` ausführen (braucht Python 3 mit Pillow, git und unzip; der Rest wird automatisch geladen).
+Die ZIP-Datei baut GitHub bei Änderungen im Ordner `desktop/` selbst neu (Reiter „Actions“, Ablauf „Windows-App“); Änderungen an der Website brauchen keinen neuen Build, weil die App die Online-Version lädt. Von Hand bauen: im Ordner `desktop/` `python3 build_desktop.py`.
 
 ## Wo die Blätter liegen
 
