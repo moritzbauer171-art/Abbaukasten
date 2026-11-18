@@ -1454,6 +1454,26 @@ body{transition:background-color .3s,border-color .25s}
 .kb-help{padding:0 18px 10px;font-size:12px;color:var(--muted)}.kb-help b{font-weight:700;color:var(--ink)}
 .kb-conf{position:fixed;inset:0;z-index:330;pointer-events:none}
 @media (max-width:700px){.kb-col{flex-basis:84vw}.kb-help{display:none}.kb-search{flex-basis:100%}}
+/* Breite und Ultrawide-Monitore: Spalten teilen sich die Breite, Inhalt mittig, alles etwas größer */
+.kb-ov>.kb-top,.kb-ov>.kb-tags,.kb-ov>.kb-help,.kb-ov>.kb-board{width:100%;max-width:var(--kbw,2400px);margin-inline:auto;box-sizing:border-box}
+@media (min-width:1500px){
+  .kb-col{flex:1 1 300px;min-width:280px;max-width:none}
+  .kb-addcol{flex:0 0 150px}
+}
+@media (min-width:2000px){
+  .kb-ov{font-size:16px}
+  .kb-board{gap:20px;padding:14px 32px 26px}.kb-top{padding:16px 32px}.kb-tags,.kb-help{padding-left:32px;padding-right:32px}
+  .kb-col{padding:10px;border-radius:20px}
+  .kb-ch h3{font-size:17px}.kb-emo{font-size:21px}
+  .kb-card{padding:13px 34px 13px 17px;border-radius:14px}
+  .kb-ta{font-size:16px}
+  .kb-due,.kb-cl,.kb-fin,.kb-lk{font-size:12.5px}
+  .kb-quick,.kb-search{height:46px}.kb-quick input,.kb-search input{font-size:16px}.kb-logo{font-size:25px}
+}
+@media (min-width:2800px){
+  .kb-ov{--kbw:2900px}
+  .kb-ov{font-size:17px}.kb-ta{font-size:17px}
+}
 /* ===== Tafelansicht ===== */
 .pr.pr-tafel .pr-stage{background:var(--tbg,#DDF0FF)}
 .pr.pr-tafel>.pr-stage>.pr-slide{border-radius:34px;box-shadow:0 18px 50px rgba(15,25,45,.28)}
