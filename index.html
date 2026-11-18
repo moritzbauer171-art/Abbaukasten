@@ -1381,45 +1381,79 @@ body{transition:background-color .3s,border-color .25s}
 .pr-blank.pat-kariert{background-image:linear-gradient(#CCD8EE 1px,transparent 1px),linear-gradient(90deg,#CCD8EE 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
 .pr-blank.pat-liniert{background-image:linear-gradient(transparent 58px,#C4D2EC 58px 60px);background-size:100% 60px;background-position:0 20px}
 /* ===== Kanban ===== */
-.kb-ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;background:var(--desk);color:var(--ink);font:15px/1.4 var(--f-ui);outline:none}
-.kb-top{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
-.kb-top b{font-size:20px;letter-spacing:-.01em}.kb-top small{color:var(--muted);font-size:13px}
+.kb-ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;color:var(--ink);font:15px/1.4 var(--f-ui);outline:none;background:radial-gradient(1200px 600px at 10% -10%,rgba(47,111,219,.14),transparent 60%),radial-gradient(900px 500px at 100% 110%,rgba(142,78,198,.13),transparent 60%),var(--desk);animation:kbIn .22s ease-out}
+.kb-ov.kb-out{animation:kbOut .18s ease-in forwards}
+@keyframes kbIn{from{opacity:0;transform:scale(.985)}}@keyframes kbOut{to{opacity:0;transform:scale(.985)}}
+.kb-top{display:flex;align-items:center;gap:12px;padding:12px 18px;flex-wrap:wrap}
+.kb-logo{font-size:22px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#2F6FDB,#8E4EC6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.kb-stats{display:flex;gap:6px;flex-wrap:wrap}.kb-stats span{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--card);box-shadow:0 1px 2px rgba(15,25,45,.08)}
+.kb-stats .today{color:#B45309}.kb-stats .late{color:#B3261E;background:#FCECEB}.kb-stats .ok{color:#1E7A46}
+.kb-quick,.kb-search{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:12px;padding:0 12px;height:40px;box-shadow:0 1px 3px rgba(15,25,45,.1);border:2px solid transparent;transition:border-color .15s}
+.kb-quick{flex:1 1 360px}.kb-search{flex:0 1 220px}
+.kb-quick:focus-within,.kb-search:focus-within{border-color:#2F6FDB}
+.kb-quick span{font-weight:800;color:#2F6FDB;font-size:18px}.kb-search span{color:var(--muted);font-size:17px}
+.kb-quick input,.kb-search input{flex:1;min-width:0;border:0;outline:none;background:transparent;font:15px var(--f-ui);color:inherit}
+.kb-x{width:38px;height:38px;border:0;border-radius:50%;background:transparent;font-size:28px;line-height:1;color:inherit;cursor:pointer;margin-left:auto}.kb-x:hover{background:rgba(0,0,0,.06)}
+.kb-tags{display:flex;gap:6px;flex-wrap:wrap;padding:0 18px 4px}.kb-tags[hidden]{display:none}
+.kb-tag{display:inline-flex;align-items:center;gap:4px;font:700 12px/1 var(--f-ui);padding:3px 8px;border-radius:999px;border:0;cursor:pointer;color:hsl(var(--th) 55% 32%);background:hsl(var(--th) 80% 92%)}
+.kb-tag small{opacity:.6;font-weight:700}.kb-tags .kb-tag.on{color:#fff;background:hsl(var(--th) 55% 42%)}
+.kb-clr{border:0;background:transparent;font:700 12px var(--f-ui);color:var(--muted);cursor:pointer;text-decoration:underline}
 .kb-sp{flex:1}
-.kb-x{width:38px;height:38px;border:0;border-radius:50%;background:transparent;font-size:28px;line-height:1;color:inherit;cursor:pointer}.kb-x:hover{background:rgba(0,0,0,.06)}
-.kb-board{flex:1;min-height:0;display:flex;gap:14px;align-items:flex-start;padding:18px 20px 24px;overflow-x:auto;overflow-y:hidden}
-.kb-col{flex:0 0 290px;max-height:100%;display:flex;flex-direction:column;background:var(--panel);border-radius:14px;padding:8px}
+.kb-board{flex:1;min-height:0;display:flex;gap:14px;align-items:flex-start;padding:10px 18px 18px;overflow-x:auto;overflow-y:hidden;scroll-behavior:auto}
+.kb-col{flex:0 0 300px;max-height:100%;display:flex;flex-direction:column;background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(6px);border-radius:16px;padding:8px;border-top:4px solid var(--cc);box-shadow:0 1px 2px rgba(15,25,45,.06);transition:box-shadow .15s,background .15s}
+.kb-col.kb-over{background:color-mix(in srgb,var(--cc) 10%,var(--panel));box-shadow:0 0 0 2px var(--cc)}
+.kb-donecol{background:color-mix(in srgb,#1E9E5A 7%,var(--panel))}
 .kb-ch{display:flex;align-items:center;gap:8px;padding:6px 6px 10px;cursor:grab;user-select:none;touch-action:manipulation}
-.kb-ch h3{margin:0;flex:1;font-size:15px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.kb-n{font-size:12px;font-weight:700;color:var(--muted);background:rgba(0,0,0,.06);border-radius:999px;padding:1px 8px}
+.kb-emo{font-size:18px;line-height:1}
+.kb-ch h3{margin:0;flex:1;font-size:15px;font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-n{font-size:12px;font-weight:800;color:var(--cc);background:color-mix(in srgb,var(--cc) 14%,transparent);border-radius:999px;padding:1px 8px}.kb-n.wip{color:#fff;background:#E5484D;animation:twPulse 1.2s ease-in-out infinite}
 .kb-cm{border:0;background:transparent;font-size:18px;line-height:1;width:28px;height:28px;border-radius:8px;cursor:pointer;color:inherit}.kb-cm:hover{background:rgba(0,0,0,.07)}
-.kb-ti{width:100%;font:700 15px var(--f-ui);border:2px solid #2F6FDB;border-radius:7px;padding:2px 6px}
-.kb-list{flex:1 1 auto;min-height:24px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px 2px 6px}
-.kb-card{position:relative;background:var(--card);border-radius:10px;padding:10px 30px 10px 14px;box-shadow:0 1px 2px rgba(15,25,45,.12),inset 4px 0 0 var(--kc,transparent);cursor:grab;user-select:none;touch-action:manipulation;white-space:pre-wrap;overflow-wrap:anywhere;outline:none}
-.kb-card:hover{box-shadow:0 3px 10px rgba(15,25,45,.16),inset 4px 0 0 var(--kc,transparent)}
+.kb-ti{width:100%;font:800 15px var(--f-ui);border:2px solid #2F6FDB;border-radius:7px;padding:2px 6px}
+.kb-list{flex:1 1 auto;min-height:40px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px 2px 6px}
+.kb-hint{font-size:13px;color:var(--faint);text-align:center;padding:14px 8px;border:2px dashed var(--line);border-radius:12px}
+.kb-card{position:relative;background:var(--card);border-radius:12px;padding:10px 30px 10px 14px;box-shadow:0 1px 2px rgba(15,25,45,.1),inset 4px 0 0 var(--kc,transparent);cursor:grab;user-select:none;touch-action:manipulation;overflow-wrap:anywhere;outline:none;transition:transform .15s,box-shadow .15s}
+.kb-card:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,25,45,.14),inset 4px 0 0 var(--kc,transparent)}
 .kb-card:focus-visible{box-shadow:0 0 0 2px #2F6FDB,inset 4px 0 0 var(--kc,transparent)}
-.kb-ct i{color:var(--faint)}
+.kb-card.kb-dn .kb-ln,.kb-card.kb-dn .kb-chk span{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(0,0,0,.25)}
+.kb-pop{animation:kbPop .45s cubic-bezier(.2,1.4,.4,1)}@keyframes kbPop{0%{transform:scale(.9);box-shadow:0 0 0 3px #2F6FDB}60%{transform:scale(1.03)}}
+.kb-ct{display:flex;flex-direction:column;gap:2px}.kb-ln{white-space:pre-wrap}.kb-empty{color:var(--faint)}
+.kb-chk{display:flex;gap:7px;align-items:flex-start;cursor:pointer;padding:1px 0}
+.kb-chk i{flex:0 0 auto;width:15px;height:15px;margin-top:2px;border-radius:4px;border:2px solid var(--line-strong);transition:background .15s}
+.kb-chk.on i{background:#1E9E5A;border-color:#1E9E5A;box-shadow:inset 0 0 0 2px var(--card)}.kb-chk.on span{color:var(--muted);text-decoration:line-through}
+.kb-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.kb-due,.kb-cl,.kb-fin,.kb-lk{font:700 11.5px/1 var(--f-ui);padding:4px 7px;border-radius:7px;background:rgba(0,0,0,.05);color:var(--muted);white-space:nowrap}
+.kb-due.today{background:#FFF1D6;color:#A15C00}.kb-due.soon{background:#E8F0FD;color:#1F56B8}.kb-due.late{background:#FCECEB;color:#B3261E}.kb-due.ok{opacity:.7}
+.kb-cl.full{background:#E3F4EA;color:#1E7A46}.kb-fin{background:#E3F4EA;color:#1E7A46}
+.kb-lk{border:0;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;background:#EEF0FB;color:#2741B5}.kb-lk:hover{background:#DDE3FA}
 .kb-del{position:absolute;right:4px;top:4px;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;opacity:0}
 .kb-card:hover .kb-del,.kb-card:focus-within .kb-del{opacity:1}.kb-del:hover{background:#FCECEB;color:#B3261E}
 @media (hover:none){.kb-del{opacity:.6}}
-.kb-card.ed{cursor:default;padding:8px 10px;box-shadow:0 0 0 2px #2F6FDB,inset 4px 0 0 var(--kc,transparent)}
+.kb-card.ed{cursor:default;padding:8px 10px;box-shadow:0 0 0 2px #2F6FDB,0 10px 24px rgba(15,25,45,.18),inset 4px 0 0 var(--kc,transparent);transform:none}
 .kb-ta{width:100%;border:0;outline:none;resize:none;font:15px/1.4 var(--f-ui);background:transparent;color:inherit;padding:2px 4px;overflow:hidden}
-.kb-eb{display:flex;align-items:center;gap:5px;margin-top:6px}
-.kb-dot{width:18px;height:18px;border-radius:50%;border:0;background:var(--dc);cursor:pointer;padding:0}.kb-dot[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--dc)}
-.kb-ok{border:0;border-radius:7px;background:#1C1F27;color:#fff;font:700 13px var(--f-ui);padding:5px 10px;cursor:pointer}
-.kb-add{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:8px;font:600 14px var(--f-ui);color:var(--muted);cursor:pointer}.kb-add:hover{background:rgba(0,0,0,.06);color:inherit}
-.kb-addcol{flex:0 0 200px;border:2px dashed var(--line-strong);background:transparent;border-radius:14px;padding:14px;font:700 14px var(--f-ui);color:var(--muted);cursor:pointer}.kb-addcol:hover{border-color:#2F6FDB;color:#2F6FDB}
-.kb-ph{border-radius:10px;background:rgba(47,111,219,.12);border:2px dashed rgba(47,111,219,.5);box-sizing:border-box;flex:0 0 auto}
-.kb-phc{flex:0 0 auto;border-radius:14px;background:rgba(47,111,219,.1);border:2px dashed rgba(47,111,219,.5);box-sizing:border-box;align-self:stretch}
+.kb-eb{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}
+.kb-lab{font:700 11px var(--f-ui);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);min-width:44px}
+.kb-chip{border:1px solid var(--line);background:var(--card);border-radius:999px;font:600 12px var(--f-ui);padding:3px 8px;cursor:pointer;color:inherit}.kb-chip:hover{border-color:#2F6FDB}
+.kb-date,.kb-sel{font:13px var(--f-ui);border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:var(--card);color:inherit;max-width:100%}.kb-sel{flex:1;min-width:0}
+.kb-dot{width:18px;height:18px;border-radius:50%;border:0;background:var(--dc);cursor:pointer;padding:0}.kb-dot[aria-pressed="true"]{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--dc)}
+.kb-ok{border:0;border-radius:8px;background:#1C1F27;color:#fff;font:700 13px var(--f-ui);padding:6px 12px;cursor:pointer}
+.kb-add{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:9px;font:700 14px var(--f-ui);color:var(--muted);cursor:pointer}.kb-add:hover{background:color-mix(in srgb,var(--cc) 12%,transparent);color:var(--cc)}
+.kb-addcol{flex:0 0 200px;border:2px dashed var(--line-strong);background:transparent;border-radius:16px;padding:14px;font:700 14px var(--f-ui);color:var(--muted);cursor:pointer}.kb-addcol:hover{border-color:#2F6FDB;color:#2F6FDB}
+.kb-ph{border-radius:12px;background:rgba(47,111,219,.1);border:2px dashed rgba(47,111,219,.55);box-sizing:border-box;flex:0 0 auto}
+.kb-phc{flex:0 0 auto;border-radius:16px;background:rgba(47,111,219,.08);border:2px dashed rgba(47,111,219,.5);box-sizing:border-box;align-self:stretch}
 .kb-src{display:none!important}
-.kb-ghost{position:fixed;left:0;top:0;z-index:310;pointer-events:none;box-shadow:0 14px 30px rgba(15,25,45,.3)!important;opacity:.95;margin:0}
+.kb-ghost{position:fixed;left:0;top:0;z-index:310;pointer-events:none;box-shadow:0 18px 40px rgba(15,25,45,.32)!important;opacity:.97;margin:0;transition:none}
 .kb-ghost.kb-col{display:flex}
 .kb-dragging,.kb-dragging *{cursor:grabbing!important;user-select:none}
-.kb-hold{transform:scale(1.03);box-shadow:0 8px 20px rgba(15,25,45,.25)}
-.kb-menu{position:fixed;z-index:320;min-width:200px;background:var(--card);border-radius:12px;box-shadow:0 12px 30px rgba(15,25,45,.25);padding:6px;display:flex;flex-direction:column}
+.kb-hold{transform:scale(1.04);box-shadow:0 10px 24px rgba(15,25,45,.25)}
+.kb-menu{position:fixed;z-index:320;width:230px;background:var(--card);border-radius:14px;box-shadow:0 14px 34px rgba(15,25,45,.26);padding:6px;display:flex;flex-direction:column}
 .kb-menu button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:8px;font:14px var(--f-ui);color:inherit;cursor:pointer}.kb-menu button:hover{background:rgba(0,0,0,.06)}.kb-menu .dng{color:#B3261E}
-.kb-undo{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#1C1F27;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 10px 26px rgba(0,0,0,.3);font-size:14px}
+.kb-emos{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:4px 2px 6px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.kb-menu .kb-emos button{text-align:center;font-size:18px;padding:5px 0}.kb-menu .kb-emos button[aria-pressed="true"]{background:#E8F0FD}
+.kb-undo{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#1C1F27;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 10px 26px rgba(0,0,0,.3);font-size:14px;animation:kbIn .2s}
 .kb-undo[hidden]{display:none}.kb-undo button{border:0;background:transparent;color:#8DB4FF;font:700 14px var(--f-ui);cursor:pointer}
-@media (max-width:600px){.kb-col{flex-basis:84vw}.kb-top small{display:none}}
+.kb-help{padding:0 18px 10px;font-size:12px;color:var(--muted)}.kb-help b{font-weight:700;color:var(--ink)}
+.kb-conf{position:fixed;inset:0;z-index:330;pointer-events:none}
+@media (max-width:700px){.kb-col{flex-basis:84vw}.kb-help{display:none}.kb-search{flex-basis:100%}}
 /* ===== Tafelansicht ===== */
 .pr.pr-tafel .pr-stage{background:var(--tbg,#DDF0FF)}
 .pr.pr-tafel>.pr-stage>.pr-slide{border-radius:34px;box-shadow:0 18px 50px rgba(15,25,45,.28)}
@@ -6093,115 +6127,200 @@ function keepAwake(win = window, quiet = false) {
 }
 /* ================= Verstecktes Kanban-Board (Doppelklick aufs Logo): Karten und Spalten per Drag & Drop, im Konto gespeichert ================= */
 const KB_COLS = { grau: '#9AA1AE', blau: '#2F6FDB', gruen: '#1E9E5A', gelb: '#F5B400', orange: '#F08C00', rot: '#E5484D', lila: '#8E4EC6' };
-const KB_DEF = () => ({ cols: [{ id: 'c' + uid(), t: 'Ideen', cards: [] }, { id: 'c' + uid(), t: 'To do', cards: [] }, { id: 'c' + uid(), t: 'In Arbeit', cards: [] }, { id: 'c' + uid(), t: 'Erledigt', cards: [] }] });
+const KB_EMO = ['💡', '📝', '🔨', '✅', '📚', '🗓️', '🧪', '✉️', '🎯', '⏳', '🔥', '🧭'];
+const KB_DEF = () => ({ cols: [{ id: 'c' + uid(), t: 'Ideen', e: '💡', cards: [] }, { id: 'c' + uid(), t: 'To do', e: '📝', cards: [] }, { id: 'c' + uid(), t: 'In Arbeit', e: '🔨', cards: [] }, { id: 'c' + uid(), t: 'Erledigt', e: '✅', done: true, cards: [] }] });
+const kbIsDone = c => !!c.done || /^(erledigt|fertig|done|geschafft)\b/i.test(c.t || '');
 function kbNorm(k) {
   if (!k || !Array.isArray(k.cols)) return null;
-  const cols = k.cols.filter(c => c && typeof c === 'object').slice(0, 12).map(c => ({ id: String(c.id || 'c' + uid()).slice(0, 40), t: String(c.t || '').slice(0, 60),
-    cards: (Array.isArray(c.cards) ? c.cards : []).filter(x => x && typeof x === 'object').slice(0, 300).map(x => ({ id: String(x.id || 'k' + uid()).slice(0, 40), t: String(x.t || '').slice(0, 2000), ...(KB_COLS[x.c] && x.c !== 'grau' ? { c: x.c } : {}) })) }));
+  const okD = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
+  const cols = k.cols.filter(c => c && typeof c === 'object').slice(0, 12).map(c => ({ id: String(c.id || 'c' + uid()).slice(0, 40), t: String(c.t || '').slice(0, 60), ...(KB_EMO.includes(c.e) ? { e: c.e } : {}), ...(c.done ? { done: true } : {}), ...(+c.lim > 0 ? { lim: Math.min(50, Math.round(+c.lim)) } : {}),
+    cards: (Array.isArray(c.cards) ? c.cards : []).filter(x => x && typeof x === 'object').slice(0, 300).map(x => ({ id: String(x.id || 'k' + uid()).slice(0, 40), t: String(x.t || '').slice(0, 2000),
+      ...(KB_COLS[x.c] && x.c !== 'grau' ? { c: x.c } : {}), ...(okD(x.d) ? { d: x.d } : {}), ...(x.lk ? { lk: String(x.lk).slice(0, 60) } : {}), ...(+x.fin > 0 ? { fin: +x.fin } : {}) })) }));
   return cols.length ? { cols } : null;
+}
+// Datum aus Freitext: heute, morgen, übermorgen, Mo–So / Montag–Sonntag, „nächste Woche“, 24.11. oder 24.11.2026
+const KB_WD = ['so', 'mo', 'di', 'mi', 'do', 'fr', 'sa'];
+const kbIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function kbParse(raw) {
+  let t = ' ' + raw + ' ', d = null, c = null; const now = new Date(); now.setHours(12, 0, 0, 0);
+  const add = n => { const x = new Date(now); x.setDate(x.getDate() + n); return x; };
+  const take = (re, fn) => { const m = t.match(re); if (m) { const r = fn(m); if (r) { d = r; t = t.replace(m[0], ' '); } } };
+  take(/\s(übermorgen)\s/i, () => add(2)); if (!d) take(/\s(morgen)\s/i, () => add(1)); if (!d) take(/\s(heute)\s/i, () => add(0));
+  if (!d) take(/\s(nächste|kommende)\s+woche\s/i, () => { const x = add(1); while (x.getDay() !== 1) x.setDate(x.getDate() + 1); return x; });
+  if (!d) take(/\s(?:bis\s+)?(\d{1,2})\.(\d{1,2})\.(\d{2,4})?\s/, m => { let y = m[3] ? +m[3] : now.getFullYear(); if (y < 100) y += 2000; const x = new Date(y, +m[2] - 1, +m[1], 12); if (isNaN(x)) return null; if (!m[3] && x < add(-30)) x.setFullYear(y + 1); return x; });
+  if (!d) take(/\s(?:bis\s+|am\s+|nächsten\s+|kommenden\s+)?(mo|di|mi|do|fr|sa|so)(?:ntag|nstag|ttwoch|nnerstag|eitag|mstag|nnabend)?\.?\s/i, m => { const w = KB_WD.indexOf(m[1].toLowerCase()); const x = add(1); while (x.getDay() !== w) x.setDate(x.getDate() + 1); return x; });
+  const pm = t.match(/\s(!{1,3})\s/); if (pm) { c = pm[1].length >= 2 ? 'rot' : 'orange'; t = t.replace(pm[0], ' '); }
+  return { t: t.replace(/\s+/g, ' ').trim(), d: d ? kbIso(d) : null, c };
+}
+const kbTagCol = s => { let h = 0; for (const ch of s.toLowerCase()) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
+function kbDue(d, done) {
+  if (!d) return ''; const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d + 'T00:00:00'); const n = Math.round((x - t) / 864e5);
+  const dm = `${x.getDate()}.${x.getMonth() + 1}.`; const wd = x.toLocaleDateString('de-DE', { weekday: 'short' }).replace('.', '');
+  const [cls, txt] = done ? ['ok', dm] : n < 0 ? ['late', n === -1 ? 'gestern' : 'überfällig · ' + dm] : n === 0 ? ['today', 'heute'] : n === 1 ? ['soon', 'morgen'] : n < 7 ? ['soon', wd + ' ' + dm] : ['', dm];
+  return `<span class="kb-due ${cls}" title="Fällig am ${x.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })}">🗓 ${txt}</span>`;
+}
+function kbConfetti(x, y) {
+  const cv = document.createElement('canvas'); cv.className = 'kb-conf'; const W = cv.width = innerWidth, H = cv.height = innerHeight; document.body.appendChild(cv); const g = cv.getContext('2d');
+  const cols = ['#2F6FDB', '#1E9E5A', '#F5B400', '#E5484D', '#8E4EC6', '#F08C00']; const P = Array.from({ length: 90 }, () => ({ x, y, vx: (Math.random() - 0.5) * 12, vy: -Math.random() * 11 - 3, r: Math.random() * 6.28, s: 4 + Math.random() * 5, c: cols[Math.floor(Math.random() * cols.length)] }));
+  const t0 = performance.now(); const step = t => { const dt = t - t0; g.clearRect(0, 0, W, H); P.forEach(p => { p.vy += 0.35; p.vx *= 0.985; p.x += p.vx; p.y += p.vy; p.r += 0.2; g.save(); g.translate(p.x, p.y); g.rotate(p.r); g.globalAlpha = Math.max(0, 1 - dt / 1400); g.fillStyle = p.c; g.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); g.restore(); }); if (dt < 1400) requestAnimationFrame(step); else cv.remove(); };
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(step); else cv.remove();
 }
 function openKanban() {
   if (document.querySelector('.kb-ov')) return;
   if (!state.prefs.kanban) state.prefs.kanban = KB_DEF();
-  const K = state.prefs.kanban; let edit = null, undoT = 0;
-  const ov = el(`<div class="kb-ov" role="dialog" aria-modal="true" aria-label="Kanban-Board" tabindex="-1"><div class="kb-top"><b>Kanban</b><small>Karten und Spalten ziehen · Klick auf eine Karte bearbeitet sie · Strg+Enter neue Karte</small><span class="kb-sp"></span><button type="button" class="kb-x" data-kb="close" aria-label="Schließen" title="Schließen (Esc)">×</button></div><div class="kb-board"></div><div class="kb-undo" hidden></div></div>`);
-  document.body.appendChild(ov); const board = ov.querySelector('.kb-board');
+  const K = state.prefs.kanban; let edit = null, undoT = 0, q = '', flash = null;
+  K.cols.forEach((c, i) => { if (!c.e) c.e = KB_EMO[[0, 1, 2, 3][i] ?? 4]; if (kbIsDone(c) && !c.done) c.done = true; });
+  const ov = el(`<div class="kb-ov" role="dialog" aria-modal="true" aria-label="Kanban-Board" tabindex="-1">
+    <div class="kb-top"><b class="kb-logo">Kanban</b><span class="kb-stats"></span>
+      <label class="kb-quick"><span aria-hidden="true">＋</span><input type="text" placeholder="Neue Aufgabe … z. B. „Klausur 10b korrigieren #korrektur Freitag !“" aria-label="Neue Aufgabe" maxlength="400"></label>
+      <label class="kb-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Suchen oder #Tag" aria-label="Karten durchsuchen"></label>
+      <button type="button" class="kb-x" data-kb="close" aria-label="Schließen" title="Schließen (Esc)">×</button></div>
+    <div class="kb-tags"></div><div class="kb-board"></div><div class="kb-undo" hidden></div>
+    <div class="kb-help">Ziehen zum Verschieben · Klick bearbeitet · <b>#tag</b>, <b>morgen</b>, <b>Fr</b>, <b>24.11.</b>, <b>!</b> beim Anlegen · <b>[ ]</b> am Zeilenanfang wird zur Checkliste · N neue Karte · / suchen</div></div>`);
+  document.body.appendChild(ov); const board = ov.querySelector('.kb-board'), qIn = ov.querySelector('.kb-quick input'), sIn = ov.querySelector('.kb-search input');
   const save = () => { state.prefs.kanban = K; savePrefs(); };
   const colOf = id => K.cols.find(c => c.id === id);
   const findCard = id => { for (const c of K.cols) { const i = c.cards.findIndex(x => x.id === id); if (i >= 0) return { c, i, x: c.cards[i] }; } return null; };
-  const cardHTML = x => `<div class="kb-card" data-card="${x.id}" style="--kc:${KB_COLS[x.c] || 'transparent'}" tabindex="0"><div class="kb-ct">${esc(x.t) || '<i>Leer</i>'}</div><button type="button" class="kb-del" data-kb="del" aria-label="Karte löschen" title="Löschen">×</button></div>`;
+  const lessonOf = id => state.lib.find(d => d.id === id);
+  const textHTML = x => esc(x.t).split('\n').map((ln, i) => {
+    const m = ln.match(/^\s*(?:[-*]\s*)?\[( |x|X)\]\s?(.*)$/);
+    const tagd = s => s.replace(/(^|\s)#([\p{L}\d][\p{L}\d_-]{0,30})/gu, (a, sp, tg) => `${sp}<span class="kb-tag" data-tag="${tg.toLowerCase()}" style="--th:${kbTagCol(tg)}">#${tg}</span>`);
+    return m ? `<label class="kb-chk${m[1] !== ' ' ? ' on' : ''}" data-li="${i}"><i aria-hidden="true"></i><span>${tagd(m[2])}</span></label>` : `<span class="kb-ln">${tagd(ln) || '&nbsp;'}</span>`;
+  }).join('');
+  const cardHTML = (x, col) => {
+    const lines = x.t.split('\n'); const ch = lines.filter(l => /^\s*(?:[-*]\s*)?\[( |x|X)\]/.test(l)); const chd = ch.filter(l => /\[(x|X)\]/.test(l)).length; const L = x.lk && lessonOf(x.lk);
+    const meta = [kbDue(x.d, kbIsDone(col)), ch.length ? `<span class="kb-cl${chd === ch.length ? ' full' : ''}" title="Checkliste">☑ ${chd}/${ch.length}</span>` : '', L ? `<button type="button" class="kb-lk" data-kb="lesson" title="Stunde öffnen: ${esc(L.title || '')}">📄 ${esc((L.title || 'Stunde').slice(0, 34))}</button>` : '', x.fin && kbIsDone(col) ? `<span class="kb-fin">✓ ${new Date(x.fin).toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' })}</span>` : ''].filter(Boolean).join('');
+    return `<div class="kb-card${flash === x.id ? ' kb-pop' : ''}${kbIsDone(col) ? ' kb-dn' : ''}" data-card="${x.id}" style="--kc:${KB_COLS[x.c] || 'transparent'}" tabindex="0"><div class="kb-ct">${x.t ? textHTML(x) : '<i class="kb-empty">Leer</i>'}</div>${meta ? `<div class="kb-meta">${meta}</div>` : ''}<button type="button" class="kb-del" data-kb="del" aria-label="Karte löschen" title="Löschen">×</button></div>`;
+  };
+  const match = x => { if (!q) return true; const L = x.lk && lessonOf(x.lk); const hay = (x.t + ' ' + (L ? L.title : '')).toLowerCase(); return q.split(/\s+/).every(w => (w.startsWith('#') ? new RegExp('(^|\\s)' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\b|$)', 'iu').test(x.t) : hay.includes(w))); };
+  const stats = () => { const all = K.cols.flatMap(c => c.cards.map(x => ({ x, done: kbIsDone(c) }))); const open = all.filter(a => !a.done); const t = kbIso(new Date());
+    const late = open.filter(a => a.x.d && a.x.d < t).length, today = open.filter(a => a.x.d === t).length; const wk = all.filter(a => a.done && a.x.fin && Date.now() - a.x.fin < 7 * 864e5).length;
+    ov.querySelector('.kb-stats').innerHTML = `<span>${open.length} offen</span>${today ? `<span class="today">${today} heute</span>` : ''}${late ? `<span class="late">${late} überfällig</span>` : ''}${wk ? `<span class="ok">${wk} diese Woche erledigt 🎉</span>` : ''}`;
+    const tags = {}; all.forEach(a => (a.x.t.match(/(^|\s)#([\p{L}\d][\p{L}\d_-]{0,30})/gu) || []).forEach(m => { const tg = m.trim().slice(1).toLowerCase(); tags[tg] = (tags[tg] || 0) + 1; }));
+    const tb = ov.querySelector('.kb-tags'); const ks = Object.keys(tags).sort(); tb.hidden = !ks.length;
+    tb.innerHTML = ks.map(tg => `<button type="button" class="kb-tag${q.split(/\s+/).includes('#' + tg) ? ' on' : ''}" data-tag="${esc(tg)}" style="--th:${kbTagCol(tg)}">#${esc(tg)} <small>${tags[tg]}</small></button>`).join('') + (q ? '<button type="button" class="kb-clr" data-kb="clrq">Filter aufheben</button>' : '');
+  };
   const render = () => {
-    const sl = board.scrollLeft;
-    board.innerHTML = K.cols.map(c => `<section class="kb-col" data-col="${c.id}"><header class="kb-ch" title="Ziehen zum Verschieben · Doppelklick zum Umbenennen"><h3>${esc(c.t) || 'Ohne Titel'}</h3><span class="kb-n">${c.cards.length}</span><button type="button" class="kb-cm" data-kb="cmenu" aria-label="Spalte: Menü">⋯</button></header>
-      <div class="kb-list">${c.cards.map(cardHTML).join('')}</div><button type="button" class="kb-add" data-kb="add">+ Karte</button></section>`).join('') + `<button type="button" class="kb-addcol" data-kb="addcol">+ Spalte</button>`;
-    board.scrollLeft = sl;
+    const sl = board.scrollLeft; const sc = {}; board.querySelectorAll('.kb-col').forEach(c => { sc[c.dataset.col] = c.querySelector('.kb-list').scrollTop; });
+    board.innerHTML = K.cols.map((c, ci) => { const vis = c.cards.filter(match); const wip = c.lim && c.cards.length > c.lim;
+      return `<section class="kb-col${c.done ? ' kb-donecol' : ''}" data-col="${c.id}" style="--cc:${['#2F6FDB', '#F08C00', '#8E4EC6', '#1E9E5A', '#E5484D', '#0D9488', '#B45309', '#475569'][ci % 8]}"><header class="kb-ch" title="Ziehen zum Verschieben · Doppelklick zum Umbenennen"><span class="kb-emo">${c.e || '📌'}</span><h3>${esc(c.t) || 'Ohne Titel'}</h3><span class="kb-n${wip ? ' wip' : ''}">${q ? vis.length + '/' : ''}${c.cards.length}</span><button type="button" class="kb-cm" data-kb="cmenu" aria-label="Spalte: Menü">⋯</button></header>
+      <div class="kb-list">${vis.map(x => cardHTML(x, c)).join('')}${!c.cards.length ? `<div class="kb-hint">${c.done ? 'Hierher ziehen, was fertig ist 🎉' : 'Noch leer · Doppelklick für eine Karte'}</div>` : ''}</div><button type="button" class="kb-add" data-kb="add">+ Karte</button></section>`; }).join('') + `<button type="button" class="kb-addcol" data-kb="addcol">+ Spalte</button>`;
+    board.scrollLeft = sl; board.querySelectorAll('.kb-col').forEach(c => { if (sc[c.dataset.col]) c.querySelector('.kb-list').scrollTop = sc[c.dataset.col]; });
+    flash = null; stats();
   };
   const undoBar = (msg, fn) => { const u = ov.querySelector('.kb-undo'); u.innerHTML = `<span>${esc(msg)}</span><button type="button">Rückgängig</button>`; u.hidden = false; u.querySelector('button').onclick = () => { fn(); u.hidden = true; save(); render(); }; clearTimeout(undoT); undoT = setTimeout(() => { u.hidden = true; }, 6000); };
-  // Bearbeiten einer Karte direkt an Ort und Stelle
+  // Bearbeiten direkt in der Karte: Text, Farbe, Fälligkeit, verknüpfte Stunde
+  const lessonOpts = sel => { const L = state.lib.slice().sort((a, b) => String(b.updated || '').localeCompare(String(a.updated || ''))).slice(0, 300);
+    return `<option value="">– keine Stunde –</option>` + L.map(d => `<option value="${esc(d.id)}"${d.id === sel ? ' selected' : ''}>${esc((d.title || 'Ohne Titel').slice(0, 60))}${d.klasse ? ' · ' + esc(KL(d.klasse).label) : ''}</option>`).join(''); };
   const editCard = (id, fresh) => {
     finishEdit(); const f = findCard(id); if (!f) return; const cEl = board.querySelector(`[data-card="${id}"]`); if (!cEl) return;
-    edit = { id, fresh, old: f.x.t };
-    cEl.classList.add('ed'); cEl.innerHTML = `<textarea class="kb-ta" rows="2" aria-label="Text der Karte" placeholder="Was ist zu tun?">${esc(f.x.t)}</textarea><div class="kb-eb">${Object.entries(KB_COLS).map(([k, c]) => `<button type="button" class="kb-dot" data-kb="color" data-v="${k}" style="--dc:${c}" aria-pressed="${(f.x.c || 'grau') === k}" aria-label="Farbe ${k}"></button>`).join('')}<span class="kb-sp"></span><button type="button" class="kb-ok" data-kb="ok">Fertig</button></div>`;
+    edit = { id, fresh, old: { ...f.x } };
+    cEl.classList.add('ed'); cEl.innerHTML = `<textarea class="kb-ta" rows="2" aria-label="Text der Karte" placeholder="Was ist zu tun? #tag · [ ] Checkliste">${esc(f.x.t)}</textarea>
+      <div class="kb-eb">${Object.entries(KB_COLS).map(([k, c]) => `<button type="button" class="kb-dot" data-kb="color" data-v="${k}" style="--dc:${c}" aria-pressed="${(f.x.c || 'grau') === k}" aria-label="Farbe ${k}"></button>`).join('')}</div>
+      <div class="kb-eb kb-ed2"><span class="kb-lab">Fällig</span><button type="button" class="kb-chip" data-kb="due" data-v="0">heute</button><button type="button" class="kb-chip" data-kb="due" data-v="1">morgen</button><button type="button" class="kb-chip" data-kb="due" data-v="7">+1 Woche</button><input type="date" class="kb-date" value="${f.x.d || ''}" aria-label="Fällig am">${f.x.d ? '<button type="button" class="kb-chip" data-kb="due" data-v="x" title="Datum entfernen">×</button>' : ''}</div>
+      ${state.lib.length ? `<div class="kb-eb"><span class="kb-lab">Stunde</span><select class="kb-sel" aria-label="Verknüpfte Stunde">${lessonOpts(f.x.lk)}</select></div>` : ''}
+      <div class="kb-eb"><span class="kb-sp"></span><button type="button" class="kb-ok" data-kb="ok">Fertig</button></div>`;
     const ta = cEl.querySelector('textarea'); const fitTa = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }; fitTa(); ta.addEventListener('input', fitTa); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+    cEl.querySelector('.kb-date').addEventListener('change', e => { f.x.d = e.target.value || undefined; if (!f.x.d) delete f.x.d; save(); });
+    const se = cEl.querySelector('.kb-sel'); if (se) se.addEventListener('change', e => { if (e.target.value) f.x.lk = e.target.value; else delete f.x.lk; save(); });
   };
   function finishEdit(cancel) {
     if (!edit) return; const e = edit; edit = null; const f = findCard(e.id); const ta = board.querySelector(`[data-card="${e.id}"] textarea`);
-    if (f) { const v = cancel ? e.old : (ta ? ta.value.trim() : f.x.t); if (!v && (e.fresh || !cancel)) f.c.cards.splice(f.i, 1); else f.x.t = v; save(); }
+    if (f) { if (cancel) { Object.keys(f.x).forEach(k => delete f.x[k]); Object.assign(f.x, e.old); if (e.fresh && !f.x.t) f.c.cards.splice(f.i, 1); }
+      else { const v = ta ? ta.value.replace(/\s+$/, '') : f.x.t; if (!v.trim()) f.c.cards.splice(f.i, 1); else { const p = e.fresh ? kbParse(v) : null; f.x.t = p && !v.includes('\n') ? p.t || v : v; if (p && p.d && !f.x.d) f.x.d = p.d; if (p && p.c && !f.x.c) f.x.c = p.c; } } save(); }
     render();
   }
-  const addCard = (colId, top) => { const c = colOf(colId); if (!c) return; finishEdit(); const x = { id: 'k' + uid(), t: '' }; if (top) c.cards.unshift(x); else c.cards.push(x); render(); editCard(x.id, true); const L = board.querySelector(`[data-col="${colId}"] .kb-list`); if (L && !top) L.scrollTop = L.scrollHeight; };
+  const addCard = (colId, top) => { const c = colOf(colId); if (!c) return; finishEdit(); const x = { id: 'k' + uid(), t: '' }; if (top) c.cards.unshift(x); else c.cards.push(x); if (q) { q = ''; sIn.value = ''; } render(); editCard(x.id, true); const L = board.querySelector(`[data-col="${colId}"] .kb-list`); if (L && !top) L.scrollTop = L.scrollHeight; };
+  const quickAdd = () => { const v = qIn.value.trim(); if (!v) return; const p = kbParse(v); const col = K.cols.find(c => /^to ?do|^zu tun|^offen/i.test(c.t)) || K.cols.find(c => !kbIsDone(c)) || K.cols[0];
+    const x = { id: 'k' + uid(), t: p.t || v, ...(p.d ? { d: p.d } : {}), ...(p.c ? { c: p.c } : {}) }; col.cards.unshift(x); flash = x.id; qIn.value = ''; save(); render(); };
   const renameCol = id => { const c = colOf(id); const h = board.querySelector(`[data-col="${id}"] h3`); if (!c || !h) return; finishEdit();
-    h.innerHTML = `<input class="kb-ti" value="${esc(c.t)}" maxlength="60" aria-label="Titel der Spalte">`; const i = h.querySelector('input'); i.focus(); i.select();
-    const done = ok => { if (ok) c.t = i.value.trim() || c.t; save(); render(); }; i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); done(true); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(false); } }); i.addEventListener('blur', () => done(true)); };
+    h.innerHTML = `<input class="kb-ti" value="${esc(c.t)}" maxlength="60" aria-label="Titel der Spalte">`; const i = h.querySelector('input'); i.focus(); i.select(); let fin = false;
+    const done = ok => { if (fin) return; fin = true; if (ok) c.t = i.value.trim() || c.t; save(); render(); }; i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); done(true); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(false); } }); i.addEventListener('blur', () => done(true)); };
   const colMenu = (id, btn) => {
     ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); const c = colOf(id); if (!c) return; const r = btn.getBoundingClientRect();
-    const mn = el(`<div class="kb-menu" role="menu"><button type="button" data-kb="m-ren">Umbenennen</button><button type="button" data-kb="m-top">Karte oben einfügen</button>${c.cards.length ? '<button type="button" data-kb="m-clr">Alle Karten löschen</button>' : ''}<button type="button" data-kb="m-del" class="dng">Spalte löschen</button></div>`);
-    mn.style.left = Math.min(window.innerWidth - 210, r.left) + 'px'; mn.style.top = (r.bottom + 4) + 'px'; mn.dataset.col = id; ov.appendChild(mn);
+    const mn = el(`<div class="kb-menu" role="menu"><div class="kb-emos">${KB_EMO.map(e => `<button type="button" data-kb="m-emo" data-v="${e}" aria-pressed="${c.e === e}">${e}</button>`).join('')}</div><button type="button" data-kb="m-ren">Umbenennen</button><button type="button" data-kb="m-top">Karte oben einfügen</button><button type="button" data-kb="m-done">${c.done ? '✓ ' : ''}Spalte für Erledigtes</button><button type="button" data-kb="m-lim">Limit: ${c.lim ? c.lim + ' Karten' : 'keins'}</button>${c.cards.length ? '<button type="button" data-kb="m-clr">Alle Karten löschen</button>' : ''}<button type="button" data-kb="m-del" class="dng">Spalte löschen</button></div>`);
+    mn.style.left = Math.min(innerWidth - 240, r.left - 180) + 'px'; mn.style.top = (r.bottom + 4) + 'px'; mn.dataset.col = id; ov.appendChild(mn);
   };
   ov.addEventListener('click', e => {
     const t = e.target; const b = t.closest('[data-kb]'); const a = b && b.dataset.kb;
     if (!t.closest('.kb-menu') && !(a === 'cmenu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove());
     if (a === 'close') { close(); return; }
     if (a === 'ok') { finishEdit(); return; }
-    if (a === 'color') { const f = edit && findCard(edit.id); if (f) { if (b.dataset.v === 'grau') delete f.x.c; else f.x.c = b.dataset.v; b.parentNode.querySelectorAll('.kb-dot').forEach(d => d.setAttribute('aria-pressed', String(d === b))); b.closest('.kb-card').style.setProperty('--kc', KB_COLS[f.x.c] || 'transparent'); save(); b.closest('.kb-card').querySelector('textarea').focus(); } return; }
+    if (a === 'clrq') { q = ''; sIn.value = ''; render(); return; }
+    const tg = t.closest('.kb-tag'); if (tg && !t.closest('.kb-card.ed')) { const w = '#' + tg.dataset.tag; const ws = q.split(/\s+/).filter(Boolean); q = (ws.includes(w) ? ws.filter(x => x !== w) : ws.concat(w)).join(' '); sIn.value = q; render(); return; }
+    if (a === 'color') { const f = edit && findCard(edit.id); if (f) { if (b.dataset.v === 'grau') delete f.x.c; else f.x.c = b.dataset.v; b.parentNode.querySelectorAll('.kb-dot').forEach(d => d.setAttribute('aria-pressed', String(d === b))); b.closest('.kb-card').style.setProperty('--kc', KB_COLS[f.x.c] || 'transparent'); save(); } return; }
+    if (a === 'due') { const f = edit && findCard(edit.id); if (f) { const v = b.dataset.v; if (v === 'x') delete f.x.d; else { const d = new Date(); d.setDate(d.getDate() + +v); f.x.d = kbIso(d); } const di = b.closest('.kb-card').querySelector('.kb-date'); if (di) di.value = f.x.d || ''; save(); } return; }
+    if (a === 'lesson') { const id = b.closest('[data-card]').dataset.card; const f = findCard(id); if (f && f.x.lk) { close(); openById(f.x.lk); } return; }
     if (a === 'del') { const id = b.closest('[data-card]').dataset.card; const f = findCard(id); if (!f) return; f.c.cards.splice(f.i, 1); save(); render(); undoBar('Karte gelöscht', () => { const c = colOf(f.c.id) || K.cols[0]; c.cards.splice(Math.min(f.i, c.cards.length), 0, f.x); }); return; }
     if (a === 'add') { addCard(b.closest('[data-col]').dataset.col); return; }
-    if (a === 'addcol') { finishEdit(); const c = { id: 'c' + uid(), t: 'Neue Spalte', cards: [] }; K.cols.push(c); save(); render(); board.scrollLeft = board.scrollWidth; renameCol(c.id); return; }
+    if (a === 'addcol') { finishEdit(); const c = { id: 'c' + uid(), t: 'Neue Spalte', e: KB_EMO[(K.cols.length + 4) % KB_EMO.length], cards: [] }; K.cols.push(c); save(); render(); board.scrollLeft = board.scrollWidth; renameCol(c.id); return; }
     if (a === 'cmenu') { colMenu(b.closest('[data-col]').dataset.col, b); return; }
-    if (a && a.startsWith('m-')) { const id = b.closest('.kb-menu').dataset.col; const c = colOf(id); b.closest('.kb-menu').remove(); if (!c) return;
+    if (a && a.startsWith('m-')) { const mnu = b.closest('.kb-menu'); const id = mnu.dataset.col; const c = colOf(id); if (!c) return;
+      if (a === 'm-emo') { c.e = b.dataset.v; save(); render(); mnu.remove(); return; }
+      mnu.remove();
       if (a === 'm-ren') renameCol(id);
       else if (a === 'm-top') addCard(id, true);
+      else if (a === 'm-done') { c.done = !c.done; save(); render(); }
+      else if (a === 'm-lim') { const opts = [0, 3, 5, 8]; c.lim = opts[(opts.indexOf(c.lim || 0) + 1) % opts.length] || undefined; if (!c.lim) delete c.lim; save(); render(); toast(c.lim ? `Limit für „${c.t}“: ${c.lim} Karten` : `Kein Limit für „${c.t}“`); }
       else if (a === 'm-clr') { const old = c.cards.slice(); c.cards = []; save(); render(); undoBar(`${old.length} Karten gelöscht`, () => { c.cards = old.concat(c.cards); }); }
       else if (a === 'm-del') { if (K.cols.length <= 1) { toast('Eine Spalte muss bleiben.'); return; } const i = K.cols.indexOf(c); K.cols.splice(i, 1); save(); render(); undoBar(`Spalte „${c.t}“ gelöscht`, () => K.cols.splice(Math.min(i, K.cols.length), 0, c)); }
       return; }
     if (moved) return;
-    const card = t.closest('.kb-card'); if (card && !card.classList.contains('ed')) { editCard(card.dataset.card); return; }
+    const chk = t.closest('.kb-chk'); const card = t.closest('.kb-card');
+    if (chk && card && !card.classList.contains('ed')) { const f = findCard(card.dataset.card); if (f) { const L = f.x.t.split('\n'); const i = +chk.dataset.li; L[i] = L[i].replace(/\[( |x|X)\]/, m => (m === '[ ]' ? '[x]' : '[ ]')); f.x.t = L.join('\n'); save(); render(); } return; }
+    if (card && !card.classList.contains('ed')) { editCard(card.dataset.card); return; }
     if (edit && !t.closest('.kb-card.ed')) finishEdit();
   });
   ov.addEventListener('dblclick', e => { const h = e.target.closest('.kb-ch'); if (h && !e.target.closest('button')) renameCol(h.closest('[data-col]').dataset.col); else if (e.target.closest('.kb-list') && !e.target.closest('.kb-card')) addCard(e.target.closest('[data-col]').dataset.col); });
+  qIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); quickAdd(); } });
+  sIn.addEventListener('input', () => { q = sIn.value.trim().toLowerCase(); render(); });
   const kbKey = e => {
     if (!ov.isConnected) return; if (e.target && e.target.closest && !e.target.closest('.kb-ov') && e.target !== document.body) return;
-    const ta = e.target.closest && e.target.closest('.kb-ta');
+    const ta = e.target.closest && e.target.closest('.kb-ta'); const inField = e.target.closest && e.target.closest('input, select, textarea');
     if (ta) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); const id = edit && edit.id; const f = id && findCard(id); const col = f && f.c.id; finishEdit(); if ((e.ctrlKey || e.metaKey) && col) addCard(col); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finishEdit(true); } return; }
-    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (ov.querySelector('.kb-menu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); else close(); return; }
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (ov.querySelector('.kb-menu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); else if (inField && e.target.value) { e.target.value = ''; if (e.target === sIn) { q = ''; render(); } } else if (inField) e.target.blur(); else close(); return; }
+    if (inField) return;
+    if (e.key === 'n' || e.key === 'N') { e.preventDefault(); qIn.focus(); return; }
+    if (e.key === '/') { e.preventDefault(); sIn.focus(); return; }
     const card = e.target.closest && e.target.closest('.kb-card'); if (card && e.key === 'Enter') { e.preventDefault(); editCard(card.dataset.card); }
     if (card && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); card.querySelector('[data-kb="del"]').click(); }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !ta) { e.preventDefault(); addCard((K.cols[0] || {}).id); }
   };
   document.addEventListener('keydown', kbKey, true);
   // ---------- Ziehen: Karten zwischen Spalten, Spalten untereinander (Maus sofort, Finger nach kurzem Halten) ----------
-  let drag = null, moved = false, holdT = 0;
+  let drag = null, moved = false, holdT = 0, pd = null, kbMove, kbUp, kbTm;
   const startDrag = (e, kind, srcEl) => {
-    finishEdit(); const r = srcEl.getBoundingClientRect();
+    finishEdit(); srcEl = board.querySelector(kind === 'card' ? `[data-card="${srcEl.dataset.card}"]` : `[data-col="${srcEl.dataset.col}"]`) || srcEl; const r = srcEl.getBoundingClientRect();
     const g = srcEl.cloneNode(true); g.classList.add('kb-ghost'); g.style.width = r.width + 'px'; g.style.height = r.height + 'px'; document.body.appendChild(g);
     const ph = document.createElement('div'); ph.className = kind === 'card' ? 'kb-ph' : 'kb-phc'; ph.style.height = r.height + 'px'; if (kind === 'col') ph.style.width = r.width + 'px';
     srcEl.after(ph); srcEl.classList.add('kb-src');
-    drag = { kind, el: srcEl, g, ph, dx: e.clientX - r.left, dy: e.clientY - r.top, id: kind === 'card' ? srcEl.dataset.card : srcEl.dataset.col };
+    drag = { kind, el: srcEl, g, ph, dx: e.clientX - r.left, dy: e.clientY - r.top, id: kind === 'card' ? srcEl.dataset.card : srcEl.dataset.col, from: kind === 'card' ? srcEl.closest('[data-col]').dataset.col : null, lx: e.clientX };
     ov.classList.add('kb-dragging'); moveDrag(e);
   };
   const moveDrag = e => {
-    const d = drag; d.g.style.transform = `translate(${e.clientX - d.dx}px,${e.clientY - d.dy}px) rotate(${d.kind === 'card' ? 2 : 1}deg)`;
+    const d = drag; const tilt = Math.max(-8, Math.min(8, (e.clientX - d.lx) * 0.6)); d.lx = e.clientX; d.g.style.transform = `translate(${e.clientX - d.dx}px,${e.clientY - d.dy}px) rotate(${(d.kind === 'card' ? 2 : 1) + tilt * 0.4}deg) scale(1.03)`;
     const br = board.getBoundingClientRect(); if (e.clientX > br.right - 60) board.scrollLeft += 14; else if (e.clientX < br.left + 60) board.scrollLeft -= 14;
     if (d.kind === 'card') {
       const cols = [...board.querySelectorAll('.kb-col')]; let col = cols.find(c => { const r = c.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right; });
       if (!col) col = cols.reduce((best, c) => { const r = c.getBoundingClientRect(); const dd = Math.abs(e.clientX - (r.left + r.width / 2)); return !best || dd < best[0] ? [dd, c] : best; }, null)[1];
+      cols.forEach(c => c.classList.toggle('kb-over', c === col));
       const list = col.querySelector('.kb-list'); const lr = list.getBoundingClientRect(); if (e.clientY > lr.bottom - 40) list.scrollTop += 10; else if (e.clientY < lr.top + 30) list.scrollTop -= 10;
       const cards = [...list.querySelectorAll('.kb-card:not(.kb-src)')]; const nx = cards.find(c => { const r = c.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
-      if (nx) { if (d.ph.nextSibling !== nx) list.insertBefore(d.ph, nx); } else if (list.lastElementChild !== d.ph) list.appendChild(d.ph);
+      if (nx) { if (d.ph.nextSibling !== nx) list.insertBefore(d.ph, nx); } else { const hint = list.querySelector('.kb-hint'); if (hint) hint.remove(); if (list.lastElementChild !== d.ph) list.appendChild(d.ph); }
     } else {
       const cols = [...board.querySelectorAll('.kb-col:not(.kb-src)')]; const nx = cols.find(c => { const r = c.getBoundingClientRect(); return e.clientX < r.left + r.width / 2; });
       if (nx) { if (d.ph.nextSibling !== nx) board.insertBefore(d.ph, nx); } else { const add = board.querySelector('.kb-addcol'); if (d.ph.nextSibling !== add) board.insertBefore(d.ph, add); }
     }
   };
-  const endDrag = () => {
-    const d = drag; drag = null; ov.classList.remove('kb-dragging'); d.g.remove();
-    if (d.kind === 'card') { const f = findCard(d.id); const col = d.ph.closest('[data-col]'); if (f && col) { const to = colOf(col.dataset.col); const idx = [...d.ph.parentNode.children].filter(x => !x.classList.contains('kb-src')).indexOf(d.ph); f.c.cards.splice(f.i, 1); to.cards.splice(Math.max(0, idx), 0, f.x); } }
-    else { const i = K.cols.findIndex(c => c.id === d.id); const idx = [...board.children].filter(x => x.classList.contains('kb-col') && !x.classList.contains('kb-src') || x === d.ph).indexOf(d.ph); if (i >= 0 && idx >= 0) { const [c] = K.cols.splice(i, 1); K.cols.splice(idx, 0, c); } }
+  const endDrag = e => {
+    const d = drag; drag = null; ov.classList.remove('kb-dragging'); d.g.remove(); board.querySelectorAll('.kb-over').forEach(c => c.classList.remove('kb-over'));
+    if (d.kind === 'card') { const f = findCard(d.id); const col = d.ph.closest('[data-col]'); if (f && col) { const to = colOf(col.dataset.col); const vis = [...d.ph.parentNode.children].filter(x => (x.classList.contains('kb-card') && !x.classList.contains('kb-src')) || x === d.ph); const idxVis = vis.indexOf(d.ph);
+      const before = vis[idxVis + 1] ? findCard(vis[idxVis + 1].dataset.card) : null; f.c.cards.splice(f.i, 1); let idx = before && before.c === to ? to.cards.indexOf(before.x) : to.cards.length; if (idx < 0) idx = to.cards.length;
+      to.cards.splice(idx, 0, f.x); flash = f.x.id; if (kbIsDone(to) && !kbIsDone(f.c)) { f.x.fin = Date.now(); kbConfetti(e ? e.clientX : innerWidth / 2, e ? e.clientY : innerHeight / 2); } else if (!kbIsDone(to)) delete f.x.fin; } }
+    else { const i = K.cols.findIndex(c => c.id === d.id); const idx = [...board.children].filter(x => (x.classList.contains('kb-col') && !x.classList.contains('kb-src')) || x === d.ph).indexOf(d.ph); if (i >= 0 && idx >= 0) { const [c] = K.cols.splice(i, 1); K.cols.splice(idx, 0, c); } }
     save(); render();
   };
-  let pd = null, kbMove, kbUp, kbTm;
   board.addEventListener('pointerdown', e => {
-    if (e.button > 0 || drag) return; const t = e.target; if (t.closest('button, textarea, input, .kb-card.ed')) return;
+    if (e.button > 0 || drag) return; const t = e.target; if (t.closest('button, textarea, input, select, .kb-card.ed, .kb-chk')) return;
     const card = t.closest('.kb-card'), head = t.closest('.kb-ch'); const src = card || (head && head.closest('.kb-col')); if (!src) return;
     moved = false; pd = { x: e.clientX, y: e.clientY, src, kind: card ? 'card' : 'col', id: e.pointerId, touch: e.pointerType !== 'mouse', ready: e.pointerType === 'mouse' };
     if (pd.touch) { clearTimeout(holdT); holdT = setTimeout(() => { if (pd && !drag) { pd.ready = true; navigator.vibrate && navigator.vibrate(15); src.classList.add('kb-hold'); } }, 280); }
@@ -6212,10 +6331,10 @@ function openKanban() {
     if (!pd.ready) { if (dist > 8) { clearTimeout(holdT); pd = null; } return; }
     if (dist > 5) { moved = true; pd.src.classList.remove('kb-hold'); try { board.setPointerCapture(e.pointerId); } catch {} startDrag(e, pd.kind, pd.src); pd = null; }
   }, { passive: false });
-  window.addEventListener('pointerup', kbUp = () => { clearTimeout(holdT); if (pd) pd.src.classList.remove('kb-hold'); pd = null; if (drag) { endDrag(); setTimeout(() => { moved = false; }, 0); } });
+  window.addEventListener('pointerup', kbUp = e => { clearTimeout(holdT); if (pd) pd.src.classList.remove('kb-hold'); pd = null; if (drag) { endDrag(e); setTimeout(() => { moved = false; }, 0); } });
   window.addEventListener('pointercancel', kbUp);
   board.addEventListener('touchmove', kbTm = e => { if (drag) e.preventDefault(); }, { passive: false });
-  function close() { finishEdit(); document.removeEventListener('keydown', kbKey, true); window.removeEventListener('pointermove', kbMove); window.removeEventListener('pointerup', kbUp); window.removeEventListener('pointercancel', kbUp); ov.remove(); }
+  function close() { finishEdit(); document.removeEventListener('keydown', kbKey, true); window.removeEventListener('pointermove', kbMove); window.removeEventListener('pointerup', kbUp); window.removeEventListener('pointercancel', kbUp); ov.classList.add('kb-out'); setTimeout(() => ov.remove(), 180); }
   render(); ov.focus();
 }
 /* ================= Tafelansicht (Vorbild Classroomscreen): Folie als Karte, Ablaufleiste, frei verschiebbare Werkzeuge ================= */
