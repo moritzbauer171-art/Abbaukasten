@@ -1402,6 +1402,9 @@ body{transition:background-color .3s,border-color .25s}
 .kb-tag small{opacity:.6;font-weight:700}.kb-tags .kb-tag.on{color:#fff;background:hsl(var(--th) 55% 42%)}
 .kb-clr{border:0;background:transparent;font:700 12px var(--f-ui);color:var(--muted);cursor:pointer;text-decoration:underline}
 .kb-sp{flex:1}
+.kb-sbtn{display:none;width:40px;height:40px;border:0;border-radius:12px;background:var(--card);font-size:20px;color:inherit;box-shadow:0 1px 3px rgba(15,25,45,.1)}
+.kb-tabs{display:none}
+.kb-mv{font-size:16px;font-weight:800;padding:3px 10px}.kb-mv:disabled{opacity:.35;cursor:default}
 .kb-board{flex:1;min-height:0;display:flex;gap:14px;align-items:flex-start;padding:10px 18px 18px;overflow-x:auto;overflow-y:hidden;scroll-behavior:auto}
 .kb-col{flex:0 0 300px;max-height:100%;display:flex;flex-direction:column;background:color-mix(in srgb,var(--panel) 82%,transparent);backdrop-filter:blur(6px);border-radius:16px;padding:8px;border-top:4px solid var(--cc);box-shadow:0 1px 2px rgba(15,25,45,.06);transition:box-shadow .15s,background .15s}
 .kb-col.kb-over{background:color-mix(in srgb,var(--cc) 10%,var(--panel));box-shadow:0 0 0 2px var(--cc)}
@@ -1481,7 +1484,37 @@ body{transition:background-color .3s,border-color .25s}
 .kb-dcm{align-items:flex-end}.kb-cin{flex:1;font:14px/1.4 var(--f-ui);border:1px solid var(--line);border-radius:10px;padding:8px 10px;resize:vertical;min-height:44px;background:var(--card);color:inherit}
 .kb-dfoot{padding-top:12px;margin-top:4px;border-top:1px solid var(--line)}
 .kb-chip.dng{color:#B3261E;border-color:#F1C6C2}
-@media (max-width:700px){.kb-col{flex-basis:84vw}.kb-help{display:none}.kb-search{flex-basis:100%}}
+/* Handy (z. B. Pixel): eine Spalte pro Bildschirm mit Einrasten, Spalten-Reiter oben, Karte als Blatt von unten */
+@media (max-width:700px){
+  .kb-ov{font-size:16px}
+  .kb-top{padding:calc(8px + env(safe-area-inset-top)) 12px 8px;gap:8px}
+  .kb-logo{font-size:20px}.kb-stats{order:5;width:100%}.kb-stats span{font-size:11.5px}
+  .kb-quick{order:6;flex:1 1 100%;height:46px}
+  .kb-search{display:none;order:7;flex:1 1 100%;height:44px}.kb-ov.kb-srch .kb-search{display:flex}
+  .kb-sbtn{display:inline-flex;align-items:center;justify-content:center;margin-left:auto}.kb-x{margin-left:0}
+  .kb-quick input,.kb-search input,.kb-ta,.kb-cin,.kb-dadd input,.kb-ti{font-size:16px}
+  .kb-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 12px 8px;scrollbar-width:none}.kb-tabs::-webkit-scrollbar{display:none}
+  .kb-tabs button{flex:0 0 auto;border:0;border-radius:999px;padding:7px 12px;background:var(--card);color:var(--muted);font:700 13px var(--f-ui);box-shadow:0 1px 2px rgba(15,25,45,.08)}
+  .kb-tabs button small{opacity:.7;margin-left:2px}.kb-tabs button[aria-selected="true"]{background:var(--cc);color:#fff}
+  .kb-tags{flex-wrap:nowrap;overflow-x:auto;padding:0 12px 6px;scrollbar-width:none}.kb-tags::-webkit-scrollbar{display:none}.kb-tags .kb-tag{flex:0 0 auto}
+  .kb-board{scroll-snap-type:x mandatory;gap:10px;padding:2px 12px calc(12px + env(safe-area-inset-bottom));scroll-padding-inline:12px;-webkit-overflow-scrolling:touch}
+  .kb-dragging .kb-board{scroll-snap-type:none}
+  .kb-col{flex:0 0 calc(100vw - 24px);scroll-snap-align:start;scroll-snap-stop:always;border-radius:18px}
+  .kb-addcol{flex:0 0 calc(100vw - 24px);scroll-snap-align:start;height:110px}
+  .kb-card{padding:13px 40px 13px 15px}
+  .kb-del{opacity:.45;width:34px;height:34px;right:2px;top:2px;font-size:20px}
+  .kb-add{padding:12px 10px;font-size:15px}
+  .kb-cm{width:36px;height:36px;font-size:20px}
+  .kb-chk{padding:4px 0}.kb-chk i{width:18px;height:18px}
+  .kb-det{left:0;right:0;top:auto;bottom:0;transform:none;width:100%;max-height:92dvh;border-radius:22px 22px 0 0;border-top-width:6px;padding:12px 16px calc(18px + env(safe-area-inset-bottom));animation:kbUp .22s cubic-bezier(.2,.9,.3,1)}
+  .kb-det::before{content:"";align-self:center;width:40px;height:5px;border-radius:3px;background:var(--line-strong);margin-bottom:2px}
+  .kb-dh .kb-dcol{flex:1;min-width:0}
+  .kb-chip{padding:6px 11px;font-size:13px}.kb-dot{width:24px;height:24px}
+  .kb-undo{bottom:calc(14px + env(safe-area-inset-bottom));width:calc(100% - 24px);justify-content:space-between;box-sizing:border-box}
+  .kb-menu{width:min(260px,calc(100vw - 24px))}.kb-menu button{padding:11px 12px}
+  .kb-help{display:none}
+}
+@keyframes kbUp{from{transform:translateY(60px);opacity:0}}
 /* Breite und Ultrawide-Monitore: Spalten teilen sich die Breite, Inhalt mittig, alles etwas größer */
 .kb-ov>.kb-top,.kb-ov>.kb-tags,.kb-ov>.kb-help,.kb-ov>.kb-board{width:100%;max-width:var(--kbw,2400px);margin-inline:auto;box-sizing:border-box}
 @media (min-width:1500px){
@@ -6246,10 +6279,11 @@ function openKanban() {
     <div class="kb-top"><b class="kb-logo">Kanban</b><span class="kb-stats"></span>
       <label class="kb-quick"><span aria-hidden="true">＋</span><input type="text" placeholder="Neue Aufgabe … z. B. „Klausur 10b korrigieren #korrektur Freitag !“" aria-label="Neue Aufgabe" maxlength="400"></label>
       <label class="kb-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Suchen oder #Tag" aria-label="Karten durchsuchen"></label>
-      <button type="button" class="kb-x" data-kb="close" aria-label="Schließen" title="Schließen (Esc)">×</button></div>
-    <div class="kb-tags"></div><div class="kb-board"></div><div class="kb-undo" hidden></div>
+      <button type="button" class="kb-sbtn" data-kb="srch" aria-label="Suchen" title="Suchen">⌕</button><button type="button" class="kb-x" data-kb="close" aria-label="Schließen" title="Schließen (Esc)">×</button></div>
+    <div class="kb-tabs" role="tablist" aria-label="Spalten"></div><div class="kb-tags"></div><div class="kb-board"></div><div class="kb-undo" hidden></div>
     <div class="kb-help">Ziehen zum Verschieben · Klick öffnet die Karte mit Links und Kommentaren · <b>#tag</b>, <b>morgen</b>, <b>Fr</b>, <b>24.11.</b>, <b>!</b> beim Anlegen · <b>[ ]</b> am Zeilenanfang wird zur Checkliste · N neue Karte · / suchen</div></div>`);
   document.body.appendChild(ov); const board = ov.querySelector('.kb-board'), qIn = ov.querySelector('.kb-quick input'), sIn = ov.querySelector('.kb-search input');
+  if (matchMedia('(max-width:700px)').matches) qIn.placeholder = 'Neue Aufgabe … #tag morgen !';
   const save = () => { state.prefs.kanban = K; savePrefs(); };
   const colOf = id => K.cols.find(c => c.id === id);
   const findCard = id => { for (const c of K.cols) { const i = c.cards.findIndex(x => x.id === id); if (i >= 0) return { c, i, x: c.cards[i] }; } return null; };
@@ -6276,10 +6310,15 @@ function openKanban() {
     const sl = board.scrollLeft; const sc = {}; board.querySelectorAll('.kb-col').forEach(c => { sc[c.dataset.col] = c.querySelector('.kb-list').scrollTop; });
     board.innerHTML = K.cols.map((c, ci) => { const vis = c.cards.filter(match); const wip = c.lim && c.cards.length > c.lim;
       return `<section class="kb-col${c.done ? ' kb-donecol' : ''}" data-col="${c.id}" style="--cc:${['#2F6FDB', '#F08C00', '#8E4EC6', '#1E9E5A', '#E5484D', '#0D9488', '#B45309', '#475569'][ci % 8]}"><header class="kb-ch" title="Ziehen zum Verschieben · Doppelklick zum Umbenennen"><span class="kb-emo">${c.e || '📌'}</span><h3>${esc(c.t) || 'Ohne Titel'}</h3><span class="kb-n${wip ? ' wip' : ''}">${q ? vis.length + '/' : ''}${c.cards.length}</span><button type="button" class="kb-cm" data-kb="cmenu" aria-label="Spalte: Menü">⋯</button></header>
-      <div class="kb-list">${vis.map(x => cardHTML(x, c)).join('')}${!c.cards.length ? `<div class="kb-hint">${c.done ? 'Hierher ziehen, was fertig ist 🎉' : 'Noch leer · Doppelklick für eine Karte'}</div>` : ''}</div><button type="button" class="kb-add" data-kb="add">+ Karte</button></section>`; }).join('') + `<button type="button" class="kb-addcol" data-kb="addcol">+ Spalte</button>`;
+      <div class="kb-list">${vis.map(x => cardHTML(x, c)).join('')}${!c.cards.length ? `<div class="kb-hint">${c.done ? 'Hierher ziehen, was fertig ist 🎉' : (matchMedia('(pointer:coarse)').matches ? 'Noch leer · unten auf „+ Karte“ tippen' : 'Noch leer · Doppelklick für eine Karte')}</div>` : ''}</div><button type="button" class="kb-add" data-kb="add">+ Karte</button></section>`; }).join('') + `<button type="button" class="kb-addcol" data-kb="addcol">+ Spalte</button>`;
     board.scrollLeft = sl; board.querySelectorAll('.kb-col').forEach(c => { if (sc[c.dataset.col]) c.querySelector('.kb-list').scrollTop = sc[c.dataset.col]; });
-    flash = null; stats();
+    flash = null; stats(); tabsR();
   };
+  const tabs = ov.querySelector('.kb-tabs'); let tabI = 0;
+  const colW = () => { const c = board.querySelector('.kb-col'); return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(board).columnGap || 10) : 300; };
+  const tabsR = () => { tabs.innerHTML = K.cols.map((c, i) => `<button type="button" role="tab" data-kt="${i}" aria-selected="${i === tabI}" style="--cc:${['#2F6FDB', '#F08C00', '#8E4EC6', '#1E9E5A', '#E5484D', '#0D9488', '#B45309', '#475569'][i % 8]}">${c.e || ''} ${esc(c.t)} <small>${c.cards.length}</small></button>`).join(''); };
+  let tabRaf = 0; board.addEventListener('scroll', () => { if (tabRaf) return; tabRaf = requestAnimationFrame(() => { tabRaf = 0; const i = Math.max(0, Math.min(K.cols.length - 1, Math.round(board.scrollLeft / colW()))); if (i !== tabI) { tabI = i; tabs.querySelectorAll('[data-kt]').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.kt === i))); const b = tabs.querySelector(`[data-kt="${i}"]`); b && b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } }); }, { passive: true });
+  tabs.addEventListener('click', e => { const b = e.target.closest('[data-kt]'); if (!b) return; e.stopPropagation(); const c = board.querySelectorAll('.kb-col')[+b.dataset.kt]; if (c) board.scrollTo({ left: c.offsetLeft - board.offsetLeft - parseFloat(getComputedStyle(board).paddingLeft || 0), behavior: 'smooth' }); });
   const undoBar = (msg, fn) => { const u = ov.querySelector('.kb-undo'); u.innerHTML = `<span>${esc(msg)}</span><button type="button">Rückgängig</button>`; u.hidden = false; u.querySelector('button').onclick = () => { fn(); u.hidden = true; save(); render(); }; clearTimeout(undoT); undoT = setTimeout(() => { u.hidden = true; }, 6000); };
   // Bearbeiten direkt in der Karte: Text, Farbe, Fälligkeit, verknüpfte Stunde
   const lessonOpts = sel => { const L = state.lib.slice().sort((a, b) => String(b.updated || '').localeCompare(String(a.updated || ''))).slice(0, 300);
@@ -6305,6 +6344,7 @@ function openKanban() {
     const cms = (x.cm || []).map(m => `<li data-m="${m.id}"><div class="kb-cmt">${kbLinkify(esc(m.t))}</div><small>${kbWhen(m.ts)}<button type="button" class="kb-dx" data-kd="cdel" aria-label="Kommentar löschen">×</button></small></li>`).join('');
     det.el.querySelector('.kb-dlinks').innerHTML = links || '<li class="kb-dnone">Noch keine Links</li>';
     det.el.querySelector('.kb-dcms').innerHTML = cms || '<li class="kb-dnone">Noch keine Kommentare</li>';
+    det.el.querySelectorAll('[data-kd="mv"]').forEach(b => { const ci = K.cols.indexOf(f.c); b.disabled = +b.dataset.v < 0 ? ci <= 0 : ci >= K.cols.length - 1; });
     det.el.querySelector('.kb-dcol').innerHTML = K.cols.map(c => `<option value="${c.id}"${c === f.c ? ' selected' : ''}>${c.e || ''} ${esc(c.t)}</option>`).join('');
     det.el.querySelectorAll('[data-kd="color"]').forEach(b => b.setAttribute('aria-pressed', String((x.c || 'grau') === b.dataset.v)));
     det.el.querySelector('.kb-date').value = x.d || '';
@@ -6313,7 +6353,7 @@ function openKanban() {
   const openDet = id => {
     finishEdit(); if (det) closeDet(); const f = findCard(id); if (!f) return;
     ov.insertAdjacentHTML('beforeend', '<div class="kb-detbg"></div>');
-    const el2 = el(`<aside class="kb-det" role="dialog" aria-label="Karte"><div class="kb-dh"><select class="kb-dcol" aria-label="Spalte"></select><span class="kb-sp"></span><button type="button" class="kb-x" data-kd="close" aria-label="Schließen">×</button></div>
+    const el2 = el(`<aside class="kb-det" role="dialog" aria-label="Karte"><div class="kb-dh"><button type="button" class="kb-chip kb-mv" data-kd="mv" data-v="-1" aria-label="Eine Spalte nach links" title="Eine Spalte nach links">‹</button><select class="kb-dcol" aria-label="Spalte"></select><button type="button" class="kb-chip kb-mv" data-kd="mv" data-v="1" aria-label="Eine Spalte nach rechts" title="Eine Spalte nach rechts">›</button><span class="kb-sp"></span><button type="button" class="kb-x" data-kd="close" aria-label="Schließen">×</button></div>
       <textarea class="kb-dta" aria-label="Text der Karte" placeholder="Was ist zu tun? #tag · [ ] Checkliste">${esc(f.x.t)}</textarea>
       <div class="kb-drow">${Object.entries(KB_COLS).map(([k, c]) => `<button type="button" class="kb-dot" data-kd="color" data-v="${k}" style="--dc:${c}" aria-label="Farbe ${k}"></button>`).join('')}</div>
       <div class="kb-drow"><span class="kb-lab">Fällig</span><button type="button" class="kb-chip" data-kd="due" data-v="0">heute</button><button type="button" class="kb-chip" data-kd="due" data-v="1">morgen</button><button type="button" class="kb-chip" data-kd="due" data-v="7">+1 Woche</button><input type="date" class="kb-date" aria-label="Fällig am"><button type="button" class="kb-chip" data-kd="due" data-v="x" title="Ohne Datum">×</button></div>
@@ -6328,7 +6368,9 @@ function openKanban() {
     ta.addEventListener('input', () => { fit2(); const g = findCard(id); if (g) { g.x.t = ta.value; save(); } });
     el2.querySelector('.kb-date').addEventListener('change', e => { const g = findCard(id); if (!g) return; if (e.target.value) g.x.d = e.target.value; else delete g.x.d; save(); });
     const se = el2.querySelector('.kb-sel'); if (se) se.addEventListener('change', e => { const g = findCard(id); if (!g) return; if (e.target.value) g.x.lk = e.target.value; else delete g.x.lk; save(); });
-    el2.querySelector('.kb-dcol').addEventListener('change', e => { const g = findCard(id); const to = colOf(e.target.value); if (!g || !to || to === g.c) return; g.c.cards.splice(g.i, 1); to.cards.unshift(g.x); if (kbIsDone(to) && !kbIsDone(g.c)) { g.x.fin = Date.now(); const r = e.target.getBoundingClientRect(); kbConfetti(r.left + r.width / 2, r.bottom); } else if (!kbIsDone(to)) delete g.x.fin; save(); render(); });
+    const moveTo = (to, src) => { const g = findCard(id); if (!g || !to || to === g.c) return; g.c.cards.splice(g.i, 1); to.cards.unshift(g.x); if (kbIsDone(to) && !kbIsDone(g.c)) { g.x.fin = Date.now(); const r = src.getBoundingClientRect(); kbConfetti(r.left + r.width / 2, r.bottom); } else if (!kbIsDone(to)) delete g.x.fin; save(); render(); detBody(); };
+    el2.querySelector('.kb-dcol').addEventListener('change', e => moveTo(colOf(e.target.value), e.target));
+    el2.querySelectorAll('[data-kd="mv"]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); const g = findCard(id); if (!g) return; moveTo(K.cols[K.cols.indexOf(g.c) + +b.dataset.v], b); }));
     const addLink = () => { const g = findCard(id); if (!g) return; let u = el2.querySelector('.kb-lu').value.trim(); const tt = el2.querySelector('.kb-lt').value.trim(); if (!u) return; if (!/^https?:\/\//i.test(u)) u = 'https://' + u; try { new URL(u); } catch { toast('Das sieht nicht wie ein Link aus.'); return; }
       (g.x.ln = g.x.ln || []).push({ u: u.slice(0, 1000), ...(tt ? { t: tt } : {}) }); el2.querySelector('.kb-lu').value = ''; el2.querySelector('.kb-lt').value = ''; save(); detBody(); el2.querySelector('.kb-lu').focus(); };
     const addCm = () => { const g = findCard(id); const ci = el2.querySelector('.kb-cin'); const v = ci.value.trim(); if (!g || !v) return; (g.x.cm = g.x.cm || []).push({ id: 'm' + uid(), t: v.slice(0, 2000), ts: Date.now() }); ci.value = ''; save(); detBody(); const L = el2.querySelector('.kb-dcms'); L.lastElementChild && L.lastElementChild.scrollIntoView({ block: 'nearest' }); ci.focus(); };
@@ -6364,12 +6406,13 @@ function openKanban() {
   const colMenu = (id, btn) => {
     ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); const c = colOf(id); if (!c) return; const r = btn.getBoundingClientRect();
     const mn = el(`<div class="kb-menu" role="menu"><div class="kb-emos">${KB_EMO.map(e => `<button type="button" data-kb="m-emo" data-v="${e}" aria-pressed="${c.e === e}">${e}</button>`).join('')}</div><button type="button" data-kb="m-ren">Umbenennen</button><button type="button" data-kb="m-top">Karte oben einfügen</button><button type="button" data-kb="m-done">${c.done ? '✓ ' : ''}Spalte für Erledigtes</button><button type="button" data-kb="m-lim">Limit: ${c.lim ? c.lim + ' Karten' : 'keins'}</button>${c.cards.length ? '<button type="button" data-kb="m-clr">Alle Karten löschen</button>' : ''}<button type="button" data-kb="m-del" class="dng">Spalte löschen</button></div>`);
-    mn.style.left = Math.min(innerWidth - 240, r.left - 180) + 'px'; mn.style.top = (r.bottom + 4) + 'px'; mn.dataset.col = id; ov.appendChild(mn);
+    mn.style.left = Math.max(8, Math.min(innerWidth - Math.min(260, innerWidth - 24) - 8, r.left - 180)) + 'px'; mn.style.top = (r.bottom + 4) + 'px'; mn.dataset.col = id; ov.appendChild(mn);
   };
   ov.addEventListener('click', e => {
     const t = e.target; const b = t.closest('[data-kb]'); const a = b && b.dataset.kb;
     if (!t.closest('.kb-menu') && !(a === 'cmenu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove());
     if (a === 'close') { close(); return; }
+    if (a === 'srch') { ov.classList.toggle('kb-srch'); if (ov.classList.contains('kb-srch')) sIn.focus(); else { sIn.value = ''; q = ''; render(); } return; }
     if (a === 'ok') { finishEdit(); return; }
     if (a === 'clrq') { q = ''; sIn.value = ''; render(); return; }
     const tg = t.closest('.kb-tag'); if (tg && !t.closest('.kb-card.ed')) { const w = '#' + tg.dataset.tag; const ws = q.split(/\s+/).filter(Boolean); q = (ws.includes(w) ? ws.filter(x => x !== w) : ws.concat(w)).join(' '); sIn.value = q; render(); return; }
