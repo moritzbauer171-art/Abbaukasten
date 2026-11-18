@@ -1347,6 +1347,19 @@ body{transition:background-color .3s,border-color .25s}
 .pr-vscroll i{position:absolute;left:2px;right:2px;min-height:30px;border-radius:999px;background:rgba(28,31,39,.65);cursor:grab}
 .pr:not(.pr-blankcur) .pr-more,.pr:not(.pr-blankcur) .pr-vscroll{display:none}
 .pr-aud .pr-more,.pr-aud .pr-vscroll{display:none}
+.pr-pk-h.either .pro{color:#1F56B8;background:#EAF1FC}.pr-pk-h.either .con{color:#6B35A6;background:#F2EAFA}
+.pr-pk-h.either b{text-transform:none;letter-spacing:0;font-size:36px;padding:12px 16px;line-height:1.1}
+.pr-pklab{position:absolute;right:14px;top:14px;z-index:6;border:0;border-radius:999px;background:rgba(28,31,39,.86);color:#fff;font:600 13px var(--f-ui);padding:7px 14px;cursor:pointer;opacity:.6;max-width:min(60%,520px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr-pklab:hover,.pr-pklab:focus-visible{opacity:1}
+.pr:not(.pr-pkcur) .pr-pklab,.pr:not(.pr-pkcur) .pr-pkdlg,.pr-aud .pr-pklab,.pr-aud .pr-pkdlg{display:none}
+.pr-pkdlg{position:absolute;right:14px;top:56px;z-index:8;width:min(360px,calc(100% - 28px));background:#fff;color:#1C1F27;border-radius:14px;box-shadow:0 14px 36px rgba(0,0,0,.35);padding:14px;display:flex;flex-direction:column;gap:10px;font:14px/1.35 var(--f-ui)}
+.pr-pkdlg[hidden]{display:none}
+.pr-pkdlg label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:12px;color:#5B6271}
+.pr-pkdlg input{font:16px var(--f-ui);border:2px solid #D5D9E2;border-radius:9px;padding:6px 9px;color:#1C1F27}
+.pr-pkdlg-b{display:flex;flex-wrap:wrap;gap:6px}
+.pr-pkdlg-b button{font:700 13px var(--f-ui);border:1px solid #D5D9E2;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:#1C1F27}
+.pr-pkdlg-b button.ok{background:#1C1F27;color:#fff;border-color:#1C1F27}.pr-pkdlg-b button:disabled{opacity:.4;cursor:default}
+.pr-pkdlg small{color:#5B6271}
 .pr-fbtns{position:absolute;left:14px;bottom:14px;z-index:6;display:flex;gap:8px}
 .pr-aud .pr-fbtns{display:none}
 .pr-pk-in{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
@@ -5899,7 +5912,7 @@ function presSlideHTML(s, bar) {
   const phChip = ph => (s.res ? '<span class="pr-chip res">Reserve</span>' : '') + (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
   const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn} Min.</span>` : `<span class="pr-chip pr-min">${mn} Min.</span>`);
   switch (s.k) {
-    case 'blank': if (s.pk) return `<div class="pr-blank pr-pk pat-weiss" aria-label="Pro-und-Contra-Tafel"><div class="pr-pk-in" style="height:${s.h || 900}px;transform:translateY(${-(s.sy || 0)}px)"><h2 class="pr-pk-q${s.q ? '' : ' empty'}">${s.q ? esc(s.q) : 'Stundenfrage im Kopf der Stunde eintragen'}</h2><div class="pr-pk-h"><b class="pro">Pro</b><b class="con">Contra</b></div><div class="pr-pk-b"></div></div></div>`;
+    case 'blank': if (s.pk) return `<div class="pr-blank pr-pk pat-weiss" aria-label="Pro-und-Contra-Tafel"><div class="pr-pk-in" style="height:${s.h || 900}px;transform:translateY(${-(s.sy || 0)}px)"><h2 class="pr-pk-q${s.q ? '' : ' empty'}">${s.q ? esc(s.q) : 'Stundenfrage im Kopf der Stunde eintragen'}</h2><div class="pr-pk-h${s.either ? ' either' : ''}"><b class="pro">${esc((s.lab || [])[0] || 'Pro')}</b><b class="con">${esc((s.lab || [])[1] || 'Contra')}</b></div><div class="pr-pk-b"></div></div></div>`;
       return `<div class="pr-blank pat-${INK_PATS[s.pat] ? s.pat : 'weiss'}" style="background-position:${inkBgPos(s) || '0 0'}" aria-label="Leere Tafelseite"></div>`;
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
@@ -6543,6 +6556,20 @@ const INK_TOOLS = {
 const TAFEL_IC = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M8 21l2-4.5M16 21l-2-4.5"/><path d="M6.5 12.5c1.6-2.6 3-3.6 4.2-2.4 1 1 2 .9 3.3-.6"/></svg>';
 // Hintergrund einer Tafelseite mitscrollen (die Seite kann nach unten erweitert werden)
 const inkBgPos = s => (s.pat === 'kariert' ? `-1px ${-1 - (s.sy || 0)}px` : s.pat === 'liniert' ? `0 ${20 - (s.sy || 0)}px` : '');
+// Entweder-oder-Fragen: die beiden Möglichkeiten als Spaltentitel („… ein Diktatfrieden oder ein Verhandlungsfrieden?“)
+function pkAuto(q) {
+  const t = String(q || '').replace(/\s+/g, ' ').trim().replace(/[?!.…]+$/, '').trim(); let a, b;
+  const m = t.match(/\bentweder\s+(.+?)\s+oder\s+(.+)$/i);
+  if (m) { a = m[1]; b = m[2]; }
+  else {
+    const i = t.toLowerCase().lastIndexOf(' oder '); if (i < 0) return null;
+    let r = t.slice(i + 6).trim().replace(/^(doch|eher|vielmehr|nicht vielmehr|nicht eher|aber|etwa)\s+/i, ''); r = r.split(/[,;:–—]| - /)[0].trim();
+    const rw = r.split(' '); if (!r || rw.length > 5) return null;
+    a = t.slice(0, i).split(/[,;:–—]| - /).pop().trim().split(' ').slice(-rw.length).join(' '); b = r;
+  }
+  const clean = x => { x = String(x).replace(/^(ein|eine|einer|eines|einen|der|die|das|den|dem|des|eher|nur|bloß|doch|mehr)\s+/i, '').trim(); return x ? x[0].toUpperCase() + x.slice(1) : x; };
+  a = clean(a); b = clean(b); if (!a || !b || a.length > 40 || b.length > 40 || a.toLowerCase() === b.toLowerCase()) return null; return [a, b];
+}
 const INK_PATS = { kariert: 'Kariert', liniert: 'Liniert', weiss: 'Weiß' };
 const inkKey = s => (!s ? '' : s.k === 'blank' ? s.id : `${s.k}:${s.b ? s.b.id : s.bid || ''}:${s.part || s.qi || 0}`);
 const inkSvg = g => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${g}</svg>`;
@@ -6700,7 +6727,9 @@ function openPres(start, opts = {}) {
   // Geschichte: Pro-und-Contra-Tafel zur Stundenfrage, mit der Stunde gespeichert
   const pkOn = !opts.board && KL(state.sheet.klasse).fach === 'gp';
   const pkSaved = state.sheet.pk && typeof state.sheet.pk === 'object' ? state.sheet.pk : {};
-  BOARD.pk = { k: 'blank', pk: true, pat: 'weiss', id: 'pk', q: tfStr(m.frage).trim(), h: Math.max(900, Math.min(9000, +pkSaved.h || 900)), sy: 0 };
+  BOARD.pk = { k: 'blank', pk: true, pat: 'weiss', id: 'pk', q: tfStr(m.frage).trim(), h: Math.max(900, Math.min(9000, +pkSaved.h || 900)), sy: 0, own: Array.isArray(pkSaved.lab) && pkSaved.lab.length === 2 ? pkSaved.lab.map(x => String(x || '').slice(0, 40)) : null };
+  const pkLab = () => { const pk = BOARD.pk; const auto = pkAuto(pk.q); pk.lab = pk.own || auto || ['Pro', 'Contra']; pk.either = !!(pk.own ? !(pk.own[0] === 'Pro' && pk.own[1] === 'Contra') : auto); pk.auto = auto; };
+  pkLab();
   const curSl = () => (BOARD.open ? (BOARD.kind === 'pk' ? BOARD.pk : BOARD.s) : S[P.i]);
   const boarding = () => BOARD.open || !!opts.board;
   // Tafel immer bildschirmfüllend: ohne Tafelansicht-Rahmen und, ohne Beamerfenster, im Vollbild des Browsers
@@ -6708,7 +6737,7 @@ function openPres(start, opts = {}) {
   const boardSet = (on, kind) => { if (opts.board) return; if (kind) BOARD.kind = kind; const was = BOARD.open; BOARD.open = on; ov.classList.toggle('pr-boarding', on); if (on !== was) boardFull(on); scale(); awScale();
     ov.querySelectorAll('.pr-tafelbtn').forEach(b => { const mine = on && BOARD.kind === b.dataset.kind; b.setAttribute('aria-pressed', String(mine)); b.querySelector('span').textContent = mine ? 'Zurück zur Folie' : b.dataset.label; }); show(); ov.focus(); };
   const boardT = kind => (BOARD.open && BOARD.kind === kind ? boardSet(false) : boardSet(true, kind));
-  const pkSave = () => { if (!pkOn) return; const L = inkStore.pk || []; if (!L.length && BOARD.pk.h <= 900) delete state.sheet.pk; else state.sheet.pk = { ink: L, h: BOARD.pk.h }; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
+  const pkSave = () => { if (!pkOn) return; const L = inkStore.pk || []; if (!L.length && BOARD.pk.h <= 900 && !BOARD.pk.own) delete state.sheet.pk; else state.sheet.pk = { ink: L, h: BOARD.pk.h, ...(BOARD.pk.own ? { lab: BOARD.pk.own } : {}) }; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
   const inkStore = { ...(pkOn && Array.isArray(pkSaved.ink) ? { pk: pkSaved.ink.filter(x => x && Array.isArray(x.p)).slice(0, 3000) } : {}) };
   const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: () => { if (curSl().id === 'pk') pkSave(); },
     addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
@@ -6853,7 +6882,7 @@ function openPres(start, opts = {}) {
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
-    fit(); TBo.slide(P.i); INK.slide(sl); INK.on(sl.k === 'blank'); ov.classList.toggle('pr-blankcur', sl.k === 'blank'); hsSync();
+    fit(); TBo.slide(P.i); INK.slide(sl); INK.on(sl.k === 'blank'); ov.classList.toggle('pr-blankcur', sl.k === 'blank'); ov.classList.toggle('pr-pkcur', !!sl.pk); hsSync();
     warnClose();
     if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
   };
@@ -6876,6 +6905,7 @@ function openPres(start, opts = {}) {
   const wake = keepAwake();
   const closeNow = () => { TBo.destroy(); INK.destroy(); wake(); refClose(); clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
+    if (e.target && e.target.closest && e.target.closest('.pr-pkdlg')) return;
     if (TBo.keyIgnore(e)) return;
     if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === 'z' || e.key === 'Z') && INK.active()) { e.preventDefault(); e.stopPropagation(); INK.undo(); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -6934,6 +6964,17 @@ function openPres(start, opts = {}) {
       try { hs.setPointerCapture(e.pointerId); } catch {} dr = { y: e.clientY, sy: b2.sy || 0, k: H / r.height }; });
     hs.addEventListener('pointermove', e => { if (dr) blankScroll(dr.sy + (e.clientY - dr.y) * dr.k); });
     const end = () => { dr = null; }; hs.addEventListener('pointerup', end); hs.addEventListener('pointercancel', end); }
+  if (pkOn) {
+    stage.insertAdjacentHTML('beforeend', `<button type="button" class="pr-pklab" title="Spaltentitel ändern">Spalten: <b></b></button><div class="pr-pkdlg" hidden role="dialog" aria-label="Spaltentitel"><label>Links <input data-pk="0" maxlength="40"></label><label>Rechts <input data-pk="1" maxlength="40"></label><div class="pr-pkdlg-b"><button type="button" data-pk="ok" class="ok">Übernehmen</button><button type="button" data-pk="pc">Pro / Contra</button><button type="button" data-pk="auto">Aus der Frage</button></div><small></small></div>`);
+    const lb = $p('.pr-pklab'), dl = $p('.pr-pkdlg'); const inp = [...dl.querySelectorAll('input')];
+    const lbSync = () => { lb.querySelector('b').textContent = BOARD.pk.lab.join(' / '); };
+    const apply2 = own => { BOARD.pk.own = own; pkLab(); lbSync(); dl.hidden = true; pkSave(); if (BOARD.open && BOARD.kind === 'pk') show(); ov.focus(); };
+    lb.addEventListener('click', e => { e.stopPropagation(); dl.hidden = !dl.hidden; if (!dl.hidden) { inp.forEach((x, i) => { x.value = BOARD.pk.lab[i]; }); dl.querySelector('small').textContent = BOARD.pk.auto ? 'Aus der Frage erkannt: ' + BOARD.pk.auto.join(' / ') : 'In der Stundenfrage steht keine Entweder-oder-Frage.'; dl.querySelector('[data-pk="auto"]').disabled = !BOARD.pk.auto; inp[0].focus(); inp[0].select(); } });
+    dl.addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('button[data-pk]'); if (!b) return; const k = b.dataset.pk;
+      if (k === 'ok') { const v = inp.map(x => x.value.trim()); apply2(v[0] && v[1] ? v : null); } else if (k === 'pc') apply2(['Pro', 'Contra']); else if (k === 'auto') apply2(null); });
+    dl.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); dl.querySelector('[data-pk="ok"]').click(); } else if (e.key === 'Escape') { e.preventDefault(); dl.hidden = true; ov.focus(); } });
+    lbSync();
+  }
   if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns"><button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
 }
