@@ -1449,10 +1449,34 @@ body{transition:background-color .3s,border-color .25s}
 .kb-menu button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:8px;font:14px var(--f-ui);color:inherit;cursor:pointer}.kb-menu button:hover{background:rgba(0,0,0,.06)}.kb-menu .dng{color:#B3261E}
 .kb-emos{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;padding:4px 2px 6px;border-bottom:1px solid var(--line);margin-bottom:4px}
 .kb-menu .kb-emos button{text-align:center;font-size:18px;padding:5px 0}.kb-menu .kb-emos button[aria-pressed="true"]{background:#E8F0FD}
-.kb-undo{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#1C1F27;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 10px 26px rgba(0,0,0,.3);font-size:14px;animation:kbIn .2s}
+.kb-undo{position:absolute;z-index:340;left:50%;bottom:40px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#1C1F27;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 10px 26px rgba(0,0,0,.3);font-size:14px;animation:kbIn .2s}
 .kb-undo[hidden]{display:none}.kb-undo button{border:0;background:transparent;color:#8DB4FF;font:700 14px var(--f-ui);cursor:pointer}
 .kb-help{padding:0 18px 10px;font-size:12px;color:var(--muted)}.kb-help b{font-weight:700;color:var(--ink)}
 .kb-conf{position:fixed;inset:0;z-index:330;pointer-events:none}
+.kb-url{color:#2741B5;text-decoration:underline;text-underline-offset:2px;word-break:break-all}.kb-url:hover{color:#1F56B8}
+.kb-cnt{font:700 11.5px/1 var(--f-ui);padding:4px 7px;border-radius:7px;background:rgba(0,0,0,.05);color:var(--muted)}
+.kb-detbg{position:absolute;inset:0;z-index:311;background:rgba(15,20,35,.28);animation:kbIn .15s}
+.kb-det{position:absolute;right:0;top:0;bottom:0;z-index:312;width:min(480px,100%);background:var(--card);box-shadow:-14px 0 40px rgba(15,25,45,.25);display:flex;flex-direction:column;gap:10px;padding:14px 18px 18px;overflow-y:auto;border-left:5px solid var(--kc,transparent);animation:kbSl .22s cubic-bezier(.2,.9,.3,1)}
+@keyframes kbSl{from{transform:translateX(40px);opacity:0}}
+.kb-dh{display:flex;align-items:center;gap:8px}.kb-dh .kb-x{margin-left:0}
+.kb-dcol{font:700 13px var(--f-ui);border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:var(--panel);color:inherit}
+.kb-dta{width:100%;min-height:70px;font:17px/1.45 var(--f-ui);border:2px solid var(--line);border-radius:12px;padding:10px 12px;resize:vertical;color:inherit;background:var(--card);box-sizing:border-box}.kb-dta:focus{border-color:#2F6FDB;outline:none}
+.kb-drow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.kb-det h4{margin:10px 0 0;font:800 13px var(--f-ui);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.kb-dlinks,.kb-dcms{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.kb-dlinks li{display:flex;align-items:center;gap:6px;background:var(--panel);border-radius:10px;padding:2px 4px 2px 0}
+.kb-dlinks a{flex:1;min-width:0;display:flex;flex-direction:column;padding:7px 10px;color:inherit;text-decoration:none;border-radius:9px}.kb-dlinks a:hover{background:rgba(47,111,219,.08)}
+.kb-dlinks a b{font-weight:700;color:#2741B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.kb-dlinks a small{color:var(--muted);font-size:12px}
+.kb-dcms li{background:var(--panel);border-radius:12px;padding:9px 12px}
+.kb-cmt{white-space:pre-wrap;overflow-wrap:anywhere}
+.kb-dcms small{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11.5px;color:var(--muted)}
+.kb-dnone{background:transparent!important;color:var(--faint);font-size:13px;padding:2px 0!important}
+.kb-dx{border:0;background:transparent;color:var(--muted);font-size:17px;line-height:1;width:24px;height:24px;border-radius:6px;cursor:pointer;margin-left:auto}.kb-dx:hover{background:#FCECEB;color:#B3261E}
+.kb-dadd{display:flex;gap:6px;flex-wrap:wrap}
+.kb-dadd input{flex:1 1 160px;min-width:0;font:14px var(--f-ui);border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:var(--card);color:inherit}
+.kb-dcm{align-items:flex-end}.kb-cin{flex:1;font:14px/1.4 var(--f-ui);border:1px solid var(--line);border-radius:10px;padding:8px 10px;resize:vertical;min-height:44px;background:var(--card);color:inherit}
+.kb-dfoot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.kb-chip.dng{color:#B3261E;border-color:#F1C6C2}
 @media (max-width:700px){.kb-col{flex-basis:84vw}.kb-help{display:none}.kb-search{flex-basis:100%}}
 /* Breite und Ultrawide-Monitore: Spalten teilen sich die Breite, Inhalt mittig, alles etwas größer */
 .kb-ov>.kb-top,.kb-ov>.kb-tags,.kb-ov>.kb-help,.kb-ov>.kb-board{width:100%;max-width:var(--kbw,2400px);margin-inline:auto;box-sizing:border-box}
@@ -6155,7 +6179,9 @@ function kbNorm(k) {
   const okD = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '');
   const cols = k.cols.filter(c => c && typeof c === 'object').slice(0, 12).map(c => ({ id: String(c.id || 'c' + uid()).slice(0, 40), t: String(c.t || '').slice(0, 60), ...(KB_EMO.includes(c.e) ? { e: c.e } : {}), ...(c.done ? { done: true } : {}), ...(+c.lim > 0 ? { lim: Math.min(50, Math.round(+c.lim)) } : {}),
     cards: (Array.isArray(c.cards) ? c.cards : []).filter(x => x && typeof x === 'object').slice(0, 300).map(x => ({ id: String(x.id || 'k' + uid()).slice(0, 40), t: String(x.t || '').slice(0, 2000),
-      ...(KB_COLS[x.c] && x.c !== 'grau' ? { c: x.c } : {}), ...(okD(x.d) ? { d: x.d } : {}), ...(x.lk ? { lk: String(x.lk).slice(0, 60) } : {}), ...(+x.fin > 0 ? { fin: +x.fin } : {}) })) }));
+      ...(KB_COLS[x.c] && x.c !== 'grau' ? { c: x.c } : {}), ...(okD(x.d) ? { d: x.d } : {}), ...(x.lk ? { lk: String(x.lk).slice(0, 60) } : {}), ...(+x.fin > 0 ? { fin: +x.fin } : {}),
+      ...(Array.isArray(x.cm) && x.cm.length ? { cm: x.cm.filter(m => m && m.t).slice(-200).map(m => ({ id: String(m.id || 'm' + uid()).slice(0, 40), t: String(m.t).slice(0, 2000), ts: +m.ts || Date.now() })) } : {}),
+      ...(Array.isArray(x.ln) && x.ln.length ? { ln: x.ln.filter(l => l && /^https?:\/\//i.test(l.u || '')).slice(0, 30).map(l => ({ u: String(l.u).slice(0, 1000), ...(l.t ? { t: String(l.t).slice(0, 120) } : {}) })) } : {}) })) }));
   return cols.length ? { cols } : null;
 }
 // Datum aus Freitext: heute, morgen, übermorgen, Mo–So / Montag–Sonntag, „nächste Woche“, 24.11. oder 24.11.2026
@@ -6172,6 +6198,10 @@ function kbParse(raw) {
   const pm = t.match(/\s(!{1,3})\s/); if (pm) { c = pm[1].length >= 2 ? 'rot' : 'orange'; t = t.replace(pm[0], ' '); }
   return { t: t.replace(/\s+/g, ' ').trim(), d: d ? kbIso(d) : null, c };
 }
+// Links im Text klickbar machen (nach esc(), daher ohne < > " im Link)
+const kbLinkify = s => s.replace(/(https?:\/\/[^\s<>"]+[^\s<>".,;:!?)\]])/gi, u => `<a class="kb-url" href="${u}" target="_blank" rel="noopener noreferrer" title="${u}">${u.replace(/^https?:\/\/(www\.)?/i, '').slice(0, 42)}${u.replace(/^https?:\/\/(www\.)?/i, '').length > 42 ? '…' : ''}</a>`);
+const kbHost = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return u; } };
+const kbWhen = ts => { const d = new Date(ts), n = new Date(); const t = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }); return d.toDateString() === n.toDateString() ? 'heute, ' + t : d.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' }) + ', ' + t; };
 const kbTagCol = s => { let h = 0; for (const ch of s.toLowerCase()) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
 function kbDue(d, done) {
   if (!d) return ''; const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d + 'T00:00:00'); const n = Math.round((x - t) / 864e5);
@@ -6196,7 +6226,7 @@ function openKanban() {
       <label class="kb-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Suchen oder #Tag" aria-label="Karten durchsuchen"></label>
       <button type="button" class="kb-x" data-kb="close" aria-label="Schließen" title="Schließen (Esc)">×</button></div>
     <div class="kb-tags"></div><div class="kb-board"></div><div class="kb-undo" hidden></div>
-    <div class="kb-help">Ziehen zum Verschieben · Klick bearbeitet · <b>#tag</b>, <b>morgen</b>, <b>Fr</b>, <b>24.11.</b>, <b>!</b> beim Anlegen · <b>[ ]</b> am Zeilenanfang wird zur Checkliste · N neue Karte · / suchen</div></div>`);
+    <div class="kb-help">Ziehen zum Verschieben · Klick öffnet die Karte mit Links und Kommentaren · <b>#tag</b>, <b>morgen</b>, <b>Fr</b>, <b>24.11.</b>, <b>!</b> beim Anlegen · <b>[ ]</b> am Zeilenanfang wird zur Checkliste · N neue Karte · / suchen</div></div>`);
   document.body.appendChild(ov); const board = ov.querySelector('.kb-board'), qIn = ov.querySelector('.kb-quick input'), sIn = ov.querySelector('.kb-search input');
   const save = () => { state.prefs.kanban = K; savePrefs(); };
   const colOf = id => K.cols.find(c => c.id === id);
@@ -6204,12 +6234,12 @@ function openKanban() {
   const lessonOf = id => state.lib.find(d => d.id === id);
   const textHTML = x => esc(x.t).split('\n').map((ln, i) => {
     const m = ln.match(/^\s*(?:[-*]\s*)?\[( |x|X)\]\s?(.*)$/);
-    const tagd = s => s.replace(/(^|\s)#([\p{L}\d][\p{L}\d_-]{0,30})/gu, (a, sp, tg) => `${sp}<span class="kb-tag" data-tag="${tg.toLowerCase()}" style="--th:${kbTagCol(tg)}">#${tg}</span>`);
+    const tagd = s => kbLinkify(s).replace(/(^|\s)#([\p{L}\d][\p{L}\d_-]{0,30})/gu, (a, sp, tg) => `${sp}<span class="kb-tag" data-tag="${tg.toLowerCase()}" style="--th:${kbTagCol(tg)}">#${tg}</span>`);
     return m ? `<label class="kb-chk${m[1] !== ' ' ? ' on' : ''}" data-li="${i}"><i aria-hidden="true"></i><span>${tagd(m[2])}</span></label>` : `<span class="kb-ln">${tagd(ln) || '&nbsp;'}</span>`;
   }).join('');
   const cardHTML = (x, col) => {
     const lines = x.t.split('\n'); const ch = lines.filter(l => /^\s*(?:[-*]\s*)?\[( |x|X)\]/.test(l)); const chd = ch.filter(l => /\[(x|X)\]/.test(l)).length; const L = x.lk && lessonOf(x.lk);
-    const meta = [kbDue(x.d, kbIsDone(col)), ch.length ? `<span class="kb-cl${chd === ch.length ? ' full' : ''}" title="Checkliste">☑ ${chd}/${ch.length}</span>` : '', L ? `<button type="button" class="kb-lk" data-kb="lesson" title="Stunde öffnen: ${esc(L.title || '')}">📄 ${esc((L.title || 'Stunde').slice(0, 34))}</button>` : '', x.fin && kbIsDone(col) ? `<span class="kb-fin">✓ ${new Date(x.fin).toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' })}</span>` : ''].filter(Boolean).join('');
+    const meta = [kbDue(x.d, kbIsDone(col)), x.ln && x.ln.length ? `<span class="kb-cnt" title="Links">🔗 ${x.ln.length}</span>` : '', x.cm && x.cm.length ? `<span class="kb-cnt" title="Kommentare">💬 ${x.cm.length}</span>` : '', ch.length ? `<span class="kb-cl${chd === ch.length ? ' full' : ''}" title="Checkliste">☑ ${chd}/${ch.length}</span>` : '', L ? `<button type="button" class="kb-lk" data-kb="lesson" title="Stunde öffnen: ${esc(L.title || '')}">📄 ${esc((L.title || 'Stunde').slice(0, 34))}</button>` : '', x.fin && kbIsDone(col) ? `<span class="kb-fin">✓ ${new Date(x.fin).toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric' })}</span>` : ''].filter(Boolean).join('');
     return `<div class="kb-card${flash === x.id ? ' kb-pop' : ''}${kbIsDone(col) ? ' kb-dn' : ''}" data-card="${x.id}" style="--kc:${KB_COLS[x.c] || 'transparent'}" tabindex="0"><div class="kb-ct">${x.t ? textHTML(x) : '<i class="kb-empty">Leer</i>'}</div>${meta ? `<div class="kb-meta">${meta}</div>` : ''}<button type="button" class="kb-del" data-kb="del" aria-label="Karte löschen" title="Löschen">×</button></div>`;
   };
   const match = x => { if (!q) return true; const L = x.lk && lessonOf(x.lk); const hay = (x.t + ' ' + (L ? L.title : '')).toLowerCase(); return q.split(/\s+/).every(w => (w.startsWith('#') ? new RegExp('(^|\\s)' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(\\b|$)', 'iu').test(x.t) : hay.includes(w))); };
@@ -6243,6 +6273,59 @@ function openKanban() {
     const ta = cEl.querySelector('textarea'); const fitTa = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }; fitTa(); ta.addEventListener('input', fitTa); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
     cEl.querySelector('.kb-date').addEventListener('change', e => { f.x.d = e.target.value || undefined; if (!f.x.d) delete f.x.d; save(); });
     const se = cEl.querySelector('.kb-sel'); if (se) se.addEventListener('change', e => { if (e.target.value) f.x.lk = e.target.value; else delete f.x.lk; save(); });
+  };
+  // ---------- Detailansicht: Text, Fälligkeit, Stunde, Links, Kommentare ----------
+  let det = null;
+  const closeDet = () => { if (!det) return; det.el.remove(); ov.querySelector('.kb-detbg')?.remove(); det = null; save(); render(); };
+  const detBody = () => {
+    const f = findCard(det.id); if (!f) { closeDet(); return; } const x = f.x;
+    const links = (x.ln || []).map((l, i) => `<li><a href="${esc(l.u)}" target="_blank" rel="noopener noreferrer"><b>${esc(l.t || decodeURIComponent(l.u.replace(/^https?:\/\/(www\.)?/i, '')).replace(/\/$/, '').slice(0, 70))}</b><small>${esc(kbHost(l.u))}</small></a><button type="button" class="kb-dx" data-kd="ldel" data-i="${i}" aria-label="Link entfernen">×</button></li>`).join('');
+    const cms = (x.cm || []).map(m => `<li data-m="${m.id}"><div class="kb-cmt">${kbLinkify(esc(m.t))}</div><small>${kbWhen(m.ts)}<button type="button" class="kb-dx" data-kd="cdel" aria-label="Kommentar löschen">×</button></small></li>`).join('');
+    det.el.querySelector('.kb-dlinks').innerHTML = links || '<li class="kb-dnone">Noch keine Links</li>';
+    det.el.querySelector('.kb-dcms').innerHTML = cms || '<li class="kb-dnone">Noch keine Kommentare</li>';
+    det.el.querySelector('.kb-dcol').innerHTML = K.cols.map(c => `<option value="${c.id}"${c === f.c ? ' selected' : ''}>${c.e || ''} ${esc(c.t)}</option>`).join('');
+    det.el.querySelectorAll('[data-kd="color"]').forEach(b => b.setAttribute('aria-pressed', String((x.c || 'grau') === b.dataset.v)));
+    det.el.querySelector('.kb-date').value = x.d || '';
+    det.el.style.setProperty('--kc', KB_COLS[x.c] || 'transparent');
+  };
+  const openDet = id => {
+    finishEdit(); if (det) closeDet(); const f = findCard(id); if (!f) return;
+    ov.insertAdjacentHTML('beforeend', '<div class="kb-detbg"></div>');
+    const el2 = el(`<aside class="kb-det" role="dialog" aria-label="Karte"><div class="kb-dh"><select class="kb-dcol" aria-label="Spalte"></select><span class="kb-sp"></span><button type="button" class="kb-x" data-kd="close" aria-label="Schließen">×</button></div>
+      <textarea class="kb-dta" aria-label="Text der Karte" placeholder="Was ist zu tun? #tag · [ ] Checkliste">${esc(f.x.t)}</textarea>
+      <div class="kb-drow">${Object.entries(KB_COLS).map(([k, c]) => `<button type="button" class="kb-dot" data-kd="color" data-v="${k}" style="--dc:${c}" aria-label="Farbe ${k}"></button>`).join('')}</div>
+      <div class="kb-drow"><span class="kb-lab">Fällig</span><button type="button" class="kb-chip" data-kd="due" data-v="0">heute</button><button type="button" class="kb-chip" data-kd="due" data-v="1">morgen</button><button type="button" class="kb-chip" data-kd="due" data-v="7">+1 Woche</button><input type="date" class="kb-date" aria-label="Fällig am"><button type="button" class="kb-chip" data-kd="due" data-v="x" title="Ohne Datum">×</button></div>
+      ${state.lib.length ? `<div class="kb-drow"><span class="kb-lab">Stunde</span><select class="kb-sel" aria-label="Verknüpfte Stunde">${lessonOpts(f.x.lk)}</select>${f.x.lk ? '<button type="button" class="kb-chip" data-kd="open">öffnen</button>' : ''}</div>` : ''}
+      <h4>🔗 Links</h4><ul class="kb-dlinks"></ul>
+      <div class="kb-dadd"><input type="url" class="kb-lu" placeholder="Link einfügen, z. B. https://…" aria-label="Link"><input type="text" class="kb-lt" placeholder="Titel (optional)" aria-label="Titel des Links" maxlength="120"><button type="button" class="kb-chip" data-kd="ladd">Hinzufügen</button></div>
+      <h4>💬 Kommentare</h4><ul class="kb-dcms"></ul>
+      <div class="kb-dadd kb-dcm"><textarea class="kb-cin" rows="2" placeholder="Kommentar schreiben … (Enter senden, Umschalt+Enter neue Zeile)" aria-label="Kommentar"></textarea><button type="button" class="kb-ok" data-kd="cadd">Senden</button></div>
+      <div class="kb-dfoot"><button type="button" class="kb-chip dng" data-kd="del">Karte löschen</button></div></aside>`);
+    ov.appendChild(el2); det = { id, el: el2 }; detBody();
+    const ta = el2.querySelector('.kb-dta'); const fit2 = () => { ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 320) + 'px'; }; fit2();
+    ta.addEventListener('input', () => { fit2(); const g = findCard(id); if (g) { g.x.t = ta.value; save(); } });
+    el2.querySelector('.kb-date').addEventListener('change', e => { const g = findCard(id); if (!g) return; if (e.target.value) g.x.d = e.target.value; else delete g.x.d; save(); });
+    const se = el2.querySelector('.kb-sel'); if (se) se.addEventListener('change', e => { const g = findCard(id); if (!g) return; if (e.target.value) g.x.lk = e.target.value; else delete g.x.lk; save(); });
+    el2.querySelector('.kb-dcol').addEventListener('change', e => { const g = findCard(id); const to = colOf(e.target.value); if (!g || !to || to === g.c) return; g.c.cards.splice(g.i, 1); to.cards.unshift(g.x); if (kbIsDone(to) && !kbIsDone(g.c)) { g.x.fin = Date.now(); const r = e.target.getBoundingClientRect(); kbConfetti(r.left + r.width / 2, r.bottom); } else if (!kbIsDone(to)) delete g.x.fin; save(); render(); });
+    const addLink = () => { const g = findCard(id); if (!g) return; let u = el2.querySelector('.kb-lu').value.trim(); const tt = el2.querySelector('.kb-lt').value.trim(); if (!u) return; if (!/^https?:\/\//i.test(u)) u = 'https://' + u; try { new URL(u); } catch { toast('Das sieht nicht wie ein Link aus.'); return; }
+      (g.x.ln = g.x.ln || []).push({ u: u.slice(0, 1000), ...(tt ? { t: tt } : {}) }); el2.querySelector('.kb-lu').value = ''; el2.querySelector('.kb-lt').value = ''; save(); detBody(); el2.querySelector('.kb-lu').focus(); };
+    const addCm = () => { const g = findCard(id); const ci = el2.querySelector('.kb-cin'); const v = ci.value.trim(); if (!g || !v) return; (g.x.cm = g.x.cm || []).push({ id: 'm' + uid(), t: v.slice(0, 2000), ts: Date.now() }); ci.value = ''; save(); detBody(); const L = el2.querySelector('.kb-dcms'); L.lastElementChild && L.lastElementChild.scrollIntoView({ block: 'nearest' }); ci.focus(); };
+    el2.querySelector('.kb-lu').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
+    el2.querySelector('.kb-lt').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addLink(); } });
+    el2.querySelector('.kb-lu').addEventListener('paste', () => setTimeout(() => el2.querySelector('.kb-lt').focus(), 0));
+    el2.querySelector('.kb-cin').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addCm(); } });
+    el2.addEventListener('click', e => { e.stopPropagation(); const b = e.target.closest('[data-kd]'); if (!b) return; const k = b.dataset.kd; const g = findCard(id); if (!g) return;
+      if (k === 'close') closeDet();
+      else if (k === 'color') { if (b.dataset.v === 'grau') delete g.x.c; else g.x.c = b.dataset.v; save(); detBody(); }
+      else if (k === 'due') { if (b.dataset.v === 'x') delete g.x.d; else { const d = new Date(); d.setDate(d.getDate() + +b.dataset.v); g.x.d = kbIso(d); } save(); detBody(); }
+      else if (k === 'open') { if (g.x.lk) { const lk = g.x.lk; closeDet(); close(); openById(lk); } }
+      else if (k === 'ladd') addLink();
+      else if (k === 'cadd') addCm();
+      else if (k === 'ldel') { const i = +b.dataset.i; const old = g.x.ln[i]; g.x.ln.splice(i, 1); if (!g.x.ln.length) delete g.x.ln; save(); detBody(); undoBar('Link entfernt', () => { (g.x.ln = g.x.ln || []).splice(i, 0, old); if (det) detBody(); }); }
+      else if (k === 'cdel') { const mid = b.closest('[data-m]').dataset.m; const i = g.x.cm.findIndex(m => m.id === mid); const old = g.x.cm[i]; g.x.cm.splice(i, 1); if (!g.x.cm.length) delete g.x.cm; save(); detBody(); undoBar('Kommentar gelöscht', () => { (g.x.cm = g.x.cm || []).splice(i, 0, old); if (det) detBody(); }); }
+      else if (k === 'del') { closeDet(); const h = findCard(id); if (!h) return; h.c.cards.splice(h.i, 1); save(); render(); undoBar('Karte gelöscht', () => { const c = colOf(h.c.id) || K.cols[0]; c.cards.splice(Math.min(h.i, c.cards.length), 0, h.x); }); } });
+    ov.querySelector('.kb-detbg').addEventListener('click', e => { e.stopPropagation(); closeDet(); });
+    if (!f.x.t) ta.focus();
   };
   function finishEdit(cancel) {
     if (!edit) return; const e = edit; edit = null; const f = findCard(e.id); const ta = board.querySelector(`[data-card="${e.id}"] textarea`);
@@ -6288,7 +6371,8 @@ function openKanban() {
     if (moved) return;
     const chk = t.closest('.kb-chk'); const card = t.closest('.kb-card');
     if (chk && card && !card.classList.contains('ed')) { const f = findCard(card.dataset.card); if (f) { const L = f.x.t.split('\n'); const i = +chk.dataset.li; L[i] = L[i].replace(/\[( |x|X)\]/, m => (m === '[ ]' ? '[x]' : '[ ]')); f.x.t = L.join('\n'); save(); render(); } return; }
-    if (card && !card.classList.contains('ed')) { editCard(card.dataset.card); return; }
+    if (t.closest('a.kb-url')) return;
+    if (card && !card.classList.contains('ed')) { openDet(card.dataset.card); return; }
     if (edit && !t.closest('.kb-card.ed')) finishEdit();
   });
   ov.addEventListener('dblclick', e => { const h = e.target.closest('.kb-ch'); if (h && !e.target.closest('button')) renameCol(h.closest('[data-col]').dataset.col); else if (e.target.closest('.kb-list') && !e.target.closest('.kb-card')) addCard(e.target.closest('[data-col]').dataset.col); });
@@ -6298,11 +6382,13 @@ function openKanban() {
     if (!ov.isConnected) return; if (e.target && e.target.closest && !e.target.closest('.kb-ov') && e.target !== document.body) return;
     const ta = e.target.closest && e.target.closest('.kb-ta'); const inField = e.target.closest && e.target.closest('input, select, textarea');
     if (ta) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); const id = edit && edit.id; const f = id && findCard(id); const col = f && f.c.id; finishEdit(); if ((e.ctrlKey || e.metaKey) && col) addCard(col); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finishEdit(true); } return; }
+    if (e.key === 'Escape' && ov.querySelector('.kb-det')) { e.preventDefault(); e.stopPropagation(); if (inField && e.target.value && !e.target.classList.contains('kb-dta')) e.target.value = ''; else closeDet(); return; }
+    if (ov.querySelector('.kb-det') && inField) return;
     if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (ov.querySelector('.kb-menu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); else if (inField && e.target.value) { e.target.value = ''; if (e.target === sIn) { q = ''; render(); } } else if (inField) e.target.blur(); else close(); return; }
     if (inField) return;
     if (e.key === 'n' || e.key === 'N') { e.preventDefault(); qIn.focus(); return; }
     if (e.key === '/') { e.preventDefault(); sIn.focus(); return; }
-    const card = e.target.closest && e.target.closest('.kb-card'); if (card && e.key === 'Enter') { e.preventDefault(); editCard(card.dataset.card); }
+    const card = e.target.closest && e.target.closest('.kb-card'); if (card && e.key === 'Enter') { e.preventDefault(); openDet(card.dataset.card); }
     if (card && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); card.querySelector('[data-kb="del"]').click(); }
   };
   document.addEventListener('keydown', kbKey, true);
