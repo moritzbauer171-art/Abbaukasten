@@ -1137,6 +1137,9 @@ body{transition:background-color .3s,border-color .25s}
 .mat-body{font-family:var(--mff,var(--f-text));font-size:var(--mfs,10.5pt);line-height:var(--mlh,1.52)}
 .mat-body p{margin:0 0 0 10mm}
 .mat-body p.ind{text-indent:4mm}
+/* Silbentrennung wie im Druck: nur bei Blocksatz, nicht in Gedichten; Lücken und Fußnoten werden nicht getrennt */
+.blk-mat:not(.al-left):not(.gedicht) .mat-body p{-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 3;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:3}
+.mat-body p .gap,.mat-body p sup{-webkit-hyphens:manual;hyphens:manual}
 .mat-body sup,.task-body sup,.blk-text sup,.info-text sup{font-size:.62em;line-height:0;vertical-align:.55em}
 .ln{display:flex;align-items:baseline}
 .ln-no{flex:0 0 7mm;margin-right:3mm;text-align:right;font-family:var(--f-ui);font-size:7pt;line-height:1;color:var(--paper-muted);font-variant-numeric:tabular-nums}
@@ -9415,6 +9418,16 @@ function buildBlock(b, ctx) {
       };
     }
     case 'material': {
+      const matHySplit = (w, top0, lh) => {
+        const tw = document.createTreeWalker(w, NodeFilter.SHOW_TEXT); let node, at = null; const r = document.createRange();
+        while ((node = tw.nextNode()) && !at) for (let i = 0; i < node.length; i++) { r.setStart(node, i); r.setEnd(node, i + 1); const rr = r.getClientRects(); const b2 = rr[rr.length - 1]; if (b2 && b2.width && b2.top > top0 + lh * .5) { at = [node, i]; break; } }
+        if (!at) return null;
+        const r1 = document.createRange(); r1.setStart(w, 0); r1.setEnd(at[0], at[1]); const r2 = document.createRange(); r2.setStart(at[0], at[1]); r2.setEnd(w, w.childNodes.length);
+        const head = r1.cloneContents(), tail = r2.cloneContents(); const ht = head.textContent || ''; if (!ht.trim() || !(tail.textContent || '').trim()) return null;
+        const a = w.cloneNode(false), c = w.cloneNode(false); a.appendChild(head); c.appendChild(tail); c.classList.add('w2');
+        if (!/[-‐–]$/.test(ht)) a.insertAdjacentHTML('beforeend', '<span class="hy" aria-hidden="true">-</span>');
+        return [a.outerHTML, c.outerHTML];
+      };
       const no = ++ctx.m; const step = Number(meta.lineStep) || 5; const matLab = (designOf(meta) === 'akte' ? 'Anlage ' : '') + ((ctx.mt && ctx.mt[b.id]) || 'M' + no);
       const gm = glossMarks(b, { gaps: true, phrase: true }); const fm = matFmt(b); const notes = gm.list;
       const gapShow = !!(ctx.view && ctx.view.lehrer) || state.gapEdit === b.id; const gaps = gapList(b);
@@ -9426,7 +9439,7 @@ function buildBlock(b, ctx) {
       const silX = fm.silben ? silEx(fm.silx) : null; const wH = w => silX ? silHTML(w.h, silX) : w.h;
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fmtFF(fm.font)}${fm.margin ? `;--mrw:${fm.mrw}mm` : ''}`;
       const isPost = !!b.post && !poem; const two = fm.cols === 2 && !isPost;
-      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' '))}</div>${tail}</div>`);
+      const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body" lang="de"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
@@ -9435,9 +9448,12 @@ function buildBlock(b, ctx) {
         let top = null, cur = [], first = true;
         const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0 && !p.classList.contains('br') && !p.classList.contains('ah') && !p.classList.contains('mh'), pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st'), h: p.classList.contains('mh') }); first = false; cur = []; } };
         [...p.querySelectorAll('.w')].forEach(w => {
-          const t = w.getBoundingClientRect().top;
+          const rs = [...w.getClientRects()].filter(r => r.width > 0); const t = rs.length ? rs[0].top : w.getBoundingClientRect().top;
           if (top === null || t > top + lh * .5) { flush(false); top = t; }
-          cur.push(w.outerHTML); zw.push(w.dataset.t || ''); zn.push(poem ? pi + 1 : lines.length + 1);
+          zw.push(w.dataset.t || ''); zn.push(poem ? pi + 1 : lines.length + 1);
+          // Silbentrennung des Browsers: ein Wort über zwei Zeilen wird an der Trennstelle aufgeteilt
+          const sp = !poem && rs.length > 1 && rs[rs.length - 1].top > rs[0].top + lh * .5 ? matHySplit(w, rs[0].top, lh) : null;
+          if (sp) { cur.push(sp[0]); flush(false); top = rs[rs.length - 1].top; cur.push(sp[1]); } else cur.push(w.outerHTML);
         });
         flush(true);
       });
