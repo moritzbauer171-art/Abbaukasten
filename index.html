@@ -1347,7 +1347,16 @@ body{transition:background-color .3s,border-color .25s}
 .pr-vscroll i{position:absolute;left:2px;right:2px;min-height:30px;border-radius:999px;background:rgba(28,31,39,.65);cursor:grab}
 .pr:not(.pr-blankcur) .pr-more,.pr:not(.pr-blankcur) .pr-vscroll{display:none}
 .pr-aud .pr-more,.pr-aud .pr-vscroll{display:none}
-.pr-tafelbtn{position:absolute;left:14px;bottom:14px;z-index:6;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:0;border-radius:999px;background:rgba(28,31,39,.86);color:#fff;font:700 15px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.55;transition:opacity .2s,background .2s}
+.pr-fbtns{position:absolute;left:14px;bottom:14px;z-index:6;display:flex;gap:8px}
+.pr-aud .pr-fbtns{display:none}
+.pr-pk-in{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
+.pr-pk-b{flex:1 1 auto;background:linear-gradient(#1C1F27,#1C1F27) 50% 0/3px 100% no-repeat}
+.pr-pk-q{margin:0;padding:34px 70px 18px;text-align:center;font:700 40px/1.2 var(--f-disp,Georgia,serif);color:#1C1F27}
+.pr-pk-q.empty{color:#9AA1AE;font-weight:400;font-size:30px}
+.pr-pk-h{display:grid;grid-template-columns:1fr 1fr;border-top:3px solid #1C1F27;border-bottom:2px solid #C9CED8}
+.pr-pk-h b{padding:12px 0;text-align:center;font:800 34px/1 var(--f-ui);letter-spacing:.04em;text-transform:uppercase}
+.pr-pk-h .pro{color:#1E7A46;background:#EAF6EF;border-right:3px solid #1C1F27}.pr-pk-h .con{color:#B3261E;background:#FCECEB}
+.pr-tafelbtn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:0;border-radius:999px;background:rgba(28,31,39,.86);color:#fff;font:700 15px var(--f-ui);cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.3);opacity:.55;transition:opacity .2s,background .2s}
 .pr-tafelbtn:hover,.pr-tafelbtn:focus-visible,.pr-tafelbtn[aria-pressed="true"]{opacity:1}
 .pr-tafelbtn[aria-pressed="true"]{background:#2741B5}
 .pr-aud .pr-tafelbtn{display:none}
@@ -1358,6 +1367,46 @@ body{transition:background-color .3s,border-color .25s}
 .pr-blank{position:absolute;inset:0;background:#fff}
 .pr-blank.pat-kariert{background-image:linear-gradient(#CCD8EE 1px,transparent 1px),linear-gradient(90deg,#CCD8EE 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
 .pr-blank.pat-liniert{background-image:linear-gradient(transparent 58px,#C4D2EC 58px 60px);background-size:100% 60px;background-position:0 20px}
+/* ===== Kanban ===== */
+.kb-ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;background:var(--desk);color:var(--ink);font:15px/1.4 var(--f-ui);outline:none}
+.kb-top{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+.kb-top b{font-size:20px;letter-spacing:-.01em}.kb-top small{color:var(--muted);font-size:13px}
+.kb-sp{flex:1}
+.kb-x{width:38px;height:38px;border:0;border-radius:50%;background:transparent;font-size:28px;line-height:1;color:inherit;cursor:pointer}.kb-x:hover{background:rgba(0,0,0,.06)}
+.kb-board{flex:1;min-height:0;display:flex;gap:14px;align-items:flex-start;padding:18px 20px 24px;overflow-x:auto;overflow-y:hidden}
+.kb-col{flex:0 0 290px;max-height:100%;display:flex;flex-direction:column;background:var(--panel);border-radius:14px;padding:8px}
+.kb-ch{display:flex;align-items:center;gap:8px;padding:6px 6px 10px;cursor:grab;user-select:none;touch-action:manipulation}
+.kb-ch h3{margin:0;flex:1;font-size:15px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kb-n{font-size:12px;font-weight:700;color:var(--muted);background:rgba(0,0,0,.06);border-radius:999px;padding:1px 8px}
+.kb-cm{border:0;background:transparent;font-size:18px;line-height:1;width:28px;height:28px;border-radius:8px;cursor:pointer;color:inherit}.kb-cm:hover{background:rgba(0,0,0,.07)}
+.kb-ti{width:100%;font:700 15px var(--f-ui);border:2px solid #2F6FDB;border-radius:7px;padding:2px 6px}
+.kb-list{flex:1 1 auto;min-height:24px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px 2px 6px}
+.kb-card{position:relative;background:var(--card);border-radius:10px;padding:10px 30px 10px 14px;box-shadow:0 1px 2px rgba(15,25,45,.12),inset 4px 0 0 var(--kc,transparent);cursor:grab;user-select:none;touch-action:manipulation;white-space:pre-wrap;overflow-wrap:anywhere;outline:none}
+.kb-card:hover{box-shadow:0 3px 10px rgba(15,25,45,.16),inset 4px 0 0 var(--kc,transparent)}
+.kb-card:focus-visible{box-shadow:0 0 0 2px #2F6FDB,inset 4px 0 0 var(--kc,transparent)}
+.kb-ct i{color:var(--faint)}
+.kb-del{position:absolute;right:4px;top:4px;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;opacity:0}
+.kb-card:hover .kb-del,.kb-card:focus-within .kb-del{opacity:1}.kb-del:hover{background:#FCECEB;color:#B3261E}
+@media (hover:none){.kb-del{opacity:.6}}
+.kb-card.ed{cursor:default;padding:8px 10px;box-shadow:0 0 0 2px #2F6FDB,inset 4px 0 0 var(--kc,transparent)}
+.kb-ta{width:100%;border:0;outline:none;resize:none;font:15px/1.4 var(--f-ui);background:transparent;color:inherit;padding:2px 4px;overflow:hidden}
+.kb-eb{display:flex;align-items:center;gap:5px;margin-top:6px}
+.kb-dot{width:18px;height:18px;border-radius:50%;border:0;background:var(--dc);cursor:pointer;padding:0}.kb-dot[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--dc)}
+.kb-ok{border:0;border-radius:7px;background:#1C1F27;color:#fff;font:700 13px var(--f-ui);padding:5px 10px;cursor:pointer}
+.kb-add{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:8px;font:600 14px var(--f-ui);color:var(--muted);cursor:pointer}.kb-add:hover{background:rgba(0,0,0,.06);color:inherit}
+.kb-addcol{flex:0 0 200px;border:2px dashed var(--line-strong);background:transparent;border-radius:14px;padding:14px;font:700 14px var(--f-ui);color:var(--muted);cursor:pointer}.kb-addcol:hover{border-color:#2F6FDB;color:#2F6FDB}
+.kb-ph{border-radius:10px;background:rgba(47,111,219,.12);border:2px dashed rgba(47,111,219,.5);box-sizing:border-box;flex:0 0 auto}
+.kb-phc{flex:0 0 auto;border-radius:14px;background:rgba(47,111,219,.1);border:2px dashed rgba(47,111,219,.5);box-sizing:border-box;align-self:stretch}
+.kb-src{display:none!important}
+.kb-ghost{position:fixed;left:0;top:0;z-index:310;pointer-events:none;box-shadow:0 14px 30px rgba(15,25,45,.3)!important;opacity:.95;margin:0}
+.kb-ghost.kb-col{display:flex}
+.kb-dragging,.kb-dragging *{cursor:grabbing!important;user-select:none}
+.kb-hold{transform:scale(1.03);box-shadow:0 8px 20px rgba(15,25,45,.25)}
+.kb-menu{position:fixed;z-index:320;min-width:200px;background:var(--card);border-radius:12px;box-shadow:0 12px 30px rgba(15,25,45,.25);padding:6px;display:flex;flex-direction:column}
+.kb-menu button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:8px;font:14px var(--f-ui);color:inherit;cursor:pointer}.kb-menu button:hover{background:rgba(0,0,0,.06)}.kb-menu .dng{color:#B3261E}
+.kb-undo{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:#1C1F27;color:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 10px 26px rgba(0,0,0,.3);font-size:14px}
+.kb-undo[hidden]{display:none}.kb-undo button{border:0;background:transparent;color:#8DB4FF;font:700 14px var(--f-ui);cursor:pointer}
+@media (max-width:600px){.kb-col{flex-basis:84vw}.kb-top small{display:none}}
 /* ===== Tafelansicht ===== */
 .pr.pr-tafel .pr-stage{background:var(--tbg,#DDF0FF)}
 .pr.pr-tafel>.pr-stage>.pr-slide{border-radius:34px;box-shadow:0 18px 50px rgba(15,25,45,.28)}
@@ -5850,7 +5899,8 @@ function presSlideHTML(s, bar) {
   const phChip = ph => (s.res ? '<span class="pr-chip res">Reserve</span>' : '') + (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
   const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn} Min.</span>` : `<span class="pr-chip pr-min">${mn} Min.</span>`);
   switch (s.k) {
-    case 'blank': return `<div class="pr-blank pat-${INK_PATS[s.pat] ? s.pat : 'weiss'}" style="background-position:${inkBgPos(s) || '0 0'}" aria-label="Leere Tafelseite"></div>`;
+    case 'blank': if (s.pk) return `<div class="pr-blank pr-pk pat-weiss" aria-label="Pro-und-Contra-Tafel"><div class="pr-pk-in" style="height:${s.h || 900}px;transform:translateY(${-(s.sy || 0)}px)"><h2 class="pr-pk-q${s.q ? '' : ' empty'}">${s.q ? esc(s.q) : 'Stundenfrage im Kopf der Stunde eintragen'}</h2><div class="pr-pk-h"><b class="pro">Pro</b><b class="con">Contra</b></div><div class="pr-pk-b"></div></div></div>`;
+      return `<div class="pr-blank pat-${INK_PATS[s.pat] ? s.pat : 'weiss'}" style="background-position:${inkBgPos(s) || '0 0'}" aria-label="Leere Tafelseite"></div>`;
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
       return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
@@ -6027,6 +6077,133 @@ function keepAwake(win = window, quiet = false) {
   const vis = () => { if (doc.visibilityState === 'visible') get(); };
   doc.addEventListener('visibilitychange', vis); win.addEventListener('focus', vis); get();
   return () => { off = true; doc.removeEventListener('visibilitychange', vis); win.removeEventListener('focus', vis); try { if (lock) lock.release(); } catch {} lock = null; };
+}
+/* ================= Verstecktes Kanban-Board (Doppelklick aufs Logo): Karten und Spalten per Drag & Drop, im Konto gespeichert ================= */
+const KB_COLS = { grau: '#9AA1AE', blau: '#2F6FDB', gruen: '#1E9E5A', gelb: '#F5B400', orange: '#F08C00', rot: '#E5484D', lila: '#8E4EC6' };
+const KB_DEF = () => ({ cols: [{ id: 'c' + uid(), t: 'Ideen', cards: [] }, { id: 'c' + uid(), t: 'To do', cards: [] }, { id: 'c' + uid(), t: 'In Arbeit', cards: [] }, { id: 'c' + uid(), t: 'Erledigt', cards: [] }] });
+function kbNorm(k) {
+  if (!k || !Array.isArray(k.cols)) return null;
+  const cols = k.cols.filter(c => c && typeof c === 'object').slice(0, 12).map(c => ({ id: String(c.id || 'c' + uid()).slice(0, 40), t: String(c.t || '').slice(0, 60),
+    cards: (Array.isArray(c.cards) ? c.cards : []).filter(x => x && typeof x === 'object').slice(0, 300).map(x => ({ id: String(x.id || 'k' + uid()).slice(0, 40), t: String(x.t || '').slice(0, 2000), ...(KB_COLS[x.c] && x.c !== 'grau' ? { c: x.c } : {}) })) }));
+  return cols.length ? { cols } : null;
+}
+function openKanban() {
+  if (document.querySelector('.kb-ov')) return;
+  if (!state.prefs.kanban) state.prefs.kanban = KB_DEF();
+  const K = state.prefs.kanban; let edit = null, undoT = 0;
+  const ov = el(`<div class="kb-ov" role="dialog" aria-modal="true" aria-label="Kanban-Board" tabindex="-1"><div class="kb-top"><b>Kanban</b><small>Karten und Spalten ziehen · Klick auf eine Karte bearbeitet sie · Strg+Enter neue Karte</small><span class="kb-sp"></span><button type="button" class="kb-x" data-kb="close" aria-label="Schließen" title="Schließen (Esc)">×</button></div><div class="kb-board"></div><div class="kb-undo" hidden></div></div>`);
+  document.body.appendChild(ov); const board = ov.querySelector('.kb-board');
+  const save = () => { state.prefs.kanban = K; savePrefs(); };
+  const colOf = id => K.cols.find(c => c.id === id);
+  const findCard = id => { for (const c of K.cols) { const i = c.cards.findIndex(x => x.id === id); if (i >= 0) return { c, i, x: c.cards[i] }; } return null; };
+  const cardHTML = x => `<div class="kb-card" data-card="${x.id}" style="--kc:${KB_COLS[x.c] || 'transparent'}" tabindex="0"><div class="kb-ct">${esc(x.t) || '<i>Leer</i>'}</div><button type="button" class="kb-del" data-kb="del" aria-label="Karte löschen" title="Löschen">×</button></div>`;
+  const render = () => {
+    const sl = board.scrollLeft;
+    board.innerHTML = K.cols.map(c => `<section class="kb-col" data-col="${c.id}"><header class="kb-ch" title="Ziehen zum Verschieben · Doppelklick zum Umbenennen"><h3>${esc(c.t) || 'Ohne Titel'}</h3><span class="kb-n">${c.cards.length}</span><button type="button" class="kb-cm" data-kb="cmenu" aria-label="Spalte: Menü">⋯</button></header>
+      <div class="kb-list">${c.cards.map(cardHTML).join('')}</div><button type="button" class="kb-add" data-kb="add">+ Karte</button></section>`).join('') + `<button type="button" class="kb-addcol" data-kb="addcol">+ Spalte</button>`;
+    board.scrollLeft = sl;
+  };
+  const undoBar = (msg, fn) => { const u = ov.querySelector('.kb-undo'); u.innerHTML = `<span>${esc(msg)}</span><button type="button">Rückgängig</button>`; u.hidden = false; u.querySelector('button').onclick = () => { fn(); u.hidden = true; save(); render(); }; clearTimeout(undoT); undoT = setTimeout(() => { u.hidden = true; }, 6000); };
+  // Bearbeiten einer Karte direkt an Ort und Stelle
+  const editCard = (id, fresh) => {
+    finishEdit(); const f = findCard(id); if (!f) return; const cEl = board.querySelector(`[data-card="${id}"]`); if (!cEl) return;
+    edit = { id, fresh, old: f.x.t };
+    cEl.classList.add('ed'); cEl.innerHTML = `<textarea class="kb-ta" rows="2" aria-label="Text der Karte" placeholder="Was ist zu tun?">${esc(f.x.t)}</textarea><div class="kb-eb">${Object.entries(KB_COLS).map(([k, c]) => `<button type="button" class="kb-dot" data-kb="color" data-v="${k}" style="--dc:${c}" aria-pressed="${(f.x.c || 'grau') === k}" aria-label="Farbe ${k}"></button>`).join('')}<span class="kb-sp"></span><button type="button" class="kb-ok" data-kb="ok">Fertig</button></div>`;
+    const ta = cEl.querySelector('textarea'); const fitTa = () => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }; fitTa(); ta.addEventListener('input', fitTa); ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  };
+  function finishEdit(cancel) {
+    if (!edit) return; const e = edit; edit = null; const f = findCard(e.id); const ta = board.querySelector(`[data-card="${e.id}"] textarea`);
+    if (f) { const v = cancel ? e.old : (ta ? ta.value.trim() : f.x.t); if (!v && (e.fresh || !cancel)) f.c.cards.splice(f.i, 1); else f.x.t = v; save(); }
+    render();
+  }
+  const addCard = (colId, top) => { const c = colOf(colId); if (!c) return; finishEdit(); const x = { id: 'k' + uid(), t: '' }; if (top) c.cards.unshift(x); else c.cards.push(x); render(); editCard(x.id, true); const L = board.querySelector(`[data-col="${colId}"] .kb-list`); if (L && !top) L.scrollTop = L.scrollHeight; };
+  const renameCol = id => { const c = colOf(id); const h = board.querySelector(`[data-col="${id}"] h3`); if (!c || !h) return; finishEdit();
+    h.innerHTML = `<input class="kb-ti" value="${esc(c.t)}" maxlength="60" aria-label="Titel der Spalte">`; const i = h.querySelector('input'); i.focus(); i.select();
+    const done = ok => { if (ok) c.t = i.value.trim() || c.t; save(); render(); }; i.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); done(true); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(false); } }); i.addEventListener('blur', () => done(true)); };
+  const colMenu = (id, btn) => {
+    ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); const c = colOf(id); if (!c) return; const r = btn.getBoundingClientRect();
+    const mn = el(`<div class="kb-menu" role="menu"><button type="button" data-kb="m-ren">Umbenennen</button><button type="button" data-kb="m-top">Karte oben einfügen</button>${c.cards.length ? '<button type="button" data-kb="m-clr">Alle Karten löschen</button>' : ''}<button type="button" data-kb="m-del" class="dng">Spalte löschen</button></div>`);
+    mn.style.left = Math.min(window.innerWidth - 210, r.left) + 'px'; mn.style.top = (r.bottom + 4) + 'px'; mn.dataset.col = id; ov.appendChild(mn);
+  };
+  ov.addEventListener('click', e => {
+    const t = e.target; const b = t.closest('[data-kb]'); const a = b && b.dataset.kb;
+    if (!t.closest('.kb-menu') && !(a === 'cmenu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove());
+    if (a === 'close') { close(); return; }
+    if (a === 'ok') { finishEdit(); return; }
+    if (a === 'color') { const f = edit && findCard(edit.id); if (f) { if (b.dataset.v === 'grau') delete f.x.c; else f.x.c = b.dataset.v; b.parentNode.querySelectorAll('.kb-dot').forEach(d => d.setAttribute('aria-pressed', String(d === b))); b.closest('.kb-card').style.setProperty('--kc', KB_COLS[f.x.c] || 'transparent'); save(); b.closest('.kb-card').querySelector('textarea').focus(); } return; }
+    if (a === 'del') { const id = b.closest('[data-card]').dataset.card; const f = findCard(id); if (!f) return; f.c.cards.splice(f.i, 1); save(); render(); undoBar('Karte gelöscht', () => { const c = colOf(f.c.id) || K.cols[0]; c.cards.splice(Math.min(f.i, c.cards.length), 0, f.x); }); return; }
+    if (a === 'add') { addCard(b.closest('[data-col]').dataset.col); return; }
+    if (a === 'addcol') { finishEdit(); const c = { id: 'c' + uid(), t: 'Neue Spalte', cards: [] }; K.cols.push(c); save(); render(); board.scrollLeft = board.scrollWidth; renameCol(c.id); return; }
+    if (a === 'cmenu') { colMenu(b.closest('[data-col]').dataset.col, b); return; }
+    if (a && a.startsWith('m-')) { const id = b.closest('.kb-menu').dataset.col; const c = colOf(id); b.closest('.kb-menu').remove(); if (!c) return;
+      if (a === 'm-ren') renameCol(id);
+      else if (a === 'm-top') addCard(id, true);
+      else if (a === 'm-clr') { const old = c.cards.slice(); c.cards = []; save(); render(); undoBar(`${old.length} Karten gelöscht`, () => { c.cards = old.concat(c.cards); }); }
+      else if (a === 'm-del') { if (K.cols.length <= 1) { toast('Eine Spalte muss bleiben.'); return; } const i = K.cols.indexOf(c); K.cols.splice(i, 1); save(); render(); undoBar(`Spalte „${c.t}“ gelöscht`, () => K.cols.splice(Math.min(i, K.cols.length), 0, c)); }
+      return; }
+    if (moved) return;
+    const card = t.closest('.kb-card'); if (card && !card.classList.contains('ed')) { editCard(card.dataset.card); return; }
+    if (edit && !t.closest('.kb-card.ed')) finishEdit();
+  });
+  ov.addEventListener('dblclick', e => { const h = e.target.closest('.kb-ch'); if (h && !e.target.closest('button')) renameCol(h.closest('[data-col]').dataset.col); else if (e.target.closest('.kb-list') && !e.target.closest('.kb-card')) addCard(e.target.closest('[data-col]').dataset.col); });
+  const kbKey = e => {
+    if (!ov.isConnected) return; if (e.target && e.target.closest && !e.target.closest('.kb-ov') && e.target !== document.body) return;
+    const ta = e.target.closest && e.target.closest('.kb-ta');
+    if (ta) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); const id = edit && edit.id; const f = id && findCard(id); const col = f && f.c.id; finishEdit(); if ((e.ctrlKey || e.metaKey) && col) addCard(col); } else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finishEdit(true); } return; }
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (ov.querySelector('.kb-menu')) ov.querySelectorAll('.kb-menu').forEach(x => x.remove()); else close(); return; }
+    const card = e.target.closest && e.target.closest('.kb-card'); if (card && e.key === 'Enter') { e.preventDefault(); editCard(card.dataset.card); }
+    if (card && (e.key === 'Delete' || e.key === 'Backspace')) { e.preventDefault(); card.querySelector('[data-kb="del"]').click(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !ta) { e.preventDefault(); addCard((K.cols[0] || {}).id); }
+  };
+  document.addEventListener('keydown', kbKey, true);
+  // ---------- Ziehen: Karten zwischen Spalten, Spalten untereinander (Maus sofort, Finger nach kurzem Halten) ----------
+  let drag = null, moved = false, holdT = 0;
+  const startDrag = (e, kind, srcEl) => {
+    finishEdit(); const r = srcEl.getBoundingClientRect();
+    const g = srcEl.cloneNode(true); g.classList.add('kb-ghost'); g.style.width = r.width + 'px'; g.style.height = r.height + 'px'; document.body.appendChild(g);
+    const ph = document.createElement('div'); ph.className = kind === 'card' ? 'kb-ph' : 'kb-phc'; ph.style.height = r.height + 'px'; if (kind === 'col') ph.style.width = r.width + 'px';
+    srcEl.after(ph); srcEl.classList.add('kb-src');
+    drag = { kind, el: srcEl, g, ph, dx: e.clientX - r.left, dy: e.clientY - r.top, id: kind === 'card' ? srcEl.dataset.card : srcEl.dataset.col };
+    ov.classList.add('kb-dragging'); moveDrag(e);
+  };
+  const moveDrag = e => {
+    const d = drag; d.g.style.transform = `translate(${e.clientX - d.dx}px,${e.clientY - d.dy}px) rotate(${d.kind === 'card' ? 2 : 1}deg)`;
+    const br = board.getBoundingClientRect(); if (e.clientX > br.right - 60) board.scrollLeft += 14; else if (e.clientX < br.left + 60) board.scrollLeft -= 14;
+    if (d.kind === 'card') {
+      const cols = [...board.querySelectorAll('.kb-col')]; let col = cols.find(c => { const r = c.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right; });
+      if (!col) col = cols.reduce((best, c) => { const r = c.getBoundingClientRect(); const dd = Math.abs(e.clientX - (r.left + r.width / 2)); return !best || dd < best[0] ? [dd, c] : best; }, null)[1];
+      const list = col.querySelector('.kb-list'); const lr = list.getBoundingClientRect(); if (e.clientY > lr.bottom - 40) list.scrollTop += 10; else if (e.clientY < lr.top + 30) list.scrollTop -= 10;
+      const cards = [...list.querySelectorAll('.kb-card:not(.kb-src)')]; const nx = cards.find(c => { const r = c.getBoundingClientRect(); return e.clientY < r.top + r.height / 2; });
+      if (nx) { if (d.ph.nextSibling !== nx) list.insertBefore(d.ph, nx); } else if (list.lastElementChild !== d.ph) list.appendChild(d.ph);
+    } else {
+      const cols = [...board.querySelectorAll('.kb-col:not(.kb-src)')]; const nx = cols.find(c => { const r = c.getBoundingClientRect(); return e.clientX < r.left + r.width / 2; });
+      if (nx) { if (d.ph.nextSibling !== nx) board.insertBefore(d.ph, nx); } else { const add = board.querySelector('.kb-addcol'); if (d.ph.nextSibling !== add) board.insertBefore(d.ph, add); }
+    }
+  };
+  const endDrag = () => {
+    const d = drag; drag = null; ov.classList.remove('kb-dragging'); d.g.remove();
+    if (d.kind === 'card') { const f = findCard(d.id); const col = d.ph.closest('[data-col]'); if (f && col) { const to = colOf(col.dataset.col); const idx = [...d.ph.parentNode.children].filter(x => !x.classList.contains('kb-src')).indexOf(d.ph); f.c.cards.splice(f.i, 1); to.cards.splice(Math.max(0, idx), 0, f.x); } }
+    else { const i = K.cols.findIndex(c => c.id === d.id); const idx = [...board.children].filter(x => x.classList.contains('kb-col') && !x.classList.contains('kb-src') || x === d.ph).indexOf(d.ph); if (i >= 0 && idx >= 0) { const [c] = K.cols.splice(i, 1); K.cols.splice(idx, 0, c); } }
+    save(); render();
+  };
+  let pd = null, kbMove, kbUp, kbTm;
+  board.addEventListener('pointerdown', e => {
+    if (e.button > 0 || drag) return; const t = e.target; if (t.closest('button, textarea, input, .kb-card.ed')) return;
+    const card = t.closest('.kb-card'), head = t.closest('.kb-ch'); const src = card || (head && head.closest('.kb-col')); if (!src) return;
+    moved = false; pd = { x: e.clientX, y: e.clientY, src, kind: card ? 'card' : 'col', id: e.pointerId, touch: e.pointerType !== 'mouse', ready: e.pointerType === 'mouse' };
+    if (pd.touch) { clearTimeout(holdT); holdT = setTimeout(() => { if (pd && !drag) { pd.ready = true; navigator.vibrate && navigator.vibrate(15); src.classList.add('kb-hold'); } }, 280); }
+  });
+  window.addEventListener('pointermove', kbMove = e => {
+    if (drag) { e.preventDefault(); moveDrag(e); return; }
+    if (!pd || e.pointerId !== pd.id) return; const dist = Math.hypot(e.clientX - pd.x, e.clientY - pd.y);
+    if (!pd.ready) { if (dist > 8) { clearTimeout(holdT); pd = null; } return; }
+    if (dist > 5) { moved = true; pd.src.classList.remove('kb-hold'); try { board.setPointerCapture(e.pointerId); } catch {} startDrag(e, pd.kind, pd.src); pd = null; }
+  }, { passive: false });
+  window.addEventListener('pointerup', kbUp = () => { clearTimeout(holdT); if (pd) pd.src.classList.remove('kb-hold'); pd = null; if (drag) { endDrag(); setTimeout(() => { moved = false; }, 0); } });
+  window.addEventListener('pointercancel', kbUp);
+  board.addEventListener('touchmove', kbTm = e => { if (drag) e.preventDefault(); }, { passive: false });
+  function close() { finishEdit(); document.removeEventListener('keydown', kbKey, true); window.removeEventListener('pointermove', kbMove); window.removeEventListener('pointerup', kbUp); window.removeEventListener('pointercancel', kbUp); ov.remove(); }
+  render(); ov.focus();
 }
 /* ================= Tafelansicht (Vorbild Classroomscreen): Folie als Karte, Ablaufleiste, frei verschiebbare Werkzeuge ================= */
 const TB_BG = {
@@ -6519,13 +6696,21 @@ function openPres(start, opts = {}) {
   const TBo = tafelBoard({ ov, stage, slide, S, meta: m, klId: ntKey, gs: KL(state.sheet.klasse).stufe === 'gs', on: presModeOf(state.sheet.klasse) === 'tafel', idx: () => P.i, go: i => { P.i = i; show(); }, awOk: () => awOk(), aw: () => AW, rescale: () => { scale(); awScale(); INK.draw(); } });
   // Stift: Notizen je Folie, mit der Stunde gespeichert (leere Tafelseiten und die freie Tafel nur für diese Präsentation)
   // Tafel über der Präsentation: eigene leere Seite, die beim Schließen bis zum Ende der Präsentation erhalten bleibt
-  const BOARD = { open: false, s: { k: 'blank', pat: 'kariert', id: 'bl-tafel' } };
-  const curSl = () => (BOARD.open ? BOARD.s : S[P.i]);
+  const BOARD = { open: false, kind: 'tafel', s: { k: 'blank', pat: 'kariert', id: 'bl-tafel' } };
+  // Geschichte: Pro-und-Contra-Tafel zur Stundenfrage, mit der Stunde gespeichert
+  const pkOn = !opts.board && KL(state.sheet.klasse).fach === 'gp';
+  const pkSaved = state.sheet.pk && typeof state.sheet.pk === 'object' ? state.sheet.pk : {};
+  BOARD.pk = { k: 'blank', pk: true, pat: 'weiss', id: 'pk', q: tfStr(m.frage).trim(), h: Math.max(900, Math.min(9000, +pkSaved.h || 900)), sy: 0 };
+  const curSl = () => (BOARD.open ? (BOARD.kind === 'pk' ? BOARD.pk : BOARD.s) : S[P.i]);
   const boarding = () => BOARD.open || !!opts.board;
   // Tafel immer bildschirmfüllend: ohne Tafelansicht-Rahmen und, ohne Beamerfenster, im Vollbild des Browsers
   const boardFull = on => { try { if (on && !awOk() && !document.fullscreenElement && ov.requestFullscreen) { BOARD.fs = true; ov.requestFullscreen().catch(() => { BOARD.fs = false; }); } else if (!on && BOARD.fs) { BOARD.fs = false; if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } } catch {} };
-  const boardSet = on => { if (opts.board) return; BOARD.open = on; ov.classList.toggle('pr-boarding', on); boardFull(on); scale(); awScale(); const b = $p('.pr-tafelbtn'); if (b) { b.setAttribute('aria-pressed', String(on)); b.querySelector('span').textContent = on ? 'Zurück zur Folie' : 'Tafel'; } show(); ov.focus(); };
-  const INK = inkLayer({ ov, stage, store: {}, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: () => {},
+  const boardSet = (on, kind) => { if (opts.board) return; if (kind) BOARD.kind = kind; const was = BOARD.open; BOARD.open = on; ov.classList.toggle('pr-boarding', on); if (on !== was) boardFull(on); scale(); awScale();
+    ov.querySelectorAll('.pr-tafelbtn').forEach(b => { const mine = on && BOARD.kind === b.dataset.kind; b.setAttribute('aria-pressed', String(mine)); b.querySelector('span').textContent = mine ? 'Zurück zur Folie' : b.dataset.label; }); show(); ov.focus(); };
+  const boardT = kind => (BOARD.open && BOARD.kind === kind ? boardSet(false) : boardSet(true, kind));
+  const pkSave = () => { if (!pkOn) return; const L = inkStore.pk || []; if (!L.length && BOARD.pk.h <= 900) delete state.sheet.pk; else state.sheet.pk = { ink: L, h: BOARD.pk.h }; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
+  const inkStore = { ...(pkOn && Array.isArray(pkSaved.ink) ? { pk: pkSaved.ink.filter(x => x && Array.isArray(x.p)).slice(0, 3000) } : {}) };
+  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: () => { if (curSl().id === 'pk') pkSave(); },
     addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
     off: () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2.sy || 0 : 0; },
     setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
@@ -6676,8 +6861,9 @@ function openPres(start, opts = {}) {
   const bl = () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2 : null; };
   const hsSync = () => { const hs = $p('.pr-vscroll'); if (!hs) return; const b2 = bl(); const H = b2 ? b2.h || 900 : 900; hs.hidden = !b2 || H <= 900; if (hs.hidden) return; const th = hs.firstElementChild; th.style.height = (900 / H * 100).toFixed(3) + '%'; th.style.top = ((b2.sy || 0) / H * 100).toFixed(3) + '%'; };
   const blankScroll = y => { const b2 = bl(); if (!b2) return; b2.sy = Math.round(Math.max(0, Math.min((b2.h || 900) - 900, y))); const d = slide.querySelector('.pr-blank'); if (d) d.style.backgroundPosition = inkBgPos(b2) || '0 0';
-    if (awOk()) { const ad = AW.document.querySelector('.pr-slide .pr-blank'); if (ad) ad.style.backgroundPosition = inkBgPos(b2) || '0 0'; } hsSync(); INK.draw(); };
-  const blankMore = () => { const b2 = bl(); if (!b2) return; b2.h = (b2.h || 900) + 900; const from = b2.sy || 0, to = Math.min(b2.h - 900, from + 680), t0 = performance.now();
+    if (awOk()) { const ad = AW.document.querySelector('.pr-slide .pr-blank'); if (ad) ad.style.backgroundPosition = inkBgPos(b2) || '0 0'; }
+    [slide, awOk() ? AW.document.querySelector('.pr-slide') : null].forEach(r => { const q = r && r.querySelector('.pr-pk-in'); if (q) q.style.transform = `translateY(${-b2.sy}px)`; }); hsSync(); INK.draw(); };
+  const blankMore = () => { const b2 = bl(); if (!b2) return; b2.h = (b2.h || 900) + 900; if (b2.id === 'pk') { const q = slide.querySelector('.pr-pk-in'); if (q) q.style.height = b2.h + 'px'; pkSave(); } const from = b2.sy || 0, to = Math.min(b2.h - 900, from + 680), t0 = performance.now();
     const step = t => { const f = Math.min(1, (t - t0) / 350); blankScroll(from + (to - from) * (1 - Math.pow(1 - f, 3))); if (f < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); };
   stage.addEventListener('wheel', e => { const b2 = bl(); if (!b2 || (b2.h || 900) <= 900) return; e.preventDefault(); const k = slide.getBoundingClientRect().height / 900 || 1; blankScroll((b2.sy || 0) + e.deltaY / k); }, { passive: false });
   // Laser an/aus; auf einer Tafelseite ist danach wieder der Stift aktiv
@@ -6705,7 +6891,7 @@ function openPres(start, opts = {}) {
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
     else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === '+' || k === '=') { stop(); tmAdj(1); } else if (k === '-' || k === '_') { stop(); tmAdj(-1); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'z' || k === 'Z') { stop(); ntToggle(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
-    else if (k === 'b' || k === 'B') { stop(); boardSet(!BOARD.open); } else if (k === 'l' || k === 'L') { stop(); laserT(); }
+    else if (k === 'b' || k === 'B') { stop(); boardT('tafel'); } else if ((k === 'k' || k === 'K') && pkOn) { stop(); boardT('pk'); } else if (k === 'l' || k === 'L') { stop(); laserT(); }
     else if (k === 'Escape') { stop(); if (ov.querySelector('[data-p="laser"][aria-pressed="true"]')) { laserT(); return; } if (BOARD.open) { boardSet(false); return; } if (!document.fullscreenElement) close(); }
   };
   /* Video: auf der Folie abspielen; mit Beamerfenster nur dort, hier bleibt die Steuerung */
@@ -6735,7 +6921,7 @@ function openPres(start, opts = {}) {
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
-    else if (k === 'ref') refOpen(); else if (k === 'board') boardSet(!BOARD.open); else if (k === 'laser') laserT();
+    else if (k === 'ref') refOpen(); else if (k === 'board') boardT(b.dataset.kind || 'tafel'); else if (k === 'laser') laserT();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tmshow') { const ks = Object.keys(TM_SHOW); state.prefs.tmShow = ks[(ks.indexOf(tmMode()) + 1) % ks.length]; savePrefs(); b.textContent = TM_SHOW[tmMode()].label; tmShow(); } else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
@@ -6748,7 +6934,7 @@ function openPres(start, opts = {}) {
       try { hs.setPointerCapture(e.pointerId); } catch {} dr = { y: e.clientY, sy: b2.sy || 0, k: H / r.height }; });
     hs.addEventListener('pointermove', e => { if (dr) blankScroll(dr.sy + (e.clientY - dr.y) * dr.k); });
     const end = () => { dr = null; }; hs.addEventListener('pointerup', end); hs.addEventListener('pointercancel', end); }
-  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<button type="button" class="pr-tafelbtn" data-p="board" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>`);
+  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns"><button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
 }
 
@@ -11895,7 +12081,7 @@ function normPrefs(p) {
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
   const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
   const zeiten = {}; Object.entries(obj(p.zeiten)).forEach(([sch, l]) => { if (Array.isArray(l)) zeiten[String(sch).slice(0, 120)] = l.filter(x => x && typeof x === 'object').slice(0, 20).map(x => ({ id: String(x.id || 'z' + uid()).slice(0, 20), l: String(x.l || '').slice(0, 40), s: hmOk(x.s), e: hmOk(x.e) })); });
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(Object.keys(obj(p.noTime)).length ? { noTime: Object.fromEntries(Object.entries(obj(p.noTime)).filter(([, v]) => v === true).slice(0, 50)) } : {}), ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(TM_SHOW[p.tmShow] ? { tmShow: p.tmShow } : {}),
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(Object.keys(obj(p.noTime)).length ? { noTime: Object.fromEntries(Object.entries(obj(p.noTime)).filter(([, v]) => v === true).slice(0, 50)) } : {}), ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(TM_SHOW[p.tmShow] ? { tmShow: p.tmShow } : {}), ...(kbNorm(p.kanban) ? { kanban: kbNorm(p.kanban) } : {}),
     ...(Object.keys(obj(p.presMode)).length ? { presMode: Object.fromEntries(Object.entries(obj(p.presMode)).filter(([k, v]) => k.length < 60 && (v === 'tafel' || v === 'folien')).slice(0, 80)) } : {}), ...(typeof p.autor === 'string' ? { autor: p.autor.slice(0, 80) } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
@@ -14242,6 +14428,8 @@ function preparePrint() {
 /* ================= Start ================= */
 function boot() {
   if (DG_VIEW) { dgViewer(DG_VIEW); return; }
+  // Verstecktes Kanban-Board: Doppelklick (oder Doppeltipp) aufs Logo
+  document.addEventListener('dblclick', e => { if (e.target.closest && e.target.closest('.brand .logo')) { e.preventDefault(); try { getSelection().removeAllRanges(); } catch {} openKanban(); } });
   setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true); state.a3p = lsGet('abw.a3p') === 'a4x2' ? 'a4x2' : 'a3';
   const ed = $('#editor');
   ed.addEventListener('focusout', e => { const k = e.target && e.target.dataset && e.target.dataset.k; const c = k && e.target.closest('[data-bid]'); if (c && (state.sheet.zrefs || []).some(r => r.f === c.dataset.bid && r.k === k)) scheduleRender(60); });
