@@ -1367,6 +1367,74 @@ body{transition:background-color .3s,border-color .25s}
 .pr:not(.pr-ref) .pr-swap{display:none}
 .pr-fbtns{position:absolute;left:14px;bottom:14px;z-index:6;display:flex;gap:8px}
 .pr-aud .pr-fbtns{display:none}
+/* ---------- Fotos vom Zweitgerät: Sicherungsfolie ---------- */
+.pr-slide.pr-k-foto{padding:0;background:#15171c}
+.pr-k-foto .pr-accent,.pr-k-foto .pr-foot,.pr-k-foto .pr-phb,.pr-k-foto .pr-tbar{display:none}
+.lf-slide{position:absolute;inset:0;overflow:hidden}
+.lf-clip{position:absolute;overflow:hidden;border-radius:4px}
+.lf-sw{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.lf-sw img,.lf-cell img{display:block;width:100%;height:100%;object-fit:fill;user-select:none;-webkit-user-drag:none}
+.lf-ink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.lf-las{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle,#ff3b3b 0 30%,rgba(255,40,40,.45) 46%,rgba(255,40,40,0) 70%);pointer-events:none;transform-origin:50% 50%}
+.lf-cell{position:absolute;overflow:hidden;border-radius:4px;background:#000}
+.lf-tag{position:absolute;left:24px;top:18px;padding:6px 12px;border-radius:8px;background:rgba(0,0,0,.55);color:#fff;font:700 20px/1.2 var(--f-ui)}
+.pr-fotos{position:relative}
+.pr-fobadge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#E0565B;color:#fff;font:700 11px/18px var(--f-ui);font-style:normal}
+.lf-pan{position:absolute;right:14px;top:62px;z-index:30;width:min(440px,calc(100% - 28px));max-height:calc(100% - 90px);overflow:auto;background:var(--panel,#fff);color:var(--ink,#1c1f27);border:1px solid var(--line,#ddd);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.35);padding:14px;font-family:var(--f-ui)}
+.lf-ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.lf-ph b{font-size:16px}
+.lf-ph button{border:0;background:none;font-size:22px;cursor:pointer;color:inherit}
+.lf-qr{display:flex;gap:12px;align-items:center;padding:10px;border:1px dashed var(--line,#ccc);border-radius:12px;margin-bottom:12px}
+.lf-qr img{width:118px;height:118px;image-rendering:pixelated;flex:0 0 auto;background:#fff;border-radius:6px}
+.lf-qr div{display:flex;flex-direction:column;gap:4px}.lf-qr small{color:var(--muted,#666);font-size:12.5px;line-height:1.35}
+.lf-bar{display:flex;gap:8px;align-items:center;margin-bottom:8px}.lf-bar b{margin-right:auto}
+.lf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:10px}
+.lf-it{display:flex;flex-direction:column;gap:5px;border:1px solid var(--line,#ddd);border-radius:10px;padding:6px;background:var(--card,#fff)}
+.lf-it.new{border-color:#E0565B;box-shadow:0 0 0 2px rgba(224,86,91,.25)}
+.lf-it img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px;background:#eee}
+.lf-it small{color:var(--muted,#666);font-size:11.5px}
+.lf-ia{display:flex;gap:4px;flex-wrap:wrap}
+.lf-b{border:1px solid var(--line,#ccc);background:var(--card,#fff);color:inherit;border-radius:7px;padding:4px 8px;font:600 12.5px var(--f-ui);cursor:pointer}
+.lf-b.pri{background:var(--tinte,#2F6FDB);border-color:var(--tinte,#2F6FDB);color:#fff;flex:1}
+.lf-b[aria-pressed="true"]{color:#C98A00}
+.lf-empty{color:var(--muted,#666);margin:6px 0}
+.lf-dlg-ov{position:fixed;inset:0;z-index:50;background:rgba(10,14,24,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.lf-dlg{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel,#fff);color:var(--ink);border-radius:16px;padding:16px 18px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+.lf-dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.lf-dh b{font-size:18px}
+/* Kameramodus auf iPad und Handy */
+body.cam-mode{overflow:hidden}
+#cam-root{position:fixed;inset:0;z-index:49;background:#101217;color:#f3f4f6;display:flex;flex-direction:column;font-family:var(--f-ui);-webkit-user-select:none;user-select:none}
+.cam-h{display:flex;gap:12px;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid #262a33}
+.cam-logo{font-size:24px}.cam-h div{display:flex;flex-direction:column}.cam-h small{color:#9aa1ad}
+.cam-m{flex:1;min-height:0;display:flex;flex-direction:column;align-items:stretch;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));gap:12px;overflow:auto}
+.cam-msg{margin:auto;text-align:center;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.cam-err{color:#ff9ea1;font-size:13px}
+.cam-btn{border:0;border-radius:12px;padding:12px 18px;background:#2F6FDB;color:#fff;font:700 16px var(--f-ui);cursor:pointer}
+.cam-btn.on{background:#1E9E5A}
+.cam-shot{align-self:center;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;padding:18px}
+.cam-ring{width:96px;height:96px;border-radius:50%;border:6px solid #fff;background:#E5484D;box-shadow:0 0 0 6px rgba(255,255,255,.12)}
+.cam-shot:active .cam-ring{transform:scale(.94)}
+.cam-hint{color:#9aa1ad;font-size:13px;text-align:center;margin:0}
+.cam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.cam-th{border:0;padding:0;background:#1b1e25;border-radius:10px;overflow:hidden;color:#cfd3da;display:flex;flex-direction:column;cursor:pointer}
+.cam-th img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#262a33}.cam-th small{padding:5px 7px;font-size:11.5px;text-align:left}
+.cam-spin{width:42px;height:42px;border-radius:50%;border:4px solid #333;border-top-color:#fff;animation:camspin 1s linear infinite}@keyframes camspin{to{transform:rotate(360deg)}}
+.cam-v{position:relative;flex:1;min-height:200px;overflow:hidden;touch-action:none;background:#000;border-radius:12px;outline:3px solid transparent;transition:outline-color .2s}
+.cam-v.live{outline-color:#1E9E5A}
+.cam-v[data-tool="pen"],.cam-v[data-tool="hl"]{cursor:crosshair}.cam-v[data-tool="laser"]{cursor:none}
+.cam-w{position:absolute;transform-origin:0 0}
+.cam-w img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none}
+.cam-svg,.cam-svg svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cam-dot{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:radial-gradient(circle,#ff3b3b 0 30%,rgba(255,40,40,.45) 46%,rgba(255,40,40,0) 70%);pointer-events:none}
+.cam-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cam-seg{display:flex;background:#1b1e25;border-radius:11px;padding:3px;gap:2px}
+.cam-tb{border:0;border-radius:9px;padding:10px 12px;background:#1b1e25;color:#e6e8ec;font:600 14.5px var(--f-ui);cursor:pointer;min-height:44px}
+.cam-seg .cam-tb{background:transparent}
+.cam-tb[aria-pressed="true"]{background:#f3f4f6;color:#101217}
+.cam-cols{display:flex;gap:6px}
+.cam-col{width:34px;height:34px;border-radius:50%;border:3px solid #101217;background:var(--cc);box-shadow:0 0 0 2px #3a3f4a;cursor:pointer}
+.cam-col[aria-pressed="true"]{box-shadow:0 0 0 3px #fff}
+.cam-sp{flex:1}
+@media (max-width:600px){.cam-tb{padding:9px 10px;font-size:13.5px}.cam-seg .cam-tb{padding:9px 8px}}
 .pr-pk-in{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
 .pr-pk-b{flex:1 1 auto;background:linear-gradient(#1C1F27,#1C1F27) 50% 0/3px 100% no-repeat}
 .pr-pk-q{margin:0;padding:34px 70px 18px;text-align:center;font:700 40px/1.2 var(--f-disp,Georgia,serif);color:#1C1F27}
@@ -5152,7 +5220,7 @@ function presEditorHTML() {
   const planNote = PL ? `<small class="hint pt-note">Stunde ${hmFmt(PL.s0)}–${hmFmt(PL.end)} Uhr · geplant ${PL.total} von ${PL.end - PL.s0} Min.${PL.total > PL.end - PL.s0 ? ' · <b class="late">' + (PL.total - (PL.end - PL.s0)) + ' Min. zu viel</b>' : ''}</small>` : '';
   const fine = state.fmtOpen.has('fmfine');
   if (!state.stInit) { state.stInit = true; state.closed.add('stunde'); }
-  return `<div class="fm-top"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><div class="seg sm" role="group" aria-label="Ansicht beim Präsentieren" title="Wird je Klasse gemerkt">${[['folien', 'Folien'], ['tafel', 'Tafel']].map(([v, t]) => `<button type="button" data-act="pres-mode" data-v="${v}" aria-pressed="${presModeOf(state.sheet.klasse) === v}">${t}</button>`).join('')}</div><button class="btn" type="button" data-act="pres-pptx">PowerPoint</button><button class="btn" type="button" data-act="settings" data-tab="pres" title="Phasenleiste, Timergröße, Uhrzeit, Sicherungen">Folien-Einstellungen</button></div>
+  return `<div class="fm-top"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><div class="seg sm" role="group" aria-label="Ansicht beim Präsentieren" title="Wird je Klasse gemerkt">${[['folien', 'Folien'], ['tafel', 'Tafel']].map(([v, t]) => `<button type="button" data-act="pres-mode" data-v="${v}" aria-pressed="${presModeOf(state.sheet.klasse) === v}">${t}</button>`).join('')}</div><button class="btn" type="button" data-act="pres-pptx">PowerPoint</button>${fotoOK() ? '<button class="btn" type="button" data-act="fotos" title="Fotos vom iPad oder Handy zu dieser Stunde">📷 Fotos</button>' : ''}<button class="btn" type="button" data-act="settings" data-tab="pres" title="Phasenleiste, Timergröße, Uhrzeit, Sicherungen">Folien-Einstellungen</button></div>
     ${(state.sheet.abs ? abBarHTML() : '') + stundeCard()}
     <div class="fm"><div class="fm-h"><b>Folien</b><small>In der Reihenfolge der Stunde. Mit „+ Zwischenfolie“ fügst du Folien ein, die nur in der Präsentation stehen. Phase und Zeit trägst du direkt ein.</small>${planNote}</div>${list}
       ${any ? '' : '<small class="hint">Noch keine Aufgaben auf dem Arbeitsblatt.</small>'}
@@ -6047,6 +6115,7 @@ function presSlideHTML(s, bar) {
   const phChip = ph => (s.res ? '<span class="pr-chip res">Reserve</span>' : '') + (ph && !barOn ? `<span class="pr-chip ph" style="--phc:${PHASEN[ph].c}">${PHASEN[ph].label}</span>` : '');
   const minChip = (mn, mode) => (!mn ? '' : mode ? `<span class="pr-chip pr-timer" data-min="${mn}"${mode === 'auto' ? ' data-auto="1"' : ''} title="Timer: ${mn} Min. · anklicken oder T zum Starten und Anhalten">${mn} Min.</span>` : `<span class="pr-chip pr-min">${mn} Min.</span>`);
   switch (s.k) {
+    case 'foto': return fotoSlideHTML(s);
     case 'blank': if (s.pk) return `<div class="pr-blank pr-pk pat-weiss" aria-label="Pro-und-Contra-Tafel"><div class="pr-pk-in" style="height:${s.h || 900}px;transform:translateY(${-(s.sy || 0)}px)"><h2 class="pr-pk-q${s.q ? '' : ' empty'}">${s.q ? esc(s.q) : 'Stundenfrage im Kopf der Stunde eintragen'}</h2><div class="pr-pk-h${s.either ? ' either' : ''}"><b class="pro">${esc((s.lab || [])[0] || 'Pro')}</b><b class="con">${esc((s.lab || [])[1] || 'Contra')}</b></div><div class="pr-pk-b"></div></div></div>`;
       return `<div class="pr-blank pat-${INK_PATS[s.pat] ? s.pat : 'weiss'}" style="background-position:${inkBgPos(s) || '0 0'}" aria-label="Leere Tafelseite"></div>`;
     case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
@@ -7003,7 +7072,7 @@ function openPres(start, opts = {}) {
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
     <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><button type="button" data-p="tmshow" class="pr-tmshow" title="Anzeige wechseln: Restminuten, Endzeit oder beides · gilt für alle Stunden">${TM_SHOW[tmMode()].label}</button><span class="pr-tl"></span></span><span class="sep"></span>
-    <button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="black" aria-pressed="false" title="Bildschirm bzw. Beamer schwarz (Punkt) oder weiß (Komma); die Referentenansicht bleibt sichtbar">Schwarz</button>${window.abDesktop && window.abDesktop.audSwap ? '<button type="button" data-p="swap" class="pr-swap" title="Beamerfenster und Referentenansicht auf die jeweils anderen Bildschirme tauschen">Bildschirme tauschen</button>' : ''}<button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
+    ${!opts.board && fotoOK() && state.sheet && state.sheet.id ? '<button type="button" data-p="fotos" class="pr-fotos" aria-expanded="false" title="Fotos vom iPad oder Handy: QR-Code, Vorschau und Sicherungsfolie (F)">📷 Fotos<i class="pr-fobadge" hidden></i></button>' : ''}<button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="black" aria-pressed="false" title="Bildschirm bzw. Beamer schwarz (Punkt) oder weiß (Komma); die Referentenansicht bleibt sichtbar">Schwarz</button>${window.abDesktop && window.abDesktop.audSwap ? '<button type="button" data-p="swap" class="pr-swap" title="Beamerfenster und Referentenansicht auf die jeweils anderen Bildschirme tauschen">Bildschirme tauschen</button>' : ''}<button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
   setAccent(ov, m);
   // Zeit ausblenden (für Klassen, die Zeitdruck stresst): Timer laufen weiter, sind aber unsichtbar; gemerkt je Klasse
   const ntKey = KL(state.sheet.klasse).id;
@@ -7022,7 +7091,11 @@ function openPres(start, opts = {}) {
   BOARD.pk = { k: 'blank', pk: true, pat: 'weiss', id: 'pk', q: tfStr(m.frage).trim(), h: Math.max(900, Math.min(9000, +pkSaved.h || 900)), sy: 0, own: Array.isArray(pkSaved.lab) && pkSaved.lab.length === 2 ? pkSaved.lab.map(x => String(x || '').slice(0, 40)) : null };
   const pkLab = () => { const pk = BOARD.pk; const auto = pkAuto(pk.q); pk.lab = pk.own || auto || ['Pro', 'Contra']; pk.either = !!(pk.own ? !(pk.own[0] === 'Pro' && pk.own[1] === 'Contra') : auto); pk.auto = auto; };
   pkLab();
-  const curSl = () => (BOARD.open ? (BOARD.kind === 'pk' ? BOARD.pk : BOARD.s) : S[P.i]);
+  const curSl = () => (BOARD.open ? (BOARD.kind === 'pk' ? BOARD.pk : BOARD.kind === 'foto' ? BOARD.foto : BOARD.s) : S[P.i]);
+  // Fotos vom iPad/Handy: erst nur hier in der Vorschau; „Zeigen“ (hier oder am Gerät) legt sie als Sicherungsfolie auf den Beamer
+  const foOn = !opts.board && fotoOK() && !!(state.sheet && state.sheet.id);
+  const FO = { list: [], loaded: false };
+  BOARD.foto = { k: 'foto', id: 'foto', items: [], view: { s: 1, cx: .5, cy: .5 }, live: null, las: null };
   const boarding = () => BOARD.open || !!opts.board;
   // Tafel immer bildschirmfüllend: ohne Tafelansicht-Rahmen und, ohne Beamerfenster, im Vollbild des Browsers
   const boardFull = on => { try { if (on && !awOk() && !document.fullscreenElement && ov.requestFullscreen) { BOARD.fs = true; ov.requestFullscreen().catch(() => { BOARD.fs = false; }); } else if (!on && BOARD.fs) { BOARD.fs = false; if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); } } catch {} };
@@ -7222,6 +7295,8 @@ function openPres(start, opts = {}) {
       if (k === 'Escape') { stop(); warnClose(); return; }
       warnClose();
     }
+    if (foOn && k === 'Escape' && !foPan().hidden) { stop(); foPanT(false); return; }
+    if (foOn && (k === 'f' || k === 'F')) { stop(); foPanT(); return; }
     if (k === 'ArrowRight' || k === ' ' || k === 'PageDown' || k === 'Enter') { stop(); next(); }
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
@@ -7251,12 +7326,15 @@ function openPres(start, opts = {}) {
     if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
     if (e.target.closest('.pr-more')) { blankMore(); return; }
     if (e.target.closest('.pr-vscroll')) return;
+    if (foOn && e.target.closest('.lf-pan')) { if (e.target.closest('[data-lf="x"]')) foPanT(false); else fotoPanelAct(e, foPan(), state.sheet.id, FO.list, foRender, items => foShow(items)); return; }
+    if (e.target.closest('.pr-slide .lf-slide')) return;
     if (INK.eats(e)) return;
     if (TBo.click(e)) return;
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
     else if (k === 'ref') refOpen(); else if (k === 'black') blank(BL || 's'); else if (k === 'swap') { if (window.abDesktop && window.abDesktop.audSwap) window.abDesktop.audSwap().then(r => { if (r && r.ok) setTimeout(() => { scale(); awScale(); }, 200); else toast('Zum Tauschen braucht es zwei Bildschirme.'); }); } else if (k === 'board') boardT(b.dataset.kind || 'tafel'); else if (k === 'laser') laserT();
+    else if (k === 'fotos') foPanT();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tmshow') { const ks = Object.keys(TM_SHOW); state.prefs.tmShow = ks[(ks.indexOf(tmMode()) + 1) % ks.length]; savePrefs(); b.textContent = TM_SHOW[tmMode()].label; tmShow(); } else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
@@ -7279,6 +7357,35 @@ function openPres(start, opts = {}) {
       if (k === 'ok') { const v = inp.map(x => x.value.trim()); apply2(v[0] && v[1] ? v : null); } else if (k === 'pc') apply2(['Pro', 'Contra']); else if (k === 'auto') apply2(null); });
     dl.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); dl.querySelector('[data-pk="ok"]').click(); } else if (e.key === 'Escape') { e.preventDefault(); dl.hidden = true; ov.focus(); } });
     lbSync();
+  }
+  if (foOn) {
+    ov.insertAdjacentHTML('beforeend', '<div class="lf-pan" hidden role="dialog" aria-label="Fotos dieser Stunde"><div class="lf-ph"><b>📷 Fotos dieser Stunde</b><button type="button" data-lf="x" aria-label="Schließen">×</button></div><div class="lf-body"></div></div>');
+  }
+  function foPan() { return $p('.lf-pan'); }
+  function foBadge() { const n = FO.list.filter(f => f._new).length; const i = $p('.pr-fobadge'); if (i) { i.hidden = !n; i.textContent = n; } }
+  function foRender() { const p = foPan(); if (!p || p.hidden) return; const bd = p.querySelector('.lf-body'); bd.innerHTML = fotoPanelHTML(state.sheet.id, FO.list, 'pres'); fotoThumbs(bd); }
+  async function foLoad() { try { const L = await fotoList(state.sheet.id); const old = new Map(FO.list.map(f => [f.id, f])); FO.list = L.map(f => ({ ...f, _new: old.has(f.id) ? !!old.get(f.id)._new : FO.loaded })); FO.loaded = true; } catch (err) { console.error(err); } foBadge(); foRender(); }
+  function foPanT(on) { const p = foPan(); if (!p) return; on = on === undefined ? p.hidden : on; p.hidden = !on; const b = $p('[data-p="fotos"]'); if (b) b.setAttribute('aria-expanded', String(on)); if (on) { foRender(); setTimeout(() => { FO.list.forEach(f => { f._new = false; }); foBadge(); }, 2500); } else ov.focus(); }
+  async function foShow(items, v) { items = (items || []).filter(Boolean).slice(0, 6); if (!items.length) return; await Promise.all(items.map(async f => { try { f.u = await fotoUrl(f.path); } catch { f.u = ''; } })); Object.assign(BOARD.foto, { items, view: v || { s: 1, cx: .5, cy: .5 }, live: null, las: null }); if (foPan()) foPan().hidden = true; boardSet(true, 'foto'); }
+  const foSingle = id => (BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1 && BOARD.foto.items[0].id === id ? BOARD.foto.items[0] : null);
+  // Live vom Gerät: nur den Fotobereich neu zeichnen, damit nichts flackert
+  const foUpd = () => { const h = fotoSlideHTML(BOARD.foto); const tmp = document.createElement('div'); tmp.innerHTML = h; const nw = tmp.querySelector('.lf-sw'); if (!nw) return;
+    [slide, awOk() ? AW.document.querySelector('.pr-slide') : null].forEach(r => { const w = r && r.querySelector('.lf-sw'); if (!w) return; w.style.transform = nw.style.transform; const a = w.querySelector('.lf-ink'), b = nw.querySelector('.lf-ink'); if (a && b) a.replaceWith(b.cloneNode(true)); const l1 = w.querySelector('.lf-las'), l2 = nw.querySelector('.lf-las'); if (l1) l1.remove(); if (l2) w.appendChild(l2.cloneNode(true)); }); };
+  if (foOn) {
+    foLoad();
+    const off = fotoListen(m => {
+      if (!document.body.contains(ov)) return; const sid = state.sheet && state.sheet.id;
+      if (m.t === 'new' && m.sheet === sid) foLoad().then(() => toast('Neues Foto vom Zweitgerät – erst einmal nur hier.', 'Zeigen', () => { const f = FO.list.find(x => x.id === m.id); if (f) foShow([f]); }));
+      else if (m.t === 'show' && m.sheet === sid) (async () => { let f = FO.list.find(x => x.id === m.id); if (!f) { await foLoad(); f = FO.list.find(x => x.id === m.id); } if (f) { if (Array.isArray(m.ink)) f.ink = m.ink; f._new = false; foBadge(); foShow([f], m.v); } })();
+      else if (m.t === 'view') { if (foSingle(m.id) && m.v) { BOARD.foto.view = m.v; foUpd(); } }
+      else if (m.t === 'stk') { const g = foSingle(m.id); if (g && m.s && Array.isArray(m.s.p) && !(g.ink || []).some(x => x.k && x.k === m.s.k)) { BOARD.foto.live = m.s; foUpd(); } }
+      else if (m.t === 'ink') { const f = FO.list.find(x => x.id === m.id); if (f && Array.isArray(m.ink)) f.ink = m.ink; const g = foSingle(m.id); if (g && Array.isArray(m.ink)) { g.ink = m.ink; BOARD.foto.live = null; foUpd(); } }
+      else if (m.t === 'las') { if (foSingle(m.id)) { BOARD.foto.las = m.off ? null : [+m.x || 0, +m.y || 0]; foUpd(); } }
+      else if (m.t === 'hide') { if (BOARD.open && BOARD.kind === 'foto') boardSet(false); }
+    });
+    ov.addEventListener('lw-close', () => off(), { once: true });
+    // Mausrad zoomt ein einzelnes Foto auch hier
+    stage.addEventListener('wheel', e => { if (!(BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1)) return; e.preventDefault(); const v = BOARD.foto.view; BOARD.foto.view = { ...v, s: Math.max(1, Math.min(8, (v.s || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15))) }; foUpd(); }, { passive: false });
   }
   if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns"><button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
@@ -10753,6 +10860,7 @@ function onClick(e) {
       const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) nc.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
     case 'xs-show': if (state.out !== a.dataset.v) setOut(a.dataset.v); return;
     case 'pres-go': openPres(0); return;
+    case 'fotos': fotoManager(); return;
     case 'pres-mode': setPresMode(a.dataset.v); renderEditor(); return;
     case 'pres-pptx': exportPPTX(); return;
     case 'vp-docx-ed': exportVP(); return;
@@ -12213,6 +12321,7 @@ function updateAccountUI() { $('#btn-login').hidden = !(store.sb && !store.user)
 
 /* ---------- Blätter aus diesem Browser in die Online-Ablage ---------- */
 function offerMigration() {
+  if (CAM_ID) return;
   if (!backend || backend.kind !== 'supabase') return;
   const n = Object.keys(localLib()).length; if (!n) return;
   toast(`${n} ${n === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser`, 'Online übernehmen', migrateLocal);
@@ -12301,7 +12410,7 @@ function applyKlassen() {
   renderTabs(); if (state.libOpen) renderLib();
 }
 // Ohne Anmeldung, aber mit Online-Ablage: erst anmelden lassen (die Einrichtung folgt nur für neue Konten)
-function maybeSetup(afterLogin) { if (!state.klReady || !state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
+function maybeSetup(afterLogin) { if (CAM_ID) return; if (!state.klReady || !state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
 function openKlassen(setup, addFach) {
   const rows = (setup || addFach ? [] : KLASSEN).map(k => ({ ...k }));
   if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach] || Object.keys(ACCENTS)[FACH_ORDER.indexOf(addFach) % Object.keys(ACCENTS).length], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
@@ -14794,6 +14903,197 @@ function preparePrint() {
   return { mixed, landscape: !mixed && w > h, size: Math.max(w, h) > 300 ? 'A3' : 'A4', n: pages.length, name: fileBase() + outSuffix() + '.pdf' };
 }
 
+/* ================= Fotos von Arbeitsergebnissen: iPad/Handy als Kamera, Sicherungsfolie, nach 14 Tagen gelöscht ================= */
+const FOTO_BUCKET = 'ab-fotos';
+const CAM_ID = (() => { try { return new URLSearchParams(location.search).get('kamera') || ''; } catch { return ''; } })();
+const fotoOK = () => !!(store.sb && store.user && backend && backend.kind === 'supabase');
+// Live-Kanal je Konto (privat): iPad ↔ Präsentation
+const fotoCh = { ch: null, uid: '', h: new Set(), ok: false };
+function fotoChannel() {
+  if (!fotoOK()) return null; if (fotoCh.ch && fotoCh.uid === store.user.id) return fotoCh.ch;
+  try { if (fotoCh.ch) store.sb.removeChannel(fotoCh.ch); } catch {}
+  const ch = store.sb.channel('lw-foto:' + store.user.id, { config: { broadcast: { self: false, ack: false }, private: true } });
+  ch.on('broadcast', { event: 'f' }, ({ payload }) => fotoCh.h.forEach(f => { try { f(payload || {}); } catch (e) { console.error(e); } }));
+  ch.subscribe(st => { fotoCh.ok = st === 'SUBSCRIBED'; });
+  fotoCh.ch = ch; fotoCh.uid = store.user.id; return ch;
+}
+const fotoSend = msg => { const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} };
+const fotoListen = f => { fotoChannel(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
+const FOTO_COLS = 'id,sheet_id,path,w,h,ink,keep,created_at,expires_at';
+async function fotoList(sheetId) { const r = await store.sb.from('ab_fotos').select(FOTO_COLS).eq('sheet_id', sheetId).or('keep.eq.true,expires_at.gt.' + new Date().toISOString()).order('created_at'); if (r.error) throw r.error; return r.data || []; }
+const fotoUrlC = {};
+async function fotoUrl(path) { const c = fotoUrlC[path]; if (c && c.t > Date.now()) return c.u; const r = await store.sb.storage.from(FOTO_BUCKET).createSignedUrl(path, 6 * 3600); if (r.error) throw r.error; fotoUrlC[path] = { u: r.data.signedUrl, t: Date.now() + 5 * 3600e3 }; return r.data.signedUrl; }
+async function fotoDelete(f) { const a = await store.sb.storage.from(FOTO_BUCKET).remove([f.path]); if (a.error) throw a.error; const b = await store.sb.from('ab_fotos').delete().eq('id', f.id); if (b.error) throw b.error; }
+const fotoLeft = f => (f.keep ? 'wird behalten' : (d => (d <= 0 ? 'wird heute gelöscht' : d === 1 ? 'noch 1 Tag' : `noch ${d} Tage`))(Math.ceil((new Date(f.expires_at) - Date.now()) / 864e5)));
+const fotoName = (f, i) => `Foto ${i + 1} ${new Date(f.created_at).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/[.:,\s]+/g, '-')}.jpg`;
+async function fotoDownload(f, i) { const u = await fotoUrl(f.path); const r = await fetch(u); if (!r.ok) throw new Error('Laden fehlgeschlagen'); await deliver(fotoName(f, i || 0), await r.blob()); }
+async function fotoShrink(file, max = 2000) {
+  let src = null; try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch {}
+  if (!src) src = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = URL.createObjectURL(file); });
+  const w = src.width || src.naturalWidth, h = src.height || src.naturalHeight, s = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82)); return { blob, w: c.width, h: c.height };
+}
+async function fotoUpload(sheetId, file) {
+  const { blob, w, h } = await fotoShrink(file);
+  const path = `${store.user.id}/${String(sheetId).replace(/[^\w-]/g, '_').slice(0, 60)}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+  const up = await store.sb.storage.from(FOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: false }); if (up.error) throw up.error;
+  const r = await store.sb.from('ab_fotos').insert({ sheet_id: sheetId, path, w, h }).select(FOTO_COLS).single(); if (r.error) throw r.error; return r.data;
+}
+const camUrl = sheetId => { const u = new URL(location.protocol === 'https:' && !isFramed ? location.href : 'https://moritzbauer171-art.github.io/Abbaukasten/'); u.search = '?kamera=' + encodeURIComponent(sheetId); u.hash = ''; return u.href; };
+// Ansicht (Zoom) und Striche eines Fotos: Zoomstufe s ≥ 1 und Mittelpunkt cx/cy als Anteil des Bildes; Striche in Bildanteilen
+const fotoTf = (v, W, H) => { const s = Math.max(1, Math.min(8, +v.s || 1)); let tx = W / 2 - (v.cx ?? 0.5) * W * s, ty = H / 2 - (v.cy ?? 0.5) * H * s; tx = Math.min(0, Math.max(W - W * s, tx)); ty = Math.min(0, Math.max(H - H * s, ty)); return { s, tx, ty }; };
+const fotoInkSvg = (ink, w, h) => { const H = Math.round(1000 * h / w); return `<svg class="lf-ink" viewBox="0 0 1000 ${H}" preserveAspectRatio="none" aria-hidden="true">${(ink || []).map(s => `<polyline points="${(s.p || []).map((v, i) => (i % 2 ? v * H : v * 1000).toFixed(1)).join(' ')}" stroke="${/^#[0-9a-f]{6}$/i.test(s.c) ? s.c : '#E5484D'}" stroke-width="${Math.max(1, Math.min(40, +s.w || 6))}"${s.h ? ' stroke-opacity=".42"' : ''} fill="none" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</svg>`; };
+
+// ---------- Kameramodus auf iPad/Handy (?kamera=<Stunde>) ----------
+function camInit() {
+  document.body.classList.add('cam-mode');
+  const root = el(`<div id="cam-root"><header class="cam-h"><span class="cam-logo">📷</span><div><b>Foto für die Stunde</b><small class="cam-t">wird geladen …</small></div></header><main class="cam-m"></main></div>`);
+  document.body.appendChild(root); const main = root.querySelector('.cam-m');
+  let fotos = [], cur = null, view = { s: 1, cx: 0.5, cy: 0.5 }, shown = false, title = '';
+  const msg = h => { main.innerHTML = `<div class="cam-msg">${h}</div>`; };
+  const ready = async () => {
+    if (!store.user) { msg('<p>Bitte melde dich mit deinem LehrWerk-Konto an.</p><button type="button" class="cam-btn" data-c="login">Anmelden</button>'); return; }
+    try { const r = await store.sb.from('ab_arbeitsblaetter').select('title').eq('id', CAM_ID).maybeSingle(); title = (r.data && r.data.title) || 'Stunde'; } catch { title = 'Stunde'; }
+    root.querySelector('.cam-t').textContent = title; fotoChannel();
+    try { fotos = await fotoList(CAM_ID); } catch { fotos = []; }
+    list();
+  };
+  const list = async () => {
+    cur = null; shown = false;
+    main.innerHTML = `<label class="cam-shot"><input type="file" accept="image/*" capture="environment" hidden><span class="cam-ring"></span><b>Foto aufnehmen</b></label>
+      <p class="cam-hint">Das Foto erscheint in deiner Präsentation zuerst nur bei dir unter „📷 Fotos“. Auf den Beamer kommt es erst mit „Zeigen“. Nach 14 Tagen wird es automatisch gelöscht.</p>
+      <div class="cam-grid">${fotos.slice().reverse().map(f => `<button type="button" class="cam-th" data-c="open" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><small>${fotoLeft(f)}</small></button>`).join('')}</div>`;
+    main.querySelectorAll('img[data-p]').forEach(async im => { try { im.src = await fotoUrl(im.dataset.p); } catch {} });
+    main.querySelector('input').addEventListener('change', async e => {
+      const fs = [...(e.target.files || [])]; if (!fs.length) return;
+      msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>');
+      try { let last = null; for (const f of fs) { last = await fotoUpload(CAM_ID, f); fotos.push(last); fotoSend({ t: 'new', sheet: CAM_ID, id: last.id }); } open(last.id); }
+      catch (err) { console.error(err); msg(`<p>Das Hochladen hat nicht geklappt.</p><p class="cam-err">${esc(err.message || String(err))}</p><button type="button" class="cam-btn" data-c="back">Zurück</button>`); }
+    });
+  };
+  // Betrachter: das Zweitgerät ist der Raum zum Zeigen und Malen – Zoomen, Stift, Textmarker, Laserpointer, alles live auf dem Beamer
+  const TOOLS = [['hand', '✋', 'Verschieben'], ['pen', '✏️', 'Stift'], ['hl', '🖍', 'Marker'], ['laser', '🔴', 'Laser']];
+  const COLS = { pen: ['#E5484D', '#2F6FDB', '#1E9E5A', '#1C1F27'], hl: ['#FFE14D', '#7CF29B', '#7FD3FF', '#FF9EC7'] };
+  let tool = 'hand', colP = '#E5484D', colH = '#FFE14D';
+  const colsHTML = () => (COLS[tool] ? COLS[tool].map(c => `<button type="button" class="cam-col" data-c="col" data-v="${c}" style="--cc:${c}" aria-pressed="${c === (tool === 'hl' ? colH : colP)}" aria-label="Farbe"></button>`).join('') : '');
+  const toolSync = () => { main.querySelectorAll('[data-c="tool"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === tool))); const cs = main.querySelector('.cam-cols'); if (cs) cs.innerHTML = colsHTML(); const v = main.querySelector('.cam-v'); if (v) v.dataset.tool = tool; };
+  const showSync = () => { const b = main.querySelector('[data-c="show"]'); if (!b) return; b.textContent = shown ? '● Läuft auf dem Beamer' : 'Auf dem Beamer zeigen'; b.classList.toggle('on', shown); main.querySelector('.cam-v').classList.toggle('live', shown); };
+  const open = async id => {
+    const f = fotos.find(x => x.id === id); if (!f) return list(); cur = f; view = { s: 1, cx: 0.5, cy: 0.5 };
+    main.innerHTML = `<div class="cam-v" data-tool="${tool}"><div class="cam-w"><img alt="Foto"><div class="cam-svg"></div></div><i class="cam-dot" hidden></i></div>
+      <div class="cam-tools"><button type="button" class="cam-btn cam-show" data-c="show">Auf dem Beamer zeigen</button>
+      <div class="cam-seg" role="group" aria-label="Werkzeug">${TOOLS.map(([k, ic, l]) => `<button type="button" class="cam-tb" data-c="tool" data-v="${k}" aria-pressed="${k === tool}"><span aria-hidden="true">${ic}</span> ${l}</button>`).join('')}</div>
+      <div class="cam-cols">${colsHTML()}</div>
+      <button type="button" class="cam-tb" data-c="undo" title="Letzten Strich entfernen" aria-label="Rückgängig">↶</button><button type="button" class="cam-tb" data-c="clear" title="Alle Striche löschen">Striche löschen</button><button type="button" class="cam-tb" data-c="zoom0" title="Zoom zurücksetzen" aria-label="Zoom zurücksetzen">⤢</button>
+      <span class="cam-sp"></span><button type="button" class="cam-tb" data-c="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="cam-tb" data-c="back">Fertig</button></div>
+      <p class="cam-hint">Zwei Finger zoomen und verschieben immer, doppelt tippen vergrößert. Stift und Marker bleiben auf dem Foto gespeichert, der Laser verschwindet beim Loslassen.</p>`;
+    const im = main.querySelector('img'); im.src = await fotoUrl(f.path); await im.decode().catch(() => {});
+    lay(); bind(); showSync();
+  };
+  const box = () => { const v = main.querySelector('.cam-v'); const W0 = v.clientWidth, H0 = v.clientHeight, r = cur.w / cur.h; let W = W0, H = W0 / r; if (H > H0) { H = H0; W = H0 * r; } return { v, W, H, ox: (W0 - W) / 2, oy: (H0 - H) / 2 }; };
+  const inkDraw = () => { const s = main.querySelector('.cam-svg'); if (s) s.innerHTML = fotoInkSvg(cur.ink, cur.w, cur.h); };
+  const lay = () => { if (!cur || !main.querySelector('.cam-w')) return; const b = box(); const w = main.querySelector('.cam-w'); const t = fotoTf(view, b.W, b.H); w.style.cssText = `width:${b.W}px;height:${b.H}px;left:${b.ox}px;top:${b.oy}px;transform:translate(${t.tx}px,${t.ty}px) scale(${t.s})`; inkDraw(); };
+  const thr = (fn, ms) => { let t = 0, last = 0, a = null; return (...x) => { a = x; const now = Date.now(); if (now - last >= ms) { last = now; fn(...a); } else if (!t) t = setTimeout(() => { t = 0; last = Date.now(); fn(...a); }, ms - (now - last)); }; };
+  const sendView = thr(() => { if (shown && cur) fotoSend({ t: 'view', id: cur.id, v: view }); }, 50);
+  const sendStk = thr(s => { if (shown && cur) fotoSend({ t: 'stk', id: cur.id, s }); }, 45);
+  const sendLas = thr((x, y) => { if (shown && cur) fotoSend({ t: 'las', id: cur.id, x: +x.toFixed(4), y: +y.toFixed(4) }); }, 30);
+  let inkT = 0; const saveInk = () => { if (shown) fotoSend({ t: 'ink', id: cur.id, ink: cur.ink || [] }); clearTimeout(inkT); const f = cur; inkT = setTimeout(() => store.sb.from('ab_fotos').update({ ink: f.ink || [] }).eq('id', f.id).then(() => {}), 800); };
+  const bind = () => {
+    const v = main.querySelector('.cam-v'), dot = v.querySelector('.cam-dot'); const P = new Map(); let g = null, stroke = null, las = false, lastTap = 0;
+    const frac = (x, y) => { const b = box(), r = v.getBoundingClientRect(), t = fotoTf(view, b.W, b.H); return [((x - r.left - b.ox) - t.tx) / (b.W * t.s), ((y - r.top - b.oy) - t.ty) / (b.H * t.s)]; };
+    const mid = () => { const pts = [...P.values()]; return pts.reduce((a, p) => [a[0] + p.x / pts.length, a[1] + p.y / pts.length], [0, 0]); };
+    const gStart = () => { const pts = [...P.values()], c = mid(); g = { d: pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0, v: { ...view }, f: frac(c[0], c[1]) }; };
+    const lasOff = () => { if (!las) return; las = false; dot.hidden = true; if (shown) fotoSend({ t: 'las', id: cur.id, off: 1 }); };
+    const lasAt = e => { const r = v.getBoundingClientRect(); dot.hidden = false; dot.style.transform = `translate(${e.clientX - r.left}px,${e.clientY - r.top}px)`; const [fx, fy] = frac(e.clientX, e.clientY); sendLas(fx, fy); };
+    v.addEventListener('pointerdown', e => {
+      e.preventDefault(); try { v.setPointerCapture(e.pointerId); } catch {} P.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (P.size > 1) { if (stroke) { cur.ink.pop(); stroke = null; inkDraw(); if (shown) fotoSend({ t: 'ink', id: cur.id, ink: cur.ink || [] }); } lasOff(); gStart(); return; }
+      if (tool === 'pen' || tool === 'hl') { const [fx, fy] = frac(e.clientX, e.clientY); const k = Math.random().toString(36).slice(2, 8); stroke = tool === 'hl' ? { k, c: colH, w: 30, h: 1, p: [+fx.toFixed(4), +fy.toFixed(4)] } : { k, c: colP, w: 6, p: [+fx.toFixed(4), +fy.toFixed(4)] }; (cur.ink = cur.ink || []).push(stroke); return; }
+      if (tool === 'laser') { las = true; lasAt(e); return; }
+      const now = Date.now(); if (now - lastTap < 300) { const [fx, fy] = frac(e.clientX, e.clientY); view = view.s > 1.2 ? { s: 1, cx: .5, cy: .5 } : { s: 2.5, cx: fx, cy: fy }; lay(); sendView(); lastTap = 0; return; } lastTap = now;
+      gStart();
+    });
+    v.addEventListener('pointermove', e => {
+      if (!P.has(e.pointerId)) return; P.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (stroke) { const [fx, fy] = frac(e.clientX, e.clientY); const n = stroke.p.length; if (Math.hypot(fx - stroke.p[n - 2], fy - stroke.p[n - 1]) > 0.002 && n < 4000) { stroke.p.push(+fx.toFixed(4), +fy.toFixed(4)); inkDraw(); sendStk(stroke); } return; }
+      if (las) { lasAt(e); return; }
+      if (!g) return; const pts = [...P.values()], c = mid();
+      const b = box(); let s = g.v.s; if (pts.length > 1 && g.d) s = Math.max(1, Math.min(8, g.v.s * Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) / g.d));
+      if (s <= 1.01 && pts.length < 2) return;
+      // der Punkt unter den Fingern bleibt unter den Fingern
+      const r = v.getBoundingClientRect(); const px = c[0] - r.left - b.ox, py = c[1] - r.top - b.oy;
+      const tx = px - g.f[0] * b.W * s, ty = py - g.f[1] * b.H * s; view = { s, cx: (b.W / 2 - tx) / (b.W * s), cy: (b.H / 2 - ty) / (b.H * s) }; lay(); sendView();
+    });
+    const up = e => { P.delete(e.pointerId); if (stroke) { stroke = null; saveInk(); } if (P.size === 0) { g = null; lasOff(); } else gStart(); };
+    v.addEventListener('pointerup', up); v.addEventListener('pointercancel', up);
+  };
+  window.addEventListener('resize', () => lay());
+  root.addEventListener('click', async e => {
+    const b = e.target.closest('[data-c]'); if (!b) return; const c = b.dataset.c;
+    if (c === 'login') openDlg('login');
+    else if (c === 'back') { if (shown) fotoSend({ t: 'hide' }); try { fotos = await fotoList(CAM_ID); } catch {} list(); }
+    else if (c === 'open') open(b.dataset.id);
+    else if (c === 'show') { shown = !shown; showSync(); fotoSend(shown ? { t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] } : { t: 'hide' }); }
+    else if (c === 'tool') { tool = b.dataset.v; toolSync(); if (tool === 'laser' && !shown) toast('Der Laser ist nur auf dem Beamer zu sehen, wenn das Foto dort läuft.'); }
+    else if (c === 'col') { if (tool === 'hl') colH = b.dataset.v; else colP = b.dataset.v; toolSync(); }
+    else if (c === 'undo') { if (cur.ink && cur.ink.length) { cur.ink.pop(); inkDraw(); saveInk(); } }
+    else if (c === 'clear') { if (!cur.ink || !cur.ink.length) return; if (b.dataset.sure) { cur.ink = []; inkDraw(); saveInk(); delete b.dataset.sure; b.textContent = 'Striche löschen'; } else { b.dataset.sure = '1'; b.textContent = 'Wirklich löschen?'; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = 'Striche löschen'; } }, 3000); } }
+    else if (c === 'zoom0') { view = { s: 1, cx: .5, cy: .5 }; lay(); sendView(); }
+    else if (c === 'dl') { try { await fotoDownload(cur, fotos.indexOf(cur)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
+  });
+  // warten, bis die Anmeldung geklärt ist
+  let last = null; const poll = setInterval(() => { const u = store.user ? store.user.id : (store.sb ? 'none' : null); if (u && u !== last) { last = u; ready(); } }, 400);
+  setTimeout(() => { if (!store.sb && !last) msg('<p>LehrWerk ist gerade nicht erreichbar. Bitte prüfe die Internetverbindung.</p>'); }, 12000);
+  void poll;
+}
+
+// ---------- Fotos einer Stunde verwalten (Präsentation und Editor) ----------
+function fotoPanelHTML(sheetId, fotos, mode) {
+  const qr = (() => { try { return QR.dataURL(camUrl(sheetId), 5); } catch { return ''; } })();
+  return `<div class="lf-qr">${qr ? `<img src="${qr}" alt="QR-Code zum Kameramodus">` : ''}<div><b>Mit iPad oder Handy scannen</b><small>Dort mit deinem Konto angemeldet, öffnet sich die Kamera für diese Stunde. Fotos werden nach 14 Tagen gelöscht.</small></div></div>
+    ${fotos.length ? `<div class="lf-bar"><b>${fotos.length} Foto${fotos.length === 1 ? '' : 's'}</b>${mode === 'pres' && fotos.length > 1 ? '<button type="button" class="lf-b" data-lf="showall">Alle zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="dlall">Alle herunterladen</button></div>
+    <div class="lf-grid">${fotos.map((f, i) => `<div class="lf-it${f._new ? ' new' : ''}" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><div class="lf-ia">${mode === 'pres' ? '<button type="button" class="lf-b pri" data-lf="show">Zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="lf-b" data-lf="keep" aria-pressed="${!!f.keep}" title="${f.keep ? 'Wird nicht automatisch gelöscht' : 'Nicht nach 14 Tagen löschen'}">${f.keep ? '★' : '☆'}</button><button type="button" class="lf-b" data-lf="del" title="Löschen" aria-label="Löschen">×</button></div><small>${fotoLeft(f)}</small></div>`).join('')}</div>`
+    : '<p class="lf-empty">Noch keine Fotos zu dieser Stunde.</p>'}`;
+}
+async function fotoPanelAct(e, root, sheetId, fotos, rerender, onShow) {
+  const b = e.target.closest('[data-lf]'); if (!b) return false; const a = b.dataset.lf; const it = b.closest('[data-id]'); const f = it && fotos.find(x => x.id === it.dataset.id);
+  if (a === 'show' && f) onShow([f]);
+  else if (a === 'showall') onShow(fotos.slice());
+  else if (a === 'dl' && f) { try { await fotoDownload(f, fotos.indexOf(f)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
+  else if (a === 'dlall') { toast('Fotos werden geladen …'); for (let i = 0; i < fotos.length; i++) { try { await fotoDownload(fotos[i], i); } catch {} } }
+  else if (a === 'keep' && f) { const k = !f.keep; const r = await store.sb.from('ab_fotos').update({ keep: k }).eq('id', f.id); if (!r.error) { f.keep = k; rerender(); toast(k ? 'Foto wird behalten und nicht automatisch gelöscht.' : 'Foto wird nach Ablauf der 14 Tage gelöscht.'); } }
+  else if (a === 'del' && f) { try { await fotoDelete(f); fotos.splice(fotos.indexOf(f), 1); rerender(); toast('Foto gelöscht.'); } catch { toast('Löschen hat nicht geklappt.'); } }
+  return true;
+}
+const fotoThumbs = root => root.querySelectorAll('img[data-p]').forEach(async im => { if (im.src) return; try { im.src = await fotoUrl(im.dataset.p); } catch {} });
+// Editor: Fotos der Stunde als Dialog
+async function fotoManager() {
+  if (!fotoOK()) { toast('Fotos gibt es mit Anmeldung in der Online-Ablage.'); return; }
+  if (!state.sheet || !state.sheet.id) return; const sid = state.sheet.id; let fotos = [];
+  const ov2 = el(`<div class="lf-dlg-ov" role="dialog" aria-modal="true" aria-label="Fotos dieser Stunde"><div class="lf-dlg"><div class="lf-dh"><b>📷 Fotos dieser Stunde</b><button type="button" class="kb-x" data-lf="x" aria-label="Schließen">×</button></div><div class="lf-body"><p class="lf-empty">Wird geladen …</p></div></div></div>`);
+  document.body.appendChild(ov2); const body = ov2.querySelector('.lf-body');
+  const rr = () => { body.innerHTML = fotoPanelHTML(sid, fotos, 'ed'); fotoThumbs(body); };
+  try { fotos = await fotoList(sid); } catch (err) { console.error(err); } rr();
+  const off = fotoListen(async m => { if (m.t === 'new' && m.sheet === sid) { try { fotos = await fotoList(sid); rr(); } catch {} } });
+  const close = () => { off(); ov2.remove(); document.removeEventListener('keydown', kd, true); };
+  const kd = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } }; document.addEventListener('keydown', kd, true);
+  ov2.addEventListener('click', async e => { if (e.target === ov2 || e.target.closest('[data-lf="x"]')) { close(); return; } await fotoPanelAct(e, body, sid, fotos, rr, () => {}); });
+}
+// Sicherungsfolie: Fotos auf der 1600×900-Folie anordnen (eines groß mit Zoom, sonst Raster)
+const fotoFit = (w, h, W, H) => { const r = w / h; let a = W, b = W / r; if (b > H) { b = H; a = H * r; } return { W: a, H: b, l: (W - a) / 2, t: (H - b) / 2 }; };
+const fotoLasHTML = (las, s) => (las ? `<i class="lf-las" style="left:${(las[0] * 100).toFixed(2)}%;top:${(las[1] * 100).toFixed(2)}%;transform:scale(${(1 / s).toFixed(3)})"></i>` : '');
+function fotoSlideHTML(s) {
+  const it = (s.items || []).slice(0, 6); if (!it.length) return '<div class="lf-slide"></div>';
+  const when = new Date(it[it.length - 1].created_at || Date.now()).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  if (it.length === 1) {
+    const f = it[0], bx = fotoFit(f.w || 4, f.h || 3, 1600, 900), t = fotoTf(s.view || {}, bx.W, bx.H);
+    return `<div class="lf-slide one"><div class="lf-clip" style="left:${bx.l}px;top:${bx.t}px;width:${bx.W}px;height:${bx.H}px"><div class="lf-sw" style="width:${bx.W}px;height:${bx.H}px;transform:translate(${t.tx}px,${t.ty}px) scale(${t.s})"><img src="${esc(f.u || '')}" alt="Foto eines Arbeitsergebnisses" draggable="false">${fotoInkSvg((f.ink || []).concat(s.live ? [s.live] : []), f.w, f.h)}${fotoLasHTML(s.las, t.s)}</div></div><span class="lf-tag">Sicherung · ${when} Uhr</span></div>`;
+  }
+  const cols = it.length <= 2 ? 2 : 3, rows = Math.ceil(it.length / cols), g = 16, cw = (1600 - g * (cols + 1)) / cols, ch = (900 - g * (rows + 1)) / rows;
+  return `<div class="lf-slide many">${it.map((f, i) => { const c = i % cols, r = Math.floor(i / cols), bx = fotoFit(f.w || 4, f.h || 3, cw, ch); return `<div class="lf-cell" style="left:${g + c * (cw + g) + bx.l}px;top:${g + r * (ch + g) + bx.t}px;width:${bx.W}px;height:${bx.H}px"><img src="${esc(f.u || '')}" alt="Foto ${i + 1}" draggable="false">${fotoInkSvg(f.ink, f.w, f.h)}</div>`; }).join('')}<span class="lf-tag">Sicherung · ${when} Uhr</span></div>`;
+}
+
 /* ================= Start ================= */
 function boot() {
   if (DG_VIEW) { dgViewer(DG_VIEW); return; }
@@ -15145,12 +15445,13 @@ function boot() {
   const ok = cached && cached.sheet && cached.sheet.meta && Array.isArray(cached.sheet.blocks) && KL(cached.sheet.klasse).id === state.klasse;
   state.sheet = normalizeSheet(ok ? cached.sheet : draftFor(state.klasse));
   // Ganz neu (noch keine Klassen auf diesem Gerät): keine Startseite vor der Einrichtung
-  if (homeAutoDue() && (lsGet(LS_KLCACHE) || lsGet('abw.ordner')) && !DG_VIEW && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
+  if (homeAutoDue() && (lsGet(LS_KLCACHE) || lsGet('abw.ordner')) && !DG_VIEW && !CAM_ID && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
   homeTouch(); setInterval(homeTouch, 5 * 6e4);
   renderTabs(); renderEditor(); applyResponsive(); renderPreview(); setStatus('pending');
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
+  if (CAM_ID) { camInit(); return; }
   setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit(); mobileInit(); admInit(); foInit();
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
