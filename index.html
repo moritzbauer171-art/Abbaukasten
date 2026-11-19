@@ -15488,36 +15488,60 @@ function lfcStart(O = {}) {
   const fxSync = () => { const x = main.querySelector('.lfc-fx'); if (x) { x.classList.toggle('on', boardOn(tab)); x.querySelector('span').textContent = boardOn(tab) ? 'Auf dem Beamer' : 'Zeigen'; } };
   const ensureBeam = () => { if (!boardOn(tab)) { send({ t: 'board', kind: tab, on: true }); if (PR) PR.board = tab; renderNav(); fxSync(); } };
   const bindBoard = () => {
-    const b = brd(); const P = new Map(); let pan = null, er = null;
+    // Handballen: Solange der Stift schreibt (und kurz danach) zählen Berührungen nicht. Mit Pencil verschieben nur zwei Finger.
+    // Setzt der Stift kurz nach einem Fingerstrich auf, war das der Ballen: dieser Strich wird zurückgenommen.
+    const b = brd(); const TP = new Map(); let pan = null, er = null, drawId = null, penDown = false, penUpT = 0, lastTouch = null;
     const pt = e => { const r = b.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 1600, (e.clientY - r.top) / r.height * 900 + (B[tab].sy || 0)]; };
     const r1 = v => Math.round(v * 10) / 10;
-    const panStart = () => { const ys = [...P.values()].map(p => p.y); pan = { y: ys.reduce((a, v) => a + v, 0) / ys.length, sy: B[tab].sy || 0 }; };
-    b.addEventListener('pointerdown', e => {
-      e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch {}
-      if (e.pointerType === 'pen' && !T.pen) { T.pen = true; toast('Apple Pencil erkannt: Der Stift schreibt, der Finger verschiebt.'); }
-      P.set(e.pointerId, { x: e.clientX, y: e.clientY, type: e.pointerType });
-      const fingerPans = e.pointerType === 'touch' && (T.pen || P.size > 1);
-      if (P.size > 1 || fingerPans) { if (T.live) { T.live = null; sendLive(null); } T.las = null; er = null; panStart(); drawInk(); return; }
-      const [x, y] = pt(e);
+    const panStart = () => { const ys = [...TP.values()].map(p => p.y); pan = { y: ys.reduce((a, v) => a + v, 0) / ys.length, sy: B[tab].sy || 0 }; };
+    const cancelLive = () => { if (T.live) { T.live = null; sendLive(null); } T.las = null; er = null; drawId = null; drawInk(); };
+    const dropPalm = () => { if (!lastTouch || Date.now() - lastTouch.t > 700) return; const k = lastTouch.k; lastTouch = null;
+      const L = B[tab].ink, n = L.length; B[tab].ink = L.filter(x => x.k !== k); if (B[tab].ink.length !== n) { send({ t: 'bop', key: tab, op: 'rm', ks: [k] }); const U = T.undo[tab]; const i = U.findIndex(h => h.t === 'add' && h.k === k); if (i >= 0) U.splice(i, 1); drawInk(); } };
+    const startDraw = e => {
+      drawId = e.pointerId; T.liveType = e.pointerType; const [x, y] = pt(e);
       if (T.tool === 'laser') { T.las = [x, y]; sendLas(x, y); drawInk(); return; }
       if (T.tool === 'er') { er = []; eraseAt(x, y, er); return; }
       const pr = e.pointerType === 'pen' && e.pressure > 0 && T.tool === 'pen';
       T.live = { k: lfcKey(), t: T.tool, c: T.col[T.tool] || T.col.pen, w: INK_W[T.w], p: pr ? [r1(x), r1(y), Math.round(e.pressure * 100)] : [r1(x), r1(y)], ...(pr ? { pr: 1 } : {}) };
       ensureBeam(); drawInk();
+    };
+    b.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      if (e.pointerType === 'pen') {
+        if (!T.pen) { T.pen = true; toast('Apple Pencil erkannt: Nur der Stift schreibt. Verschieben mit zwei Fingern.'); }
+        penDown = true; TP.clear(); pan = null;
+        if (drawId !== null && T.liveType === 'touch') cancelLive(); dropPalm();
+        try { b.setPointerCapture(e.pointerId); } catch {} startDraw(e); return;
+      }
+      if (e.pointerType === 'touch') {
+        if (penDown || Date.now() - penUpT < 500) return;
+        try { b.setPointerCapture(e.pointerId); } catch {} TP.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (T.pen) { if (TP.size >= 2) panStart(); return; }
+        if (TP.size >= 2) { cancelLive(); panStart(); return; }
+        startDraw(e); return;
+      }
+      try { b.setPointerCapture(e.pointerId); } catch {} startDraw(e);
     });
     b.addEventListener('pointermove', e => {
-      if (!P.has(e.pointerId)) return; P.get(e.pointerId).x = e.clientX; P.get(e.pointerId).y = e.clientY;
-      if (pan) { const ys = [...P.values()].map(p => p.y), y = ys.reduce((a, v) => a + v, 0) / ys.length, r = b.getBoundingClientRect(); const H = B[tab].h || 900; const sy = Math.max(0, Math.min(H - 900, pan.sy - (y - pan.y) / r.height * 900)); if (sy !== B[tab].sy) { B[tab].sy = sy; T.panT = Date.now(); drawSl(); drawInk(); sendSy(sy); } return; }
+      if (TP.has(e.pointerId)) { const q = TP.get(e.pointerId); q.x = e.clientX; q.y = e.clientY;
+        if (pan) { const ys = [...TP.values()].map(p => p.y), y = ys.reduce((a, v) => a + v, 0) / ys.length, r = b.getBoundingClientRect(); const H = B[tab].h || 900; const sy = Math.max(0, Math.min(H - 900, pan.sy - (y - pan.y) / r.height * 900)); if (sy !== B[tab].sy) { B[tab].sy = sy; T.panT = Date.now(); drawSl(); drawInk(); sendSy(sy); } return; }
+        if (e.pointerId !== drawId) return; }
+      if (e.pointerId !== drawId) return;
       if (T.tool === 'laser' && T.las) { const [x, y] = pt(e); T.las = [x, y]; sendLas(x, y); drawInk(); return; }
       if (er) { const [x, y] = pt(e); eraseAt(x, y, er); return; }
       const s = T.live; if (!s) return; const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
       (evs.length ? evs : [e]).forEach(ev => { const [x, y] = pt(ev); const st2 = s.pr ? 3 : 2; const lx = s.p[s.p.length - st2], ly = s.p[s.p.length - st2 + 1]; if (Math.hypot(x - lx, y - ly) < 1.5) return; s.p.push(r1(x), r1(y)); if (s.pr) s.p.push(Math.round((ev.pressure || 0.5) * 100)); });
       drawInk(); sendLive(s);
     });
-    const up = e => { P.delete(e.pointerId); if (pan) { if (!P.size) pan = null; else panStart(); return; }
+    const up = e => {
+      if (e.pointerType === 'pen') { penDown = false; penUpT = Date.now(); }
+      if (TP.has(e.pointerId)) { TP.delete(e.pointerId); if (pan) { if (TP.size >= (T.pen ? 2 : 1)) panStart(); else pan = null; return; } }
+      if (e.pointerId !== drawId) return; drawId = null;
       if (T.las) { T.las = null; drawInk(); }
       if (er) { if (er.length) { T.undo[tab].push({ t: 'rm', L: er }); send({ t: 'bop', key: tab, op: 'rm', ks: er.map(x => x.k) }); } er = null; return; }
-      const s = T.live; if (!s) return; T.live = null; B[tab].ink.push(s); T.undo[tab].push({ t: 'add', k: s.k }); send({ t: 'bop', key: tab, op: 'add', s }); drawInk(); };
+      const s = T.live; if (!s) return; T.live = null; B[tab].ink.push(s); T.undo[tab].push({ t: 'add', k: s.k }); send({ t: 'bop', key: tab, op: 'add', s }); drawInk();
+      if (e.pointerType === 'touch') lastTouch = { k: s.k, t: Date.now() };
+    };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
   };
   const eraseAt = (x, y, out) => { const L = B[tab].ink; for (let i = L.length - 1; i >= 0; i--) if (inkHit(L[i], x, y, 14)) { if (!L[i].k) L[i].k = lfcKey(); out.push(L[i]); L.splice(i, 1); } drawInk(); };
