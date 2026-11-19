@@ -7424,7 +7424,7 @@ function openPres(start, opts = {}) {
     });
     ov.addEventListener('lw-close', () => off(), { once: true });
     // Mausrad zoomt ein einzelnes Foto auch hier
-    stage.addEventListener('wheel', e => { if (!(BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1)) return; e.preventDefault(); const v = BOARD.foto.view; BOARD.foto.view = { ...v, s: Math.max(1, Math.min(8, (v.s || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15))) }; foUpd(); }, { passive: false });
+    stage.addEventListener('wheel', e => { if (!(BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1)) return; e.preventDefault(); const v = BOARD.foto.view; BOARD.foto.view = { cx: v.cx, cy: v.cy, s: Math.max(1, Math.min(8, (v.s || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15))) }; foUpd(); }, { passive: false });
   }
   if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns">${foOn ? '<button type="button" class="pr-tafelbtn pr-fobtn" data-p="fotos" data-label="Fotos" aria-expanded="false" title="Fotos vom iPad oder Handy: QR-Code, neue Fotos, Sicherungsfolie (F)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.7l1.6-2.2h6.4L16.8 7h2.7A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Fotos</span><i class="pr-fobadge" hidden></i></button>' : ''}<button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
@@ -15077,7 +15077,8 @@ async function fotoUpload(sheetId, file, pre) {
 }
 const camUrl = sheetId => { const u = new URL(location.protocol === 'https:' && !isFramed ? location.href : 'https://moritzbauer171-art.github.io/Abbaukasten/'); u.search = '?kamera=' + encodeURIComponent(sheetId); u.hash = ''; return u.href; };
 // Ansicht (Zoom) und Striche eines Fotos: Zoomstufe s ≥ 1 und Mittelpunkt cx/cy als Anteil des Bildes; Striche in Bildanteilen
-const fotoTf = (v, W, H) => { const s = Math.max(1, Math.min(8, +v.s || 1)); let tx = W / 2 - (v.cx ?? 0.5) * W * s, ty = H / 2 - (v.cy ?? 0.5) * H * s; tx = Math.min(0, Math.max(W - W * s, tx)); ty = Math.min(0, Math.max(H - H * s, ty)); return { s, tx, ty }; };
+// Zoom nutzt die ganze Bildfläche: ist das vergrößerte Foto breiter (höher) als die Fläche, wird es dort verschoben, sonst mittig
+const fotoTf = (v, W, H, VW = W, VH = H) => { const s = Math.max(1, Math.min(8, v.fw ? VW / W : +v.s || 1)), sw = W * s, sh = H * s; let tx = VW / 2 - (v.cx ?? 0.5) * sw, ty = VH / 2 - (v.cy ?? 0.5) * sh; tx = sw <= VW ? (VW - sw) / 2 : Math.min(0, Math.max(VW - sw, tx)); ty = sh <= VH ? (VH - sh) / 2 : Math.min(0, Math.max(VH - sh, ty)); return { s, tx, ty }; };
 const fotoInkSvg = (ink, w, h) => { const H = Math.round(1000 * h / w); return `<svg class="lf-ink" viewBox="0 0 1000 ${H}" preserveAspectRatio="none" aria-hidden="true">${(ink || []).map(s => `<polyline points="${(s.p || []).map((v, i) => (i % 2 ? v * H : v * 1000).toFixed(1)).join(' ')}" stroke="${/^#[0-9a-f]{6}$/i.test(s.c) ? s.c : '#E5484D'}" stroke-width="${Math.max(1, Math.min(40, +s.w || 6))}"${s.h ? ' stroke-opacity=".42"' : ''} fill="none" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</svg>`; };
 
 // ---------- Kameramodus auf iPad/Handy (?kamera=<Stunde>) ----------
@@ -15096,7 +15097,7 @@ function camInit() {
     rot: '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>', rotl: '<path d="M4 11a8 8 0 1 1 2.3 5.7"/><path d="M4 4v7h7"/>',
     crop: '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/>', zoom: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8 11h6"/>',
     dl: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>', trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', tv: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
-    scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M4 12h16"/>', full: '<rect x="4" y="4" width="16" height="16" rx="1.5"/>'
+    scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M4 12h16"/>', full: '<rect x="4" y="4" width="16" height="16" rx="1.5"/>', fw: '<path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/>'
   };
   const ic = (k, s = 24) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
   const root = el(`<div id="cam-root"><nav class="cam-nav"><div class="cam-nl"></div><div class="cam-nt"><b>Fotos</b><small class="cam-t">wird geladen …</small></div><div class="cam-nr"></div></nav><main class="cam-m"></main><div class="cam-tip" hidden></div><footer class="cam-bar"></footer></div>`);
@@ -15177,6 +15178,7 @@ function camInit() {
   const colsHTML = () => (COLS[tool] ? COLS[tool].map(c => `<button type="button" class="cam-col" data-c="col" data-v="${c}" style="--cc:${c}" aria-pressed="${c === (tool === 'hl' ? colH : colP)}" aria-label="Farbe"></button>`).join('') : '');
   const toolSync = () => { root.querySelectorAll('[data-c="tool"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === tool))); const cs = root.querySelector('.cam-cols'); if (cs) { cs.innerHTML = colsHTML(); cs.hidden = !COLS[tool]; } const v = main.querySelector('.cam-v'); if (v) v.dataset.tool = tool; };
   const showSync = () => { const b = root.querySelector('[data-c="show"]'); if (!b) return; b.innerHTML = `${ic('tv', 18)}<span>${shown ? 'Auf dem Beamer' : 'Zeigen'}</span>`; b.classList.toggle('on', shown); b.setAttribute('aria-pressed', String(shown)); const v = main.querySelector('.cam-v'); if (v) v.classList.toggle('live', shown); };
+  const fwSync = () => { const b = root.querySelector('[data-c="fw"]'); if (b) b.setAttribute('aria-pressed', String(!!view.fw)); };
   const sheet = on => { const s = root.querySelector('.cam-sheet'); if (!s) return; s.hidden = !on; root.querySelector('.cam-scrim').hidden = !on; };
   const open = async id => {
     const f = fotos.find(x => x.id === id); if (!f) return list(); cur = f; view = { s: 1, cx: 0.5, cy: 0.5 }; root.dataset.screen = 'view';
@@ -15190,13 +15192,13 @@ function camInit() {
         <button type="button" data-c="clear" class="red" role="menuitem">${ic('trash', 22)}<span>Alle Striche löschen</span></button></div>
         <div class="cam-sg"><button type="button" data-c="nosheet" class="strong"><span>Abbrechen</span></button></div></div>`;
     bar.innerHTML = `<div class="cam-seg" role="group" aria-label="Werkzeug">${TOOLS.map(([k, l]) => `<button type="button" class="cam-bi" data-c="tool" data-v="${k}" aria-pressed="${k === tool}">${ic(k)}<span>${l}</span></button>`).join('')}</div>
-      <span class="cam-div"></span><button type="button" class="cam-bi" data-c="undo">${ic('undo')}<span>Zurück</span></button><button type="button" class="cam-bi" data-c="more" aria-haspopup="menu">${ic('more')}<span>Mehr</span></button>`;
+      <span class="cam-div"></span><button type="button" class="cam-bi" data-c="fw" aria-pressed="false" title="Foto auf die ganze Breite vergrößern, auf dem Beamer und hier">${ic('fw')}<span>Breite</span></button><button type="button" class="cam-bi" data-c="undo">${ic('undo')}<span>Zurück</span></button><button type="button" class="cam-bi" data-c="more" aria-haspopup="menu">${ic('more')}<span>Mehr</span></button>`;
     const im = main.querySelector('img'); im.src = await fotoUrl(f.path); await im.decode().catch(() => {});
     lay(); bind(); showSync(); tip('view', 'Zwei Finger zoomen und verschieben, doppelt tippen vergrößert. „Zeigen“ oben rechts bringt das Foto auf den Beamer.');
   };
-  const box = () => { const v = main.querySelector('.cam-v'); const W0 = v.clientWidth, H0 = v.clientHeight, r = cur.w / cur.h; let W = W0, H = W0 / r; if (H > H0) { H = H0; W = H0 * r; } return { v, W, H, ox: (W0 - W) / 2, oy: (H0 - H) / 2 }; };
+  const box = () => { const v = main.querySelector('.cam-v'); const W0 = v.clientWidth, H0 = v.clientHeight, r = cur.w / cur.h; let W = W0, H = W0 / r; if (H > H0) { H = H0; W = H0 * r; } return { v, W, H, ox: 0, oy: 0, VW: W0, VH: H0 }; };
   const inkDraw = () => { const s = main.querySelector('.cam-svg'); if (s) s.innerHTML = fotoInkSvg(cur.ink, cur.w, cur.h); };
-  const lay = () => { if (!cur || !main.querySelector('.cam-w')) return; const b = box(); const w = main.querySelector('.cam-w'); const t = fotoTf(view, b.W, b.H); w.style.cssText = `width:${b.W}px;height:${b.H}px;left:${b.ox}px;top:${b.oy}px;transform:translate(${t.tx}px,${t.ty}px) scale(${t.s})`; inkDraw(); };
+  const lay = () => { if (!cur || !main.querySelector('.cam-w')) return; const b = box(); const w = main.querySelector('.cam-w'); const t = fotoTf(view, b.W, b.H, b.VW, b.VH); w.style.cssText = `width:${b.W}px;height:${b.H}px;left:${b.ox}px;top:${b.oy}px;transform:translate(${t.tx}px,${t.ty}px) scale(${t.s})`; inkDraw(); };
   const thr = (fn, ms) => { let t = 0, last = 0, a = null; return (...x) => { a = x; const now = Date.now(); if (now - last >= ms) { last = now; fn(...a); } else if (!t) t = setTimeout(() => { t = 0; last = Date.now(); fn(...a); }, ms - (now - last)); }; };
   const sendView = thr(() => { if (shown && cur) fotoSend({ t: 'view', id: cur.id, v: view }); }, 50);
   const sendStk = thr(s => { if (shown && cur) fotoSend({ t: 'stk', id: cur.id, s }); }, 45);
@@ -15204,7 +15206,7 @@ function camInit() {
   let inkT = 0; const saveInk = () => { if (shown) fotoSend({ t: 'ink', id: cur.id, ink: cur.ink || [] }); clearTimeout(inkT); const f = cur; inkT = setTimeout(() => store.sb.from('ab_fotos').update({ ink: f.ink || [] }).eq('id', f.id).then(() => {}), 800); };
   const bind = () => {
     const v = main.querySelector('.cam-v'), dot = v.querySelector('.cam-dot'); const P = new Map(); let g = null, stroke = null, las = false, lastTap = 0;
-    const frac = (x, y) => { const b = box(), r = v.getBoundingClientRect(), t = fotoTf(view, b.W, b.H); return [((x - r.left - b.ox) - t.tx) / (b.W * t.s), ((y - r.top - b.oy) - t.ty) / (b.H * t.s)]; };
+    const frac = (x, y) => { const b = box(), r = v.getBoundingClientRect(), t = fotoTf(view, b.W, b.H, b.VW, b.VH); return [((x - r.left - b.ox) - t.tx) / (b.W * t.s), ((y - r.top - b.oy) - t.ty) / (b.H * t.s)]; };
     const mid = () => { const pts = [...P.values()]; return pts.reduce((a, p) => [a[0] + p.x / pts.length, a[1] + p.y / pts.length], [0, 0]); };
     const gStart = () => { const pts = [...P.values()], c = mid(); g = { d: pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0, v: { ...view }, f: frac(c[0], c[1]) }; };
     const lasOff = () => { if (!las) return; las = false; dot.hidden = true; if (shown) fotoSend({ t: 'las', id: cur.id, off: 1 }); };
@@ -15214,7 +15216,7 @@ function camInit() {
       if (P.size > 1) { if (stroke) { cur.ink.pop(); stroke = null; inkDraw(); if (shown) fotoSend({ t: 'ink', id: cur.id, ink: cur.ink || [] }); } lasOff(); gStart(); return; }
       if (tool === 'pen' || tool === 'hl') { const [fx, fy] = frac(e.clientX, e.clientY); const k = Math.random().toString(36).slice(2, 8); stroke = tool === 'hl' ? { k, c: colH, w: 30, h: 1, p: [+fx.toFixed(4), +fy.toFixed(4)] } : { k, c: colP, w: 6, p: [+fx.toFixed(4), +fy.toFixed(4)] }; (cur.ink = cur.ink || []).push(stroke); return; }
       if (tool === 'laser') { las = true; lasAt(e); return; }
-      const now = Date.now(); if (now - lastTap < 300) { const [fx, fy] = frac(e.clientX, e.clientY); view = view.s > 1.2 ? { s: 1, cx: .5, cy: .5 } : { s: 2.5, cx: fx, cy: fy }; lay(); sendView(); lastTap = 0; return; } lastTap = now;
+      const now = Date.now(); if (now - lastTap < 300) { const [fx, fy] = frac(e.clientX, e.clientY); view = view.fw || view.s > 1.2 ? { s: 1, cx: .5, cy: .5 } : { s: 2.5, cx: fx, cy: fy }; lay(); sendView(); fwSync(); lastTap = 0; return; } lastTap = now;
       gStart();
     });
     v.addEventListener('pointermove', e => {
@@ -15222,11 +15224,11 @@ function camInit() {
       if (stroke) { const [fx, fy] = frac(e.clientX, e.clientY); const n = stroke.p.length; if (Math.hypot(fx - stroke.p[n - 2], fy - stroke.p[n - 1]) > 0.002 && n < 4000) { stroke.p.push(+fx.toFixed(4), +fy.toFixed(4)); inkDraw(); sendStk(stroke); } return; }
       if (las) { lasAt(e); return; }
       if (!g) return; const pts = [...P.values()], c = mid();
-      const b = box(); let s = g.v.s; if (pts.length > 1 && g.d) s = Math.max(1, Math.min(8, g.v.s * Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) / g.d));
+      const b = box(), s0 = fotoTf(g.v, b.W, b.H, b.VW, b.VH).s; let s = s0; const fw = !!g.v.fw && pts.length < 2; if (pts.length > 1 && g.d) s = Math.max(1, Math.min(8, s0 * Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) / g.d));
       if (s <= 1.01 && pts.length < 2) return;
       // der Punkt unter den Fingern bleibt unter den Fingern
       const r = v.getBoundingClientRect(); const px = c[0] - r.left - b.ox, py = c[1] - r.top - b.oy;
-      const tx = px - g.f[0] * b.W * s, ty = py - g.f[1] * b.H * s; view = { s, cx: (b.W / 2 - tx) / (b.W * s), cy: (b.H / 2 - ty) / (b.H * s) }; lay(); sendView();
+      const tx = px - g.f[0] * b.W * s, ty = py - g.f[1] * b.H * s; view = { ...(fw ? { fw: 1 } : {}), s, cx: (b.VW / 2 - tx) / (b.W * s), cy: (b.VH / 2 - ty) / (b.H * s) }; fwSync(); lay(); sendView();
     });
     const up = e => { P.delete(e.pointerId); if (stroke) { stroke = null; saveInk(); } if (P.size === 0) { g = null; lasOff(); } else gStart(); };
     v.addEventListener('pointerup', up); v.addEventListener('pointercancel', up);
@@ -15246,7 +15248,8 @@ function camInit() {
     else if (c === 'more') sheet(true);
     else if (c === 'nosheet') sheet(false);
     else if (c === 'clear') { sheet(false); if (!cur.ink || !cur.ink.length) return; if (confirm('Alle Striche auf diesem Foto löschen?')) { cur.ink = []; inkDraw(); saveInk(); } }
-    else if (c === 'zoom0') { sheet(false); view = { s: 1, cx: .5, cy: .5 }; lay(); sendView(); }
+    else if (c === 'zoom0') { sheet(false); view = { s: 1, cx: .5, cy: .5 }; lay(); sendView(); fwSync(); }
+    else if (c === 'fw') { view = view.fw ? { s: 1, cx: .5, cy: .5 } : { fw: 1, cx: .5, cy: 0 }; lay(); sendView(); fwSync(); }
     else if (c === 'dl') { sheet(false); try { await fotoDownload(cur, fotos.indexOf(cur)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
     else if (c === 'rot') { sheet(false); const sh = shown; msg('<div class="cam-spin"></div><p>Wird gedreht …</p>'); try { await fotoRotate(cur, 1); } catch (err) { console.error(err); toast('Drehen hat nicht geklappt.'); } await open(cur.id); if (sh) reshow(); }
     else if (c === 'crop') { sheet(false); const f = cur, sh = shown; if ((f.ink || []).length && !confirm('Beim Zuschneiden gehen die Striche auf dem Foto verloren. Trotzdem zuschneiden?')) return; let pre = null; try { pre = await camEdit(await fotoUrl(f.path)); } catch {} if (pre) { msg('<div class="cam-spin"></div><p>Wird gespeichert …</p>'); try { await fotoReplace(f, pre.blob, pre.w, pre.h, []); } catch (err) { console.error(err); toast('Speichern hat nicht geklappt.'); } } await open(f.id); if (sh) reshow(); }
@@ -15298,8 +15301,8 @@ function fotoSlideHTML(s) {
   const it = (s.items || []).slice(0, 6); if (!it.length) return '<div class="lf-slide"></div>';
   const when = new Date(it[it.length - 1].created_at || Date.now()).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
   if (it.length === 1) {
-    const f = it[0], bx = fotoFit(f.w || 4, f.h || 3, 1600, 900), t = fotoTf(s.view || {}, bx.W, bx.H);
-    return `<div class="lf-slide one"><div class="lf-clip" style="left:${bx.l}px;top:${bx.t}px;width:${bx.W}px;height:${bx.H}px"><div class="lf-sw" style="width:${bx.W}px;height:${bx.H}px;transform:translate(${t.tx}px,${t.ty}px) scale(${t.s})"><img src="${esc(f.u || '')}" alt="Foto eines Arbeitsergebnisses" draggable="false">${fotoInkSvg((f.ink || []).concat(s.live ? [s.live] : []), f.w, f.h)}${fotoLasHTML(s.las, t.s)}</div></div><span class="lf-tag">Sicherung · ${when} Uhr</span></div>`;
+    const f = it[0], bx = fotoFit(f.w || 4, f.h || 3, 1600, 900), t = fotoTf(s.view || {}, bx.W, bx.H, 1600, 900);
+    return `<div class="lf-slide one"><div class="lf-clip" style="left:0;top:0;width:1600px;height:900px"><div class="lf-sw" style="width:${bx.W}px;height:${bx.H}px;transform:translate(${t.tx}px,${t.ty}px) scale(${t.s})"><img src="${esc(f.u || '')}" alt="Foto eines Arbeitsergebnisses" draggable="false">${fotoInkSvg((f.ink || []).concat(s.live ? [s.live] : []), f.w, f.h)}${fotoLasHTML(s.las, t.s)}</div></div><span class="lf-tag">Sicherung · ${when} Uhr</span></div>`;
   }
   const cols = it.length <= 2 ? 2 : 3, rows = Math.ceil(it.length / cols), g = 16, cw = (1600 - g * (cols + 1)) / cols, ch = (900 - g * (rows + 1)) / rows;
   return `<div class="lf-slide many">${it.map((f, i) => { const c = i % cols, r = Math.floor(i / cols), bx = fotoFit(f.w || 4, f.h || 3, cw, ch); return `<div class="lf-cell" style="left:${g + c * (cw + g) + bx.l}px;top:${g + r * (ch + g) + bx.t}px;width:${bx.W}px;height:${bx.H}px"><img src="${esc(f.u || '')}" alt="Foto ${i + 1}" draggable="false">${fotoInkSvg(f.ink, f.w, f.h)}</div>`; }).join('')}<span class="lf-tag">Sicherung · ${when} Uhr</span></div>`;
