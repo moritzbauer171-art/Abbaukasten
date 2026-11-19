@@ -446,6 +446,7 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 body.basis .x-pro:not(.used){display:none!important}
 .x-wrap.x-pro:not(.chks){display:contents}
 .umfang button{min-width:0;padding-left:9px;padding-right:9px}
+body.basis .area-more{display:none}
 .ph-ctl{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
 .grp-sel{margin-left:auto;max-width:150px}
 .tm-row{align-items:flex-end}
@@ -4830,19 +4831,20 @@ const gsaSummary = b => { const k = gsaK(b); const n = k === 'suchsel' || k === 
 
 /* ================= Funktionsumfang: Basis blendet selten gebrauchte Werkzeuge aus (.x-pro), solange sie nicht benutzt werden (.used) ================= */
 const LS_UMFANG = 'abw.umfang';
+const UMF = { basis: false };
 function setUmfang(v, quiet) {
-  const basis = false; document.body.classList.remove('basis');
+  UMF.basis = v === 'basis'; const basis = UMF.basis; document.body.classList.toggle('basis', basis);
   document.querySelectorAll('[data-act="umfang"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (basis ? 'basis' : 'experte'))));
   const uc = document.getElementById('umfang-chip'); if (uc) uc.textContent = basis ? 'Basis' : '';
   if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
   if (!quiet) { if (basis && state.area === 'start') state.area = 'blatt'; basisClamp(); state.insAt = null; closeGloss(); closeZl(); closeMenu(); renderEditor(); clearTimeout(renderTimer); renderPreview(); }
 }
-// Basis kennt nur Arbeitsblätter: Bereich „Arbeitsblätter“, Ausgaben Arbeitsblatt und Tippkarten
-const isBasis = () => false;
-const BASIS_OUTS = ['blatt', 'tipps'];
+// Basis: nur Arbeitsblätter und die Präsentation dazu (Bereiche „Arbeitsblatt“ und „Präsentation“, Ausgaben Arbeitsblatt, Tippkarten und Folien)
+const isBasis = () => UMF.basis;
+const BASIS_OUTS = ['blatt', 'tipps', 'pres'];
 function basisClamp() {
   if (!isBasis()) return;
-  if (state.area !== 'einst') state.area = 'blatt'; if (!BASIS_OUTS.includes(state.out)) state.out = 'blatt';
+  if (!['einst', 'blatt', 'pres'].includes(state.area)) state.area = 'blatt'; if (!BASIS_OUTS.includes(state.out)) state.out = state.area === 'pres' ? 'pres' : 'blatt';
 }
 
 /* ================= Stunde: ein oder mehrere Arbeitsblätter =================
@@ -5187,7 +5189,6 @@ const blockArea = b => (b.type === 'step' ? 'stunde' : b.type === 'tafel' ? 'taf
 const inArea = (b, A) => blockArea(b) === A || (A === 'extras' && b.type === 'step' && !!b.exit);
 const areaIc = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC[k]}</svg>`;
 function areaBarHTML() {
-  if (isBasis()) return '';
   const SB = stBlocks(); const n = { start: 0, stunde: SB.filter(b => b.type === 'step').length, blatt: SB.filter(b => blockArea(b) === 'blatt' && b.type !== 'pagebreak').length, tafel: SB.filter(b => b.type === 'tafel').length + (state.sheet.cards || []).length, extras: SB.filter(b => b.type === 'a3').length + exitSteps().length, pres: 0 };
   const A = areaNorm(state.area); const more = AREAS_MORE.find(x => x[0] === A); const mo = state.areaMore;
   return `<nav class="area-bar a2" role="tablist" aria-label="Bereiche der Stunde">${AREAS.map(([k, l]) => `<button type="button" role="tab" class="area-b" data-act="area-set" data-v="${k}" aria-selected="${A === k}" title="${l}"><i>${areaIc(k)}</i><span>${l}</span>${k === 'blatt' && n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}
@@ -5204,7 +5205,7 @@ function quickBarHTML() {
 function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras') { const SB = stBlocks(); return SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4') ? 'a4' : SB.some(b => b.type === 'a3') ? 'a3' : exitSteps().length ? 'exit' : 'a4'; } return L[0]; }
 function setArea(a) {
   a = areaNorm(a); state.areaMore = false;
-  if (!AREA_OUTS[a] || isBasis() && a !== 'blatt' && a !== 'einst') return; if (state.area === a && (OUT_AREA[state.out] === a || a === 'start' || a === 'einst')) { $('#editor').scrollTop = 0; return; }
+  if (!AREA_OUTS[a] || isBasis() && !['blatt', 'einst', 'pres'].includes(a)) return; if (state.area === a && (OUT_AREA[state.out] === a || a === 'start' || a === 'einst')) { $('#editor').scrollTop = 0; return; }
   if (a === 'einst' && state.area !== 'einst') state.prevArea = state.area || 'blatt';
   state.area = a; state.out = areaOutFor(a); state.insAt = null; closeGloss(); closeZl(); closeMenu();
   renderEditor(); $('#editor').scrollTop = 0; clearTimeout(renderTimer); renderPreview();
@@ -5213,7 +5214,7 @@ function setArea(a) {
 function areaGo(ar, bid, k) {
   ar = areaNorm(ar); state.areaMore = false;
   if (ar === 'pres' && bid) state.zwOpen = bid;
-  if (isBasis() && ar !== 'blatt') { toast('Das bearbeitest du im Modus „Experte“ (Einstellungen ⚙ → App).'); return; }
+  if (isBasis() && ar !== 'blatt' && ar !== 'pres') { toast('Das bearbeitest du im Modus „Experte“ (Einstellungen ⚙ → App).'); return; }
   const P = state.sheet;
   if (P.abs && Number.isFinite(k) && k !== (P.abActive || 0)) { abSwitch(k); state.closed = defaultClosed(); state.taskOpen = new Set(); }
   const b = bid ? P.blocks.find(x => x.id === bid) : null;
@@ -5253,7 +5254,7 @@ function startHTML() {
 // Bereich „Einstellungen“: alles, was nicht Inhalt ist, an einem Ort
 const SET_TABS = [['kurs', 'Kurs'], ['blatt', 'Arbeitsblatt'], ['design', 'Aussehen'], ['zeiten', 'Zeiten'], ['pres', 'Präsentation'], ['app', 'App']];
 function settingsHTML() {
-  const m = state.sheet.meta; const basis = isBasis(); const tabs = SET_TABS.filter(([k]) => !(basis && (k === 'pres' || k === 'zeiten')));
+  const m = state.sheet.meta; const basis = isBasis(); const tabs = SET_TABS.filter(([k]) => !(basis && k === 'zeiten'));
   const tab = tabs.some(([k]) => k === state.setTab) ? state.setTab : 'kurs'; const isK = m.mode === 'klausur';
   let c = '';
   if (tab === 'kurs') c = `<div class="card set-card" data-bid="meta"><div class="card-b">
@@ -5286,6 +5287,7 @@ function settingsHTML() {
       <small class="hint">Welche Folien gezeigt werden und die Zeiten je Folie stellst du im Bereich <button class="link" type="button" data-act="area-set" data-v="pres">Präsentation</button> ein.</small>
     </div></div>`;
   else c = `<div class="card set-card"><div class="card-b">
+      <div class="f"><span>Funktionsumfang</span><div class="seg sm umfang" role="group" aria-label="Funktionsumfang"><button type="button" data-act="umfang" data-v="basis" aria-pressed="${isBasis()}">Basis</button><button type="button" data-act="umfang" data-v="experte" aria-pressed="${!isBasis()}">Experte</button></div><small>${isBasis() ? '<b>Basis:</b> nur Arbeitsblätter und die Präsentation dazu. Stundenplanung (Ziel, Zeiten, Verlaufsplan), Tafelbilder und Karten, Druck-Extras, Startseite und Board sind ausgeblendet, ebenso Standards, Phase und Zeit, Gruppen und Niveaus, solange sie nicht benutzt werden. Gelöscht wird nichts.' : '<b>Experte:</b> alle Funktionen. Mit „Basis“ bleiben nur Arbeitsblätter und die Präsentation dazu.'}</small></div>
       <div class="f"><span>Startseite von selbst zeigen</span><div class="seg sm" role="group" aria-label="Startseite von selbst zeigen">${HOME_MODES.map(([v, l]) => `<button type="button" data-act="home-pref" data-v="${v}" aria-pressed="${homeMode() === v}">${l}</button>`).join('')}</div><small class="hint">„Nach einer Pause“: beim ersten Öffnen und wenn die App mindestens drei Stunden zu war. Über das Haus-Symbol kommst du jederzeit hin.</small></div>
       <div class="f"><span>Darstellung</span><div class="seg sm" role="group" aria-label="Darstellung">${[['light', 'Hell'], ['dark', 'Dunkel'], ['auto', 'Wie das Gerät']].map(([v, l]) => `<button type="button" data-act="theme-set" data-v="${v}" aria-pressed="${themePref() === v}">${l}</button>`).join('')}</div></div>
       <div class="f"><span>Ansicht</span><div class="set-chks">
@@ -5520,7 +5522,7 @@ function presEditorHTML() {
   const fine = state.fmtOpen.has('fmfine');
   if (!state.stInit) { state.stInit = true; state.closed.add('stunde'); }
   return `<div class="fm-top"><button class="btn primary" type="button" data-act="pres-go">Präsentieren</button><div class="seg sm" role="group" aria-label="Ansicht beim Präsentieren" title="Wird je Klasse gemerkt">${[['folien', 'Folien'], ['tafel', 'Tafel']].map(([v, t]) => `<button type="button" data-act="pres-mode" data-v="${v}" aria-pressed="${presModeOf(state.sheet.klasse) === v}">${t}</button>`).join('')}</div><button class="btn" type="button" data-act="pres-pptx">PowerPoint</button>${fotoOK() ? '<button class="btn" type="button" data-act="fotos" title="Fotos vom iPad oder Handy zu dieser Stunde">📷 Fotos</button>' : ''}<button class="btn" type="button" data-act="settings" data-tab="pres" title="Phasenleiste, Timergröße, Uhrzeit, Sicherungen">Folien-Einstellungen</button></div>
-    ${(state.sheet.abs ? abBarHTML() : '') + stundeCard()}
+    ${(state.sheet.abs ? abBarHTML() : '') + (isBasis() ? '' : stundeCard())}
     <div class="fm"><div class="fm-h"><b>Folien</b><small>In der Reihenfolge der Stunde. Mit „+ Zwischenfolie“ fügst du Folien ein, die nur in der Präsentation stehen. Phase und Zeit trägst du direkt ein.</small>${planNote}</div>${list}
       ${any ? '' : '<small class="hint">Noch keine Aufgaben auf dem Arbeitsblatt.</small>'}
       <button class="link fm-fine-b" type="button" data-act="sub-toggle" data-key="fmfine" aria-expanded="${fine}">${fine ? '▾' : '▸'} Einzelne Folien an- und abwählen</button>${fine ? `<div class="fm-fine">${presPickHTML()}</div>` : ''}
@@ -9315,7 +9317,7 @@ function renderOut() {
     if (sh.meta.groupsOn) h += segHTML('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp, 'Gruppe');
     if (sh.meta.levelsOn) h += segHTML('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all', 'Niveau');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
-    if (!isBasis()) h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
+    h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
   }
   if (state.out === 'vp') h += '<button class="btn sm" type="button" data-pv="vp-docx">Als Word speichern</button><button class="btn sm" type="button" data-pv="st-out">Ganze Stunde ausgeben</button>';
   if (state.out === 'blatt') h += '<button class="btn sm dz-btn" type="button" data-pv="dz-page" title="Design, Farbe, Papier und Abstände"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5a7.5 7.5 0 1 0 0 15c1 0 1.5-.7 1.5-1.4 0-.9-.8-1.2-.8-2 0-.8.6-1.3 1.4-1.3h1.6a3.8 3.8 0 0 0 3.8-3.8C17.5 5.5 14.2 2.5 10 2.5Z"/><circle cx="6.5" cy="9" r="1"/><circle cx="9" cy="6" r="1"/><circle cx="12.8" cy="6.6" r="1"/></svg>Aussehen</button>';
@@ -13653,7 +13655,7 @@ function outApply(o) {
   clearTimeout(renderTimer); renderPreview();
 }
 const OUT_FMTS = { blatt: ['pdf', 'docx', 'print', 'digital', 'pptx'], vp: ['docx'], pres: ['pptx'] };
-const fmtOk = (v, out) => (OUT_FMTS[out] || ['pdf', 'print']).includes(v) && (v !== 'print' || canPrint) && !(v === 'pptx' && isBasis());
+const fmtOk = (v, out) => (OUT_FMTS[out] || ['pdf', 'print']).includes(v) && (v !== 'print' || canPrint);
 const fmtFirst = out => (OUT_FMTS[out] || ['pdf']).find(v => fmtOk(v, out)) || 'pdf';
 function openOut() {
   if (state.gapEdit) { state.gapEdit = null; renderEditor(); clearTimeout(renderTimer); renderPreview(); }
@@ -13716,7 +13718,7 @@ function outHTML() {
       <div class="row"><button class="btn primary" type="button" data-act="out-stunde">Ordner erstellen</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div></div></div>`; }
   return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how">
     <div class="out-g">
-    <div class="f"><span>Als</span><div class="out-fmts">${fmts.filter(f => !(isBasis() && f[0] === 'pptx')).map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${fmtOk(v, state.out) ? '' : ' disabled'}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
+    <div class="f"><span>Als</span><div class="out-fmts">${fmts.map(([v, t, sub, ic]) => `<button type="button" class="out-fmt" data-act="out-set" data-f="fmt" data-v="${v}" aria-pressed="${d.fmt === v}"${fmtOk(v, state.out) ? '' : ' disabled'}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic}</svg><b>${t}</b><span>${sub}</span></button>`).join('')}</div></div>
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
@@ -15915,7 +15917,7 @@ function lfcWatch() {
 function boot() {
   if (DG_VIEW) { dgViewer(DG_VIEW); return; }
   // Verstecktes Kanban-Board: Doppelklick (oder Doppeltipp) aufs Logo
-  document.addEventListener('dblclick', e => { if (e.target.closest && e.target.closest('.brand .logo')) { e.preventDefault(); try { getSelection().removeAllRanges(); } catch {} openKanban(); } });
+  document.addEventListener('dblclick', e => { if (e.target.closest && e.target.closest('.brand .logo')) { e.preventDefault(); try { getSelection().removeAllRanges(); } catch {} if (isBasis()) { toast('Das Board gibt es im Modus „Experte“ (Einstellungen ⚙ → App).'); return; } openKanban(); } });
   setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true); state.a3p = lsGet('abw.a3p') === 'a4x2' ? 'a4x2' : 'a3';
   const ed = $('#editor');
   ed.addEventListener('focusout', e => { const k = e.target && e.target.dataset && e.target.dataset.k; const c = k && e.target.closest('[data-bid]'); if (c && (state.sheet.zrefs || []).some(r => r.f === c.dataset.bid && r.k === k)) scheduleRender(60); });
@@ -16181,7 +16183,7 @@ function boot() {
     if (act === 'help') { state.dlg = { mode: 'help' }; renderDlg(); }
     if (act === 'rlp-view') rlpOpen();
     if (act === 'settings') openSettings();
-    if (act === 'umfang') { setUmfang(a.dataset.v); toast(a.dataset.v === 'basis' ? 'Basis: nur Arbeitsblätter. Stundenplanung, Tafel, Druck-Extras und Präsentation sind ausgeblendet, ebenso Standards, Phase und Zeit, Gruppen und Niveaus, solange sie nicht benutzt werden. Gelöscht wird nichts.' : 'Experte: alle Funktionen, auch Stunde, Tafel, Druck-Extras und Präsentation.'); }
+    if (act === 'umfang') { setUmfang(a.dataset.v); toast(a.dataset.v === 'basis' ? 'Basis: nur Arbeitsblätter und die Präsentation dazu. Stundenplanung, Tafelbilder, Druck-Extras, Startseite und Board sind ausgeblendet. Gelöscht wird nichts.' : 'Experte: alle Funktionen.'); }
     if (act === 'pdf') exportPDF();
     if (act === 'docx') exportDOCX();
     if (act === 'print') doPrint();
