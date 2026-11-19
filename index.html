@@ -1413,47 +1413,62 @@ body{transition:background-color .3s,border-color .25s}
 .lf-dlg-ov{position:fixed;inset:0;z-index:50;background:rgba(10,14,24,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .lf-dlg{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel,#fff);color:var(--ink);border-radius:16px;padding:16px 18px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
 .lf-dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.lf-dh b{font-size:18px}
-/* Kameramodus auf iPad und Handy */
-body.cam-mode{overflow:hidden}
-#cam-root{position:fixed;inset:0;z-index:49;background:#101217;color:#f3f4f6;display:flex;flex-direction:column;font-family:var(--f-ui);-webkit-user-select:none;user-select:none}
-.cam-h{display:flex;gap:12px;align-items:center;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid #262a33}
-.cam-logo{font-size:24px}.cam-h div{display:flex;flex-direction:column}.cam-h small{color:#9aa1ad}
-.cam-m{flex:1;min-height:0;display:flex;flex-direction:column;align-items:stretch;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));gap:12px;overflow:auto}
-.cam-msg{margin:auto;text-align:center;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.cam-err{color:#ff9ea1;font-size:13px}
-.cam-btn{border:0;border-radius:12px;padding:12px 18px;background:#2F6FDB;color:#fff;font:700 16px var(--f-ui);cursor:pointer}
-.cam-btn.on{background:#1E9E5A}
-.cam-shot{align-self:center;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;padding:18px}
-.cam-ring{width:96px;height:96px;border-radius:50%;border:6px solid #fff;background:#E5484D;box-shadow:0 0 0 6px rgba(255,255,255,.12)}
-.cam-shot:active .cam-ring{transform:scale(.94)}
-.cam-hint{color:#9aa1ad;font-size:13px;text-align:center;margin:0}
-.cam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
-.cam-th{border:0;padding:0;background:#1b1e25;border-radius:10px;overflow:hidden;color:#cfd3da;display:flex;flex-direction:column;cursor:pointer}
-.cam-th img{width:100%;aspect-ratio:4/3;object-fit:cover;background:#262a33}.cam-th small{padding:5px 7px;font-size:11.5px;text-align:left}
-.cam-spin{width:42px;height:42px;border-radius:50%;border:4px solid #333;border-top-color:#fff;animation:camspin 1s linear infinite}@keyframes camspin{to{transform:rotate(360deg)}}
-.cam-v{position:relative;flex:1;min-height:200px;overflow:hidden;touch-action:none;background:#000;border-radius:12px;outline:3px solid transparent;transition:outline-color .2s}
-.cam-v.live{outline-color:#1E9E5A}
+/* Kameramodus auf iPad und Handy: Aufbau wie eine iPad-App */
+html:has(body.cam-mode),body.cam-mode{overflow:hidden;overscroll-behavior:none;background:#000}
+#cam-root{position:fixed;inset:0;z-index:49;background:#000;color:#fff;display:grid;grid-template-rows:auto 1fr auto;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",var(--f-ui);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.cam-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;min-height:50px;padding:calc(4px + env(safe-area-inset-top,0px)) calc(10px + env(safe-area-inset-right,0px)) 4px calc(10px + env(safe-area-inset-left,0px));background:rgba(28,28,30,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid rgba(255,255,255,.14);z-index:3}
+.cam-nl{display:flex;justify-content:flex-start}.cam-nr{display:flex;justify-content:flex-end;gap:6px;align-items:center}
+.cam-nt{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}.cam-nt b{font-size:17px;font-weight:600;letter-spacing:-.01em}.cam-nt small{font-size:12px;color:#98989F;max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cam-nb{display:inline-flex;align-items:center;gap:2px;border:0;background:none;color:#0A84FF;font:400 17px/1 inherit;padding:8px 6px;cursor:pointer;min-height:44px}.cam-nb.strong{font-weight:600}.cam-nb.ic{padding:8px 10px}.cam-nb:disabled{opacity:.5}
+.cam-live{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:7px 14px;background:rgba(118,118,128,.32);color:#fff;font:600 15px inherit;cursor:pointer;min-height:36px}
+.cam-live.on{background:#30D158;color:#00210b}
+.cam-m{position:relative;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.cam-tip{position:absolute;left:50%;top:calc(62px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:4;max-width:min(560px,calc(100% - 32px));padding:9px 14px;border-radius:14px;background:rgba(44,44,46,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#fff;font-size:14px;line-height:1.35;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none}
+.cam-bar{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px calc(12px + env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) calc(12px + env(safe-area-inset-left,0px));min-height:62px;background:rgba(28,28,30,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid rgba(255,255,255,.14);z-index:3}
+.cam-bar:empty{display:none}
+.cam-bi{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:64px;min-height:50px;padding:4px 8px;border:0;border-radius:12px;background:none;color:#D1D1D6;font:500 11px/1.1 inherit;cursor:pointer}
+.cam-bi[aria-pressed="true"]{color:#0A84FF;background:rgba(10,132,255,.14)}
+.cam-bi:active{background:rgba(255,255,255,.08)}
+.cam-seg{display:flex;gap:2px}
+.cam-div{width:.5px;align-self:stretch;margin:8px 8px;background:rgba(255,255,255,.18)}
+.cam-cnt b{font-size:17px;color:#fff}
+.cam-shot{display:flex;align-items:center;justify-content:center;margin:0 clamp(24px,8vw,80px);cursor:pointer}
+.cam-ring{width:56px;height:56px;margin:4px 0;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #1c1c1e,0 0 0 6px #fff;transition:transform .12s}
+.cam-shot:active .cam-ring{transform:scale(.9)}
+.cam-msg{margin:auto;text-align:center;max-width:420px;display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;color:#EBEBF5}
+.cam-err{color:#FF8A84;font-size:13px}
+.cam-btn{border:0;border-radius:12px;padding:12px 20px;background:#0A84FF;color:#fff;font:600 17px inherit;cursor:pointer}
+.cam-empty{margin:auto;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;max-width:380px;padding:24px;color:#8E8E93}.cam-empty b{color:#fff;font-size:20px}.cam-empty svg{color:#48484A}
+.cam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:2px;overflow:auto;padding:2px calc(2px + env(safe-area-inset-right,0px)) 2px calc(2px + env(safe-area-inset-left,0px));align-content:start;-webkit-overflow-scrolling:touch}
+@media (max-width:600px){.cam-grid{grid-template-columns:repeat(3,1fr)}}
+.cam-th{position:relative;border:0;padding:0;background:#1C1C1E;overflow:hidden;cursor:pointer;aspect-ratio:1}
+.cam-th img{width:100%;height:100%;object-fit:cover;display:block}
+.cam-th small{position:absolute;left:0;right:0;bottom:0;padding:16px 6px 5px;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff;font-size:11px;text-align:left}
+.cam-spin{width:38px;height:38px;border-radius:50%;border:3.5px solid #3A3A3C;border-top-color:#fff;animation:camspin 1s linear infinite}@keyframes camspin{to{transform:rotate(360deg)}}
+.cam-v{position:relative;flex:1;min-height:200px;overflow:hidden;touch-action:none;background:#000;box-shadow:inset 0 0 0 0 #30D158;transition:box-shadow .2s}
+.cam-v.live{box-shadow:inset 0 0 0 3px #30D158}
 .cam-v[data-tool="pen"],.cam-v[data-tool="hl"]{cursor:crosshair}.cam-v[data-tool="laser"]{cursor:none}
 .cam-w{position:absolute;transform-origin:0 0}
 .cam-w img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none}
 .cam-svg,.cam-svg svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cam-dot{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:radial-gradient(circle,#ff3b3b 0 30%,rgba(255,40,40,.45) 46%,rgba(255,40,40,0) 70%);pointer-events:none}
-.cam-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.cam-seg{display:flex;background:#1b1e25;border-radius:11px;padding:3px;gap:2px}
-.cam-tb{border:0;border-radius:9px;padding:10px 12px;background:#1b1e25;color:#e6e8ec;font:600 14.5px var(--f-ui);cursor:pointer;min-height:44px}
-.cam-seg .cam-tb{background:transparent}
-.cam-tb[aria-pressed="true"]{background:#f3f4f6;color:#101217}
-.cam-cols{display:flex;gap:6px}
-.cam-col{width:34px;height:34px;border-radius:50%;border:3px solid #101217;background:var(--cc);box-shadow:0 0 0 2px #3a3f4a;cursor:pointer}
-.cam-col[aria-pressed="true"]{box-shadow:0 0 0 3px #fff}
-.cam-sp{flex:1}
-.cam-crop{position:relative;flex:1;min-height:240px;overflow:hidden;background:#000;border-radius:12px;touch-action:none}
+.cam-cols{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:10px;padding:8px 12px;border-radius:999px;background:rgba(44,44,46,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 6px 20px rgba(0,0,0,.45);z-index:2}
+.cam-cols[hidden]{display:none}
+.cam-col{width:30px;height:30px;border-radius:50%;border:0;background:var(--cc);box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);cursor:pointer}
+.cam-col[aria-pressed="true"]{box-shadow:0 0 0 2px rgba(44,44,46,1),0 0 0 4px #fff}
+.cam-scrim{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:5}
+.cam-sheet{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);width:min(420px,calc(100% - 20px));display:flex;flex-direction:column;gap:8px;z-index:6}
+.cam-sheet[hidden],.cam-scrim[hidden]{display:none}
+.cam-sg{display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:rgba(44,44,46,.96);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.cam-sg button{display:flex;align-items:center;gap:14px;border:0;border-top:.5px solid rgba(255,255,255,.12);background:none;color:#fff;font:400 17px inherit;padding:14px 18px;text-align:left;cursor:pointer;min-height:52px}
+.cam-sg button:first-child{border-top:0}.cam-sg button svg{color:#0A84FF}.cam-sg button.red,.cam-sg button.red svg{color:#FF453A}.cam-sg button.strong{justify-content:center;font-weight:600;color:#0A84FF}
+.cam-sg button:active{background:rgba(255,255,255,.08)}
+.cam-crop{position:relative;flex:1;min-height:240px;overflow:hidden;background:#000;touch-action:none}
 .cam-crop canvas,.cam-cq{position:absolute}
-.cam-hd{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:3px solid #fff;background:rgba(79,139,255,.6);box-shadow:0 2px 8px rgba(0,0,0,.5);touch-action:none;cursor:grab}
-.cam-hd::after{content:"";position:absolute;inset:-14px;border-radius:50%}
-.cam-hd.on{background:#4F8BFF;cursor:grabbing}
-.cam-btn:disabled{opacity:.6}
-@media (max-width:600px){.cam-tb{padding:9px 10px;font-size:13.5px}.cam-seg .cam-tb{padding:9px 8px}}
+.cam-ch{position:absolute;left:50%;top:10px;transform:translateX(-50%);padding:6px 12px;border-radius:999px;background:rgba(44,44,46,.85);font-size:13px;color:#fff;white-space:nowrap;pointer-events:none}
+.cam-hd{position:absolute;left:0;top:0;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:2.5px solid #fff;background:rgba(10,132,255,.55);box-shadow:0 2px 8px rgba(0,0,0,.5);touch-action:none;cursor:grab}
+.cam-hd::after{content:"";position:absolute;inset:-16px;border-radius:50%}
+.cam-hd.on{background:#0A84FF;cursor:grabbing;transform-origin:center}
 .pr-pk-in{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
 .pr-pk-b{flex:1 1 auto;background:linear-gradient(#1C1F27,#1C1F27) 50% 0/3px 100% no-repeat}
 .pr-pk-q{margin:0;padding:34px 70px 18px;text-align:center;font:700 40px/1.2 var(--f-disp,Georgia,serif);color:#1C1F27}
@@ -15068,79 +15083,116 @@ const fotoInkSvg = (ink, w, h) => { const H = Math.round(1000 * h / w); return `
 // ---------- Kameramodus auf iPad/Handy (?kamera=<Stunde>) ----------
 function camInit() {
   document.body.classList.add('cam-mode');
-  const root = el(`<div id="cam-root"><header class="cam-h"><span class="cam-logo">📷</span><div><b>Foto für die Stunde</b><small class="cam-t">wird geladen …</small></div></header><main class="cam-m"></main></div>`);
-  document.body.appendChild(root); const main = root.querySelector('.cam-m');
+  try { const vp = document.querySelector('meta[name="viewport"]'); if (vp) vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; let tc = document.querySelector('meta[name="theme-color"]'); if (!tc) { tc = document.createElement('meta'); tc.name = 'theme-color'; document.head.appendChild(tc); } tc.content = '#1c1c1e'; } catch {}
+  // iPad-App-Aufbau: Navigationsleiste oben, Bühne, Werkzeugleiste unten (mit Rand für Home-Balken und Kamera)
+  const I = {
+    back: '<path d="M15 5l-7 7 7 7"/>', fs: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', fsx: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+    lib: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/>',
+    hand: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V12M14 11.5V6a1.5 1.5 0 0 1 3 0v7c0 4-2.5 7-6.5 7-2.6 0-4-1.2-5.6-3.6L3.4 13.6a1.5 1.5 0 0 1 2.4-1.8L8 14.5"/>',
+    pen: '<path d="M4 20l1.2-4.4L16.5 4.3a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8.4 18.8z"/><path d="M14.5 6.3l3.2 3.2"/>',
+    hl: '<path d="M9 14l-3 3v3h3l3-3"/><path d="M9 14l7.5-9.5a2 2 0 0 1 3 0l1 1a2 2 0 0 1 0 3L12 17z"/><path d="M3 21h8" opacity=".6"/>',
+    laser: '<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5" opacity=".45"/>',
+    undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>', more: '<circle cx="5.5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18.5" cy="12" r="1.4" fill="currentColor"/>',
+    rot: '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>', rotl: '<path d="M4 11a8 8 0 1 1 2.3 5.7"/><path d="M4 4v7h7"/>',
+    crop: '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M2 6h14a2 2 0 0 1 2 2v14"/>', zoom: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8 11h6"/>',
+    dl: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>', trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>', tv: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M4 12h16"/>', full: '<rect x="4" y="4" width="16" height="16" rx="1.5"/>'
+  };
+  const ic = (k, s = 24) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
+  const root = el(`<div id="cam-root"><nav class="cam-nav"><div class="cam-nl"></div><div class="cam-nt"><b>Fotos</b><small class="cam-t">wird geladen …</small></div><div class="cam-nr"></div></nav><main class="cam-m"></main><div class="cam-tip" hidden></div><footer class="cam-bar"></footer></div>`);
+  document.body.appendChild(root); const main = root.querySelector('.cam-m'), bar = root.querySelector('.cam-bar'), nl = root.querySelector('.cam-nl'), nr = root.querySelector('.cam-nr'), nb = root.querySelector('.cam-nt b');
   let fotos = [], cur = null, view = { s: 1, cx: 0.5, cy: 0.5 }, shown = false, title = '';
-  const msg = h => { main.innerHTML = `<div class="cam-msg">${h}</div>`; };
+  const msg = h => { main.innerHTML = `<div class="cam-msg">${h}</div>`; bar.innerHTML = ''; };
+  const nav = (left, head, right) => { const tp = root.querySelector('.cam-tip'); if (tp) tp.hidden = true; nl.innerHTML = left || ''; nb.textContent = head; nr.innerHTML = right || ''; };
+  // kurze Hinweise oben auf der Bühne; jeder nur die ersten Male
+  let tipT = 0; const tip = (k, t) => { let n = 0; try { n = +localStorage.getItem('abw.camtip.' + k) || 0; } catch {} if (n >= 3) return; try { localStorage.setItem('abw.camtip.' + k, n + 1); } catch {} const e = root.querySelector('.cam-tip'); e.textContent = t; e.hidden = false; clearTimeout(tipT); tipT = setTimeout(() => { e.hidden = true; }, 4200); };
+  // Vollbild: auf dem iPad über die Vollbild-Schnittstelle, beim ersten Antippen automatisch; auf dem iPhone geht das nur über „Zum Home-Bildschirm“
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const fsCan = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone;
+  const fsGo = on => { try { if (on) { const d = document.documentElement; const p = (d.requestFullscreen || d.webkitRequestFullscreen).call(d); if (p && p.catch) p.catch(() => {}); } else (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch {} };
+  const fsPref = () => { try { return localStorage.getItem('abw.camfs') !== '0'; } catch { return true; } };
+  const fsBtn = () => (fsCan() ? `<button type="button" class="cam-nb ic" data-c="fs" aria-label="${fsEl() ? 'Vollbild beenden' : 'Vollbild'}">${ic(fsEl() ? 'fsx' : 'fs', 22)}</button>` : '');
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => { const b = root.querySelector('[data-c="fs"]'); if (b) b.outerHTML = fsBtn(); setTimeout(() => lay(), 60); }));
+  root.addEventListener('pointerdown', () => { if (fsCan() && fsPref() && !fsEl() && !root.dataset.fsTried) { root.dataset.fsTried = '1'; fsGo(true); } }, { capture: true });
   const ready = async () => {
-    if (!store.user) { msg('<p>Bitte melde dich mit deinem LehrWerk-Konto an.</p><button type="button" class="cam-btn" data-c="login">Anmelden</button>'); return; }
+    if (!store.user) { nav('', 'LehrWerk', ''); msg('<p>Bitte melde dich mit deinem LehrWerk-Konto an.</p><button type="button" class="cam-btn" data-c="login">Anmelden</button>'); return; }
     try { const r = await store.sb.from('ab_arbeitsblaetter').select('title').eq('id', CAM_ID).maybeSingle(); title = (r.data && r.data.title) || 'Stunde'; } catch { title = 'Stunde'; }
     root.querySelector('.cam-t').textContent = title; fotoChannel();
     try { fotos = await fotoList(CAM_ID); } catch { fotos = []; }
     list();
   };
+  // Übersicht: Raster der Fotos, unten Auslöser (Kamera) und Mediathek
   const list = async () => {
-    cur = null; shown = false;
-    main.innerHTML = `<label class="cam-shot"><input type="file" accept="image/*" capture="environment" hidden><span class="cam-ring"></span><b>Foto aufnehmen</b></label>
-      <p class="cam-hint">Das Foto erscheint in deiner Präsentation zuerst nur bei dir unter „📷 Fotos“. Auf den Beamer kommt es erst mit „Zeigen“. Nach 14 Tagen wird es automatisch gelöscht.</p>
-      <div class="cam-grid">${fotos.slice().reverse().map(f => `<button type="button" class="cam-th" data-c="open" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><small>${fotoLeft(f)}</small></button>`).join('')}</div>`;
+    cur = null; shown = false; root.dataset.screen = 'list';
+    nav('', 'Fotos', fsBtn());
+    main.innerHTML = fotos.length ? `<div class="cam-grid">${fotos.slice().reverse().map(f => `<button type="button" class="cam-th" data-c="open" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><small>${fotoLeft(f)}</small></button>`).join('')}</div>`
+      : `<div class="cam-empty">${ic('scan', 56)}<b>Noch keine Fotos zu dieser Stunde</b><span>Tippe unten auf den Auslöser. LehrWerk findet das Arbeitsblatt im Foto und schneidet es gerade zu.</span></div>`;
+    bar.innerHTML = `<label class="cam-bi"><input type="file" accept="image/*" multiple hidden data-in="lib">${ic('lib')}<span>Mediathek</span></label>
+      <label class="cam-shot" aria-label="Foto aufnehmen"><input type="file" accept="image/*" capture="environment" hidden data-in="cam"><span class="cam-ring"></span></label>
+      <span class="cam-bi cam-cnt"><b>${fotos.length}</b><span>${fotos.length === 1 ? 'Foto' : 'Fotos'}</span></span>`;
     main.querySelectorAll('img[data-p]').forEach(async im => { try { im.src = await fotoUrl(im.dataset.p); } catch {} });
-    main.querySelector('input').addEventListener('change', async e => {
+    bar.querySelectorAll('input[type="file"]').forEach(inp => inp.addEventListener('change', async e => {
       const fs = [...(e.target.files || [])]; if (!fs.length) return;
-      try { let last = null; for (const f of fs) { const pre = await camEdit(f); if (!pre) continue; msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>'); last = await fotoUpload(CAM_ID, null, pre); fotos.push(last); fotoSend({ t: 'new', sheet: CAM_ID, id: last.id }); } if (last) open(last.id); else list(); }
+      try { let last = null; for (const f of fs) { const pre = await camEdit(f); if (!pre) continue; nav('', 'Fotos', ''); msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>'); last = await fotoUpload(CAM_ID, null, pre); fotos.push(last); fotoSend({ t: 'new', sheet: CAM_ID, id: last.id }); } if (last) open(last.id); else list(); }
       catch (err) { console.error(err); msg(`<p>Das Hochladen hat nicht geklappt.</p><p class="cam-err">${esc(err.message || String(err))}</p><button type="button" class="cam-btn" data-c="back">Zurück</button>`); }
-    });
+    }));
+    tip('list', 'Neue Fotos erscheinen in der Präsentation zuerst nur bei dir. Auf den Beamer kommen sie mit „Zeigen“.');
   };
-  // Zuschneiden: Blatt wird erkannt, Ecken lassen sich verschieben, Drehen in 90°-Schritten; Ergebnis gerade gezogen
+  // Zuschneiden wie in der Fotos-App: oben Abbrechen und Fertig, unten Drehen und Erkennen
   const camEdit = src => new Promise(async done => {
-    msg('<div class="cam-spin"></div><p>Arbeitsblatt wird gesucht …</p>');
+    root.dataset.screen = 'crop'; nav('', 'Zuschneiden', ''); msg('<div class="cam-spin"></div><p>Arbeitsblatt wird gesucht …</p>');
     let c; try { c = await fotoCanvas(src, 2600); } catch (err) { console.error(err); done(null); return; }
     const full = () => [[0, 0], [c.width, 0], [c.width, c.height], [0, c.height]];
     let q = fotoDetect(c), auto = !!q; if (!q) q = full();
-    main.innerHTML = `<div class="cam-crop"><canvas></canvas><svg class="cam-cq" preserveAspectRatio="none"></svg>${[0, 1, 2, 3].map(i => `<i class="cam-hd" data-i="${i}"></i>`).join('')}</div>
-      <div class="cam-tools"><button type="button" class="cam-btn" data-e="ok">✂ Zuschneiden</button><button type="button" class="cam-tb" data-e="rl" title="Nach links drehen" aria-label="Nach links drehen">⟲</button><button type="button" class="cam-tb" data-e="rr" title="Nach rechts drehen" aria-label="Nach rechts drehen">⟳</button><button type="button" class="cam-tb" data-e="auto">Blatt suchen</button><button type="button" class="cam-tb" data-e="full">Ganzes Foto</button><span class="cam-sp"></span><button type="button" class="cam-tb" data-e="x">Abbrechen</button></div>
-      <p class="cam-hint cam-ch">${auto ? 'Das Arbeitsblatt ist erkannt. Passt eine Ecke nicht, zieh sie an die richtige Stelle.' : 'Kein Blatt erkannt. Zieh die vier Punkte an die Ecken des Blatts oder nimm das ganze Foto.'}</p>`;
+    nav('<button type="button" class="cam-nb" data-e="x">Abbrechen</button>', 'Zuschneiden', '<button type="button" class="cam-nb strong" data-e="ok">Fertig</button>');
+    main.innerHTML = `<div class="cam-crop"><canvas></canvas><svg class="cam-cq" preserveAspectRatio="none"></svg>${[0, 1, 2, 3].map(i => `<i class="cam-hd" data-i="${i}"></i>`).join('')}<span class="cam-ch">${auto ? 'Arbeitsblatt erkannt – Ecken bei Bedarf verschieben' : 'Kein Blatt erkannt – Ecken an das Blatt ziehen'}</span></div>`;
+    bar.innerHTML = `<button type="button" class="cam-bi" data-e="rl">${ic('rotl')}<span>Links</span></button><button type="button" class="cam-bi" data-e="rr">${ic('rot')}<span>Rechts</span></button><button type="button" class="cam-bi" data-e="auto">${ic('scan')}<span>Blatt suchen</span></button><button type="button" class="cam-bi" data-e="full">${ic('full')}<span>Ganzes Foto</span></button>`;
     const box = main.querySelector('.cam-crop'), cv = box.querySelector('canvas'), svg = box.querySelector('svg'), hs = [...box.querySelectorAll('.cam-hd')]; let g = { k: 1, ox: 0, oy: 0 };
-    const paint = () => { cv.width = c.width; cv.height = c.height; cv.getContext('2d').drawImage(c, 0, 0); svg.setAttribute('viewBox', `0 0 ${c.width} ${c.height}`); lay(); };
-    const lay = () => { const bw = box.clientWidth, bh = box.clientHeight, k = Math.min(bw / c.width, bh / c.height); g = { k, ox: (bw - c.width * k) / 2, oy: (bh - c.height * k) / 2 };
+    const paint = () => { cv.width = c.width; cv.height = c.height; cv.getContext('2d').drawImage(c, 0, 0); svg.setAttribute('viewBox', `0 0 ${c.width} ${c.height}`); lay2(); };
+    const lay2 = () => { const bw = box.clientWidth - 40, bh = box.clientHeight - 40, k = Math.min(bw / c.width, bh / c.height); g = { k, ox: 20 + (bw - c.width * k) / 2, oy: 20 + (bh - c.height * k) / 2 };
       [cv, svg].forEach(e => { e.style.cssText = `left:${g.ox}px;top:${g.oy}px;width:${c.width * k}px;height:${c.height * k}px`; });
-      const pts = q.map(p => p.map(v => v.toFixed(1)).join(',')).join(' '); const sw = Math.max(c.width, c.height) / 260;
-      svg.innerHTML = `<path d="M0 0H${c.width}V${c.height}H0Z M${q.map(p => p.join(' ')).join(' L')}Z" fill="rgba(0,0,0,.55)" fill-rule="evenodd"/><polygon points="${pts}" fill="none" stroke="#4F8BFF" stroke-width="${sw}"/>`;
+      const pts = q.map(p => p.map(v => v.toFixed(1)).join(',')).join(' '); const sw = Math.max(c.width, c.height) / 300;
+      svg.innerHTML = `<path d="M0 0H${c.width}V${c.height}H0Z M${q.map(p => p.join(' ')).join(' L')}Z" fill="rgba(0,0,0,.6)" fill-rule="evenodd"/><polygon points="${pts}" fill="none" stroke="#fff" stroke-width="${sw}"/>`;
       hs.forEach((h, i) => { h.style.transform = `translate(${g.ox + q[i][0] * k}px,${g.oy + q[i][1] * k}px)`; }); };
     hs.forEach(h => { h.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); try { h.setPointerCapture(e.pointerId); } catch {} h.classList.add('on'); });
-      h.addEventListener('pointermove', e => { if (!h.classList.contains('on')) return; const r = box.getBoundingClientRect(), i = +h.dataset.i; q[i] = [Math.max(0, Math.min(c.width, (e.clientX - r.left - g.ox) / g.k)), Math.max(0, Math.min(c.height, (e.clientY - r.top - g.oy) / g.k))]; lay(); });
+      h.addEventListener('pointermove', e => { if (!h.classList.contains('on')) return; const r = box.getBoundingClientRect(), i = +h.dataset.i; q[i] = [Math.max(0, Math.min(c.width, (e.clientX - r.left - g.ox) / g.k)), Math.max(0, Math.min(c.height, (e.clientY - r.top - g.oy) / g.k))]; lay2(); });
       const up = () => h.classList.remove('on'); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up); });
-    const ro = new ResizeObserver(() => lay()); ro.observe(box);
-    const fin = v => { ro.disconnect(); main.removeEventListener('click', onClick); done(v); };
+    const ro = new ResizeObserver(() => lay2()); ro.observe(box);
+    const fin = v => { ro.disconnect(); root.removeEventListener('click', onClick); done(v); };
     const onClick = async e => { const b = e.target.closest('[data-e]'); if (!b) return; e.stopPropagation(); const a = b.dataset.e;
       if (a === 'x') fin(null);
-      else if (a === 'full') { q = full(); lay(); }
-      else if (a === 'auto') { const d2 = fotoDetect(c); if (d2) { q = d2; lay(); } else toast('Kein Blatt gefunden. Die Ecken lassen sich von Hand setzen.'); }
+      else if (a === 'full') { q = full(); lay2(); }
+      else if (a === 'auto') { const d2 = fotoDetect(c); if (d2) { q = d2; lay2(); } else toast('Kein Blatt gefunden. Die Ecken lassen sich von Hand setzen.'); }
       else if (a === 'rl' || a === 'rr') { const dir = a === 'rr' ? 1 : -1, H0 = c.height, W0 = c.width; c = fotoRot(c, dir); q = fotoQuad(q.map(([x, y]) => (dir > 0 ? [H0 - y, x] : [y, W0 - x]))); paint(); }
-      else if (a === 'ok') { b.disabled = true; b.textContent = 'Wird gerade gezogen …'; await new Promise(r => setTimeout(r, 30));
+      else if (a === 'ok') { b.disabled = true; b.textContent = 'Moment …'; await new Promise(r => setTimeout(r, 30));
         const isFull = q.every((p, i) => Math.hypot(p[0] - full()[i][0], p[1] - full()[i][1]) < 2); let o = isFull ? c : fotoWarp(c, fotoQuad(q));
         if (Math.max(o.width, o.height) > 2000) { const s = 2000 / Math.max(o.width, o.height), t = document.createElement('canvas'); t.width = Math.round(o.width * s); t.height = Math.round(o.height * s); t.getContext('2d').drawImage(o, 0, 0, t.width, t.height); o = t; }
         fin({ blob: await fotoBlob(o), w: o.width, h: o.height }); } };
-    main.addEventListener('click', onClick); paint();
+    root.addEventListener('click', onClick); paint();
   });
-  // Betrachter: das Zweitgerät ist der Raum zum Zeigen und Malen – Zoomen, Stift, Textmarker, Laserpointer, alles live auf dem Beamer
-  const TOOLS = [['hand', '✋', 'Verschieben'], ['pen', '✏️', 'Stift'], ['hl', '🖍', 'Marker'], ['laser', '🔴', 'Laser']];
-  const COLS = { pen: ['#E5484D', '#2F6FDB', '#1E9E5A', '#1C1F27'], hl: ['#FFE14D', '#7CF29B', '#7FD3FF', '#FF9EC7'] };
-  let tool = 'hand', colP = '#E5484D', colH = '#FFE14D';
+  // Betrachter: Foto randlos, unten Werkzeuge wie bei Markierungen auf dem iPad, alles live auf dem Beamer
+  const TOOLS = [['hand', 'Bewegen'], ['pen', 'Stift'], ['hl', 'Marker'], ['laser', 'Laser']];
+  const COLS = { pen: ['#FF453A', '#0A84FF', '#30D158', '#FFFFFF', '#1C1C1E'], hl: ['#FFE14D', '#7CF29B', '#7FD3FF', '#FF9EC7'] };
+  let tool = 'hand', colP = '#FF453A', colH = '#FFE14D';
   const colsHTML = () => (COLS[tool] ? COLS[tool].map(c => `<button type="button" class="cam-col" data-c="col" data-v="${c}" style="--cc:${c}" aria-pressed="${c === (tool === 'hl' ? colH : colP)}" aria-label="Farbe"></button>`).join('') : '');
-  const toolSync = () => { main.querySelectorAll('[data-c="tool"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === tool))); const cs = main.querySelector('.cam-cols'); if (cs) cs.innerHTML = colsHTML(); const v = main.querySelector('.cam-v'); if (v) v.dataset.tool = tool; };
-  const showSync = () => { const b = main.querySelector('[data-c="show"]'); if (!b) return; b.textContent = shown ? '● Läuft auf dem Beamer' : 'Auf dem Beamer zeigen'; b.classList.toggle('on', shown); main.querySelector('.cam-v').classList.toggle('live', shown); };
+  const toolSync = () => { root.querySelectorAll('[data-c="tool"]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === tool))); const cs = root.querySelector('.cam-cols'); if (cs) { cs.innerHTML = colsHTML(); cs.hidden = !COLS[tool]; } const v = main.querySelector('.cam-v'); if (v) v.dataset.tool = tool; };
+  const showSync = () => { const b = root.querySelector('[data-c="show"]'); if (!b) return; b.innerHTML = `${ic('tv', 18)}<span>${shown ? 'Auf dem Beamer' : 'Zeigen'}</span>`; b.classList.toggle('on', shown); b.setAttribute('aria-pressed', String(shown)); const v = main.querySelector('.cam-v'); if (v) v.classList.toggle('live', shown); };
+  const sheet = on => { const s = root.querySelector('.cam-sheet'); if (!s) return; s.hidden = !on; root.querySelector('.cam-scrim').hidden = !on; };
   const open = async id => {
-    const f = fotos.find(x => x.id === id); if (!f) return list(); cur = f; view = { s: 1, cx: 0.5, cy: 0.5 };
+    const f = fotos.find(x => x.id === id); if (!f) return list(); cur = f; view = { s: 1, cx: 0.5, cy: 0.5 }; root.dataset.screen = 'view';
+    const i = fotos.indexOf(f) + 1;
+    nav(`<button type="button" class="cam-nb" data-c="back">${ic('back', 22)}<span>Fotos</span></button>`, `Foto ${i} von ${fotos.length}`, `${fsBtn()}<button type="button" class="cam-live" data-c="show" aria-pressed="false"></button>`);
     main.innerHTML = `<div class="cam-v" data-tool="${tool}"><div class="cam-w"><img alt="Foto"><div class="cam-svg"></div></div><i class="cam-dot" hidden></i></div>
-      <div class="cam-tools"><button type="button" class="cam-btn cam-show" data-c="show">Auf dem Beamer zeigen</button>
-      <div class="cam-seg" role="group" aria-label="Werkzeug">${TOOLS.map(([k, ic, l]) => `<button type="button" class="cam-tb" data-c="tool" data-v="${k}" aria-pressed="${k === tool}"><span aria-hidden="true">${ic}</span> ${l}</button>`).join('')}</div>
-      <div class="cam-cols">${colsHTML()}</div>
-      <button type="button" class="cam-tb" data-c="undo" title="Letzten Strich entfernen" aria-label="Rückgängig">↶</button><button type="button" class="cam-tb" data-c="clear" title="Alle Striche löschen">Striche löschen</button><button type="button" class="cam-tb" data-c="zoom0" title="Zoom zurücksetzen" aria-label="Zoom zurücksetzen">⤢</button>
-      <button type="button" class="cam-tb" data-c="rot" title="Foto um 90° nach rechts drehen">⟳ Drehen</button><button type="button" class="cam-tb" data-c="crop" title="Arbeitsblatt neu zuschneiden">✂ Zuschneiden</button><span class="cam-sp"></span><button type="button" class="cam-tb" data-c="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="cam-tb" data-c="back">Fertig</button></div>
-      <p class="cam-hint">Zwei Finger zoomen und verschieben immer, doppelt tippen vergrößert. Stift und Marker bleiben auf dem Foto gespeichert, der Laser verschwindet beim Loslassen.</p>`;
+      <div class="cam-cols" ${COLS[tool] ? '' : 'hidden'}>${colsHTML()}</div>
+      <div class="cam-scrim" hidden data-c="nosheet"></div><div class="cam-sheet" hidden role="menu"><div class="cam-sg">
+        <button type="button" data-c="rot" role="menuitem">${ic('rot', 22)}<span>Drehen</span></button><button type="button" data-c="crop" role="menuitem">${ic('crop', 22)}<span>Neu zuschneiden</span></button>
+        <button type="button" data-c="zoom0" role="menuitem">${ic('zoom', 22)}<span>Zoom zurücksetzen</span></button><button type="button" data-c="dl" role="menuitem">${ic('dl', 22)}<span>Herunterladen</span></button>
+        <button type="button" data-c="clear" class="red" role="menuitem">${ic('trash', 22)}<span>Alle Striche löschen</span></button></div>
+        <div class="cam-sg"><button type="button" data-c="nosheet" class="strong"><span>Abbrechen</span></button></div></div>`;
+    bar.innerHTML = `<div class="cam-seg" role="group" aria-label="Werkzeug">${TOOLS.map(([k, l]) => `<button type="button" class="cam-bi" data-c="tool" data-v="${k}" aria-pressed="${k === tool}">${ic(k)}<span>${l}</span></button>`).join('')}</div>
+      <span class="cam-div"></span><button type="button" class="cam-bi" data-c="undo">${ic('undo')}<span>Zurück</span></button><button type="button" class="cam-bi" data-c="more" aria-haspopup="menu">${ic('more')}<span>Mehr</span></button>`;
     const im = main.querySelector('img'); im.src = await fotoUrl(f.path); await im.decode().catch(() => {});
-    lay(); bind(); showSync();
+    lay(); bind(); showSync(); tip('view', 'Zwei Finger zoomen und verschieben, doppelt tippen vergrößert. „Zeigen“ oben rechts bringt das Foto auf den Beamer.');
   };
   const box = () => { const v = main.querySelector('.cam-v'); const W0 = v.clientWidth, H0 = v.clientHeight, r = cur.w / cur.h; let W = W0, H = W0 / r; if (H > H0) { H = H0; W = H0 * r; } return { v, W, H, ox: (W0 - W) / 2, oy: (H0 - H) / 2 }; };
   const inkDraw = () => { const s = main.querySelector('.cam-svg'); if (s) s.innerHTML = fotoInkSvg(cur.ink, cur.w, cur.h); };
@@ -15180,26 +15232,31 @@ function camInit() {
     v.addEventListener('pointerup', up); v.addEventListener('pointercancel', up);
   };
   window.addEventListener('resize', () => lay());
+  const reshow = () => { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] }); };
   root.addEventListener('click', async e => {
     const b = e.target.closest('[data-c]'); if (!b) return; const c = b.dataset.c;
     if (c === 'login') openDlg('login');
+    else if (c === 'fs') { const on = !fsEl(); try { localStorage.setItem('abw.camfs', on ? '1' : '0'); } catch {} fsGo(on); }
     else if (c === 'back') { if (shown) fotoSend({ t: 'hide' }); try { fotos = await fotoList(CAM_ID); } catch {} list(); }
     else if (c === 'open') open(b.dataset.id);
     else if (c === 'show') { shown = !shown; showSync(); fotoSend(shown ? { t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] } : { t: 'hide' }); }
-    else if (c === 'tool') { tool = b.dataset.v; toolSync(); if (tool === 'laser' && !shown) toast('Der Laser ist nur auf dem Beamer zu sehen, wenn das Foto dort läuft.'); }
+    else if (c === 'tool') { tool = b.dataset.v; toolSync(); if (tool === 'laser' && !shown) tip('laser', 'Den Laser sieht die Klasse, sobald das Foto auf dem Beamer läuft („Zeigen“ oben rechts).'); }
     else if (c === 'col') { if (tool === 'hl') colH = b.dataset.v; else colP = b.dataset.v; toolSync(); }
     else if (c === 'undo') { if (cur.ink && cur.ink.length) { cur.ink.pop(); inkDraw(); saveInk(); } }
-    else if (c === 'clear') { if (!cur.ink || !cur.ink.length) return; if (b.dataset.sure) { cur.ink = []; inkDraw(); saveInk(); delete b.dataset.sure; b.textContent = 'Striche löschen'; } else { b.dataset.sure = '1'; b.textContent = 'Wirklich löschen?'; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = 'Striche löschen'; } }, 3000); } }
-    else if (c === 'zoom0') { view = { s: 1, cx: .5, cy: .5 }; lay(); sendView(); }
-    else if (c === 'dl') { try { await fotoDownload(cur, fotos.indexOf(cur)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
-    else if (c === 'rot') { b.disabled = true; b.textContent = 'Dreht …'; try { await fotoRotate(cur, 1); } catch (err) { console.error(err); toast('Drehen hat nicht geklappt.'); } const sh = shown; await open(cur.id); if (sh) { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] }); } }
-    else if (c === 'crop') { const f = cur, sh = shown; if ((f.ink || []).length && !confirm('Beim Zuschneiden gehen die Striche auf dem Foto verloren. Trotzdem zuschneiden?')) return; let pre = null; try { pre = await camEdit(await fotoUrl(f.path)); } catch {} if (pre) { msg('<div class="cam-spin"></div><p>Wird gespeichert …</p>'); try { await fotoReplace(f, pre.blob, pre.w, pre.h, []); } catch (err) { console.error(err); toast('Speichern hat nicht geklappt.'); } } await open(f.id); if (sh) { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] }); } }
+    else if (c === 'more') sheet(true);
+    else if (c === 'nosheet') sheet(false);
+    else if (c === 'clear') { sheet(false); if (!cur.ink || !cur.ink.length) return; if (confirm('Alle Striche auf diesem Foto löschen?')) { cur.ink = []; inkDraw(); saveInk(); } }
+    else if (c === 'zoom0') { sheet(false); view = { s: 1, cx: .5, cy: .5 }; lay(); sendView(); }
+    else if (c === 'dl') { sheet(false); try { await fotoDownload(cur, fotos.indexOf(cur)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
+    else if (c === 'rot') { sheet(false); const sh = shown; msg('<div class="cam-spin"></div><p>Wird gedreht …</p>'); try { await fotoRotate(cur, 1); } catch (err) { console.error(err); toast('Drehen hat nicht geklappt.'); } await open(cur.id); if (sh) reshow(); }
+    else if (c === 'crop') { sheet(false); const f = cur, sh = shown; if ((f.ink || []).length && !confirm('Beim Zuschneiden gehen die Striche auf dem Foto verloren. Trotzdem zuschneiden?')) return; let pre = null; try { pre = await camEdit(await fotoUrl(f.path)); } catch {} if (pre) { msg('<div class="cam-spin"></div><p>Wird gespeichert …</p>'); try { await fotoReplace(f, pre.blob, pre.w, pre.h, []); } catch (err) { console.error(err); toast('Speichern hat nicht geklappt.'); } } await open(f.id); if (sh) reshow(); }
   });
   // warten, bis die Anmeldung geklärt ist
   let last = null; const poll = setInterval(() => { const u = store.user ? store.user.id : (store.sb ? 'none' : null); if (u && u !== last) { last = u; ready(); } }, 400);
   setTimeout(() => { if (!store.sb && !last) msg('<p>LehrWerk ist gerade nicht erreichbar. Bitte prüfe die Internetverbindung.</p>'); }, 12000);
   void poll;
 }
+
 
 // ---------- Fotos einer Stunde verwalten (Präsentation und Editor) ----------
 function fotoPanelHTML(sheetId, fotos, mode) {
