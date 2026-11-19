@@ -1,7 +1,8 @@
 'use strict';
 // LehrWerk als Windows-App (Electron). Die App lädt die aktuelle Online-Version (immer auf dem neuesten Stand,
 // mit Konto, Videos und Lehrerzimmer). Ohne Internet startet die mitgelieferte Kopie im Ordner app/.
-const { app, BrowserWindow, Menu, dialog, ipcMain, shell, session, net } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell, session, net, screen } = require('electron');
+const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -16,7 +17,7 @@ const isOurs = u => { try { const x = new URL(u); return x.protocol === 'file:' 
 
 if (!app.requestSingleInstanceLock()) { app.quit(); return; }
 
-let win = null;
+let win = null, audWin = null, switched = false;
 const statePath = () => path.join(app.getPath('userData'), 'fenster.json');
 const prefsPath = () => path.join(app.getPath('userData'), 'einstellungen.json');
 const readJSON = (p, d) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return d; } };
@@ -43,6 +44,8 @@ function createWindow() {
     if (!url || url === 'about:blank' || isOurs(url)) return { action: 'allow', overrideBrowserWindowOptions: { autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#000000', title: APP_NAME + ' – Beamer' } };
     if (/^https?:/i.test(url)) shell.openExternal(url); return { action: 'deny' };
   });
+  // Beamerfenster merken, damit es auf den zweiten Bildschirm gesetzt werden kann
+  win.webContents.on('did-create-window', child => { audWin = child; child.setMenuBarVisibility(false); child.on('closed', () => { if (audWin === child) audWin = null; }); });
   win.webContents.on('will-navigate', (e, url) => { if (!isOurs(url)) { e.preventDefault(); if (/^https?:/i.test(url)) shell.openExternal(url); } });
   // Ohne Internet und ohne Zwischenspeicher: Hinweisseite mit „Erneut versuchen“
   win.webContents.on('did-fail-load', (e, code, desc, url, isMain) => {
@@ -141,6 +144,40 @@ ipcMain.handle('ab:json', async (e, url) => {
   } catch { return null; }
 });
 ipcMain.handle('ab:open', (e, p) => shell.openPath(p));
+
+// ---------- Referentenansicht wie in PowerPoint ----------
+const displays = () => screen.getAllDisplays();
+const winDisplay = w => screen.getDisplayMatching(w.getBounds());
+ipcMain.handle('lw:displays', () => ({ n: displays().length, win32: process.platform === 'win32' }));
+// Beamerfenster auf den Bildschirm, auf dem die App nicht ist, und dort Vollbild
+ipcMain.handle('lw:aud-place', () => {
+  const ds = displays(); if (!audWin || audWin.isDestroyed()) return { ok: false, n: ds.length };
+  if (ds.length < 2) return { ok: false, n: ds.length };
+  const mine = winDisplay(win); const d = ds.find(x => x.id !== mine.id); if (!d) return { ok: false, n: ds.length };
+  audWin.setFullScreen(false); audWin.setBounds(d.bounds); audWin.setFullScreen(true); audWin.setAlwaysOnTop(false); win.focus();
+  return { ok: true, n: ds.length };
+});
+// Bildschirme tauschen: Beamerfenster und App wechseln die Plätze
+ipcMain.handle('lw:aud-swap', () => {
+  if (!audWin || audWin.isDestroyed() || displays().length < 2) return { ok: false };
+  const a = winDisplay(audWin), m = winDisplay(win); if (a.id === m.id) return { ok: false };
+  const fs2 = win.isFullScreen(); audWin.setFullScreen(false); win.setFullScreen(false);
+  audWin.setBounds(m.bounds); win.setBounds(a.workArea); audWin.setFullScreen(true); if (fs2) win.setFullScreen(true); win.focus();
+  return { ok: true };
+});
+ipcMain.handle('lw:fullscreen', (e, on) => { if (win) win.setFullScreen(!!on); });
+// Windows von „Duplizieren“ auf „Erweitern“ stellen (wie PowerPoint) und nach der Präsentation zurück
+const dswitch = args => new Promise(res => { if (process.platform !== 'win32') return res(false); execFile(path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'DisplaySwitch.exe'), args, { windowsHide: true }, () => res(true)); });
+const waitDisplays = (n0, ms) => new Promise(res => { const t0 = Date.now(); const iv = setInterval(() => { const n = displays().length; if (n > n0 || Date.now() - t0 > ms) { clearInterval(iv); res(n); } }, 250); });
+ipcMain.handle('lw:extend', async () => {
+  const n0 = displays().length; if (process.platform !== 'win32') return { ok: false, n: n0 };
+  await dswitch(['/extend']); let n = await waitDisplays(n0, 4000);
+  if (n <= n0) { await dswitch(['3']); n = await waitDisplays(n0, 4000); } // neuere Windows-11-Versionen: Ziffern statt Schalter
+  if (n > n0) switched = true;
+  return { ok: n > n0, n };
+});
+ipcMain.handle('lw:restore', async () => { if (!switched) return; switched = false; await dswitch(['/clone']); });
+app.on('before-quit', () => { if (switched) { switched = false; try { execFile(path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'DisplaySwitch.exe'), ['/clone'], { windowsHide: true }); } catch {} } });
 ipcMain.handle('ab:reveal', (e, p) => { shell.showItemInFolder(p); });
 
 // ---------- Menü ----------
@@ -197,5 +234,8 @@ app.whenReady().then(() => {
   // Downloads, die nicht über die Brücke laufen, trotzdem mit Speichern-Dialog
   session.defaultSession.on('will-download', (e, item) => { item.setSaveDialogOptions({ defaultPath: path.join(app.getPath('documents'), safeName(item.getFilename())) }); });
   menu(); createWindow();
+  // Beamer an- oder abgesteckt: der Seite Bescheid geben
+  const tell = () => { if (win && !win.isDestroyed()) win.webContents.send('lw:displays', displays().length); };
+  screen.on('display-added', () => setTimeout(tell, 600)); screen.on('display-removed', () => { if (audWin && !audWin.isDestroyed() && displays().length < 2) audWin.close(); setTimeout(tell, 300); });
 });
 app.on('window-all-closed', () => app.quit());

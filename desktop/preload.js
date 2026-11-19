@@ -9,5 +9,14 @@ contextBridge.exposeInMainWorld('abDesktop', {
   print: info => ipcRenderer.invoke('ab:print', info),
   open: p => ipcRenderer.invoke('ab:open', p),
   reveal: p => ipcRenderer.invoke('ab:reveal', p),
-  json: url => ipcRenderer.invoke('ab:json', url)
+  json: url => ipcRenderer.invoke('ab:json', url),
+  // Referentenansicht wie in PowerPoint
+  win32: process.platform === 'win32',
+  displays: () => ipcRenderer.invoke('lw:displays'),
+  audPlace: () => ipcRenderer.invoke('lw:aud-place'),
+  audSwap: () => ipcRenderer.invoke('lw:aud-swap'),
+  extend: () => ipcRenderer.invoke('lw:extend'),
+  restore: () => ipcRenderer.invoke('lw:restore'),
+  fullscreen: on => ipcRenderer.invoke('lw:fullscreen', on),
+  onDisplays: cb => { const f = (e, n) => cb(n); ipcRenderer.on('lw:displays', f); return () => ipcRenderer.removeListener('lw:displays', f); }
 });

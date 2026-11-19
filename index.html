@@ -1363,6 +1363,8 @@ body{transition:background-color .3s,border-color .25s}
 .pr-pkdlg-b button{font:700 13px var(--f-ui);border:1px solid #D5D9E2;background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:#1C1F27}
 .pr-pkdlg-b button.ok{background:#1C1F27;color:#fff;border-color:#1C1F27}.pr-pkdlg-b button:disabled{opacity:.4;cursor:default}
 .pr-pkdlg small{color:#5B6271}
+.pr-blackout{position:absolute;inset:0;z-index:20;background:#000}.pr-blackout.w{background:#fff}
+.pr:not(.pr-ref) .pr-swap{display:none}
 .pr-fbtns{position:absolute;left:14px;bottom:14px;z-index:6;display:flex;gap:8px}
 .pr-aud .pr-fbtns{display:none}
 .pr-pk-in{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
@@ -7001,7 +7003,7 @@ function openPres(start, opts = {}) {
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
     <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><button type="button" data-p="tmshow" class="pr-tmshow" title="Anzeige wechseln: Restminuten, Endzeit oder beides · gilt für alle Stunden">${TM_SHOW[tmMode()].label}</button><span class="pr-tl"></span></span><span class="sep"></span>
-    <button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
+    <button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="black" aria-pressed="false" title="Bildschirm bzw. Beamer schwarz (Punkt) oder weiß (Komma); die Referentenansicht bleibt sichtbar">Schwarz</button>${window.abDesktop && window.abDesktop.audSwap ? '<button type="button" data-p="swap" class="pr-swap" title="Beamerfenster und Referentenansicht auf die jeweils anderen Bildschirme tauschen">Bildschirme tauschen</button>' : ''}<button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
   setAccent(ov, m);
   // Zeit ausblenden (für Klassen, die Zeitdruck stresst): Timer laufen weiter, sind aber unsichtbar; gemerkt je Klasse
   const ntKey = KL(state.sheet.klasse).id;
@@ -7080,6 +7082,7 @@ function openPres(start, opts = {}) {
   /* ---------- Zweiter Bildschirm: Beamerfenster zeigt die Folie, dieses Fenster die Referentenansicht ---------- */
   let AW = null, awPoll = 0, awWake = null, sideKey = '';
   const awOk = () => !!(AW && !AW.closed && AW.document && AW.document.querySelector('.pr-slide'));
+  let AWnative = false, BL = '';
   const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = boarding() ? `translate(-50%,-50%) scale(${k})` : TBo.slideTf(k); TBo.placeAw(d, k); INK.placeAw(d, k); d.querySelector('.pr').classList.toggle('pr-boarding', boarding()); };
   const mirror = () => { if (!awOk()) return; TBo.mirror(); AW.document.querySelector('.pr').classList.toggle('pr-boarding', boarding()); INK.draw(); const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
   const mirrorT = () => { if (!awOk()) return; const d = AW.document; ['.pr-timer', '.pr-tbar'].forEach(q => { const a = slide.querySelector(q), b = d.querySelector('.pr-slide ' + q); if (a && b) { b.className = a.className; b.innerHTML = a.innerHTML; } }); d.querySelector('.pr-slide').className = slide.className; };
@@ -7104,7 +7107,7 @@ function openPres(start, opts = {}) {
     const t = $p('.prs-tm'); if (t) { t.textContent = T.run || (T.slide >= 0 && T.full && T.left < T.full) ? `Timer${T.slide !== P.i ? ' (Folie ' + (T.slide + 1) + ')' : ''}: ${fmt(T.left)}${T.run ? ' · bis ' + hhmm(T.end) : ' · angehalten'}` : (PLAN ? 'Stundenende ' + hmFmt(PLAN.end) + ' Uhr' : ''); t.classList.toggle('low', T.run && T.full > 0 && T.left <= T.full * 0.3); }
   };
   const refUi = on => { ov.classList.toggle('pr-ref', on); const b = $p('[data-p="ref"]'); b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Beamerfenster schließen' : 'Referentenansicht'; sideKey = ''; scale(); if (on) refSide(); };
-  const refClose = () => { clearInterval(awPoll); awPoll = 0; if (awWake) { awWake(); awWake = null; } try { if (AW && !AW.closed) AW.close(); } catch {} AW = null; refUi(false); ov.focus(); };
+  const refClose = () => { AWnative = false; if (window.abDesktop && window.abDesktop.restore) window.abDesktop.restore().catch(() => {}); clearInterval(awPoll); awPoll = 0; if (awWake) { awWake(); awWake = null; } try { if (AW && !AW.closed) AW.close(); } catch {} AW = null; refUi(false); ov.focus(); };
   const awBuild = (hint) => {
     const d = AW.document; d.open(); d.write('<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LehrWerk · Beamer</title></head><body></body></html>'); d.close();
     [...document.documentElement.attributes].forEach(a => { if (a.name !== 'style') d.documentElement.setAttribute(a.name, a.value); });
@@ -7113,7 +7116,7 @@ function openPres(start, opts = {}) {
     d.body.innerHTML = `<div class="pr pr-aud" style="${esc(ov.style.cssText)}"><div class="pr-stage"><div class="pr-slide"></div></div><div class="pr-aud-hint"><b>Beamerfenster</b><span>${hint}</span></div></div>`;
     const hd = () => { const h = d.querySelector('.pr-aud-hint'); if (h) h.hidden = !!d.fullscreenElement; awScale(); };
     d.addEventListener('fullscreenchange', hd);
-    d.addEventListener('click', e => { if (e.target.closest('.pr-yt-go')) { ytPlay(); return; } if (e.target.closest('.pr-yt.on')) return; if (!d.fullscreenElement && d.documentElement.requestFullscreen) { d.documentElement.requestFullscreen().catch(() => {}); return; } next(); });
+    d.addEventListener('click', e => { if (e.target.closest('.pr-yt-go')) { ytPlay(); return; } if (e.target.closest('.pr-yt.on')) return; if (!AWnative && !d.fullscreenElement && d.documentElement.requestFullscreen) { d.documentElement.requestFullscreen().catch(() => {}); return; } next(); });
     AW.addEventListener('blur', () => setTimeout(() => { try { const a = AW.document.activeElement; if (a && a.tagName === 'IFRAME') a.blur(); } catch {} }, 60));
     d.addEventListener('keydown', e => { if (e.key === 'Escape' && d.fullscreenElement) return; key(e); });
     AW.addEventListener('resize', awScale);
@@ -7136,7 +7139,12 @@ function openPres(start, opts = {}) {
       try { const sd = await window.getScreenDetails(); many = sd.screens.length; other = sd.screens.find(x => x !== sd.currentScreen) || null;
         if (other && AW && !AW.closed) { AW.moveTo(other.availLeft, other.availTop); AW.resizeTo(other.availWidth, other.availHeight); const h = AW.document.querySelector('.pr-aud-hint span'); if (h) h.textContent = 'Einmal klicken: Vollbild.'; } } catch {}
     }
-    if (many === 1) toast('Es ist nur ein Bildschirm angeschlossen. Am Beamer unter Windows mit Win+P „Erweitern“ wählen, am Mac in den Displays „Spiegeln“ ausschalten.');
+    const D = window.abDesktop;
+    if (D && D.audPlace) { try { const r = await D.audPlace(); if (r && r.ok && AW && !AW.closed) { AWnative = true; many = r.n; const h = AW.document.querySelector('.pr-aud-hint'); if (h) h.hidden = true; setTimeout(awScale, 120); } else if (r) many = r.n; } catch {} }
+    if (many === 1) {
+      if (D && D.extend && D.win32) toast('Nur ein Bildschirm erkannt. Steht Windows auf „Duplizieren“?', 'Auf „Erweitern“ umschalten', async () => { toast('Bildschirme werden umgeschaltet …'); const r = await D.extend(); if (r && r.ok) { if (AW && !AW.closed) { const q = await D.audPlace(); if (q && q.ok) { AWnative = true; const h = AW.document.querySelector('.pr-aud-hint'); if (h) h.hidden = true; setTimeout(awScale, 120); } } toast('Beamer auf „Erweitern“ gestellt. Nach der Präsentation stellt LehrWerk wieder um.'); } else toast('Kein zweiter Bildschirm gefunden. Ist der Beamer angeschlossen und eingeschaltet?'); });
+      else toast('Es ist nur ein Bildschirm angeschlossen. Am Beamer unter Windows mit Win+P „Erweitern“ wählen, am Mac in den Displays „Spiegeln“ ausschalten.');
+    }
     sideKey = ''; refSide();
   };
   window.addEventListener('pagehide', () => { try { if (AW && !AW.closed) AW.close(); } catch {} });
@@ -7187,13 +7195,20 @@ function openPres(start, opts = {}) {
   stage.addEventListener('wheel', e => { const b2 = bl(); if (!b2 || (b2.h || 900) <= 900) return; e.preventDefault(); const k = slide.getBoundingClientRect().height / 900 || 1; blankScroll((b2.sy || 0) + e.deltaY / k); }, { passive: false });
   // Laser an/aus; auf einer Tafelseite ist danach wieder der Stift aktiv
   const laserT = () => { INK.laser(); if (curSl().k === 'blank' && !INK.active()) INK.on(true); };
-  const next = () => { if (BOARD.open) { boardSet(false); return; } if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
-  const prev = () => { if (BOARD.open) { boardSet(false); return; } if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
+  const blank = mode => {
+    BL = BL === mode ? '' : mode; const tgt = awOk() ? AW.document.querySelector('.pr-stage') : stage;
+    [stage, awOk() ? AW.document.querySelector('.pr-stage') : null].forEach(st => { const o = st && st.querySelector(':scope > .pr-blackout'); if (o) o.remove(); });
+    if (BL && tgt) tgt.insertAdjacentHTML('beforeend', `<div class="pr-blackout ${BL}"></div>`);
+    ov.querySelectorAll('[data-p="black"]').forEach(b => { b.setAttribute('aria-pressed', String(!!BL)); b.textContent = BL === 'w' ? 'Weiß ✓' : BL ? 'Schwarz ✓' : 'Schwarz'; });
+    if (BL && tgt !== stage) toast(BL === 'w' ? 'Beamer weiß – deine Ansicht bleibt. Komma oder der Knopf hebt es auf.' : 'Beamer schwarz – deine Ansicht bleibt. Punkt oder der Knopf hebt es auf.');
+  };
+  const next = () => { if (BL) { blank(BL); return; } if (BOARD.open) { boardSet(false); return; } if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
+  const prev = () => { if (BL) { blank(BL); return; } if (BOARD.open) { boardSet(false); return; } if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
   const tip = () => { const tp = slide.querySelector('.pr-tips'); if (!tp) return; const h = tp.querySelector('[hidden]'); tp.hidden = false; if (h) h.hidden = false; apply(); };
   const ehT = () => { const e2 = slide.querySelector('.pr-eh'); if (!e2) return; e2.hidden = !e2.hidden; apply(); };
   const close = () => tmWarn('Beim Beenden der Präsentation wird er abgebrochen.', 'Präsentation beenden', closeNow);
   const wake = keepAwake();
-  const closeNow = () => { TBo.destroy(); INK.destroy(); wake(); refClose(); clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
+  const closeNow = () => { ov.dispatchEvent(new Event('lw-close')); TBo.destroy(); INK.destroy(); wake(); refClose(); clearInterval(T.id); clearInterval(T.cid); document.removeEventListener('keydown', key, true); window.removeEventListener('resize', scale); try { if (document.fullscreenElement) document.exitFullscreen(); } catch {} ov.remove(); };
   const key = e => {
     if (e.target && e.target.closest && e.target.closest('.pr-pkdlg')) return;
     if (TBo.keyIgnore(e)) return;
@@ -7211,7 +7226,7 @@ function openPres(start, opts = {}) {
     else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { stop(); prev(); }
     else if (k === 'Home') { stop(); P.i = 0; show(); } else if (k === 'End') { stop(); P.i = S.length - 1; show(); }
     else if (k === 't' || k === 'T') { stop(); tmToggle(); } else if (k === '+' || k === '=') { stop(); tmAdj(1); } else if (k === '-' || k === '_') { stop(); tmAdj(-1); } else if (k === 'e' || k === 'E') { stop(); ehT(); } else if (k === 'z' || k === 'Z') { stop(); ntToggle(); } else if (k === 'h' || k === 'H') { stop(); tip(); }
-    else if (k === 'b' || k === 'B') { stop(); boardT('tafel'); } else if ((k === 'k' || k === 'K') && pkOn) { stop(); boardT('pk'); } else if (k === 'l' || k === 'L') { stop(); laserT(); }
+    else if (k === 'b' || k === 'B') { stop(); boardT('tafel'); } else if (k === '.') { stop(); blank('s'); } else if (k === ',') { stop(); blank('w'); } else if ((k === 'k' || k === 'K') && pkOn) { stop(); boardT('pk'); } else if (k === 'l' || k === 'L') { stop(); laserT(); }
     else if (k === 'Escape') { stop(); if (ov.querySelector('[data-p="laser"][aria-pressed="true"]')) { laserT(); return; } if (BOARD.open) { boardSet(false); return; } if (!document.fullscreenElement) close(); }
   };
   /* Video: auf der Folie abspielen; mit Beamerfenster nur dort, hier bleibt die Steuerung */
@@ -7241,7 +7256,7 @@ function openPres(start, opts = {}) {
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
     const k = b.dataset.p;
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
-    else if (k === 'ref') refOpen(); else if (k === 'board') boardT(b.dataset.kind || 'tafel'); else if (k === 'laser') laserT();
+    else if (k === 'ref') refOpen(); else if (k === 'black') blank(BL || 's'); else if (k === 'swap') { if (window.abDesktop && window.abDesktop.audSwap) window.abDesktop.audSwap().then(r => { if (r && r.ok) setTimeout(() => { scale(); awScale(); }, 200); else toast('Zum Tauschen braucht es zwei Bildschirme.'); }); } else if (k === 'board') boardT(b.dataset.kind || 'tafel'); else if (k === 'laser') laserT();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tmshow') { const ks = Object.keys(TM_SHOW); state.prefs.tmShow = ks[(ks.indexOf(tmMode()) + 1) % ks.length]; savePrefs(); b.textContent = TM_SHOW[tmMode()].label; tmShow(); } else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
@@ -7267,6 +7282,16 @@ function openPres(start, opts = {}) {
   }
   if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns"><button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
+  const D = window.abDesktop;
+  if (D && D.displays && !opts.board) {
+    D.displays().then(r => { if (r && r.n > 1 && !awOk() && document.body.contains(ov)) { refOpen(); toast('Zweiter Bildschirm erkannt: Folien auf dem Beamer, Referentenansicht hier.'); } }).catch(() => {});
+    const off = D.onDisplays && D.onDisplays(n => {
+      if (!document.body.contains(ov)) { off && off(); return; }
+      if (n < 2 && AW && !AW.closed) { refClose(); if (D.fullscreen) D.fullscreen(true); toast('Beamer getrennt – die Präsentation läuft hier weiter.'); }
+      else if (n > 1 && !(AW && !AW.closed)) { refOpen(); toast('Beamer erkannt: Folien laufen jetzt dort.'); }
+    });
+    ov.addEventListener('lw-close', () => { off && off(); }, { once: true });
+  }
 }
 
 /* PowerPoint: dieselben Folien als bearbeitbare Textfelder und Tabellen (PptxGenJS); Erwartung und Tipps stehen in den Notizen */
