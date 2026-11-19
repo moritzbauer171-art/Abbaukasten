@@ -208,6 +208,7 @@ function menu() {
       { type: 'separator' }, { label: 'Entwicklerwerkzeuge', role: 'toggleDevTools', visible: false }
     ] },
     { label: 'Hilfe', submenu: [
+      { label: 'Nach Updates suchen …', click: () => updCheck(true).catch(() => {}) },
       { label: 'Online-Version öffnen', click: () => shell.openExternal(ONLINE_URL) },
       { label: 'Datenordner öffnen', click: () => shell.openPath(app.getPath('userData')) },
       { type: 'separator' },
@@ -224,6 +225,63 @@ Electron ${process.versions.electron} · Chromium ${process.versions.chrome}` })
   Menu.setApplicationMenu(Menu.buildFromTemplate(tpl));
 }
 
+/* ---------- Updates: beim Öffnen nachfragen, wenn es eine neue App-Version gibt ---------- */
+// Die Inhalte (Website) sind immer aktuell; nur die App-Hülle (Fenster, Beamer, Speichern) braucht ab und zu ein Update.
+const REL_API = 'https://api.github.com/repos/moritzbauer171-art/Abbaukasten/releases/tags/windows';
+const REL_PAGE = 'https://github.com/moritzbauer171-art/Abbaukasten/releases/tag/windows';
+const verNum = v => String(v || '').split('.').map(x => parseInt(x, 10) || 0);
+const newer = (a, b) => { const x = verNum(a), y = verNum(b); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; };
+const updFile = () => path.join(app.getPath('userData'), 'update.json');
+const updState = () => { try { return JSON.parse(fs.readFileSync(updFile(), 'utf8')); } catch { return {}; } };
+const updSave = o => { try { fs.writeFileSync(updFile(), JSON.stringify({ ...updState(), ...o })); } catch {} };
+async function updCheck(manual) {
+  let rel;
+  try { const r = await net.fetch(REL_API, { headers: { 'User-Agent': 'LehrWerk', Accept: 'application/vnd.github+json' } }); if (!r.ok) throw new Error('HTTP ' + r.status); rel = await r.json(); }
+  catch (err) { if (manual) dialog.showMessageBox(win, { type: 'warning', title: APP_NAME, message: 'Die Suche nach Updates hat nicht geklappt.', detail: 'Bitte prüfe die Internetverbindung.' }); return; }
+  const m = /\(([\d.]+)\)/.exec(rel.name || ''); const latest = m && m[1]; const mine = app.getVersion();
+  const asset = (rel.assets || []).find(a => a.name === 'LehrWerk-Windows-x64.zip');
+  if (!latest || !newer(latest, mine)) { if (manual) dialog.showMessageBox(win, { type: 'info', title: APP_NAME, message: 'LehrWerk ist auf dem neuesten Stand.', detail: `Version ${mine}` }); return; }
+  if (!manual && updState().skip === latest) return;
+  const r = await dialog.showMessageBox(win, { type: 'question', title: APP_NAME, icon: iconPath(), noLink: true, defaultId: 0, cancelId: 1,
+    buttons: ['Jetzt aktualisieren', 'Später', 'Diese Version überspringen'],
+    message: `Eine neue Version von LehrWerk ist da: ${latest}`,
+    detail: `Du hast ${mine}. Das Update lädt einmal rund 120 MB und startet LehrWerk danach neu. Deine Stunden und Einstellungen bleiben, sie liegen in deinem Konto.` });
+  if (r.response === 2) { updSave({ skip: latest }); return; }
+  if (r.response !== 0) return;
+  if (process.platform !== 'win32' || !asset) { shell.openExternal(REL_PAGE); return; }
+  updInstall(asset.browser_download_url, latest).catch(err => {
+    try { win.setProgressBar(-1); } catch {}
+    dialog.showMessageBox(win, { type: 'warning', title: APP_NAME, buttons: ['Download-Seite öffnen', 'Schließen'], defaultId: 0, cancelId: 1, message: 'Das Update konnte nicht automatisch installiert werden.', detail: String(err && err.message || err) + '\n\nDu kannst die neue Version auch selbst herunterladen und über den alten Ordner entpacken.' })
+      .then(x => { if (x.response === 0) shell.openExternal(REL_PAGE); });
+  });
+}
+async function updInstall(url, ver) {
+  const appDir = path.dirname(process.execPath);
+  // Darf in den App-Ordner geschrieben werden? Sonst Download-Seite
+  const probe = path.join(appDir, '.lw-schreibtest'); fs.writeFileSync(probe, '1'); fs.unlinkSync(probe);
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'lehrwerk-update-')); const zip = path.join(tmp, 'update.zip');
+  const r = await net.fetch(url, { headers: { 'User-Agent': 'LehrWerk' } }); if (!r.ok || !r.body) throw new Error('Download fehlgeschlagen (HTTP ' + r.status + ')');
+  const total = +r.headers.get('content-length') || 0; let got = 0; const out = fs.createWriteStream(zip); const rd = r.body.getReader();
+  for (;;) { const { done, value } = await rd.read(); if (done) break; got += value.length; if (!out.write(Buffer.from(value))) await new Promise(res => out.once('drain', res)); if (total && win && !win.isDestroyed()) win.setProgressBar(got / total); }
+  await new Promise((res, rej) => { out.end(res); out.on('error', rej); });
+  if (total && got < total) throw new Error('Download unvollständig');
+  try { win.setProgressBar(-1); } catch {}
+  const exe = path.basename(process.execPath); const q = s => s.replace(/"/g, '');
+  const bat = path.join(tmp, 'update.cmd');
+  fs.writeFileSync(bat, [
+    '@echo off', 'chcp 65001 >nul',
+    ':warte', `tasklist /FI "PID eq ${process.pid}" 2>nul | find "${process.pid}" >nul && (timeout /t 1 /nobreak >nul & goto warte)`,
+    `powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -LiteralPath '${q(zip).replace(/'/g, "''")}' -DestinationPath '${q(tmp).replace(/'/g, "''")}\\neu' -Force"`,
+    `robocopy "${q(tmp)}\\neu\\LehrWerk" "${q(appDir)}" /E /R:5 /W:1 /NFL /NDL /NJH /NJS /NP >nul`,
+    `start "" "${q(appDir)}\\${q(exe)}"`,
+    `(goto) 2>nul & rmdir /s /q "${q(tmp)}"`
+  ].join('\r\n'), 'utf8');
+  updSave({ skip: '', installed: ver });
+  await dialog.showMessageBox(win, { type: 'info', title: APP_NAME, message: `Version ${ver} ist geladen.`, detail: 'LehrWerk schließt sich jetzt kurz und startet aktualisiert neu.', buttons: ['OK'] });
+  require('child_process').spawn('cmd.exe', ['/c', bat], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+  app.quit();
+}
+
 app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
 app.whenReady().then(() => {
   try { session.defaultSession.setSpellCheckerLanguages(['de-DE']); } catch {}
@@ -234,6 +292,8 @@ app.whenReady().then(() => {
   // Downloads, die nicht über die Brücke laufen, trotzdem mit Speichern-Dialog
   session.defaultSession.on('will-download', (e, item) => { item.setSaveDialogOptions({ defaultPath: path.join(app.getPath('documents'), safeName(item.getFilename())) }); });
   menu(); createWindow();
+  // beim Öffnen nach einer neuen App-Version fragen (nicht im Offline-Fall, nicht beim Testen)
+  if (app.isPackaged) win.webContents.once('did-finish-load', () => setTimeout(() => updCheck(false).catch(() => {}), 2500));
   // Beamer an- oder abgesteckt: der Seite Bescheid geben
   const tell = () => { if (win && !win.isDestroyed()) win.webContents.send('lw:displays', displays().length); };
   screen.on('display-added', () => setTimeout(tell, 600)); screen.on('display-removed', () => { if (audWin && !audWin.isDestroyed() && displays().length < 2) audWin.close(); setTimeout(tell, 300); });

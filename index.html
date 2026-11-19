@@ -1371,6 +1371,19 @@ body{transition:background-color .3s,border-color .25s}
 .pr-slide.pr-k-foto{padding:0;background:#15171c}
 .pr-k-foto .pr-accent,.pr-k-foto .pr-foot,.pr-k-foto .pr-phb,.pr-k-foto .pr-tbar{display:none}
 .lf-slide{position:absolute;inset:0;overflow:hidden}
+.pr-fobtn{opacity:.55}.pr-fobtn.has-new{opacity:1;background:#C2410C;animation:prfo 1.6s ease-in-out 3}
+@keyframes prfo{50%{box-shadow:0 0 0 8px rgba(194,65,12,.25),0 6px 18px rgba(0,0,0,.3)}}
+.pr-fobtn .pr-fobadge{top:-6px;right:-4px;background:#fff;color:#C2410C}
+.prs-fo{display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:12px;background:#1E2A44;border:1px solid #34446A}
+.prs-fo.new{background:#3A2416;border-color:#C2410C}
+.prs-fob{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;border-radius:10px;background:#2741B5;color:#fff;font:inherit;text-align:left;cursor:pointer}
+.prs-fo.new .prs-fob{background:#C2410C}
+.prs-fob:hover{filter:brightness(1.1)}.prs-fob span{display:flex;flex-direction:column;flex:1}.prs-fob b{font-size:16px}.prs-fob small{opacity:.85;font-size:12.5px}
+.prs-fob i{font-style:normal;font-weight:800;background:#fff;color:#C2410C;border-radius:999px;min-width:24px;padding:2px 8px;text-align:center}
+.prs-fol{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.prs-fot{position:relative;padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:#111;cursor:pointer}
+.prs-fot.new{border-color:#F97316}.prs-fot img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.prs-fot span{position:absolute;left:0;right:0;bottom:0;padding:3px;background:rgba(0,0,0,.6);color:#fff;font:700 11.5px var(--f-ui)}
 .lf-clip{position:absolute;overflow:hidden;border-radius:4px}
 .lf-sw{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
 .lf-sw img,.lf-cell img{display:block;width:100%;height:100%;object-fit:fill;user-select:none;-webkit-user-drag:none}
@@ -7168,9 +7181,11 @@ function openPres(start, opts = {}) {
       sideKey = key; const w = Math.max(160, sd.clientWidth - 32); const bar = S.bar || [];
       const nxt = P.cur < P.max ? `<div class="prs-step">Noch ${P.max - P.cur} ${P.max - P.cur === 1 ? 'Schritt' : 'Schritte'} auf dieser Folie</div>` : '';
       sd.innerHTML = `<div class="prs-top"><b class="prs-clock"></b><span>Folie ${P.i + 1} von ${S.length}</span></div><div class="prs-tm"></div>
+        ${foOn ? (() => { const nn = FO.list.filter(f => f._new).length, L = FO.list.slice(-3).reverse(); return `<div class="prs-fo${nn ? ' new' : ''}"><button type="button" class="prs-fob" data-p="fotos">${'<svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 8.5A1.5 1.5 0 0 1 4.5 7h2.7l1.6-2.2h6.4L16.8 7h2.7A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z\"/><circle cx=\"12\" cy=\"13\" r=\"3.6\"/></svg>'.replace(/20/g, '24')}<span><b>Fotos vom iPad / Handy</b><small>${FO.list.length ? (nn ? nn + ' neu · ' : '') + FO.list.length + ' zu dieser Stunde' : 'QR-Code scannen und loslegen'}</small></span>${nn ? `<i>${nn}</i>` : ''}</button>${L.length ? `<div class="prs-fol">${L.map(f => `<button type="button" class="prs-fot${f._new ? ' new' : ''}" data-foshow="${f.id}" title="Als Sicherungsfolie auf den Beamer"><img alt="" data-p="${esc(f.path)}"><span>Zeigen</span></button>`).join('')}</div>` : ''}</div>`; })() : ''}
         <div class="prs-h">Als Nächstes</div>${nxt}${nx ? `<div class="pr-thumb prs-next" style="--tw:${w}px;--k:${(w / 1600).toFixed(4)}"><div class="pr-slide pr-k-${nx.k}${bar.length ? ' has-bar' : ''}"><div class="pr-accent"></div>${presSlideHTML(nx, bar)}${presBarHTML(bar, nx.bi)}<div class="pr-foot"><span></span><span>${P.i + 2}</span></div></div></div>` : '<div class="prs-end">Das ist die letzte Folie.</div>'}
         <div class="prs-h">Notizen <small>nur hier sichtbar</small></div><div class="prs-notes">${notes.join('') || '<p class="prs-none">Zu dieser Folie gibt es keine Tipps oder Erwartungen.</p>'}</div>
         <div class="prs-h">Beamer</div><div class="prs-aw">${awOk() ? 'Die Folie läuft im Beamerfenster. Dort einmal klicken für Vollbild. Tasten und Presenter funktionieren in beiden Fenstern.' : 'Das Beamerfenster ist zu.'}</div>`;
+      if (foOn) fotoThumbs(sd);
       const ns = sd.querySelector('.prs-next .pr-slide'); if (ns) { const f = ns.querySelector('.pr-fit'), body = ns.querySelector('.pr-body'); try { if (f && body && PR_MAX[nx.k]) fitUp(f, body, PR_MAX[nx.k]); tfDraw(ns); phbFit(ns); } catch {} }
     }
     refClock();
@@ -7328,6 +7343,7 @@ function openPres(start, opts = {}) {
     if (e.target.closest('.pr-vscroll')) return;
     if (foOn && e.target.closest('.lf-pan')) { if (e.target.closest('[data-lf="x"]')) foPanT(false); else fotoPanelAct(e, foPan(), state.sheet.id, FO.list, foRender, items => foShow(items)); return; }
     if (e.target.closest('.pr-slide .lf-slide')) return;
+    { const fs = e.target.closest('[data-foshow]'); if (fs && foOn) { const f = FO.list.find(x => x.id === fs.dataset.foshow); if (f) { f._new = false; foBadge(); foShow([f]); } return; } }
     if (INK.eats(e)) return;
     if (TBo.click(e)) return;
     const b = e.target.closest('[data-p]'); if (!b) { if (e.target.closest('.pr-stage') && !e.target.closest('.pr-pop')) next(); return; }
@@ -7362,10 +7378,10 @@ function openPres(start, opts = {}) {
     ov.insertAdjacentHTML('beforeend', '<div class="lf-pan" hidden role="dialog" aria-label="Fotos dieser Stunde"><div class="lf-ph"><b>📷 Fotos dieser Stunde</b><button type="button" data-lf="x" aria-label="Schließen">×</button></div><div class="lf-body"></div></div>');
   }
   function foPan() { return $p('.lf-pan'); }
-  function foBadge() { const n = FO.list.filter(f => f._new).length; const i = $p('.pr-fobadge'); if (i) { i.hidden = !n; i.textContent = n; } }
+  function foBadge() { const n = FO.list.filter(f => f._new).length; ov.querySelectorAll('.pr-fobadge').forEach(i => { i.hidden = !n; i.textContent = n; }); ov.querySelectorAll('.pr-fobtn').forEach(b => b.classList.toggle('has-new', !!n)); sideKey = ''; refSide(); }
   function foRender() { const p = foPan(); if (!p || p.hidden) return; const bd = p.querySelector('.lf-body'); bd.innerHTML = fotoPanelHTML(state.sheet.id, FO.list, 'pres'); fotoThumbs(bd); }
   async function foLoad() { try { const L = await fotoList(state.sheet.id); const old = new Map(FO.list.map(f => [f.id, f])); FO.list = L.map(f => ({ ...f, _new: old.has(f.id) ? !!old.get(f.id)._new : FO.loaded })); FO.loaded = true; } catch (err) { console.error(err); } foBadge(); foRender(); }
-  function foPanT(on) { const p = foPan(); if (!p) return; on = on === undefined ? p.hidden : on; p.hidden = !on; const b = $p('[data-p="fotos"]'); if (b) b.setAttribute('aria-expanded', String(on)); if (on) { foRender(); setTimeout(() => { FO.list.forEach(f => { f._new = false; }); foBadge(); }, 2500); } else ov.focus(); }
+  function foPanT(on) { const p = foPan(); if (!p) return; on = on === undefined ? p.hidden : on; p.hidden = !on; ov.querySelectorAll('[data-p="fotos"]').forEach(b => b.setAttribute('aria-expanded', String(on))); if (on) { foRender(); setTimeout(() => { FO.list.forEach(f => { f._new = false; }); foBadge(); }, 2500); } else ov.focus(); }
   async function foShow(items, v) { items = (items || []).filter(Boolean).slice(0, 6); if (!items.length) return; await Promise.all(items.map(async f => { try { f.u = await fotoUrl(f.path); } catch { f.u = ''; } })); Object.assign(BOARD.foto, { items, view: v || { s: 1, cx: .5, cy: .5 }, live: null, las: null }); if (foPan()) foPan().hidden = true; boardSet(true, 'foto'); }
   const foSingle = id => (BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1 && BOARD.foto.items[0].id === id ? BOARD.foto.items[0] : null);
   // Live vom Gerät: nur den Fotobereich neu zeichnen, damit nichts flackert
@@ -7387,7 +7403,7 @@ function openPres(start, opts = {}) {
     // Mausrad zoomt ein einzelnes Foto auch hier
     stage.addEventListener('wheel', e => { if (!(BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1)) return; e.preventDefault(); const v = BOARD.foto.view; BOARD.foto.view = { ...v, s: Math.max(1, Math.min(8, (v.s || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15))) }; foUpd(); }, { passive: false });
   }
-  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns"><button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
+  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns">${foOn ? '<button type="button" class="pr-tafelbtn pr-fobtn" data-p="fotos" data-label="Fotos" aria-expanded="false" title="Fotos vom iPad oder Handy: QR-Code, neue Fotos, Sicherungsfolie (F)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.7l1.6-2.2h6.4L16.8 7h2.7A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Fotos</span><i class="pr-fobadge" hidden></i></button>' : ''}<button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
   const D = window.abDesktop;
   if (D && D.displays && !opts.board) {
