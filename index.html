@@ -1409,12 +1409,55 @@ body{transition:background-color .3s,border-color .25s}
 .lf-b{border:1px solid var(--line,#ccc);background:var(--card,#fff);color:inherit;border-radius:7px;padding:4px 8px;font:600 12.5px var(--f-ui);cursor:pointer}
 .lf-b.pri{background:var(--tinte,#2F6FDB);border-color:var(--tinte,#2F6FDB);color:#fff;flex:1}
 .lf-b[aria-pressed="true"]{color:#C98A00}
+.lf-tafel{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line,#ddd);font-size:12.5px;line-height:1.4;color:var(--muted,#666)}.lf-tafel b{color:var(--ink)}.lf-tafel span{display:block;margin-top:4px;font-family:ui-monospace,monospace;color:var(--tinte);user-select:all;word-break:break-all}
 .lf-empty{color:var(--muted,#666);margin:6px 0}
 .lf-dlg-ov{position:fixed;inset:0;z-index:50;background:rgba(10,14,24,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .lf-dlg{width:min(720px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--panel,#fff);color:var(--ink);border-radius:16px;padding:16px 18px;box-shadow:0 24px 70px rgba(0,0,0,.35)}
 .lf-dh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.lf-dh b{font-size:18px}
 /* Kameramodus auf iPad und Handy: Aufbau wie eine iPad-App */
 html:has(body.cam-mode),body.cam-mode{overflow:hidden;overscroll-behavior:none;background:#000}
+/* ---------- Companion (iPad/Handy als Tafel) ---------- */
+#lfc-root{position:fixed;inset:0;z-index:49;background:#000;color:#fff;display:grid;grid-template-rows:auto 1fr auto;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",var(--f-ui);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+body.lfc-on{overflow:hidden}
+.lfc-st{color:#98989F}.lfc-st.ok{color:#30D158}
+.lfc-m{position:relative;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#111214}
+.lfc-tabs{display:flex;justify-content:center;gap:4px;padding:4px calc(10px + env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) calc(10px + env(safe-area-inset-left,0px));background:rgba(28,28,30,.92);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-top:.5px solid rgba(255,255,255,.14)}
+.lfc-tabs:empty{display:none}
+.lfc-tab{flex:0 1 150px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:0;background:none;color:#8E8E93;font:500 11px/1.1 inherit;cursor:pointer;min-height:50px}
+.lfc-tab[aria-selected="true"]{color:#0A84FF}
+.lfc-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:8px 12px 92px}
+.lfc-board{position:relative;overflow:hidden;border-radius:10px;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.5);touch-action:none}
+.lfc-sl{position:absolute;inset:0;pointer-events:none}
+.lfc-sl .pr-slide{left:0;top:0;transform:scale(var(--k));transform-origin:0 0;box-shadow:none;pointer-events:none}
+.lfc-cv{position:absolute;inset:0;width:100%;height:100%}
+.lfc-dot{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:radial-gradient(circle,#ff2a2a 0 32%,rgba(255,40,40,.45) 48%,rgba(255,40,40,0) 70%);pointer-events:none}
+.lfc-vs{position:absolute;right:4px;top:6px;bottom:6px;width:5px;border-radius:3px;background:rgba(0,0,0,.08);pointer-events:none}.lfc-vs i{position:absolute;left:0;right:0;border-radius:3px;background:rgba(0,0,0,.35)}
+.lfc-pal{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;align-items:center;gap:4px;padding:6px 8px;border-radius:18px;background:rgba(44,44,46,.94);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 8px 28px rgba(0,0,0,.5);max-width:calc(100% - 16px);overflow-x:auto;z-index:2}
+.lfc-pg{display:flex;align-items:center;gap:2px;padding:0 4px}.lfc-pg+.lfc-pg{border-left:.5px solid rgba(255,255,255,.16)}
+.lfc-pb{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border:0;border-radius:12px;background:none;color:#D1D1D6;cursor:pointer;flex:0 0 auto}
+.lfc-pb[aria-pressed="true"]{background:rgba(10,132,255,.22);color:#0A84FF}
+.lfc-pb i{display:block;border-radius:50%;background:currentColor}
+.lfc-col{width:28px;height:28px;margin:0 3px;border-radius:50%;border:0;background:var(--cc);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3);cursor:pointer;flex:0 0 auto}
+.lfc-col[aria-pressed="true"]{box-shadow:0 0 0 2px #2c2c2e,0 0 0 4px #fff}
+.lfc-m .cam-sheet{bottom:12px}
+.lfc-patv{width:26px;height:20px;border-radius:4px;background-color:#fff;border:1px solid #555;flex:0 0 auto}
+.lfc-patv.pat-kariert{background-image:linear-gradient(#9fb3d9 1px,transparent 1px),linear-gradient(90deg,#9fb3d9 1px,transparent 1px);background-size:6px 6px}
+.lfc-patv.pat-liniert{background-image:linear-gradient(transparent 5px,#9fb3d9 5px 6px);background-size:100% 6px}
+.lfc-fol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px}
+.lfc-fc{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;max-width:620px}.lfc-fc small{color:#98989F;font-size:15px}.lfc-fc b{font-size:28px;font-weight:700}.lfc-fc span{color:#AEAEB2;font-size:15px}
+.lfc-fb{display:flex;gap:16px;width:min(640px,100%)}
+.lfc-big{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:180px;border:0;border-radius:22px;background:#2C2C2E;color:#fff;font:600 19px inherit;cursor:pointer}
+.lfc-big.pri{background:#0A84FF}.lfc-big:disabled{opacity:.35}.lfc-big:active{transform:scale(.98)}
+.lfc-fr{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.lfc-pill{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:12px 18px;background:#2C2C2E;color:#fff;font:600 15px inherit;cursor:pointer}.lfc-pill.on{background:#fff;color:#000}
+.lfc-camh{position:relative;flex:1;min-height:0}
+#cam-root.in-hub{position:absolute;inset:0;z-index:1}
+.lfc-wait svg{color:#48484A}
+#lfc-ban{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:58;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 14px;border-radius:16px;background:#1C1C1E;color:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);font-family:var(--f-ui);max-width:calc(100% - 24px);animation:lfcin .3s ease-out}
+@keyframes lfcin{from{opacity:0;transform:translate(-50%,-12px)}}
+.lfc-bi{color:#30D158;display:flex}.lfc-bt{display:flex;flex-direction:column;min-width:0}.lfc-bt small{color:#98989F;font-size:12px}.lfc-bt b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:40vw}
+.lfc-bgo{border:0;border-radius:11px;padding:10px 14px;background:#0A84FF;color:#fff;font:700 14.5px var(--f-ui);cursor:pointer;white-space:nowrap}
+.lfc-bx{border:0;background:none;color:#98989F;font-size:22px;width:36px;height:36px;cursor:pointer}
 #cam-root{position:fixed;inset:0;z-index:49;background:#000;color:#fff;display:grid;grid-template-rows:auto 1fr auto;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",var(--f-ui);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
 .cam-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;min-height:50px;padding:calc(4px + env(safe-area-inset-top,0px)) calc(10px + env(safe-area-inset-right,0px)) 4px calc(10px + env(safe-area-inset-left,0px));background:rgba(28,28,30,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid rgba(255,255,255,.14);z-index:3}
 .cam-nl{display:flex;justify-content:flex-start}.cam-nr{display:flex;justify-content:flex-end;gap:6px;align-items:center}
@@ -7018,7 +7061,7 @@ function inkLayer(X) {
   const renderTo = (gg, w) => {
     gg.setTransform(1, 0, 0, 1, 0, 0); gg.clearRect(0, 0, w.width, w.height); const m = M(); const f = w.width / 1600;
     gg.setTransform(f * m.s, 0, 0, f * m.s, f * m.x, f * m.y); gg.translate(0, -(X.off ? X.off() : 0));
-    (store[st.key] || []).forEach(s => inkDraw(gg, s)); if (st.cur) inkDraw(gg, st.cur);
+    (store[st.key] || []).forEach(s => inkDraw(gg, s)); if (st.cur) inkDraw(gg, st.cur); if (st.rl && st.rl.key === st.key && st.rl.s) inkDraw(gg, st.rl.s);
     if (st.lz.length) { const now = performance.now(); const L = st.lz.filter(p => now - p.t < 650);
       gg.save(); gg.lineCap = gg.lineJoin = 'round'; for (let i = 1; i < L.length; i++) { const a = 1 - (now - L[i].t) / 650; gg.strokeStyle = `rgba(255,40,40,${(a * 0.85).toFixed(3)})`; gg.lineWidth = 4 + 8 * a; gg.beginPath(); gg.moveTo(L[i - 1].x, L[i - 1].y); gg.lineTo(L[i].x, L[i].y); gg.stroke(); }
       const p = L[L.length - 1]; if (p) { gg.shadowColor = 'rgba(255,0,0,.9)'; gg.shadowBlur = 18; gg.fillStyle = '#FF2A2A'; gg.beginPath(); gg.arc(p.x, p.y, 9, 0, 7); gg.fill(); } gg.restore(); }
@@ -7065,7 +7108,7 @@ function inkLayer(X) {
     st.down = false;
     if (erased) { if (erased.length) H().push({ t: 'del', L: erased }); erased = null; changed(); return; }
     const s = st.cur; if (!s) return; st.cur = null;
-    if (!(s.t !== 'pen' && s.t !== 'hl' && Math.hypot(s.p[2] - s.p[0], s.p[3] - s.p[1]) < 4)) { list().push(s); H().push({ t: 'add', s }); }
+    if (!(s.t !== 'pen' && s.t !== 'hl' && Math.hypot(s.p[2] - s.p[0], s.p[3] - s.p[1]) < 4)) { s.k = Math.random().toString(36).slice(2, 9); list().push(s); H().push({ t: 'add', s }); }
     changed();
   };
   cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('pointerleave', () => { if (st.laser && !st.down) { /* Spur verblasst von selbst */ } });
@@ -7094,6 +7137,17 @@ function inkLayer(X) {
     slide: s => { st.key = inkKey(s); st.cur = null; erased = null; draw(); sync(); },
     toggle: () => setOn(!st.on), laser: () => setLaser(!st.laser), on: setOn, undo,
     active: () => st.on || st.laser,
+    // Striche vom Companion (iPad): hinzufügen, entfernen, leeren, laufender Strich, Laser
+    remote: {
+      keyed: k => { const L = store[k] || []; L.forEach(x => { if (!x.k) x.k = Math.random().toString(36).slice(2, 9); }); return L; },
+      op: (k, m) => { const L = (store[k] = store[k] || []);
+        if (m.op === 'live') { st.rl = m.s && Array.isArray(m.s.p) ? { key: k, s: m.s } : null; draw(); return; }
+        if (m.op === 'add' && m.s && Array.isArray(m.s.p) && m.s.p.length < 20000) { if (!L.some(x => x.k && x.k === m.s.k)) L.push(m.s); st.rl = null; }
+        else if (m.op === 'rm') { const ks = new Set(m.ks || []); store[k] = L.filter(x => !ks.has(x.k)); }
+        else if (m.op === 'clr') { if (L.length) H().push({ t: 'clr', L: L.slice() }); store[k] = []; }
+        draw(); sync(); X.saved(true); },
+      laser: (k, x, y) => { if (k !== st.key) return; st.lz.push({ x, y, t: performance.now() }); if (st.lz.length > 80) st.lz.splice(0, st.lz.length - 80); if (!st.raf) st.raf = requestAnimationFrame(laserLoop); }
+    },
     eats: e => !!((st.on || st.laser) && e.target.closest('.pr-ink, .pr-pen')) || !!e.target.closest('.pr-pen'),
     destroy: () => { cancelAnimationFrame(st.raf); }
   };
@@ -7138,7 +7192,7 @@ function openPres(start, opts = {}) {
   const boardT = kind => (BOARD.open && BOARD.kind === kind ? boardSet(false) : boardSet(true, kind));
   const pkSave = () => { if (!pkOn) return; const L = inkStore.pk || []; if (!L.length && BOARD.pk.h <= 900 && !BOARD.pk.own) delete state.sheet.pk; else state.sheet.pk = { ink: L, h: BOARD.pk.h, ...(BOARD.pk.own ? { lab: BOARD.pk.own } : {}) }; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
   const inkStore = { ...(pkOn && Array.isArray(pkSaved.ink) ? { pk: pkSaved.ink.filter(x => x && Array.isArray(x.p)).slice(0, 3000) } : {}) };
-  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: () => { if (curSl().id === 'pk') pkSave(); },
+  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: remote => { if (curSl().id === 'pk') pkSave(); if (!remote) lfcPushSoon(); },
     addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
     off: () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2.sy || 0 : 0; },
     setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
@@ -7292,13 +7346,14 @@ function openPres(start, opts = {}) {
     fit(); TBo.slide(P.i); INK.slide(sl); INK.on(sl.k === 'blank'); ov.classList.toggle('pr-blankcur', sl.k === 'blank'); ov.classList.toggle('pr-pkcur', !!sl.pk); hsSync();
     warnClose();
     if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
+    lfcHb();
   };
   // Tafel nach unten erweitern; rechts erscheint eine Scrollleiste
   const bl = () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2 : null; };
   const hsSync = () => { const hs = $p('.pr-vscroll'); if (!hs) return; const b2 = bl(); const H = b2 ? b2.h || 900 : 900; hs.hidden = !b2 || H <= 900; if (hs.hidden) return; const th = hs.firstElementChild; th.style.height = (900 / H * 100).toFixed(3) + '%'; th.style.top = ((b2.sy || 0) / H * 100).toFixed(3) + '%'; };
   const blankScroll = y => { const b2 = bl(); if (!b2) return; b2.sy = Math.round(Math.max(0, Math.min((b2.h || 900) - 900, y))); const d = slide.querySelector('.pr-blank'); if (d) d.style.backgroundPosition = inkBgPos(b2) || '0 0';
     if (awOk()) { const ad = AW.document.querySelector('.pr-slide .pr-blank'); if (ad) ad.style.backgroundPosition = inkBgPos(b2) || '0 0'; }
-    [slide, awOk() ? AW.document.querySelector('.pr-slide') : null].forEach(r => { const q = r && r.querySelector('.pr-pk-in'); if (q) q.style.transform = `translateY(${-b2.sy}px)`; }); hsSync(); INK.draw(); };
+    [slide, awOk() ? AW.document.querySelector('.pr-slide') : null].forEach(r => { const q = r && r.querySelector('.pr-pk-in'); if (q) q.style.transform = `translateY(${-b2.sy}px)`; }); hsSync(); INK.draw(); lfcHb(); };
   const blankMore = () => { const b2 = bl(); if (!b2) return; b2.h = (b2.h || 900) + 900; if (b2.id === 'pk') { const q = slide.querySelector('.pr-pk-in'); if (q) q.style.height = b2.h + 'px'; pkSave(); } const from = b2.sy || 0, to = Math.min(b2.h - 900, from + 680), t0 = performance.now();
     const step = t => { const f = Math.min(1, (t - t0) / 350); blankScroll(from + (to - from) * (1 - Math.pow(1 - f, 3))); if (f < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); };
   stage.addEventListener('wheel', e => { const b2 = bl(); if (!b2 || (b2.h || 900) <= 900) return; e.preventDefault(); const k = slide.getBoundingClientRect().height / 900 || 1; blankScroll((b2.sy || 0) + e.deltaY / k); }, { passive: false });
@@ -7309,7 +7364,7 @@ function openPres(start, opts = {}) {
     [stage, awOk() ? AW.document.querySelector('.pr-stage') : null].forEach(st => { const o = st && st.querySelector(':scope > .pr-blackout'); if (o) o.remove(); });
     if (BL && tgt) tgt.insertAdjacentHTML('beforeend', `<div class="pr-blackout ${BL}"></div>`);
     ov.querySelectorAll('[data-p="black"]').forEach(b => { b.setAttribute('aria-pressed', String(!!BL)); b.textContent = BL === 'w' ? 'Weiß ✓' : BL ? 'Schwarz ✓' : 'Schwarz'; });
-    if (BL && tgt !== stage) toast(BL === 'w' ? 'Beamer weiß – deine Ansicht bleibt. Komma oder der Knopf hebt es auf.' : 'Beamer schwarz – deine Ansicht bleibt. Punkt oder der Knopf hebt es auf.');
+    lfcHb(); if (BL && tgt !== stage) toast(BL === 'w' ? 'Beamer weiß – deine Ansicht bleibt. Komma oder der Knopf hebt es auf.' : 'Beamer schwarz – deine Ansicht bleibt. Punkt oder der Knopf hebt es auf.');
   };
   const next = () => { if (BL) { blank(BL); return; } if (BOARD.open) { boardSet(false); return; } if (P.cur < P.max) { P.cur++; apply(); } else if (P.i < S.length - 1) { P.i++; show(); } };
   const prev = () => { if (BL) { blank(BL); return; } if (BOARD.open) { boardSet(false); return; } if (P.cur > 0) { P.cur--; apply(); } else if (P.i > 0) { P.i--; show(); P.cur = P.max; apply(); } };
@@ -7399,6 +7454,12 @@ function openPres(start, opts = {}) {
     ov.insertAdjacentHTML('beforeend', '<div class="lf-pan" hidden role="dialog" aria-label="Fotos dieser Stunde"><div class="lf-ph"><b>📷 Fotos dieser Stunde</b><button type="button" data-lf="x" aria-label="Schließen">×</button></div><div class="lf-body"></div></div>');
   }
   function foPan() { return $p('.lf-pan'); }
+  // Zustand für das Companion-Gerät
+  var LFC = LFC || { sid: Math.random().toString(36).slice(2, 10), t: 0, pt: 0 };
+  function lfcState() { const pk = BOARD.pk; return { t: 'pres', sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
+  function lfcHb() { if (!foOn || !LFC) return; clearTimeout(LFC.t); LFC.t = setTimeout(() => { if (document.body.contains(ov)) fotoSend(lfcState()); }, 120); }
+  function lfcFull(key) { if (!foOn) return; fotoSend({ t: 'bfull', key, ink: INK.remote.keyed(key === 'pk' ? 'pk' : BOARD.s.id) }); }
+  function lfcPushSoon() { if (!foOn || !LFC || !BOARD.open) return; const k = BOARD.kind; clearTimeout(LFC.pt); LFC.pt = setTimeout(() => lfcFull(k), 300); }
   function foBadge() { const n = FO.list.filter(f => f._new).length; ov.querySelectorAll('.pr-fobadge').forEach(i => { i.hidden = !n; i.textContent = n; }); ov.querySelectorAll('.pr-fobtn').forEach(b => b.classList.toggle('has-new', !!n)); sideKey = ''; refSide(); }
   function foRender() { const p = foPan(); if (!p || p.hidden) return; const bd = p.querySelector('.lf-body'); bd.innerHTML = fotoPanelHTML(state.sheet.id, FO.list, 'pres'); fotoThumbs(bd); }
   async function foLoad() { try { const L = await fotoList(state.sheet.id); const old = new Map(FO.list.map(f => [f.id, f])); FO.list = L.map(f => ({ ...f, _new: old.has(f.id) ? !!old.get(f.id)._new : FO.loaded })); FO.loaded = true; } catch (err) { console.error(err); } foBadge(); foRender(); }
@@ -7423,6 +7484,21 @@ function openPres(start, opts = {}) {
         if (bi && BOARD.open && BOARD.kind === 'foto') fotoUrl(bi.path).then(u => { bi.u = u; BOARD.foto.live = null; if (BOARD.open && BOARD.kind === 'foto') show(); }).catch(() => {}); foRender(); sideKey = ''; refSide(); }
     });
     ov.addEventListener('lw-close', () => off(), { once: true });
+    // Companion (iPad/Handy mit demselben Konto): Lebenszeichen der Präsentation, Tafel-Striche, Fernbedienung
+    const offL = fotoListen(m => {
+      if (!document.body.contains(ov)) return;
+      const key = m.key === 'pk' && pkOn ? 'pk' : 'tafel', bk = key === 'pk' ? BOARD.pk : BOARD.s, ik = key === 'pk' ? 'pk' : BOARD.s.id, cur = BOARD.open && BOARD.kind === key;
+      if (m.t === 'hi') { fotoSend(lfcState()); lfcFull('tafel'); if (pkOn) lfcFull('pk'); }
+      else if (m.t === 'board') { if (m.kind === 'pk' && !pkOn) return; const k2 = m.kind === 'pk' ? 'pk' : 'tafel'; if (m.on && !(BOARD.open && BOARD.kind === k2)) boardSet(true, k2); else if (!m.on && BOARD.open && BOARD.kind === k2) boardSet(false); else lfcHb(); }
+      else if (m.t === 'bop') { INK.remote.op(ik, m); if (key === 'pk' && m.op !== 'live') pkSave(); }
+      else if (m.t === 'blas') INK.remote.laser(ik, +m.x || 0, +m.y || 0);
+      else if (m.t === 'bsy') { const y = Math.round(Math.max(0, Math.min((bk.h || 900) - 900, +m.sy || 0))); if (cur) blankScroll(y); else { bk.sy = y; lfcHb(); } }
+      else if (m.t === 'bmore') { if (cur) blankMore(); else { bk.h = (bk.h || 900) + 900; if (key === 'pk') pkSave(); lfcHb(); } }
+      else if (m.t === 'bpat') { if (INK_PATS[m.pat]) { BOARD.s.pat = m.pat; if (BOARD.open && BOARD.kind === 'tafel') show(); else lfcHb(); } }
+      else if (m.t === 'nav') { if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); }
+    });
+    const hbI = setInterval(() => fotoSend(lfcState()), 4000);
+    ov.addEventListener('lw-close', () => { offL(); clearInterval(hbI); fotoSend({ t: 'presend', sid: LFC.sid }); }, { once: true });
     // Mausrad zoomt ein einzelnes Foto auch hier
     stage.addEventListener('wheel', e => { if (!(BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1)) return; e.preventDefault(); const v = BOARD.foto.view; BOARD.foto.view = { cx: v.cx, cy: v.cy, s: Math.max(1, Math.min(8, (v.s || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15))) }; foUpd(); }, { passive: false });
   }
@@ -12379,7 +12455,7 @@ function updateAccountUI() { $('#btn-login').hidden = !(store.sb && !store.user)
 
 /* ---------- Blätter aus diesem Browser in die Online-Ablage ---------- */
 function offerMigration() {
-  if (CAM_ID) return;
+  if (COMPANION_PAGE()) return;
   if (!backend || backend.kind !== 'supabase') return;
   const n = Object.keys(localLib()).length; if (!n) return;
   toast(`${n} ${n === 1 ? 'Blatt liegt' : 'Blätter liegen'} noch nur in diesem Browser`, 'Online übernehmen', migrateLocal);
@@ -12468,7 +12544,7 @@ function applyKlassen() {
   renderTabs(); if (state.libOpen) renderLib();
 }
 // Ohne Anmeldung, aber mit Online-Ablage: erst anmelden lassen (die Einrichtung folgt nur für neue Konten)
-function maybeSetup(afterLogin) { if (CAM_ID) return; if (!state.klReady || !state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
+function maybeSetup(afterLogin) { if (COMPANION_PAGE()) return; if (!state.klReady || !state.needSetup || state.dlg) return; if (!afterLogin && store.sb && !store.user) { openDlg('login'); return; } openKlassen(true); }
 function openKlassen(setup, addFach) {
   const rows = (setup || addFach ? [] : KLASSEN).map(k => ({ ...k }));
   if (addFach) rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: FAECHER[addFach].course, school: (KLASSEN.find(x => x.fach === addFach) || KLASSEN[KLASSEN.length - 1] || {}).school || '', accent: ({ deutsch: 'tinte', gp: 'wein', bio: 'petrol', en: 'wein', es: 'graphit' })[addFach] || Object.keys(ACCENTS)[FACH_ORDER.indexOf(addFach) % Object.keys(ACCENTS).length], anrede: (KLASSEN[KLASSEN.length - 1] || {}).anrede, fach: addFach }, rows.length));
@@ -15075,6 +15151,7 @@ async function fotoUpload(sheetId, file, pre) {
   const up = await store.sb.storage.from(FOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: false }); if (up.error) throw up.error;
   const r = await store.sb.from('ab_fotos').insert({ sheet_id: sheetId, path, w, h }).select(FOTO_COLS).single(); if (r.error) throw r.error; return r.data;
 }
+const tafelUrl = () => { const u = new URL(location.protocol === 'https:' && !isFramed ? location.href : 'https://moritzbauer171-art.github.io/Abbaukasten/'); u.search = '?tafel'; u.hash = ''; return u.href; };
 const camUrl = sheetId => { const u = new URL(location.protocol === 'https:' && !isFramed ? location.href : 'https://moritzbauer171-art.github.io/Abbaukasten/'); u.search = '?kamera=' + encodeURIComponent(sheetId); u.hash = ''; return u.href; };
 // Ansicht (Zoom) und Striche eines Fotos: Zoomstufe s ≥ 1 und Mittelpunkt cx/cy als Anteil des Bildes; Striche in Bildanteilen
 // Zoom nutzt die ganze Bildfläche: ist das vergrößerte Foto breiter (höher) als die Fläche, wird es dort verschoben, sonst mittig
@@ -15082,9 +15159,9 @@ const fotoTf = (v, W, H, VW = W, VH = H) => { const s = Math.max(1, Math.min(8, 
 const fotoInkSvg = (ink, w, h) => { const H = Math.round(1000 * h / w); return `<svg class="lf-ink" viewBox="0 0 1000 ${H}" preserveAspectRatio="none" aria-hidden="true">${(ink || []).map(s => `<polyline points="${(s.p || []).map((v, i) => (i % 2 ? v * H : v * 1000).toFixed(1)).join(' ')}" stroke="${/^#[0-9a-f]{6}$/i.test(s.c) ? s.c : '#E5484D'}" stroke-width="${Math.max(1, Math.min(40, +s.w || 6))}"${s.h ? ' stroke-opacity=".42"' : ''} fill="none" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</svg>`; };
 
 // ---------- Kameramodus auf iPad/Handy (?kamera=<Stunde>) ----------
-function camInit() {
-  document.body.classList.add('cam-mode');
-  try { const vp = document.querySelector('meta[name="viewport"]'); if (vp) vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; let tc = document.querySelector('meta[name="theme-color"]'); if (!tc) { tc = document.createElement('meta'); tc.name = 'theme-color'; document.head.appendChild(tc); } tc.content = '#1c1c1e'; } catch {}
+function camInit(SID = CAM_ID, O = {}) {
+  if (!O.host) document.body.classList.add('cam-mode');
+  if (!O.host) try { const vp = document.querySelector('meta[name="viewport"]'); if (vp) vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; let tc = document.querySelector('meta[name="theme-color"]'); if (!tc) { tc = document.createElement('meta'); tc.name = 'theme-color'; document.head.appendChild(tc); } tc.content = '#1c1c1e'; } catch {}
   // iPad-App-Aufbau: Navigationsleiste oben, Bühne, Werkzeugleiste unten (mit Rand für Home-Balken und Kamera)
   const I = {
     back: '<path d="M15 5l-7 7 7 7"/>', fs: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', fsx: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
@@ -15101,7 +15178,7 @@ function camInit() {
   };
   const ic = (k, s = 24) => `<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]}</svg>`;
   const root = el(`<div id="cam-root"><nav class="cam-nav"><div class="cam-nl"></div><div class="cam-nt"><b>Fotos</b><small class="cam-t">wird geladen …</small></div><div class="cam-nr"></div></nav><main class="cam-m"></main><div class="cam-tip" hidden></div><footer class="cam-bar"></footer></div>`);
-  document.body.appendChild(root); const main = root.querySelector('.cam-m'), bar = root.querySelector('.cam-bar'), nl = root.querySelector('.cam-nl'), nr = root.querySelector('.cam-nr'), nb = root.querySelector('.cam-nt b');
+  if (O.host) root.classList.add('in-hub'); (O.host || document.body).appendChild(root); const main = root.querySelector('.cam-m'), bar = root.querySelector('.cam-bar'), nl = root.querySelector('.cam-nl'), nr = root.querySelector('.cam-nr'), nb = root.querySelector('.cam-nt b');
   let fotos = [], cur = null, view = { s: 1, cx: 0.5, cy: 0.5 }, shown = false, title = '';
   const msg = h => { main.innerHTML = `<div class="cam-msg">${h}</div>`; bar.innerHTML = ''; };
   const nav = (left, head, right) => { const tp = root.querySelector('.cam-tip'); if (tp) tp.hidden = true; nl.innerHTML = left || ''; nb.textContent = head; nr.innerHTML = right || ''; };
@@ -15109,7 +15186,7 @@ function camInit() {
   let tipT = 0; const tip = (k, t) => { let n = 0; try { n = +localStorage.getItem('abw.camtip.' + k) || 0; } catch {} if (n >= 3) return; try { localStorage.setItem('abw.camtip.' + k, n + 1); } catch {} const e = root.querySelector('.cam-tip'); e.textContent = t; e.hidden = false; clearTimeout(tipT); tipT = setTimeout(() => { e.hidden = true; }, 4200); };
   // Vollbild: auf dem iPad über die Vollbild-Schnittstelle, beim ersten Antippen automatisch; auf dem iPhone geht das nur über „Zum Home-Bildschirm“
   const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
-  const fsCan = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone;
+  const fsCan = () => !O.host && !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone;
   const fsGo = on => { try { if (on) { const d = document.documentElement; const p = (d.requestFullscreen || d.webkitRequestFullscreen).call(d); if (p && p.catch) p.catch(() => {}); } else (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch {} };
   const fsPref = () => { try { return localStorage.getItem('abw.camfs') !== '0'; } catch { return true; } };
   const fsBtn = () => (fsCan() ? `<button type="button" class="cam-nb ic" data-c="fs" aria-label="${fsEl() ? 'Vollbild beenden' : 'Vollbild'}">${ic(fsEl() ? 'fsx' : 'fs', 22)}</button>` : '');
@@ -15117,9 +15194,9 @@ function camInit() {
   root.addEventListener('pointerdown', () => { if (fsCan() && fsPref() && !fsEl() && !root.dataset.fsTried) { root.dataset.fsTried = '1'; fsGo(true); } }, { capture: true });
   const ready = async () => {
     if (!store.user) { nav('', 'LehrWerk', ''); msg('<p>Bitte melde dich mit deinem LehrWerk-Konto an.</p><button type="button" class="cam-btn" data-c="login">Anmelden</button>'); return; }
-    try { const r = await store.sb.from('ab_arbeitsblaetter').select('title').eq('id', CAM_ID).maybeSingle(); title = (r.data && r.data.title) || 'Stunde'; } catch { title = 'Stunde'; }
+    try { const r = await store.sb.from('ab_arbeitsblaetter').select('title').eq('id', SID).maybeSingle(); title = (r.data && r.data.title) || 'Stunde'; } catch { title = 'Stunde'; }
     root.querySelector('.cam-t').textContent = title; fotoChannel();
-    try { fotos = await fotoList(CAM_ID); } catch { fotos = []; }
+    try { fotos = await fotoList(SID); } catch { fotos = []; }
     list();
   };
   // Übersicht: Raster der Fotos, unten Auslöser (Kamera) und Mediathek
@@ -15134,7 +15211,7 @@ function camInit() {
     main.querySelectorAll('img[data-p]').forEach(async im => { try { im.src = await fotoUrl(im.dataset.p); } catch {} });
     bar.querySelectorAll('input[type="file"]').forEach(inp => inp.addEventListener('change', async e => {
       const fs = [...(e.target.files || [])]; if (!fs.length) return;
-      try { let last = null; for (const f of fs) { const pre = await camEdit(f); if (!pre) continue; nav('', 'Fotos', ''); msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>'); last = await fotoUpload(CAM_ID, null, pre); fotos.push(last); fotoSend({ t: 'new', sheet: CAM_ID, id: last.id }); } if (last) open(last.id); else list(); }
+      try { let last = null; for (const f of fs) { const pre = await camEdit(f); if (!pre) continue; nav('', 'Fotos', ''); msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>'); last = await fotoUpload(SID, null, pre); fotos.push(last); fotoSend({ t: 'new', sheet: SID, id: last.id }); } if (last) open(last.id); else list(); }
       catch (err) { console.error(err); msg(`<p>Das Hochladen hat nicht geklappt.</p><p class="cam-err">${esc(err.message || String(err))}</p><button type="button" class="cam-btn" data-c="back">Zurück</button>`); }
     }));
     tip('list', 'Neue Fotos erscheinen in der Präsentation zuerst nur bei dir. Auf den Beamer kommen sie mit „Zeigen“.');
@@ -15234,14 +15311,14 @@ function camInit() {
     v.addEventListener('pointerup', up); v.addEventListener('pointercancel', up);
   };
   window.addEventListener('resize', () => lay());
-  const reshow = () => { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] }); };
+  const reshow = () => { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: SID, v: view, ink: cur.ink || [] }); };
   root.addEventListener('click', async e => {
     const b = e.target.closest('[data-c]'); if (!b) return; const c = b.dataset.c;
     if (c === 'login') openDlg('login');
     else if (c === 'fs') { const on = !fsEl(); try { localStorage.setItem('abw.camfs', on ? '1' : '0'); } catch {} fsGo(on); }
-    else if (c === 'back') { if (shown) fotoSend({ t: 'hide' }); try { fotos = await fotoList(CAM_ID); } catch {} list(); }
+    else if (c === 'back') { if (shown) fotoSend({ t: 'hide' }); try { fotos = await fotoList(SID); } catch {} list(); }
     else if (c === 'open') open(b.dataset.id);
-    else if (c === 'show') { shown = !shown; showSync(); fotoSend(shown ? { t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] } : { t: 'hide' }); }
+    else if (c === 'show') { shown = !shown; showSync(); fotoSend(shown ? { t: 'show', id: cur.id, sheet: SID, v: view, ink: cur.ink || [] } : { t: 'hide' }); }
     else if (c === 'tool') { tool = b.dataset.v; toolSync(); if (tool === 'laser' && !shown) tip('laser', 'Den Laser sieht die Klasse, sobald das Foto auf dem Beamer läuft („Zeigen“ oben rechts).'); }
     else if (c === 'col') { if (tool === 'hl') colH = b.dataset.v; else colP = b.dataset.v; toolSync(); }
     else if (c === 'undo') { if (cur.ink && cur.ink.length) { cur.ink.pop(); inkDraw(); saveInk(); } }
@@ -15257,7 +15334,7 @@ function camInit() {
   // warten, bis die Anmeldung geklärt ist
   let last = null; const poll = setInterval(() => { const u = store.user ? store.user.id : (store.sb ? 'none' : null); if (u && u !== last) { last = u; ready(); } }, 400);
   setTimeout(() => { if (!store.sb && !last) msg('<p>LehrWerk ist gerade nicht erreichbar. Bitte prüfe die Internetverbindung.</p>'); }, 12000);
-  void poll;
+  return { destroy: () => { clearInterval(poll); root.remove(); } };
 }
 
 
@@ -15267,7 +15344,7 @@ function fotoPanelHTML(sheetId, fotos, mode) {
   return `<div class="lf-qr">${qr ? `<img src="${qr}" alt="QR-Code zum Kameramodus">` : ''}<div><b>Mit iPad oder Handy scannen</b><small>Dort mit deinem Konto angemeldet, öffnet sich die Kamera für diese Stunde. Fotos werden nach 14 Tagen gelöscht.</small></div></div>
     ${fotos.length ? `<div class="lf-bar"><b>${fotos.length} Foto${fotos.length === 1 ? '' : 's'}</b>${mode === 'pres' && fotos.length > 1 ? '<button type="button" class="lf-b" data-lf="showall">Alle zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="dlall">Alle herunterladen</button></div>
     <div class="lf-grid">${fotos.map((f, i) => `<div class="lf-it${f._new ? ' new' : ''}" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><div class="lf-ia">${mode === 'pres' ? '<button type="button" class="lf-b pri" data-lf="show">Zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="rot" title="Um 90° nach rechts drehen" aria-label="Drehen">⟳</button><button type="button" class="lf-b" data-lf="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="lf-b" data-lf="keep" aria-pressed="${!!f.keep}" title="${f.keep ? 'Wird nicht automatisch gelöscht' : 'Nicht nach 14 Tagen löschen'}">${f.keep ? '★' : '☆'}</button><button type="button" class="lf-b" data-lf="del" title="Löschen" aria-label="Löschen">×</button></div><small>${fotoLeft(f)}</small></div>`).join('')}</div>`
-    : '<p class="lf-empty">Noch keine Fotos zu dieser Stunde.</p>'}`;
+    : '<p class="lf-empty">Noch keine Fotos zu dieser Stunde.</p>'}${mode === 'pres' ? `<p class="lf-tafel"><b>iPad als Tafel, ohne QR-Code:</b> Ist LehrWerk auf dem iPad oder Handy offen und angemeldet, erscheint dort während der Präsentation „Als Tafel verbinden“. Fester Einstieg zum Ablegen auf dem Home-Bildschirm: <span>${esc(tafelUrl())}</span></p>` : ''}`;
 }
 async function fotoPanelAct(e, root, sheetId, fotos, rerender, onShow) {
   const b = e.target.closest('[data-lf]'); if (!b) return false; const a = b.dataset.lf; const it = b.closest('[data-id]'); const f = it && fotos.find(x => x.id === it.dataset.id);
@@ -15306,6 +15383,206 @@ function fotoSlideHTML(s) {
   }
   const cols = it.length <= 2 ? 2 : 3, rows = Math.ceil(it.length / cols), g = 16, cw = (1600 - g * (cols + 1)) / cols, ch = (900 - g * (rows + 1)) / rows;
   return `<div class="lf-slide many">${it.map((f, i) => { const c = i % cols, r = Math.floor(i / cols), bx = fotoFit(f.w || 4, f.h || 3, cw, ch); return `<div class="lf-cell" style="left:${g + c * (cw + g) + bx.l}px;top:${g + r * (ch + g) + bx.t}px;width:${bx.W}px;height:${bx.H}px"><img src="${esc(f.u || '')}" alt="Foto ${i + 1}" draggable="false">${fotoInkSvg(f.ink, f.w, f.h)}</div>`; }).join('')}<span class="lf-tag">Sicherung · ${when} Uhr</span></div>`;
+}
+
+/* ================= Companion: iPad oder Handy als Tafel, Fernbedienung und Kamera, solange am Rechner präsentiert wird ================= */
+// Kein QR-Code nötig: beide Geräte sind mit demselben Konto angemeldet und hören auf denselben privaten Live-Kanal.
+// Fester Einstieg ohne Präsentation: …/?tafel (als Symbol „LehrWerk Tafel“ auf dem Home-Bildschirm)
+const TAFEL_APP = (() => { try { return new URLSearchParams(location.search).has('tafel'); } catch { return false; } })();
+const COMPANION_PAGE = () => !!(CAM_ID || TAFEL_APP);
+const LFC_IC = {
+  tafel: '<rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M7 21l2-4M17 21l-2-4M7 9.5c1.5-1.5 3-1.5 4 0s2.5 1.5 4 0"/>',
+  pk: '<rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M12 8v12M3 8h18M6 13.5h3M7.5 12v3M15 13.5h3"/>',
+  fol: '<rect x="3" y="5" width="18" height="12" rx="1.5"/><path d="M10 8.5l4 2.5-4 2.5z" fill="currentColor"/><path d="M8 21h8"/>',
+  cam: '<path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.7l1.6-2.2h6.4L16.8 7h2.7A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/>',
+  pen: '<path d="M4 20l1.2-4.4L16.5 4.3a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8.4 18.8z"/><path d="M14.5 6.3l3.2 3.2"/>',
+  hl: '<path d="M9 14l-3 3v3h3l3-3"/><path d="M9 14l7.5-9.5a2 2 0 0 1 3 0l1 1a2 2 0 0 1 0 3L12 17z"/>',
+  er: '<path d="M8 20h12"/><path d="M4.5 15.5l9-9a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L12 18H7.5z"/><path d="M9 11l5 5"/>',
+  laser: '<circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5" opacity=".45"/>',
+  undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>', more: '<circle cx="5.5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18.5" cy="12" r="1.4" fill="currentColor"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>', tv: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>', back: '<path d="M15 5l-7 7 7 7"/>',
+  prev: '<path d="M15 5l-7 7 7 7"/>', next: '<path d="M9 5l7 7-7 7"/>', black: '<rect x="3" y="5" width="18" height="12" rx="1.5" fill="currentColor"/><path d="M8 21h8"/>',
+  fs: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', fsx: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>', wait: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/><path d="M9.5 10h.01M12 10h.01M14.5 10h.01" stroke-width="2.6"/>'
+};
+const lfcIc = (k, n = 24) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LFC_IC[k]}</svg>`;
+const lfcKey = () => Math.random().toString(36).slice(2, 9);
+function lfcStart(O = {}) {
+  if (document.getElementById('lfc-root')) return;
+  const page = !!O.page; let PR = O.pres || null, lastHb = PR ? Date.now() : 0, tab = 'tafel', cam = null;
+  const wake = keepAwake(); const offs = [];
+  const B = { tafel: { ink: [], h: 900, sy: 0, pat: 'kariert' }, pk: { ink: [], h: 900, sy: 0, q: '', lab: ['Pro', 'Contra'], either: false } };
+  const T = { tool: 'pen', col: { pen: INK_COLS[0], hl: INK_COLS[4] }, w: 'm', pen: false, live: null, las: null, panT: 0, undo: { tafel: [], pk: [] } };
+  const root = el(`<div id="lfc-root" class="${page ? 'page' : ''}"><nav class="cam-nav lfc-nav"><div class="cam-nl"></div><div class="cam-nt"><b>Tafel</b><small class="lfc-st"></small></div><div class="cam-nr"></div></nav><main class="lfc-m"></main><footer class="lfc-tabs" role="tablist"></footer></div>`);
+  document.body.appendChild(root); document.body.classList.add('lfc-on');
+  const main = root.querySelector('.lfc-m'), tabs = root.querySelector('.lfc-tabs'), nl = root.querySelector('.cam-nl'), nr = root.querySelector('.cam-nr'), nb = root.querySelector('.cam-nt b'), stl = root.querySelector('.lfc-st');
+  // Vollbild wie bei der Kamera: auf dem iPad beim ersten Antippen
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const fsCan = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone;
+  const fsGo = on => { try { if (on) { const d = document.documentElement; const p = (d.requestFullscreen || d.webkitRequestFullscreen).call(d); if (p && p.catch) p.catch(() => {}); } else (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch {} };
+  const fsBtn = () => (fsCan() ? `<button type="button" class="cam-nb ic" data-l="fs" aria-label="Vollbild">${lfcIc(fsEl() ? 'fsx' : 'fs', 22)}</button>` : '');
+  const onFs = () => { renderNav(); setTimeout(lay, 80); }; ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, onFs));
+  let fsTried = false; root.addEventListener('pointerdown', () => { if (!fsTried && fsCan() && !fsEl()) { fsTried = true; try { if (localStorage.getItem('abw.camfs') !== '0') fsGo(true); } catch { fsGo(true); } } }, { capture: true });
+  const send = m => fotoSend(m);
+  const live = () => !!PR && Date.now() - lastHb < 15000;
+  const boardOn = k => !!PR && PR.board === k;
+  const tabList = () => [['tafel', 'Tafel'], ...(PR && PR.gp ? [['pk', 'Pro / Contra']] : []), ['fol', 'Folien'], ['cam', 'Fotos']];
+  const renderTabs = () => { tabs.innerHTML = live() ? tabList().map(([k, l]) => `<button type="button" role="tab" class="lfc-tab" data-tab="${k}" aria-selected="${k === tab}">${lfcIc(k)}<span>${l}</span></button>`).join('') : ''; };
+  const renderNav = () => {
+    nl.innerHTML = `<button type="button" class="cam-nb" data-l="exit">${lfcIc('back', 22)}<span>LehrWerk</span></button>`;
+    const names = { tafel: 'Tafel', pk: 'Pro / Contra', fol: 'Folien', cam: 'Fotos' }; nb.textContent = live() ? names[tab] : 'Companion';
+    stl.textContent = live() ? '● ' + (PR.title || 'Präsentation') : 'keine Präsentation';
+    stl.classList.toggle('ok', live());
+    const bk = tab === 'tafel' || tab === 'pk' ? tab : '';
+    nr.innerHTML = fsBtn() + (live() && bk ? `<button type="button" class="cam-live${boardOn(bk) ? ' on' : ''}" data-l="beam" aria-pressed="${boardOn(bk)}">${lfcIc('tv', 18)}<span>${boardOn(bk) ? 'Auf dem Beamer' : 'Zeigen'}</span></button>` : '');
+  };
+  // ---------- Tafel und Pro/Contra: Spiegel der Beamer-Tafel mit Zeichenfläche ----------
+  const slideObj = k => (k === 'pk' ? { k: 'blank', pk: true, pat: 'weiss', id: 'pk', q: B.pk.q, lab: B.pk.lab, either: B.pk.either, h: B.pk.h, sy: B.pk.sy } : { k: 'blank', id: 'bl-tafel', pat: B.tafel.pat, h: B.tafel.h, sy: B.tafel.sy });
+  const pal = () => `<div class="lfc-pal" role="toolbar" aria-label="Werkzeuge">
+      <div class="lfc-pg">${['pen', 'hl', 'er', 'laser'].map(t => `<button type="button" class="lfc-pb" data-tool="${t}" aria-pressed="${T.tool === t}" aria-label="${{ pen: 'Stift', hl: 'Marker', er: 'Radierer', laser: 'Laser' }[t]}">${lfcIc(t, 22)}</button>`).join('')}</div>
+      <div class="lfc-pg lfc-cols">${INK_COLS.map(c => `<button type="button" class="lfc-col" data-col="${c}" style="--cc:${c}" aria-pressed="${(T.col[T.tool] || T.col.pen) === c}" aria-label="Farbe"></button>`).join('')}</div>
+      <div class="lfc-pg lfc-ws">${Object.entries(INK_W).map(([k, w]) => `<button type="button" class="lfc-pb" data-w="${k}" aria-pressed="${T.w === k}" aria-label="Stärke"><i style="width:${w + 4}px;height:${w + 4}px"></i></button>`).join('')}</div>
+      <div class="lfc-pg"><button type="button" class="lfc-pb" data-l="undo" aria-label="Rückgängig">${lfcIc('undo', 22)}</button><button type="button" class="lfc-pb" data-l="more" aria-label="Platz nach unten">${lfcIc('plus', 22)}</button><button type="button" class="lfc-pb" data-l="menu" aria-label="Mehr">${lfcIc('more', 22)}</button></div></div>`;
+  const renderBoard = () => {
+    const k = tab; main.innerHTML = `<div class="lfc-stage"><div class="lfc-board"><div class="lfc-sl"></div><canvas class="lfc-cv" width="2400" height="1350"></canvas><i class="lfc-dot" hidden></i><div class="lfc-vs" hidden><i></i></div></div></div>${pal()}
+      <div class="cam-scrim" hidden data-l="nomenu"></div><div class="cam-sheet" hidden role="menu"><div class="cam-sg">
+        ${k === 'tafel' ? Object.entries(INK_PATS).map(([p, l]) => `<button type="button" data-pat="${p}" role="menuitem"><span class="lfc-patv pat-${p}"></span><span>Hintergrund: ${l}</span></button>`).join('') : ''}
+        <button type="button" data-l="clr" class="red" role="menuitem"><span>${k === 'pk' ? 'Pro/Contra-Tafel' : 'Tafel'} leeren</span></button></div><div class="cam-sg"><button type="button" data-l="nomenu" class="strong"><span>Abbrechen</span></button></div></div>`;
+    lay(); bindBoard(); drawSl(); drawInk();
+  };
+  const brd = () => main.querySelector('.lfc-board');
+  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = Math.min(st.clientWidth - 24, (st.clientHeight - 16) * 16 / 9); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
+  const drawSl = () => { const s = main.querySelector('.lfc-sl'); if (!s) return; const o = slideObj(tab); s.innerHTML = `<div class="pr-slide pr-k-blank">${presSlideHTML(o, [])}</div>`; const vs = main.querySelector('.lfc-vs'); const H = o.h || 900; vs.hidden = H <= 900; if (!vs.hidden) { vs.firstChild.style.height = (900 / H * 100) + '%'; vs.firstChild.style.top = ((o.sy || 0) / H * 100) + '%'; } };
+  const drawInk = () => { const c = main.querySelector('.lfc-cv'); if (!c) return; const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height); g.setTransform(1.5, 0, 0, 1.5, 0, 0); g.translate(0, -(B[tab].sy || 0)); B[tab].ink.forEach(s => inkDraw(g, s)); if (T.live) inkDraw(g, T.live);
+    const d = main.querySelector('.lfc-dot'); if (d) { d.hidden = !T.las; if (T.las) { const b = brd().getBoundingClientRect(); d.style.transform = `translate(${T.las[0] / 1600 * b.width}px,${(T.las[1] - B[tab].sy) / 900 * b.height}px)`; } } };
+  const thr = (fn, ms) => { let t = 0, last = 0, a = null; return (...x) => { a = x; const now = Date.now(); if (now - last >= ms) { last = now; fn(...a); } else if (!t) t = setTimeout(() => { t = 0; last = Date.now(); fn(...a); }, ms - (now - last)); }; };
+  const sendLive = thr(s => send({ t: 'bop', key: tab, op: 'live', s }), 40);
+  const sendLas = thr((x, y) => send({ t: 'blas', key: tab, x: Math.round(x), y: Math.round(y) }), 25);
+  const sendSy = thr(sy => send({ t: 'bsy', key: tab, sy: Math.round(sy) }), 50);
+  const ensureBeam = () => { if (!boardOn(tab)) { send({ t: 'board', kind: tab, on: true }); if (PR) PR.board = tab; renderNav(); } };
+  const bindBoard = () => {
+    const b = brd(); const P = new Map(); let pan = null, er = null;
+    const pt = e => { const r = b.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 1600, (e.clientY - r.top) / r.height * 900 + (B[tab].sy || 0)]; };
+    const r1 = v => Math.round(v * 10) / 10;
+    const panStart = () => { const ys = [...P.values()].map(p => p.y); pan = { y: ys.reduce((a, v) => a + v, 0) / ys.length, sy: B[tab].sy || 0 }; };
+    b.addEventListener('pointerdown', e => {
+      e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch {}
+      if (e.pointerType === 'pen' && !T.pen) { T.pen = true; toast('Apple Pencil erkannt: Der Stift schreibt, der Finger verschiebt.'); }
+      P.set(e.pointerId, { x: e.clientX, y: e.clientY, type: e.pointerType });
+      const fingerPans = e.pointerType === 'touch' && (T.pen || P.size > 1);
+      if (P.size > 1 || fingerPans) { if (T.live) { T.live = null; sendLive(null); } T.las = null; er = null; panStart(); drawInk(); return; }
+      const [x, y] = pt(e);
+      if (T.tool === 'laser') { T.las = [x, y]; sendLas(x, y); drawInk(); return; }
+      if (T.tool === 'er') { er = []; eraseAt(x, y, er); return; }
+      const pr = e.pointerType === 'pen' && e.pressure > 0 && T.tool === 'pen';
+      T.live = { k: lfcKey(), t: T.tool, c: T.col[T.tool] || T.col.pen, w: INK_W[T.w], p: pr ? [r1(x), r1(y), Math.round(e.pressure * 100)] : [r1(x), r1(y)], ...(pr ? { pr: 1 } : {}) };
+      ensureBeam(); drawInk();
+    });
+    b.addEventListener('pointermove', e => {
+      if (!P.has(e.pointerId)) return; P.get(e.pointerId).x = e.clientX; P.get(e.pointerId).y = e.clientY;
+      if (pan) { const ys = [...P.values()].map(p => p.y), y = ys.reduce((a, v) => a + v, 0) / ys.length, r = b.getBoundingClientRect(); const H = B[tab].h || 900; const sy = Math.max(0, Math.min(H - 900, pan.sy - (y - pan.y) / r.height * 900)); if (sy !== B[tab].sy) { B[tab].sy = sy; T.panT = Date.now(); drawSl(); drawInk(); sendSy(sy); } return; }
+      if (T.tool === 'laser' && T.las) { const [x, y] = pt(e); T.las = [x, y]; sendLas(x, y); drawInk(); return; }
+      if (er) { const [x, y] = pt(e); eraseAt(x, y, er); return; }
+      const s = T.live; if (!s) return; const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      (evs.length ? evs : [e]).forEach(ev => { const [x, y] = pt(ev); const st2 = s.pr ? 3 : 2; const lx = s.p[s.p.length - st2], ly = s.p[s.p.length - st2 + 1]; if (Math.hypot(x - lx, y - ly) < 1.5) return; s.p.push(r1(x), r1(y)); if (s.pr) s.p.push(Math.round((ev.pressure || 0.5) * 100)); });
+      drawInk(); sendLive(s);
+    });
+    const up = e => { P.delete(e.pointerId); if (pan) { if (!P.size) pan = null; else panStart(); return; }
+      if (T.las) { T.las = null; drawInk(); }
+      if (er) { if (er.length) { T.undo[tab].push({ t: 'rm', L: er }); send({ t: 'bop', key: tab, op: 'rm', ks: er.map(x => x.k) }); } er = null; return; }
+      const s = T.live; if (!s) return; T.live = null; B[tab].ink.push(s); T.undo[tab].push({ t: 'add', k: s.k }); send({ t: 'bop', key: tab, op: 'add', s }); drawInk(); };
+    b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+  };
+  const eraseAt = (x, y, out) => { const L = B[tab].ink; for (let i = L.length - 1; i >= 0; i--) if (inkHit(L[i], x, y, 14)) { if (!L[i].k) L[i].k = lfcKey(); out.push(L[i]); L.splice(i, 1); } drawInk(); };
+  const undo = () => { const h = T.undo[tab].pop(); if (!h) return; const L = B[tab].ink;
+    if (h.t === 'add') { B[tab].ink = L.filter(x => x.k !== h.k); send({ t: 'bop', key: tab, op: 'rm', ks: [h.k] }); }
+    else (h.L || []).forEach(s => { L.push(s); send({ t: 'bop', key: tab, op: 'add', s }); });
+    drawInk(); };
+  // ---------- Folien: Fernbedienung ----------
+  const renderFol = () => {
+    main.innerHTML = `<div class="lfc-fol"><div class="lfc-fc"><small>Folie ${PR.i + 1} von ${PR.n}</small><b>${esc(PR.lab || '')}</b>${PR.nx ? `<span>Als Nächstes: ${esc(PR.nx)}</span>` : '<span>Das ist die letzte Folie.</span>'}</div>
+      <div class="lfc-fb"><button type="button" class="lfc-big" data-nav="prev" ${PR.i <= 0 ? 'disabled' : ''}>${lfcIc('prev', 40)}<span>Zurück</span></button><button type="button" class="lfc-big pri" data-nav="next">${lfcIc('next', 40)}<span>Weiter</span></button></div>
+      <div class="lfc-fr"><button type="button" class="lfc-pill${PR.bl ? ' on' : ''}" data-nav="black">${lfcIc('black', 20)}<span>${PR.bl ? 'Beamer wieder an' : 'Beamer schwarz'}</span></button>${PR.board ? `<button type="button" class="lfc-pill" data-l="boardoff">${lfcIc('tafel', 20)}<span>Tafel schließen</span></button>` : ''}</div></div>`;
+  };
+  const renderCam = () => { main.innerHTML = '<div class="lfc-camh"></div>'; if (cam) cam.destroy(); cam = camInit(PR.sheet, { host: main.querySelector('.lfc-camh') }); cam.sheet = PR.sheet; };
+  const renderWait = () => { main.innerHTML = `<div class="cam-empty lfc-wait">${lfcIc('wait', 64)}<b>Warte auf die Präsentation</b><span>Starte am Rechner „Präsentieren“. Dieses Gerät verbindet sich dann von selbst – mit deinem Konto, ohne QR-Code.</span></div>`; };
+  const render = () => {
+    if (cam && (tab !== 'cam' || !live())) { cam.destroy(); cam = null; }
+    if (!tabList().some(t => t[0] === tab)) tab = 'tafel';
+    renderNav(); renderTabs();
+    if (!live()) renderWait(); else if (tab === 'tafel' || tab === 'pk') renderBoard(); else if (tab === 'fol') renderFol(); else if (!cam || cam.sheet !== PR.sheet) renderCam();
+  };
+  const sheet = on => { const s = main.querySelector('.cam-sheet'); if (!s) return; s.hidden = !on; main.querySelector('.cam-scrim').hidden = !on; };
+  root.addEventListener('click', e => {
+    const t = e.target.closest('[data-tab]'); if (t) { tab = t.dataset.tab; render(); return; }
+    const tl = e.target.closest('[data-tool]'); if (tl) { T.tool = tl.dataset.tool; main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
+    const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') { if (T.tool !== 'pen') T.tool = 'pen'; } T.col[T.tool] = cl.dataset.col; main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
+    const w = e.target.closest('[data-w]'); if (w) { T.w = w.dataset.w; main.querySelectorAll('[data-w]').forEach(x => x.setAttribute('aria-pressed', String(x === w))); return; }
+    const pt = e.target.closest('[data-pat]'); if (pt) { sheet(false); B.tafel.pat = pt.dataset.pat; send({ t: 'bpat', pat: pt.dataset.pat }); drawSl(); return; }
+    const nv = e.target.closest('[data-nav]'); if (nv) { send({ t: 'nav', a: nv.dataset.nav }); return; }
+    const b = e.target.closest('[data-l]'); if (!b) return; const a = b.dataset.l;
+    if (a === 'exit') close(true);
+    else if (a === 'fs') { const on = !fsEl(); try { localStorage.setItem('abw.camfs', on ? '1' : '0'); } catch {} fsGo(on); }
+    else if (a === 'beam') { const on = !boardOn(tab); send({ t: 'board', kind: tab, on }); if (PR) PR.board = on ? tab : ''; renderNav(); }
+    else if (a === 'boardoff') { send({ t: 'board', kind: PR.board, on: false }); }
+    else if (a === 'undo') undo();
+    else if (a === 'more') { B[tab].h = (B[tab].h || 900) + 900; B[tab].sy = Math.min(B[tab].h - 900, (B[tab].sy || 0) + 680); T.panT = Date.now(); send({ t: 'bmore', key: tab }); setTimeout(() => sendSy(B[tab].sy), 420); drawSl(); drawInk(); }
+    else if (a === 'menu') sheet(true);
+    else if (a === 'nomenu') sheet(false);
+    else if (a === 'clr') { sheet(false); if (!B[tab].ink.length || !confirm('Alles auf dieser Tafel löschen? Das sieht man sofort auch auf dem Beamer.')) return; T.undo[tab].push({ t: 'rm', L: B[tab].ink.slice() }); send({ t: 'bop', key: tab, op: 'clr' }); B[tab].ink = []; drawInk(); }
+  });
+  window.addEventListener('resize', lay);
+  // ---------- Live-Kanal ----------
+  const takePres = m => {
+    const was = live(), oldSheet = PR && PR.sheet, oldGp = PR && PR.gp, oldBoard = PR && PR.board, oldI = PR && PR.i, oldBl = PR && PR.bl; PR = m; lastHb = Date.now();
+    const panning = Date.now() - T.panT < 900;
+    if (m.tafel) { B.tafel.h = m.tafel.h || 900; B.tafel.pat = m.tafel.pat || 'kariert'; if (!panning) B.tafel.sy = m.tafel.sy || 0; }
+    if (m.pk) { Object.assign(B.pk, { q: m.pk.q || '', lab: m.pk.lab || ['Pro', 'Contra'], either: !!m.pk.either, h: m.pk.h || 900 }); if (!panning) B.pk.sy = m.pk.sy || 0; }
+    if (!was || oldSheet !== m.sheet || oldGp !== m.gp) { if (oldSheet !== m.sheet) { B.tafel.ink = []; B.pk.ink = []; T.undo = { tafel: [], pk: [] }; send({ t: 'hi' }); } render(); return; }
+    renderNav(); if (tab === 'fol' && (oldI !== m.i || oldBoard !== m.board || oldBl !== m.bl)) renderFol(); if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
+  };
+  offs.push(fotoListen(m => {
+    if (m.t === 'pres') takePres(m);
+    else if (m.t === 'presend') { lastHb = 0; if (!page) { close(false); toast('Die Präsentation wurde beendet.'); } else render(); }
+    else if (m.t === 'bfull' && B[m.key] && Array.isArray(m.ink)) { B[m.key].ink = m.ink; if (tab === m.key && !T.live) drawInk(); }
+  }));
+  const hbChk = setInterval(() => { if (PR && !live() && main.querySelector('.lfc-stage, .lfc-fol, .lfc-camh')) render(); }, 3000);
+  const hello = setInterval(() => { if (!live()) send({ t: 'hi' }); }, 6000);
+  send({ t: 'hi' }); render();
+  function close(manual) { clearInterval(hbChk); clearInterval(hello); offs.forEach(f => f()); if (cam) cam.destroy(); wake(); ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.removeEventListener(ev, onFs)); window.removeEventListener('resize', lay);
+    if (page) { location.href = location.pathname; return; }
+    root.remove(); document.body.classList.remove('lfc-on'); if (fsEl()) fsGo(false); if (manual && PR) lfcBan.skip = PR.sid; }
+  return { close };
+}
+// Hinweis im normalen LehrWerk: „Präsentation läuft – als Tafel verbinden“
+const lfcBan = { el: null, skip: '', last: null, t: 0 };
+// Seite „LehrWerk Tafel“ (…/?tafel): ohne Manifest, damit „Zum Home-Bildschirm“ genau diese Adresse speichert
+function lfcPage() {
+  document.body.classList.add('cam-mode');
+  const add = (tag, at) => { const n = document.createElement(tag); Object.entries(at).forEach(([k, v]) => n.setAttribute(k, v)); document.head.appendChild(n); };
+  try { const vp = document.querySelector('meta[name="viewport"]'); if (vp) vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; } catch {}
+  add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' }); add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }); add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
+  add('meta', { name: 'apple-mobile-web-app-title', content: 'LehrWerk Tafel' }); add('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }); add('meta', { name: 'theme-color', content: '#1c1c1e' }); document.title = 'LehrWerk Tafel';
+  const go = setInterval(() => { if (store.user && fotoOK()) { clearInterval(go); lfcStart({ page: true }); } else if (store.sb && !store.user && !state.dlg) openDlg('login'); }, 500);
+}
+function lfcWatch() {
+  let on = false;
+  const hide = () => { if (lfcBan.el) { lfcBan.el.remove(); lfcBan.el = null; } };
+  const show = m => {
+    if (lfcBan.el) { lfcBan.el.querySelector('b').textContent = m.title || 'Präsentation'; return; }
+    lfcBan.el = el(`<div id="lfc-ban" role="status"><span class="lfc-bi">${lfcIc('tafel', 22)}</span><span class="lfc-bt"><small>Präsentation läuft</small><b></b></span><button type="button" class="lfc-bgo">Als Tafel verbinden</button><button type="button" class="lfc-bx" aria-label="Ausblenden">×</button></div>`);
+    lfcBan.el.querySelector('b').textContent = m.title || 'Präsentation'; document.body.appendChild(lfcBan.el);
+    lfcBan.el.querySelector('.lfc-bgo').onclick = () => { const p = lfcBan.last; hide(); lfcStart({ pres: p }); };
+    lfcBan.el.querySelector('.lfc-bx').onclick = () => { lfcBan.skip = (lfcBan.last || {}).sid || ''; hide(); };
+  };
+  const tick = setInterval(() => {
+    if (on || !fotoOK()) return; on = true; clearInterval(tick);
+    fotoListen(m => {
+      if (m.t === 'pres') { lfcBan.last = m; clearTimeout(lfcBan.t); lfcBan.t = setTimeout(hide, 15000);
+        if (document.querySelector('.pr') || document.getElementById('lfc-root') || m.sid === lfcBan.skip) { hide(); return; } show(m); }
+      else if (m.t === 'presend') { clearTimeout(lfcBan.t); hide(); }
+    });
+    fotoSend({ t: 'hi' });
+  }, 1500);
 }
 
 /* ================= Start ================= */
@@ -15659,14 +15936,15 @@ function boot() {
   const ok = cached && cached.sheet && cached.sheet.meta && Array.isArray(cached.sheet.blocks) && KL(cached.sheet.klasse).id === state.klasse;
   state.sheet = normalizeSheet(ok ? cached.sheet : draftFor(state.klasse));
   // Ganz neu (noch keine Klassen auf diesem Gerät): keine Startseite vor der Einrichtung
-  if (homeAutoDue() && (lsGet(LS_KLCACHE) || lsGet('abw.ordner')) && !DG_VIEW && !CAM_ID && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
+  if (homeAutoDue() && (lsGet(LS_KLCACHE) || lsGet('abw.ordner')) && !DG_VIEW && !COMPANION_PAGE() && !MAPPE_LOCK && !location.hash && !hmS.open) homeOpen(true);
   homeTouch(); setInterval(homeTouch, 5 * 6e4);
   renderTabs(); renderEditor(); applyResponsive(); renderPreview(); setStatus('pending');
   Promise.race([Promise.all(FONT_SPECS.map(f => document.fonts.load(f))), wait(3500)]).then(() => { fontsOK = true; renderPreview(); }).catch(() => {});
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
   if (CAM_ID) { camInit(); return; }
-  setTimeout(hyInit, 50);
+  if (TAFEL_APP) { lfcPage(); return; }
+  setTimeout(hyInit, 50); lfcWatch();
   setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit(); mobileInit(); admInit(); foInit();
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });
