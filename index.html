@@ -9659,6 +9659,7 @@ function buildBlock(b, ctx) {
       const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body" lang="de"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
+      if (HY.fn && !poem && fm.align !== 'left' && !fm.silben) hyWords(bodyEl);
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
       const lines = []; const zw = [], zn = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
@@ -9930,6 +9931,24 @@ function layout() {
 }
 
 let renderTimer = null;
+/* Silbentrennung ohne Wörterbuch des Browsers (Windows-App/Electron hat keins): weiche Trennstriche nach deutschen Trennmustern einsetzen */
+const HY = { need: null, fn: null, busy: false };
+function hyNeed() {
+  if (HY.need !== null) return HY.need;
+  try { const d = document.createElement('div'); d.lang = 'de'; d.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;width:48px;font:16px/20px serif;-webkit-hyphens:auto;hyphens:auto;overflow-wrap:normal;word-break:normal'; d.textContent = 'Donaudampfschifffahrtsgesellschaft'; document.body.appendChild(d);
+    const h1 = d.getBoundingClientRect().height; d.style.webkitHyphens = 'manual'; d.style.hyphens = 'manual'; const h2 = d.getBoundingClientRect().height; d.remove(); HY.need = !(h1 > h2 * 1.5); } catch { HY.need = false; }
+  return HY.need;
+}
+function hyInit() {
+  if (HY.fn || HY.busy || !hyNeed()) return; HY.busy = true;
+  Promise.all([loadScript('lib/hyphen.js'), loadScript('lib/hyphen-de.js')]).then(() => { if (window.createHyphenator && window.hyphenationPatternsDe1996) { const f = window.createHyphenator(window.hyphenationPatternsDe1996, { html: false }); HY.fn = t => hyMin(f(t)); scheduleRender(0); } }).catch(err => console.warn('Silbentrennung nicht geladen', err)).finally(() => { HY.busy = false; });
+}
+// wie im Browser: mindestens 3 Buchstaben vor und nach der Trennstelle, Wörter ab 6 Buchstaben
+const hyMin = t => t.replace(/[^\s­]+(?:­[^\s­]+)+/g, w => { const parts = w.split('­'), L = w.replace(/­/g, '').length; if (L < 6) return parts.join(''); let pos = 0, out = parts[0]; pos = parts[0].length; for (let i = 1; i < parts.length; i++) { const left = pos, right = L - pos; out += (left >= 3 && right >= 3 ? '­' : '') + parts[i]; pos += parts[i].length; } return out; });
+function hyWords(root) {
+  if (!HY.fn) return; const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.parentElement && n.parentElement.closest('.gap, sup, .hy') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+  const L = []; let n; while ((n = tw.nextNode())) L.push(n); L.forEach(t => { if (/[A-Za-zÄÖÜäöüß]{6}/.test(t.nodeValue)) t.nodeValue = HY.fn(t.nodeValue); });
+}
 function scheduleRender(ms = 220) { clearTimeout(renderTimer); renderTimer = setTimeout(renderPreview, ms); }
 let MAPPE_LOCK = false, EXTRA_FONTS = [];
 function renderPreview() {
@@ -15587,6 +15606,7 @@ function boot() {
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => scheduleRender(60));
   initBackend().catch(err => { console.error(err); useBackend(localB); });
   if (CAM_ID) { camInit(); return; }
+  setTimeout(hyInit, 50);
   setupPWA(); setTimeout(newsMaybe, 1500); pvInit(); tourInit(); mobileInit(); admInit(); foInit();
   $('#home-root').addEventListener('click', homeClick); $('#home-root').addEventListener('change', e => { if (e.target.dataset.hm === 'auto') homeClick(e); });
   document.addEventListener('keydown', e => { if (hmS.open && e.key === 'Escape' && !state.dlg && !state.libOpen && !document.querySelector('.nw-ov,.rlpv')) { e.preventDefault(); homeClose(); } });

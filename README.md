@@ -215,6 +215,7 @@ Speicher: Der kostenlose Tarif erlaubt 500 MB Datenbank; ein Blatt braucht im Sc
 - `index.html`: die ganze Anwendung in einer Datei
 - `desktop/`: Windows-App (Electron) mit Bauskript
 - `supabase/schema.sql`: Tabellen `ab_arbeitsblaetter` und `ab_einstellungen` mit Zugriffsregeln für die Online-Ablage
+- `lib/hyphen.js`, `lib/hyphen-de.js`: Silbentrennung für Browser ohne eigenes Trennwörterbuch, vor allem die Windows-App (Hyphen von Yevhen Tiurin, ISC-Lizenz; deutsche Trennmuster aus TeX hyph-utf8). Wird nur geladen, wenn der Browser selbst nicht trennt; dann setzt LehrWerk weiche Trennstriche in Blocksatz-Materialtexte, mit denselben Regeln wie im Browser (mindestens 3 Buchstaben vor und nach der Trennstelle).
 - `manifest.webmanifest`, `sw.js`, `icons/`: installierbare Web-App (Startbildschirm, offline)
 
 ---
