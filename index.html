@@ -1447,6 +1447,12 @@ body.cam-mode{overflow:hidden}
 .cam-col{width:34px;height:34px;border-radius:50%;border:3px solid #101217;background:var(--cc);box-shadow:0 0 0 2px #3a3f4a;cursor:pointer}
 .cam-col[aria-pressed="true"]{box-shadow:0 0 0 3px #fff}
 .cam-sp{flex:1}
+.cam-crop{position:relative;flex:1;min-height:240px;overflow:hidden;background:#000;border-radius:12px;touch-action:none}
+.cam-crop canvas,.cam-cq{position:absolute}
+.cam-hd{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:3px solid #fff;background:rgba(79,139,255,.6);box-shadow:0 2px 8px rgba(0,0,0,.5);touch-action:none;cursor:grab}
+.cam-hd::after{content:"";position:absolute;inset:-14px;border-radius:50%}
+.cam-hd.on{background:#4F8BFF;cursor:grabbing}
+.cam-btn:disabled{opacity:.6}
 @media (max-width:600px){.cam-tb{padding:9px 10px;font-size:13.5px}.cam-seg .cam-tb{padding:9px 8px}}
 .pr-pk-in{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column}
 .pr-pk-b{flex:1 1 auto;background:linear-gradient(#1C1F27,#1C1F27) 50% 0/3px 100% no-repeat}
@@ -7398,6 +7404,8 @@ function openPres(start, opts = {}) {
       else if (m.t === 'ink') { const f = FO.list.find(x => x.id === m.id); if (f && Array.isArray(m.ink)) f.ink = m.ink; const g = foSingle(m.id); if (g && Array.isArray(m.ink)) { g.ink = m.ink; BOARD.foto.live = null; foUpd(); } }
       else if (m.t === 'las') { if (foSingle(m.id)) { BOARD.foto.las = m.off ? null : [+m.x || 0, +m.y || 0]; foUpd(); } }
       else if (m.t === 'hide') { if (BOARD.open && BOARD.kind === 'foto') boardSet(false); }
+      else if (m.t === 'upd') { const set = x => { if (x && x.id === m.id && x !== m) Object.assign(x, { path: m.path, w: m.w, h: m.h, ink: Array.isArray(m.ink) ? m.ink : x.ink }); }; FO.list.forEach(set); const bi = BOARD.foto.items.find(x => x.id === m.id); set(bi);
+        if (bi && BOARD.open && BOARD.kind === 'foto') fotoUrl(bi.path).then(u => { bi.u = u; BOARD.foto.live = null; if (BOARD.open && BOARD.kind === 'foto') show(); }).catch(() => {}); foRender(); sideKey = ''; refSide(); }
     });
     ov.addEventListener('lw-close', () => off(), { once: true });
     // Mausrad zoomt ein einzelnes Foto auch hier
@@ -14950,8 +14958,85 @@ async function fotoShrink(file, max = 2000) {
   const c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s); c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
   const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82)); return { blob, w: c.width, h: c.height };
 }
-async function fotoUpload(sheetId, file) {
-  const { blob, w, h } = await fotoShrink(file);
+// ---------- Scannen: Arbeitsblatt im Foto finden, gerade ziehen und drehen ----------
+async function fotoCanvas(src, max = 2000) {
+  let im = null;
+  if (typeof src === 'string') { im = new Image(); im.crossOrigin = 'anonymous'; await new Promise((res, rej) => { im.onload = res; im.onerror = () => rej(new Error('Bild nicht ladbar')); im.src = src; }); }
+  else { try { im = await createImageBitmap(src, { imageOrientation: 'from-image' }); } catch {} if (!im) im = await new Promise((res, rej) => { const x = new Image(); x.onload = () => res(x); x.onerror = rej; x.src = URL.createObjectURL(src); }); }
+  const w = im.naturalWidth || im.width, h = im.naturalHeight || im.height, s = Math.min(1, max / Math.max(w, h));
+  const c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); return c;
+}
+const fotoBlob = (c, q = 0.85) => new Promise(r => c.toBlob(r, 'image/jpeg', q));
+function fotoRot(c, dir) { const o = document.createElement('canvas'); o.width = c.height; o.height = c.width; const x = o.getContext('2d'); x.translate(o.width / 2, o.height / 2); x.rotate(dir * Math.PI / 2); x.drawImage(c, -c.width / 2, -c.height / 2); return o; }
+// Ecken sortieren: oben links, oben rechts, unten rechts, unten links
+const fotoQuad = P => { const s = P.map(p => p[0] + p[1]), d = P.map(p => p[0] - p[1]); const at = (a, f) => P[a.indexOf(f(...a))]; return [at(s, Math.min), at(d, Math.max), at(s, Math.max), at(d, Math.min)]; };
+// Das hellste, wenig farbige große Feld im Bild ist das Blatt; seine äußersten Punkte sind die Ecken
+function fotoDetect(c) {
+  const k = Math.min(1, 320 / Math.max(c.width, c.height)), W = Math.max(8, Math.round(c.width * k)), H = Math.max(8, Math.round(c.height * k)), N = W * H;
+  const t = document.createElement('canvas'); t.width = W; t.height = H; const x = t.getContext('2d', { willReadFrequently: true }); x.drawImage(c, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data, L = new Uint8Array(N), S = new Float32Array(N), hist = new Uint32Array(256);
+  for (let i = 0; i < N; i++) { const r = d[i * 4], g = d[i * 4 + 1], b = d[i * 4 + 2], mx = Math.max(r, g, b), mn = Math.min(r, g, b); L[i] = (0.299 * r + 0.587 * g + 0.114 * b) | 0; S[i] = mx ? (mx - mn) / mx : 0; hist[L[i]]++; }
+  let sum = 0; for (let i = 0; i < 256; i++) sum += i * hist[i];
+  let sB = 0, wB = 0, best = -1, thr = 128; for (let i = 0; i < 256; i++) { wB += hist[i]; if (!wB) continue; const wF = N - wB; if (!wF) break; sB += i * hist[i]; const mB = sB / wB, mF = (sum - sB) / wF, v = wB * wF * (mB - mF) * (mB - mF); if (v > best) { best = v; thr = i; } }
+  const M = new Uint8Array(N); for (let i = 0; i < N; i++) M[i] = L[i] > thr && S[i] < 0.38 ? 1 : 0;
+  const lab = new Int32Array(N), st = new Int32Array(N), ctr = (H >> 1) * W + (W >> 1); let id = 0, bestId = 0, bestScore = 0;
+  for (let i = 0; i < N; i++) { if (!M[i] || lab[i]) continue; id++; let n = 0, sp = 0, hit = false; st[sp++] = i; lab[i] = id;
+    while (sp) { const p = st[--sp]; n++; if (p === ctr) hit = true; const px = p % W; const nb = [px > 0 ? p - 1 : -1, px < W - 1 ? p + 1 : -1, p - W, p + W]; for (const q of nb) if (q >= 0 && q < N && M[q] && !lab[q]) { lab[q] = id; st[sp++] = q; } }
+    const sc = n * (hit ? 1.6 : 1); if (sc > bestScore) { bestScore = sc; bestId = id; } }
+  if (!bestId) return null;
+  let n = 0, a = [1e9, -1e9, -1e9, -1e9], P = [null, null, null, null];
+  for (let i = 0; i < N; i++) { if (lab[i] !== bestId) continue; n++; const px = i % W, py = (i / W) | 0, s = px + py, df = px - py;
+    if (s < a[0]) { a[0] = s; P[0] = [px, py]; } if (df > a[1]) { a[1] = df; P[1] = [px + 1, py]; } if (s > a[2]) { a[2] = s; P[2] = [px + 1, py + 1]; } if (-df > a[3]) { a[3] = -df; P[3] = [px, py + 1]; } }
+  const fr = n / N; if (fr < 0.12 || fr > 0.985) return null;
+  const Q = P.map(p => [p[0] / k, p[1] / k]); const area = Math.abs(Q.reduce((s2, p, i) => { const q = Q[(i + 1) % 4]; return s2 + p[0] * q[1] - q[0] * p[1]; }, 0)) / 2;
+  if (area < 0.1 * c.width * c.height) return null; return Q;
+}
+function fotoHomog(src, dst) {
+  const A = [], B = []; for (let i = 0; i < 4; i++) { const [x, y] = src[i], [X, Y] = dst[i]; A.push([x, y, 1, 0, 0, 0, -x * X, -y * X]); B.push(X); A.push([0, 0, 0, x, y, 1, -x * Y, -y * Y]); B.push(Y); }
+  for (let c = 0; c < 8; c++) { let m = c; for (let r = c + 1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r; [A[c], A[m]] = [A[m], A[c]]; [B[c], B[m]] = [B[m], B[c]];
+    for (let r = 0; r < 8; r++) { if (r === c) continue; const f = A[r][c] / A[c][c]; for (let k = c; k < 8; k++) A[r][k] -= f * A[c][k]; B[r] -= f * B[c]; } }
+  return B.map((b, i) => b / A[i][i]).concat(1);
+}
+// echtes Seitenverhältnis des Blatts trotz Schrägaufnahme (Zhang & He, Whiteboard-Scanning); sonst Kantenlängen
+function fotoAspect(Q, cw, ch) {
+  const u0 = cw / 2, v0 = ch / 2; const m = [Q[0], Q[1], Q[3], Q[2]].map(([x, y]) => [x - u0, y - v0, 1]);
+  const cr = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], dt = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const k2 = dt(cr(m[0], m[3]), m[2]) / dt(cr(m[1], m[3]), m[2]), k3 = dt(cr(m[0], m[3]), m[1]) / dt(cr(m[2], m[3]), m[1]);
+  const n2 = m[1].map((v, i) => k2 * v - m[0][i]), n3 = m[2].map((v, i) => k3 * v - m[0][i]);
+  let r;
+  if (Math.abs(n2[2]) < 1e-6 || Math.abs(n3[2]) < 1e-6) r = Math.sqrt((n2[0] ** 2 + n2[1] ** 2) / (n3[0] ** 2 + n3[1] ** 2));
+  else { const f2 = -(n2[0] * n3[0] + n2[1] * n3[1]) / (n2[2] * n3[2]); if (!(f2 > 0)) return null; r = Math.sqrt((n2[0] ** 2 / f2 + n2[1] ** 2 / f2 + n2[2] ** 2) / (n3[0] ** 2 / f2 + n3[1] ** 2 / f2 + n3[2] ** 2)); }
+  return isFinite(r) && r > 0.2 && r < 5 ? r : null;
+}
+function fotoWarp(c, Q, max = 2000) {
+  const ds = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]); let W = Math.max(ds(Q[0], Q[1]), ds(Q[3], Q[2])), H = Math.max(ds(Q[0], Q[3]), ds(Q[1], Q[2]));
+  { let r = fotoAspect(Q, c.width, c.height) || W / H; const A4 = Math.SQRT1_2; if (Math.abs(r / A4 - 1) < 0.09) r = A4; else if (Math.abs(r * A4 - 1) < 0.09) r = 1 / A4; const A = W * H; W = Math.sqrt(A * r); H = W / r; } // nahe an A4: genau A4
+  const s = Math.min(1, max / Math.max(W, H)); W = Math.max(8, Math.round(W * s)); H = Math.max(8, Math.round(H * s));
+  const h = fotoHomog([[0, 0], [W, 0], [W, H], [0, H]], Q); const sw = c.width, sh = c.height;
+  const src = c.getContext('2d').getImageData(0, 0, sw, sh).data; const o = document.createElement('canvas'); o.width = W; o.height = H; const ox = o.getContext('2d'); const od = ox.createImageData(W, H), D = od.data;
+  for (let v = 0; v < H; v++) for (let u = 0; u < W; u++) {
+    const den = h[6] * u + h[7] * v + 1; let x = (h[0] * u + h[1] * v + h[2]) / den, y = (h[3] * u + h[4] * v + h[5]) / den;
+    x = Math.max(0, Math.min(sw - 1.001, x)); y = Math.max(0, Math.min(sh - 1.001, y)); const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, i0 = (y0 * sw + x0) * 4, i1 = i0 + sw * 4, j = (v * W + u) * 4;
+    for (let ch = 0; ch < 3; ch++) D[j + ch] = (src[i0 + ch] * (1 - fx) + src[i0 + 4 + ch] * fx) * (1 - fy) + (src[i1 + ch] * (1 - fx) + src[i1 + 4 + ch] * fx) * fy;
+    D[j + 3] = 255; }
+  ox.putImageData(od, 0, 0); return o;
+}
+// Foto ersetzen (gedreht oder zugeschnitten): neue Datei, alte weg, Präsentation bekommt Bescheid
+async function fotoReplace(f, blob, w, h, ink) {
+  const dir = f.path.split('/').slice(0, -1).join('/'); const path = `${dir}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+  const up = await store.sb.storage.from(FOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: false }); if (up.error) throw up.error;
+  const r = await store.sb.from('ab_fotos').update({ path, w, h, ink }).eq('id', f.id); if (r.error) throw r.error;
+  try { await store.sb.storage.from(FOTO_BUCKET).remove([f.path]); } catch {}
+  Object.assign(f, { path, w, h, ink }); const msg = { t: 'upd', id: f.id, sheet: f.sheet_id, path, w, h, ink };
+  fotoCh.h.forEach(fn => { try { fn(msg); } catch {} }); fotoSend(msg); return f;
+}
+async function fotoRotate(f, dir = 1) {
+  const c = fotoRot(await fotoCanvas(await fotoUrl(f.path), 4000), dir);
+  const ink = (f.ink || []).map(s => ({ ...s, p: (s.p || []).map((v, i, a) => (i % 2 ? (dir > 0 ? a[i - 1] : 1 - a[i - 1]) : (dir > 0 ? 1 - a[i + 1] : a[i + 1]))).map(v => +v.toFixed(4)) }));
+  return fotoReplace(f, await fotoBlob(c), c.width, c.height, ink);
+}
+async function fotoUpload(sheetId, file, pre) {
+  const { blob, w, h } = pre || await fotoShrink(file);
   const path = `${store.user.id}/${String(sheetId).replace(/[^\w-]/g, '_').slice(0, 60)}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
   const up = await store.sb.storage.from(FOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: false }); if (up.error) throw up.error;
   const r = await store.sb.from('ab_fotos').insert({ sheet_id: sheetId, path, w, h }).select(FOTO_COLS).single(); if (r.error) throw r.error; return r.data;
@@ -14983,11 +15068,42 @@ function camInit() {
     main.querySelectorAll('img[data-p]').forEach(async im => { try { im.src = await fotoUrl(im.dataset.p); } catch {} });
     main.querySelector('input').addEventListener('change', async e => {
       const fs = [...(e.target.files || [])]; if (!fs.length) return;
-      msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>');
-      try { let last = null; for (const f of fs) { last = await fotoUpload(CAM_ID, f); fotos.push(last); fotoSend({ t: 'new', sheet: CAM_ID, id: last.id }); } open(last.id); }
+      try { let last = null; for (const f of fs) { const pre = await camEdit(f); if (!pre) continue; msg('<div class="cam-spin"></div><p>Wird hochgeladen …</p>'); last = await fotoUpload(CAM_ID, null, pre); fotos.push(last); fotoSend({ t: 'new', sheet: CAM_ID, id: last.id }); } if (last) open(last.id); else list(); }
       catch (err) { console.error(err); msg(`<p>Das Hochladen hat nicht geklappt.</p><p class="cam-err">${esc(err.message || String(err))}</p><button type="button" class="cam-btn" data-c="back">Zurück</button>`); }
     });
   };
+  // Zuschneiden: Blatt wird erkannt, Ecken lassen sich verschieben, Drehen in 90°-Schritten; Ergebnis gerade gezogen
+  const camEdit = src => new Promise(async done => {
+    msg('<div class="cam-spin"></div><p>Arbeitsblatt wird gesucht …</p>');
+    let c; try { c = await fotoCanvas(src, 2600); } catch (err) { console.error(err); done(null); return; }
+    const full = () => [[0, 0], [c.width, 0], [c.width, c.height], [0, c.height]];
+    let q = fotoDetect(c), auto = !!q; if (!q) q = full();
+    main.innerHTML = `<div class="cam-crop"><canvas></canvas><svg class="cam-cq" preserveAspectRatio="none"></svg>${[0, 1, 2, 3].map(i => `<i class="cam-hd" data-i="${i}"></i>`).join('')}</div>
+      <div class="cam-tools"><button type="button" class="cam-btn" data-e="ok">✂ Zuschneiden</button><button type="button" class="cam-tb" data-e="rl" title="Nach links drehen" aria-label="Nach links drehen">⟲</button><button type="button" class="cam-tb" data-e="rr" title="Nach rechts drehen" aria-label="Nach rechts drehen">⟳</button><button type="button" class="cam-tb" data-e="auto">Blatt suchen</button><button type="button" class="cam-tb" data-e="full">Ganzes Foto</button><span class="cam-sp"></span><button type="button" class="cam-tb" data-e="x">Abbrechen</button></div>
+      <p class="cam-hint cam-ch">${auto ? 'Das Arbeitsblatt ist erkannt. Passt eine Ecke nicht, zieh sie an die richtige Stelle.' : 'Kein Blatt erkannt. Zieh die vier Punkte an die Ecken des Blatts oder nimm das ganze Foto.'}</p>`;
+    const box = main.querySelector('.cam-crop'), cv = box.querySelector('canvas'), svg = box.querySelector('svg'), hs = [...box.querySelectorAll('.cam-hd')]; let g = { k: 1, ox: 0, oy: 0 };
+    const paint = () => { cv.width = c.width; cv.height = c.height; cv.getContext('2d').drawImage(c, 0, 0); svg.setAttribute('viewBox', `0 0 ${c.width} ${c.height}`); lay(); };
+    const lay = () => { const bw = box.clientWidth, bh = box.clientHeight, k = Math.min(bw / c.width, bh / c.height); g = { k, ox: (bw - c.width * k) / 2, oy: (bh - c.height * k) / 2 };
+      [cv, svg].forEach(e => { e.style.cssText = `left:${g.ox}px;top:${g.oy}px;width:${c.width * k}px;height:${c.height * k}px`; });
+      const pts = q.map(p => p.map(v => v.toFixed(1)).join(',')).join(' '); const sw = Math.max(c.width, c.height) / 260;
+      svg.innerHTML = `<path d="M0 0H${c.width}V${c.height}H0Z M${q.map(p => p.join(' ')).join(' L')}Z" fill="rgba(0,0,0,.55)" fill-rule="evenodd"/><polygon points="${pts}" fill="none" stroke="#4F8BFF" stroke-width="${sw}"/>`;
+      hs.forEach((h, i) => { h.style.transform = `translate(${g.ox + q[i][0] * k}px,${g.oy + q[i][1] * k}px)`; }); };
+    hs.forEach(h => { h.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); try { h.setPointerCapture(e.pointerId); } catch {} h.classList.add('on'); });
+      h.addEventListener('pointermove', e => { if (!h.classList.contains('on')) return; const r = box.getBoundingClientRect(), i = +h.dataset.i; q[i] = [Math.max(0, Math.min(c.width, (e.clientX - r.left - g.ox) / g.k)), Math.max(0, Math.min(c.height, (e.clientY - r.top - g.oy) / g.k))]; lay(); });
+      const up = () => h.classList.remove('on'); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up); });
+    const ro = new ResizeObserver(() => lay()); ro.observe(box);
+    const fin = v => { ro.disconnect(); main.removeEventListener('click', onClick); done(v); };
+    const onClick = async e => { const b = e.target.closest('[data-e]'); if (!b) return; e.stopPropagation(); const a = b.dataset.e;
+      if (a === 'x') fin(null);
+      else if (a === 'full') { q = full(); lay(); }
+      else if (a === 'auto') { const d2 = fotoDetect(c); if (d2) { q = d2; lay(); } else toast('Kein Blatt gefunden. Die Ecken lassen sich von Hand setzen.'); }
+      else if (a === 'rl' || a === 'rr') { const dir = a === 'rr' ? 1 : -1, H0 = c.height, W0 = c.width; c = fotoRot(c, dir); q = fotoQuad(q.map(([x, y]) => (dir > 0 ? [H0 - y, x] : [y, W0 - x]))); paint(); }
+      else if (a === 'ok') { b.disabled = true; b.textContent = 'Wird gerade gezogen …'; await new Promise(r => setTimeout(r, 30));
+        const isFull = q.every((p, i) => Math.hypot(p[0] - full()[i][0], p[1] - full()[i][1]) < 2); let o = isFull ? c : fotoWarp(c, fotoQuad(q));
+        if (Math.max(o.width, o.height) > 2000) { const s = 2000 / Math.max(o.width, o.height), t = document.createElement('canvas'); t.width = Math.round(o.width * s); t.height = Math.round(o.height * s); t.getContext('2d').drawImage(o, 0, 0, t.width, t.height); o = t; }
+        fin({ blob: await fotoBlob(o), w: o.width, h: o.height }); } };
+    main.addEventListener('click', onClick); paint();
+  });
   // Betrachter: das Zweitgerät ist der Raum zum Zeigen und Malen – Zoomen, Stift, Textmarker, Laserpointer, alles live auf dem Beamer
   const TOOLS = [['hand', '✋', 'Verschieben'], ['pen', '✏️', 'Stift'], ['hl', '🖍', 'Marker'], ['laser', '🔴', 'Laser']];
   const COLS = { pen: ['#E5484D', '#2F6FDB', '#1E9E5A', '#1C1F27'], hl: ['#FFE14D', '#7CF29B', '#7FD3FF', '#FF9EC7'] };
@@ -15002,7 +15118,7 @@ function camInit() {
       <div class="cam-seg" role="group" aria-label="Werkzeug">${TOOLS.map(([k, ic, l]) => `<button type="button" class="cam-tb" data-c="tool" data-v="${k}" aria-pressed="${k === tool}"><span aria-hidden="true">${ic}</span> ${l}</button>`).join('')}</div>
       <div class="cam-cols">${colsHTML()}</div>
       <button type="button" class="cam-tb" data-c="undo" title="Letzten Strich entfernen" aria-label="Rückgängig">↶</button><button type="button" class="cam-tb" data-c="clear" title="Alle Striche löschen">Striche löschen</button><button type="button" class="cam-tb" data-c="zoom0" title="Zoom zurücksetzen" aria-label="Zoom zurücksetzen">⤢</button>
-      <span class="cam-sp"></span><button type="button" class="cam-tb" data-c="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="cam-tb" data-c="back">Fertig</button></div>
+      <button type="button" class="cam-tb" data-c="rot" title="Foto um 90° nach rechts drehen">⟳ Drehen</button><button type="button" class="cam-tb" data-c="crop" title="Arbeitsblatt neu zuschneiden">✂ Zuschneiden</button><span class="cam-sp"></span><button type="button" class="cam-tb" data-c="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="cam-tb" data-c="back">Fertig</button></div>
       <p class="cam-hint">Zwei Finger zoomen und verschieben immer, doppelt tippen vergrößert. Stift und Marker bleiben auf dem Foto gespeichert, der Laser verschwindet beim Loslassen.</p>`;
     const im = main.querySelector('img'); im.src = await fotoUrl(f.path); await im.decode().catch(() => {});
     lay(); bind(); showSync();
@@ -15057,6 +15173,8 @@ function camInit() {
     else if (c === 'clear') { if (!cur.ink || !cur.ink.length) return; if (b.dataset.sure) { cur.ink = []; inkDraw(); saveInk(); delete b.dataset.sure; b.textContent = 'Striche löschen'; } else { b.dataset.sure = '1'; b.textContent = 'Wirklich löschen?'; setTimeout(() => { if (b.isConnected) { delete b.dataset.sure; b.textContent = 'Striche löschen'; } }, 3000); } }
     else if (c === 'zoom0') { view = { s: 1, cx: .5, cy: .5 }; lay(); sendView(); }
     else if (c === 'dl') { try { await fotoDownload(cur, fotos.indexOf(cur)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
+    else if (c === 'rot') { b.disabled = true; b.textContent = 'Dreht …'; try { await fotoRotate(cur, 1); } catch (err) { console.error(err); toast('Drehen hat nicht geklappt.'); } const sh = shown; await open(cur.id); if (sh) { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] }); } }
+    else if (c === 'crop') { const f = cur, sh = shown; if ((f.ink || []).length && !confirm('Beim Zuschneiden gehen die Striche auf dem Foto verloren. Trotzdem zuschneiden?')) return; let pre = null; try { pre = await camEdit(await fotoUrl(f.path)); } catch {} if (pre) { msg('<div class="cam-spin"></div><p>Wird gespeichert …</p>'); try { await fotoReplace(f, pre.blob, pre.w, pre.h, []); } catch (err) { console.error(err); toast('Speichern hat nicht geklappt.'); } } await open(f.id); if (sh) { shown = true; showSync(); fotoSend({ t: 'show', id: cur.id, sheet: CAM_ID, v: view, ink: cur.ink || [] }); } }
   });
   // warten, bis die Anmeldung geklärt ist
   let last = null; const poll = setInterval(() => { const u = store.user ? store.user.id : (store.sb ? 'none' : null); if (u && u !== last) { last = u; ready(); } }, 400);
@@ -15069,7 +15187,7 @@ function fotoPanelHTML(sheetId, fotos, mode) {
   const qr = (() => { try { return QR.dataURL(camUrl(sheetId), 5); } catch { return ''; } })();
   return `<div class="lf-qr">${qr ? `<img src="${qr}" alt="QR-Code zum Kameramodus">` : ''}<div><b>Mit iPad oder Handy scannen</b><small>Dort mit deinem Konto angemeldet, öffnet sich die Kamera für diese Stunde. Fotos werden nach 14 Tagen gelöscht.</small></div></div>
     ${fotos.length ? `<div class="lf-bar"><b>${fotos.length} Foto${fotos.length === 1 ? '' : 's'}</b>${mode === 'pres' && fotos.length > 1 ? '<button type="button" class="lf-b" data-lf="showall">Alle zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="dlall">Alle herunterladen</button></div>
-    <div class="lf-grid">${fotos.map((f, i) => `<div class="lf-it${f._new ? ' new' : ''}" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><div class="lf-ia">${mode === 'pres' ? '<button type="button" class="lf-b pri" data-lf="show">Zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="lf-b" data-lf="keep" aria-pressed="${!!f.keep}" title="${f.keep ? 'Wird nicht automatisch gelöscht' : 'Nicht nach 14 Tagen löschen'}">${f.keep ? '★' : '☆'}</button><button type="button" class="lf-b" data-lf="del" title="Löschen" aria-label="Löschen">×</button></div><small>${fotoLeft(f)}</small></div>`).join('')}</div>`
+    <div class="lf-grid">${fotos.map((f, i) => `<div class="lf-it${f._new ? ' new' : ''}" data-id="${f.id}"><img alt="" data-p="${esc(f.path)}"><div class="lf-ia">${mode === 'pres' ? '<button type="button" class="lf-b pri" data-lf="show">Zeigen</button>' : ''}<button type="button" class="lf-b" data-lf="rot" title="Um 90° nach rechts drehen" aria-label="Drehen">⟳</button><button type="button" class="lf-b" data-lf="dl" title="Herunterladen" aria-label="Herunterladen">⬇</button><button type="button" class="lf-b" data-lf="keep" aria-pressed="${!!f.keep}" title="${f.keep ? 'Wird nicht automatisch gelöscht' : 'Nicht nach 14 Tagen löschen'}">${f.keep ? '★' : '☆'}</button><button type="button" class="lf-b" data-lf="del" title="Löschen" aria-label="Löschen">×</button></div><small>${fotoLeft(f)}</small></div>`).join('')}</div>`
     : '<p class="lf-empty">Noch keine Fotos zu dieser Stunde.</p>'}`;
 }
 async function fotoPanelAct(e, root, sheetId, fotos, rerender, onShow) {
@@ -15078,6 +15196,7 @@ async function fotoPanelAct(e, root, sheetId, fotos, rerender, onShow) {
   else if (a === 'showall') onShow(fotos.slice());
   else if (a === 'dl' && f) { try { await fotoDownload(f, fotos.indexOf(f)); } catch { toast('Herunterladen hat nicht geklappt.'); } }
   else if (a === 'dlall') { toast('Fotos werden geladen …'); for (let i = 0; i < fotos.length; i++) { try { await fotoDownload(fotos[i], i); } catch {} } }
+  else if (a === 'rot' && f) { b.disabled = true; try { await fotoRotate(f, 1); rerender(); } catch (err) { console.error(err); toast('Drehen hat nicht geklappt.'); } }
   else if (a === 'keep' && f) { const k = !f.keep; const r = await store.sb.from('ab_fotos').update({ keep: k }).eq('id', f.id); if (!r.error) { f.keep = k; rerender(); toast(k ? 'Foto wird behalten und nicht automatisch gelöscht.' : 'Foto wird nach Ablauf der 14 Tage gelöscht.'); } }
   else if (a === 'del' && f) { try { await fotoDelete(f); fotos.splice(fotos.indexOf(f), 1); rerender(); toast('Foto gelöscht.'); } catch { toast('Löschen hat nicht geklappt.'); } }
   return true;
@@ -15091,7 +15210,7 @@ async function fotoManager() {
   document.body.appendChild(ov2); const body = ov2.querySelector('.lf-body');
   const rr = () => { body.innerHTML = fotoPanelHTML(sid, fotos, 'ed'); fotoThumbs(body); };
   try { fotos = await fotoList(sid); } catch (err) { console.error(err); } rr();
-  const off = fotoListen(async m => { if (m.t === 'new' && m.sheet === sid) { try { fotos = await fotoList(sid); rr(); } catch {} } });
+  const off = fotoListen(async m => { if ((m.t === 'new' || m.t === 'upd') && m.sheet === sid) { try { fotos = await fotoList(sid); rr(); } catch {} } });
   const close = () => { off(); ov2.remove(); document.removeEventListener('keydown', kd, true); };
   const kd = e => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } }; document.addEventListener('keydown', kd, true);
   ov2.addEventListener('click', async e => { if (e.target === ov2 || e.target.closest('[data-lf="x"]')) { close(); return; } await fotoPanelAct(e, body, sid, fotos, rr, () => {}); });
