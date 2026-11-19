@@ -7514,7 +7514,7 @@ function openPres(start, opts = {}) {
   function foPan() { return $p('.lf-pan'); }
   // Zustand für das Companion-Gerät
   var LFC = LFC || { sid: Math.random().toString(36).slice(2, 10), t: 0, pt: 0 };
-  function lfcState() { const pk = BOARD.pk; return { t: 'pres', sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', cur: P.cur, max: P.max, up: +state.sheet.updatedAt || 0, board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
+  function lfcState() { const pk = BOARD.pk; return { t: 'pres', sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', tm: !!TBo.isOn(), cur: P.cur, max: P.max, up: +state.sheet.updatedAt || 0, board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
   function lfcHb() { if (!foOn || !LFC) return; clearTimeout(LFC.t); LFC.t = setTimeout(() => { if (document.body.contains(ov)) fotoSend(lfcState()); }, 120); }
   function lfcFull(key) { if (!foOn) return; fotoSend({ t: 'bfull', key, ink: INK.remote.keyed(key === 'pk' ? 'pk' : BOARD.s.id) }); }
   function lfcPushSoon() { if (!foOn || !LFC || !BOARD.open) return; const k = BOARD.kind; clearTimeout(LFC.pt); LFC.pt = setTimeout(() => lfcFull(k), 300); }
@@ -7553,7 +7553,7 @@ function openPres(start, opts = {}) {
       else if (m.t === 'bsy') { const y = Math.round(Math.max(0, Math.min((bk.h || 900) - 900, +m.sy || 0))); if (cur) blankScroll(y); else { bk.sy = y; lfcHb(); } }
       else if (m.t === 'bmore') { if (cur) blankMore(); else { bk.h = (bk.h || 900) + 900; if (key === 'pk') pkSave(); lfcHb(); } }
       else if (m.t === 'bpat') { if (inkPatOk(m.pat)) { BOARD.s.pat = m.pat; if (BOARD.open && BOARD.kind === 'tafel') show(); else lfcHb(); } }
-      else if (m.t === 'nav') { if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); }
+      else if (m.t === 'nav') { if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); else if (m.a === 'mode') { const mb = $p('[data-p="mode"]'); if (mb) mb.click(); setTimeout(lfcHb, 60); } }
     });
     const hbI = setInterval(() => fotoSend(lfcState()), 4000);
     ov.addEventListener('lw-close', () => { offL(); clearInterval(hbI); fotoSend({ t: 'presend', sid: LFC.sid }); }, { once: true });
@@ -15610,7 +15610,7 @@ function lfcStart(O = {}) {
       ${F ? `<button type="button" class="lfc-fx" data-l="focus" aria-label="Vollbild verlassen">${lfcIc('fsx', 18)}<span>Folie ${PR.i + 1} / ${PR.n}</span></button>` : `<div class="lfc-fside"><div class="lfc-fh"><small>Folie ${PR.i + 1} von ${PR.n}${PR.max ? ` · Schritt ${PR.cur || 0} von ${PR.max}` : ''}</small><b>${esc(PR.lab || '')}</b></div>
         <div class="lfc-nx"><small>Als Nächstes</small>${PR.i + 1 < PR.n ? `<div class="lfc-nxs"></div><span>${esc(PR.nx || '')}</span>` : '<span>Das ist die letzte Folie.</span>'}</div>
         <div class="lfc-fb"><button type="button" class="lfc-big" data-nav="prev" ${PR.i <= 0 && !PR.cur ? 'disabled' : ''}>${lfcIc('prev', 34)}<span>Zurück</span></button><button type="button" class="lfc-big pri" data-nav="next">${lfcIc('next', 34)}<span>Weiter</span></button></div>
-        <div class="lfc-fr"><button type="button" class="lfc-pill${PR.bl ? ' on' : ''}" data-nav="black">${lfcIc('black', 20)}<span>${PR.bl ? 'Beamer wieder an' : 'Schwarz'}</span></button>${PR.board ? `<button type="button" class="lfc-pill" data-l="boardoff">${lfcIc('tafel', 20)}<span>Tafel schließen</span></button>` : ''}<button type="button" class="lfc-pill" data-l="focus">${lfcIc('focus', 20)}<span>Vollbild</span></button></div></div>`}</div>`;
+        <div class="lfc-fr"><button type="button" class="lfc-pill${PR.bl ? ' on' : ''}" data-nav="black">${lfcIc('black', 20)}<span>${PR.bl ? 'Beamer wieder an' : 'Schwarz'}</span></button>${PR.board ? `<button type="button" class="lfc-pill" data-l="boardoff">${lfcIc('tafel', 20)}<span>Tafel schließen</span></button>` : ''}<button type="button" class="lfc-pill${PR.tm ? ' on' : ''}" data-nav="mode">${lfcIc('tafel', 20)}<span>${PR.tm ? 'Folienansicht' : 'Tafelansicht'}</span></button><button type="button" class="lfc-pill" data-l="focus">${lfcIc('focus', 20)}<span>Vollbild</span></button></div></div>`}</div>`;
     if (!ok) return;
     const mw = main.querySelector('.lfc-mirw'), mir = main.querySelector('.lfc-mir'); const W = Math.max(200, Math.min(mw.clientWidth - (F ? 0 : 8), (mw.clientHeight - (F ? 0 : 8)) * 16 / 9));
     slPaint(mir, PR.i, W, PR.cur || 0);
@@ -15651,12 +15651,12 @@ function lfcStart(O = {}) {
   window.addEventListener('resize', onRs);
   // ---------- Live-Kanal ----------
   const takePres = m => {
-    const oldCur = PR && PR.cur, oldUp = PR && PR.up; const was = live(), oldSheet = PR && PR.sheet, oldGp = PR && PR.gp, oldBoard = PR && PR.board, oldI = PR && PR.i, oldBl = PR && PR.bl; PR = m; lastHb = Date.now();
+    const oldCur = PR && PR.cur, oldUp = PR && PR.up, oldTm = PR && PR.tm; const was = live(), oldSheet = PR && PR.sheet, oldGp = PR && PR.gp, oldBoard = PR && PR.board, oldI = PR && PR.i, oldBl = PR && PR.bl; PR = m; lastHb = Date.now();
     const panning = Date.now() - T.panT < 900;
     if (m.tafel) { B.tafel.h = m.tafel.h || 900; B.tafel.pat = m.tafel.pat || 'kariert'; if (!panning) B.tafel.sy = m.tafel.sy || 0; }
     if (m.pk) { Object.assign(B.pk, { q: m.pk.q || '', lab: m.pk.lab || ['Pro', 'Contra'], either: !!m.pk.either, h: m.pk.h || 900 }); if (!panning) B.pk.sy = m.pk.sy || 0; }
     if (!was || oldSheet !== m.sheet || oldGp !== m.gp) { if (oldSheet !== m.sheet) { B.tafel.ink = []; B.pk.ink = []; T.undo = { tafel: [], pk: [] }; send({ t: 'hi' }); } render(); return; }
-    renderNav(); fxSync(); if (tab === 'fol' && (oldI !== m.i || oldBoard !== m.board || oldBl !== m.bl || oldCur !== m.cur || oldUp !== m.up)) renderFol(); if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
+    renderNav(); fxSync(); if (tab === 'fol' && (oldI !== m.i || oldBoard !== m.board || oldBl !== m.bl || oldCur !== m.cur || oldUp !== m.up || oldTm !== m.tm)) renderFol(); if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
   };
   offs.push(fotoListen(m => {
     if (m.t === 'pres') takePres(m);
