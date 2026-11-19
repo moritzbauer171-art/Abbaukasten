@@ -1461,6 +1461,13 @@ body.lfc-on{overflow:hidden}
 .lfc-sw{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 10px 40px rgba(0,0,0,.5);background:#fff}
 .lfc-fol2.f .lfc-sw{border-radius:0;box-shadow:none}
 .lfc-sw .pr-slide{left:0;top:0;transform:scale(var(--k));transform-origin:0 0;box-shadow:none;pointer-events:none}
+.lfc-sw .lfc-prw .pr-slide{left:50%;top:50%;transform-origin:center}
+.lfc-tm{background:#000}
+.lfc-prw.pr{position:absolute;left:0;top:0;inset:auto;width:1600px;height:900px;transform-origin:0 0;z-index:auto;display:block;background:none}
+.lfc-prw .pr-stage{position:absolute;inset:0;cursor:default}
+.lfc-prw .pr-stage>.tfl{transform:translate(-50%,-50%)}
+.lfc-prw .pr-slide{pointer-events:none}
+
 .lfc-fside{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto}
 .lfc-fh{display:flex;flex-direction:column;gap:3px}.lfc-fh small{color:#98989F;font-size:13px}.lfc-fh b{font-size:20px}
 .lfc-nx{display:flex;flex-direction:column;gap:6px;color:#AEAEB2;font-size:13px}.lfc-nx small{text-transform:uppercase;letter-spacing:.06em;font-size:11px;font-weight:700;color:#8E8E93}
@@ -6768,7 +6775,7 @@ function tafelBoard(X) {
   const bgCss = () => (st.bg === 'bild' && st.img ? `center/cover no-repeat url("${st.img}"),#20242C` : TB_BG[st.bg].c);
   const save = () => { clearTimeout(svT); svT = setTimeout(() => { const all = lsGet('abw.tafel') || {}; all[kid] = { bg: st.bg, w: st.w.map(w => ({ k: w.k, x: Math.round(w.x), y: Math.round(w.y), w: Math.round(w.w), h: Math.round(w.h), c: w.c })) }; lsSet('abw.tafel', all); }, 300); };
   const names = () => { const n = (lsGet('abw.namen') || {})[kid]; return Array.isArray(n) ? n : []; };
-  const sync = () => { if (dirty) return; dirty = requestAnimationFrame(() => { dirty = 0; mirror(); }); };
+  const sync = () => { if (dirty) return; dirty = requestAnimationFrame(() => { dirty = 0; mirror(); if (X.onSync) X.onSync(); }); };
   // ---------- Werkzeuge: view = Anzeige (auch auf dem Beamer), ctl = Bedienung (nur hier) ----------
   const KW = {
     timer: {
@@ -7009,6 +7016,9 @@ function tafelBoard(X) {
     slideTf: k => (st.on ? `translate(calc(-50% + ${(OX * k).toFixed(2)}px), calc(-50% + ${(OY * k).toFixed(2)}px)) scale(${(k * SK).toFixed(5)})` : `translate(-50%,-50%) scale(${k})`),
     place: k => { K = k; tb.style.transform = `translate(-50%,-50%) scale(${k})`; },
     placeAw, mirror, click, keyIgnore, slide: onSlide, isOn: () => st.on,
+    // Momentaufnahme der Tafelansicht für das Companion-Gerät (ohne Bedienelemente, eigenes Hintergrundbild nicht mitgeschickt)
+    snap: () => { if (!st.on) return null; const t = tb.cloneNode(true); t.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable')); t.querySelectorAll('.tw-nl, .tw-ctl, canvas').forEach(e => e.remove());
+      return { cls: tb.className, html: t.innerHTML, bg: st.bg === 'bild' ? TB_BG.papier.c : bgCss(), os, ox: OX, oy: OY, sk: SK }; },
     destroy: () => { clearInterval(tick); st.w.forEach(w => { if (KW[w.k].stop) KW[w.k].stop(w, R[w.id]); }); save(); }
   };
 }
@@ -7227,7 +7237,7 @@ function openPres(start, opts = {}) {
   ntSet(!!(state.prefs && state.prefs.noTime && state.prefs.noTime[ntKey])); document.body.appendChild(ov);
   const stage = ov.querySelector('.pr-stage'), slide = ov.querySelector('.pr-slide'), $p = q => ov.querySelector(q);
   const P = { i: Math.min(Math.max(0, +start || 0), S.length - 1), cur: 0, max: 0 };
-  const TBo = tafelBoard({ ov, stage, slide, S, meta: m, klId: ntKey, gs: KL(state.sheet.klasse).stufe === 'gs', on: presModeOf(state.sheet.klasse) === 'tafel', idx: () => P.i, go: i => { P.i = i; show(); }, awOk: () => awOk(), aw: () => AW, rescale: () => { scale(); awScale(); INK.draw(); } });
+  const TBo = tafelBoard({ ov, stage, slide, S, meta: m, klId: ntKey, gs: KL(state.sheet.klasse).stufe === 'gs', on: presModeOf(state.sheet.klasse) === 'tafel', idx: () => P.i, go: i => { P.i = i; show(); }, awOk: () => awOk(), aw: () => AW, rescale: () => { scale(); awScale(); INK.draw(); }, onSync: () => lfcTfl() });
   // Stift: Notizen je Folie, mit der Stunde gespeichert (leere Tafelseiten und die freie Tafel nur für diese Präsentation)
   // Tafel über der Präsentation: eigene leere Seite, die beim Schließen bis zum Ende der Präsentation erhalten bleibt
   const BOARD = { open: false, kind: 'tafel', s: { k: 'blank', pat: 'kariert', id: 'bl-tafel' } };
@@ -7515,8 +7525,10 @@ function openPres(start, opts = {}) {
   // Zustand für das Companion-Gerät
   var LFC = LFC || { sid: Math.random().toString(36).slice(2, 10), t: 0, pt: 0 };
   function lfcState() { const pk = BOARD.pk; return { t: 'pres', sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', tm: !!TBo.isOn(), cur: P.cur, max: P.max, up: +state.sheet.updatedAt || 0, board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
-  function lfcHb() { if (!foOn || !LFC) return; clearTimeout(LFC.t); LFC.t = setTimeout(() => { if (document.body.contains(ov)) fotoSend(lfcState()); }, 120); }
+  function lfcHb() { if (!foOn || !LFC) return; clearTimeout(LFC.t); LFC.t = setTimeout(() => { if (document.body.contains(ov)) { fotoSend(lfcState()); lfcTfl(); } }, 120); }
   function lfcFull(key) { if (!foOn) return; fotoSend({ t: 'bfull', key, ink: INK.remote.keyed(key === 'pk' ? 'pk' : BOARD.s.id) }); }
+  function lfcTfl(force) { if (!foOn || !LFC || !LFC.peer || Date.now() - LFC.peer > 600000) return; const now = Date.now(); if (!force && now - (LFC.tt || 0) < 1500) { clearTimeout(LFC.tq); LFC.tq = setTimeout(() => lfcTfl(), 1500 - (now - (LFC.tt || 0)) + 20); return; }
+    LFC.tt = now; const sn = TBo.snap(); const key = sn ? sn.cls + sn.bg + sn.html : ''; if (key === LFC.tk && !force) return; LFC.tk = key; fotoSend(sn ? { t: 'tfl', ...sn } : { t: 'tfl', off: 1 }); }
   function lfcPushSoon() { if (!foOn || !LFC || !BOARD.open) return; const k = BOARD.kind; clearTimeout(LFC.pt); LFC.pt = setTimeout(() => lfcFull(k), 300); }
   function foBadge() { const n = FO.list.filter(f => f._new).length; ov.querySelectorAll('.pr-fobadge').forEach(i => { i.hidden = !n; i.textContent = n; }); ov.querySelectorAll('.pr-fobtn').forEach(b => b.classList.toggle('has-new', !!n)); sideKey = ''; refSide(); }
   function foRender() { const p = foPan(); if (!p || p.hidden) return; const bd = p.querySelector('.lf-body'); bd.innerHTML = fotoPanelHTML(state.sheet.id, FO.list, 'pres'); fotoThumbs(bd); }
@@ -7545,15 +7557,16 @@ function openPres(start, opts = {}) {
     // Companion (iPad/Handy mit demselben Konto): Lebenszeichen der Präsentation, Tafel-Striche, Fernbedienung
     const offL = fotoListen(m => {
       if (!document.body.contains(ov)) return;
+      if (['hi', 'ping', 'board', 'bop', 'blas', 'bsy', 'bmore', 'bpat', 'nav'].includes(m.t)) LFC.peer = Date.now();
       const key = m.key === 'pk' && pkOn ? 'pk' : 'tafel', bk = key === 'pk' ? BOARD.pk : BOARD.s, ik = key === 'pk' ? 'pk' : BOARD.s.id, cur = BOARD.open && BOARD.kind === key;
-      if (m.t === 'hi') { fotoSend(lfcState()); lfcFull('tafel'); if (pkOn) lfcFull('pk'); }
+      if (m.t === 'hi') { fotoSend(lfcState()); lfcFull('tafel'); if (pkOn) lfcFull('pk'); LFC.tk = ''; lfcTfl(true); }
       else if (m.t === 'board') { if (m.kind === 'pk' && !pkOn) return; const k2 = m.kind === 'pk' ? 'pk' : 'tafel'; if (m.on && !(BOARD.open && BOARD.kind === k2)) boardSet(true, k2); else if (!m.on && BOARD.open && BOARD.kind === k2) boardSet(false); else lfcHb(); }
       else if (m.t === 'bop') { INK.remote.op(ik, m); if (key === 'pk' && m.op !== 'live') pkSave(); }
       else if (m.t === 'blas') INK.remote.laser(ik, +m.x || 0, +m.y || 0);
       else if (m.t === 'bsy') { const y = Math.round(Math.max(0, Math.min((bk.h || 900) - 900, +m.sy || 0))); if (cur) blankScroll(y); else { bk.sy = y; lfcHb(); } }
       else if (m.t === 'bmore') { if (cur) blankMore(); else { bk.h = (bk.h || 900) + 900; if (key === 'pk') pkSave(); lfcHb(); } }
       else if (m.t === 'bpat') { if (inkPatOk(m.pat)) { BOARD.s.pat = m.pat; if (BOARD.open && BOARD.kind === 'tafel') show(); else lfcHb(); } }
-      else if (m.t === 'nav') { if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); else if (m.a === 'mode') { const mb = $p('[data-p="mode"]'); if (mb) mb.click(); setTimeout(lfcHb, 60); } }
+      else if (m.t === 'nav') { if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); else if (m.a === 'mode') { const mb = $p('[data-p="mode"]'); if (mb) mb.click(); setTimeout(() => { lfcHb(); lfcTfl(true); }, 60); } }
     });
     const hbI = setInterval(() => fotoSend(lfcState()), 4000);
     ov.addEventListener('lw-close', () => { offL(); clearInterval(hbI); fotoSend({ t: 'presend', sid: LFC.sid }); }, { once: true });
@@ -15595,6 +15608,7 @@ function lfcStart(O = {}) {
     catch (err) { console.error(err); SL.id = PR.sheet; SL.up = PR.up || 0; }
     SL.busy = false; if (tab === 'fol') renderFol();
   };
+  let TF = null;
   const slOk = () => !!(SL.S && SL.id === PR.sheet && SL.S.length === PR.n);
   const slPaint = (host, i, w, steps) => withSh(() => {
     const x = SL.S[i]; if (!x) { host.innerHTML = ''; return; } const bar = SL.S.bar || [];
@@ -15603,6 +15617,15 @@ function lfcStart(O = {}) {
     try { const f = sl.querySelector('.pr-fit'), body = sl.querySelector('.pr-body'); if (f && body && PR_MAX[x.k]) fitUp(f, body, PR_MAX[x.k]); tfDraw(sl); phbFit(sl); } catch {}
     if (steps != null) sl.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > steps));
   });
+  // Tafelansicht wie auf dem Beamer: Hintergrund, verkleinerte Folie, Ablaufleiste und Werkzeuge (als Momentaufnahme)
+  const slPaintTm = (host, i, w, steps) => withSh(() => {
+    const x = SL.S[i]; if (!x) { host.innerHTML = ''; return; } const bar = SL.S.bar || [];
+    host.innerHTML = `<div class="lfc-sw lfc-tm" style="width:${w}px;height:${w * 9 / 16}px"><div class="pr pr-aud pr-tafel${TF.os ? ' pr-tos' : ''} lfc-prw" style="--tbg:${esc(TF.bg)};transform:scale(${(w / 1600).toFixed(5)})"><div class="pr-stage"><div class="pr-slide pr-k-${x.k}${prMin(x) ? ' has-timer' : ''}${bar.length ? ' has-bar' : ''}" style="transform:translate(calc(-50% + ${TF.ox}px),calc(-50% + ${TF.oy}px)) scale(${TF.sk})"><div class="pr-accent"></div>${presSlideHTML(x, bar)}${presBarHTML(bar, x.bi)}<div class="pr-foot"><span></span><span>${i + 1}</span></div></div><div class="${esc(TF.cls)}">${TF.html}</div></div></div></div>`;
+    const sl = host.querySelector('.pr-slide'); setAccent(host.querySelector('.lfc-prw'), SL.sh.meta);
+    try { const f = sl.querySelector('.pr-fit'), body = sl.querySelector('.pr-body'); if (f && body && PR_MAX[x.k]) fitUp(f, body, PR_MAX[x.k]); tfDraw(sl); phbFit(sl); } catch {}
+    if (steps != null) sl.querySelectorAll('[data-st]').forEach(e => e.classList.toggle('tf-hid', +e.dataset.st > steps));
+  });
+  const tflUpd = () => { const t = main.querySelector('.lfc-prw .pr-stage > .tfl'); if (!t || !TF) return false; t.className = TF.cls; t.innerHTML = TF.html; main.querySelector('.lfc-prw').style.setProperty('--tbg', TF.bg); return true; };
   const renderFol = () => {
     const ok = slOk(); slLoad();
     const F = foc();
@@ -15613,7 +15636,7 @@ function lfcStart(O = {}) {
         <div class="lfc-fr"><button type="button" class="lfc-pill${PR.bl ? ' on' : ''}" data-nav="black">${lfcIc('black', 20)}<span>${PR.bl ? 'Beamer wieder an' : 'Schwarz'}</span></button>${PR.board ? `<button type="button" class="lfc-pill" data-l="boardoff">${lfcIc('tafel', 20)}<span>Tafel schließen</span></button>` : ''}<button type="button" class="lfc-pill${PR.tm ? ' on' : ''}" data-nav="mode">${lfcIc('tafel', 20)}<span>${PR.tm ? 'Folienansicht' : 'Tafelansicht'}</span></button><button type="button" class="lfc-pill" data-l="focus">${lfcIc('focus', 20)}<span>Vollbild</span></button></div></div>`}</div>`;
     if (!ok) return;
     const mw = main.querySelector('.lfc-mirw'), mir = main.querySelector('.lfc-mir'); const W = Math.max(200, Math.min(mw.clientWidth - (F ? 0 : 8), (mw.clientHeight - (F ? 0 : 8)) * 16 / 9));
-    slPaint(mir, PR.i, W, PR.cur || 0);
+    if (PR.tm && TF) slPaintTm(mir, PR.i, W, PR.cur || 0); else slPaint(mir, PR.i, W, PR.cur || 0);
     const nx = main.querySelector('.lfc-nxs'); if (nx) slPaint(nx, PR.i + 1, nx.clientWidth || 240, 99);
   };
   const renderCam = () => { main.innerHTML = '<div class="lfc-camh"></div>'; if (cam) cam.destroy(); cam = camInit(PR.sheet, { host: main.querySelector('.lfc-camh') }); cam.sheet = PR.sheet; };
@@ -15661,12 +15684,14 @@ function lfcStart(O = {}) {
   offs.push(fotoListen(m => {
     if (m.t === 'pres') takePres(m);
     else if (m.t === 'presend') { lastHb = 0; if (!page) { close(false); toast('Die Präsentation wurde beendet.'); } else render(); }
+    else if (m.t === 'tfl') { const had = !!TF; TF = m.off ? null : m; if (tab === 'fol' && live()) { if (!TF || !had || !tflUpd()) renderFol(); } }
     else if (m.t === 'bfull' && B[m.key] && Array.isArray(m.ink)) { B[m.key].ink = m.ink; if (tab === m.key && !T.live) drawInk(); }
   }));
   const hbChk = setInterval(() => { if (PR && !live() && main.querySelector('.lfc-stage, .lfc-fol, .lfc-camh')) render(); }, 3000);
   const hello = setInterval(() => { if (!live()) send({ t: 'hi' }); }, 6000);
+  const ping = setInterval(() => { if (live()) send({ t: 'ping' }); }, 20000);
   send({ t: 'hi' }); render();
-  function close(manual) { clearInterval(hbChk); clearInterval(hello); offs.forEach(f => f()); if (cam) cam.destroy(); wake(); ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.removeEventListener(ev, onFs)); window.removeEventListener('resize', onRs);
+  function close(manual) { clearInterval(hbChk); clearInterval(hello); clearInterval(ping); offs.forEach(f => f()); if (cam) cam.destroy(); wake(); ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.removeEventListener(ev, onFs)); window.removeEventListener('resize', onRs);
     if (page) { location.href = location.pathname; return; }
     root.remove(); document.body.classList.remove('lfc-on'); if (fsEl()) fsGo(false); if (manual && PR) lfcBan.skip = PR.sid; }
   return { close };
