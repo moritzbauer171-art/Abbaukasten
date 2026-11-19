@@ -446,6 +446,13 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 body.basis .x-pro:not(.used){display:none!important}
 .x-wrap.x-pro:not(.chks){display:contents}
 .umfang button{min-width:0;padding-left:9px;padding-right:9px}
+.kl-umf{margin-top:12px}
+.kl-umfo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:520px){.kl-umfo{grid-template-columns:1fr}}
+.kl-uo{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:1.5px solid var(--line);border-radius:12px;background:var(--card,#fff);color:var(--ink);padding:10px 12px;cursor:pointer;font:inherit}
+.kl-uo b{font-size:14.5px}.kl-uo small{color:var(--muted);font-size:12.5px;line-height:1.35}
+.kl-uo[aria-checked="true"]{border-color:var(--tinte);box-shadow:0 0 0 2px color-mix(in srgb,var(--tinte) 22%,transparent)}
+
 body.basis .area-more{display:none}
 .ph-ctl{display:inline-flex;align-items:center;gap:6px;margin-left:auto}
 .grp-sel{margin-left:auto;max-width:150px}
@@ -4836,7 +4843,7 @@ function setUmfang(v, quiet) {
   UMF.basis = v === 'basis'; const basis = UMF.basis; document.body.classList.toggle('basis', basis);
   document.querySelectorAll('[data-act="umfang"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === (basis ? 'basis' : 'experte'))));
   const uc = document.getElementById('umfang-chip'); if (uc) uc.textContent = basis ? 'Basis' : '';
-  if (!quiet) lsSet(LS_UMFANG, basis ? 'basis' : 'experte');
+  if (!quiet) { lsSet(LS_UMFANG, basis ? 'basis' : 'experte'); if (state.prefs && state.klReady && state.prefs.umfang !== (basis ? 'basis' : 'experte')) { state.prefs.umfang = basis ? 'basis' : 'experte'; savePrefs(); } }
   if (!quiet) { if (basis && state.area === 'start') state.area = 'blatt'; basisClamp(); state.insAt = null; closeGloss(); closeZl(); closeMenu(); renderEditor(); clearTimeout(renderTimer); renderPreview(); }
 }
 // Basis: nur Arbeitsblätter und die Präsentation dazu (Bereiche „Arbeitsblatt“ und „Präsentation“, Ausgaben Arbeitsblatt, Tippkarten und Folien)
@@ -12839,6 +12846,7 @@ function klassenHTML() {
     ${d.setup ? `<label class="f"><span>Deine Schule</span><input class="inp" id="kl-school" value="${esc(d.school || '')}" placeholder="z. B. Musterschule Berlin" maxlength="80"></label>` : ''}
     <div class="kl-list">${d.rows.map(row).join('')}</div>
     <button type="button" class="link" data-act="kl-add">+ Weitere Klasse</button>
+    ${d.setup ? `<div class="f kl-umf"><span>Wie viel soll LehrWerk zeigen?</span><div class="kl-umfo" role="radiogroup" aria-label="Funktionsumfang">${[['basis', 'Basis', 'Arbeitsblätter und die Präsentation dazu. Übersichtlich für den Einstieg.'], ['experte', 'Experte', 'Alles: dazu Stundenplanung mit Zeiten und Verlaufsplan, Tafelbilder, Karten, Druck-Extras, Startseite und Board.']].map(([v, l, t]) => `<button type="button" role="radio" class="kl-uo" data-act="kl-umf" data-v="${v}" aria-checked="${(d.umf || 'basis') === v}"><b>${l}</b><small>${t}</small></button>`).join('')}</div><small class="hint">Lässt sich jederzeit ändern: Einstellungen ⚙ → App → Funktionsumfang.</small></div>` : ''}
     <div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>
     <div class="row"><button class="btn primary" type="button" data-act="kl-save">${d.setup ? 'Los geht’s' : 'Fertig'}</button>${d.setup ? '' : '<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>'}</div>${d.setup ? '<p class="copy-l">LehrWerk · © 2026 Moritz Bauer</p>' : ''}`;
 }
@@ -12853,12 +12861,12 @@ async function klassenSave() {
   if (!rows.length) { dlgMsg('Bitte mindestens einer Klasse einen Namen geben.'); const f = document.querySelector('#dlg-root [data-kf="label"]'); if (f) f.focus(); return; }
   const used = new Set();
   const ks = rows.map((k, i) => { let id = k.id && !used.has(k.id) ? k.id : 'k-' + uid(); used.add(id); return normKlasse({ ...k, id, school: d.setup ? school : k.school, course: k.course || k.label }, i); });
-  const setup = d.setup; const curF = fachKey(state.klasse); const oldIds = new Set(KLASSEN.map(k => k.id)); state.prefs.klassen = ks; state.dlg = null; renderDlg();
+  const setup = d.setup; const curF = fachKey(state.klasse); const oldIds = new Set(KLASSEN.map(k => k.id)); state.prefs.klassen = ks; if (setup) state.prefs.umfang = d.umf || 'basis'; state.dlg = null; renderDlg();
   KLASSEN = ks; lsSet(LS_KLCACHE, ks); state.needSetup = false; savePrefs();
   state.lib.forEach(x => { x.klasse = KL(x.kraw || x.klasse).id; });
   if (setup || !KLASSEN.some(k => k.id === state.klasse)) { state.klasse = KLASSEN[0].id; lsSet(LS.klasse, state.klasse); openSheet(draftFor(state.klasse)); }
   renderTabs(); renderEditor(); if (state.libOpen) renderLib();
-  if (setup) { lsSet(LS_NEWS, NEWS_ID); state.newAcct = true; if (hmS.open) homeClose(); toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); setTimeout(() => tourMaybe(), 900); }
+  if (setup) { setUmfang(state.prefs.umfang, true); lsSet(LS_UMFANG, state.prefs.umfang); basisClamp(); renderEditor(); lsSet(LS_NEWS, NEWS_ID); state.newAcct = true; if (hmS.open) homeClose(); toast(`${ks.length === 1 ? 'Klasse' : ks.length + ' Klassen'} eingerichtet · über „+ Neue Stunde“ oben gibt es Vorlagen`); setTimeout(() => tourMaybe(), 900); }
   else if (d.single) { const nk = ks.find(x => !oldIds.has(x.id)); toast(nk ? `„${nk.label}“ in ${FAECHER[nk.fach].label} angelegt` : 'Klasse angelegt'); }
   else { const other = ks.filter(k => !oldIds.has(k.id) && k.fach !== curF); toast(other.length && !d.wantFach ? `„${other[0].label}“ steht im Fach ${FAECHER[other[0].fach].label}. Wechseln über „${FAECHER[curF].label}“ oben neben dem Titel.` : 'Klassen gespeichert'); }
   if (!setup && d.wantFach) { const nk = d.single && d.rows[0] ? ks.find(x => !oldIds.has(x.id) && x.fach === d.wantFach) : null; const k = nk || KLASSEN.find(x => x.fach === d.wantFach); if (k) switchKlasse(k.id); }
@@ -12949,7 +12957,7 @@ function normPrefs(p) {
   const klassen = Array.isArray(p.klassen) && p.klassen.length ? p.klassen.map(normKlasse) : null;
   const rlpOwn = {}; Object.entries(obj(p.rlpOwn)).forEach(([f, l]) => { if (Array.isArray(l)) { const L = [...new Set(l.filter(x => typeof x === 'string').map(x => x.trim().slice(0, 300)).filter(Boolean))].slice(0, 400); if (L.length) rlpOwn[f] = L; } });
   const zeiten = {}; Object.entries(obj(p.zeiten)).forEach(([sch, l]) => { if (Array.isArray(l)) zeiten[String(sch).slice(0, 120)] = l.filter(x => x && typeof x === 'object').slice(0, 20).map(x => ({ id: String(x.id || 'z' + uid()).slice(0, 20), l: String(x.l || '').slice(0, 40), s: hmOk(x.s), e: hmOk(x.e) })); });
-  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(Object.keys(obj(p.noTime)).length ? { noTime: Object.fromEntries(Object.entries(obj(p.noTime)).filter(([, v]) => v === true).slice(0, 50)) } : {}), ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(TM_SHOW[p.tmShow] ? { tmShow: p.tmShow } : {}), ...(kbNorm(p.kanban) ? { kanban: kbNorm(p.kanban) } : {}),
+  return { v: 1, folders, place: { ...obj(p.place) }, order: { ...obj(p.order) }, rlpOwn, zeiten, ...(Object.keys(obj(p.noTime)).length ? { noTime: Object.fromEntries(Object.entries(obj(p.noTime)).filter(([, v]) => v === true).slice(0, 50)) } : {}), ...(typeof p.uhr === 'boolean' ? { uhr: p.uhr } : {}), ...(p.umfang === 'basis' || p.umfang === 'experte' ? { umfang: p.umfang } : {}), ...(['s', 'm', 'l', 'xl'].includes(p.tmSize) ? { tmSize: p.tmSize } : {}), ...(TM_SHOW[p.tmShow] ? { tmShow: p.tmShow } : {}), ...(kbNorm(p.kanban) ? { kanban: kbNorm(p.kanban) } : {}),
     ...(Object.keys(obj(p.presMode)).length ? { presMode: Object.fromEntries(Object.entries(obj(p.presMode)).filter(([k, v]) => k.length < 60 && (v === 'tafel' || v === 'folien')).slice(0, 80)) } : {}), ...(typeof p.autor === 'string' ? { autor: p.autor.slice(0, 80) } : {}), ...(typeof p.sichAuto === 'boolean' ? { sichAuto: p.sichAuto } : {}), ...(typeof p.sichLast === 'boolean' ? { sichLast: p.sichLast } : {}), ...(klassen ? { klassen } : {}) };
 }
 const fClosed = new Set(lsGet(LS_FZU) || []);
@@ -12962,7 +12970,7 @@ function savePrefs() {
     try { await b.savePrefs(clone(state.prefs)); } catch (err) { console.error(err); toast('Die Ordner konnten gerade nicht gespeichert werden. Die nächste Änderung versucht es erneut.'); }
   }, 250);
 }
-async function loadPrefs(b) { let p = null, fail = false; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); fail = true; } if (b === backend) { state.prefs = normPrefs(p); state.prefsFail = fail && b.kind !== 'local'; tmApply(); if (state.prefsFail) toast('Deine Einstellungen ließen sich gerade nicht laden. Bis zum Neuladen speichert LehrWerk keine Änderungen an Klassen und Ordnern.'); } }
+async function loadPrefs(b) { let p = null, fail = false; try { p = b && b.loadPrefs ? await b.loadPrefs() : null; } catch (err) { console.error(err); fail = true; } if (b === backend) { state.prefs = normPrefs(p); state.prefsFail = fail && b.kind !== 'local'; tmApply(); if (state.prefs.umfang && (state.prefs.umfang === 'basis') !== isBasis()) { setUmfang(state.prefs.umfang, true); lsSet(LS_UMFANG, state.prefs.umfang); basisClamp(); try { renderEditor(); } catch {} } if (state.prefsFail) toast('Deine Einstellungen ließen sich gerade nicht laden. Bis zum Neuladen speichert LehrWerk keine Änderungen an Klassen und Ordnern.'); } }
 function mergePrefs(p) {
   const lp = normPrefs(p); if (!lp.folders.length && !Object.keys(lp.place).length && !lp.klassen) return false;
   const ids = new Set(state.prefs.folders.map(f => f.id));
@@ -13890,6 +13898,7 @@ async function onDlgClick(e) {
     if (act === 'kl-set' && a.dataset.f === 'jg') { d.rows[i].jg = +a.dataset.v; d.rows[i].jgTouch = true; renderDlg(); return; }
       if (act === 'kl-set' && a.dataset.f === 'anrede') d.rows[i].anTouch = true;
     if (act === 'kl-set') { const r = d.rows[i]; if (a.dataset.f === 'fach' && ['', 'Deutsch', 'Geschichte', 'Politik', 'Geschichte/Politik', 'Biologie', 'Englisch', 'Spanisch'].includes(String(r.course || '').trim())) r.course = FAECHER[a.dataset.v].course; r[a.dataset.f] = a.dataset.v; renderDlg(); return; }
+    if (act === 'kl-umf') { d.umf = a.dataset.v === 'experte' ? 'experte' : 'basis'; renderDlg(); return; }
     if (act === 'kl-add') { const n = d.rows.length; d.rows.push(normKlasse({ id: 'k-' + uid(), label: '', course: '', school: d.setup ? '' : (d.rows[n - 1] || {}).school, accent: Object.keys(ACCENTS)[n % 3], anrede: (d.rows[n - 1] || {}).anrede, fach: (d.rows[n - 1] || {}).fach, stufe: (d.rows[n - 1] || {}).stufe, jg: (d.rows[n - 1] || {}).jg }, n)); d.rows[n].label = ''; d.rows[n].fresh = true; renderDlg(); const f = document.querySelectorAll('#dlg-root [data-kf="label"]'); if (f[n]) f[n].focus(); return; }
     if (act === 'kl-del') { const k = d.rows[i]; const n = state.lib.filter(x => x.klasse === k.id).length; if (n) { d.rows.forEach(x => { x.delAsk = false; }); k.delAsk = true; renderDlg(); return; } d.rows.splice(i, 1); renderDlg(); return; }
     if (act === 'kl-del-no') { d.rows[i].delAsk = false; d.rows[i].puz = null; renderDlg(); return; }
