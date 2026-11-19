@@ -1429,6 +1429,14 @@ body.lfc-on{overflow:hidden}
 .lfc-board{position:relative;overflow:hidden;border-radius:10px;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.5);touch-action:none}
 .lfc-sl{position:absolute;inset:0;pointer-events:none}
 .lfc-sl .pr-slide{left:0;top:0;transform:scale(var(--k));transform-origin:0 0;box-shadow:none;pointer-events:none}
+#lfc-root.focus{grid-template-rows:1fr}
+#lfc-root.focus .lfc-nav,#lfc-root.focus .lfc-tabs{display:none}
+#lfc-root.focus .lfc-m{background:#000}
+#lfc-root.focus .lfc-stage{padding:0}
+#lfc-root.focus .lfc-board{border-radius:0;box-shadow:none}
+#lfc-root.focus .lfc-pal{bottom:calc(10px + env(safe-area-inset-bottom,0px));background:rgba(44,44,46,.82)}
+.lfc-fx{position:absolute;right:calc(12px + env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));z-index:3;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:8px 14px;background:rgba(44,44,46,.82);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);color:#fff;font:600 14px -apple-system,var(--f-ui);cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.lfc-fx.on{background:#30D158;color:#00210b}
 .lfc-cv{position:absolute;inset:0;width:100%;height:100%}
 .lfc-dot{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:radial-gradient(circle,#ff2a2a 0 32%,rgba(255,40,40,.45) 48%,rgba(255,40,40,0) 70%);pointer-events:none}
 .lfc-vs{position:absolute;right:4px;top:6px;bottom:6px;width:5px;border-radius:3px;background:rgba(0,0,0,.08);pointer-events:none}.lfc-vs i{position:absolute;left:0;right:0;border-radius:3px;background:rgba(0,0,0,.35)}
@@ -15402,7 +15410,7 @@ const LFC_IC = {
   undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>', more: '<circle cx="5.5" cy="12" r="1.4" fill="currentColor"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/><circle cx="18.5" cy="12" r="1.4" fill="currentColor"/>',
   plus: '<path d="M12 5v14M5 12h14"/>', tv: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>', back: '<path d="M15 5l-7 7 7 7"/>',
   prev: '<path d="M15 5l-7 7 7 7"/>', next: '<path d="M9 5l7 7-7 7"/>', black: '<rect x="3" y="5" width="18" height="12" rx="1.5" fill="currentColor"/><path d="M8 21h8"/>',
-  fs: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', fsx: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>', wait: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/><path d="M9.5 10h.01M12 10h.01M14.5 10h.01" stroke-width="2.6"/>'
+  focus: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="8" y="8" width="8" height="8" rx="1"/>', fs: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', fsx: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>', wait: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/><path d="M9.5 10h.01M12 10h.01M14.5 10h.01" stroke-width="2.6"/>'
 };
 const lfcIc = (k, n = 24) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LFC_IC[k]}</svg>`;
 const lfcKey = () => Math.random().toString(36).slice(2, 9);
@@ -15412,6 +15420,8 @@ function lfcStart(O = {}) {
   const wake = keepAwake(); const offs = [];
   const B = { tafel: { ink: [], h: 900, sy: 0, pat: 'kariert' }, pk: { ink: [], h: 900, sy: 0, q: '', lab: ['Pro', 'Contra'], either: false } };
   const T = { tool: 'pen', col: { pen: INK_COLS[0], hl: INK_COLS[4] }, w: 'm', pen: false, live: null, las: null, panT: 0, undo: { tafel: [], pk: [] } };
+  let FOC = false; try { FOC = localStorage.getItem('abw.lfcfocus') === '1'; } catch {}
+  const foc = () => FOC && (tab === 'tafel' || tab === 'pk') && live();
   const root = el(`<div id="lfc-root" class="${page ? 'page' : ''}"><nav class="cam-nav lfc-nav"><div class="cam-nl"></div><div class="cam-nt"><b>Tafel</b><small class="lfc-st"></small></div><div class="cam-nr"></div></nav><main class="lfc-m"></main><footer class="lfc-tabs" role="tablist"></footer></div>`);
   document.body.appendChild(root); document.body.classList.add('lfc-on');
   const main = root.querySelector('.lfc-m'), tabs = root.querySelector('.lfc-tabs'), nl = root.querySelector('.cam-nl'), nr = root.querySelector('.cam-nr'), nb = root.querySelector('.cam-nt b'), stl = root.querySelector('.lfc-st');
@@ -15438,19 +15448,20 @@ function lfcStart(O = {}) {
   // ---------- Tafel und Pro/Contra: Spiegel der Beamer-Tafel mit Zeichenfläche ----------
   const slideObj = k => (k === 'pk' ? { k: 'blank', pk: true, pat: 'weiss', id: 'pk', q: B.pk.q, lab: B.pk.lab, either: B.pk.either, h: B.pk.h, sy: B.pk.sy } : { k: 'blank', id: 'bl-tafel', pat: B.tafel.pat, h: B.tafel.h, sy: B.tafel.sy });
   const pal = () => `<div class="lfc-pal" role="toolbar" aria-label="Werkzeuge">
+      <div class="lfc-pg"><button type="button" class="lfc-pb" data-l="focus" aria-pressed="${foc()}" aria-label="${foc() ? 'Vollbild verlassen' : 'Tafel im Vollbild'}" title="${foc() ? 'Vollbild verlassen' : 'Tafel im Vollbild'}">${lfcIc(foc() ? 'fsx' : 'focus', 22)}</button></div>
       <div class="lfc-pg">${['pen', 'hl', 'er', 'laser'].map(t => `<button type="button" class="lfc-pb" data-tool="${t}" aria-pressed="${T.tool === t}" aria-label="${{ pen: 'Stift', hl: 'Marker', er: 'Radierer', laser: 'Laser' }[t]}">${lfcIc(t, 22)}</button>`).join('')}</div>
       <div class="lfc-pg lfc-cols">${INK_COLS.map(c => `<button type="button" class="lfc-col" data-col="${c}" style="--cc:${c}" aria-pressed="${(T.col[T.tool] || T.col.pen) === c}" aria-label="Farbe"></button>`).join('')}</div>
       <div class="lfc-pg lfc-ws">${Object.entries(INK_W).map(([k, w]) => `<button type="button" class="lfc-pb" data-w="${k}" aria-pressed="${T.w === k}" aria-label="Stärke"><i style="width:${w + 4}px;height:${w + 4}px"></i></button>`).join('')}</div>
       <div class="lfc-pg"><button type="button" class="lfc-pb" data-l="undo" aria-label="Rückgängig">${lfcIc('undo', 22)}</button><button type="button" class="lfc-pb" data-l="more" aria-label="Platz nach unten">${lfcIc('plus', 22)}</button><button type="button" class="lfc-pb" data-l="menu" aria-label="Mehr">${lfcIc('more', 22)}</button></div></div>`;
   const renderBoard = () => {
-    const k = tab; main.innerHTML = `<div class="lfc-stage"><div class="lfc-board"><div class="lfc-sl"></div><canvas class="lfc-cv" width="2400" height="1350"></canvas><i class="lfc-dot" hidden></i><div class="lfc-vs" hidden><i></i></div></div></div>${pal()}
+    const k = tab; main.innerHTML = `<div class="lfc-stage"><div class="lfc-board"><div class="lfc-sl"></div><canvas class="lfc-cv" width="2400" height="1350"></canvas><i class="lfc-dot" hidden></i><div class="lfc-vs" hidden><i></i></div></div></div>${pal()}${foc() ? `<button type="button" class="lfc-fx${boardOn(tab) ? ' on' : ''}" data-l="beam" aria-label="Auf dem Beamer">${lfcIc('tv', 18)}<span>${boardOn(tab) ? 'Auf dem Beamer' : 'Zeigen'}</span></button>` : ''}
       <div class="cam-scrim" hidden data-l="nomenu"></div><div class="cam-sheet" hidden role="menu"><div class="cam-sg">
         ${k === 'tafel' ? Object.entries(INK_PATS).map(([p, l]) => `<button type="button" data-pat="${p}" role="menuitem"><span class="lfc-patv pat-${p}"></span><span>Hintergrund: ${l}</span></button>`).join('') : ''}
         <button type="button" data-l="clr" class="red" role="menuitem"><span>${k === 'pk' ? 'Pro/Contra-Tafel' : 'Tafel'} leeren</span></button></div><div class="cam-sg"><button type="button" data-l="nomenu" class="strong"><span>Abbrechen</span></button></div></div>`;
     lay(); bindBoard(); drawSl(); drawInk();
   };
   const brd = () => main.querySelector('.lfc-board');
-  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = Math.min(st.clientWidth - 24, (st.clientHeight - 16) * 16 / 9); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
+  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = foc() ? Math.min(st.clientWidth, st.clientHeight * 16 / 9) : Math.min(st.clientWidth - 24, (st.clientHeight - 16) * 16 / 9); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
   const drawSl = () => { const s = main.querySelector('.lfc-sl'); if (!s) return; const o = slideObj(tab); s.innerHTML = `<div class="pr-slide pr-k-blank">${presSlideHTML(o, [])}</div>`; const vs = main.querySelector('.lfc-vs'); const H = o.h || 900; vs.hidden = H <= 900; if (!vs.hidden) { vs.firstChild.style.height = (900 / H * 100) + '%'; vs.firstChild.style.top = ((o.sy || 0) / H * 100) + '%'; } };
   const drawInk = () => { const c = main.querySelector('.lfc-cv'); if (!c) return; const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, c.width, c.height); g.setTransform(1.5, 0, 0, 1.5, 0, 0); g.translate(0, -(B[tab].sy || 0)); B[tab].ink.forEach(s => inkDraw(g, s)); if (T.live) inkDraw(g, T.live);
     const d = main.querySelector('.lfc-dot'); if (d) { d.hidden = !T.las; if (T.las) { const b = brd().getBoundingClientRect(); d.style.transform = `translate(${T.las[0] / 1600 * b.width}px,${(T.las[1] - B[tab].sy) / 900 * b.height}px)`; } } };
@@ -15458,7 +15469,8 @@ function lfcStart(O = {}) {
   const sendLive = thr(s => send({ t: 'bop', key: tab, op: 'live', s }), 40);
   const sendLas = thr((x, y) => send({ t: 'blas', key: tab, x: Math.round(x), y: Math.round(y) }), 25);
   const sendSy = thr(sy => send({ t: 'bsy', key: tab, sy: Math.round(sy) }), 50);
-  const ensureBeam = () => { if (!boardOn(tab)) { send({ t: 'board', kind: tab, on: true }); if (PR) PR.board = tab; renderNav(); } };
+  const fxSync = () => { const x = main.querySelector('.lfc-fx'); if (x) { x.classList.toggle('on', boardOn(tab)); x.querySelector('span').textContent = boardOn(tab) ? 'Auf dem Beamer' : 'Zeigen'; } };
+  const ensureBeam = () => { if (!boardOn(tab)) { send({ t: 'board', kind: tab, on: true }); if (PR) PR.board = tab; renderNav(); fxSync(); } };
   const bindBoard = () => {
     const b = brd(); const P = new Map(); let pan = null, er = null;
     const pt = e => { const r = b.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 1600, (e.clientY - r.top) / r.height * 900 + (B[tab].sy || 0)]; };
@@ -15508,7 +15520,7 @@ function lfcStart(O = {}) {
   const render = () => {
     if (cam && (tab !== 'cam' || !live())) { cam.destroy(); cam = null; }
     if (!tabList().some(t => t[0] === tab)) tab = 'tafel';
-    renderNav(); renderTabs();
+    root.classList.toggle('focus', foc()); renderNav(); renderTabs();
     if (!live()) renderWait(); else if (tab === 'tafel' || tab === 'pk') renderBoard(); else if (tab === 'fol') renderFol(); else if (!cam || cam.sheet !== PR.sheet) renderCam();
   };
   const sheet = on => { const s = main.querySelector('.cam-sheet'); if (!s) return; s.hidden = !on; main.querySelector('.cam-scrim').hidden = !on; };
@@ -15522,9 +15534,10 @@ function lfcStart(O = {}) {
     const b = e.target.closest('[data-l]'); if (!b) return; const a = b.dataset.l;
     if (a === 'exit') close(true);
     else if (a === 'fs') { const on = !fsEl(); try { localStorage.setItem('abw.camfs', on ? '1' : '0'); } catch {} fsGo(on); }
-    else if (a === 'beam') { const on = !boardOn(tab); send({ t: 'board', kind: tab, on }); if (PR) PR.board = on ? tab : ''; renderNav(); }
+    else if (a === 'beam') { const on = !boardOn(tab); send({ t: 'board', kind: tab, on }); if (PR) PR.board = on ? tab : ''; renderNav(); fxSync(); }
     else if (a === 'boardoff') { send({ t: 'board', kind: PR.board, on: false }); }
     else if (a === 'undo') undo();
+    else if (a === 'focus') { FOC = !FOC; try { localStorage.setItem('abw.lfcfocus', FOC ? '1' : '0'); } catch {} if (FOC && fsCan() && !fsEl()) fsGo(true); render(); }
     else if (a === 'more') { B[tab].h = (B[tab].h || 900) + 900; B[tab].sy = Math.min(B[tab].h - 900, (B[tab].sy || 0) + 680); T.panT = Date.now(); send({ t: 'bmore', key: tab }); setTimeout(() => sendSy(B[tab].sy), 420); drawSl(); drawInk(); }
     else if (a === 'menu') sheet(true);
     else if (a === 'nomenu') sheet(false);
@@ -15538,7 +15551,7 @@ function lfcStart(O = {}) {
     if (m.tafel) { B.tafel.h = m.tafel.h || 900; B.tafel.pat = m.tafel.pat || 'kariert'; if (!panning) B.tafel.sy = m.tafel.sy || 0; }
     if (m.pk) { Object.assign(B.pk, { q: m.pk.q || '', lab: m.pk.lab || ['Pro', 'Contra'], either: !!m.pk.either, h: m.pk.h || 900 }); if (!panning) B.pk.sy = m.pk.sy || 0; }
     if (!was || oldSheet !== m.sheet || oldGp !== m.gp) { if (oldSheet !== m.sheet) { B.tafel.ink = []; B.pk.ink = []; T.undo = { tafel: [], pk: [] }; send({ t: 'hi' }); } render(); return; }
-    renderNav(); if (tab === 'fol' && (oldI !== m.i || oldBoard !== m.board || oldBl !== m.bl)) renderFol(); if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
+    renderNav(); fxSync(); if (tab === 'fol' && (oldI !== m.i || oldBoard !== m.board || oldBl !== m.bl)) renderFol(); if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
   };
   offs.push(fotoListen(m => {
     if (m.t === 'pres') takePres(m);
