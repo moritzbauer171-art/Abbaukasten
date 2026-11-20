@@ -6467,6 +6467,9 @@ const prSie = h => h.replace(/<\/b>(\s+)(Sie|du|ihr)(?=[\s,.;:!?]|$)/g, '$1$2</b
 const prRefs = h => h.split(/(<[^>]+>)/).map(x => (x.charAt(0) === '<' ? x : x.replace(/(^|[^\p{L}\d])((?:M|Q|D)\s?\d+[a-z]?|(?:Z|V)\.\s?\d+(?:\s?[–-]\s?\d+)?|Abb\.\s?\d+)(?![\p{L}\d])/gu, (_, a, r) => a + '<span class="pr-ref">' + r.replace(/\s/g, '\u00a0') + '</span>'))).join('');
 const prImp = x => (/^\*\*/.test(x) ? x : x.replace(/^([„"]?)(\p{Lu}[\p{Ll}-]+)(\s+)(Sie|du|ihr)(?![\p{L}])/u, '$1**$2$3$4**'));
 const prStepsOf = (it, m) => taskSteps(taskText(it, m)).map(x => prRefs(prSie(inlineHTML(prImp(x)))));
+// Arbeitsauftrag wie auf dem Arbeitsblatt: ein Absatz, Zeilenumbrüche bleiben, keine Aufteilung in Sätze
+const prLinesRaw = (it, m) => String(taskText(it, m) || '').replace(/\r/g, '').trim().split(/\n+/).map(x => x.trim()).filter(Boolean);
+const prLinesOf = (it, m) => prLinesRaw(it, m).map(x => prRefs(prSie(inlineHTML(prImp(x)))));
 // Aufgaben mit Spiegelstrichen oder a)/1.-Unterpunkten: Einleitung als Absatz, Unterpunkte eingerückt wie auf dem Arbeitsblatt
 const PR_SUB_B = /^[-•*–]\s+/, PR_SUB_N = /^(\d{1,2}[.)]|[a-z][.)])\s+/i;
 const prTaskHTML = (it, m) => {
@@ -6478,7 +6481,7 @@ const prTaskHTML = (it, m) => {
       if (b) h += `<li>${fx(x.replace(PR_SUB_B, ''))}</li>`; else if (n) { const mk = x.match(PR_SUB_N)[1]; h += `<li><b class="pr-mk">${esc(mk)}</b>${fx(x.replace(PR_SUB_N, ''))}</li>`; } else h += `<p class="pr-lead">${fx(x)}</p>`; });
     close(); return h;
   }
-  const st = prStepsOf(it, m); return st.length > 1 ? `<ul class="pr-steps">${st.map(x => `<li>${x}</li>`).join('')}</ul>` : st.length ? `<p>${st[0]}</p>` : ''; };
+  const st = prLinesOf(it, m); return st.length ? `<p>${st.join('<br>')}</p>` : ''; };
 // Zeit einer Aufgabenfolie: Zeilen nacheinander, Gruppenspalten parallel (längste Gruppe)
 // Zeit einer Aufgabenfolie = Zeit des Bausteins; nebeneinanderstehende Gruppen-Bausteine laufen parallel (längster zählt)
 const tsMin = s => { const by = {}; s.items.forEach(x => { by[x.bid] = x.bmin || 0; }); const v = Object.values(by); return v.length > 1 ? Math.max(0, ...v) : (v[0] || 0); };
@@ -8004,14 +8007,14 @@ async function exportPPTX() {
       if (title) sl.addText(String(title), { placeholder: 'title', align: 'left', x: X, y: 0.74, w: CW - cw, h: 0.56, ...PH.title, fit: 'shrink' }); if (cw) phPos(sl, X, 0.74, CW - cw, 0.56);
     };
     const chipsOf = (it, ph, mn, mode) => [it && SOZ[it.soz] ? { t: SOZ[it.soz].label } : null, ...arbOf(it).map(k => ({ t: ARB[k].label })), ph && !bar.length ? { t: PHASEN[ph].label, fill: PHASEN[ph].c.slice(1).toUpperCase(), color: 'FFFFFF' } : null, mn ? { t: mn + ' Min.', ...(mode && mn <= 180 ? { timer: mn, mode } : {}) } : null].filter(Boolean);
-    // Arbeitsauftrag: Schritte als Aufzählung, Operator und Anrede fett in der Akzentfarbe, Material- und Zeilenangaben hervorgehoben
+    // Arbeitsauftrag wie auf dem Arbeitsblatt (keine Aufteilung in Sätze), Operator und Anrede fett in der Akzentfarbe, Material- und Zeilenangaben hervorgehoben
     const HL = { b: ACC, ref: ACC };
-    const stepPlain = it => taskSteps(taskText(it, m)).map(x => plainText(x).length);
+    const stepPlain = it => prLinesRaw(it, m).map(x => plainText(x).length);
     const needH = (paras, w, fs) => { const cpl = Math.max(6, w * 72 / (fs * 0.48)); const lines = paras.reduce((a, p) => a + Math.max(1, Math.ceil(p / cpl)), 0); return lines * fs * 1.27 / 72 + (paras.length - 1) * fs * 0.45 / 72 + 0.08; };
     const fitFs = (paras, w, h, list) => list.find(fs => needH(paras, w, fs) <= h) || list[list.length - 1];
     const stepRuns = (its, fs) => {
       const out = [];
-      its.forEach((it, ii) => { const st = prStepsOf(it, m); const many = st.length > 1; st.forEach((x, i) => {
+      its.forEach((it, ii) => { const st = prLinesOf(it, m); const many = false; st.forEach((x, i) => {
         const r = htmlRuns(x, {}, HL); r.forEach((z, zi) => { if (many && !zi) z.options.bullet = { code: '25A0', indent: Math.round(fs * 1.05) }; z.options.paraSpaceAfter = Math.round(fs * 0.45); });
         out.push(...r); if (i < st.length - 1 || ii < its.length - 1) out[out.length - 1].options.breakLine = true;
       }); });
