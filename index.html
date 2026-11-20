@@ -163,6 +163,44 @@ button,input,select,textarea{font:inherit;color:inherit}
 .card-h .kind{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);flex:0 0 auto}
 .card-h .sum{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
 .card-h .sum.dim{color:var(--faint);font-weight:400}
+/* Kartenkopf: Art klein oben, Titel darunter mit voller Breite (bis zwei Zeilen), zugeklappt mit Kurzinfo */
+.card-h .ch-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.card-h .ch-k{display:flex;align-items:center;gap:6px;min-width:0;line-height:1.2}
+.card-h .ch-k .kind{font-size:10px}
+.card-h .ch-t .sum{flex:none;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;font-size:14px}
+.card-h .sum2{display:none;font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card.closed .card-h .sum2{display:block}
+.card-h .pres-tg::after{content:'Folie';font-size:11.5px}
+.card-h .pres-tg{padding:4px 9px 4px 7px!important;margin-left:0;gap:4px}
+#editor .card{scroll-margin-top:var(--sm,12px)}
+/* Gliederung des Arbeitsblatts */
+.ol{flex:1 1 100%;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:7px 0 2px;margin-top:6px;border-top:1px solid var(--line);-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
+.ol::-webkit-scrollbar{display:none}
+.ol-c{flex:none;display:inline-flex;align-items:center;gap:5px;max-width:150px;height:30px;padding:0 10px 0 7px;border:1px solid var(--line);border-radius:999px;background:var(--card,#fff);font:inherit;font-size:12px;font-weight:700;color:var(--ink);cursor:pointer;white-space:nowrap}
+.ol-c span{overflow:hidden;text-overflow:ellipsis}
+.ol-c i{display:inline-flex;width:15px;height:15px;color:var(--acc,#2B45B8);flex:none}.ol-c i svg{width:15px;height:15px}
+.ol-c:hover{border-color:var(--acc,#2B45B8)}
+.ol-c.on{background:var(--acc,#2B45B8);border-color:var(--acc,#2B45B8);color:#fff}.ol-c.on i{color:#fff}
+.ol-c.ol-warn::after{content:'';width:6px;height:6px;border-radius:50%;background:#E5A100;flex:none}
+.ol-c[draggable="true"]{cursor:grab}.ol-c.dragging{opacity:.4}
+.ol-c.ol-b{box-shadow:-3px 0 0 var(--acc,#2B45B8)}.ol-c.ol-a{box-shadow:3px 0 0 var(--acc,#2B45B8)}
+.ol-k{flex:none;align-self:center;font-size:11px;color:var(--faint);padding:0 2px}
+/* Schnellbausteine mit Namen */
+.qbar .qb.qb-l{flex:1 1 0;min-width:0;width:auto;height:46px;flex-direction:column;gap:2px;padding:4px 2px;font-size:10.5px;font-weight:700;justify-content:center;color:var(--ink)}
+.qbar .qb-add{height:46px}
+.qbar .qb.qb-l span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qbar .qb-add{flex:0 0 auto!important}
+/* Prüfblick */
+.pf{margin:14px 0 8px;border:1px solid var(--line);border-radius:12px;background:var(--card,#fff);padding:10px 12px}
+.pf h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.pf h4 em{font-style:normal;background:#FFF1CC;color:#7A5200;border-radius:999px;padding:0 7px;font-size:11px;letter-spacing:0}
+.pf ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.pf li button{width:100%;text-align:left;display:flex;gap:8px;align-items:baseline;padding:6px 6px;border:0;border-radius:8px;background:none;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.pf li button:hover{background:var(--panel)}
+.pf li i{flex:none;width:7px;height:7px;border-radius:50%;background:#E5A100;transform:translateY(-1px)}
+.pf li.n i{background:var(--faint,#A3A9B6)}
+.pf li button span{flex:1}.pf li button small{color:var(--acc,#2B45B8);font-weight:700;font-size:12px}
+.pf-ok{font-size:13px;color:#1E7A46;display:flex;gap:6px;align-items:center}
 .ib{width:30px;height:30px;display:inline-grid;place-items:center;border:0;background:transparent;border-radius:7px;color:var(--muted);cursor:pointer;flex:0 0 auto}
 .ib:hover{background:var(--tinte-soft);color:var(--ink)}
 .ib svg{width:16px;height:16px}
@@ -5563,14 +5601,15 @@ function areaBarHTML() {
   const A = areaNorm(state.area); const more = AREAS_MORE.find(x => x[0] === A); const mo = state.areaMore;
   return `<nav class="area-bar a2" role="tablist" aria-label="Bereiche der Stunde">${AREAS.map(([k, l]) => `<button type="button" role="tab" class="area-b" data-act="area-set" data-v="${k}" aria-selected="${A === k}" title="${l}"><i>${areaIc(k)}</i><span>${l}</span>${k === 'blatt' && n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}
     <div class="area-more"><button type="button" class="area-mb${more ? ' on' : ''}" data-act="area-more" aria-expanded="${!!mo}" title="Seltener gebraucht: Tafelbilder, Tafelkarten, Druck-Extras">${more ? `<b>${esc(more[1].split(':')[0])}</b>` : 'Mehr'}<svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
-    ${mo ? `<div class="area-mp" role="menu">${AREAS_MORE.map(([k, l]) => `<button type="button" role="menuitem" data-act="area-set" data-v="${k}"${A === k ? ' aria-current="true"' : ''}><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}${more ? `<button type="button" role="menuitem" data-act="area-set" data-v="blatt"><i>${areaIc('blatt')}</i><span>Zurück zum Arbeitsblatt</span></button>` : ''}</div>` : ''}</div>${A === 'blatt' ? quickBarHTML() : ''}</nav>`;
+    ${mo ? `<div class="area-mp" role="menu">${AREAS_MORE.map(([k, l]) => `<button type="button" role="menuitem" data-act="area-set" data-v="${k}"${A === k ? ' aria-current="true"' : ''}><i>${areaIc(k)}</i><span>${l}</span>${n[k] ? `<em>${n[k]}</em>` : ''}</button>`).join('')}${more ? `<button type="button" role="menuitem" data-act="area-set" data-v="blatt"><i>${areaIc('blatt')}</i><span>Zurück zum Arbeitsblatt</span></button>` : ''}</div>` : ''}</div>${A === 'blatt' ? quickBarHTML() + olHTML() : ''}</nav>`;
 }
 // Die meistgenutzten Bausteine immer griffbereit; der Rest unter „Weitere“ (mit Suche)
 const QUICK_MA = ['tasks', 'rechen', 'wertetabelle', 'info', 'abbildung', 'lines'];
 const QUICK = ['material', 'tasks', 'info', 'lines'], QUICK_GS = ['material', 'tasks', 'gs-kreuz', 'lineatur'];
+const QB_SHORT = { material: 'Material', tasks: 'Aufgaben', info: 'Kasten', lines: 'Linien', 'gs-kreuz': 'Ankreuzen', lineatur: 'Lineatur', rechen: 'Rechnen', wertetabelle: 'Tabelle', abbildung: 'Abbildung' };
 function quickBarHTML() {
   const P = paletteFor(); const L = (isGS() ? QUICK_GS : fachBase() === 'ma' ? QUICK_MA.slice(0, 4) : QUICK).map(k => P.find(t => t.k === k)).filter(Boolean);
-  return `<div class="qbar" role="toolbar" aria-label="Baustein hinzufügen"><button type="button" class="qb-add" data-act="bk-open" title="Alle Bausteine mit Suche (Strg+K: auch Befehle)"><b>+</b> Baustein</button>${L.map(t => `<button type="button" class="qb" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)} · wird hinter dem gewählten Baustein eingefügt" aria-label="${esc(t.label)} hinzufügen"><i>${typeIcon(t.ic)}</i></button>`).join('')}</div>`;
+  return `<div class="qbar" role="toolbar" aria-label="Baustein hinzufügen"><button type="button" class="qb-add" data-act="bk-open" title="Alle Bausteine mit Suche (Strg+K: auch Befehle)"><b>+</b> Baustein</button>${L.map(t => `<button type="button" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)} · wird hinter dem gewählten Baustein eingefügt" aria-label="${esc(t.label)} hinzufügen" class="qb qb-l"><i>${typeIcon(t.ic)}</i><span>${esc(QB_SHORT[t.k] || t.label)}</span></button>`).join('')}</div>`;
 }
 function areaOutFor(a) { const L = AREA_OUTS[a]; const o = state.areaOut && state.areaOut[a]; if (o && L.includes(o)) return o; if (a === 'extras') { const SB = stBlocks(); return SB.some(b => b.type === 'a3' && a3Fmt(b) === 'a4') ? 'a4' : SB.some(b => b.type === 'a3') ? 'a3' : exitSteps().length ? 'exit' : 'a4'; } return L[0]; }
 function setArea(a) {
@@ -5833,6 +5872,7 @@ const minInHTML = b => `<span class="pht-min"><input type="text" inputmode="nume
 function phtStrip(b) {
   if (PHT_NO.has(b.type)) return '';
   const key = 'pht:' + b.id; const ph = itPh(b), mn = itMin(b);
+  if (!ph && !mn && !moreOn(key) && blockArea(b) === 'blatt' && !(state.prefs && state.prefs.phtAll)) return '';
   if (!moreOn(key)) { const sum = [ph && PHASEN[ph] ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · ');
     return `<div class="pht pht-c"><button type="button" class="pht-tg" data-act="more" data-key="${esc(key)}" aria-expanded="false"${ph && PHASEN[ph] ? ` style="--phc:${PHASEN[ph].c}"` : ''}><i></i>${sum ? esc(sum) : 'Phase und Zeit'}</button></div>`; }
   return `<div class="pht"><label><span>Phase</span>${phSelHTML(b)}</label><label><span>Zeit</span>${minInHTML(b)}</label>${moreAll() ? '' : `<button type="button" class="link pht-x" data-act="more" data-key="${esc(key)}">Einklappen</button>`}</div>`;
@@ -5841,9 +5881,9 @@ function phtStrip(b) {
 function cardHTML(b, i, num, opt = {}) {
   const blocks = state.sheet.blocks; const closed = state.closed.has(b.id); const gOn = state.sheet.meta.groupsOn;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === b.id ? ' sel' : ''}" data-bid="${b.id}">
-        <div class="card-h" data-act="toggle"${opt.drag === false ? '' : ' draggable="true" title="Zum Umsortieren ziehen"'}><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">${esc(grpName(state.sheet.meta, b.group))}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}<span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>${isRes(b) ? '<span class="res-badge" title="Reserve: nur, wenn Zeit bleibt">Reserve</span>' : ''}${isBasis() ? '' : presBtn(b)}
-          <button class="ib" type="button" data-act="up" title="${opt.drag === false ? 'Früher in der Stunde' : 'Nach oben'}"${i === 0 ? ' disabled' : ''}>${I.up}</button>
-          <button class="ib" type="button" data-act="down" title="${opt.drag === false ? 'Später in der Stunde' : 'Nach unten'}"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>
+        <div class="card-h" data-act="toggle"${opt.drag === false ? '' : ' draggable="true" title="Zum Umsortieren ziehen"'}><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon(iconKey(b))}</span><span class="ch-t"><span class="ch-k"><span class="kind">${typeLabel(b)}</span>${gOn && b.group ? `<span class="gpill">${esc(grpName(state.sheet.meta, b.group))}</span>` : ''}${state.sheet.meta.levelsOn && Array.isArray(b.lv) ? `<span class="gpill" title="${b.lv.map(x => LV[x].name).join(', ')}">${b.lv.map(x => LV[x].sym).join(' ')}</span>` : ''}${isRes(b) ? '<span class="res-badge" title="Reserve: nur, wenn Zeit bleibt">Reserve</span>' : ''}</span><span class="sum${b.type === 'pagebreak' ? ' dim' : ''}" data-sum>${esc(summary(b, num))}</span>${b.type === 'pagebreak' ? '' : `<span class="sum2" data-sum2>${esc(sumDetail(b))}</span>`}</span>${isBasis() ? '' : presBtn(b)}
+          ${opt.drag === false ? `<button class="ib" type="button" data-act="up" title="Früher in der Stunde"${i === 0 ? ' disabled' : ''}>${I.up}</button>
+          <button class="ib" type="button" data-act="down" title="Später in der Stunde"${i === blocks.length - 1 ? ' disabled' : ''}>${I.down}</button>` : ''}
           <button class="ib" type="button" data-act="menu" title="Weitere Aktionen" aria-haspopup="menu">${I.more}</button></div>
         ${b.type === 'pagebreak' ? '' : `<div class="card-b">${gNote(b.id)}${phtStrip(b)}${bodyFor(b, num)}</div>`}</div>`;
 }
@@ -9489,7 +9529,9 @@ function renderMenu() {
   const b = target(o.bid); if (!b) { menu.open = null; root.innerHTML = ''; return; }
   const gOn = state.sheet.meta.groupsOn; const g = b.group || '';
   root.innerHTML = `<div class="mn" id="mn" role="menu">
+    ${(() => { const L = state.sheet.blocks; const i = L.findIndex(x => x.id === o.bid); return i < 0 ? '' : `<button type="button" role="menuitem" data-mn="up"${i === 0 ? ' disabled' : ''}>Nach oben</button><button type="button" role="menuitem" data-mn="down"${i === L.length - 1 ? ' disabled' : ''}>Nach unten</button><hr>`; })()}
     <button type="button" role="menuitem" data-mn="dup">Duplizieren</button>
+    ${PHT_NO.has(b.type) ? '' : `<button type="button" role="menuitem" data-mn="pht">${itPh(b) || itMin(b) ? 'Phase und Zeit ändern' : 'Phase und Zeit festlegen'}</button>`}
     ${b.type === 'tasks' ? '<button type="button" role="menuitem" data-mn="oph-all">Tipps zu allen Aufgaben vorschlagen</button>' : ''}
     ${b.type === 'pagebreak' ? '' : '<button type="button" role="menuitem" data-mn="snip">In der Sammlung speichern</button>'}
     ${state.sheet.meta.levelsOn && b.type !== 'pagebreak' ? `<hr><small>Niveau</small>${Object.entries(LV).map(([k, x]) => `<button type="button" role="menuitemcheckbox" aria-checked="${!Array.isArray(b.lv) || b.lv.includes(k)}" data-mn="lv" data-v="${k}">${x.sym} ${x.name}</button>`).join('')}` : ''}
@@ -9507,6 +9549,8 @@ function onMenuClick(e) {
   const blocks = state.sheet.blocks; const idx = blocks.findIndex(x => x.id === bid); const b = blocks[idx]; if (!b) return;
   switch (a.dataset.mn) {
     case 'dup': { const c = clone(b); c.id = 'b' + uid(); zlCloneFor(b.id, c.id); blocks.splice(idx + 1, 0, c); state.sel = c.id; changed(true); break; }
+    case 'up': case 'down': { const j = a.dataset.mn === 'up' ? idx - 1 : idx + 1; if (j < 0 || j >= blocks.length) return; [blocks[idx], blocks[j]] = [blocks[j], blocks[idx]]; state.sel = bid; changed(true); break; }
+    case 'pht': { state.fmtOpen.add('more:pht:' + bid); state.sel = bid; openOnly(bid); renderEditor(); const c = $(`#editor .card[data-bid="${bid}"] .pht`); if (c) c.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); break; }
     case 'oph-all': { const du = state.sheet.meta.anrede === 'du'; let n = 0, none = 0;
       b.items.forEach((it, i) => { if (tipsOf(it).length) return; const S = ophFor(it); if (!S) { none++; return; } it.tips = S.H.tips.slice(0, 3).map(x => duSie(x, du)).concat(['', '', '']).slice(0, 3); state.taskOpen.add(taskKey(b.id, i, 'tips')); n++; });
       if (!n) { toast(none ? 'Bei den übrigen Aufgaben wurde kein Operator erkannt.' : 'Alle Aufgaben haben schon Tipps.'); break; }
@@ -11608,6 +11652,75 @@ function progressionHTML() {
   if (!labels.length) return '';
   return `Progression auf dem Blatt: <b>${labels.join(' → ')}</b>`;
 }
+// Kurzinfo für zugeklappte Karten
+function sumDetail(b) {
+  const pl = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+  const wc = t => { const x = plainText(t || '').trim(); return x ? x.split(/\s+/).length : 0; };
+  try {
+    switch (b.type) {
+      case 'material': { const w = wc(b.text), g = (b.glossary || []).length; return [w ? pl(w, 'Wort', 'Wörter') : 'noch kein Text', g ? pl(g, 'Worterklärung', 'Worterklärungen') : '', String(b.source || '').trim() ? '' : 'ohne Quelle'].filter(Boolean).join(' · '); }
+      case 'tasks': { const L = b.items || []; const noEh = L.filter(it => String(it.text || '').trim() && !ehLines(it).length).length; return [pl(L.length, 'Aufgabe', 'Aufgaben'), noEh ? (noEh === L.length ? 'ohne Erwartung' : `${noEh} ohne Erwartung`) : 'Erwartung ✓'].join(' · '); }
+      case 'info': case 'text': case 'quote': { const w = wc(b.text); return w ? plainText(b.text).trim().slice(0, 70) : 'noch leer'; }
+      case 'image': return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
+      default: { const ph = itPh(b), mn = itMin(b); return [ph ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · '); }
+    }
+  } catch { return ''; }
+}
+// Kurzname für die Gliederung
+function olShort(b, num) {
+  const r = num[b.id];
+  if (b.type === 'material') return r ? r.tag || 'M' + r.m : 'M';
+  if (b.type === 'tasks') return !r || r.to < r.from ? 'Aufgaben' : r.from === r.to ? 'Aufgabe ' + r.from : `Aufgaben ${r.from}–${r.to}`;
+  if (b.type === 'info') return b.kind || 'Infokasten';
+  if (b.type === 'image') return r && r.tag ? r.tag : typeLabel(b);
+  if (b.type === 'heading') return plainText(b.text || '').slice(0, 18) || 'Überschrift';
+  return typeLabel(b);
+}
+// Offene Punkte auf dem Blatt (springen per Klick an die Stelle)
+function pruefList() {
+  const sh = state.sheet, m = sh.meta, num = numbering(sh), L = [];
+  const add = (bid, t, k = 'w') => L.push({ bid, t, k });
+  if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') add('meta', 'Das Blatt hat noch keinen Titel.');
+  let tno = 0;
+  sh.blocks.forEach(b => {
+    if (blockArea(b) !== 'blatt') return;
+    if (b.type === 'tasks' && rst(b)) tno = 0;
+    if (b.type === 'material') { const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';
+      if (String(b.memo || '').trim()) add(b.id, `${lab}: ${String(b.memo).trim().slice(0, 80)}`);
+      if (!String(b.text || '').trim()) add(b.id, `${lab} hat noch keinen Text.`);
+      if (!String(b.source || '').trim()) add(b.id, `${lab} hat keine Quellenangabe.`, 'n'); }
+    if (b.type === 'tasks') (b.items || []).forEach(it => { if (itFo(it)) return; tno++; if (!String(it.text || '').trim()) add(b.id, `Aufgabe ${tno} ist leer.`); else if (!ehLines(it).length) add(b.id, `Aufgabe ${tno} hat noch keine Erwartung.`, 'n'); });
+    if ((b.type === 'info' || b.type === 'text') && !plainText(b.text || '').trim()) add(b.id, `${typeLabel(b)} ist noch leer.`);
+    if (b.type === 'heading' && !String(b.text || '').trim()) add(b.id, 'Eine Überschrift ist leer.', 'n');
+    if (b.type === 'image' && !b.src) add(b.id, 'Ein Bild-Baustein hat noch kein Bild.');
+    if (b.type === 'qr' && !String(b.url || '').trim()) add(b.id, 'Ein QR-Code hat noch keinen Link.');
+  });
+  return L;
+}
+function pruefHTML() {
+  if (!state.sheet.blocks.length) return '';
+  const L = pruefList(); const nW = L.filter(x => x.k === 'w').length;
+  if (!L.length) return '<div class="pf"><div class="pf-ok">✓ Alles da: Titel, Texte, Quellen und Erwartungen.</div></div>';
+  return `<div class="pf" aria-label="Noch offen"><h4>Noch offen <em>${L.length}</em></h4><ul>${L.slice(0, 12).map(x => `<li class="${x.k}"><button type="button" data-act="ol-go" data-ob="${x.bid}"><i></i><span>${esc(x.t)}</span><small>hin</small></button></li>`).join('')}</ul>${L.length > 12 ? `<small class="hint">… und ${L.length - 12} weitere</small>` : ''}${nW ? '' : ''}</div>`;
+}
+function olHTML() {
+  const sh = state.sheet, num = numbering(sh); const warn = new Set(pruefList().filter(x => x.k === 'w').map(x => x.bid));
+  const open = id => state.sel === id || (!state.closed.has(id) && oneCard() && !state.allOpen);
+  const chip = (id, ic, t, drag) => `<button type="button" class="ol-c${open(id) ? ' on' : ''}${warn.has(id) ? ' ol-warn' : ''}" data-act="ol-go" data-ob="${id}"${drag ? ' draggable="true"' : ''} title="${esc(t)}${drag ? ' · ziehen zum Umsortieren' : ''}"><i>${typeIcon(ic)}</i><span>${esc(t)}</span></button>`;
+  const bl = sh.blocks.filter(b => blockArea(b) === 'blatt');
+  return `<div class="ol" role="toolbar" aria-label="Gliederung des Arbeitsblatts">${chip('meta', 'meta', 'Kopf', false)}${bl.map(b => b.type === 'pagebreak' ? '<span class="ol-k" title="Neue Seite">⤓</span>' : chip(b.id, iconKey(b), olShort(b, num), true)).join('')}</div>`;
+}
+function olSync() {
+  document.querySelectorAll('#editor .ol-c').forEach(c => { const id = c.dataset.ob; const card = document.querySelector(`#editor .card[data-bid="${id}"]`); c.classList.toggle('on', state.sel === id || !!(card && !card.classList.contains('closed') && oneCard() && !state.allOpen)); });
+  const on = document.querySelector('#editor .ol-c.on'); if (on) { const o = on.parentElement, r = on.getBoundingClientRect(), orr = o.getBoundingClientRect(); if (r.left < orr.left || r.right > orr.right) o.scrollLeft += r.left - orr.left - 30; }
+}
+function olGo(bid) {
+  if (!bid) return; if (state.area !== 'blatt' && bid !== 'meta') { const bb = state.sheet.blocks.find(x => x.id === bid); if (bb) { areaGo(blockArea(bb), bid); return; } }
+  state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed();
+  renderEditor(); markSel(); clearTimeout(renderTimer); renderPreview();
+  const c = $(`#editor .card[data-bid="${bid}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  setTimeout(() => { const n = document.querySelector(`#pages [data-bid="${bid}"]`); if (n) n.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }, 120);
+}
 function summary(b, num) {
   switch (b.type) {
     case 'material': return `${num[b.id].tag || 'M' + num[b.id].m} · ${b.title || 'ohne Titel'}`;
@@ -11676,8 +11789,8 @@ function bodyFor(b, num) {
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS_BY[fachBase()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
-      <small class="hint dz-hint">Stil (Fläche, Rahmen, Linie, klein): in der Vorschau über den Infokasten fahren und den Pinsel „Gestaltung“ wählen (am Tablet: antippen).</small>
-      ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}`;
+      ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}
+      ${stilTiles(b, ST_INFO)}`;
     case 'phrases': {
       if (!Array.isArray(b.groups) || !b.groups.length) b.groups = [{ head: '', text: '' }];
       return `${fText('title', 'Überschrift', b.title, 'Formulierungshilfen')}
@@ -11767,7 +11880,7 @@ function metaCard() {
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'meta' ? ' sel' : ''}" data-bid="meta">
-    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('meta')}</span><span class="kind">Kopf</span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span></div>
+    <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('meta')}</span><span class="ch-t"><span class="ch-k"><span class="kind">Kopf</span></span><span class="sum">${isK ? esc(ex.label || 'Klausur') + ' · ' : (m.nr ? 'AB ' + esc(m.nr) + ' · ' : '')}${esc(m.title || 'Ohne Titel')}</span><span class="sum2">${esc([m.subtitle ? plainText(m.subtitle) : '', KL(state.sheet.klasse).label].filter(Boolean).join(' · '))}</span></span></div>
     <div class="card-b">${gNote('meta')}
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input type="text" data-k="nr" value="${esc(m.nr)}" placeholder="7"></label>${fText('title', isK ? 'Titel (für die Ablage)' : 'Titel', m.title, 'Titel des Arbeitsblatts')}</div>
       ${isK ? '' : fText('topic', 'Thema / Unterzeile', m.topic, 'optional')}
@@ -11818,9 +11931,10 @@ function renderEditor(focusSel) {
     else {
       const cards = blocks.map((b, i) => (inArea(b, A) ? (A === 'blatt' ? insRow(i) : '') + cardHTML(b, i, num) : A === 'blatt' && b.type !== 'pagebreak' ? phRowHTML(b, num) : '')).join('');
       const none = A !== 'blatt' && !blocks.some(b => inArea(b, A));
-      body = fold + (state.sheet.abs && state.sheet.abs.length > 1 ? abBarHTML() : '') + intro + (A === 'blatt' ? metaCard() : '') + cards + (none ? `<div class="flow-empty">${A === 'tafel' ? 'Noch kein Tafelbild in diesem Arbeitsblatt.' : 'Noch keine A3-Vorlage und kein Exit-Ticket in diesem Arbeitsblatt.'}</div>` : '') + bkHTML();
+      body = fold + (state.sheet.abs && state.sheet.abs.length > 1 ? abBarHTML() : '') + intro + (A === 'blatt' ? metaCard() : '') + cards + (A === 'blatt' && state.out === 'blatt' ? pruefHTML() : '') + (none ? `<div class="flow-empty">${A === 'tafel' ? 'Noch kein Tafelbild in diesem Arbeitsblatt.' : 'Noch keine A3-Vorlage und kein Exit-Ticket in diesem Arbeitsblatt.'}</div>` : '') + bkHTML();
     }
     ed.innerHTML = areaBarHTML() + body;
+    { const ab = ed.querySelector('.area-bar'); if (ab && getComputedStyle(ab).position === 'sticky') ed.style.setProperty('--sm', ab.offsetHeight + 10 + 'px'); }
     document.body.classList.toggle('pp-on', ppOn()); if (ppOn()) { ppAfterStrip(); ppPanelRender(); } else ppPanelRender();
   }
   ed.scrollTop = st;
@@ -11831,7 +11945,8 @@ function renderEditor(focusSel) {
 }
 function refreshSummaries() {
   const num = numbering(state.sheet);
-  state.sheet.blocks.forEach(b => { const s = document.querySelector(`#editor [data-bid="${b.id}"] [data-sum]`); if (s) s.textContent = summary(b, num); });
+  state.sheet.blocks.forEach(b => { const s = document.querySelector(`#editor [data-bid="${b.id}"] [data-sum]`); if (s) s.textContent = summary(b, num); const s2 = document.querySelector(`#editor [data-bid="${b.id}"] [data-sum2]`); if (s2) s2.textContent = sumDetail(b); const oc = document.querySelector(`#editor .ol-c[data-ob="${b.id}"] span`); if (oc) oc.textContent = olShort(b, num); });
+  clearTimeout(refreshSummaries.t); refreshSummaries.t = setTimeout(() => { const pf = document.querySelector('#editor .pf'); if (pf && state.area === 'blatt') { const n = el(pruefHTML()); if (n) pf.replaceWith(n); else pf.remove(); } const warn = new Set(pruefList().filter(x => x.k === 'w').map(x => x.bid)); document.querySelectorAll('#editor .ol-c').forEach(c => c.classList.toggle('ol-warn', warn.has(c.dataset.ob))); }, 600);
   const ms = document.querySelector('#editor [data-bid="meta"] .sum'); const m = state.sheet.meta;
   if (ms) ms.textContent = (m.nr ? 'AB ' + m.nr + ' · ' : '') + (m.title || 'Ohne Titel');
   const tb = document.querySelector('#editor .ab-tab[aria-selected="true"] span'); if (tb) tb.textContent = plainText(m.title || '') || 'ohne Titel';
@@ -11970,6 +12085,7 @@ function onClick(e) {
   const act = a.dataset.act; if (act.startsWith('abx-')) { abAct(act, a); return; }
   if (act.startsWith('pp-')) { ppAct(act, a); return; }
   if (act === 'bk-open') { bkOpen(); return; }
+  if (act === 'ol-go') { olGo(a.dataset.ob); return; }
   if (act === 'bk-close') { state.insAt = null; bkClose(); return; }
   if (a.dataset.bkArea) { state.bkOpen = false; state.bkQ = ''; const ar = a.dataset.bkArea; if (ar !== (state.area || 'blatt')) { state.area = ar; state.out = areaOutFor(ar); if (ar === 'extras' && a.dataset.act === 'st-new') state.out = 'exit'; } }
   const card = a.closest('[data-bid]'); const bid = card && card.dataset.bid;
@@ -12022,7 +12138,7 @@ function onClick(e) {
       else if (opening) state.closed.delete(bid); else state.closed.add(bid);
       state.sel = bid; saveClosed();
       document.querySelectorAll('#editor .card[data-bid]').forEach(c => { const zu = state.closed.has(c.dataset.bid); c.classList.toggle('closed', zu); const ch = c.querySelector('.chev'); if (ch) { ch.setAttribute('aria-expanded', String(!zu)); ch.title = zu ? 'Aufklappen' : 'Zuklappen'; } });
-      document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel')); card.classList.add('sel'); markSel();
+      document.querySelectorAll('#editor .card.sel').forEach(c => c.classList.remove('sel')); card.classList.add('sel'); markSel(); olSync();
       if (opening) { const r = card.getBoundingClientRect(), er = $('#editor').getBoundingClientRect(); if (r.top < er.top || r.top > er.top + er.height * .6) card.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
       if (opening && state.area === 'extras' && b) { const f = b.type === 'a3' ? a3Fmt(b) : 'exit'; if (state.out !== f) { state.out = f; state.areaOut.extras = f; renderOut(); clearTimeout(renderTimer); renderPreview(); document.querySelectorAll('#editor .xs').forEach(x => { const on = x.classList.contains('xs-' + f); x.classList.toggle('on', on); const e = x.querySelector('.xs-eye'); if (e) e.textContent = on ? 'in der Vorschau' : 'Vorschau ›'; }); } }
       return;
@@ -16948,6 +17064,12 @@ function boot() {
     const i = +h.dataset.i; const w = tbWidths(b); const cum = w.slice(0, i + 1).reduce((a, x) => a + x, 0);
     cwSet(b, i, cum + (e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : 1) * (e.shiftKey ? 5 : 1)); cwPaint(card, b); changed(false);
   });
+  let olDrag = null; const olClr = () => document.querySelectorAll('#editor .ol-b,#editor .ol-a').forEach(n => n.classList.remove('ol-b', 'ol-a'));
+  edEl.addEventListener('dragstart', e => { const c = e.target.closest && e.target.closest('.ol-c[draggable="true"]'); if (!c) return; olDrag = c.dataset.ob; try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', c.textContent); } catch {} setTimeout(() => c.classList.add('dragging'), 0); });
+  const olT = e => { const c = e.target.closest && e.target.closest('.ol-c[draggable="true"]'); if (!c || c.dataset.ob === olDrag) return null; const r = c.getBoundingClientRect(); return { c, before: e.clientX < r.left + r.width / 2 }; };
+  edEl.addEventListener('dragover', e => { if (!olDrag) return; const t = olT(e); olClr(); if (!t) return; e.preventDefault(); t.c.classList.add(t.before ? 'ol-b' : 'ol-a'); });
+  edEl.addEventListener('drop', e => { if (!olDrag) return; const t = olT(e); const id = olDrag; olDrag = null; olClr(); if (!t) return; e.preventDefault(); edDrop(id, t.c.dataset.ob, t.before); });
+  edEl.addEventListener('dragend', () => { olDrag = null; olClr(); document.querySelectorAll('#editor .ol-c.dragging').forEach(n => n.classList.remove('dragging')); });
   edEl.addEventListener('dragstart', e => {
     const h = e.target.closest && e.target.closest('.card-h[draggable="true"]'); if (!h) return;
     const c = h.closest('.card'); edDrag = c.dataset.bid;
