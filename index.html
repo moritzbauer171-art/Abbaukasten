@@ -600,6 +600,9 @@ body.basis .area-more{display:none}
 .mw-wt button:hover{background:#E6EAF2}
 .mw-wt button[aria-pressed="true"]{background:#DCE3F7;border-color:#9DB0E8}
 .mw-tl{font-size:12.5px;font-weight:700;margin-left:5px}
+.mw-wt .mw-hy{gap:7px;margin-left:4px}
+.mw-sw{width:28px;height:16px;border-radius:9px;background:#C5CBD6;position:relative;transition:background .15s;flex:none}.mw-sw::after{content:'';position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .15s}
+.mw-hy[aria-checked="true"] .mw-sw{background:#2F6FDB}.mw-hy[aria-checked="true"] .mw-sw::after{left:14px}
 .mw-sep{width:1px;height:22px;background:#D5DAE3;margin:0 4px}
 .mw-wpg{background:#E9ECF1;padding:12px}
 .mw-word .rtx.mw-wp{border:1px solid #DDE1E8;border-radius:0;background:#fff;color:#1C1F27;box-shadow:0 1px 4px rgba(20,30,50,.10);padding:16px 18px;font-size:15px;line-height:1.55;max-height:46vh}
@@ -10079,14 +10082,15 @@ function buildBlock(b, ctx) {
       const tailFor = (list, src, bank) => (list.length || src || (bank && bankH)) ? `<div class="mat-tail">${bank ? bankH : ''}${list.length ? `<div class="notes">${list.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${src ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
       const tail = tailFor(notes, !!b.source, true);
       const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
-      const fcls = (meta.noHy ? ' nohy' : '') + (poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '')) + (fm.silben === 'boegen' ? ' sil-b' : fm.silben === 'farbe' ? ' sil-f' : '');
+      const noHyB = b.hy != null ? !b.hy : !!meta.noHy;
+      const fcls = (noHyB ? ' nohy' : '') + (poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '')) + (fm.silben === 'boegen' ? ' sil-b' : fm.silben === 'farbe' ? ' sil-f' : '');
       const silX = fm.silben ? silEx(fm.silx) : null; const wH = w => silX ? silHTML(w.h, silX) : w.h;
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fmtFF(fm.font)}${fm.margin ? `;--mrw:${fm.mrw}mm` : ''}`;
       const isPost = !!b.post && !poem; const two = fm.cols === 2 && !isPost;
       const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body" lang="de"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
-      if (HY.fn && !poem && fm.align !== 'left' && !fm.silben && !meta.noHy) hyWords(bodyEl);
+      if (HY.fn && !poem && fm.align !== 'left' && !fm.silben && !noHyB) hyWords(bodyEl);
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
       const lines = []; const zw = [], zn = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
@@ -10135,7 +10139,7 @@ function buildBlock(b, ctx) {
         const t = tailOf(sel, !!tailEl && sel.includes(tailEl)); if (t) w.appendChild(t);
         return w;
       };
-      const item = { type: 'material', el: n, atoms, keepFirst: isPost ? 4 : 3, keepLast: (tailEl ? 3 : 2) + (isPost ? 1 : 0), contPre: () => 5.2 * MMPX, assemble, keepNext: i => !!(atoms[i] && atoms[i].classList && atoms[i].classList.contains('mh')) };
+      const item = { type: 'material', el: n, atoms, keepFirst: isPost ? 4 : 3, keepLast: (tailEl ? 3 : 2) + (isPost ? 1 : 0), contPre: () => 5.2 * MMPX, assemble, keepNext: i => [atoms[i], atoms[i - 1], atoms[i - 2]].some(a => !!(a && a.classList && a.classList.contains('mh'))) };
       // Mit Worterklärungen hängt die Höhe eines Teils davon ab, welche Erklärungen mitwandern: dann den Teil selbst messen
       if (notes.length) { const memo = new Map(); item.partH = (s, e) => { const key = s + ':' + e; if (!memo.has(key)) { const w = assemble(s, e); ctx.body.appendChild(w); memo.set(key, w.getBoundingClientRect().height); w.remove(); } return memo.get(key); }; }
       return item;
@@ -10237,7 +10241,10 @@ function matTwoCols({ n, ctx, head, tailEl, bodyEl, lineEls, atoms, matLab, poem
       const right = tot - left - (c.contains('st') ? stPad : 0);
       let x = Math.max(left, right);
       if (poem) { if (!c.contains('st')) x += lh * 2; if (c.contains('vc')) x += lh * 6; }
-      else { if (c.contains('pl')) x += lh * .6; if (ls[k - 1].classList.contains('pf')) x += lh * .6; }
+      else { if (c.contains('pl')) x += lh * .6; if (ls[k - 1].classList.contains('pf')) x += lh * .6;
+        // Zwischenüberschrift mit weniger als drei Zeilen darunter unten in der Spalte: lieber oben in der nächsten Spalte beginnen
+        for (let j = 1; j <= 3 && k - j >= 0; j++) if (ls[k - j].classList.contains('mh')) { x += lh * 8; break; }
+        if (c.contains('mh')) x -= lh * .3; }
       if (x < cost - .01 || (Math.abs(x - cost) < .01 && left >= right)) { cost = x; best = k; }
     }
     return best;
@@ -10259,7 +10266,7 @@ function matTwoCols({ n, ctx, head, tailEl, bodyEl, lineEls, atoms, matLab, poem
   const full = assemble(0, atoms.length); n.replaceWith(full);
   const memo = new Map();
   const partH = (s, e) => { const key = s + ':' + e; if (!memo.has(key)) { const w = assemble(s, e); ctx.body.appendChild(w); memo.set(key, w.getBoundingClientRect().height); w.remove(); } return memo.get(key); };
-  return { type: 'material', el: full, atoms, keepFirst: 3, keepLast: tailEl ? 3 : 2, contPre: () => 5.2 * MMPX, assemble, partH };
+  return { type: 'material', el: full, atoms, keepFirst: 3, keepLast: tailEl ? 3 : 2, contPre: () => 5.2 * MMPX, assemble, partH, keepNext: i => [atoms[i], atoms[i - 1], atoms[i - 2]].some(a => !!(a && a.classList && a.classList.contains('mh'))) };
 }
 function minStart(it) { if (!it || !it.el) return 0; if (!it.atoms) return Math.min(it.h, AVAIL); if (it.partH) return it.partH(0, Math.min(it.keepFirst, it.atoms.length)); return it.pre + sum(it.ah, 0, Math.min(it.keepFirst, it.atoms.length)); }
 
@@ -10801,7 +10808,7 @@ function fWord(k, label, v, o = {}) {
   const BIG = ['<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2h4v4M6 14H2v-4M14 2 9.5 6.5M2 14l4.5-4.5"/></svg>', '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 6.5h-4v-4M2.5 9.5h4v4M9.5 6.5 14 2M6.5 9.5 2 14"/></svg>'];
   return `<div class="f rt-f mw-f"><span>${label}</span><div class="mw-word${big ? ' mw-max' : ''}" data-mw="${esc(o.bid || '')}"${fm ? ` style="--mwff:${fmtFF(fm.font).replace(/"/g, "'")};--mwfs:${(FMT_SIZE[fm.size] / 10.5 * 15).toFixed(1)}px"` : ''}>
     <div class="mw-wh"><span>${esc(o.head || label)}</span><button type="button" class="mw-big" data-act="mw-big" aria-pressed="${big}" title="${big ? 'Fenster verkleinern (Esc)' : 'Fenster groß machen'}">${BIG[big ? 1 : 0]}<span>${big ? 'Verkleinern' : 'Vergrößern'}</span></button></div>
-    <div class="mw-wt" role="toolbar" aria-label="Formatierung">${ob && ob.type === 'material' ? fmtSel(ob, 'font') + fmtSel(ob, 'size') + '<span class="mw-sep"></span>' : ''}${T.map(x => x === '|' ? '<span class="mw-sep"></span>' : `<button type="button" data-mwc="${x[0]}" title="${x[1]}" aria-label="${x[1]}"${/^[biumh]$/.test(x[0]) ? ' aria-pressed="false"' : ''}>${x[2] || mwIc(x[0])}</button>`).join('')}</div>
+    <div class="mw-wt" role="toolbar" aria-label="Formatierung">${ob && ob.type === 'material' ? fmtSel(ob, 'font') + fmtSel(ob, 'size') + (ob.form !== 'gedicht' ? mwHyBtn(ob) : '') + '<span class="mw-sep"></span>' : ''}${T.map(x => x === '|' ? '<span class="mw-sep"></span>' : `<button type="button" data-mwc="${x[0]}" title="${x[1]}" aria-label="${x[1]}"${/^[biumh]$/.test(x[0]) ? ' aria-pressed="false"' : ''}>${x[2] || mwIc(x[0])}</button>`).join('')}</div>
     <div class="mw-wpg">${rtField(k, v, { aria: label, ...o, cls: ((o.cls || '') + ' mw-wp').trim() })}</div>
     <div class="mw-ws"><span class="mw-wc">${mwWords(v)}</span><span>wird automatisch gespeichert</span></div></div>${o.hint ? `<small class="fh">${o.hint}</small>` : ''}</div>`;
 }
@@ -10817,7 +10824,10 @@ function mwState() {
     if (inF) { const c = bt.dataset.mwc; try { if (c === 'm') on = rtMarked(); else if (c === 'h') on = /^h\d$/i.test(document.queryCommandValue('formatBlock')); else on = document.queryCommandState({ b: 'bold', i: 'italic', u: 'underline' }[c]); } catch {} }
     bt.setAttribute('aria-pressed', on ? 'true' : 'false'); });
 }
+const mwHyOn = b => b.hy != null ? !!b.hy : !(state.sheet.meta || {}).noHy;
+const mwHyBtn = b => { const on = mwHyOn(b); return `<button type="button" class="mw-hy" data-mwc="hy" role="switch" aria-checked="${on}" title="Silbentrennung in diesem Material ${on ? 'ausschalten' : 'einschalten'}"><span class="mw-tl" style="margin:0">Silben­trennung</span><i class="mw-sw"></i></button>`; };
 function mwCmd(btn) {
+  if (btn.dataset.mwc === 'hy') { const card = btn.closest('[data-bid]'); const b = card && target(card.dataset.bid); if (!b) return; const on = !mwHyOn(b); b.hy = on; btn.setAttribute('aria-checked', on); btn.title = `Silbentrennung in diesem Material ${on ? 'ausschalten' : 'einschalten'}`; changed(); toast(on ? 'Silbentrennung in diesem Material an' : 'Silbentrennung in diesem Material aus'); return; }
   const w = btn.closest('.mw-word'); const f = w && w.querySelector('.rtx'); if (!f) return; const c = btn.dataset.mwc;
   if (!f.contains(getSelection().anchorNode)) { f.focus(); rtCaretEnd(f); }
   if (c === 'gl') { const card = btn.closest('.card'); const b = card && target(card.dataset.bid); if (b) glossFromTextarea(card, b, btn); return; }
@@ -12820,7 +12830,7 @@ async function initBackend() {
       const ou = lsGet(LS_OFFUSER);
       if (!store.user && !navigator.onLine && ou && ou.id) { await useBackend(offlineOnlyB(ou)); return; }
       await useBackend(store.user ? supaB(sb, store.user) : localB);
-      if (store.user) offerMigration();
+      if (store.user) { offerMigration(); admCheck(); }
       else openDlg('login');
       return;
     } catch (err) {
@@ -12838,7 +12848,7 @@ function onAuth(ev, session) {
   if (user && user.id !== cur) {
     store.user = user;
     if (state.dlg && state.dlg.mode === 'login') closeDlg();
-    useBackend(supaB(store.sb, user)).then(offerMigration);
+    useBackend(supaB(store.sb, user)).then(() => { offerMigration(); admCheck(); });
   } else if (!user && cur) {
     store.user = null; lsDel(LS.cur); state.touched = false;
     useBackend(localB).then(() => openDlg('login'));
@@ -13402,7 +13412,7 @@ const ADM = { is: false, for: '', open: false, tab: 'konten', users: null, share
 async function admCheck() {
   const uid = store.user && store.user.id; if (!uid || !store.sb) { ADM.is = false; ADM.for = ''; return; }
   if (ADM.for === uid) return; ADM.for = uid; ADM.is = false;
-  try { const r = await store.sb.rpc('ab_is_admin'); if (!r.error && r.data === true && store.user && store.user.id === uid) { ADM.is = true; if (state.libOpen) renderLib(); if (state.area === 'einst') renderEditor(); } } catch {}
+  try { const r = await store.sb.rpc('ab_is_admin'); if (!r.error && r.data === true && store.user && store.user.id === uid) { ADM.is = true; if (state.libOpen) renderLib(); if (state.area === 'einst' || state.area === 'pres') renderEditor(); } } catch {}
 }
 const admRpc = async (fn, args) => { const r = await store.sb.rpc(fn, args || {}); if (r.error) throw r.error; return r.data; };
 const admDate = (v, t) => { if (!v) return '–'; const d = new Date(v); return isNaN(d) ? '–' : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }) + (t ? ' ' + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : ''); };
