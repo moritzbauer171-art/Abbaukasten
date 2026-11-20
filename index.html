@@ -3708,6 +3708,32 @@ body.home-on{overflow:hidden}
   body>*:not(#printroot){display:none!important}
   #printroot .page{box-shadow:none}
 }
+/* Handy: kompakter Kopf (zwei schmale Zeilen), Kopf weicht beim Scrollen, eine Vorschauleiste */
+@media (max-width: 640px){
+  .bar{grid-template-columns:auto minmax(0,1fr) auto!important;grid-template-areas:"brand status actions" "crumbs crumbs crumbs"!important;gap:2px 8px!important;padding-bottom:4px!important;align-items:center;transition:margin-top .22s ease}
+  .bar .brand{gap:8px;align-items:center}.bar .brand-c{display:none!important}
+  .bar .logo-l,.bar .logo-w{font-size:17px}
+  .bar .fach-btn{min-height:30px;padding:2px 6px}
+  .bar .status{justify-self:end;font-size:0;gap:0}.bar .status span{display:none!important}.bar .status i{width:8px;height:8px}
+  .bar .actions .btn,.bar .actions .ib-help{min-width:40px;height:38px;border-radius:11px;padding:0 8px}
+  .bar .crumbs{margin:0 -4px}.bar .cr{height:30px;font-size:13px;padding:0 6px}
+  body.hd-hide .bar{margin-top:calc(-1 * var(--hdh, 100px))}
+  .area-bar .qbar{display:none!important}
+  .area-bar .olz{margin-top:4px}
+  .pv-bar{flex-wrap:nowrap!important;padding-top:6px!important;gap:6px!important;min-width:0}
+  .pv-bar #pv-opts{flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .pv-bar #pv-opts::-webkit-scrollbar{display:none}
+  .pv-bar #pagecount,.pv-bar #btn-wide{display:none!important}
+  .pv-opts .dz-btn{font-size:0!important;gap:0!important;padding:0 10px!important}
+  .pv-bar #btn-zoom{flex:none;padding:0 6px}
+}
+/* Einfügen zwischen Karten: feine Linie mit kleinem Plus nur an der Stelle unter dem Zeiger (am Tablet unter der gewählten Karte) */
+.ins-row{height:14px!important;flex:none!important;margin:-7px 0!important;cursor:pointer}
+.ins-row::before{content:'';position:absolute;left:14px;right:14px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--tinte);opacity:0;transform:scaleX(.3);transition:opacity .14s,transform .18s ease-out;pointer-events:none}
+.ins-row .ins-btn{top:50%!important;width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;padding:0!important;border:0!important;background:var(--tinte)!important;color:var(--tinte-ink,#fff)!important;font-size:14px!important;transform:translateY(-50%) scale(.6);opacity:0!important;transition:opacity .14s,transform .18s ease-out;box-shadow:0 0 0 3px var(--bg,#F3F5F9)}
+.ins-row:hover::before{opacity:1;transform:none}
+.ins-row:hover .ins-btn,.ins-row .ins-btn:focus-visible{opacity:1!important;transform:translateY(-50%) scale(1)}
+@media (hover:none){.card.sel+.ins-row::before{opacity:.4;transform:none}.card.sel+.ins-row .ins-btn{opacity:1!important;transform:translateY(-50%) scale(.95)}}
 </style>
 </head>
 <body>
@@ -9513,7 +9539,7 @@ function saveSnip(b) {
 // Einfügen an Ort und Stelle: ein „+“ zwischen den Karten öffnet die Bausteinauswahl genau dort
 function insRow(i) {
   if (state.insAt === i) return `<div class="ins-pal" data-at="${i}"><div class="ins-pal-h"><span>Baustein hier einfügen</span><button type="button" class="ib" data-act="ins-close" title="Schließen">${I.x}</button></div><div class="ins-grid">${areaPalette(state.area || 'blatt').map(t => `<button type="button" class="ins-b" data-act="ins-add" data-type="${t.type}" data-pk="${t.k}" data-at="${i}" title="${esc(t.desc)}"><i class="add-ic">${typeIcon(t.ic)}</i><b>${t.label}</b></button>`).join('')}</div></div>`;
-  return `<div class="ins-row"><button type="button" class="ins-btn" data-act="ins-open" data-at="${i}" title="Baustein hier einfügen" aria-label="Baustein hier einfügen">+</button></div>`;
+  return `<div class="ins-row" data-act="ins-open" data-at="${i}"><button type="button" class="ins-btn" data-act="ins-open" data-at="${i}" title="Baustein hier einfügen" aria-label="Baustein hier einfügen">+</button></div>`;
 }
 function adderHTML(A = 'blatt') {
   const tile = t => `<button type="button" class="add-b" data-act="add" data-type="${t.type}" data-pk="${t.k}" title="${esc(t.label + ': ' + t.desc)}"><i class="add-ic">${typeIcon(t.ic)}</i><span class="add-tx"><b>${t.label}</b></span></button>`;
@@ -11915,6 +11941,16 @@ function seiteCard() {
 
     </div></div>`;
 }
+// Handy: Kopf beim Herunterscrollen ausblenden, beim Hochscrollen zeigen
+(() => {
+  const mq = window.matchMedia('(max-width: 640px)'); let last = {}, hidden = false;
+  const set = on => { if (on === hidden) return; hidden = on; if (on) { const b = document.querySelector('header.bar'); if (b) document.body.style.setProperty('--hdh', b.offsetHeight + 'px'); } document.body.classList.toggle('hd-hide', on); };
+  const onScroll = e => { const t = e.target; if (!mq.matches || !t || (t.id !== 'editor' && t.id !== 'preview-scroll')) return; const y = t.scrollTop, p = last[t.id] || 0; last[t.id] = y;
+    if (y < 30) set(false); else if (y - p > 6) set(true); else if (p - y > 10) set(false); };
+  document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+  mq.addEventListener('change', () => set(false));
+  window.__hdShow = () => set(false);
+})();
 function renderEditor(focusSel) {
   try { crumbsRender(); } catch {}
   const ed = $('#editor'); const st = ed.scrollTop;
@@ -13139,7 +13175,7 @@ function backClose() {
 }
 function mobileInit() {
   const bar = $('#mbar');
-  bar.addEventListener('click', e => { const b = e.target.closest('[data-mb]'); if (!b) return; const k = b.dataset.mb;
+  bar.addEventListener('click', e => { const b = e.target.closest('[data-mb]'); if (!b) return; const k = b.dataset.mb; if (window.__hdShow) window.__hdShow();
     if (k === 'edit' || k === 'preview') { if (hmS.open) homeClose(); setView(k); window.scrollTo({ top: 0 }); return; }
     if (k === 'add') { if (hmS.open) homeClose(); if ((state.area || 'blatt') !== 'blatt' && state.area !== 'extras') setArea('blatt'); setView('edit'); bkOpen(); setTimeout(() => { const q = document.querySelector('#editor .bk-q, #editor .bk input, #editor [data-bk-q]'); const box = q && (q.closest('.bk') || q); if (box) box.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 80); return; }
     if (k === 'out') { const o = $('#btn-out'); if (o) o.click(); } });
