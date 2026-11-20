@@ -30,7 +30,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: st.width || 1440, height: st.height || 920, x: st.x, y: st.y,
     minWidth: 900, minHeight: 600, show: false, title: APP_NAME, icon: iconPath(), backgroundColor: '#EEF0F4',
-    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true, spellcheck: true }
+    webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true, spellcheck: true, autoplayPolicy: 'no-user-gesture-required' }
   });
   if (st.max) win.maximize();
   win.once('ready-to-show', () => { win.show(); setTimeout(firstRun, 800); });
@@ -41,7 +41,7 @@ function createWindow() {
   // Links nach außen im Standardbrowser öffnen, die App selbst nie wegnavigieren
   // Beamerfenster der Referentenansicht (leeres Fenster der Seite) zulassen, alles andere im Standardbrowser
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (!url || url === 'about:blank' || isOurs(url)) return { action: 'allow', overrideBrowserWindowOptions: { autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#000000', title: APP_NAME + ' – Beamer' } };
+    if (!url || url === 'about:blank' || isOurs(url)) return { action: 'allow', overrideBrowserWindowOptions: { autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#000000', title: APP_NAME + ' – Beamer', webPreferences: { autoplayPolicy: 'no-user-gesture-required' } } };
     if (/^https?:/i.test(url)) shell.openExternal(url); return { action: 'deny' };
   });
   // Beamerfenster merken, damit es auf den zweiten Bildschirm gesetzt werden kann
