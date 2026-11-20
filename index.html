@@ -3038,6 +3038,20 @@ body.home-on{overflow:hidden}
 #pv-tools button:hover:not(:disabled){background:var(--panel);color:var(--tinte)}
 #pv-tools button:disabled{opacity:.3;cursor:default}
 #pv-tools button.on{background:var(--tinte-soft);color:var(--tinte)}
+#pv-tools.has-q{flex-wrap:wrap;width:356px;padding:5px}
+#pv-tools .pvq{flex:1 0 100%;border-top:1px solid var(--line);margin-top:5px;padding:8px 4px 2px;display:flex;flex-direction:column;gap:8px}
+#pv-tools .pvq-r{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pv-tools .pvq-r>span{font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
+#pv-tools .pvq-seg{display:flex;background:var(--panel);border-radius:8px;padding:2px;gap:2px}
+#pv-tools .pvq-seg button{width:auto;height:26px;padding:0 9px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+#pv-tools .pvq-seg button.on{background:var(--card);color:var(--tinte);box-shadow:0 1px 3px rgba(20,30,60,.18)}
+#pv-tools .pvq-tg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+#pv-tools .pvq-t{width:auto;height:auto;display:flex;align-items:center;gap:7px;justify-content:flex-start;padding:6px 7px;font-size:12px;font-weight:600;text-align:left;line-height:1.2;border:1px solid var(--line)}
+#pv-tools .pvq-t i{flex:none;width:24px;height:14px;border-radius:8px;background:#C5CBD6;position:relative;transition:background .15s}
+#pv-tools .pvq-t i::after{content:'';position:absolute;left:2px;top:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:left .15s}
+#pv-tools .pvq-t.on{background:none;color:var(--ink)}#pv-tools .pvq-t.on i{background:var(--tinte)}#pv-tools .pvq-t.on i::after{left:12px}
+#pv-tools .pvq-b{display:flex;gap:6px}
+#pv-tools .pvq-b button{flex:1;width:auto;height:30px;font-size:12px;font-weight:600;border:1px solid var(--line-strong);padding:0 8px}
 #pv-tools .pvt-sep{width:1px;height:18px;background:var(--line);margin:0 3px}
 #pv-tools button.danger:hover{color:#B42318;background:#FDECEA}
 #pv-ins{position:fixed;inset:0;pointer-events:none;z-index:29}
@@ -12161,6 +12175,34 @@ const pvOn = () => state.out === 'blatt' && !MAPPE_LOCK && !DG_VIEW && !state.ga
 function pvOrder() { const on = new Set([...document.querySelectorAll('#pages [data-bid]')].map(n => n.dataset.bid)); return state.sheet.blocks.map((b, i) => [b, i]).filter(([b]) => on.has(b.id) || b.type === 'pagebreak'); }
 function pvBlockEl(t) { const n = t && t.closest && t.closest('#pages [data-bid]'); if (!n) return null; const bid = n.dataset.bid; return state.sheet.blocks.some(b => b.id === bid) ? n : null; }
 function pvHide() { const t = $('#pv-tools'), i = $('#pv-ins'); if (t) t.hidden = true; if (i) i.hidden = true; PVT.bid = null; PVT.el = null; }
+// Schnellfeld beim Überfahren eines Materials: die häufigsten Entscheidungen auf einen Blick
+function pvQuick(b) {
+  if (!b || b.type !== 'material' || b.post) return '';
+  const f = matFmt(b), poem = b.form === 'gedicht';
+  const seg = (lab, q, opts, cur) => `<div class="pvq-r"><span>${lab}</span><div class="pvq-seg">${opts.map(([v, l]) => `<button type="button" data-pv="q" data-q="${q}" data-v="${v}" class="${String(cur) === v ? 'on' : ''}" aria-pressed="${String(cur) === v}">${l}</button>`).join('')}</div></div>`;
+  const tg = (lab, q, on, dis, tip) => `<button type="button" class="pvq-t${on ? ' on' : ''}" data-pv="q" data-q="${q}" role="switch" aria-checked="${on}"${dis ? ` disabled title="${tip}"` : ''}><i></i>${lab}</button>`;
+  let h = seg('Spalten', 'cols', [['1', 'eine'], ['2', 'zwei']], f.cols);
+  if (!poem) h += seg('Satz', 'align', [['justify', 'Blocksatz'], ['left', 'linksbündig']], f.align);
+  h += `<div class="pvq-tg">${tg('Rand für Notizen', 'margin', f.margin, f.cols === 2, 'Nur bei einer Spalte')}${tg(poem ? 'Verszählung' : 'Zeilennummern', 'ln', b.lineNumbers !== false)}${poem ? '' : tg('Silbentrennung', 'hy', mwHyOn(b), f.align === 'left' || !!f.silben, 'Nur im Blocksatz ohne Silbenhilfe')}${poem ? '' : tg('Einzug bei Absätzen', 'indent', f.indent)}</div>`;
+  if (f.margin) h += seg('Randbreite', 'mrw', MAT_FMT.mrw.opts, f.mrw);
+  if (!poem && matHasH(b.text)) h += seg('Zwischen\u00adüberschriften', 'gapHd', GAP_HD.map(([v, l]) => [v, ({ '': 'bleiben', weg: 'weg', luecke: 'Linie', kasten: 'Linie + Kasten' })[v] || l]), b.gapHd || '');
+  h += `<div class="pvq-b"><button type="button" data-pv="q" data-q="gaps">Lücken setzen</button><button type="button" data-pv="dz">Mehr Gestaltung …</button></div>`;
+  return `<div class="pvq">${h}</div>`;
+}
+function pvQAct(a) {
+  const b = state.sheet.blocks.find(x => x.id === PVT.bid); if (!b) return; const q = a.dataset.q, v = a.dataset.v, f = matFmt(b);
+  const F = (k, val) => { b.fmt = { ...(b.fmt || {}), [k]: val }; };
+  if (q === 'cols') { F('cols', v); if (v === '2') F('margin', false); }
+  else if (q === 'align') F('align', v);
+  else if (q === 'margin') F('margin', !f.margin);
+  else if (q === 'indent') F('indent', !f.indent);
+  else if (q === 'mrw') F('mrw', v);
+  else if (q === 'ln') b.lineNumbers = b.lineNumbers === false;
+  else if (q === 'hy') b.hy = !mwHyOn(b);
+  else if (q === 'gapHd') { if (v) b.gapHd = v; else delete b.gapHd; }
+  else if (q === 'gaps') { pvHide(); const fake = document.createElement('button'); fake.dataset.act = 'gap-edit'; const holder = document.createElement('div'); holder.dataset.bid = b.id; holder.append(fake); onClick({ target: fake, preventDefault() {}, stopPropagation() {} }); return; }
+  const bid = PVT.bid; PVT.bid = null; PVT.follow = bid; changed(true);
+}
 function pvShow(n) {
   const t = $('#pv-tools'), ins = $('#pv-ins'); if (!t || !n || !n.isConnected) return pvHide();
   const bid = n.dataset.bid; const b = state.sheet.blocks.find(x => x.id === bid); if (!b) return pvHide();
@@ -12169,7 +12211,9 @@ function pvShow(n) {
     const dzB = DZ_TYPES.has(b.type) ? `<button type="button" data-pv="dz" class="${state.dz && state.dz.k === 'block' && state.dz.bid === bid ? 'on' : ''}" title="Gestaltung: ${b.type === 'material' ? 'Schrift, Größe, Zeilenabstand, Einzug, Rand' : 'Stil'}">${pvI('dz')}</button>` : '';
     const extra = dzB + (PRES_OPT.has(b.type) ? `<button type="button" data-pv="pres-tg" class="${presOn(b) ? 'on' : ''}" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht auf einer Folie · klicken zum Entfernen' : 'Auf die Folie'}">${pvI('fol')}</button>` : '')
       + (b.type === 'tasks' ? `<button type="button" data-pv="res-tg" class="${isRes(b) ? 'on' : ''}" aria-pressed="${isRes(b)}" title="${isRes(b) ? 'Ist Reserve · klicken, um sie wieder normal zu zählen' : 'Als Reserve: auf den Folien, nicht in der Phasenleiste und nicht in der Stundenzeit'}">${pvI('res')}</button>` : '');
+    t.classList.toggle('has-q', b.type === 'material' && !b.post);
     t.innerHTML = `<span class="pvt-l">${esc(typeLabel(b))}</span><button type="button" data-pv="edit" title="Links bearbeiten">${pvI('edit')}</button><button type="button" data-pv="up" title="Nach oben"${k <= 0 ? ' disabled' : ''}>${pvI('up')}</button><button type="button" data-pv="down" title="Nach unten"${k < 0 || k >= ord.length - 1 ? ' disabled' : ''}>${pvI('down')}</button>${extra}<button type="button" data-pv="dup" title="Verdoppeln">${pvI('dup')}</button><span class="pvt-sep" aria-hidden="true"></span><button type="button" data-pv-ins="a" title="Darüber einen Baustein einfügen">${pvI('insA')}</button><button type="button" data-pv-ins="b" title="Darunter einen Baustein einfügen">${pvI('insB')}</button><span class="pvt-sep" aria-hidden="true"></span><button type="button" data-pv="del" class="danger" title="Löschen">${pvI('del')}</button>`;
+    if (b.type === 'material') t.insertAdjacentHTML('beforeend', pvQuick(b));
   }
   PVT.bid = bid; PVT.el = n; t.hidden = false; ins.hidden = false;
   const r = n.getBoundingClientRect(), pr = (n.closest('.page, .pout') || n).getBoundingClientRect(), vr = $('#preview-scroll').getBoundingClientRect();
@@ -12218,7 +12262,7 @@ function pvInit() {
   }, { passive: true });
   $('#pv-tools').addEventListener('click', e => { const ia = e.target.closest('[data-pv-ins]');
     if (ia) { e.stopPropagation(); keep(); const ord = pvOrder(), k = ord.findIndex(([x]) => x.id === PVT.bid); if (k < 0) return; if (PVT.ins != null && ia.classList.contains('on')) { pvInsClose(); return; } pvInsClose(); ia.classList.add('on'); pvInsOpen(ord[k][1] + (ia.dataset.pvIns === 'b' ? 1 : 0), ia); return; }
-    const a = e.target.closest('[data-pv]'); if (a && !a.disabled) { e.stopPropagation(); pvAct(a.dataset.pv); } });
+    const a = e.target.closest('[data-pv]'); if (a && !a.disabled) { e.stopPropagation(); if (a.dataset.pv === 'q') pvQAct(a); else pvAct(a.dataset.pv); } });
   $('#pv-ins').addEventListener('click', e => { const a = e.target.closest('.pvi'); if (a) { e.stopPropagation(); keep(); pvInsOpen(+a.dataset.at, a); } });
   $('#pv-insp').addEventListener('click', e => { const a = e.target.closest('[data-pvadd]'); if (!a) return; const at = PVT.ins; pvInsClose(); pvHide();
     if (a.dataset.pvadd === '*') { state.insAt = at; if ((state.area || 'blatt') !== 'blatt') setArea('blatt'); bkOpen(); return; }
