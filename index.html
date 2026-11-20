@@ -16641,7 +16641,7 @@ function lfcStart(O = {}) {
     const cancelLive = () => { if (T.live) { T.live = null; sendLive(null); } T.las = null; er = null; drawId = null; drawInk(); };
     const dropPalm = () => { if (!lastTouch || Date.now() - lastTouch.t > 700) return; const k = lastTouch.k; lastTouch = null;
       const L = KB().ink, n = L.length; KB().ink = L.filter(x => x.k !== k); if (KB().ink.length !== n) { send({ t: 'bop', key: kOf(), op: 'rm', ks: [k] }); const U = T.undo[kOf()]; const i = U.findIndex(h => h.t === 'add' && h.k === k); if (i >= 0) U.splice(i, 1); drawInk(); } };
-    const tool = e => (e.pointerType === 'pen' && T.tool === 'nav' ? T.btool : T.tool);
+    const tool = e => (e.pointerType === 'pen' && (e.buttons & 32 || e.button === 5) ? 'er' : e.pointerType === 'pen' && T.tool === 'nav' ? T.btool : T.tool); // Radiererende bzw. Radiertaste des Stifts (z. B. OnePlus Stylo, Surface Pen)
     const startDraw = e => {
       const tl0 = tool(e); drawId = e.pointerId; T.liveType = e.pointerType; T.cur = tl0; const [x, y] = pt(e);
       if (tl0 === 'laser') { T.las = [x, y]; sendLas(x, y); drawInk(); return; }
