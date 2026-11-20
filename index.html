@@ -3038,20 +3038,20 @@ body.home-on{overflow:hidden}
 #pv-tools button:hover:not(:disabled){background:var(--panel);color:var(--tinte)}
 #pv-tools button:disabled{opacity:.3;cursor:default}
 #pv-tools button.on{background:var(--tinte-soft);color:var(--tinte)}
-#pv-tools.has-q{flex-wrap:wrap;width:356px;padding:5px}
-#pv-tools .pvq{flex:1 0 100%;border-top:1px solid var(--line);margin-top:5px;padding:8px 4px 2px;display:flex;flex-direction:column;gap:8px}
-#pv-tools .pvq-r{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#pv-tools.has-q{flex-wrap:wrap;width:min(380px,calc(100vw - 16px));box-sizing:border-box;padding:5px}
+#pv-tools .pvq{flex:1 0 100%;min-width:0;box-sizing:border-box;border-top:1px solid var(--line);margin-top:5px;padding:8px 4px 2px;display:flex;flex-direction:column;gap:8px}
+#pv-tools .pvq-r{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;min-width:0}
 #pv-tools .pvq-r>span{font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}
-#pv-tools .pvq-seg{display:flex;background:var(--panel);border-radius:8px;padding:2px;gap:2px}
+#pv-tools .pvq-seg{display:flex;flex-wrap:wrap;max-width:100%;background:var(--panel);border-radius:8px;padding:2px;gap:2px;margin-left:auto}
 #pv-tools .pvq-seg button{width:auto;height:26px;padding:0 9px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
 #pv-tools .pvq-seg button.on{background:var(--card);color:var(--tinte);box-shadow:0 1px 3px rgba(20,30,60,.18)}
-#pv-tools .pvq-tg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-#pv-tools .pvq-t{width:auto;height:auto;display:flex;align-items:center;gap:7px;justify-content:flex-start;padding:6px 7px;font-size:12px;font-weight:600;text-align:left;line-height:1.2;border:1px solid var(--line)}
+#pv-tools .pvq-tg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}
+#pv-tools .pvq-t{width:auto;min-width:0;white-space:normal;overflow-wrap:anywhere;box-sizing:border-box;height:auto;display:flex;align-items:center;gap:7px;justify-content:flex-start;padding:6px 7px;font-size:12px;font-weight:600;text-align:left;line-height:1.2;border:1px solid var(--line)}
 #pv-tools .pvq-t i{flex:none;width:24px;height:14px;border-radius:8px;background:#C5CBD6;position:relative;transition:background .15s}
 #pv-tools .pvq-t i::after{content:'';position:absolute;left:2px;top:2px;width:10px;height:10px;border-radius:50%;background:#fff;transition:left .15s}
 #pv-tools .pvq-t.on{background:none;color:var(--ink)}#pv-tools .pvq-t.on i{background:var(--tinte)}#pv-tools .pvq-t.on i::after{left:12px}
 #pv-tools .pvq-b{display:flex;gap:6px}
-#pv-tools .pvq-b button{flex:1;width:auto;height:30px;font-size:12px;font-weight:600;border:1px solid var(--line-strong);padding:0 8px}
+#pv-tools .pvq-b button{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:auto;height:30px;font-size:12px;font-weight:600;border:1px solid var(--line-strong);padding:0 8px}
 #pv-tools .pvt-sep{width:1px;height:18px;background:var(--line);margin:0 3px}
 #pv-tools button.danger:hover{color:#B42318;background:#FDECEA}
 #pv-ins{position:fixed;inset:0;pointer-events:none;z-index:29}
