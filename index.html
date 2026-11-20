@@ -1776,6 +1776,24 @@ html:has(body.cam-mode),body.cam-mode{overflow:hidden;overscroll-behavior:none;b
 .lfc-tkc{position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-radius:50%;background:var(--cc);box-shadow:0 0 0 1.5px #2c2c2e}
 .lfc-tkn{display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:14px;background:rgba(44,44,46,.92);color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .lfc-tkn.pri{background:#0A84FF}.lfc-tkn:disabled{opacity:.35}
+.lfc-apl{display:flex!important;align-items:flex-end;gap:14px;height:96px;padding:0 22px!important;border-radius:48px!important;background:rgba(246,246,248,.94)!important;box-shadow:0 10px 40px rgba(0,0,0,.35),inset 0 0 0 .5px rgba(0,0,0,.08)!important;-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);overflow:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.lfc-apl::before{content:'';position:absolute;left:50%;top:7px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:rgba(60,60,67,.25)}
+.lfc-ag{display:flex;gap:10px;align-self:center}
+.lfc-ar{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:#E5E5EA;color:#8E8E93;cursor:pointer;padding:0}
+.lfc-ar:active{background:#D1D1D6}
+.lfc-at{display:flex;align-items:flex-end;gap:2px;height:100%}
+.lfc-tool{position:relative;width:44px;height:96px;border:0;background:none;padding:0;cursor:pointer;transform:translateY(30px);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+.lfc-tool svg{display:block;width:44px;height:96px}
+.lfc-tool.on{transform:translateY(8px)}
+.lfc-tool:not(.on):hover{transform:translateY(24px)}
+.lfc-tw{position:absolute;left:0;right:0;bottom:22px;font:700 9px var(--f-ui);font-style:normal;color:#8E8E93;text-align:center;pointer-events:none}
+.lfc-tool:not(.on) .lfc-tw{display:none}
+.lfc-ac{display:grid;grid-template-columns:repeat(3,30px);gap:8px;align-self:center}
+.lfc-apl .lfc-col{width:30px;height:30px;margin:0;border-radius:50%;border:0;background:var(--cc);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);cursor:pointer}
+.lfc-apl .lfc-col[aria-pressed="true"]{box-shadow:0 0 0 2px #F6F6F8,0 0 0 4.5px #1C1C1E}
+.lfc2 .lfc-pal.lfc-palb.sunk{transform:translateX(-50%) translateY(54px)}
+.lfc2 .lfc-pal.lfc-palb.sunk .lfc-ag,.lfc2 .lfc-pal.lfc-palb.sunk .lfc-ac{opacity:0}
+.lfc2 .lfc-pal.lfc-palb{bottom:calc(-14px + env(safe-area-inset-bottom,0px))!important;}
 .lfc2 .lfc-pal.lfc-palb{left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));top:auto;z-index:4}
 .lfc2[data-mode="tafel"] .lfc-stage,.lfc2[data-mode="pk"] .lfc-stage{align-items:flex-start;padding-top:70px!important}
 .lfc2 .lfc-pal.lfc-palx{left:calc(14px + env(safe-area-inset-left,0px));bottom:auto;top:66px;transform:none;z-index:4}
@@ -16519,11 +16537,23 @@ function lfcStart(O = {}) {
   // Werkzeuge als kleiner Knopf oben links; ein Tipp klappt die Leiste darunter auf
   let PALO = false, MODO = false;
   const pal = () => `<div class="lfc-tk"><button type="button" class="lfc-tkm${MODO ? ' on' : ''}" data-l="modes" aria-expanded="${MODO}" aria-label="Modus wechseln" title="Folie, Tafel, Fotos">${lfcIc(tab === 'fol' ? 'fol' : tab, 20)}<span>${(modes().find(m => m[0] === tab) || ['', ''])[1]}</span>${lfcIc('down', 14)}</button>${tab === 'fol' ? '' : '<!--'}<button type="button" class="lfc-tkb${PALO ? ' on' : ''}" data-l="pal" aria-expanded="${PALO}" aria-label="Werkzeuge" title="Werkzeuge">${lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22)}<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i></button>${tab === 'fol' ? '' : '-->'}<button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button>${tab === 'fol' ? `<button type="button" class="lfc-tkn" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 22)}</button><button type="button" class="lfc-tkn pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 22)}</button>` : ''}</div>${MODO ? `<div class="lfc-modes" role="menu">${modes().map(([k, l]) => `<button type="button" role="menuitemradio" data-tab="${k}" aria-checked="${k === tab}">${lfcIc(k, 20)}<span>${l}</span></button>`).join('')}</div>` : ''}${tab !== 'fol' ? palBar(true) : PALO ? palBar() : ''}`;
-  const palBar = pin => `<div class="lfc-pal ${pin ? 'lfc-palb' : 'lfc-palx'}" role="toolbar" aria-label="Werkzeuge">
-      <div class="lfc-pg">${tools().map(t => `<button type="button" class="lfc-pb" data-tool="${t}" aria-pressed="${T.tool === t}" aria-label="${TNAME[t]}" title="${TNAME[t]}">${lfcIc(t === 'nav' ? 'hand' : t, 22)}</button>`).join('')}</div>
-      <div class="lfc-pg lfc-cols">${INK_COLS.slice(0, 5).map(c => `<button type="button" class="lfc-col" data-col="${c}" style="--cc:${c}" aria-pressed="${(T.col[T.tool] || T.col.pen) === c}" aria-label="Farbe"></button>`).join('')}</div>
-      <div class="lfc-pg"><button type="button" class="lfc-pb" data-l="undo" aria-label="Rückgängig">${lfcIc('undo', 22)}</button>${tab !== 'fol' ? `<button type="button" class="lfc-pb" data-l="more" aria-label="Platz nach unten" title="Platz nach unten">${lfcIc('plus', 22)}</button>` : ''}</div>
-      ${pin ? '' : `<div class="lfc-pg"><button type="button" class="lfc-pb" data-l="pal" aria-label="Leiste schließen">${lfcIc('fsx', 20)}</button></div>`}</div>`;
+  // Werkzeuge wie in Apple Notizen: Stifte stehen aufrecht in einer hellen Leiste, der gewählte ragt heraus; Farben als Raster
+  const toolSvg = t => { const c = T.col[t] || T.col.pen;
+    if (t === 'nav') return `<svg viewBox="0 0 44 96" aria-hidden="true"><rect x="7" y="22" width="30" height="80" rx="9" fill="#F2F2F7" stroke="#C7C7CC"/><g transform="translate(10 30)" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${LFC_IC.hand}</g></svg>`;
+    if (t === 'pen') return `<svg viewBox="0 0 44 96" aria-hidden="true"><path d="M13 40 L22 8 L31 40 Z" fill="#E9E9EE" stroke="#C7C7CC"/><path d="M19.4 17.5 L22 8 L24.6 17.5 Z" fill="${c}"/><rect x="13" y="40" width="18" height="62" rx="3" fill="#FDFDFE" stroke="#C7C7CC"/><rect x="13" y="46" width="18" height="5" fill="${c}"/></svg>`;
+    if (t === 'hl') return `<svg viewBox="0 0 44 96" aria-hidden="true"><path d="M14 22 L30 14 L30 30 L14 30 Z" fill="${T.col.hl}" stroke="rgba(0,0,0,.15)"/><rect x="11" y="30" width="22" height="72" rx="3" fill="#FDFDFE" stroke="#C7C7CC"/><rect x="11" y="44" width="22" height="7" fill="${T.col.hl}"/></svg>`;
+    if (t === 'er') return `<svg viewBox="0 0 44 96" aria-hidden="true"><rect x="11" y="16" width="22" height="22" rx="7" fill="#F4A3AB" stroke="rgba(0,0,0,.12)"/><rect x="11" y="32" width="22" height="70" rx="3" fill="#FDFDFE" stroke="#C7C7CC"/><rect x="11" y="32" width="22" height="4" fill="#E0E0E5"/></svg>`;
+    return `<svg viewBox="0 0 44 96" aria-hidden="true"><circle cx="22" cy="17" r="8" fill="#FF453A" opacity=".25"/><circle cx="22" cy="17" r="4.5" fill="#FF453A"/><rect x="14" y="26" width="16" height="76" rx="7" fill="#3A3A3C" stroke="#1C1C1E"/><rect x="18" y="36" width="8" height="4" rx="2" fill="#8E8E93"/></svg>`; };
+  const palBar = pin => `<div class="lfc-pal lfc-apl ${pin ? 'lfc-palb' : 'lfc-palx'}" role="toolbar" aria-label="Werkzeuge">
+      <div class="lfc-ag"><button type="button" class="lfc-ar" data-l="undo" aria-label="Rückgängig">${lfcIc('undo', 20)}</button></div>
+      <div class="lfc-at">${tools().map(t => `<button type="button" class="lfc-tool${T.tool === t ? ' on' : ''}" data-tool="${t}" aria-pressed="${T.tool === t}" aria-label="${TNAME[t]}" title="${TNAME[t]}">${toolSvg(t)}${t === 'pen' || t === 'hl' ? `<i class="lfc-tw">${({ s: 'S', m: 'M', l: 'L' })[T.w]}</i>` : ''}</button>`).join('')}</div>
+      <div class="lfc-ac">${INK_COLS.map(c => `<button type="button" class="lfc-col" data-col="${c}" style="--cc:${c}" aria-pressed="${(T.col[T.tool] || T.col.pen) === c}" aria-label="Farbe"></button>`).join('')}</div>
+      <div class="lfc-ag">${tab !== 'fol' ? `<button type="button" class="lfc-ar" data-l="more" aria-label="Platz nach unten" title="Platz nach unten">${lfcIc('plus', 20)}</button>` : ''}<button type="button" class="lfc-ar" data-l="${pin ? 'menu' : 'pal'}" aria-label="${pin ? 'Mehr' : 'Leiste schließen'}">${lfcIc(pin ? 'more' : 'fsx', 20)}</button></div></div>`;
+  // Leiste sinkt nach unten, solange man sie nicht braucht; ein Tipp holt sie hoch
+  let sinkT = 0;
+  const sink = on => { const b = main.querySelector('.lfc-palb'); if (!b) return; clearTimeout(sinkT); b.classList.toggle('sunk', !!on); };
+  const sinkSoon = (ms = 3500) => { clearTimeout(sinkT); sinkT = setTimeout(() => sink(true), ms); };
+  const palRe = () => { const o = main.querySelector('.lfc-pal'); if (!o) return; const pin = o.classList.contains('lfc-palb'); const t = document.createElement('div'); t.innerHTML = palBar(pin); o.replaceWith(t.firstElementChild); };
   const palSync = () => { const b = main.querySelector('.lfc-tkb'); if (b) b.innerHTML = lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22) + `<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i>`; };
   const ytBtns = () => (!PR.yt ? '' : PR.yt === 'on'
     ? `<div class="lfc-yt on"><span>${lfcIc('fol', 18)} Video läuft am Beamer</span><div><button type="button" class="lfc-pill" data-nav="ytpause">Pause</button><button type="button" class="lfc-pill" data-nav="ytplay">Weiter</button><button type="button" class="lfc-pill${PR.ytbig ? ' on' : ''}" data-nav="ytbig">${PR.ytbig ? 'Vollbild aus' : 'Vollbild'}</button><button type="button" class="lfc-pill" data-nav="ytstop">Schließen</button></div></div>`
@@ -16574,7 +16604,7 @@ function lfcStart(O = {}) {
       ${nx ? `<aside class="lfc-side"><div class="lfc-nx"><small>Als Nächstes</small>${PR.i + 1 < PR.n ? `<div class="lfc-nxs"></div><span>${esc(PR.nx || '')}</span>` : '<span>Das ist die letzte Folie.</span>'}</div>
         <div class="lfc-notes"><small>Notizen</small>${notes.length ? `<ul>${notes.map(t => `<li>${inlineHTML(t)}</li>`).join('')}</ul>` : '<span>Keine Notizen zu dieser Folie.</span>'}</div>
         <div class="lfc-fb"><button type="button" class="lfc-big" data-nav="prev" ${PR.i <= 0 && !PR.cur ? 'disabled' : ''}>${lfcIc('prev', 30)}<span>Zurück</span></button><button type="button" class="lfc-big pri" data-nav="next">${lfcIc('next', 30)}<span>Weiter</span></button></div></aside>` : ''}</div>`;
-    lay(); bindBoard(); drawSl(); drawInk();
+    lay(); bindBoard(); drawSl(); drawInk(); sinkSoon(4000);
     if (nx) { const n = main.querySelector('.lfc-nxs'); if (n && slOk()) slPaint(n, PR.i + 1, n.clientWidth || 260, 99); }
   };
   const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = Math.max(200, Math.min(st.clientWidth - 16, (st.clientHeight - (tab === 'fol' ? 16 : 150)) * 16 / 9)); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
@@ -16615,7 +16645,7 @@ function lfcStart(O = {}) {
       if (dy < -90 && s0.y > r.bottom - 120) { overview(true); return; }
       if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && Date.now() - s0.t < 450) { const fx = (e.clientX - r.left) / r.width; if (PR && PR.yt === 'ready' && fx > .3 && fx < .7) { nav('ytplay'); return; } if (fx < 1 / 3) nav('prev'); else if (fx > 2 / 3) nav('next'); else topShow(); } };
     b.addEventListener('pointerdown', e => {
-      e.preventDefault(); topIdle();
+      e.preventDefault(); topIdle(); sink(true);
       if (e.pointerType === 'pen') {
         if (!T.pen) { T.pen = true; if (tab === 'fol' && T.tool === 'nav') { /* Stift schreibt mit dem zuletzt gewählten Werkzeug */ } toast('Apple Pencil erkannt: Der Stift schreibt, der Finger blättert.'); }
         penDown = true; TP.clear(); pan = null; sw = null;
@@ -16692,12 +16722,14 @@ function lfcStart(O = {}) {
     if (tab !== 'fol' && T.tool === 'nav') T.tool = T.btool;
     root.dataset.mode = tab; root.classList.toggle('ref-on', REF && tab === 'fol'); renderTop(); renderMain(); topIdle();
   };
+  root.addEventListener('pointerdown', e => { const pb = e.target.closest && e.target.closest('.lfc-palb'); if (pb && pb.classList.contains('sunk')) { e.preventDefault(); e.stopPropagation(); sink(false); sinkSoon(5000); pb.dataset.eat = '1'; } }, { capture: true });
   root.addEventListener('click', e => {
+    { const pb = e.target.closest && e.target.closest('.lfc-palb'); if (pb && pb.dataset.eat) { delete pb.dataset.eat; e.stopPropagation(); return; } if (pb) sinkSoon(5000); }
     topIdle();
     const t = e.target.closest('[data-tab]'); if (t) { MODO = false; if (tab !== t.dataset.tab) { tab = t.dataset.tab; if (tab === 'fol' && !T.pen) T.tool = 'nav'; render(); } else { const md = main.querySelector('.lfc-modes'); if (md) md.remove(); const mb = main.querySelector('.lfc-tkm'); if (mb) mb.classList.remove('on'); } return; }
     const go = e.target.closest('[data-go]'); if (go) { overview(false); send({ t: 'nav', a: 'goto', i: +go.dataset.go }); return; }
-    const tl0 = e.target.closest('[data-tool]'); if (tl0) { T.tool = tl0.dataset.tool; if (T.tool !== 'nav') T.btool = T.tool; palSync(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl0))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
-    const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') T.tool = 'pen'; T.btool = T.tool; T.col[T.tool] = cl.dataset.col; palSync(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
+    const tl0 = e.target.closest('[data-tool]'); if (tl0) { if (T.tool === tl0.dataset.tool && (T.tool === 'pen' || T.tool === 'hl')) { T.w = T.w === 's' ? 'm' : T.w === 'm' ? 'l' : 's'; } T.tool = tl0.dataset.tool; if (T.tool !== 'nav') T.btool = T.tool; palSync(); palRe(); sinkSoon(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl0))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
+    const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') T.tool = 'pen'; T.btool = T.tool; T.col[T.tool] = cl.dataset.col; palSync(); palRe(); sinkSoon(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
     const w = e.target.closest('[data-w]'); if (w) { T.w = w.dataset.w; shEl.querySelectorAll('[data-w]').forEach(x => x.setAttribute('aria-pressed', String(x === w))); return; }
     const pt = e.target.closest('[data-pat]'); if (pt) { sheet(''); B.tafel.pat = pt.dataset.pat; send({ t: 'bpat', pat: pt.dataset.pat }); drawSl(); return; }
     const nv = e.target.closest('[data-nav]'); if (nv) { if (SHEET) sheet(''); nav(nv.dataset.nav); return; }
