@@ -68,6 +68,9 @@ button,input,select,textarea{font:inherit;color:inherit}
 .cr .cr-ab{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.02em;color:#fff;background:var(--tinte);border-radius:5px;padding:2px 6px}
 .cr-ch{width:12px;height:12px;flex:none;color:var(--muted)}
 #cr-kl,#cr-ab{flex:none}#cr-st{flex:0 1 auto;min-width:90px}
+/* Schmale Fenster (iPad mini quer u. ä.): Pfad schrumpft mit Auslassungspunkten statt über Nachbarn zu laufen */
+@media (min-width: 900px){.bar .crumbs{overflow:hidden;min-width:60px}}
+@media (min-width: 900px) and (max-width: 1240px){#cr-kl{flex:0 1 auto;min-width:min(96px,12vw)}#cr-kl>span{min-width:0}#cr-st{min-width:40px}.bar .brand-c{display:none}#btn-cmd kbd{display:none}#btn-pres>span{display:none}#btn-pres{padding-left:12px;padding-right:12px}#btn-cmd{padding-left:10px;padding-right:10px}.bar .actions{gap:6px}}
 .crumbs{flex:0 1 auto}
 .bar .status{flex:0 4 auto;min-width:16px;max-width:240px}
 @media (min-width: 900px){.bar{flex-wrap:nowrap}.bar .actions{flex:none;flex-wrap:nowrap}}
