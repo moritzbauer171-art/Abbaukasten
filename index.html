@@ -458,6 +458,8 @@ body.basis .x-pro:not(.used){display:none!important}
 mark.msr-hit{background:#FFE58A;color:inherit;border-radius:1px;box-shadow:0 0 0 1px #F2C94C}
 mark.msr-hit.cur{background:#FF9F43;box-shadow:0 0 0 2px #E8740C}
 @media print{mark.msr-hit{background:none;box-shadow:none}#msr{display:none}}
+@media screen{#pages .mat-body .w.glsug{background:rgba(245,166,35,.16);text-decoration-line:underline;text-decoration-style:wavy;text-decoration-color:#E8900C;text-decoration-thickness:.25mm;text-underline-offset:.9mm;border-radius:.6mm}
+#pages .mat-body .w.glsug:hover{background:rgba(245,166,35,.32)}}
 
 .kl-umf{margin-top:12px}
 .kl-umfo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -4553,7 +4555,7 @@ function readEditor(b) {
       <p class="rd-k">${r.W} Wörter · ${r.S} ${r.S === 1 ? 'Satz' : 'Sätze'} · im Schnitt ${String(r.avg).replace('.', ',')} Wörter je Satz · ${r.pL} % lange Wörter (über 6 Buchstaben)</p>
       <small class="hint">LIX = Wörter je Satz + Anteil langer Wörter. Unter 40 eher leicht (Jugendbuch), 40–50 mittel (Sachtext), ab 50 schwer (Fachtext), ab 60 sehr schwer.</small>
       ${r.long.length ? `<div class="f"><span>Lange Sätze (über 25 Wörter)</span><ul class="rd-long">${r.long.slice(0, 6).map((o, i) => `<li><button type="button" class="link" data-act="rd-show" data-i="${i}" title="Im Text markieren">„${esc(o.x.split(/\s+/).slice(0, 7).join(' '))} …“</button><span>${o.n} Wörter</span></li>`).join('')}</ul></div>` : '<p class="rd-k">Keine Sätze über 25 Wörter.</p>'}
-      ${r.sugg.length ? `<div class="f"><span>Vorschläge für Worterklärungen</span><div class="rd-sugg" data-rds="${b.id}">${rdSuggHTML(b, r)}</div><small class="hint">Seltene oder lange Wörter aus dem Text, die seltensten zuerst (Häufigkeit laut DWDS, wenn online). Klicken legt eine Worterklärung an, mit Vorschlägen zum Übernehmen.</small></div>` : ''}
+      ${r.sugg.length ? `<div class="f"><span>Vorschläge für Worterklärungen</span><div class="rd-sugg" data-rds="${b.id}">${rdSuggHTML(b, r)}</div><small class="hint">Seltene oder lange Wörter aus dem Text, die seltensten zuerst (Häufigkeit laut DWDS, wenn online). Klicken legt eine Worterklärung an, mit Vorschlägen zum Übernehmen.</small><label class="chk" style="margin-top:6px"><input type="checkbox" data-glsug${GLS.on ? ' checked' : ''}> In der Vorschau markieren</label></div>` : ''}
     </div>` : open ? '<div class="sub-b"><p class="rd-k">Die Werte erscheinen ab 20 Wörtern.</p></div>' : ''}
   </div>`;
 }
@@ -10474,7 +10476,19 @@ function msrToggle(on) {
 }
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'F' || e.key === 'f') && state.out === 'blatt' && !state.dlg && !document.querySelector('.pr')) { e.preventDefault(); msrToggle(true); } });
 function msrStep(d) { if (!MSR.hits.length) return; MSR.cur = (MSR.cur + d + MSR.hits.length) % MSR.hits.length; msrFocus(true); }
-function renderPreview() { const r = renderPreview0(); if (MSR.open && state.out === 'blatt') requestAnimationFrame(() => msrRun(true)); else if (MSR.open) msrToggle(false); return r; }
+// Vorschläge zum Glossieren in der Vorschau markieren (nur am Bildschirm, nicht im Druck)
+const GLS = { on: (() => { try { return localStorage.getItem('abw.glsug') === '1'; } catch { return false; } })() };
+function glSugSet(on) { GLS.on = !!on; try { localStorage.setItem('abw.glsug', on ? '1' : '0'); } catch {} glSugMark(); if (on) toast('Orange unterstrichen: Vorschläge für Worterklärungen. Anklicken legt eine an.'); }
+function glSugMark() {
+  document.querySelectorAll('#pages .w.glsug').forEach(w => { w.classList.remove('glsug'); w.removeAttribute('title'); });
+  if (!GLS.on || state.out !== 'blatt' || state.gapEdit) return;
+  const nk = t => String(t || '').replace(/\u00AD/g, '').replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '').replace(/[’']s?$/, '').toLowerCase();
+  state.sheet.blocks.filter(b => b.type === 'material' && b.form !== 'gedicht').forEach(b => {
+    const r = readStats(b); if (!r || !r.sugg.length) return; const S = new Set(r.sugg.map(o => o.w.toLowerCase()));
+    document.querySelectorAll(`#pages [data-bid="${b.id}"] .mat-body .w`).forEach(w => { if (!w.classList.contains('glw') && S.has(nk(w.dataset.t))) { w.classList.add('glsug'); w.title = 'Vorschlag: Worterklärung anlegen (klicken)'; } });
+  });
+}
+function renderPreview() { const r = renderPreview0(); if (GLS.on) requestAnimationFrame(glSugMark); if (MSR.open && state.out === 'blatt') requestAnimationFrame(() => msrRun(true)); else if (MSR.open) msrToggle(false); return r; }
 function renderPreview0() {
   if (MAPPE_LOCK || DG_VIEW) return;
   if (hmS.open && hmS.hold) { hmS.pend = true; return; }
@@ -12183,7 +12197,7 @@ function pvQuick(b) {
   const tg = (lab, q, on, dis, tip) => `<button type="button" class="pvq-t${on ? ' on' : ''}" data-pv="q" data-q="${q}" role="switch" aria-checked="${on}"${dis ? ` disabled title="${tip}"` : ''}><i></i>${lab}</button>`;
   let h = seg('Spalten', 'cols', [['1', 'eine'], ['2', 'zwei']], f.cols);
   if (!poem) h += seg('Satz', 'align', [['justify', 'Blocksatz'], ['left', 'linksbündig']], f.align);
-  h += `<div class="pvq-tg">${tg('Rand für Notizen', 'margin', f.margin, f.cols === 2, 'Nur bei einer Spalte')}${tg(poem ? 'Verszählung' : 'Zeilennummern', 'ln', b.lineNumbers !== false)}${poem ? '' : tg('Silbentrennung', 'hy', mwHyOn(b), f.align === 'left' || !!f.silben, 'Nur im Blocksatz ohne Silbenhilfe')}${poem ? '' : tg('Einzug bei Absätzen', 'indent', f.indent)}</div>`;
+  h += `<div class="pvq-tg">${tg('Rand für Notizen', 'margin', f.margin, f.cols === 2, 'Nur bei einer Spalte')}${tg(poem ? 'Verszählung' : 'Zeilennummern', 'ln', b.lineNumbers !== false)}${poem ? '' : tg('Silbentrennung', 'hy', mwHyOn(b), f.align === 'left' || !!f.silben, 'Nur im Blocksatz ohne Silbenhilfe')}${poem ? '' : tg('Einzug bei Absätzen', 'indent', f.indent)}${poem ? '' : tg('Vorschläge zum Glossieren', 'glsug', GLS.on)}</div>`;
   if (f.margin) h += seg('Randbreite', 'mrw', MAT_FMT.mrw.opts, f.mrw);
   if (!poem && matHasH(b.text)) h += seg('Zwischen\u00adüberschriften', 'gapHd', GAP_HD.map(([v, l]) => [v, ({ '': 'bleiben', weg: 'weg', luecke: 'Linie', kasten: 'Linie + Kasten' })[v] || l]), b.gapHd || '');
   h += `<div class="pvq-b"><button type="button" data-pv="q" data-q="gaps">Lücken setzen</button><button type="button" data-pv="dz">Mehr Gestaltung …</button></div>`;
@@ -12200,6 +12214,7 @@ function pvQAct(a) {
   else if (q === 'ln') b.lineNumbers = b.lineNumbers === false;
   else if (q === 'hy') b.hy = !mwHyOn(b);
   else if (q === 'gapHd') { if (v) b.gapHd = v; else delete b.gapHd; }
+  else if (q === 'glsug') { glSugSet(!GLS.on); a.classList.toggle('on', GLS.on); a.setAttribute('aria-checked', GLS.on); return; }
   else if (q === 'gaps') { pvHide(); const fake = document.createElement('button'); fake.dataset.act = 'gap-edit'; const holder = document.createElement('div'); holder.dataset.bid = b.id; holder.append(fake); onClick({ target: fake, preventDefault() {}, stopPropagation() {} }); return; }
   const bid = PVT.bid; PVT.bid = null; PVT.follow = bid; changed(true);
 }
@@ -16225,6 +16240,7 @@ function boot() {
   const edEl = $('#editor');
   // Lesbarkeit: Klick auf Vorschlag oder „markieren“ soll das Textfeld nicht verlassen (sonst baut sich die Karte neu auf)
   edEl.addEventListener('mousedown', e => { if (e.target.closest && e.target.closest('.rd-sugg button, [data-act="rd-show"]')) e.preventDefault(); });
+  edEl.addEventListener('change', e => { if (e.target.matches && e.target.matches('[data-glsug]')) glSugSet(e.target.checked); });
   // Spaltenbreite: Griffe auf dem Lineal ziehen oder mit Pfeiltasten verschieben
   let cwDrag = null;
   edEl.addEventListener('pointerdown', e => {
