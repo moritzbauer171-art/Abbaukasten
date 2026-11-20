@@ -207,6 +207,10 @@ function menu() {
       { type: 'separator' }, { label: 'Vollbild', role: 'togglefullscreen' }, { label: 'Neu laden', role: 'reload' },
       { type: 'separator' }, { label: 'Entwicklerwerkzeuge', role: 'toggleDevTools', visible: false }
     ] },
+    { label: 'Konto', submenu: [
+      { label: 'Bei YouTube anmelden …', click: () => ytLogin() },
+      { label: 'Von YouTube abmelden', click: () => ytLogout().catch(() => {}) }
+    ] },
     { label: 'Hilfe', submenu: [
       { label: 'Nach Updates suchen …', click: () => updCheck(true).catch(() => {}) },
       { label: 'Online-Version öffnen', click: () => shell.openExternal(ONLINE_URL) },
@@ -223,6 +227,32 @@ Electron ${process.versions.electron} · Chromium ${process.versions.chrome}` })
     ] }
   ];
   Menu.setApplicationMenu(Menu.buildFromTemplate(tpl));
+}
+
+/* ---------- YouTube-Anmeldung: Videos auf den Folien laufen dann mit dem eigenen Konto (z. B. Premium ohne Werbung) ---------- */
+// Google lehnt Anmeldungen in Apps manchmal ab; mit der normalen Chrome-Kennung klappt es meist.
+const chromeUA = () => `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${process.versions.chrome} Safari/537.36`;
+let ytWin = null;
+function ytLogin() {
+  if (ytWin && !ytWin.isDestroyed()) { ytWin.focus(); return; }
+  ytWin = new BrowserWindow({ parent: win, width: 520, height: 760, title: 'Bei YouTube anmelden', autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#ffffff', webPreferences: { sandbox: true } });
+  ytWin.webContents.setUserAgent(chromeUA());
+  ytWin.webContents.setWindowOpenHandler(({ url }) => { ytWin.loadURL(url); return { action: 'deny' }; });
+  let done = false;
+  const check = (e, url) => { if (done || !/^https:\/\/(www|m)\.youtube\.com\//.test(url || '')) return;
+    done = true; setTimeout(async () => { const ok = (await session.defaultSession.cookies.get({ domain: 'youtube.com' }).catch(() => [])).some(c => /^(LOGIN_INFO|SAPISID|__Secure-3PSID)$/.test(c.name));
+      try { ytWin.close(); } catch {}
+      dialog.showMessageBox(win, { type: ok ? 'info' : 'warning', title: APP_NAME, message: ok ? 'Bei YouTube angemeldet.' : 'Die Anmeldung ist nicht durchgegangen.',
+        detail: ok ? 'Videos auf den Folien laufen jetzt mit deinem YouTube-Konto, mit Premium also ohne Werbung. Abmelden kannst du dich unter „Konto → Von YouTube abmelden“.' : 'Google hat die Anmeldung in der App vermutlich nicht zugelassen. Videos laufen trotzdem, nur ohne dein Konto. Mit Anmeldung geht es in der Online-Version im Browser.' }); }, 900); };
+  ytWin.webContents.on('did-navigate', check); ytWin.webContents.on('did-redirect-navigation', check);
+  ytWin.on('closed', () => { ytWin = null; });
+  ytWin.loadURL('https://accounts.google.com/ServiceLogin?service=youtube&hl=de&continue=' + encodeURIComponent('https://www.youtube.com/'));
+}
+async function ytLogout() {
+  const ses = session.defaultSession; const all = await ses.cookies.get({}); let n = 0;
+  for (const c of all) { const d = String(c.domain || '').replace(/^\./, ''); if (!/(^|\.)(youtube\.com|google\.[a-z.]+|googlevideo\.com|youtube-nocookie\.com)$/.test(d)) continue;
+    try { await ses.cookies.remove((c.secure ? 'https://' : 'http://') + d + (c.path || '/'), c.name); n++; } catch {} }
+  dialog.showMessageBox(win, { type: 'info', title: APP_NAME, message: n ? 'Von YouTube abgemeldet.' : 'Du warst bei YouTube nicht angemeldet.' });
 }
 
 /* ---------- Updates: beim Öffnen nachfragen, wenn es eine neue App-Version gibt ---------- */

@@ -1762,9 +1762,21 @@ html:has(body.cam-mode),body.cam-mode{overflow:hidden;overscroll-behavior:none;b
 .lfc-side .lfc-fb{display:flex;gap:10px;margin-top:auto}.lfc-side .lfc-big{min-height:96px;font-size:15px;border-radius:16px}
 .lfc2 .lfc-pal{bottom:calc(12px + env(safe-area-inset-bottom,0px));background:rgba(44,44,46,.9);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
 .lfc-pb.pri{background:#0A84FF;color:#fff}
+.lfc-tk{position:absolute;left:calc(14px + env(safe-area-inset-left,0px));top:12px;z-index:4;display:flex;gap:8px;align-items:center}
+.lfc2[data-mode="fol"]:not(.ref-on) .lfc-tk{top:64px}
+.lfc2[data-mode="fol"]:not(.ref-on).idle .lfc-tk{top:12px}
+.lfc-tkb{position:relative;display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:14px;background:rgba(44,44,46,.92);color:#0A84FF;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.lfc-tkb.on{background:#0A84FF;color:#fff}
+.lfc-tkc{position:absolute;right:6px;bottom:6px;width:10px;height:10px;border-radius:50%;background:var(--cc);box-shadow:0 0 0 1.5px #2c2c2e}
+.lfc-tkn{display:grid;place-items:center;width:46px;height:46px;border:0;border-radius:14px;background:rgba(44,44,46,.92);color:#fff;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.lfc-tkn.pri{background:#0A84FF}.lfc-tkn:disabled{opacity:.35}
+.lfc2 .lfc-pal.lfc-palx{left:calc(14px + env(safe-area-inset-left,0px));bottom:auto;top:66px;transform:none;z-index:4}
+.lfc2[data-mode="fol"]:not(.ref-on) .lfc-pal.lfc-palx{top:118px}
+.lfc2[data-mode="fol"]:not(.ref-on).idle .lfc-pal.lfc-palx{top:66px}
+.lfc-wrap .lfc-stage{padding-bottom:8px!important}.lfc-blk{box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .lfc-blk{display:flex;align-items:center;gap:7px;white-space:nowrap;height:44px;padding:0 14px;border:0;border-radius:12px;background:#3A3A3C;color:#fff;font:700 14px var(--f-ui);cursor:pointer}
 .lfc-blk.on{background:#FF9F0A;color:#1c1300}
-.lfc-blon{position:absolute;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:rgba(255,159,10,.95);color:#1c1300;font:600 14px var(--f-ui);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.lfc-blon{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:4;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:rgba(255,159,10,.95);color:#1c1300;font:600 14px var(--f-ui);box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .lfc-blon button{border:0;border-radius:10px;background:#1c1300;color:#FFD60A;font:700 14px var(--f-ui);padding:8px 12px;cursor:pointer}
 .lfc-pill.on{background:#0A84FF}.lfc-pb:disabled{opacity:.3}
 .lfc2 .lfc-ytf{bottom:auto;top:64px}
@@ -16474,7 +16486,7 @@ function lfcStart(O = {}) {
   const fsCan = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && !matchMedia('(display-mode: standalone)').matches && !navigator.standalone;
   const fsGo = on => { try { if (on) { const d = document.documentElement; const p = (d.requestFullscreen || d.webkitRequestFullscreen).call(d); if (p && p.catch) p.catch(() => {}); } else (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch {} };
   const onFs = () => { renderTop(); setTimeout(lay, 80); }; ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, onFs));
-  root.addEventListener('pointerdown', e => { if (root.classList.contains('idle') && e.clientY < 72) { e.preventDefault(); e.stopPropagation(); topShow(); } }, { capture: true });
+  root.addEventListener('pointerdown', e => { if (root.classList.contains('idle') && e.clientY < 72 && !(e.target.closest && e.target.closest('.lfc-tk, .lfc-palx, .lfc-ytf'))) { e.preventDefault(); e.stopPropagation(); topShow(); } }, { capture: true });
   let fsTried = false; root.addEventListener('pointerdown', () => { if (!fsTried && fsCan() && !fsEl()) { fsTried = true; try { if (localStorage.getItem('abw.camfs') !== '0') fsGo(true); } catch { fsGo(true); } } }, { capture: true });
   const send = m => fotoSend(m);
   const live = () => !!PR && Date.now() - lastHb < 15000;
@@ -16495,13 +16507,15 @@ function lfcStart(O = {}) {
   // ---------- schwebende Werkzeugleiste ----------
   const tools = () => (tab === 'fol' ? ['nav', 'pen', 'hl', 'er', 'laser'] : ['pen', 'hl', 'er', 'laser']);
   const TNAME = { nav: 'Blättern und zeigen', pen: 'Stift', hl: 'Marker', er: 'Radierer', laser: 'Laser' };
-  const pal = () => `<div class="lfc-pal" role="toolbar" aria-label="Werkzeuge">
-      <div class="lfc-pg"><button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button></div>
-      ${tab === 'fol' ? `<div class="lfc-pg"><button type="button" class="lfc-pb" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 24)}</button></div>` : ''}
+  // Werkzeuge als kleiner Knopf oben links; ein Tipp klappt die Leiste darunter auf
+  let PALO = false;
+  const pal = () => `<div class="lfc-tk"><button type="button" class="lfc-tkb${PALO ? ' on' : ''}" data-l="pal" aria-expanded="${PALO}" aria-label="Werkzeuge" title="Werkzeuge">${lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22)}<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i></button><button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button>${tab === 'fol' ? `<button type="button" class="lfc-tkn" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 22)}</button><button type="button" class="lfc-tkn pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 22)}</button>` : ''}</div>${PALO ? palBar() : ''}`;
+  const palBar = () => `<div class="lfc-pal lfc-palx" role="toolbar" aria-label="Werkzeuge">
       <div class="lfc-pg">${tools().map(t => `<button type="button" class="lfc-pb" data-tool="${t}" aria-pressed="${T.tool === t}" aria-label="${TNAME[t]}" title="${TNAME[t]}">${lfcIc(t === 'nav' ? 'hand' : t, 22)}</button>`).join('')}</div>
       <div class="lfc-pg lfc-cols">${INK_COLS.slice(0, 5).map(c => `<button type="button" class="lfc-col" data-col="${c}" style="--cc:${c}" aria-pressed="${(T.col[T.tool] || T.col.pen) === c}" aria-label="Farbe"></button>`).join('')}</div>
       <div class="lfc-pg"><button type="button" class="lfc-pb" data-l="undo" aria-label="Rückgängig">${lfcIc('undo', 22)}</button>${tab !== 'fol' ? `<button type="button" class="lfc-pb" data-l="more" aria-label="Platz nach unten" title="Platz nach unten">${lfcIc('plus', 22)}</button>` : ''}</div>
-      ${tab === 'fol' ? `<div class="lfc-pg"><button type="button" class="lfc-pb pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 24)}</button></div>` : ''}</div>`;
+      <div class="lfc-pg"><button type="button" class="lfc-pb" data-l="pal" aria-label="Leiste schließen">${lfcIc('fsx', 20)}</button></div></div>`;
+  const palSync = () => { const b = main.querySelector('.lfc-tkb'); if (b) b.innerHTML = lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22) + `<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i>`; };
   const ytBtns = () => (!PR.yt ? '' : PR.yt === 'on'
     ? `<div class="lfc-yt on"><span>${lfcIc('fol', 18)} Video läuft am Beamer</span><div><button type="button" class="lfc-pill" data-nav="ytpause">Pause</button><button type="button" class="lfc-pill" data-nav="ytplay">Weiter</button><button type="button" class="lfc-pill${PR.ytbig ? ' on' : ''}" data-nav="ytbig">${PR.ytbig ? 'Vollbild aus' : 'Vollbild'}</button><button type="button" class="lfc-pill" data-nav="ytstop">Schließen</button></div></div>`
     : `<div class="lfc-yt"><button type="button" class="lfc-ytgo" data-nav="ytplay"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg><span>Video abspielen</span></button></div>`);
@@ -16554,7 +16568,7 @@ function lfcStart(O = {}) {
     lay(); bindBoard(); drawSl(); drawInk();
     if (nx) { const n = main.querySelector('.lfc-nxs'); if (n && slOk()) slPaint(n, PR.i + 1, n.clientWidth || 260, 99); }
   };
-  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = Math.max(200, Math.min(st.clientWidth - 16, (st.clientHeight - 84) * 16 / 9)); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
+  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = Math.max(200, Math.min(st.clientWidth - 16, (st.clientHeight - 16) * 16 / 9)); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
   const drawSl = () => { const s = main.querySelector('.lfc-sl'); if (!s) return; const b = brd();
     if (tab === 'fol') { if (!slOk()) { s.innerHTML = `<div class="lfc-fc"><b>${esc(PR.lab || '')}</b><span>${SL.id === PR.sheet && !SL.busy ? 'Die Folie lässt sich hier gerade nicht anzeigen. Blättern und Schreiben funktionieren trotzdem.' : 'Folie wird geladen …'}</span></div>`; return; }
       const W = b ? b.clientWidth : 800; if (PR.tm && TF) slPaintTm(s, PR.i, W, PR.cur || 0); else slPaint(s, PR.i, W, PR.cur || 0); return; }
@@ -16673,8 +16687,8 @@ function lfcStart(O = {}) {
     topIdle();
     const t = e.target.closest('[data-tab]'); if (t) { if (tab !== t.dataset.tab) { tab = t.dataset.tab; if (tab === 'fol' && !T.pen) T.tool = 'nav'; render(); } return; }
     const go = e.target.closest('[data-go]'); if (go) { overview(false); send({ t: 'nav', a: 'goto', i: +go.dataset.go }); return; }
-    const tl0 = e.target.closest('[data-tool]'); if (tl0) { T.tool = tl0.dataset.tool; if (T.tool !== 'nav') T.btool = T.tool; main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl0))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
-    const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') T.tool = 'pen'; T.btool = T.tool; T.col[T.tool] = cl.dataset.col; main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
+    const tl0 = e.target.closest('[data-tool]'); if (tl0) { T.tool = tl0.dataset.tool; if (T.tool !== 'nav') T.btool = T.tool; palSync(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl0))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
+    const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') T.tool = 'pen'; T.btool = T.tool; T.col[T.tool] = cl.dataset.col; palSync(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
     const w = e.target.closest('[data-w]'); if (w) { T.w = w.dataset.w; shEl.querySelectorAll('[data-w]').forEach(x => x.setAttribute('aria-pressed', String(x === w))); return; }
     const pt = e.target.closest('[data-pat]'); if (pt) { sheet(''); B.tafel.pat = pt.dataset.pat; send({ t: 'bpat', pat: pt.dataset.pat }); drawSl(); return; }
     const nv = e.target.closest('[data-nav]'); if (nv) { if (SHEET) sheet(''); nav(nv.dataset.nav); return; }
@@ -16684,6 +16698,7 @@ function lfcStart(O = {}) {
     else if (a === 'beam') { const on = !boardOn(tab); send({ t: 'board', kind: tab, on }); if (PR) PR.board = on ? tab : ''; renderTop(); if (on) { const x = main.querySelector('.lfc-fx'); if (x) x.remove(); } }
     else if (a === 'boardoff') { sheet(''); send({ t: 'board', kind: PR.board, on: false }); }
     else if (a === 'undo') undo();
+    else if (a === 'pal') { PALO = !PALO; const st = main.querySelector('.lfc-stage'); if (st) { const old = st.querySelector('.lfc-tk'), ob = st.querySelector('.lfc-palx'); if (ob) ob.remove(); if (old) old.outerHTML = pal(); } }
     else if (a === 'ref') { REF = !REF; try { localStorage.setItem('abw.lfcref', REF ? '1' : '0'); } catch {} render(); }
     else if (a === 'over') { sheet(''); overview(true); }
     else if (a === 'overx') overview(false);
