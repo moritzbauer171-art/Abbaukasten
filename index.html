@@ -446,6 +446,19 @@ button.gl-w:hover{color:var(--tinte);text-decoration:underline}
 body.basis .x-pro:not(.used){display:none!important}
 .x-wrap.x-pro:not(.chks){display:contents}
 .umfang button{min-width:0;padding-left:9px;padding-right:9px}
+#msr{position:sticky;top:0;z-index:6;margin:0 auto 10px;width:min(560px,100%);background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.14);font-family:var(--f-ui)}
+.msr-row{display:flex;align-items:center;gap:6px;padding:6px 8px;color:var(--muted)}
+.msr-row input{flex:1;min-width:0;border:0;background:transparent;font:500 14px var(--f-ui);color:var(--ink);outline:none;padding:4px 2px}
+.msr-n{font-size:12px;white-space:nowrap}
+.msr-list{max-height:240px;overflow:auto;border-top:1px solid var(--line);padding:4px}
+.msr-li{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;border:0;background:none;border-radius:8px;padding:5px 8px;cursor:pointer;font:13px/1.35 var(--f-ui);color:var(--ink)}
+.msr-li b{flex:0 0 auto;font-size:12px;color:var(--tinte);white-space:nowrap}.msr-li span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msr-li mark{background:#FFE58A;color:inherit;border-radius:2px}.msr-li.on,.msr-li:hover{background:var(--tinte-soft)}
+.msr-sum{font-size:12px;color:var(--muted);padding:6px 8px 4px;border-top:1px dashed var(--line);margin-top:4px}
+mark.msr-hit{background:#FFE58A;color:inherit;border-radius:1px;box-shadow:0 0 0 1px #F2C94C}
+mark.msr-hit.cur{background:#FF9F43;box-shadow:0 0 0 2px #E8740C}
+@media print{mark.msr-hit{background:none;box-shadow:none}#msr{display:none}}
+
 .kl-umf{margin-top:12px}
 .kl-umfo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media (max-width:520px){.kl-umfo{grid-template-columns:1fr}}
@@ -592,7 +605,10 @@ body.basis .area-more{display:none}
 .mw-word .rtx.mw-wp{border:1px solid #DDE1E8;border-radius:0;background:#fff;color:#1C1F27;box-shadow:0 1px 4px rgba(20,30,50,.10);padding:16px 18px;font-size:15px;line-height:1.55;max-height:46vh}
 .mw-word .rtx.mw-wp.is-empty::before{left:19px;top:16px}
 .mw-ws{display:flex;justify-content:space-between;gap:10px;padding:4px 12px;font-size:11.5px;color:#5B6170;background:#F7F8FA;border-top:1px solid #DDE1E8}
-.mw-word.mw-max{position:fixed;inset:0;z-index:70;border-radius:0;display:flex;flex-direction:column}
+.mw-word.mw-max{position:fixed;inset:max(20px,4vh) max(20px,6vw);z-index:70;border-radius:14px;display:flex;flex-direction:column;box-shadow:0 0 0 100vmax rgba(18,24,36,.46),0 24px 64px rgba(0,0,0,.32);animation:mwPop .16s ease-out}
+@keyframes mwPop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+body.mw-max-on #editor{contain:none}
+.mat-body p.bl{min-height:1lh}.ln.bl .ln-no{visibility:hidden}
 .mw-word.mw-max .mw-wpg{flex:1 1 auto;min-height:0;display:flex;padding:18px}
 .mw-word.mw-max .rtx.mw-wp{flex:1 1 auto;max-height:none;width:100%;max-width:860px;margin:0 auto;padding:28px 34px;font-size:17px}
 body.mw-max-on{overflow:hidden}
@@ -1146,7 +1162,7 @@ body{transition:background-color .3s,border-color .25s}
 .mat-body p{margin:0 0 0 10mm}
 .mat-body p.ind{text-indent:4mm}
 /* Silbentrennung wie im Druck: nur bei Blocksatz, nicht in Gedichten; Lücken und Fußnoten werden nicht getrennt */
-.blk-mat:not(.al-left):not(.gedicht) .mat-body p{-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 3;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:3}
+.blk-mat:not(.al-left):not(.gedicht):not(.nohy) .mat-body p{-webkit-hyphens:auto;hyphens:auto;hyphenate-limit-chars:6 3 3;-webkit-hyphenate-limit-before:3;-webkit-hyphenate-limit-after:3}
 .mat-body p .gap,.mat-body p sup{-webkit-hyphens:manual;hyphens:manual}
 .mat-body sup,.task-body sup,.blk-text sup,.info-text sup{font-size:.62em;line-height:0;vertical-align:.55em}
 .ln{display:flex;align-items:baseline}
@@ -3930,7 +3946,19 @@ function poemVerses(text) {
   return out;
 }
 // Material (Prosa): Leerzeile = neuer Absatz, einfacher Umbruch = neue Zeile im selben Absatz
-const matParas = t => String(t || '').replace(/\r/g, '').split(/\n[ \t]*\n/).map(p => p.split('\n').map(l => l.trim()).filter(Boolean)).filter(p => p.length);
+const MAT_BL = '\u2063';
+const matParas = t => {
+  // Eine Leerzeile = neuer Absatz; jede weitere Leerzeile bleibt als sichtbare Leerzeile stehen
+  const out = []; let cur = [], blank = 0;
+  String(t || '').replace(/\r/g, '').split('\n').forEach(l => {
+    l = l.trim();
+    if (!l) { if (cur.length) { out.push(cur); cur = []; } blank++; return; }
+    if (out.length && !cur.length) for (let k = 1; k < blank; k++) out.push([MAT_BL]);
+    blank = 0; cur.push(l);
+  });
+  if (cur.length) out.push(cur);
+  return out;
+};
 // Zwischenüberschrift im Material: Zeile mit „## “ am Anfang (im Textfeld fett als eigene Zeile)
 const MH_RE = /^##(?:[ \t\u00a0]+|$)/;
 const matHasH = t => String(t || '').split('\n').some(l => MH_RE.test(l.trim()) && l.trim().replace(MH_RE, '').trim());
@@ -3938,6 +3966,7 @@ const matHasH = t => String(t || '').split('\n').some(l => MH_RE.test(l.trim()) 
 function matParasHTML(paras, words) {
   let prevH = false, out = '';
   paras.forEach((p, i) => p.forEach((seg, j) => {
+    if (seg === MAT_BL) { out += '<p class="bl"></p>'; prevH = true; return; }
     const hd = MH_RE.test(seg); const t = hd ? seg.replace(MH_RE, '') : seg; if (hd && !t.trim()) return;
     const cls = hd ? 'mh' : prevH ? 'ah' : `${i && !j ? 'ind' : ''}${j ? ' br' : ''}`.trim();
     out += `<p class="${cls}">${words(t)}</p>`; prevH = hd;
@@ -5307,7 +5336,7 @@ function settingsHTML() {
   else if (tab === 'blatt') c = `<div class="card set-card" data-bid="meta"><div class="card-b">
       <div class="f"><span>Art</span><div class="seg sm" role="group" aria-label="Art des Blatts"><button type="button" data-act="mode" data-v="blatt" aria-pressed="${!isK}">Arbeitsblatt</button><button type="button" data-act="mode" data-v="klausur" aria-pressed="${isK}">Klausur</button></div></div>
       <div class="row">${fSelect('lineStep', 'Zeilenzählung', m.lineStep, [[5, 'jede 5. Zeile'], [1, 'jede Zeile']])}</div>
-      <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
+      <div class="chks">${isK ? '' : fCheck('showName', 'Namensfeld', m.showName) + fCheck('showDate', 'Datumsfeld', m.showDate)}${fCheck('showAFB', 'AFB neben Aufgaben drucken', m.showAFB) + fCheck('noHy', 'Keine Silbentrennung in Materialtexten', m.noHy)}<span class="x-wrap x-pro${m.showMin ? ' used' : ''}">${fCheck('showMin', 'Bearbeitungszeit neben Aufgaben drucken', m.showMin)}</span>${fCheck('opBold', 'Operatoren fett', m.opBold !== false)}</div>
       <small class="hint">Gilt für ${state.sheet.abs ? 'alle Arbeitsblätter der Stunde' : 'das Arbeitsblatt'}.</small>
     </div></div>`;
   else if (tab === 'design') { const sc = seiteCard(); c = sc.replace('<div class="card', '<div class="card set-card').replace(/<div class="card-h"[\s\S]*?<\/div>\s*<div class="card-b">/, '<div class="card-b">').replace(' closed', ''); c = (state.sheet.abs ? `<small class="hint">Design und Papier gelten für ${esc(abLabel(m, state.sheet.abActive || 0))}; die anderen Arbeitsblätter stellst du jeweils dort ein.</small>` : '') + c; }
@@ -6326,7 +6355,7 @@ function a4Fill(b, v) {
   if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
   if (v === 'absatz' || v === 'saetze') {
     const mb = mats[0]; if (!mb) return 'Das Blatt hat noch kein Material mit Text.';
-    const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l)).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l) && l !== MAT_BL).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
     if (v === 'absatz') { b.cards = [...keep(b.cards), ...paras.map(t => ({ h: '', t }))]; return paras.length + ' Absätze als Karten angefügt (zum Ordnen: „Karten nummerieren“ aus).'; }
     const sents = paras.join(' ').split(/(?<=[.!?…][“”"»)]?)\s+(?=[„"»(]?[A-ZÄÖÜ0-9])/).map(x => x.trim()).filter(Boolean).slice(0, 40);
     b.strips = sents.join('\n'); b.mix = true; return sents.length + ' Sätze als Streifen übernommen und gemischt.';
@@ -6379,7 +6408,7 @@ function a3Editor(b) {
 }
 // Folienübergänge (vorerst nur im Admin-Konto): über die View-Transitions-Schnittstelle des Browsers
 const PR_VT = { none: 'Keiner', fade: 'Überblenden', morph: 'Morphen', push: 'Schieben', zoom: 'Zoom' };
-const presVT = () => { try { if (!ADM.is || !document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return ''; } catch { return ''; } const t = state.prefs && state.prefs.trans; return PR_VT[t] && t !== 'none' ? t : ''; };
+const presVT = () => { if (!ADM.is || !document.startViewTransition) return ''; const t = state.prefs && state.prefs.trans; return PR_VT[t] && t !== 'none' ? t : ''; };
 const presHead = (kick, head, chips) => { if (!head) { head = kick; kick = ''; } return `<div class="pr-top"><div class="pr-hd">${kick ? `<span class="pr-kick">${kick}</span>` : ''}<div class="pr-ttl">${head || ''}</div></div>${chips ? `<span class="pr-chips">${chips}</span>` : ''}</div>`; };
 // Arbeitsauftrag auf Folien: ein Schritt je Satz oder Zeile, Operator mit Anrede fett, Material- und Zeilenangaben hervorgehoben
 const PR_ABBR = /^(?:\p{L}|\d+|bzw|ggf|vgl|ca|bspw|usw|etc|nr|abb|kap|evtl|sog|insb|inkl|jh|jhd|hrsg|bd|str)$/iu;
@@ -9369,6 +9398,7 @@ function renderOut() {
     if (sh.meta.levelsOn) h += segHTML('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all', 'Niveau');
     if (state.fassung === 'lehrer') h += '<button class="btn sm" type="button" data-pv="ehmd">Erwartungshorizont (.md)</button>';
     h += '<button class="btn sm" type="button" data-pv="pres" title="Folien der Stunde am Beamer zeigen">Präsentieren</button>';
+    h += '<button class="btn sm msr-btn" type="button" data-pv="msr" title="Wort in den Materialien suchen (Strg+Umschalt+F)"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg> Suchen</button>';
   }
   if (state.out === 'vp') h += '<button class="btn sm" type="button" data-pv="vp-docx">Als Word speichern</button><button class="btn sm" type="button" data-pv="st-out">Ganze Stunde ausgeben</button>';
   if (state.out === 'blatt') h += '<button class="btn sm dz-btn" type="button" data-pv="dz-page" title="Design, Farbe, Papier und Abstände"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2.5a7.5 7.5 0 1 0 0 15c1 0 1.5-.7 1.5-1.4 0-.9-.8-1.2-.8-2 0-.8.6-1.3 1.4-1.3h1.6a3.8 3.8 0 0 0 3.8-3.8C17.5 5.5 14.2 2.5 10 2.5Z"/><circle cx="6.5" cy="9" r="1"/><circle cx="9" cy="6" r="1"/><circle cx="12.8" cy="6.6" r="1"/></svg>Aussehen</button>';
@@ -10049,17 +10079,18 @@ function buildBlock(b, ctx) {
       const tailFor = (list, src, bank) => (list.length || src || (bank && bankH)) ? `<div class="mat-tail">${bank ? bankH : ''}${list.length ? `<div class="notes">${list.map(x => `<div><sup>${x.no}</sup> ${esc(normTerm(x.g.term))}: ${inlineHTML(x.g.text)}</div>`).join('')}</div>` : ''}${src ? `<div class="src">${inlineHTML(b.source)}</div>` : ''}</div>` : '';
       const tail = tailFor(notes, !!b.source, true);
       const poem = b.form === 'gedicht'; const paras = poem ? [] : matParas(gm.text); const verses = poem ? poemVerses(gm.text) : null;
-      const fcls = (poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '')) + (fm.silben === 'boegen' ? ' sil-b' : fm.silben === 'farbe' ? ' sil-f' : '');
+      const fcls = (meta.noHy ? ' nohy' : '') + (poem ? ' gedicht al-left noind' + (fm.margin ? ' rand' : '') : (fm.align === 'left' ? ' al-left' : '') + (fm.indent ? '' : ' noind') + (fm.margin ? ' rand' : '')) + (fm.silben === 'boegen' ? ' sil-b' : fm.silben === 'farbe' ? ' sil-f' : '');
       const silX = fm.silben ? silEx(fm.silx) : null; const wH = w => silX ? silHTML(w.h, silX) : w.h;
       const fsty = `--mfs:${FMT_SIZE[fm.size]}pt;--mlh:${FMT_LH[fm.lh]};--mff:${fmtFF(fm.font)}${fm.margin ? `;--mrw:${fm.mrw}mm` : ''}`;
       const isPost = !!b.post && !poem; const two = fm.cols === 2 && !isPost;
       const n = put(`<div class="blk blk-mat${fcls}${two ? ' mc2 mc-m' : ''}${isPost ? ' post' : ''}${state.gapEdit === b.id ? ' gap-edit' : ''}" style="${fsty}"><div class="mat-head"><span class="mat-no">${matLab}</span><span class="mat-title">${inlineHTML(b.title) || (isPost ? `Beitrag von ${esc(String(b.post.name || '').trim() || '…')} (${esc(POST_PF[b.post.pf] || POST_PF[''])}${b.post.date ? ', ' + esc(b.post.date) : ''})` : '') || '&nbsp;'}</span></div><div class="mat-body" lang="de"${fm.margin && fm.mrh.trim() ? ` data-rh="${esc(fm.mrh.trim())}"` : ''}>${poem ? (verses.length ? verses : [{ t: 'Gedichttext' }]).map(v => `<p class="vs${v.st ? ' st' : ''}">${toWordsM(v.t, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' ')}</p>`).join('') : matParasHTML(paras.length ? paras : [['Materialtext']], seg => toWordsM(seg, gapShow, b.gapW).map(w => `<span class="w${w.gl ? ' glw' : ''}${w.gp ? ' gapw' : ''}" data-t="${esc(w.t)}">${wH(w)}</span>`).join(' '))}</div>${tail}</div>`);
       // Zeilen ermitteln
       const bodyEl = n.querySelector('.mat-body');
-      if (HY.fn && !poem && fm.align !== 'left' && !fm.silben) hyWords(bodyEl);
+      if (HY.fn && !poem && fm.align !== 'left' && !fm.silben && !meta.noHy) hyWords(bodyEl);
       const lh = parseFloat(getComputedStyle(bodyEl).lineHeight) || 21;
       const lines = []; const zw = [], zn = [];
       [...bodyEl.querySelectorAll('p')].forEach((p, pi) => {
+        if (p.classList.contains('bl')) { lines.push({ html: '&nbsp;', bl: 1, v: pi + 1 }); return; }
         let top = null, cur = [], first = true;
         const flush = last => { if (cur.length) { lines.push({ html: cur.join(' '), pf: first && pi > 0 && !p.classList.contains('br') && !p.classList.contains('ah') && !p.classList.contains('mh'), pl: last, v: pi + 1, cont: !first, st: first && p.classList.contains('st'), h: p.classList.contains('mh') }); first = false; cur = []; } };
         [...p.querySelectorAll('.w')].forEach(w => {
@@ -10074,14 +10105,14 @@ function buildBlock(b, ctx) {
       });
       // Zeilennummern: Zwischenüberschriften zählen nur mit, wenn so eingestellt; Wörter darin verweisen auf die nächste Zeile
       if (!poem) {
-        let k = 0; lines.forEach(L => { L.n = L.h && !b.hdCount ? 0 : ++k; });
+        let k = 0; lines.forEach(L => { L.n = L.bl || (L.h && !b.hdCount) ? 0 : ++k; });
         const nAt = ix => { for (let j = ix - 1; j < lines.length; j++) if (lines[j].n) return lines[j].n; for (let j = ix - 2; j >= 0; j--) if (lines[j].n) return lines[j].n; return ix; };
         for (let q = 0; q < zn.length; q++) zn[q] = nAt(zn[q]);
       }
       ZL_MAP[b.id] = { words: zw, lineOf: zn, tag: (ctx.mt && ctx.mt[b.id]) || 'M' + no, gaps: gaps.length > 0 };
       bodyEl.innerHTML = poem
         ? lines.map(L => `<div class="ln vs${L.st ? ' st' : ''}${L.cont ? ' vc' : ''}"><span class="ln-no" data-n="${L.v}">${b.lineNumbers !== false && !L.cont && L.v % step === 0 ? L.v : ''}</span><span class="ln-t">${L.html}</span></div>`).join('')
-        : lines.map(L => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}${L.h ? ' mh' : ''}"><span class="ln-no" data-n="${L.n || ''}">${b.lineNumbers !== false && L.n && L.n % step === 0 ? L.n : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
+        : lines.map(L => `<div class="ln${L.pf ? ' pf' : ''}${L.pl ? ' pl' : ''}${L.h ? ' mh' : ''}${L.bl ? ' bl' : ''}"><span class="ln-no" data-n="${L.n || ''}">${b.lineNumbers !== false && L.n && L.n % step === 0 ? L.n : ''}</span><span class="ln-t">${L.html}</span></div>`).join('');
       if (b.lineNumbers === false) bodyEl.querySelectorAll('.ln-no').forEach(x => x.style.visibility = 'hidden');
       const head = n.querySelector('.mat-head'), tailEl = n.querySelector('.mat-tail');
       const lineEls = [...bodyEl.children];
@@ -10348,7 +10379,60 @@ function hyWords(root) {
 }
 function scheduleRender(ms = 220) { clearTimeout(renderTimer); renderTimer = setTimeout(renderPreview, ms); }
 let MAPPE_LOCK = false, EXTRA_FONTS = [];
-function renderPreview() {
+/* ================= Suche in den Materialien (Vorschau): Treffer markieren, mit Material und Zeile ================= */
+const MSR = { open: false, q: '', hits: [], cur: -1 };
+const msrNorm = s => s.toLocaleLowerCase('de').replace(/ß/g, 'ss');
+function msrClear() { document.querySelectorAll('#pages mark.msr-hit').forEach(m => { const p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize(); }); }
+function msrRun(keepCur) {
+  msrClear(); MSR.hits = []; const q = msrNorm(MSR.q.trim()); const bar = $('#msr'); if (!bar) return;
+  if (q.length >= 2) {
+    // je Material (auch über Seiten verteilt) einen durchgehenden Text bauen; Trennstellen am Zeilenende zählen nicht
+    const mats = new Map(); document.querySelectorAll('#pages .blk-mat').forEach(m => { const lab = ((m.querySelector('.mat-no') || {}).textContent || '').trim() || 'Material'; if (!mats.has(lab)) mats.set(lab, []); mats.get(lab).push(m); });
+    mats.forEach((parts, lab) => {
+      let txt = ''; const map = []; // je Zeichen: [Textknoten, Offset, Zeile]
+      parts.forEach(m => m.querySelectorAll('.ln').forEach(ln => {
+        const t = ln.querySelector('.ln-t'); if (!t) return; const n = +((ln.querySelector('.ln-no') || {}).dataset || {}).n || 0;
+        const tw = document.createTreeWalker(t, NodeFilter.SHOW_TEXT, { acceptNode: x => (x.parentElement.closest('.hy, sup, .gl-no') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+        let nd; while ((nd = tw.nextNode())) { const v = nd.nodeValue; for (let i = 0; i < v.length; i++) { if (v[i] === '­') continue; txt += v[i]; map.push([nd, i, n]); } }
+        if (!t.querySelector('.hy') && !/[-‐]$/.test(txt)) { txt += ' '; map.push(null); } else if (t.querySelector('.hy')) { /* getrenntes Wort läuft weiter */ } else { txt += ''; }
+      }));
+      const T = msrNorm(txt).replace(/\s+/g, ' '); let from = 0, k;
+      // Länge bleibt gleich, weil msrNorm nur ß→ss ersetzt: dafür eigene Suche ohne Längenänderung
+      const low = txt.toLocaleLowerCase('de'); const qq = MSR.q.trim().toLocaleLowerCase('de');
+      while ((k = low.indexOf(qq, from)) >= 0 && MSR.hits.length < 300) { const seg = map.slice(k, k + qq.length).filter(Boolean); if (seg.length) MSR.hits.push({ lab, n: seg[0][2], seg, ctx: txt.slice(Math.max(0, k - 30), k + qq.length + 30).replace(/\s+/g, ' ') , k: k - Math.max(0, k - 30), len: qq.length }); from = k + Math.max(1, qq.length); }
+      void T;
+    });
+    // markieren: Segmente je Textknoten zusammenfassen, von hinten nach vorn einwickeln
+    const byNode = new Map(); MSR.hits.forEach((h, hi) => h.seg.forEach(([nd, i]) => { if (!byNode.has(nd)) byNode.set(nd, []); byNode.get(nd).push([i, hi]); }));
+    byNode.forEach((L, nd) => { L.sort((a, b) => a[0] - b[0]); const runs = []; L.forEach(([i, hi]) => { const r = runs[runs.length - 1]; if (r && r.hi === hi && r.e === i) r.e = i + 1; else runs.push({ s: i, e: i + 1, hi }); });
+      for (let r = runs.length - 1; r >= 0; r--) { const { s, e, hi } = runs[r]; const range = document.createRange(); try { range.setStart(nd, s); range.setEnd(nd, e); const mk = document.createElement('mark'); mk.className = 'msr-hit'; mk.dataset.h = hi; range.surroundContents(mk); } catch {} } });
+  }
+  if (!keepCur || MSR.cur >= MSR.hits.length) MSR.cur = MSR.hits.length ? 0 : -1;
+  msrBar(); msrFocus(false);
+}
+function msrFocus(scroll) { document.querySelectorAll('#pages mark.msr-hit.cur').forEach(m => m.classList.remove('cur')); if (MSR.cur < 0) return; const ms = document.querySelectorAll(`#pages mark.msr-hit[data-h="${MSR.cur}"]`); ms.forEach(m => m.classList.add('cur')); if (scroll && ms[0]) ms[0].scrollIntoView({ block: 'center', behavior: 'smooth' }); const c = $('#msr .msr-n'); if (c) c.textContent = MSR.hits.length ? `${MSR.cur + 1} von ${MSR.hits.length}` : (MSR.q.trim().length >= 2 ? 'keine Treffer' : ''); $('#msr').querySelectorAll('.msr-li').forEach((li, i) => li.classList.toggle('on', i === MSR.cur)); }
+function msrBar() {
+  const L = $('#msr .msr-list'); if (!L) return;
+  const groups = {}; MSR.hits.forEach(h => { (groups[h.lab] = groups[h.lab] || []).push(h); });
+  L.innerHTML = MSR.hits.length ? MSR.hits.slice(0, 120).map((h, i) => `<button type="button" class="msr-li" data-msr="go" data-i="${i}"><b>${esc(h.lab)}${h.n ? ' · Z. ' + h.n : ''}</b><span>…${esc(h.ctx.slice(0, h.k))}<mark>${esc(h.ctx.slice(h.k, h.k + h.len))}</mark>${esc(h.ctx.slice(h.k + h.len))}…</span></button>`).join('') + (Object.keys(groups).length ? `<div class="msr-sum">${Object.entries(groups).map(([g, l]) => `${esc(g)}: Z. ${[...new Set(l.map(x => x.n).filter(Boolean))].join(', ') || '–'}`).join(' · ')}</div>` : '') : '';
+  L.hidden = !MSR.hits.length;
+}
+function msrToggle(on) {
+  MSR.open = on === undefined ? !MSR.open : on; let bar = $('#msr');
+  if (!MSR.open) { if (bar) bar.remove(); msrClear(); MSR.hits = []; return; }
+  if (!bar) { bar = el(`<div id="msr" role="search"><div class="msr-row"><svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4.5 4.5"/></svg><input id="msr-q" type="search" placeholder="Wort in den Materialien suchen" aria-label="Wort in den Materialien suchen" autocomplete="off" spellcheck="false"><span class="msr-n" aria-live="polite"></span><button type="button" class="ib" data-msr="prev" title="Vorheriger Treffer (Umschalt+Enter)" aria-label="Vorheriger Treffer">‹</button><button type="button" class="ib" data-msr="next" title="Nächster Treffer (Enter)" aria-label="Nächster Treffer">›</button><button type="button" class="ib" data-msr="x" title="Suche schließen (Esc)" aria-label="Suche schließen">×</button></div><div class="msr-list" hidden></div></div>`);
+    $('#preview-scroll').prepend(bar);
+    const inp = bar.querySelector('input'); let t = 0;
+    inp.addEventListener('input', () => { MSR.q = inp.value; clearTimeout(t); t = setTimeout(() => { msrRun(); msrFocus(true); }, 160); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); msrStep(e.shiftKey ? -1 : 1); } else if (e.key === 'Escape') { e.preventDefault(); msrToggle(false); } });
+    bar.addEventListener('click', e => { const b = e.target.closest('[data-msr]'); if (!b) return; const a = b.dataset.msr; if (a === 'x') msrToggle(false); else if (a === 'next') msrStep(1); else if (a === 'prev') msrStep(-1); else if (a === 'go') { MSR.cur = +b.dataset.i; msrFocus(true); } });
+    inp.value = MSR.q; }
+  bar.querySelector('input').focus(); bar.querySelector('input').select(); if (MSR.q) msrRun();
+}
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'F' || e.key === 'f') && state.out === 'blatt' && !state.dlg && !document.querySelector('.pr')) { e.preventDefault(); msrToggle(true); } });
+function msrStep(d) { if (!MSR.hits.length) return; MSR.cur = (MSR.cur + d + MSR.hits.length) % MSR.hits.length; msrFocus(true); }
+function renderPreview() { const r = renderPreview0(); if (MSR.open && state.out === 'blatt') requestAnimationFrame(() => msrRun(true)); else if (MSR.open) msrToggle(false); return r; }
+function renderPreview0() {
   if (MAPPE_LOCK || DG_VIEW) return;
   if (hmS.open && hmS.hold) { hmS.pend = true; return; }
   { const h = $('#pages'); if (h) h.lang = fachLang(); }
@@ -10639,13 +10723,14 @@ function htmlToRaw(html, mode, opt = {}) {
       if (/^(P|H[1-6]|BLOCKQUOTE|PRE|SECTION|ARTICLE|HEADER|FOOTER|ASIDE|NAV|MAIN|FIGURE|FIGCAPTION|ADDRESS|DL|DT|DD|TABLE|CENTER|FORM|FIELDSET)$/.test(tag)) {
         const empty = !n.textContent.replace(/[\s\u00A0]/g, '') && !n.querySelector('img');
         if (opt.hd && !verseP && /^H[1-6]$/.test(tag) && !empty) { brk('para'); pendPre = 'h'; walk(n, flagsOf(n, fl), ctx); brk('para'); continue; }
+        if (empty && !verseP && para && para.some(has)) { para.extra = (para.extra || 0) + 1; brk('para'); continue; }
         if (verseP && /^(P|H[1-6])$/.test(tag)) { brk(empty ? 'para' : 'line'); if (!empty) walk(n, flagsOf(n, fl), ctx); brk('line'); continue; }
         brk('para'); walk(n, flagsOf(n, fl), tag === 'PRE' ? { ...ctx, pre: true } : ctx); brk('para'); continue;
       }
       if (tag === 'DIV') {
         // Wie in den Textfeldern: ein DIV ist eine Zeile, ein leeres DIV eine Leerzeile (= neuer Absatz)
         const empty = !n.textContent.replace(/[\s\u00A0]/g, '');
-        if (empty && !n.querySelector('img')) { brk('para'); continue; }
+        if (empty && !n.querySelector('img')) { if (!opt.poem && para && para.some(has) && pend === 'para') para.extra = (para.extra || 0) + 1; brk('para'); continue; }
         brk('line'); walk(n, flagsOf(n, fl), ctx); brk('line'); continue;
       }
       walk(n, flagsOf(n, fl), ctx);
@@ -10655,7 +10740,8 @@ function htmlToRaw(html, mode, opt = {}) {
   const lines = [];
   paras.forEach(p => {
     const ls = p.filter(has); if (!ls.length) return;
-    if (lines.length) lines.push({ pre: '', runs: [] });
+    if (lines.length) { lines.push({ pre: '', runs: [] }); for (let k = 0; k < (lines.extra || 0); k++) lines.push({ pre: '', runs: [] }); }
+    lines.extra = p.extra || 0;
     ls.forEach(L => {
       const tx = L.runs.filter(r => r.t != null && !r.sup);
       if (tx.length) { tx[tx.length - 1].t = tx[tx.length - 1].t.replace(/\s+$/, ''); }
@@ -10664,7 +10750,7 @@ function htmlToRaw(html, mode, opt = {}) {
     });
   });
   const out = emitLines(lines, mode);
-  return mode === 'line' ? out.filter(Boolean).join(' ') : out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  return mode === 'line' ? out.filter(Boolean).join(' ') : out.join('\n').replace(/\n{6,}/g, '\n\n\n\n\n').trim();
 }
 // Gespeicherten Text an der Schreibmarke einsetzen (mit Rückgängig)
 function rtInsertRaw(rt, raw) {
@@ -10943,7 +11029,7 @@ function bodyFor(b, num) {
       return `${b.memo ? `<div class="memo-flag">${esc(b.memo)}</div>` : ''}${srcFormSeg(b)}
       ${fText('title', fachBase() === 'gp' ? 'Titel / Verfasser' : 'Titel / Autor', b.title, fachBase() === 'gp' ? (b.mk === 'd' ? 'z. B. Heinrich August Winkler: Der lange Weg nach Westen (2000), Auszug' : 'z. B. Otto von Bismarck: Rede vor dem Reichstag (1888), Auszug') : fachBase() === 'bio' ? 'z. B. Wie Pflanzen Licht nutzen (nach: Natura 2, S. 84)' : poem ? 'z. B. Gottfried Benn: Kleine Aster (1912)' : 'z. B. Caroline Wahl: 22 Bahnen (2023), Auszug')}
       ${poem ? fWord('text', 'Gedicht', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Gedicht`, mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
-        : fWord('text', 'Text', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Text`, mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
+        : fWord('text', 'Text', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Text`, mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz, jede weitere Leerzeile bleibt auf dem Blatt sichtbar. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button>${poem ? '' : '<button class="link" type="button" data-act="mat-h" title="Neue Zwischenüberschrift an der Schreibmarke (sonst am Ende)">+ Zwischenüberschrift</button>'}</div>
       ${!poem && matHasH(b.text) ? `<div class="chks">${fCheck('hdCount', 'Zwischenüberschriften bei den Zeilennummern mitzählen', b.hdCount)}</div>` : ''}
       ${glossRows(b)}
@@ -13316,7 +13402,7 @@ const ADM = { is: false, for: '', open: false, tab: 'konten', users: null, share
 async function admCheck() {
   const uid = store.user && store.user.id; if (!uid || !store.sb) { ADM.is = false; ADM.for = ''; return; }
   if (ADM.for === uid) return; ADM.for = uid; ADM.is = false;
-  try { const r = await store.sb.rpc('ab_is_admin'); if (!r.error && r.data === true && store.user && store.user.id === uid) { ADM.is = true; if (state.libOpen) renderLib(); } } catch {}
+  try { const r = await store.sb.rpc('ab_is_admin'); if (!r.error && r.data === true && store.user && store.user.id === uid) { ADM.is = true; if (state.libOpen) renderLib(); if (state.area === 'einst') renderEditor(); } } catch {}
 }
 const admRpc = async (fn, args) => { const r = await store.sb.rpc(fn, args || {}); if (r.error) throw r.error; return r.data; };
 const admDate = (v, t) => { if (!v) return '–'; const d = new Date(v); return isNaN(d) ? '–' : d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }) + (t ? ' ' + d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : ''); };
@@ -13711,6 +13797,7 @@ const OUT_FMTS = { blatt: ['pdf', 'docx', 'print', 'digital', 'pptx'], vp: ['doc
 const fmtOk = (v, out) => (OUT_FMTS[out] || ['pdf', 'print']).includes(v) && (v !== 'print' || canPrint);
 const fmtFirst = out => (OUT_FMTS[out] || ['pdf']).find(v => fmtOk(v, out)) || 'pdf';
 function openOut() {
+  if (MSR.open) msrToggle(false);
   if (state.gapEdit) { state.gapEdit = null; renderEditor(); clearTimeout(renderTimer); renderPreview(); }
   closeGloss(); closeZl(); closeMenu();
   clearTimeout(renderTimer); renderPreview();
@@ -15042,7 +15129,7 @@ async function exportDOCX() {
         const mInd = (i) => { const a = []; if (fm.margin) a.push(`w:right="${TW(+fm.mrw || 28)}"`); if (i && fm.indent) a.push(`w:firstLine="${TW(4)}"`); return a.length ? `<w:ind ${a.join(' ')}/>` : ''; };
         const mBdr = fm.margin ? '<w:pBdr><w:right w:val="single" w:sz="4" w:space="8" w:color="C8CCD5"/></w:pBdr>' : '';
         if (b.form === 'gedicht') poemVerses(gmD.text).forEach(v => parts.push(xp(xrInline(v.t, { font: FMT_WF[fm.font] || SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: false, line: FMT_WLINE[fm.lh], jc: 'left', before: v.st ? 160 : 0, ind: `<w:ind w:left="${TW(6)}" w:hanging="${TW(6)}"${fm.margin ? ` w:right="${TW(28)}"` : ''}/>`, bdr: mBdr })));
-        else { let prevH = false; matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => { const hd = MH_RE.test(seg); const tx = hd ? seg.replace(MH_RE, '') : seg; if (hd && !tx.trim()) return; parts.push(xp(xrInline(tx, { ...(hd ? { b: 1 } : {}), font: FMT_WF[fm.font] || SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: hd && !b.hdCount, line: FMT_WLINE[fm.lh], jc: hd || fm.align === 'left' ? 'left' : 'both', ...(hd && (i || j) ? { before: 140, keepNext: true } : hd ? { keepNext: true } : {}), ind: mInd(hd || prevH || j ? 0 : i), bdr: mBdr })); prevH = hd; })); }
+        else { let prevH = false; matParas(gmD.text).forEach((p, i) => p.forEach((seg, j) => { if (seg === MAT_BL) { parts.push(xp(xrInline('', { font: FMT_WF[fm.font] || SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: true, line: FMT_WLINE[fm.lh] })); prevH = true; return; } const hd = MH_RE.test(seg); const tx = hd ? seg.replace(MH_RE, '') : seg; if (hd && !tx.trim()) return; parts.push(xp(xrInline(tx, { ...(hd ? { b: 1 } : {}), font: FMT_WF[fm.font] || SERIF, sz: FMT_WSZ[fm.size], fn }), { style: 'Materialtext', noLn: hd && !b.hdCount, line: FMT_WLINE[fm.lh], jc: hd || fm.align === 'left' ? 'left' : 'both', ...(hd && (i || j) ? { before: 140, keepNext: true } : hd ? { keepNext: true } : {}), ind: mInd(hd || prevH || j ? 0 : i), bdr: mBdr })); prevH = hd; })); }
         if (two) closeSect(ln, true);
         const notes = fn ? [] : gmD.list.map(x => ({ n: String(x.no), term: normTerm(x.g.term), text: x.g.text }));
         if (notes.length) { parts.push(xp('', { line: 120, rule: 'exact', mark: 2 })); notes.forEach((x, i) => parts.push(xp(xr(x.n, { sz: 16, sup: 1 }) + xr(' ' + x.term + ': ', { sz: 16 }) + xrInline(x.text, { sz: 16 }), { bdr: i === 0 ? `<w:pBdr><w:top w:val="single" w:sz="4" w:space="2" w:color="C8CCD5"/></w:pBdr>` : '', ind: `<w:ind w:right="${TW(50)}"/>` }))); }
@@ -16102,6 +16189,7 @@ function boot() {
     const b = e.target.closest('[data-pv]'); if (!b) return; const k = b.dataset.pv, v = b.dataset.v;
     if (k === 'ehmd') { exportEH(); return; }
     if (k === 'tfbeam') { tfBeamer(); return; }
+    if (k === 'msr') { msrToggle(true); return; }
     if (k === 'dz-page') { if (state.dz && state.dz.k === 'page') dzClose(); else dzOpen('page', null, b.getBoundingClientRect()); return; }
     if (k === 'pres') { openPres(0); return; }
     if (k === 'vp') { openVP(); return; }
