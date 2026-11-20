@@ -7975,7 +7975,7 @@ function inkLayer(X) {
   const renderTo = (gg, w) => {
     gg.setTransform(1, 0, 0, 1, 0, 0); gg.clearRect(0, 0, w.width, w.height); const m = M(); const f = w.width / 1600;
     gg.setTransform(f * m.s, 0, 0, f * m.s, f * m.x, f * m.y); gg.translate(0, -(X.off ? X.off() : 0));
-    (store[st.key] || []).forEach(s => inkDraw(gg, s)); if (st.cur) inkDraw(gg, st.cur); if (st.rl && st.rl.key === st.key && st.rl.s) inkDraw(gg, st.rl.s);
+    (store[st.key] || []).forEach(s => inkDraw(gg, s)); if (st.cur) inkDraw(gg, st.cur); if (st.rl) Object.values(st.rl).forEach(r => { if (r.key === st.key && r.s) inkDraw(gg, r.s); });
     if (st.lz.length) { const now = performance.now(); const L = st.lz.filter(p => now - p.t < 650);
       gg.save(); gg.lineCap = gg.lineJoin = 'round'; for (let i = 1; i < L.length; i++) { const a = 1 - (now - L[i].t) / 650; gg.strokeStyle = `rgba(255,40,40,${(a * 0.85).toFixed(3)})`; gg.lineWidth = 4 + 8 * a; gg.beginPath(); gg.moveTo(L[i - 1].x, L[i - 1].y); gg.lineTo(L[i].x, L[i].y); gg.stroke(); }
       const p = L[L.length - 1]; if (p) { gg.shadowColor = 'rgba(255,0,0,.9)'; gg.shadowBlur = 18; gg.fillStyle = '#FF2A2A'; gg.beginPath(); gg.arc(p.x, p.y, 9, 0, 7); gg.fill(); } gg.restore(); }
@@ -8057,8 +8057,8 @@ function inkLayer(X) {
     remote: {
       keyed: k => { const L = store[k] || []; L.forEach(x => { if (!x.k) x.k = Math.random().toString(36).slice(2, 9); }); return L; },
       op: (k, m) => { const L = (store[k] = store[k] || []);
-        if (m.op === 'live') { st.rl = m.s && Array.isArray(m.s.p) ? { key: k, s: m.s } : null; draw(); return; }
-        if (m.op === 'add' && m.s && Array.isArray(m.s.p) && m.s.p.length < 20000) { if (!L.some(x => x.k && x.k === m.s.k)) L.push(m.s); st.rl = null; }
+        const dv = String(m.d || '-'); st.rl = st.rl || {}; if (m.op === 'live') { if (m.s && Array.isArray(m.s.p)) st.rl[dv] = { key: k, s: m.s }; else delete st.rl[dv]; draw(); return; }
+        if (m.op === 'add' && m.s && Array.isArray(m.s.p) && m.s.p.length < 20000) { if (!L.some(x => x.k && x.k === m.s.k)) L.push(m.s); delete st.rl[dv]; }
         else if (m.op === 'rm') { const ks = new Set(m.ks || []); store[k] = L.filter(x => !ks.has(x.k)); }
         else if (m.op === 'clr') { if (L.length) H().push({ t: 'clr', L: L.slice() }); store[k] = []; }
         draw(); sync(); X.saved(true); },
@@ -8108,7 +8108,7 @@ function openPres(start, opts = {}) {
   const boardT = kind => (BOARD.open && BOARD.kind === kind ? boardSet(false) : boardSet(true, kind));
   const pkSave = () => { if (!pkOn) return; const L = inkStore.pk || []; if (!L.length && BOARD.pk.h <= 900 && !BOARD.pk.own) delete state.sheet.pk; else state.sheet.pk = { ink: L, h: BOARD.pk.h, ...(BOARD.pk.own ? { lab: BOARD.pk.own } : {}) }; if (state.sheet.example) state.sheet.example = false; state.touched = true; scheduleSave(); };
   const inkStore = { ...(pkOn && Array.isArray(pkSaved.ink) ? { pk: pkSaved.ink.filter(x => x && Array.isArray(x.p)).slice(0, 3000) } : {}) };
-  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: remote => { if (curSl().id === 'pk') pkSave(); if (!remote) lfcPushSoon(); },
+  const INK = inkLayer({ ov, stage, store: inkStore, tafel: () => TBo.isOn() && !boarding(), awOk: () => awOk(), aw: () => AW, saved: remote => { if (curSl().id === 'pk') pkSave(); if (!remote || (LFC && Object.values(LFC.devs || {}).filter(t => Date.now() - t < 90000).length > 1)) lfcPushSoon(); },
     addPage: opts.board ? () => { S.splice(P.i + 1, 0, { k: 'blank', pat: S[P.i].pat || 'kariert', id: 'bl-' + uid() }); P.i++; show(); } : null,
     off: () => { const b2 = curSl(); return b2 && b2.k === 'blank' ? b2.sy || 0 : 0; },
     setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
@@ -8414,7 +8414,7 @@ function openPres(start, opts = {}) {
     // Companion (iPad/Handy mit demselben Konto): Lebenszeichen der Präsentation, Tafel-Striche, Fernbedienung
     const offL = fotoListen(m => {
       if (!document.body.contains(ov)) return;
-      if (['hi', 'ping', 'board', 'bop', 'blas', 'bsy', 'bmore', 'bpat', 'nav'].includes(m.t)) LFC.peer = Date.now();
+      if (['hi', 'ping', 'board', 'bop', 'blas', 'bsy', 'bmore', 'bpat', 'nav'].includes(m.t)) { LFC.peer = Date.now(); if (m.d) (LFC.devs = LFC.devs || {})[m.d] = Date.now(); }
       const slk = m.key === 'sl'; const key = m.key === 'pk' && pkOn ? 'pk' : 'tafel', bk = key === 'pk' ? BOARD.pk : BOARD.s, ik = slk ? inkKey(S[P.i]) : key === 'pk' ? 'pk' : BOARD.s.id, cur = BOARD.open && BOARD.kind === key;
       if (slk && (m.t === 'bsy' || m.t === 'bmore')) return;
       if (m.t === 'hi') { fotoSend(lfcState()); lfcFull('tafel'); lfcFull('sl'); if (pkOn) lfcFull('pk'); LFC.tk = ''; lfcTfl(true); }
@@ -16518,7 +16518,11 @@ function lfcStart(O = {}) {
   const onFs = () => { renderTop(); setTimeout(lay, 80); }; ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, onFs));
   root.addEventListener('pointerdown', e => { if (root.classList.contains('idle') && e.clientY < 72 && !(e.target.closest && e.target.closest('.lfc-tk, .lfc-palx, .lfc-ytf, .lfc-modes'))) { e.preventDefault(); e.stopPropagation(); topShow(); } }, { capture: true });
   let fsTried = false; root.addEventListener('pointerdown', () => { if (!fsTried && fsCan() && !fsEl()) { fsTried = true; try { if (localStorage.getItem('abw.camfs') !== '0') fsGo(true); } catch { fsGo(true); } } }, { capture: true });
-  const send = m => fotoSend(m);
+  let DEV = ''; try { DEV = sessionStorage.getItem('abw.lfcdev') || ''; if (!DEV) { DEV = Math.random().toString(36).slice(2, 10); sessionStorage.setItem('abw.lfcdev', DEV); } } catch { DEV = Math.random().toString(36).slice(2, 10); }
+  const PEND = [];
+  const send = m => { m.d = DEV; if (m.t === 'bop' && (m.op === 'add' || m.op === 'rm')) { PEND.push({ t: Date.now(), key: m.key, op: m.op, s: m.s, ks: m.ks }); if (PEND.length > 300) PEND.shift(); } fotoSend(m); };
+  // Komplettstand vom Rechner mit eigenen, noch unterwegs befindlichen Strichen zusammenführen (zwei schreiben gleichzeitig)
+  const merge = (key, ink) => { const now = Date.now(); while (PEND.length && now - PEND[0].t > 5000) PEND.shift(); let L = ink.slice(); PEND.forEach(x => { if (x.key !== key) return; if (x.op === 'add' && x.s && !L.some(y => y.k === x.s.k)) L.push(x.s); else if (x.op === 'rm') { const R = new Set(x.ks || []); L = L.filter(y => !R.has(y.k)); } }); return L; };
   const live = () => !!PR && Date.now() - lastHb < 15000;
   const boardOn = k => !!PR && PR.board === k;
   const kOf = () => (tab === 'fol' ? 'sl' : tab);
@@ -16778,8 +16782,8 @@ function lfcStart(O = {}) {
     if (m.t === 'pres') takePres(m);
     else if (m.t === 'presend') { lastHb = 0; if (!page) { close(false); toast('Die Präsentation wurde beendet.'); } else render(); }
     else if (m.t === 'tfl') { const had = !!TF; TF = m.off ? null : m; if (tab === 'fol' && live()) { if (!TF || !had || !tflUpd()) drawSl(); } }
-    else if (m.t === 'bfull' && m.key === 'sl' && Array.isArray(m.ink)) { if (PR && (m.i == null || m.i === PR.i)) { B.sl = { ink: m.ink, h: 900, sy: 0, i: PR.i }; if (tab === 'fol' && !T.live) drawInk(); } }
-    else if (m.t === 'bfull' && B[m.key] && Array.isArray(m.ink)) { B[m.key].ink = m.ink; if (tab === m.key && !T.live) drawInk(); }
+    else if (m.t === 'bfull' && m.key === 'sl' && Array.isArray(m.ink)) { if (PR && (m.i == null || m.i === PR.i)) { B.sl = { ink: merge('sl', m.ink), h: 900, sy: 0, i: PR.i }; if (tab === 'fol' && !T.live) drawInk(); } }
+    else if (m.t === 'bfull' && B[m.key] && Array.isArray(m.ink)) { B[m.key].ink = merge(m.key, m.ink); if (tab === m.key && !T.live) drawInk(); }
   }));
   const hbChk = setInterval(() => { if (PR && !live() && main.querySelector('.lfc-stage, .lfc-camh')) render(); }, 3000);
   const hello = setInterval(() => { if (!live()) send({ t: 'hi' }); }, 6000);
