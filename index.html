@@ -1794,6 +1794,9 @@ html:has(body.cam-mode),body.cam-mode{overflow:hidden;overscroll-behavior:none;b
 .lfc2 .lfc-pal.lfc-palb.sunk{transform:translateX(-50%) translateY(54px)}
 .lfc2 .lfc-pal.lfc-palb.sunk .lfc-ag,.lfc2 .lfc-pal.lfc-palb.sunk .lfc-ac{opacity:0}
 .lfc2 .lfc-pal.lfc-palb{bottom:calc(-14px + env(safe-area-inset-bottom,0px))!important;}
+.lfc2.tfull{grid-template-rows:minmax(0,1fr)!important}.lfc2.tfull .lfc-top{display:none}.lfc2.tfull .lfc-m{grid-row:1}
+.lfc2.tfull .lfc-stage{padding:0!important;align-items:center!important}.lfc2.tfull .lfc-board{border-radius:0;box-shadow:none}
+.lfc2.tfull .lfc-tk{top:12px!important}.lfc2.tfull .lfc-modes{top:66px!important}
 .lfc2 .lfc-pal.lfc-palb{left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));top:auto;z-index:4}
 .lfc2[data-mode="tafel"] .lfc-stage,.lfc2[data-mode="pk"] .lfc-stage{align-items:flex-start;padding-top:70px!important}
 .lfc2 .lfc-pal.lfc-palx{left:calc(14px + env(safe-area-inset-left,0px));bottom:auto;top:66px;transform:none;z-index:4}
@@ -16535,8 +16538,8 @@ function lfcStart(O = {}) {
   const tools = () => (tab === 'fol' ? ['nav', 'pen', 'hl', 'er', 'laser'] : ['pen', 'hl', 'er', 'laser']);
   const TNAME = { nav: 'Blättern und zeigen', pen: 'Stift', hl: 'Marker', er: 'Radierer', laser: 'Laser' };
   // Werkzeuge als kleiner Knopf oben links; ein Tipp klappt die Leiste darunter auf
-  let PALO = false, MODO = false;
-  const pal = () => `<div class="lfc-tk"><button type="button" class="lfc-tkm${MODO ? ' on' : ''}" data-l="modes" aria-expanded="${MODO}" aria-label="Modus wechseln" title="Folie, Tafel, Fotos">${lfcIc(tab === 'fol' ? 'fol' : tab, 20)}<span>${(modes().find(m => m[0] === tab) || ['', ''])[1]}</span>${lfcIc('down', 14)}</button>${tab === 'fol' ? '' : '<!--'}<button type="button" class="lfc-tkb${PALO ? ' on' : ''}" data-l="pal" aria-expanded="${PALO}" aria-label="Werkzeuge" title="Werkzeuge">${lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22)}<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i></button>${tab === 'fol' ? '' : '-->'}<button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button>${tab === 'fol' ? `<button type="button" class="lfc-tkn" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 22)}</button><button type="button" class="lfc-tkn pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 22)}</button>` : ''}</div>${MODO ? `<div class="lfc-modes" role="menu">${modes().map(([k, l]) => `<button type="button" role="menuitemradio" data-tab="${k}" aria-checked="${k === tab}">${lfcIc(k, 20)}<span>${l}</span></button>`).join('')}</div>` : ''}${tab !== 'fol' ? palBar(true) : PALO ? palBar() : ''}`;
+  let PALO = false, MODO = false, TFULL = false; try { TFULL = localStorage.getItem('abw.lfctfull') === '1'; } catch {}
+  const pal = () => `<div class="lfc-tk"><button type="button" class="lfc-tkm${MODO ? ' on' : ''}" data-l="modes" aria-expanded="${MODO}" aria-label="Modus wechseln" title="Folie, Tafel, Fotos">${lfcIc(tab === 'fol' ? 'fol' : tab, 20)}<span>${(modes().find(m => m[0] === tab) || ['', ''])[1]}</span>${lfcIc('down', 14)}</button>${tab === 'fol' ? '' : '<!--'}<button type="button" class="lfc-tkb${PALO ? ' on' : ''}" data-l="pal" aria-expanded="${PALO}" aria-label="Werkzeuge" title="Werkzeuge">${lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22)}<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i></button>${tab === 'fol' ? '' : '-->'}<button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button>${tab !== 'fol' && tab !== 'cam' ? `<button type="button" class="lfc-tkn${TFULL ? ' pri' : ''}" data-l="tfull" aria-pressed="${TFULL}" aria-label="${TFULL ? 'Vollbild verlassen' : 'Tafel im Vollbild'}" title="${TFULL ? 'Vollbild verlassen' : 'Tafel im Vollbild'}">${lfcIc(TFULL ? 'fsx' : 'fs', 20)}</button>` : ''}${tab === 'fol' ? `<button type="button" class="lfc-tkn" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 22)}</button><button type="button" class="lfc-tkn pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 22)}</button>` : ''}</div>${MODO ? `<div class="lfc-modes" role="menu">${modes().map(([k, l]) => `<button type="button" role="menuitemradio" data-tab="${k}" aria-checked="${k === tab}">${lfcIc(k, 20)}<span>${l}</span></button>`).join('')}</div>` : ''}${tab !== 'fol' ? palBar(true) : PALO ? palBar() : ''}`;
   // Werkzeuge wie in Apple Notizen: Stifte stehen aufrecht in einer hellen Leiste, der gewählte ragt heraus; Farben als Raster
   const toolSvg = t => { const c = T.col[t] || T.col.pen;
     if (t === 'nav') return `<svg viewBox="0 0 44 96" aria-hidden="true"><rect x="7" y="22" width="30" height="80" rx="9" fill="#F2F2F7" stroke="#C7C7CC"/><g transform="translate(10 30)" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${LFC_IC.hand}</g></svg>`;
@@ -16600,14 +16603,14 @@ function lfcStart(O = {}) {
     if (tab === 'fol') { slLoad(); if (B.sl.i !== PR.i) { B.sl = { ink: [], h: 900, sy: 0, i: PR.i }; T.undo.sl = []; } }
     const nx = tab === 'fol' && REF;
     const notes = nx ? notesOf(PR.i) : [];
-    main.innerHTML = `<div class="lfc-wrap${nx ? ' ref' : ''}"><div class="lfc-stage">${PR.bl ? `<div class="lfc-blon" role="status">${lfcIc('black', 18)}<span>Der Beamer ist schwarz</span><button type="button" data-nav="black">Wieder einschalten</button></div>` : ''}<div class="lfc-board${tab === 'fol' ? ' fol' : ''}"><div class="lfc-sl"></div><canvas class="lfc-cv" width="2400" height="1350"></canvas><i class="lfc-dot" hidden></i><div class="lfc-vs" hidden><i></i></div></div>${pal()}${tab === 'fol' && PR.yt ? `<div class="lfc-ytf">${ytBtns()}</div>` : ''}${tab !== 'fol' && tab !== 'cam' && !boardOn(tab) ? `<button type="button" class="lfc-fx" data-l="beam">${lfcIc('tv', 18)}<span>Am Beamer zeigen</span></button>` : ''}</div>
+    main.innerHTML = `<div class="lfc-wrap${nx ? ' ref' : ''}"><div class="lfc-stage">${PR.bl ? `<div class="lfc-blon" role="status">${lfcIc('black', 18)}<span>Der Beamer ist schwarz</span><button type="button" data-nav="black">Wieder einschalten</button></div>` : ''}<div class="lfc-board${tab === 'fol' ? ' fol' : ''}"><div class="lfc-sl"></div><canvas class="lfc-cv" width="2400" height="1350"></canvas><i class="lfc-dot" hidden></i><div class="lfc-vs" hidden><i></i></div></div>${pal()}${tab === 'fol' && PR.yt ? `<div class="lfc-ytf">${ytBtns()}</div>` : ''}${tab !== 'fol' && tab !== 'cam' ? fxHTML() : ''}</div>
       ${nx ? `<aside class="lfc-side"><div class="lfc-nx"><small>Als Nächstes</small>${PR.i + 1 < PR.n ? `<div class="lfc-nxs"></div><span>${esc(PR.nx || '')}</span>` : '<span>Das ist die letzte Folie.</span>'}</div>
         <div class="lfc-notes"><small>Notizen</small>${notes.length ? `<ul>${notes.map(t => `<li>${inlineHTML(t)}</li>`).join('')}</ul>` : '<span>Keine Notizen zu dieser Folie.</span>'}</div>
         <div class="lfc-fb"><button type="button" class="lfc-big" data-nav="prev" ${PR.i <= 0 && !PR.cur ? 'disabled' : ''}>${lfcIc('prev', 30)}<span>Zurück</span></button><button type="button" class="lfc-big pri" data-nav="next">${lfcIc('next', 30)}<span>Weiter</span></button></div></aside>` : ''}</div>`;
     lay(); bindBoard(); drawSl(); drawInk(); sinkSoon(4000);
     if (nx) { const n = main.querySelector('.lfc-nxs'); if (n && slOk()) slPaint(n, PR.i + 1, n.clientWidth || 260, 99); }
   };
-  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const W = Math.max(200, Math.min(st.clientWidth - 16, (st.clientHeight - (tab === 'fol' ? 16 : 150)) * 16 / 9)); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
+  const lay = () => { const b = brd(); if (!b) return; const st = main.querySelector('.lfc-stage'); const full = root.classList.contains('tfull'); const W = Math.max(200, full ? Math.min(st.clientWidth, st.clientHeight * 16 / 9) : Math.min(st.clientWidth - 16, (st.clientHeight - (tab === 'fol' ? 16 : 150)) * 16 / 9)); b.style.width = W + 'px'; b.style.height = W * 9 / 16 + 'px'; b.style.setProperty('--k', (W / 1600).toFixed(5)); };
   const drawSl = () => { const s = main.querySelector('.lfc-sl'); if (!s) return; const b = brd();
     if (tab === 'fol') { if (!slOk()) { s.innerHTML = `<div class="lfc-fc"><b>${esc(PR.lab || '')}</b><span>${SL.id === PR.sheet && !SL.busy ? 'Die Folie lässt sich hier gerade nicht anzeigen. Blättern und Schreiben funktionieren trotzdem.' : 'Folie wird geladen …'}</span></div>`; return; }
       const W = b ? b.clientWidth : 800; if (PR.tm && TF) slPaintTm(s, PR.i, W, PR.cur || 0); else slPaint(s, PR.i, W, PR.cur || 0); return; }
@@ -16619,7 +16622,11 @@ function lfcStart(O = {}) {
   const sendLive = thr(s => send({ t: 'bop', key: kOf(), op: 'live', s }), 40);
   const sendLas = thr((x, y) => send({ t: 'blas', key: kOf(), x: Math.round(x), y: Math.round(y) }), 25);
   const sendSy = thr(sy => send({ t: 'bsy', key: kOf(), sy: Math.round(sy) }), 50);
-  const ensureBeam = () => { if (tab === 'fol') return; if (!boardOn(tab)) { send({ t: 'board', kind: tab, on: true }); if (PR) PR.board = tab; renderTop(); const x = main.querySelector('.lfc-fx'); if (x) x.remove(); } };
+  let extT = 0;
+  const extend = scroll => { if (tab === 'fol' || Date.now() - extT < 700) return; extT = Date.now(); KB().h = (KB().h || 900) + 900; send({ t: 'bmore', key: kOf() }); if (scroll) { KB().sy = Math.min(KB().h - 900, (KB().sy || 0) + 680); T.panT = Date.now(); setTimeout(() => sendSy(KB().sy), 420); } drawSl(); drawInk(); };
+  const fxHTML = () => `<button type="button" class="lfc-fx${boardOn(tab) ? ' on' : ''}" data-l="beam" aria-pressed="${boardOn(tab)}" title="${boardOn(tab) ? 'Die Tafel vom Beamer nehmen (zurück zur Folie)' : 'Die Tafel am Beamer zeigen'}">${lfcIc('tv', 18)}<span>${boardOn(tab) ? 'Am Beamer · wegnehmen' : 'Am Beamer zeigen'}</span></button>`;
+  const fxSync = () => { const x = main.querySelector('.lfc-fx'); if (x) x.outerHTML = fxHTML(); };
+  const ensureBeam = () => { if (tab === 'fol') return; if (!boardOn(tab)) { send({ t: 'board', kind: tab, on: true }); if (PR) PR.board = tab; renderTop(); fxSync(); } };
   const nav = a => send({ t: 'nav', a });
   const bindBoard = () => {
     // Pencil schreibt, der Finger blättert (Folie) oder verschiebt mit zwei Fingern (Tafel). Ohne Pencil: Werkzeug „Blättern“ oder Zeichnen mit dem Finger.
@@ -16662,11 +16669,12 @@ function lfcStart(O = {}) {
     });
     b.addEventListener('pointermove', e => {
       if (TP.has(e.pointerId)) { const q = TP.get(e.pointerId); q.x = e.clientX; q.y = e.clientY;
-        if (pan && tab !== 'fol') { const ys = [...TP.values()].map(p => p.y), y = ys.reduce((a, v) => a + v, 0) / ys.length, r = b.getBoundingClientRect(); const H = KB().h || 900; const sy = Math.max(0, Math.min(H - 900, pan.sy - (y - pan.y) / r.height * 900)); if (sy !== KB().sy) { KB().sy = sy; T.panT = Date.now(); drawSl(); drawInk(); sendSy(sy); } return; } }
+        if (pan && tab !== 'fol') { const ys = [...TP.values()].map(p => p.y), y = ys.reduce((a, v) => a + v, 0) / ys.length, r = b.getBoundingClientRect(); const raw = pan.sy - (y - pan.y) / r.height * 900; if (raw > (KB().h || 900) - 900 + 90) extend(false); const H = KB().h || 900; const sy = Math.max(0, Math.min(H - 900, raw)); if (sy !== KB().sy) { KB().sy = sy; T.panT = Date.now(); drawSl(); drawInk(); sendSy(sy); } return; } }
       if (e.pointerId !== drawId) return;
       if (T.cur === 'laser' && T.las) { const [x, y] = pt(e); T.las = [x, y]; sendLas(x, y); drawInk(); return; }
       if (er) { const [x, y] = pt(e); eraseAt(x, y, er); return; }
       const s = T.live; if (!s) return; const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      { const [, yy] = pt(e); if (tab !== 'fol' && yy > (KB().h || 900) - 110) extend(false); }
       (evs.length ? evs : [e]).forEach(ev => { const [x, y] = pt(ev); const st2 = s.pr ? 3 : 2; const lx = s.p[s.p.length - st2], ly = s.p[s.p.length - st2 + 1]; if (Math.hypot(x - lx, y - ly) < 1.5) return; s.p.push(r1(x), r1(y)); if (s.pr) s.p.push(Math.round((ev.pressure || 0.5) * 100)); });
       drawInk(); sendLive(s);
     });
@@ -16720,7 +16728,7 @@ function lfcStart(O = {}) {
     if (cam && (tab !== 'cam' || !live())) { cam.destroy(); cam = null; }
     if (!modes().some(t => t[0] === tab)) tab = 'fol';
     if (tab !== 'fol' && T.tool === 'nav') T.tool = T.btool;
-    root.dataset.mode = tab; root.classList.toggle('ref-on', REF && tab === 'fol'); renderTop(); renderMain(); topIdle();
+    root.dataset.mode = tab; root.classList.toggle('ref-on', REF && tab === 'fol'); root.classList.toggle('tfull', TFULL && (tab === 'tafel' || tab === 'pk')); renderTop(); renderMain(); topIdle();
   };
   root.addEventListener('pointerdown', e => { const pb = e.target.closest && e.target.closest('.lfc-palb'); if (pb && pb.classList.contains('sunk')) { e.preventDefault(); e.stopPropagation(); sink(false); sinkSoon(5000); pb.dataset.eat = '1'; } }, { capture: true });
   root.addEventListener('click', e => {
@@ -16736,7 +16744,7 @@ function lfcStart(O = {}) {
     const b = e.target.closest('[data-l]'); if (!b) return; const a = b.dataset.l;
     if (a === 'exit') close(true);
     else if (a === 'fs') { sheet(''); const on = !fsEl(); try { localStorage.setItem('abw.camfs', on ? '1' : '0'); } catch {} fsGo(on); }
-    else if (a === 'beam') { const on = !boardOn(tab); send({ t: 'board', kind: tab, on }); if (PR) PR.board = on ? tab : ''; renderTop(); if (on) { const x = main.querySelector('.lfc-fx'); if (x) x.remove(); } }
+    else if (a === 'beam') { const on = !boardOn(tab); send({ t: 'board', kind: tab, on }); if (PR) PR.board = on ? tab : ''; renderTop(); fxSync(); }
     else if (a === 'boardoff') { sheet(''); send({ t: 'board', kind: PR.board, on: false }); }
     else if (a === 'undo') undo();
     else if (a === 'modes') { MODO = !MODO; PALO = false; const st = main.querySelector('.lfc-stage'); if (st) { st.querySelectorAll('.lfc-palx, .lfc-palb, .lfc-modes').forEach(x => x.remove()); const old = st.querySelector('.lfc-tk'); if (old) old.outerHTML = pal(); } }
@@ -16744,6 +16752,7 @@ function lfcStart(O = {}) {
     else if (a === 'ref') { REF = !REF; try { localStorage.setItem('abw.lfcref', REF ? '1' : '0'); } catch {} render(); }
     else if (a === 'over') { sheet(''); overview(true); }
     else if (a === 'overx') overview(false);
+    else if (a === 'tfull') { TFULL = !TFULL; try { localStorage.setItem('abw.lfctfull', TFULL ? '1' : '0'); } catch {} if (TFULL && fsCan() && !fsEl()) fsGo(true); render(); }
     else if (a === 'more') { KB().h = (KB().h || 900) + 900; KB().sy = Math.min(KB().h - 900, (KB().sy || 0) + 680); T.panT = Date.now(); send({ t: 'bmore', key: kOf() }); setTimeout(() => sendSy(KB().sy), 420); drawSl(); drawInk(); }
     else if (a === 'menu') sheet('menu');
     else if (a === 'tpls') sheet('tpls');
@@ -16762,7 +16771,7 @@ function lfcStart(O = {}) {
     renderTop();
     if (tab === 'fol' && (old.i !== m.i || old.board !== m.board || old.bl !== m.bl || old.cur !== m.cur || old.up !== m.up || old.tm !== m.tm || old.yt !== m.yt)) { if (!T.live) renderMain(); if (OV) overview(true); }
     if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
-    if (tab !== 'fol' && tab !== 'cam' && (old.board !== m.board || old.bl !== m.bl) && !T.live) renderMain();
+    if (tab !== 'fol' && tab !== 'cam' && old.bl !== m.bl && !T.live) renderMain(); else if (tab !== 'fol' && tab !== 'cam' && old.board !== m.board) fxSync();
     if (tab === 'fol' && old.ytbig !== m.ytbig && !T.live) renderMain();
   };
   offs.push(fotoListen(m => {
