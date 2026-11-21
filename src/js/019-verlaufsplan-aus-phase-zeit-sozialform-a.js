@@ -20,7 +20,7 @@ function vpRows() {
         if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
         a3.filter(x => x.taskRef === b.id + ':' + idx[k]).forEach(x => media.push(A3_TPL[a3Tpl(x)].label + ' (A3)'));
         if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
-        if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
+        if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa' || it.soz === 'tps')) media.push('digitale Fassung (Tablet)');
         const g = itGrp(b, it, m);
         bRows.push({ no: fo ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: isRes(b) ? '' : bg, res: isRes(b), gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
       });

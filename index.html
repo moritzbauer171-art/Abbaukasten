@@ -5072,6 +5072,7 @@ const SOZ = {
   ea: { label: 'Einzelarbeit', short: 'EA' },
   pa: { label: 'Partnerarbeit', short: 'PA' },
   ga: { label: 'Gruppenarbeit', short: 'GA' },
+  tps: { label: 'Think-Pair-Share', short: 'TPS' },
   pl: { label: 'Plenum', short: 'Plenum' }
 };
 /* Arbeitsformen: Piktogramme neben der Sozialform, mehrere je Aufgabe möglich */
@@ -7236,7 +7237,7 @@ function vpRows() {
         if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
         a3.filter(x => x.taskRef === b.id + ':' + idx[k]).forEach(x => media.push(A3_TPL[a3Tpl(x)].label + ' (A3)'));
         if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
-        if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa')) media.push('digitale Fassung (Tablet)');
+        if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa' || it.soz === 'tps')) media.push('digitale Fassung (Tablet)');
         const g = itGrp(b, it, m);
         bRows.push({ no: fo ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: isRes(b) ? '' : bg, res: isRes(b), gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
       });
@@ -7666,12 +7667,12 @@ const TW_KINDS = {
   qr: { t: 'QR-Code', ic: '🔳', w: 290, h: 340 }
 };
 const TW_SYM = {
-  ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Alle zusammen' },
+  ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, tps: { l: 'Think-Pair-Share' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Alle zusammen' },
   zuhoeren: { l: 'Zuhören', e: '👂' }, melden: { l: 'Melden', e: '✋' }, fluestern: { l: 'Flüstern', e: '🤫' }, leise: { l: 'Ganz leise', e: '🤐' },
   kreis: { l: 'Sitzkreis', e: '⭕' }, aufr: { l: 'Aufräumen', e: '🧹' }, pause: { l: 'Pause', e: '🍎' }
 };
 // Oberschule: sachliche Arbeitsformen mit den Piktogrammen der Arbeitsblätter statt Emojis
-const TW_SYM_OS = { ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Plenum' }, lesen: { l: 'Lesen' }, schreiben: { l: 'Schreiben' }, hoeren: { l: 'Zuhören' }, sprechen: { l: 'Diskussion' }, markieren: { l: 'Markieren' }, recherche: { l: 'Recherche' } };
+const TW_SYM_OS = { ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, tps: { l: 'Think-Pair-Share' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Plenum' }, lesen: { l: 'Lesen' }, schreiben: { l: 'Schreiben' }, hoeren: { l: 'Zuhören' }, sprechen: { l: 'Diskussion' }, markieren: { l: 'Markieren' }, recherche: { l: 'Recherche' } };
 const TW_AMPEL = { r: 'Stopp', y: 'Leise', g: 'Los' };
 const TW_TXC = { gelb: '#FFF3B0', rosa: '#FFD9E2', blau: '#D9ECFF', gruen: '#DDF3D2', weiss: '#FFFFFF' };
 const TW_PENS = ['#1C1F27', '#E5484D', '#2F6FDB', '#30A46C'];
@@ -8842,6 +8843,11 @@ function sozSVG(kind, c, bg) {
   if (kind === 'ea') g = P(16, 6.2, 4.4, 23.5, 7.6, 9.6, '');
   if (kind === 'pa') g = P(9.3, 6.8, 3.8, 23.5, 6.2, 8.6, '') + P(22.7, 6.8, 3.8, 23.5, 6.2, 8.6, '');
   if (kind === 'ga') g = P(7, 5.8, 3.3, 21.5, 5.6, 7.8, '') + P(25, 5.8, 3.3, 21.5, 5.6, 7.8, '') + P(16, 8.6, 3.7, 23.6, 6.4, 8.6, halo);
+  // Think-Pair-Share: allein → zu zweit → teilen (Sprechblase)
+  if (kind === 'tps') g = P(5, 11.4, 3, 23.5, 4.7, 6.6, '')
+    + `<path d="M10.6 14.2l2.2 2.4-2.2 2.4" style="fill:none;stroke:${c};stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"/>`
+    + P(18.6, 11.4, 3, 23.5, 4.7, 6.6, '') + P(27, 11.4, 3, 23.5, 4.7, 6.6, '')
+    + `<path d="M19.8 .6h6a1.6 1.6 0 0 1 1.6 1.6v2.6a1.6 1.6 0 0 1-1.6 1.6h-2.2l-1.8 1.8V6.4h-2a1.6 1.6 0 0 1-1.6-1.6V2.2a1.6 1.6 0 0 1 1.6-1.6z"/>`;
   if (kind === 'pl') g = `<path d="M10.5 1h11a3 3 0 0 1 3 3v3.6a3 3 0 0 1-3 3h-3.4L16 13.4l-2.1-2.8h-3.4a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3z"/>`
     + [12.6, 16, 19.4].map(x => `<circle cx="${x}" cy="5.8" r="1.05" style="fill:${bg}"/>`).join('')
     + [4, 11.5, 20.5, 28].map(x => P(x, 16.4, 2.25, 24, 3.6, 4.7, '')).join('');

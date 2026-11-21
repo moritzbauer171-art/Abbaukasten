@@ -41,3 +41,9 @@ def test_schnellfeld_zugeklappt(lw):
     el = pg.locator('#pages [data-bid="m1"]').first; el.scroll_into_view_if_needed(); bb = el.bounding_box()
     pg.mouse.move(bb['x'] + 200, bb['y'] + 120); pg.wait_for_timeout(600)
     assert pg.locator('#pv-tools .pvq').count() == 0 and pg.locator('#pv-tools [data-pv="qx"]').count() == 1
+
+def test_think_pair_share(lw):
+    pg = lw.open(); lw.new_lesson(pg); b = blocks_standard(); b[3]['items'][0]['soz'] = 'tps'; lw.setup(pg, b)
+    assert pg.locator('#pages .task-soz img[alt="Think-Pair-Share"]').count() == 1
+    pg.click('#editor .ol-c:has-text("Aufgaben")'); pg.wait_for_timeout(500)
+    assert pg.locator('#editor .card.sel [data-act="soz"][data-v="tps"][aria-pressed="true"]').count() == 1

@@ -25,12 +25,12 @@ const TW_KINDS = {
   qr: { t: 'QR-Code', ic: '🔳', w: 290, h: 340 }
 };
 const TW_SYM = {
-  ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Alle zusammen' },
+  ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, tps: { l: 'Think-Pair-Share' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Alle zusammen' },
   zuhoeren: { l: 'Zuhören', e: '👂' }, melden: { l: 'Melden', e: '✋' }, fluestern: { l: 'Flüstern', e: '🤫' }, leise: { l: 'Ganz leise', e: '🤐' },
   kreis: { l: 'Sitzkreis', e: '⭕' }, aufr: { l: 'Aufräumen', e: '🧹' }, pause: { l: 'Pause', e: '🍎' }
 };
 // Oberschule: sachliche Arbeitsformen mit den Piktogrammen der Arbeitsblätter statt Emojis
-const TW_SYM_OS = { ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Plenum' }, lesen: { l: 'Lesen' }, schreiben: { l: 'Schreiben' }, hoeren: { l: 'Zuhören' }, sprechen: { l: 'Diskussion' }, markieren: { l: 'Markieren' }, recherche: { l: 'Recherche' } };
+const TW_SYM_OS = { ea: { l: 'Einzelarbeit' }, pa: { l: 'Partnerarbeit' }, tps: { l: 'Think-Pair-Share' }, ga: { l: 'Gruppenarbeit' }, pl: { l: 'Plenum' }, lesen: { l: 'Lesen' }, schreiben: { l: 'Schreiben' }, hoeren: { l: 'Zuhören' }, sprechen: { l: 'Diskussion' }, markieren: { l: 'Markieren' }, recherche: { l: 'Recherche' } };
 const TW_AMPEL = { r: 'Stopp', y: 'Leise', g: 'Los' };
 const TW_TXC = { gelb: '#FFF3B0', rosa: '#FFD9E2', blau: '#D9ECFF', gruen: '#DDF3D2', weiss: '#FFFFFF' };
 const TW_PENS = ['#1C1F27', '#E5484D', '#2F6FDB', '#30A46C'];

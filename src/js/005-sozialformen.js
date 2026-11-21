@@ -3,6 +3,7 @@ const SOZ = {
   ea: { label: 'Einzelarbeit', short: 'EA' },
   pa: { label: 'Partnerarbeit', short: 'PA' },
   ga: { label: 'Gruppenarbeit', short: 'GA' },
+  tps: { label: 'Think-Pair-Share', short: 'TPS' },
   pl: { label: 'Plenum', short: 'Plenum' }
 };
 /* Arbeitsformen: Piktogramme neben der Sozialform, mehrere je Aufgabe möglich */
