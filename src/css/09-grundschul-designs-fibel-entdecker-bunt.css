@@ -535,19 +535,15 @@
 .pr-chip img{height:26px}
 .pr-chip.ph{background:var(--phc);color:#fff}
 .pr-chip.res{background:#FEF3C7;color:#92400E;border:2px dashed #D97706}
-/* Think-Pair-Share als Dreischritt auf der Folie */
-.pr-tps{flex:0 0 auto;display:flex;align-items:stretch;gap:0;margin-top:26px}
-.pr-tps-s{flex:1 1 0;display:flex;align-items:center;gap:16px;padding:14px 22px;border-radius:18px;background:var(--acc-tint);color:var(--acc);transition:background .2s,color .2s,opacity .2s,transform .2s}
-.pr-tps-s img{height:34px;flex:none}
-.pr-tps-s span{display:flex;flex-direction:column;gap:2px;min-width:0}
-.pr-tps-s b{font-size:28px;font-weight:800;line-height:1.1}
-.pr-tps-s small{font-size:19px;font-weight:600;color:#4B5263;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pr-tps-a{flex:0 0 46px;align-self:center;height:22px;background:var(--acc);opacity:.55;clip-path:polygon(0 35%,60% 35%,60% 0,100% 50%,60% 100%,60% 65%,0 65%);margin:0 6px}
+/* Think-Pair-Share: dezenter Dreischritt oben rechts */
+.pr-chip.pr-tps{gap:4px;padding:5px 8px}
+.pr-tps-s{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;transition:background .2s,color .2s,opacity .2s}
+.pr-tps-s img{height:22px}
+.pr-tps-a{font-style:normal;opacity:.55;font-weight:800}
 .pr-tps.act .pr-tps-s:not(.on){opacity:.45}
-.pr-tps-s.on{background:var(--acc);color:#fff;transform:scale(1.03)}
-.pr-tps-s.on small{color:rgba(255,255,255,.85)}
+.pr-tps-s.on{background:var(--acc);color:#fff}
 .pr-tps-s.on img{filter:brightness(0) invert(1)}
-.pr:not(.pr-ref) .pr-slide .pr-tps-s,.pr-ref .pr-main .pr-slide .pr-tps-s{cursor:pointer}
+.pr .pr-slide .pr-tps-s{cursor:pointer}
 .pr-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
 .pr-fit{width:100%}
 .pr-foot{position:absolute;left:104px;right:84px;bottom:16px;display:flex;justify-content:space-between;font-size:16px;color:#8A909C}

@@ -17,6 +17,7 @@ const LFC_IC = {
   prev: '<path d="M15 5l-7 7 7 7"/>', next: '<path d="M9 5l7 7-7 7"/>', black: '<rect x="3" y="5" width="18" height="12" rx="1.5" fill="currentColor"/><path d="M8 21h8"/>',
   down: '<path d="M6 9l6 6 6-6"/>',
   hand: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4a1.5 1.5 0 0 1 3 0v7M14 11V5.5a1.5 1.5 0 0 1 3 0V13c0 4-2.5 7-6 7-2.5 0-4-1.2-5.3-3.2L4 13.6a1.4 1.4 0 0 1 2.3-1.6L8 14"/>', ref: '<rect x="2.5" y="4" width="12" height="9" rx="1.2"/><path d="M17.5 5h4M17.5 9h4M17.5 13h4M2.5 17h19M2.5 20.5h12"/>',
+  tools: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><path d="M17 13.5v7M13.5 17h7"/>',
   focus: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="8" y="8" width="8" height="8" rx="1"/>', fs: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>', fsx: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>', wait: '<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/><path d="M9.5 10h.01M12 10h.01M14.5 10h.01" stroke-width="2.6"/>'
 };
 const lfcIc = (k, n = 24) => `<svg viewBox="0 0 24 24" width="${n}" height="${n}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${LFC_IC[k]}</svg>`;
@@ -65,7 +66,7 @@ function lfcStart(O = {}) {
   const TNAME = { nav: 'Blättern und zeigen', pen: 'Stift', hl: 'Marker', er: 'Radierer', laser: 'Laser' };
   // Werkzeuge als kleiner Knopf oben links; ein Tipp klappt die Leiste darunter auf
   let PALO = false, MODO = false, TFULL = false; try { TFULL = localStorage.getItem('abw.lfctfull') === '1'; } catch {}
-  const pal = () => `<div class="lfc-tk"><button type="button" class="lfc-tkm${MODO ? ' on' : ''}" data-l="modes" aria-expanded="${MODO}" aria-label="Modus wechseln" title="Folie, Tafel, Fotos">${lfcIc(tab === 'fol' ? 'fol' : tab, 20)}<span>${(modes().find(m => m[0] === tab) || ['', ''])[1]}</span>${lfcIc('down', 14)}</button>${tab === 'fol' ? '' : '<!--'}<button type="button" class="lfc-tkb${PALO ? ' on' : ''}" data-l="pal" aria-expanded="${PALO}" aria-label="Werkzeuge" title="Werkzeuge">${lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22)}<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i></button>${tab === 'fol' ? '' : '-->'}<button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button>${tab !== 'fol' && tab !== 'cam' ? `<button type="button" class="lfc-tkn${TFULL ? ' pri' : ''}" data-l="tfull" aria-pressed="${TFULL}" aria-label="${TFULL ? 'Vollbild verlassen' : 'Tafel im Vollbild'}" title="${TFULL ? 'Vollbild verlassen' : 'Tafel im Vollbild'}">${lfcIc(TFULL ? 'fsx' : 'fs', 20)}</button>` : ''}${tab === 'fol' ? `<button type="button" class="lfc-tkn" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 22)}</button><button type="button" class="lfc-tkn pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 22)}</button>` : ''}</div>${MODO ? `<div class="lfc-modes" role="menu">${modes().map(([k, l]) => `<button type="button" role="menuitemradio" data-tab="${k}" aria-checked="${k === tab}">${lfcIc(k, 20)}<span>${l}</span></button>`).join('')}</div>` : ''}${tab !== 'fol' ? palBar(true) : PALO ? palBar() : ''}`;
+  const pal = () => `<div class="lfc-tk"><button type="button" class="lfc-tkm${MODO ? ' on' : ''}" data-l="modes" aria-expanded="${MODO}" aria-label="Modus wechseln" title="Folie, Tafel, Fotos">${lfcIc(tab === 'fol' ? 'fol' : tab, 20)}<span>${(modes().find(m => m[0] === tab) || ['', ''])[1]}</span>${lfcIc('down', 14)}</button>${tab === 'fol' ? '' : '<!--'}<button type="button" class="lfc-tkb${PALO ? ' on' : ''}" data-l="pal" aria-expanded="${PALO}" aria-label="Werkzeuge" title="Werkzeuge">${lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22)}<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i></button>${tab === 'fol' ? '' : '-->'}${tab === 'fol' && PR.tm ? `<button type="button" class="lfc-tkn lfc-tmb" data-l="tmm" aria-label="Werkzeuge der Tafelansicht" title="Werkzeuge der Tafelansicht: Timer, Ampel, Würfel …">${lfcIc('tools', 20)}</button>` : ''}<button type="button" class="lfc-blk${PR.bl ? ' on' : ''}" data-nav="black" aria-pressed="${!!PR.bl}" title="${PR.bl ? 'Beamer wieder einschalten' : 'Beamer schwarz schalten'}">${lfcIc('black', 20)}<span>${PR.bl ? 'Wieder an' : 'Schwarz'}</span></button>${tab !== 'fol' && tab !== 'cam' ? `<button type="button" class="lfc-tkn${TFULL ? ' pri' : ''}" data-l="tfull" aria-pressed="${TFULL}" aria-label="${TFULL ? 'Vollbild verlassen' : 'Tafel im Vollbild'}" title="${TFULL ? 'Vollbild verlassen' : 'Tafel im Vollbild'}">${lfcIc(TFULL ? 'fsx' : 'fs', 20)}</button>` : ''}${tab === 'fol' ? `<button type="button" class="lfc-tkn" data-nav="prev" aria-label="Zurück"${PR.i <= 0 && !PR.cur ? ' disabled' : ''}>${lfcIc('prev', 22)}</button><button type="button" class="lfc-tkn pri" data-nav="next" aria-label="Weiter">${lfcIc('next', 22)}</button>` : ''}</div>${MODO ? `<div class="lfc-modes" role="menu">${modes().map(([k, l]) => `<button type="button" role="menuitemradio" data-tab="${k}" aria-checked="${k === tab}">${lfcIc(k, 20)}<span>${l}</span></button>`).join('')}</div>` : ''}${tab !== 'fol' ? palBar(true) : PALO ? palBar() : ''}`;
   // Werkzeuge wie in Apple Notizen: Stifte stehen aufrecht in einer hellen Leiste, der gewählte ragt heraus; Farben als Raster
   const toolSvg = t => { const c = T.col[t] || T.col.pen;
     if (t === 'nav') return `<svg viewBox="0 0 44 96" aria-hidden="true"><rect x="7" y="22" width="30" height="80" rx="9" fill="#F2F2F7" stroke="#C7C7CC"/><g transform="translate(10 30)" fill="none" stroke="#0A84FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${LFC_IC.hand}</g></svg>`;
@@ -98,7 +99,7 @@ function lfcStart(O = {}) {
     catch (err) { console.error(err); SL.id = PR.sheet; SL.up = PR.up || 0; }
     SL.busy = false; if (tab === 'fol' && live()) renderMain();
   };
-  let TF = null;
+  let TF = null, TFhold = 0;
   const slOk = () => !!(PR && SL.S && SL.id === PR.sheet && SL.S.length === PR.n);
   const slPaint = (host, i, w, steps) => withSh(() => {
     const x = SL.S[i]; if (!x) { host.innerHTML = ''; return; } const bar = SL.S.bar || [];
@@ -177,7 +178,21 @@ function lfcStart(O = {}) {
       if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) { nav(dx < 0 ? 'next' : 'prev'); return; }
       if (dy < -90 && s0.y > r.bottom - 120) { overview(true); return; }
       if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && Date.now() - s0.t < 450) { const fx = (e.clientX - r.left) / r.width; if (PR && PR.yt === 'ready' && fx > .3 && fx < .7) { nav('ytplay'); return; } if (fx < 1 / 3) nav('prev'); else if (fx > 2 / 3) nav('next'); else topShow(); } };
+    // Tafelansicht bedienen: Finger auf einem Werkzeug oder der Ablaufleiste tippt bzw. verschiebt es am Rechner
+    let tmd = null;
+    const tmHit = e => { if (tab !== 'fol' || !PR || !PR.tm || !TF || e.pointerType === 'pen' || !(T.pen || T.tool === 'nav')) return null; const cv = main.querySelector('.lfc-cv'); if (cv) cv.style.pointerEvents = 'none'; b.classList.add('tmh');
+      const el2 = document.elementFromPoint(e.clientX, e.clientY); if (cv) cv.style.pointerEvents = ''; b.classList.remove('tmh'); return el2 && el2.closest && el2.closest('.lfc-prw .tw, .lfc-prw .tfl-it') ? el2 : null; };
+    const tmSel = el2 => { const tw = el2.closest('.tw'); const a = el2.closest('[data-ta], [data-tfl-go]'); if (!a) return '';
+      if (a.dataset.tflGo != null) return `[data-tfl-go="${a.dataset.tflGo}"]`; return `${tw ? `[data-tw="${tw.dataset.tw}"] ` : ''}[data-ta="${a.dataset.ta}"]${a.dataset.v != null ? `[data-v="${a.dataset.v}"]` : ''}`; };
+    const tmField = (el2, sel) => { // Eingabefelder: Auswahl bzw. Eingabe hier, Wert an den Rechner
+      if (el2.tagName === 'SELECT') { const L = [...el2.options]; sheetPick(L.map(o => [o.value, o.textContent]), el2.value, v => send({ t: 'tfv', sel, v })); return true; }
+      if (el2.tagName === 'INPUT' && el2.type !== 'range') { const v = window.prompt(el2.getAttribute('aria-label') || el2.placeholder || 'Eingabe', el2.value || ''); if (v != null) send({ t: 'tfv', sel, v }); return true; }
+      if (el2.classList.contains('tw-tx')) { const v = window.prompt('Notiz', el2.innerText || ''); if (v != null) send({ t: 'tfv', sel, v }); return true; }
+      return false; };
     b.addEventListener('pointerdown', e => {
+      { const h = tmHit(e); if (h) { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch {} const tw = h.closest('.tw'); const k = tw ? tw.getBoundingClientRect().width / (parseFloat(tw.style.width) || 1) : 1;
+        const mode = tw && h.closest('.tw-rs') ? 'rs' : tw && h.closest('.tw-h') && !h.closest('button') ? 'mv' : '';
+        tmd = { id: e.pointerId, el: h, tw, mode, k, sx: e.clientX, sy: e.clientY, x: tw ? parseFloat(tw.style.left) || 0 : 0, y: tw ? parseFloat(tw.style.top) || 0 : 0, w: tw ? parseFloat(tw.style.width) || 0 : 0, h: tw ? parseFloat(tw.style.height) || 0 : 0, moved: false }; return; } }
       e.preventDefault(); topIdle(); sink(true);
       if (e.pointerType === 'pen') {
         if (!T.pen) { T.pen = true; if (tab === 'fol' && T.tool === 'nav') { /* Stift schreibt mit dem zuletzt gewählten Werkzeug */ } toast('Apple Pencil erkannt: Der Stift schreibt, der Finger blättert.'); }
@@ -194,6 +209,9 @@ function lfcStart(O = {}) {
       startDraw(e);
     });
     b.addEventListener('pointermove', e => {
+      if (tmd && e.pointerId === tmd.id) { const dx = (e.clientX - tmd.sx) / tmd.k, dy = (e.clientY - tmd.sy) / tmd.k; if (Math.hypot(dx, dy) * tmd.k > 8) tmd.moved = true;
+        if (tmd.mode === 'mv' && tmd.moved) { tmd.tw.style.left = (tmd.x + dx) + 'px'; tmd.tw.style.top = Math.max(0, tmd.y + dy) + 'px'; }
+        else if (tmd.mode === 'rs' && tmd.moved) { tmd.tw.style.width = Math.max(150, tmd.w + dx) + 'px'; tmd.tw.style.height = Math.max(110, tmd.h + dy) + 'px'; } return; }
       if (TP.has(e.pointerId)) { const q = TP.get(e.pointerId); q.x = e.clientX; q.y = e.clientY;
         if (pan && tab !== 'fol') { const ys = [...TP.values()].map(p => p.y), y = ys.reduce((a, v) => a + v, 0) / ys.length, r = b.getBoundingClientRect(); const raw = pan.sy - (y - pan.y) / r.height * 900; if (raw > (KB().h || 900) - 900 + 90) extend(false); const H = KB().h || 900; const sy = Math.max(0, Math.min(H - 900, raw)); if (sy !== KB().sy) { KB().sy = sy; T.panT = Date.now(); drawSl(); drawInk(); sendSy(sy); } return; } }
       if (e.pointerId !== drawId) return;
@@ -205,6 +223,13 @@ function lfcStart(O = {}) {
       drawInk(); sendLive(s);
     });
     const up = e => {
+      if (tmd && e.pointerId === tmd.id) { const d = tmd; tmd = null; if (e.type !== 'pointerup') return;
+        if (d.moved && d.mode === 'mv') { send({ t: 'tfd', id: d.tw.dataset.tw, x: Math.round(parseFloat(d.tw.style.left)), y: Math.round(parseFloat(d.tw.style.top)) }); TFhold = Date.now(); return; }
+        if (d.moved && d.mode === 'rs') { send({ t: 'tfd', id: d.tw.dataset.tw, w: Math.round(parseFloat(d.tw.style.width)), h: Math.round(parseFloat(d.tw.style.height)) }); TFhold = Date.now(); return; }
+        if (d.moved) return; const sel = tmSel(d.el); if (!sel) return; if (d.el.closest('select, input, .tw-tx') && tmField(d.el.closest('select, input, .tw-tx'), sel)) return;
+        if (/\[data-ta="list"\]/.test(sel)) { toast('Die Namensliste trägst du am Rechner ein – sie bleibt nur dort.'); return; }
+        const fb = d.el.closest('[data-ta], [data-tfl-go]'); if (fb) { fb.classList.add('tm-tap'); setTimeout(() => fb.classList.remove('tm-tap'), 260); }
+        send({ t: 'tfc', sel }); return; }
       if (e.pointerType === 'pen') { penDown = false; penUpT = Date.now(); }
       if (sw && e.type === 'pointerup') swipeEnd(e); else if (e.type === 'pointercancel') sw = null;
       if (TP.has(e.pointerId)) { TP.delete(e.pointerId); if (pan) { if (TP.size >= (T.pen ? 2 : 1)) panStart(); else pan = null; return; } }
@@ -230,13 +255,20 @@ function lfcStart(O = {}) {
     const on0 = ovl.querySelector('.lfc-ovi.on'); if (on0) on0.scrollIntoView({ block: 'center' });
   };
   // ---------- Menü „⋯“ (Blatt von unten) ----------
+  // Auswahlliste (z. B. Arbeitsform) als Blatt
+  let PICK = null;
+  const sheetPick = (opts, cur, cb) => { PICK = cb; SHEET = 'pick'; shEl.hidden = false; shEl.innerHTML = `<div class="lfc-shs" role="menu">${opts.map(([v, l]) => `<button type="button" data-pick="${esc(v)}" role="menuitemradio" aria-checked="${v === cur}"${v === cur ? ' class="strong"' : ''}><span>${esc(l)}</span></button>`).join('')}</div>`; };
+  shEl.addEventListener('click', e => { const p = e.target.closest('[data-pick]'); if (!p || !PICK) return; e.stopPropagation(); const cb = PICK; PICK = null; sheet(''); cb(p.dataset.pick); }, true);
   const sheet = kind => {
     SHEET = kind || ''; shEl.hidden = !kind; if (!kind) { shEl.innerHTML = ''; return; }
     const it = (attr, label, cls) => `<button type="button" ${attr}${cls ? ` class="${cls}"` : ''} role="menuitem"><span>${label}</span></button>`;
     let g1 = '';
-    if (kind === 'tpls') g1 = it('data-l="menu"', '‹ Zurück') + Object.entries(INK_TPLS).map(([p, t]) => it(`data-pat="${p}"`, t.l, B.tafel.pat === p ? 'strong' : '')).join('');
+    if (kind === 'tmm') g1 = (PR.tm ? `<div class="lfc-shh">Werkzeug dazunehmen</div><div class="lfc-tmg">${Object.entries(TW_KINDS).map(([k, x]) => `<button type="button" data-tmc='[data-tadd="${k}"]'><i>${x.ic}</i><span>${esc(x.t)}</span></button>`).join('')}</div>
+        <div class="lfc-shh">Hintergrund</div><div class="lfc-tmg bg">${Object.entries(TB_BG).map(([k, x]) => `<button type="button" data-tmc='[data-tbg="${k}"]'><i style="background:${esc(x.c)}"></i><span>${esc(x.l)}</span></button>`).join('')}</div>`
+        + it(`data-tmc='[data-tdef]'`, 'Standard-Werkzeuge') + it(`data-tmc='[data-tclear]'`, 'Alle Werkzeuge entfernen', 'red') : '') + it('data-nav="mode"', PR.tm ? 'Zur Folienansicht wechseln' : 'Tafelansicht einschalten');
+    else if (kind === 'tpls') g1 = it('data-l="menu"', '‹ Zurück') + Object.entries(INK_TPLS).map(([p, t]) => it(`data-pat="${p}"`, t.l, B.tafel.pat === p ? 'strong' : '')).join('');
     else {
-      g1 = (tab === 'fol' ? it('data-nav="black"', PR.bl ? 'Beamer wieder an' : 'Beamer schwarz schalten') + it('data-nav="mode"', PR.tm ? 'Am Beamer: Folienansicht' : 'Am Beamer: Tafelansicht') + it('data-l="over"', 'Alle Folien') : '')
+      g1 = (tab === 'fol' ? it('data-nav="black"', PR.bl ? 'Beamer wieder an' : 'Beamer schwarz schalten') + it('data-nav="mode"', PR.tm ? 'Am Beamer: Folienansicht' : 'Am Beamer: Tafelansicht') + (PR.tm ? it('data-l="tmm"', 'Werkzeuge der Tafelansicht …') : '') + it('data-l="over"', 'Alle Folien') : '')
         + (PR.board ? it('data-l="boardoff"', PR.board === 'pk' ? 'Pro/Contra am Beamer schließen' : 'Tafel am Beamer schließen') : '')
         + (tab === 'tafel' ? Object.entries(INK_PATS).map(([p, l]) => `<button type="button" data-pat="${p}" role="menuitem"><span class="lfc-patv pat-${p}"></span><span>Hintergrund: ${l}</span></button>`).join('') + it('data-l="tpls"', 'Vorlagen …') : '')
         + (drawTab() ? `<div class="lfc-shw"><span>Strichstärke</span>${Object.entries(INK_W).map(([k, w]) => `<button type="button" data-w="${k}" aria-pressed="${T.w === k}" aria-label="Stärke"><i style="width:${w + 4}px;height:${w + 4}px"></i></button>`).join('')}</div>` : '')
@@ -261,6 +293,7 @@ function lfcStart(O = {}) {
     { const pb = e.target.closest && e.target.closest('.lfc-palb'); if (pb && pb.dataset.eat) { delete pb.dataset.eat; e.stopPropagation(); return; } if (pb) sinkSoon(5000); }
     topIdle();
     const t = e.target.closest('[data-tab]'); if (t) { MODO = false; if (tab !== t.dataset.tab) { tab = t.dataset.tab; if (tab === 'fol' && !T.pen) T.tool = 'nav'; render(); } else { const md = main.querySelector('.lfc-modes'); if (md) md.remove(); const mb = main.querySelector('.lfc-tkm'); if (mb) mb.classList.remove('on'); } return; }
+    const tmc = e.target.closest('[data-tmc]'); if (tmc) { send({ t: 'tfc', sel: tmc.dataset.tmc }); if (tmc.closest('.lfc-sh')) sheet(''); return; }
     const go = e.target.closest('[data-go]'); if (go) { overview(false); send({ t: 'nav', a: 'goto', i: +go.dataset.go }); return; }
     const tl0 = e.target.closest('[data-tool]'); if (tl0) { if (T.tool === tl0.dataset.tool && (T.tool === 'pen' || T.tool === 'hl')) { T.w = T.w === 's' ? 'm' : T.w === 'm' ? 'l' : 's'; } T.tool = tl0.dataset.tool; if (T.tool !== 'nav') T.btool = T.tool; palSync(); palRe(); sinkSoon(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl0))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
     const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') T.tool = 'pen'; T.btool = T.tool; T.col[T.tool] = cl.dataset.col; palSync(); palRe(); sinkSoon(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
@@ -282,6 +315,7 @@ function lfcStart(O = {}) {
     else if (a === 'more') { KB().h = (KB().h || 900) + 900; KB().sy = Math.min(KB().h - 900, (KB().sy || 0) + 680); T.panT = Date.now(); send({ t: 'bmore', key: kOf() }); setTimeout(() => sendSy(KB().sy), 420); drawSl(); drawInk(); }
     else if (a === 'menu') sheet('menu');
     else if (a === 'tpls') sheet('tpls');
+    else if (a === 'tmm') sheet(SHEET === 'tmm' ? '' : 'tmm');
     else if (a === 'nomenu') sheet('');
     else if (a === 'clr') { sheet(''); const k = kOf(); if (!B[k].ink.length || !confirm(tab === 'fol' ? 'Alles löschen, was auf dieser Folie geschrieben wurde? Das sieht man sofort auch am Beamer.' : 'Alles auf dieser Tafel löschen? Das sieht man sofort auch am Beamer.')) return; T.undo[k].push({ t: 'rm', L: B[k].ink.slice() }); send({ t: 'bop', key: k, op: 'clr' }); B[k].ink = []; drawInk(); }
   });
@@ -303,7 +337,7 @@ function lfcStart(O = {}) {
   offs.push(fotoListen(m => {
     if (m.t === 'pres') takePres(m);
     else if (m.t === 'presend') { lastHb = 0; if (!page) { close(false); toast('Die Präsentation wurde beendet.'); } else render(); }
-    else if (m.t === 'tfl') { const had = !!TF; TF = m.off ? null : m; if (tab === 'fol' && live()) { if (!TF || !had || !tflUpd()) drawSl(); } }
+    else if (m.t === 'tfl') { const had = !!TF; const wasTm = PR && PR.tm; TF = m.off ? null : m; if (tab === 'fol' && live()) { if (!TF || !had || !tflUpd()) drawSl(); } if (!!TF !== !!had) renderTop(); }
     else if (m.t === 'bfull' && m.key === 'sl' && Array.isArray(m.ink)) { if (PR && (m.i == null || m.i === PR.i)) { B.sl = { ink: merge('sl', m.ink), h: 900, sy: 0, i: PR.i }; if (tab === 'fol' && !T.live) drawInk(); } }
     else if (m.t === 'bfull' && B[m.key] && Array.isArray(m.ink)) { B[m.key].ink = merge(m.key, m.ink); if (tab === m.key && !T.live) drawInk(); }
   }));

@@ -233,11 +233,18 @@ Electron ${process.versions.electron} · Chromium ${process.versions.chrome}` })
 // Google lehnt Anmeldungen in Apps manchmal ab; mit der normalen Chrome-Kennung klappt es meist.
 // Wie ein normales Chrome (gekürzte Versionsnummer wie im echten Chrome, ohne „Electron“)
 const chromeUA = () => `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${String(process.versions.chrome).split('.')[0]}.0.0.0 Safari/537.36`;
-let ytWin = null;
+let ytWin = null, ytHdr = false;
+const FF_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0';
 function ytLogin() {
   if (ytWin && !ytWin.isDestroyed()) { ytWin.focus(); return; }
   ytWin = new BrowserWindow({ parent: win, width: 520, height: 760, title: 'Bei YouTube anmelden', autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#ffffff', webPreferences: { sandbox: true, contextIsolation: true, preload: path.join(__dirname, 'yt-preload.js') } });
-  ytWin.webContents.setUserAgent(chromeUA());
+  // Google lehnt eingebettete Chromium-Fenster („unsicherer Browser“) ab. Als Firefox angemeldet klappt es:
+  // Firefox-Kennung, keine Chromium-Hinweise (Sec-CH-UA) in den Anfragen, navigator.userAgentData ausgeblendet (yt-preload.js).
+  ytWin.webContents.setUserAgent(FF_UA);
+  const wcId = ytWin.webContents.id;
+  if (!ytHdr) { ytHdr = true; session.defaultSession.webRequest.onBeforeSendHeaders((d, cb) => {
+    if (ytWin && !ytWin.isDestroyed() && d.webContentsId === wcId) { const h = d.requestHeaders; for (const k of Object.keys(h)) if (/^sec-ch-ua/i.test(k)) delete h[k]; h['User-Agent'] = FF_UA; cb({ requestHeaders: h }); return; }
+    cb({ requestHeaders: d.requestHeaders }); }); }
   ytWin.webContents.setWindowOpenHandler(({ url }) => { ytWin.loadURL(url); return { action: 'deny' }; });
   let done = false;
   const check = (e, url) => { if (done || !/^https:\/\/(www|m)\.youtube\.com\//.test(url || '')) return;

@@ -556,6 +556,7 @@ function openPres(start, opts = {}) {
       else if (m.t === 'blas') INK.remote.laser(ik, +m.x || 0, +m.y || 0);
       else if (m.t === 'bsy') { const y = Math.round(Math.max(0, Math.min((bk.h || 900) - 900, +m.sy || 0))); if (cur) blankScroll(y); else { bk.sy = y; lfcHb(); } }
       else if (m.t === 'bmore') { if (cur) blankMore(); else { bk.h = (bk.h || 900) + 900; if (key === 'pk') pkSave(); lfcHb(); } }
+      else if (m.t === 'tfc' || m.t === 'tfv' || m.t === 'tfd') { LFC.peer = Date.now(); if (TBo.remote(m)) setTimeout(() => lfcTfl(true), 60); }
       else if (m.t === 'bpat') { if (inkPatOk(m.pat)) { BOARD.s.pat = m.pat; if (BOARD.open && BOARD.kind === 'tafel') show(); else lfcHb(); } }
       else if (m.t === 'nav') { if (m.a === 'goto') { const j = Math.max(0, Math.min(S.length - 1, +m.i || 0)); if (BOARD.open) boardSet(false); P.i = j; show(); lfcHb(); } else if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); else if (m.a === 'ytplay') { if (ytOn !== P.i) ytPlay(); else ytCmd(awOk() ? AW.document : document, 'playVideo'); } else if (m.a === 'ytpause') ytCmd(awOk() ? AW.document : document, 'pauseVideo'); else if (m.a === 'ytstop') { if (ytOn === P.i) ytStop(); } else if (m.a === 'ytbig') { if (ytOn === P.i) ytBigSet(!ytBig); } else if (m.a === 'mode') { const mb = $p('[data-p="mode"]'); if (mb) mb.click(); setTimeout(() => { lfcHb(); lfcTfl(true); }, 60); } }
     });

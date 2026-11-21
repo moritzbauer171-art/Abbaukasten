@@ -18,5 +18,5 @@ def test_think_pair_share_dreischritt(lw):
         pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(350)
     assert pg.locator('.pr .pr-slide .pr-tps-s').count() == 3
     pg.locator('.pr .pr-slide .pr-tps-s').nth(1).click(); pg.wait_for_timeout(300)
-    assert pg.locator('.pr .pr-slide .pr-tps-s.on').inner_text().startswith('2')
+    assert pg.locator('.pr .pr-slide .pr-tps-s.on').inner_text().strip() == 'Pair'
     pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'tps_folie.png'))

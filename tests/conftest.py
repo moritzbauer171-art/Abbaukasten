@@ -19,6 +19,7 @@ HOOKS = [('const state = {', 'const state = window.__S = {'),
          ('function openPres(start, opts = {}) {', 'window.__OP = (...a) => openPres(...a);\nfunction openPres(start, opts = {}) {'),
          ('function renderPreview() {', 'window.__RP = () => renderPreview(); function renderPreview() {'),
          ('async function openFass() {', 'window.__FA = () => openFass(); async function openFass() {'),
+         ('function saveNow() {', 'window.__SV = () => saveNow(); function saveNow() {'),
          ('function openVP() {', 'window.__VP = () => openVP(); function openVP() {'),
          ("const kOf = () => (tab === 'fol' ? 'sl' : tab);", "const kOf = () => (tab === 'fol' ? 'sl' : tab); window.__LB = () => B;"),
          ('function lfcFull(key) {', 'window.__PCT = () => INK.remote.keyed(BOARD.s.id).length;\n  function lfcFull(key) {')]

@@ -5,6 +5,8 @@
 const { contextBridge } = require('electron');
 try {
   contextBridge.executeInMainWorld({ func: () => {
+    // Wie Firefox: keine Chromium-Markenangaben
+    try { Object.defineProperty(Navigator.prototype, 'userAgentData', { get: () => undefined, configurable: true }); } catch {}
     try {
       const P = window.PublicKeyCredential; if (!P) return;
       Object.defineProperty(P, 'isUserVerifyingPlatformAuthenticatorAvailable', { value: () => Promise.resolve(false), configurable: true });

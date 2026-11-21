@@ -319,8 +319,27 @@ function tafelBoard(X) {
     place: k => { K = k; tb.style.transform = `translate(-50%,-50%) scale(${k})`; },
     placeAw, mirror, click, keyIgnore, slide: onSlide, isOn: () => st.on,
     // Momentaufnahme der Tafelansicht für das Companion-Gerät (ohne Bedienelemente, eigenes Hintergrundbild nicht mitgeschickt)
-    snap: () => { if (!st.on) return null; const t = tb.cloneNode(true); t.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable')); t.querySelectorAll('.tw-nl, .tw-ctl, canvas').forEach(e => e.remove());
+    snap: () => { if (!st.on) return null; const t = tb.cloneNode(true);
+      // Eingabewerte als Attribute mitgeben, damit das Gerät den aktuellen Stand sieht
+      const A = tb.querySelectorAll('input, select'), B2 = t.querySelectorAll('input, select'); A.forEach((x, i) => { const y = B2[i]; if (!y) return; if (x.tagName === 'SELECT') [...y.options].forEach((o, j) => { if (j === x.selectedIndex) o.setAttribute('selected', ''); else o.removeAttribute('selected'); }); else y.setAttribute('value', x.value); });
+      t.querySelectorAll('[contenteditable]').forEach(e => e.removeAttribute('contenteditable')); t.querySelectorAll('.tw-nl, canvas').forEach(e => e.remove());
       return { cls: tb.className, html: t.innerHTML, bg: st.bg === 'bild' ? TB_BG.papier.c : bgCss(), os, ox: OX, oy: OY, sk: SK }; },
+    // Bedienung vom Companion-Gerät: Tippen auf ein Bedienelement, Werte setzen, Werkzeuge verschieben
+    remote: m => {
+      const SEL = /^(\[data-tw="tw\d{1,4}"\] )?\[data-(ta|tfl-go|tadd|tbg|p)="[\w-]{1,24}"\](\[data-v="[\w.-]{1,24}"\])?$|^\[data-(tclear|tdef)\]$/;
+      if (m.t === 'tfc' || m.t === 'tfv') { const sel = String(m.sel || ''); if (!SEL.test(sel)) return false;
+        const e = /^\[data-p=/.test(sel) ? X.ov.querySelector(sel) : /^\[data-(tadd|tbg|tclear|tdef)/.test(sel) ? mn.querySelector(sel) : tb.querySelector(sel); if (!e) return false;
+        if (m.t === 'tfc') { if (/^\[data-tbg="bild"\]$/.test(sel)) return false; e.click(); return true; }
+        const v = String(m.v == null ? '' : m.v).slice(0, 2000);
+        if (e.tagName === 'SELECT') { e.value = v; e.dispatchEvent(new Event('change', { bubbles: true })); }
+        else if (e.isContentEditable || e.classList.contains('tw-tx')) { e.innerText = v; e.dispatchEvent(new Event('input', { bubbles: true })); }
+        else if (e.tagName === 'INPUT') { e.value = v; e.dispatchEvent(new Event('input', { bubbles: true })); }
+        return true; }
+      if (m.t === 'tfd') { const w = st.w.find(x => x.id === m.id); if (!w) return false; const n = (v, a, b) => Math.max(a, Math.min(b, +v || 0));
+        if (m.w != null) { w.w = n(m.w, 150, 1600); w.h = n(m.h, 110, 900); } if (m.x != null) { w.x = n(m.x, -w.w + 90, 1600 - 90); w.y = n(m.y, 0, 900 - 44); }
+        ws.appendChild(w.el); st.w = st.w.filter(x => x !== w).concat(w); pos(w); if (w.k === 'zeichnen') cvFit(w); save(); sync(); return true; }
+      return false;
+    },
     destroy: () => { clearInterval(tick); st.w.forEach(w => { if (KW[w.k].stop) KW[w.k].stop(w, R[w.id]); }); save(); }
   };
 }

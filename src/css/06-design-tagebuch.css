@@ -363,3 +363,17 @@ body.lfc-on{overflow:hidden}
 
 .pr-blank.pat-kariert{background-image:linear-gradient(#CCD8EE 1px,transparent 1px),linear-gradient(90deg,#CCD8EE 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
 .pr-blank.pat-liniert{background-image:linear-gradient(transparent 58px,#C4D2EC 58px 60px);background-size:100% 60px;background-position:0 20px}
+
+/* Companion: Tafelansicht bedienen */
+.lfc-board.tmh .lfc-sl,.lfc-board.tmh .lfc-sl *{pointer-events:auto!important}
+.lfc-prw .tw .tw-ctl button,.lfc-prw .tw [data-ta],.lfc-prw .tfl-it{cursor:pointer}
+.lfc-prw [data-ta="list"],.lfc-prw .tw-nl{display:none!important}
+.lfc-prw .tm-tap{filter:brightness(1.25);transform:scale(.96);transition:transform .12s}
+.lfc-tmg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px 12px 10px}
+.lfc-sh .lfc-tmg button{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;border-radius:12px;background:#2C2C2E;color:#fff;padding:10px 4px;min-height:0;font:600 12.5px/1.2 var(--f-ui);cursor:pointer}
+.lfc-tmg button i{font-style:normal;font-size:24px;line-height:1}
+.lfc-tmg.bg button i{width:38px;height:26px;border-radius:7px;border:1px solid rgba(255,255,255,.25)}
+.lfc-shh{padding:12px 16px 2px;color:#8E8E93;font:600 12px/1.2 var(--f-ui);text-transform:uppercase;letter-spacing:.06em}
+.lfc-prw .tw .tw-c.tw-ctl{display:flex!important}.lfc-prw .tw .tw-h .tw-ctl{display:inline-flex!important}
+.lfc-prw .tw .tw-h{cursor:grab}
+.lfc-prw .tw .tw-c button{min-height:38px;min-width:38px;font-size:17px}.lfc-prw .tw .tw-c select{min-height:38px;font-size:17px}
