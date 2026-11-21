@@ -234,25 +234,64 @@ Electron ${process.versions.electron} · Chromium ${process.versions.chrome}` })
 // Wie ein normales Chrome (gekürzte Versionsnummer wie im echten Chrome, ohne „Electron“)
 const chromeUA = () => `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${process.versions.chrome} Safari/537.36`;
 let ytWin = null;
-function ytLogin() {
+/* ---------- YouTube-Anmeldung ----------
+   Weg 1 (empfohlen): Ein echtes Google Chrome bzw. Microsoft Edge öffnet sich mit einem eigenen, leeren Profil von LehrWerk.
+   Dort meldest du dich ganz normal an (Google erlaubt das, auch mit Passkey). Danach übernimmt LehrWerk die
+   YouTube-Anmeldung (Cookies) über die lokale Entwicklerschnittstelle dieses Browsers und schließt ihn wieder.
+   Weg 2: Anmeldung im App-Fenster (Google lehnt eingebettete Fenster oft als „unsicher“ ab). */
+const fs2 = require('fs');
+const ytOk = async () => (await session.defaultSession.cookies.get({ domain: 'youtube.com' }).catch(() => [])).some(c => /^(LOGIN_INFO|SAPISID|__Secure-3PSID)$/.test(c.name));
+const ytDone = async () => { const ok = await ytOk(); dialog.showMessageBox(win, { type: ok ? 'info' : 'warning', title: APP_NAME, message: ok ? 'Bei YouTube angemeldet.' : 'Die Anmeldung ist nicht durchgegangen.',
+  detail: ok ? 'Videos auf den Folien laufen jetzt mit deinem YouTube-Konto, mit Premium also ohne Werbung. Abmelden kannst du dich unter „Konto → Von YouTube abmelden“.' : 'Versuch es noch einmal über „Konto → Bei YouTube anmelden …“. Videos laufen auch ohne Anmeldung, nur ohne dein Konto.' }); if (ok && win && !win.isDestroyed()) win.webContents.reload(); };
+function findBrowser() {
+  const env = process.env, L = [];
+  for (const base of [env.PROGRAMFILES, env['PROGRAMFILES(X86)'], env.LOCALAPPDATA]) if (base) L.push(path.join(base, 'Google', 'Chrome', 'Application', 'chrome.exe'));
+  for (const base of [env['PROGRAMFILES(X86)'], env.PROGRAMFILES]) if (base) L.push(path.join(base, 'Microsoft', 'Edge', 'Application', 'msedge.exe'));
+  return L.find(f => { try { return fs2.existsSync(f); } catch { return false; } }) || null;
+}
+const httpJson = url => new Promise((res, rej) => { const r = net.request(url); let b = ''; r.on('response', s => { s.on('data', d => { b += d; }); s.on('end', () => { try { res(JSON.parse(b)); } catch (e) { rej(e); } }); }); r.on('error', rej); r.end(); });
+const sameSite = v => ({ Strict: 'strict', Lax: 'lax', None: 'no_restriction' }[v] || 'unspecified');
+let ytChrome = null;
+async function ytLoginChrome() {
+  const exe = findBrowser(); if (!exe) { dialog.showMessageBox(win, { type: 'warning', title: APP_NAME, message: 'Kein Google Chrome oder Microsoft Edge gefunden.', detail: 'Für die Anmeldung braucht es einen der beiden Browser auf diesem Rechner.' }); return; }
+  if (ytChrome) { try { ytChrome.kill(); } catch {} ytChrome = null; }
+  const dir = path.join(app.getPath('userData'), 'yt-anmeldung'); const port = 9300 + Math.floor(Math.random() * 600);
+  const url = 'https://accounts.google.com/ServiceLogin?service=youtube&hl=de&continue=' + encodeURIComponent('https://www.youtube.com/');
+  ytChrome = require('child_process').spawn(exe, [`--user-data-dir=${dir}`, `--remote-debugging-port=${port}`, '--remote-allow-origins=http://127.0.0.1', '--no-first-run', '--no-default-browser-check', '--new-window', url], { detached: false, stdio: 'ignore' });
+  const proc = ytChrome; let fin = false;
+  const grab = async () => {
+    const v = await httpJson(`http://127.0.0.1:${port}/json/version`); const ws = new WebSocket(v.webSocketDebuggerUrl);
+    const call = (id, method, params = {}) => new Promise((res, rej) => { const on = ev => { const m = JSON.parse(ev.data); if (m.id === id) { ws.removeEventListener('message', on); m.error ? rej(m.error) : res(m.result); } }; ws.addEventListener('message', on); ws.send(JSON.stringify({ id, method, params })); });
+    await new Promise((res, rej) => { ws.addEventListener('open', res, { once: true }); ws.addEventListener('error', rej, { once: true }); });
+    const r = await call(1, 'Storage.getCookies'); const C = (r.cookies || []).filter(c => /(^|\.)(youtube\.com|google\.com|google\.de)$/.test(String(c.domain).replace(/^\./, '')));
+    const ok = C.some(c => /^(LOGIN_INFO|SAPISID|__Secure-3PSID)$/.test(c.name) && /youtube/.test(c.domain)); if (!ok) { ws.close(); return false; }
+    for (const c of C) { const d = String(c.domain).replace(/^\./, ''); try { await session.defaultSession.cookies.set({ url: (c.secure ? 'https://' : 'http://') + d + (c.path || '/'), name: c.name, value: c.value, domain: c.domain.startsWith('.') ? c.domain : undefined, path: c.path, secure: c.secure, httpOnly: c.httpOnly, sameSite: sameSite(c.sameSite), ...(c.expires > 0 ? { expirationDate: c.expires } : {}) }); } catch {} }
+    try { await call(2, 'Browser.close'); } catch {} ws.close(); return true;
+  };
+  // Alle 2 Sekunden nachsehen, ob die Anmeldung durch ist
+  const poll = setInterval(async () => { if (fin) return; try { if (await grab()) { fin = true; clearInterval(poll); ytChrome = null; ytDone(); } } catch {} }, 2000);
+  proc.on('exit', () => { clearInterval(poll); if (!fin) { fin = true; ytChrome = null; ytOk().then(ok => { if (!ok) dialog.showMessageBox(win, { type: 'info', title: APP_NAME, message: 'Anmeldung abgebrochen.', detail: 'Das Browserfenster wurde geschlossen, bevor die Anmeldung durch war.' }); }); } });
+}
+// Weg 2: im App-Fenster – mit vollständiger Chrome-Kennung (auch Sec-CH-UA mit „Google Chrome“), ohne Eingriffe in die Seite
+function ytLoginWin() {
   if (ytWin && !ytWin.isDestroyed()) { ytWin.focus(); return; }
-  const ok = dialog.showMessageBoxSync(win, { type: 'info', title: APP_NAME, buttons: ['Weiter zu Google', 'Abbrechen'], defaultId: 0, cancelId: 1, message: 'Bei YouTube anmelden',
-    detail: 'Passkeys funktionieren in diesem Fenster nicht. Fragt Google nach einem Passkey, tippe auf „Andere Möglichkeit wählen“ (bzw. „Andere Option ausprobieren“) und nimm dein Passwort, die Bestätigung auf dem Handy oder einen Code.' });
-  if (ok !== 0) return;
   ytWin = new BrowserWindow({ parent: win, width: 520, height: 760, title: 'Bei YouTube anmelden', autoHideMenuBar: true, icon: iconPath(), backgroundColor: '#ffffff', webPreferences: { sandbox: true } });
-  // Wie in Version 2.4 (dort kam Google bis zur Passkey-Abfrage): normales Chrome, keine Eingriffe in die Seite.
-  // Jeder Eingriff (Passkey ausblenden, andere Browserkennung) ließ Google das Fenster als „unsicher“ ablehnen.
-  ytWin.webContents.setUserAgent(chromeUA());
+  const major = String(process.versions.chrome).split('.')[0];
+  try { const dbg = ytWin.webContents.debugger; dbg.attach('1.3'); dbg.sendCommand('Emulation.setUserAgentOverride', { userAgent: chromeUA(), acceptLanguage: 'de-DE,de;q=0.9,en;q=0.8', platform: 'Win32',
+    userAgentMetadata: { brands: [{ brand: 'Google Chrome', version: major }, { brand: 'Chromium', version: major }, { brand: 'Not_A Brand', version: '24' }], fullVersionList: [{ brand: 'Google Chrome', version: process.versions.chrome }, { brand: 'Chromium', version: process.versions.chrome }, { brand: 'Not_A Brand', version: '24.0.0.0' }], platform: 'Windows', platformVersion: '15.0.0', architecture: 'x86', model: '', mobile: false, bitness: '64', wow64: false } }).catch(() => ytWin.webContents.setUserAgent(chromeUA())); }
+  catch { ytWin.webContents.setUserAgent(chromeUA()); }
   ytWin.webContents.setWindowOpenHandler(({ url }) => { ytWin.loadURL(url); return { action: 'deny' }; });
   let done = false;
-  const check = (e, url) => { if (done || !/^https:\/\/(www|m)\.youtube\.com\//.test(url || '')) return;
-    done = true; setTimeout(async () => { const ok = (await session.defaultSession.cookies.get({ domain: 'youtube.com' }).catch(() => [])).some(c => /^(LOGIN_INFO|SAPISID|__Secure-3PSID)$/.test(c.name));
-      try { ytWin.close(); } catch {}
-      dialog.showMessageBox(win, { type: ok ? 'info' : 'warning', title: APP_NAME, message: ok ? 'Bei YouTube angemeldet.' : 'Die Anmeldung ist nicht durchgegangen.',
-        detail: ok ? 'Videos auf den Folien laufen jetzt mit deinem YouTube-Konto, mit Premium also ohne Werbung. Abmelden kannst du dich unter „Konto → Von YouTube abmelden“.' : 'Meldet Google „Anmeldung nicht möglich“ oder fragt nach einem Passkey: bei Google „Andere Möglichkeit wählen“ und Passwort, Bestätigung auf dem Handy oder Code nehmen. Videos laufen auch ohne Anmeldung, nur ohne dein Konto.' }); }, 900); };
+  const check = (e, url) => { if (done || !/^https:\/\/(www|m)\.youtube\.com\//.test(url || '')) return; done = true; setTimeout(() => { try { ytWin.close(); } catch {} ytDone(); }, 900); };
   ytWin.webContents.on('did-navigate', check); ytWin.webContents.on('did-redirect-navigation', check);
   ytWin.on('closed', () => { ytWin = null; });
   ytWin.loadURL('https://accounts.google.com/ServiceLogin?service=youtube&hl=de&continue=' + encodeURIComponent('https://www.youtube.com/'));
+}
+function ytLogin() {
+  const exe = findBrowser();
+  const r = dialog.showMessageBoxSync(win, { type: 'question', title: APP_NAME, message: 'Bei YouTube anmelden', buttons: exe ? [`Über ${/msedge/i.test(exe) ? 'Edge' : 'Chrome'} anmelden (empfohlen)`, 'Im App-Fenster versuchen', 'Abbrechen'] : ['Im App-Fenster versuchen', 'Abbrechen'], defaultId: 0, cancelId: exe ? 2 : 1,
+    detail: exe ? `Es öffnet sich ein ${/msedge/i.test(exe) ? 'Edge' : 'Chrome'}-Fenster mit einem eigenen, leeren Profil für LehrWerk. Melde dich dort ganz normal bei Google an – Passkey, Passwort oder Handy gehen alle. Sobald du angemeldet bist, übernimmt LehrWerk die Anmeldung und schließt das Fenster von selbst. Dein normales ${/msedge/i.test(exe) ? 'Edge' : 'Chrome'} bleibt unberührt.` : 'Google lässt die Anmeldung in eingebetteten Fenstern manchmal nicht zu. Mit installiertem Google Chrome oder Edge geht es zuverlässiger.' });
+  if (exe && r === 0) ytLoginChrome(); else if ((exe && r === 1) || (!exe && r === 0)) ytLoginWin();
 }
 async function ytLogout() {
   const ses = session.defaultSession; const all = await ses.cookies.get({}); let n = 0;
