@@ -3726,9 +3726,19 @@ body.home-on{overflow:hidden}
   .pv-bar #pagecount,.pv-bar #btn-wide{display:none!important}
   .pv-opts .dz-btn{font-size:0!important;gap:0!important;padding:0 10px!important}
   .pv-bar #btn-zoom{flex:none;padding:0 6px}
+  #editor{gap:6px!important}
+  #editor .card-h{padding:6px 4px 6px 8px!important;gap:6px!important;min-height:0}
+  #editor .card-h .kind-i{width:26px;height:26px}
+  #editor .card-h .ch-k .kind{font-size:9.5px}
+  #editor .card-h .ch-t .sum{font-size:14.5px;line-height:1.25}
+  #editor .card-h .sum2{font-size:11.5px}
+  #editor .card-h .pres-tg{padding:3px 8px 3px 6px!important;min-height:30px}
+  #editor .card-h .ib{min-width:34px;min-height:34px;width:34px;height:34px}
+  #editor .ph-row{margin:0!important}
+  #editor .ins-row{margin:-9px 0!important}
 }
 /* Einfügen zwischen Karten: feine Linie mit kleinem Plus nur an der Stelle unter dem Zeiger (am Tablet unter der gewählten Karte) */
-.ins-row{height:14px!important;flex:none!important;margin:-7px 0!important;cursor:pointer}
+.ins-row{height:14px!important;min-height:0!important;padding:0!important;flex:none!important;margin:-7px 0!important;cursor:pointer}
 .ins-row::before{content:'';position:absolute;left:14px;right:14px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--tinte);opacity:0;transform:scaleX(.3);transition:opacity .14s,transform .18s ease-out;pointer-events:none}
 .ins-row .ins-btn{top:50%!important;width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;padding:0!important;border:0!important;background:var(--tinte)!important;color:var(--tinte-ink,#fff)!important;font-size:14px!important;transform:translateY(-50%) scale(.6);opacity:0!important;transition:opacity .14s,transform .18s ease-out;box-shadow:0 0 0 3px var(--bg,#F3F5F9)}
 .ins-row:hover::before{opacity:1;transform:none}
