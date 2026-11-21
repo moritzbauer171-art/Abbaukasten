@@ -882,10 +882,10 @@ function sozSVG(kind, c, bg) {
   if (kind === 'pa') g = P(9.3, 6.8, 3.8, 23.5, 6.2, 8.6, '') + P(22.7, 6.8, 3.8, 23.5, 6.2, 8.6, '');
   if (kind === 'ga') g = P(7, 5.8, 3.3, 21.5, 5.6, 7.8, '') + P(25, 5.8, 3.3, 21.5, 5.6, 7.8, '') + P(16, 8.6, 3.7, 23.6, 6.4, 8.6, halo);
   // Think-Pair-Share: allein → zu zweit → teilen (Sprechblase)
-  if (kind === 'tps') g = P(5, 11.4, 3, 23.5, 4.7, 6.6, '')
-    + `<path d="M10.6 14.2l2.2 2.4-2.2 2.4" style="fill:none;stroke:${c};stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round"/>`
-    + P(18.6, 11.4, 3, 23.5, 4.7, 6.6, '') + P(27, 11.4, 3, 23.5, 4.7, 6.6, '')
-    + `<path d="M19.8 .6h6a1.6 1.6 0 0 1 1.6 1.6v2.6a1.6 1.6 0 0 1-1.6 1.6h-2.2l-1.8 1.8V6.4h-2a1.6 1.6 0 0 1-1.6-1.6V2.2a1.6 1.6 0 0 1 1.6-1.6z"/>`;
+  // Think-Pair-Share als Dreischritt: eine Person › zwei Personen › Sprechblase (teilen)
+  if (kind === 'tps') { const ar = x => `<path d="M${x} 15.6l1.5 1.6-1.5 1.6" style="fill:none;stroke:${c};stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round"/>`;
+    g = P(3.6, 13.4, 2.3, 23.5, 3.5, 5.6, '') + ar(7.4) + P(12.4, 13.4, 2.3, 23.5, 3.4, 5.6, '') + P(17.8, 13.4, 2.3, 23.5, 3.4, 5.6, halo) + ar(22.2)
+      + `<path d="M25.4 9.6h5a1.4 1.4 0 0 1 1.4 1.4v5.4a1.4 1.4 0 0 1-1.4 1.4h-2.2l-2.2 2.4v-2.4h-.6a1.4 1.4 0 0 1-1.4-1.4V11a1.4 1.4 0 0 1 1.4-1.4z"/>` + [26.6, 28.2, 29.8].map(x => `<circle cx="${x}" cy="13.7" r=".75" style="fill:${bg}"/>`).join(''); }
   if (kind === 'pl') g = `<path d="M10.5 1h11a3 3 0 0 1 3 3v3.6a3 3 0 0 1-3 3h-3.4L16 13.4l-2.1-2.8h-3.4a3 3 0 0 1-3-3V4a3 3 0 0 1 3-3z"/>`
     + [12.6, 16, 19.4].map(x => `<circle cx="${x}" cy="5.8" r="1.05" style="fill:${bg}"/>`).join('')
     + [4, 11.5, 20.5, 28].map(x => P(x, 16.4, 2.25, 24, 3.6, 4.7, '')).join('');

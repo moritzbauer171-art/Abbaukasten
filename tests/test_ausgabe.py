@@ -22,10 +22,10 @@ def test_verlaufsplan_im_ausgeben(lw):
 
 def test_tps_in_word(lw):
     pg = lw.open(); lw.new_lesson(pg); b = blocks_standard(); b[3]['items'][0]['soz'] = 'tps'; lw.setup(pg, b)
-    assert pg.locator('#pages .task-tps .tps-s').count() == 3
+    assert pg.locator('#pages .task-tps').count() == 0
     pg.click('#btn-out'); pg.wait_for_timeout(500); pg.click('#dlg-root [data-act="out-set"][data-f="fmt"][data-v="docx"]'); pg.wait_for_timeout(300)
     with pg.expect_download(timeout=30000) as d:
         pg.click('#dlg-root [data-act="out-go"]')
     f = OUT / 'tps.docx'; d.value.save_as(str(f))
     xml = zipfile.ZipFile(f).read('word/document.xml').decode()
-    assert '1 Think' in xml and '3 Share' in xml
+    assert 'Think-Pair-Share' in xml

@@ -152,9 +152,3 @@
 .task-soz img.arb{width:5.2mm;height:5.2mm;margin-top:.2mm}
 .task-soz .soz-gap{display:block;width:8mm;flex:0 0 auto}
 
-/* Think-Pair-Share: leiser Dreischritt unter der Aufgabe */
-.task-tps{display:flex;flex-wrap:wrap;align-items:center;gap:.6mm 1.4mm;margin-top:.8mm;font-size:.8em;color:var(--paper-muted,#6B7280)}
-.task-tps .tps-s{display:inline-flex;align-items:center;gap:.9mm;white-space:nowrap}
-.task-tps .tps-s b{color:var(--acc,#2B45B8);font-weight:700}
-.task-tps img{height:2.8mm;opacity:.85}
-.task-tps .tps-a{font-style:normal;color:var(--paper-muted,#9AA1AE)}
