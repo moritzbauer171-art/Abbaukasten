@@ -438,8 +438,10 @@ function presSlideHTML(s, bar) {
       const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map(x => item(x)).join('')}</div>`
         : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map(x => item(x, c)).join('')}</div>`).join('')}</div>`; })()).join('');
       const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));
+      // Think-Pair-Share: Dreischritt unter dem Auftrag; beim Präsentieren per Klick weiterschalten
+      const tps = s.items.some(x => x.it.soz === 'tps') ? `<div class="pr-tps" role="list" aria-label="Think-Pair-Share">${[['ea', 'Think', 'allein nachdenken'], ['pa', 'Pair', 'zu zweit austauschen'], ['pl', 'Share', 'im Plenum teilen']].map(([k, t, d], i) => `<div class="pr-tps-s" role="listitem" data-tps="${i}"><img src="${sozURI(k, acc, pageAcc(m).t || '#fff')}" alt=""><span><b>${i + 1} · ${t}</b><small>${d}</small></span></div>`).join('<i class="pr-tps-a" aria-hidden="true"></i>')}</div>` : '';
       return presHead(esc(tsKick(s, m)), tsHead(s), sozChip({ soz: sz, arb: tsArb(s) }) + phChip(s.ph) + minChip(mn, tsTimer(s)))
-        + `<div class="pr-body"><div class="pr-fit pr-tset${multi ? ' multi' : ''}">${body}</div></div>`
+        + `<div class="pr-body"><div class="pr-fit pr-tset${multi ? ' multi' : ''}">${body}</div></div>` + tps
         + prPops(tips, s.items.map(x => [tsLab(x, s, m), ehLines(x.it)]));
     }
     case 'step': {

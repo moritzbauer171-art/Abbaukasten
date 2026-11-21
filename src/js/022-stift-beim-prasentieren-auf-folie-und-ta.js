@@ -290,6 +290,10 @@ function openPres(start, opts = {}) {
   let AWnative = false, BL = '';
   const awScale = () => { if (!awOk()) return; const d = AW.document, st = d.querySelector('.pr-stage'), sl = d.querySelector('.pr-slide'); const k = Math.min(st.clientWidth / 1600, st.clientHeight / 900); sl.style.transform = boarding() ? `translate(-50%,-50%) scale(${k})` : TBo.slideTf(k); TBo.placeAw(d, k); INK.placeAw(d, k); d.querySelector('.pr').classList.toggle('pr-boarding', boarding()); };
   const mirror = () => { if (!awOk()) return; TBo.mirror(); AW.document.querySelector('.pr').classList.toggle('pr-boarding', boarding()); INK.draw(); const d = AW.document, sl = d.querySelector('.pr-slide'); if (ytOn === P.i && sl.querySelector('.pr-yt.on iframe')) { awScale(); return; } sl.className = slide.className; sl.innerHTML = slide.innerHTML; d.querySelector('.pr').classList.toggle('pr-notime', ov.classList.contains('pr-notime')); awScale(); };
+  // Think-Pair-Share: aktiven Schritt markieren (auch im Beamerfenster)
+  const tpsSet = i => { const L = slide.querySelector('.pr-tps'); if (!L) return false; const cur = +(L.dataset.on ?? -1); const v = cur === i ? -1 : i;
+    const apply = el => { if (!el) return; el.dataset.on = v; el.classList.toggle('act', v >= 0); el.querySelectorAll('.pr-tps-s').forEach(x => x.classList.toggle('on', +x.dataset.tps === v)); };
+    apply(L); if (awOk()) apply(AW.document.querySelector('.pr-slide .pr-tps')); return true; };
   const mirrorT = () => { if (!awOk()) return; const d = AW.document; ['.pr-timer', '.pr-tbar'].forEach(q => { const a = slide.querySelector(q), b = d.querySelector('.pr-slide ' + q); if (a && b) { b.className = a.className; b.innerHTML = a.innerHTML; } }); d.querySelector('.pr-slide').className = slide.className; };
   const refSide = () => {
     if (!ov.classList.contains('pr-ref')) return; const sd = $p('.pr-side'); const nx = S[P.i + 1];
@@ -468,6 +472,7 @@ function openPres(start, opts = {}) {
     if (e.target.closest('.pr-slide .pr-yt.on, .pr-slide .pr-yt.remote')) return;
     if (W) { const wb = e.target.closest('[data-w]'); if (wb) { const f = W.ok, ok = wb.dataset.w === 'ok'; warnClose(); if (ok) f(); } else if (!e.target.closest('.pr-warn-c')) warnClose(); return; }
     if (e.target.closest('.pr-slide .pr-timer')) { tmToggle(); return; }
+    { const tp = e.target.closest('.pr-slide .pr-tps-s'); if (tp) { tpsSet(+tp.dataset.tps); return; } }
     if (e.target.closest('.pr-more')) { blankMore(); return; }
     if (e.target.closest('.pr-vscroll')) return;
     if (foOn && e.target.closest('.lf-pan')) { if (e.target.closest('[data-lf="x"]')) foPanT(false); else fotoPanelAct(e, foPan(), state.sheet.id, FO.list, foRender, items => foShow(items)); return; }
