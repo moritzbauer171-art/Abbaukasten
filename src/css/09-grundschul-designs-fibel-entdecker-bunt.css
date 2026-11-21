@@ -719,6 +719,15 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 /* Video groß: füllt die ganze Folie (am Beamer also den Bildschirm) */
 .pr-ytbig .pr-slide .pr-body,.pr-ytbig .pr-slide .pr-vidb{position:static}
 .pr-ytbig .pr-slide .pr-yt.on{position:absolute;inset:0;z-index:60;max-width:none;max-height:none;margin:0;border-radius:0;aspect-ratio:auto;background:#000;box-shadow:none}
+/* Video groß: nichts darüber – keine Phasenleiste, Fußzeile, Knöpfe; die Steuerleiste erscheint erst, wenn die Maus nach unten fährt */
+.pr-ytbig .pr-slide .pr-phb,.pr-ytbig .pr-slide .pr-foot,.pr-ytbig .pr-slide .pr-src,.pr-ytbig .pr-fbtns,.pr-ytbig .pr-slide .pr-accent,.pr-ytbig .pr-slide .pr-tbar{display:none!important}
+.pr-ytbig .pr-slide{padding:0!important;border-radius:0!important}
+.pr-ytbig>.pr-bar{position:absolute;left:0;right:0;bottom:0;z-index:95;opacity:0;transition:opacity .25s}
+.pr-ytbig>.pr-bar:hover,.pr-ytbig>.pr-bar:focus-within{opacity:1}
+/* Beobachtungsauftrag dezent über dem Video (A) */
+.pr-ytbig .pr-slide .pr-yt-auf{position:absolute;left:48px;top:44px;max-width:56%;z-index:70;margin:0;background:rgba(14,17,24,.72);color:#fff;border-left:6px solid var(--acc,#2B45B8);border-radius:10px;padding:14px 22px;font:600 28px/1.35 var(--f-ui);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transform:translateY(-8px);transition:opacity .3s,transform .3s;pointer-events:none}
+.pr-ytbig.pr-ytauf .pr-slide .pr-yt-auf{opacity:1;transform:none}
+.pr-ytbig .pr-slide .pr-yt-auf b,.pr-ytbig .pr-slide .pr-yt-auf strong{color:#fff}
 .pr-yt-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:20px}
 .pr-yt-go{display:block;border:0;background:none;padding:0;cursor:pointer;width:150px;transition:transform .2s}.pr-yt-go:hover{transform:scale(1.08)}.pr-yt-go svg{width:100%;display:block}
 .pr-yt-t{font:700 34px/1.2 var(--f-ui)}.pr-yt-t small{font-weight:500;opacity:.75;margin-left:8px}

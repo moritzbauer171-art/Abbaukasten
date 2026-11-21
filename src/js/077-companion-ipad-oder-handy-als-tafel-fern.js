@@ -86,7 +86,7 @@ function lfcStart(O = {}) {
   const palRe = () => { const o = main.querySelector('.lfc-pal'); if (!o) return; const pin = o.classList.contains('lfc-palb'); const t = document.createElement('div'); t.innerHTML = palBar(pin); o.replaceWith(t.firstElementChild); };
   const palSync = () => { const b = main.querySelector('.lfc-tkb'); if (b) b.innerHTML = lfcIc(T.tool === 'nav' ? 'hand' : T.tool, 22) + `<i class="lfc-tkc" style="--cc:${T.col[T.tool] || T.col.pen}"></i>`; };
   const ytBtns = () => (!PR.yt ? '' : PR.yt === 'on'
-    ? `<div class="lfc-yt on"><span>${lfcIc('fol', 18)} Video läuft am Beamer</span><div><button type="button" class="lfc-pill" data-nav="ytpause">Pause</button><button type="button" class="lfc-pill" data-nav="ytplay">Weiter</button><button type="button" class="lfc-pill${PR.ytbig ? ' on' : ''}" data-nav="ytbig">${PR.ytbig ? 'Vollbild aus' : 'Vollbild'}</button><button type="button" class="lfc-pill" data-nav="ytstop">Schließen</button></div></div>`
+    ? `<div class="lfc-yt on"><span>${lfcIc('fol', 18)} Video läuft am Beamer</span><div><button type="button" class="lfc-pill" data-nav="ytpause">Pause</button><button type="button" class="lfc-pill" data-nav="ytplay">Weiter</button><button type="button" class="lfc-pill${PR.ytbig ? ' on' : ''}" data-nav="ytbig">${PR.ytbig ? 'Vollbild aus' : 'Vollbild'}</button>${PR.ythas ? `<button type="button" class="lfc-pill${PR.ytauf ? ' on' : ''}" data-nav="ytauf" aria-pressed="${!!PR.ytauf}">${PR.ytauf ? 'Auftrag aus' : 'Auftrag'}</button>` : ''}<button type="button" class="lfc-pill" data-nav="ytstop">Schließen</button></div></div>`
     : `<div class="lfc-yt"><button type="button" class="lfc-ytgo" data-nav="ytplay"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg><span>Video abspielen</span></button></div>`);
   // ---------- Folien aus der gespeicherten Stunde ----------
   const SL = { id: '', up: 0, S: null, sh: null, busy: false, retry: 0 };
@@ -332,7 +332,7 @@ function lfcStart(O = {}) {
     if (tab === 'fol' && (old.i !== m.i || old.board !== m.board || old.bl !== m.bl || old.cur !== m.cur || old.up !== m.up || old.tm !== m.tm || old.yt !== m.yt)) { if (!T.live) renderMain(); if (OV) overview(true); }
     if ((tab === 'tafel' || tab === 'pk') && !T.live) { drawSl(); drawInk(); }
     if (tab !== 'fol' && tab !== 'cam' && old.bl !== m.bl && !T.live) renderMain(); else if (tab !== 'fol' && tab !== 'cam' && old.board !== m.board) fxSync();
-    if (tab === 'fol' && old.ytbig !== m.ytbig && !T.live) renderMain();
+    if (tab === 'fol' && (old.ytbig !== m.ytbig || old.ytauf !== m.ytauf) && !T.live) renderMain();
   };
   offs.push(fotoListen(m => {
     if (m.t === 'pres') takePres(m);

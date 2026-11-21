@@ -20,3 +20,21 @@ def test_think_pair_share_dreischritt(lw):
     pg.locator('.pr .pr-slide .pr-tps-s').nth(1).click(); pg.wait_for_timeout(300)
     assert pg.locator('.pr .pr-slide .pr-tps-s.on').inner_text().strip() == 'Pair'
     pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'tps_folie.png'))
+
+def test_video_gross_mit_auftrag(lw):
+    pg = lw.open(); lw.new_lesson(pg); b = blocks_standard()
+    b.insert(1, {'id': 'v1', 'type': 'step', 'tpl': 'video', 'title': '', 'ph': 'ein', 'min': '5', 'soz': 'pl', 'fol': 'video', 'head': '', 'cap': 'Kurzvideo', 'text': 'Achten Sie beim Ansehen darauf, wie Nähe erzeugt wird.', 'yt': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'quote': '', 'author': '', 'src': '', 'note': '', 'eh': '', 'media': ''})
+    lw.setup(pg, b)
+    pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
+    for _ in range(8):
+        if pg.locator('.pr .pr-slide .pr-yt').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(300)
+    pg.locator('.pr .pr-slide .pr-yt-go').click(); pg.wait_for_timeout(800)
+    assert not pg.locator('.pr .pr-ytb').is_hidden()
+    pg.keyboard.press('v'); pg.wait_for_timeout(300)
+    assert pg.locator('.pr.pr-ytbig').count() == 1
+    assert pg.locator('.pr .pr-slide .pr-phb').is_hidden() and pg.locator('.pr .pr-fbtns').is_hidden()
+    assert float(pg.evaluate("getComputedStyle(document.querySelector('.pr > .pr-bar')).opacity")) == 0
+    pg.keyboard.press('a'); pg.wait_for_timeout(500)
+    assert pg.locator('.pr.pr-ytauf').count() == 1
+    pg.screenshot(path=str(__import__('conftest').OUT / 'video_auftrag.png'))
