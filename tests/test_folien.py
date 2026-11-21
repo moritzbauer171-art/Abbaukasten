@@ -38,3 +38,18 @@ def test_video_gross_mit_auftrag(lw):
     pg.keyboard.press('a'); pg.wait_for_timeout(500)
     assert pg.locator('.pr.pr-ytauf').count() == 1
     pg.screenshot(path=str(__import__('conftest').OUT / 'video_auftrag.png'))
+
+def test_ton_unter_30_prozent(lw):
+    pg = lw.open(); lw.new_lesson(pg); b = blocks_standard(); b[3]['timer'] = 'on'; b[3]['min'] = '1'; b[3]['items'][0]['min'] = '1'; b[3]['items'][1]['min'] = '0'; lw.setup(pg, b)
+    pg.evaluate("""() => { window.__tones = 0; const A = window.AudioContext; window.AudioContext = function () { window.__tones++; return new A(); };
+      const d0 = Date.now.bind(Date); window.__off = 0; Date.now = () => d0() + window.__off; }""")
+    pg.evaluate("__OP(0)"); pg.wait_for_timeout(800)
+    for _ in range(10):
+        if pg.locator('.pr .pr-slide .pr-timer').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(300)
+    pg.locator('.pr .pr-slide .pr-timer').click(); pg.wait_for_timeout(600)
+    assert pg.evaluate("window.__tones") == 0
+    pg.evaluate("window.__off = 45000"); pg.wait_for_timeout(800)
+    assert pg.evaluate("window.__tones") == 1
+    pg.evaluate("window.__off = 50000"); pg.wait_for_timeout(800)
+    assert pg.evaluate("window.__tones") == 1

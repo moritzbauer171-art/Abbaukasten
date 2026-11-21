@@ -41,6 +41,12 @@ const twMmss = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 // Ansicht beim Präsentieren je Klasse: Grundschule startet mit der Tafel
 function presModeOf(klasse) { const k = KL(klasse); const p = state.prefs && state.prefs.presMode; return p && p[k.id] ? p[k.id] : k.stufe === 'gs' ? 'tafel' : 'folien'; }
 function setPresMode(v) { const id = KL(state.sheet.klasse).id; if (!state.prefs.presMode) state.prefs.presMode = {}; state.prefs.presMode[id] = v; savePrefs(); }
+// Dezenter Hinweiston, wenn ein Timer unter 30 % Restzeit fällt: ein weicher, leiser Doppelton
+function tbSoft() {
+  try { const ac = new (window.AudioContext || window.webkitAudioContext)();
+    [784, 1175].forEach((f, i) => { const t = ac.currentTime + i * 0.16; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7); o.connect(g).connect(ac.destination); o.start(t); o.stop(t + 0.75); });
+    setTimeout(() => { try { ac.close(); } catch {} }, 1400); } catch {}
+}
 function tbChime() {
   try { const ac = new (window.AudioContext || window.webkitAudioContext)();
     [660, 880, 1046].forEach((f, i) => { const t = ac.currentTime + i * 0.24; const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7); o.connect(g).connect(ac.destination); o.start(t); o.stop(t + 0.75); });
@@ -300,7 +306,7 @@ function tafelBoard(X) {
   const tick = setInterval(() => {
     let ch = false; const mm = new Date().getMinutes();
     st.w.forEach(w => { const r = R[w.id];
-      if (w.k === 'timer' && r.run) { r.left = Math.max(0, Math.round((r.end - Date.now()) / 1000)); if (r.left <= 0) { r.run = false; if (w.c.snd) tbChime(); ctlSync(w); } upd(w); ch = true; }
+      if (w.k === 'timer' && r.run) { r.left = Math.max(0, Math.round((r.end - Date.now()) / 1000)); if (r.full >= 60 && r.left > 0 && r.left <= r.full * 0.3) { if (!r.lowRung && w.c.snd) tbSoft(); r.lowRung = true; } else if (r.left > r.full * 0.3) r.lowRung = false; if (r.left <= 0) { r.run = false; if (w.c.snd) tbChime(); ctlSync(w); } upd(w); ch = true; }
       else if (w.k === 'uhr' && mm !== lastMin) { upd(w); ch = true; } });
     lastMin = mm; if (ch) sync();
   }, 250);

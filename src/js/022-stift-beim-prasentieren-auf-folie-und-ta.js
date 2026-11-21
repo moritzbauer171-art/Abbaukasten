@@ -360,7 +360,8 @@ function openPres(start, opts = {}) {
   };
   window.addEventListener('pagehide', () => { try { if (AW && !AW.closed) AW.close(); } catch {} });
   if (PLAN) T.cid = setInterval(() => { if (!T.run) tmShow(); }, 15000);
-  const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000)); if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
+  const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000));
+    if (T.full >= 60 && T.left > 0 && T.left <= T.full * 0.3) { if (!T.lowRung && !ov.classList.contains('pr-notime')) tbSoft(); T.lowRung = true; } else if (T.left > T.full * 0.3) T.lowRung = false; if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
   const tmToggle = () => {
     if (T.run && T.slide !== P.i && slide.querySelector('.pr-timer')) { tmWarn('Der Timer dieser Folie ersetzt ihn.', 'Neuen Timer starten', tmStart); return; }
     if (T.run) { clearInterval(T.id); T.run = false; tick(); T.run = false; tmShow(); return; }
