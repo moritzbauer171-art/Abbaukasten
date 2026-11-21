@@ -20,3 +20,17 @@ def test_zwei_geraete_parallel(lw):
     a.wait_for_timeout(2500)
     assert pg.evaluate("__PCT()") == 6
     assert a.evaluate("__LB().tafel.ink.length") == 6 and q.evaluate("__LB().tafel.ink.length") == 6
+
+def test_stift_ist_laser_auf_folie(lw):
+    pg = lw.open(); lw.new_lesson(pg); lw.setup(pg, blocks_standard()); pg.evaluate("__SV()"); pg.wait_for_timeout(500)
+    pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
+    pad = lw.open('?tafel', viewport={'width': 1180, 'height': 820})
+    for _ in range(3):
+        try: pad.wait_for_selector('.lfc-tkm', timeout=10000); break
+        except Exception: pad.reload()
+    pad.evaluate("""() => { const b = document.querySelector('.lfc-board'), r = b.getBoundingClientRect(); window.__sent = [];
+      const ev = (t, x) => b.dispatchEvent(new PointerEvent(t, { pointerId: 7, pointerType: 'pen', pressure: .5, clientX: r.left + x, clientY: r.top + 200, bubbles: true, cancelable: true, buttons: t === 'pointerup' ? 0 : 1 }));
+      ev('pointerdown', 200); for (let i = 1; i < 6; i++) ev('pointermove', 200 + i * 20); ev('pointerup', 320); }""")
+    pad.wait_for_timeout(300)
+    sent = pad.evaluate("(window.__sent || []).map(m => m.t + (m.op ? ':' + m.op : ''))")
+    assert 'blas' in sent and 'bop:add' not in sent, sent

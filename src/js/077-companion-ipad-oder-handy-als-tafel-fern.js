@@ -164,7 +164,7 @@ function lfcStart(O = {}) {
     const cancelLive = () => { if (T.live) { T.live = null; sendLive(null); } T.las = null; er = null; drawId = null; drawInk(); };
     const dropPalm = () => { if (!lastTouch || Date.now() - lastTouch.t > 700) return; const k = lastTouch.k; lastTouch = null;
       const L = KB().ink, n = L.length; KB().ink = L.filter(x => x.k !== k); if (KB().ink.length !== n) { send({ t: 'bop', key: kOf(), op: 'rm', ks: [k] }); const U = T.undo[kOf()]; const i = U.findIndex(h => h.t === 'add' && h.k === k); if (i >= 0) U.splice(i, 1); drawInk(); } };
-    const tool = e => (e.pointerType === 'pen' && (e.buttons & 32 || e.button === 5) ? 'er' : e.pointerType === 'pen' && T.tool === 'nav' ? T.btool : T.tool); // Radiererende bzw. Radiertaste des Stifts (z. B. OnePlus Stylo, Surface Pen)
+    const tool = e => (e.pointerType === 'pen' && (e.buttons & 32 || e.button === 5) ? 'er' : e.pointerType === 'pen' && T.tool === 'nav' ? (tab === 'fol' ? 'laser' : T.btool) : T.tool); // Radiererende bzw. Radiertaste des Stifts (z. B. OnePlus Stylo, Surface Pen)
     const startDraw = e => {
       const tl0 = tool(e); drawId = e.pointerId; T.liveType = e.pointerType; T.cur = tl0; const [x, y] = pt(e);
       if (tl0 === 'laser') { T.las = [x, y]; sendLas(x, y); drawInk(); return; }
@@ -195,7 +195,7 @@ function lfcStart(O = {}) {
         tmd = { id: e.pointerId, el: h, tw, mode, k, sx: e.clientX, sy: e.clientY, x: tw ? parseFloat(tw.style.left) || 0 : 0, y: tw ? parseFloat(tw.style.top) || 0 : 0, w: tw ? parseFloat(tw.style.width) || 0 : 0, h: tw ? parseFloat(tw.style.height) || 0 : 0, moved: false }; return; } }
       e.preventDefault(); topIdle(); sink(true);
       if (e.pointerType === 'pen') {
-        if (!T.pen) { T.pen = true; if (tab === 'fol' && T.tool === 'nav') { /* Stift schreibt mit dem zuletzt gewählten Werkzeug */ } toast('Apple Pencil erkannt: Der Stift schreibt, der Finger blättert.'); }
+        if (!T.pen) { T.pen = true; if (tab === 'fol' && T.tool === 'nav') { /* Stift schreibt mit dem zuletzt gewählten Werkzeug */ } toast(tab === 'fol' ? 'Stift erkannt: Auf der Folie ist er der Laserpointer, der Finger blättert. Zum Schreiben oben links den Stift wählen.' : 'Stift erkannt: Der Stift schreibt, der Finger verschiebt.'); }
         penDown = true; TP.clear(); pan = null; sw = null;
         if (drawId !== null && T.liveType === 'touch') cancelLive(); dropPalm();
         try { b.setPointerCapture(e.pointerId); } catch {} startDraw(e); return;
@@ -292,7 +292,7 @@ function lfcStart(O = {}) {
   root.addEventListener('click', e => {
     { const pb = e.target.closest && e.target.closest('.lfc-palb'); if (pb && pb.dataset.eat) { delete pb.dataset.eat; e.stopPropagation(); return; } if (pb) sinkSoon(5000); }
     topIdle();
-    const t = e.target.closest('[data-tab]'); if (t) { MODO = false; if (tab !== t.dataset.tab) { tab = t.dataset.tab; if (tab === 'fol' && !T.pen) T.tool = 'nav'; render(); } else { const md = main.querySelector('.lfc-modes'); if (md) md.remove(); const mb = main.querySelector('.lfc-tkm'); if (mb) mb.classList.remove('on'); } return; }
+    const t = e.target.closest('[data-tab]'); if (t) { MODO = false; if (tab !== t.dataset.tab) { tab = t.dataset.tab; if (tab === 'fol') T.tool = 'nav'; render(); } else { const md = main.querySelector('.lfc-modes'); if (md) md.remove(); const mb = main.querySelector('.lfc-tkm'); if (mb) mb.classList.remove('on'); } return; }
     const tmc = e.target.closest('[data-tmc]'); if (tmc) { send({ t: 'tfc', sel: tmc.dataset.tmc }); if (tmc.closest('.lfc-sh')) sheet(''); return; }
     const go = e.target.closest('[data-go]'); if (go) { overview(false); send({ t: 'nav', a: 'goto', i: +go.dataset.go }); return; }
     const tl0 = e.target.closest('[data-tool]'); if (tl0) { if (T.tool === tl0.dataset.tool && (T.tool === 'pen' || T.tool === 'hl')) { T.w = T.w === 's' ? 'm' : T.w === 'm' ? 'l' : 's'; } T.tool = tl0.dataset.tool; if (T.tool !== 'nav') T.btool = T.tool; palSync(); palRe(); sinkSoon(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x === tl0))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.col === (T.col[T.tool] || T.col.pen)))); return; }
