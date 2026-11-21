@@ -231,7 +231,8 @@ Electron ${process.versions.electron} · Chromium ${process.versions.chrome}` })
 
 /* ---------- YouTube-Anmeldung: Videos auf den Folien laufen dann mit dem eigenen Konto (z. B. Premium ohne Werbung) ---------- */
 // Google lehnt Anmeldungen in Apps manchmal ab; mit der normalen Chrome-Kennung klappt es meist.
-const chromeUA = () => `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${process.versions.chrome} Safari/537.36`;
+// Wie ein normales Chrome (gekürzte Versionsnummer wie im echten Chrome, ohne „Electron“)
+const chromeUA = () => `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${String(process.versions.chrome).split('.')[0]}.0.0.0 Safari/537.36`;
 let ytWin = null;
 function ytLogin() {
   if (ytWin && !ytWin.isDestroyed()) { ytWin.focus(); return; }
@@ -243,7 +244,7 @@ function ytLogin() {
     done = true; setTimeout(async () => { const ok = (await session.defaultSession.cookies.get({ domain: 'youtube.com' }).catch(() => [])).some(c => /^(LOGIN_INFO|SAPISID|__Secure-3PSID)$/.test(c.name));
       try { ytWin.close(); } catch {}
       dialog.showMessageBox(win, { type: ok ? 'info' : 'warning', title: APP_NAME, message: ok ? 'Bei YouTube angemeldet.' : 'Die Anmeldung ist nicht durchgegangen.',
-        detail: ok ? 'Videos auf den Folien laufen jetzt mit deinem YouTube-Konto, mit Premium also ohne Werbung. Abmelden kannst du dich unter „Konto → Von YouTube abmelden“.' : 'Fragt Google nach einem Passkey, bei Google „Andere Möglichkeit wählen“ antippen und das Passwort, die Bestätigung auf dem Handy oder einen Code nehmen – Passkeys gehen in der App nicht. Videos laufen auch ohne Anmeldung, nur ohne dein Konto.' }); }, 900); };
+        detail: ok ? 'Videos auf den Folien laufen jetzt mit deinem YouTube-Konto, mit Premium also ohne Werbung. Abmelden kannst du dich unter „Konto → Von YouTube abmelden“.' : 'Meldet Google „Anmeldung nicht möglich“ oder fragt nach einem Passkey: bei Google „Andere Möglichkeit wählen“ und Passwort, Bestätigung auf dem Handy oder Code nehmen. Videos laufen auch ohne Anmeldung, nur ohne dein Konto.' }); }, 900); };
   ytWin.webContents.on('did-navigate', check); ytWin.webContents.on('did-redirect-navigation', check);
   ytWin.on('closed', () => { ytWin = null; });
   ytWin.loadURL('https://accounts.google.com/ServiceLogin?service=youtube&hl=de&continue=' + encodeURIComponent('https://www.youtube.com/'));

@@ -1,11 +1,14 @@
-// Nur für das Fenster „Bei YouTube anmelden“: Passkeys (WebAuthn) ausblenden.
-// Electron hat unter Windows keine Passkey-Abfrage; Google bietet dann von selbst Passwort,
-// Bestätigung auf dem Handy oder Code an.
+// Nur für das Fenster „Bei YouTube anmelden“.
+// Google soll nicht zuerst einen Passkey anbieten (Electron hat unter Windows keine Passkey-Abfrage).
+// Wichtig: WebAuthn selbst bleibt vorhanden – fehlt es ganz, hält Google das Fenster für einen
+// „unsicheren Browser“ und lehnt die Anmeldung ab. Wir melden nur, dass kein Gerät-Passkey da ist.
 const { contextBridge } = require('electron');
 try {
   contextBridge.executeInMainWorld({ func: () => {
-    const no = () => Promise.reject(new DOMException('Passkeys sind in LehrWerk nicht verfügbar.', 'NotAllowedError'));
-    try { Object.defineProperty(window, 'PublicKeyCredential', { value: undefined, configurable: true, writable: true }); } catch {}
-    try { if (navigator.credentials) { navigator.credentials.get = no; navigator.credentials.create = no; } } catch {}
+    try {
+      const P = window.PublicKeyCredential; if (!P) return;
+      Object.defineProperty(P, 'isUserVerifyingPlatformAuthenticatorAvailable', { value: () => Promise.resolve(false), configurable: true });
+      Object.defineProperty(P, 'isConditionalMediationAvailable', { value: () => Promise.resolve(false), configurable: true });
+    } catch {}
   } });
 } catch {}
