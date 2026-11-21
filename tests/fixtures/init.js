@@ -1,0 +1,4 @@
+(() => { if (!localStorage.getItem('abw.ordner')) localStorage.setItem('abw.ordner', JSON.stringify({ v: 1, folders: [], place: {}, order: {}, klassen: [{"id": "gk", "label": "Grundkurs", "course": "Grundkurs Deutsch", "school": "Georg-Herwegh-Gymnasium", "accent": "tinte", "anrede": "sie"}, {"id": "k10", "label": "Klasse 10", "course": "Deutsch Klasse 10", "school": "Waldseeschule", "accent": "petrol", "anrede": "du"}, {"id": "k910", "label": "Klasse 9/10", "course": "Deutsch Klasse 9/10", "school": "Waldseeschule", "accent": "wein", "anrede": "du"}] })); localStorage.setItem('abw.tips', '1'); if (localStorage.getItem('abw.onecard') == null) localStorage.setItem('abw.onecard', '0'); })();
+try { if (!localStorage.getItem('abw.news')) localStorage.setItem('abw.news', JSON.stringify('rlp-2026-11')); } catch {}
+
+try { if (localStorage.getItem('abw.homeStart') === null) localStorage.setItem('abw.homeStart', JSON.stringify('0')); } catch {}

@@ -1,0 +1,94 @@
+</style>
+
+<div id="app">
+  <header class="bar">
+    <div class="brand"><div class="brand-t"><b class="logo" aria-label="LehrWerk"><svg class="logo-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="currentColor"/><path d="M7.2 16.8 13.9 10.1M13.9 10.1l2.6-2.6a1.3 1.3 0 0 1 1.8 0l.0 0a1.3 1.3 0 0 1 0 1.8l-2.6 2.6M7.2 16.8l-.6 1.9 1.9-.6" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.6" cy="6.4" r="1.6" fill="#F5B400"/></svg><span class="logo-l">Lehr</span><span class="logo-w">Werk</span></b><small class="brand-c">© 2026 Moritz Bauer</small></div><button type="button" class="fach-btn" id="btn-fach" aria-haspopup="true" aria-expanded="false" title="Fach wechseln"><span>Deutsch</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5l3 3 3-3"/></svg></button><div class="fach-pop" id="fach-pop" hidden></div></div>
+    <nav class="crumbs" id="crumbs" aria-label="Wo du gerade bist">
+      <button type="button" class="cr" id="cr-kl" data-mmk="kl" aria-haspopup="true" aria-expanded="false" title="Klasse wechseln"></button><i class="cr-sep" aria-hidden="true">›</i>
+      <button type="button" class="cr" id="cr-st" data-mmk="st" aria-haspopup="true" aria-expanded="false" title="Stunde wechseln"></button><i class="cr-sep" aria-hidden="true">›</i>
+      <button type="button" class="cr" id="cr-ab" data-mmk="ab" aria-haspopup="true" aria-expanded="false" title="Arbeitsblatt dieser Stunde wechseln"></button>
+    </nav>
+    <div class="tabs" role="group" aria-label="Ansicht">
+      <button type="button" id="tab-edit" data-act="tab" data-v="edit" aria-pressed="true">Bearbeiten</button>
+      <button type="button" id="tab-prev" data-act="tab" data-v="preview" aria-pressed="false">Vorschau</button>
+    </div>
+    <div class="status" id="status" data-s="example"><i></i><span>Beispielblatt</span></div>
+    <div class="hd-hist"><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5 2.8 6.3 6 3.1"/><path d="M3 6.3h6.2a3.8 3.8 0 0 1 0 7.6H7"/></svg></button><button type="button" class="ib" data-act="redo" title="Wiederholen (Strg+Y)" aria-label="Wiederholen"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 9.5l3.2-3.2L10 3.1"/><path d="M13 6.3H6.8a3.8 3.8 0 0 0 0 7.6H9"/></svg></button></div>
+    <div class="actions">
+      <a class="hd-x btn ib-help hd-coffee" id="btn-coffee" href="https://www.paypal.me/mehrbier" target="_blank" rel="noopener noreferrer" title="Gefällt dir das LehrWerk? Einen Kaffee spendieren (PayPal)" aria-label="Einen Kaffee spendieren"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2.8c-.6.8-.6 1.6 0 2.4M11.5 2.8c-.6.8-.6 1.6 0 2.4"/></svg></a>
+      <button class="hd-x btn ib-help" type="button" id="btn-home" data-act="home" title="Startseite: Fächer, Klassen, zuletzt bearbeitet, neu geteilt" aria-label="Startseite"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11h13V9"/><path d="M10 20v-5.5h4V20"/></svg></button>
+      <button class="hd-x btn ib-help" type="button" id="btn-set" data-act="settings" title="Einstellungen: Kurs, Aussehen, Präsentation, Basis oder Experte" aria-label="Einstellungen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+      <button class="btn rlp-btn" type="button" id="btn-rlp" data-act="rlp-view" title="Rahmenlehrplan Berlin für dieses Fach als PDF"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.2c1.8-.8 3.7-.8 5.5.3 1.8-1.1 3.7-1.1 5.5-.3v9.6c-1.8-.8-3.7-.8-5.5.3-1.8-1.1-3.7-1.1-5.5-.3z"/><path d="M8 3.5v9.6"/></svg><span>RLP</span></button>
+      <button class="hd-x btn ib-help" type="button" id="btn-help" data-act="help" title="Hilfe und Kniffe" aria-label="Hilfe und Kniffe">?</button>
+      <button class="hd-x btn ib-help" type="button" id="btn-tafel" data-act="tafel-open" title="Tafel öffnen: leere Seite mit Stift, Laser und Werkzeugen wie Timer und Ampel" aria-label="Tafel öffnen"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="13" rx="1.5"/><path d="M8 21l2-4.5M16 21l-2-4.5"/><path d="M6.5 12.5c1.6-2.6 3-3.6 4.2-2.4 1 1 2 .9 3.3-.6"/></svg></button>
+      <button class="hd-x btn ib-help fo-btn" type="button" id="btn-forum" data-act="forum" title="Lehrerzimmer: Forum für Fragen, Tipps und Austausch" aria-label="Lehrerzimmer"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M19 9h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1v2.5L16 19h-4"/></svg><em class="fo-badge" hidden></em></button>
+      <button class="btn" type="button" id="btn-login" data-act="login" hidden>Anmelden</button>
+      <button class="hd-x btn btn-new" type="button" id="btn-new" data-act="new" title="Neue Stunde anlegen">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg><span class="l-long">Neue Stunde</span><span class="l-short">Neu</span></button>
+      <button class="hd-x btn" type="button" id="btn-lib" data-act="lib-open">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span class="l-long">Meine Stunden</span><span class="l-short">Stunden</span></button>
+      <button class="hd-x btn" type="button" id="btn-saveas" data-act="saveas" title="Speichern unter (Strg+Umschalt+S)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M2.5 2.5h8.3l2.7 2.7v8.3h-11z"/><path d="M5.2 2.5v3.2h4.6V2.5"/><path d="M5 13.5V9.6h6v3.9"/></svg><span class="l-long">Speichern unter</span><span class="l-short">Speichern</span></button>
+      <button class="btn hd-cmd" type="button" id="btn-cmd" data-act="cmd" title="Befehle, Bausteine und Einstellungen suchen (Strg+K)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4.3"/><path d="M13.5 13.5 10.2 10.2"/></svg><span class="l-long">Befehle</span><kbd>Strg K</kbd></button>
+      <button class="btn" type="button" id="btn-stunden" data-mmk="stunden" aria-haspopup="true" aria-expanded="false" title="Neue Stunde, Meine Stunden, Speichern unter"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 3.5h4l1.2 1.5h5.8v7.5h-11z"/></svg><span>Stunden</span><svg class="cr-ch" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 6.5 8 10l3.5-3.5"/></svg></button>
+      <button class="btn hd-pres" type="button" id="btn-pres" data-act="pres-go" title="Präsentation der Stunde am Beamer zeigen (F5)"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L12.8 8z" fill="currentColor"/></svg><span>Präsentieren</span></button>
+      <button class="btn primary" type="button" id="btn-out" data-act="out" title="PDF, Word oder Drucken">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V1.8h8V6"/><rect x="1.8" y="6" width="12.4" height="5.5" rx="1"/><path d="M4 9.5h8v4.7H4z"/></svg><span class="l-long">Ausgeben</span><span class="l-short">Ausgeben</span></button>
+      <button class="btn" type="button" id="btn-docx" data-act="docx" hidden>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1.8h5.5l3 3v9.4H4z"/><path d="M9.5 1.8v3h3"/><path d="M5.8 8l.9 3.6L8 8.6l1.3 3L10.2 8"/></svg>Word</button>
+      <button class="btn primary" type="button" id="btn-pdf" data-act="pdf" hidden>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V1.8h8V6"/><rect x="1.8" y="6" width="12.4" height="5.5" rx="1"/><path d="M4 9.5h8v4.7H4z"/></svg><span class="l-long">PDF zum Drucken</span><span class="l-short">PDF</span></button>
+      <button class="btn" type="button" id="btn-print" data-act="print" hidden>Drucken</button>
+      <button class="btn ib-help" type="button" id="btn-mmore" aria-haspopup="true" aria-expanded="false" title="Werkzeuge: Tafel, Rahmenlehrplan, Lehrerzimmer, Einstellungen, Hilfe" aria-label="Weitere Funktionen"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><circle cx="5.5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18.5" cy="12" r="1.8"/></svg></button>
+    </div>
+  </header>
+  <div class="tabrow"><nav class="reiter" id="reiter" role="tablist" aria-label="Klassen"></nav></div>
+  <div class="main">
+    <section class="pane" id="editor" aria-label="Bausteine"></section>
+    <section class="pane" id="preview" aria-label="Vorschau">
+      <div class="pv-bar"><div class="seg sm outsw" id="outsw" role="group" aria-label="Ausgabe"></div><div class="pv-opts" id="pv-opts"></div><span id="pagecount">A4</span>
+        <button class="btn ghost" type="button" id="btn-wide" title="Vorschau groß: Karten ausblenden" aria-pressed="false"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/></svg></button>
+        <button class="btn ghost" type="button" id="btn-zoom" data-act="zoom">100 %</button></div>
+      <div class="pv-hint" id="pv-hint">Tipp: Wort im Material anklicken für eine Worterklärung · Zeilennummer anklicken für eine Zeilenangabe</div>
+      <div id="preview-scroll"><div id="pages"></div></div>
+      <div id="pp-panel" hidden aria-label="Folie bearbeiten"></div>
+    </section>
+  </div>
+</div>
+<div id="measure-host"><div class="page" id="measure"><div class="pg-body"></div></div></div>
+<div id="fit-host"></div>
+<div id="printroot"></div>
+<nav id="mbar" aria-label="Schnellzugriff">
+  <button type="button" data-mb="edit" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 19.5l1-4.6L16.3 4.1a2.2 2.2 0 0 1 3.1 3.1L8.6 18z"/><path d="M14.4 6l3.1 3.1"/></svg><span>Bearbeiten</span></button>
+  <button type="button" data-mb="preview" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.8" width="14" height="18.4" rx="1.6"/><path d="M8.5 7.5h7M8.5 11h7M8.5 14.5h4.5"/></svg><span>Vorschau</span></button>
+  <button type="button" data-mb="add" class="mb-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Baustein</span></button>
+  <button type="button" data-mb="out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="1.5"/><path d="M6 14h12v7H6z"/></svg><span>Ausgeben</span></button>
+</nav>
+<div id="mmore-pop" class="mm-pop" hidden role="menu"></div>
+<div id="home-root"></div>
+<div id="lib-root"></div>
+<div id="adm-root"></div>
+<div id="fo-root"></div>
+<div id="dlg-root"></div>
+<div id="gl-root"></div>
+<div id="zl-root"></div>
+<div id="menu-root"></div>
+<input type="file" id="import-file" accept=".json,application/json" hidden>
+<div id="rt-bar" class="rt-bar" role="toolbar" aria-label="Formatierung" hidden>
+  <button type="button" data-rt="b" title="Fett (Strg+B)"><b style="font-size:15px">B</b></button>
+  <button type="button" data-rt="i" title="Kursiv (Strg+I)"><i style="font-family:Georgia,serif;font-size:16px">I</i></button>
+  <button type="button" data-rt="u" title="Unterstrichen (Strg+U)"><u style="font-size:15px">U</u></button>
+  <button type="button" data-rt="m" title="Textmarker (Strg+Umschalt+H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20h14" stroke-width="3.2" opacity=".45"/><path d="M8.5 15.5 15.8 5.2l3 2.2-7.2 10.3H8.5z"/><path d="m8.5 15.5-1.2 2.3"/></svg></button>
+  <span class="sep" data-hd></span>
+  <button type="button" data-rt="h" data-hd title="Zwischenüberschrift (oder „## “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5v14M14 5v14M5 12h9"/><path d="M17.5 13.2 20 11.5V19"/></svg></button>
+  <span class="sep" data-full></span>
+  <button type="button" data-rt="ul" data-full title="Aufzählung (oder „- “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="5" cy="17" r="1.2" fill="currentColor" stroke="none"/><path d="M9.5 7H20M9.5 12H20M9.5 17H20"/></svg></button>
+  <button type="button" data-rt="ol" data-full title="Nummerierung (oder „1. “ am Zeilenanfang)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5 5.5 4.5V9.5M4 9.5h3M4 14.8c.3-.9 2.8-1.1 2.8.4 0 1.2-2.8 2.1-2.8 3.3h3"/><path d="M10.5 7H20M10.5 12H20M10.5 17H20"/></svg></button>
+  <button type="button" data-rt="gap" data-full title="Lücke zum Ausfüllen (ersetzt das Markierte; oder ___ tippen)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17.5h18"/><path d="M3 14.5v3M21 14.5v3"/><path d="M8 11.5 10 6l2 5.5M8.7 9.8h2.6" stroke-width="1.5"/></svg><span>Lücke</span></button>
+  <span class="sep"></span>
+  <button type="button" data-rt="x" title="Formatierung entfernen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5h11M11.5 5 9 19"/><path d="m15 14 5 5M20 14l-5 5"/></svg></button>
+</div>
+<div id="toast-root"></div>
+<div id="tip-root"></div>
+
+<script>

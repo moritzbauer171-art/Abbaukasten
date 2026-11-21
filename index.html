@@ -956,6 +956,7 @@ body.mw-max-on{overflow:hidden}
 .tipcard p{margin:0;font-size:13px;line-height:1.4;color:var(--ink)}
 .tip-a{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
 .cf-opts{display:flex;flex-direction:column;gap:8px}
+.fass-l{max-height:min(56vh,520px);overflow-y:auto}.fass-it{display:flex;align-items:center;gap:12px;cursor:default}.fass-it>span{flex:1;min-width:0}.fass-it .btn{flex:none}
 .dlg.dlg-kl{width:min(640px,calc(100% - 32px))}
 .kl-list{display:flex;flex-direction:column;gap:10px}
 .sp-lead{margin:0 0 10px}
@@ -7272,13 +7273,22 @@ function vpHTML() {
   const m = state.sheet.meta, vp = vpOf();
   return `<h2 id="dlg-t">Verlaufsplan</h2>
     <p class="rlp-stat">Entsteht aus Phase, Zeit, Sozialform, Arbeitsauftrag und Erwartung der Aufgaben. Phase und Zeit trägst du neben den Sozialformen jeder Aufgabe ein; in Word lässt sich alles weiter bearbeiten.</p>
-    <div class="row vp-meta"><label class="f"><span>Datum</span><input type="text" data-vp="datum" value="${esc(vp.datum || '')}" placeholder="z. B. 12.11.2026"></label><label class="f narrow"><span>Beginn</span><input type="text" data-vp="start" value="${esc(vp.start || '')}" placeholder="08:00"></label><label class="f narrow"><span>Länge</span><select data-vp="lesson">${[45, 60, 90, 135].map(n => `<option value="${n}"${n === (Number(m.lesson) || 45) ? ' selected' : ''}>${n} Min.</option>`).join('')}</select></label></div>
+    <div class="row vp-meta"><label class="f"><span>Datum</span><input type="text" data-vp="datum" value="${esc(vp.datum || '')}" placeholder="z. B. 12.11.2026"></label><label class="f narrow"><span>Beginn</span><input type="text" data-vp="start" value="${esc(vp.start || '')}" placeholder="08:00"></label><label class="f narrow"><span>Länge</span><select data-vp="lesson">${[45, 60, 75, 90, 135].map(n => `<option value="${n}"${n === (Number(m.lesson) || 45) ? ' selected' : ''}>${n} Min.</option>`).join('')}</select></label></div>
     <label class="f"><span>Stundenziel</span><textarea data-vp="ziel" rows="2" placeholder="Die Schülerinnen und Schüler …">${esc(vp.ziel || '')}</textarea></label>
     <label class="f"><span>Stundenfrage</span><input type="text" data-vp="frage" value="${esc(tfStr(m.frage))}" placeholder="optional, z. B. Wie erzeugen Politikerinnen und Politiker in sozialen Medien Nähe?"></label>
     <div id="vp-prev">${vpTableHTML()}</div>
-    <div class="row"><button class="btn primary" type="button" data-act="vp-docx">Als Word speichern</button><button class="btn" type="button" data-act="dlg-close">Schließen</button></div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="vp-docx">Als Word speichern</button><button class="btn" type="button" data-act="vp-print">Drucken oder als PDF</button><button class="btn" type="button" data-act="dlg-close">Schließen</button></div>`;
 }
 function openVP() { state.dlg = { mode: 'vp' }; renderDlg(); }
+// Drucken bzw. „Als PDF speichern“ über den Druckdialog des Browsers (Querformat)
+function vpPrint() {
+  const m = state.sheet.meta, vp = vpOf(); const css = [...document.styleSheets].length ? '' : '';
+  const head = `<h1>Verlaufsplan</h1><p class="m">${esc(stTitle(state.sheet))}${vp.datum ? ' · ' + esc(vp.datum) : ''}${vp.start ? ' · Beginn ' + esc(vp.start) : ''} · ${Number(m.lesson) || 45} Minuten · ${esc(KL(state.sheet.klasse).course || KL(state.sheet.klasse).label || '')}</p>${vp.ziel ? `<p><b>Stundenziel:</b> ${esc(vp.ziel)}</p>` : ''}${tfStr(m.frage).trim() ? `<p><b>Stundenfrage:</b> ${esc(tfStrip(m.frage))}</p>` : ''}`;
+  const doc = `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Verlaufsplan</title><style>@page{size:A4 landscape;margin:14mm}body{font:10.5pt/1.35 system-ui,-apple-system,'Segoe UI',sans-serif;color:#111;margin:0}h1{font-size:16pt;margin:0 0 2mm}.m{color:#555;margin:0 0 3mm}p{margin:0 0 2mm}.vp-wrap{overflow:visible}table{border-collapse:collapse;width:100%;margin-top:3mm}th{background:#2B45B8;color:#fff;text-align:left;padding:4px 6px;font-size:9.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}td{border:1px solid #c9ced8;padding:4px 6px;vertical-align:top}td small{display:block;color:#555}tr{break-inside:avoid}</style></head><body>${head}${vpTableHTML()}</body></html>`;
+  const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+  document.body.appendChild(f); const w = f.contentWindow; w.document.open(); w.document.write(doc); w.document.close();
+  setTimeout(() => { try { w.focus(); w.print(); } catch { toast('Drucken ist hier nicht möglich – bitte „Als Word speichern“ nutzen.'); } setTimeout(() => f.remove(), 60000); }, 300);
+}
 async function exportVP() {
   if (busy) return; busy = true;
   try {
@@ -13129,7 +13139,7 @@ function mmoreHTML(kind) {
     login: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.5" r="2.8"/><path d="M2.8 14c.8-2.8 2.8-4 5.2-4s4.4 1.2 5.2 4"/></svg>' };
   const vis = id => { const e = document.getElementById(id); return e && !e.hidden; };
   const H = t => `<div class="mm-h">${t}</div>`, SEP = '<div class="mm-sep"></div>';
-  if (kind === 'stunden') return it('btn-new', ICON.plus, 'Neue Stunde') + it('btn-lib', ICON.folder, 'Meine Stunden') + it('btn-saveas', ICON.save, 'Speichern unter …', 'Strg ⇧ S') + (isBasis() ? '' : SEP + it('btn-home', ICON.home, 'Startseite'));
+  if (kind === 'stunden') return it('btn-new', ICON.plus, 'Neue Stunde') + it('btn-lib', ICON.folder, 'Meine Stunden') + it('btn-saveas', ICON.save, 'Speichern unter …', 'Strg ⇧ S') + `<button type="button" role="menuitem" data-cra="fass"><span class="mm-i"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.8 8a5.2 5.2 0 1 0 1.6-3.8"/><path d="M2.5 2.8v2.6h2.6"/><path d="M8 5.2V8l2 1.3"/></svg></span>Frühere Fassungen …</button>` + (isBasis() ? '' : SEP + it('btn-home', ICON.home, 'Startseite'));
   if (kind === 'kl') { const fk = fachKey(state.klasse);
     return H('Klasse') + KLASSEN.filter(k => k.fach === fk).map(k => `<button type="button" role="menuitem" data-crk="${esc(k.id)}" class="${state.klasse === k.id ? 'on' : ''}"><span class="mm-dot" style="background:${(ACCENTS[k.accent] || ACCENTS.tinte).c}"></span>${esc(k.label)}<small>${(state.lib || []).filter(d => d.klasse === k.id).length || ''}</small></button>`).join('') + SEP + `<button type="button" role="menuitem" data-cra="klassen"><span class="mm-i">${ICON.plus}</span>Klassen anlegen und bearbeiten</button>`; }
   if (kind === 'st') { const cur = state.sheet; const L = (state.lib || []).filter(d => d.klasse === state.klasse).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)).slice(0, 8);
@@ -13199,6 +13209,7 @@ function mobileInit() {
     if (b.dataset.crab != null) { abGo(+b.dataset.crab); return; }
     if (b.dataset.cra === 'klassen') { openKlassen(false); return; }
     if (b.dataset.cra === 'keys') { keysOpen(); return; }
+    if (b.dataset.cra === 'fass') { openFass(); return; }
     if (b.dataset.cra) abAct(b.dataset.cra, b); });
   document.addEventListener('click', e => { const p = $('#mmore-pop'); if (p && !p.hidden && !e.target.closest('#mmore-pop, #btn-mmore, [data-mmk]')) mmoreToggle(false); });
   // Zurück-Geste: eigener Eintrag im Verlauf, solange keine Freigabe- oder Mappen-Adresse offen ist
@@ -13555,7 +13566,7 @@ function saveNow() {
   savePending = false;
   sh.updatedAt = Date.now();
   const snap = clone(sh), b = backend;
-  rememberLast(snap); setStatus('saving');
+  rememberLast(snap); setStatus('saving'); FASS.keep(snap, 'auto');
   saveChain = saveChain.then(() => doSave(b, snap)).catch(() => {});
   return saveChain;
 }
@@ -13579,10 +13590,51 @@ async function doSave(b, snap) {
   }
 }
 
+/* ---------- Frühere Fassungen: Stände je Blatt in diesem Browser (IndexedDB) ----------
+   Beim Öffnen und spätestens alle 10 Minuten beim Speichern wird ein Stand abgelegt.
+   Behalten werden: alle Stände der letzten 24 Stunden (höchstens 24), danach einer je Tag (30 Tage). */
+const FASS = (() => {
+  const key = id => 'fass:' + id; const GAP = 10 * 60 * 1000; let busy = Promise.resolve();
+  const sig = sh => { try { const j = JSON.stringify([sh.meta, sh.blocks, sh.abs, sh.stunde, sh.cards]); let h = 5381; for (let i = 0; i < j.length; i++) h = ((h << 5) + h + j.charCodeAt(i)) | 0; return j.length + ':' + (h >>> 0).toString(36); } catch { return ''; } };
+  const thin = L => { const now = Date.now(), day = 864e5; const recent = L.filter(x => now - x.t < day).slice(-24); const seen = new Set();
+    const older = L.filter(x => now - x.t >= day && now - x.t < 30 * day).filter(x => { const d = new Date(x.t).toDateString(); if (seen.has(d)) return false; seen.add(d); return true; });
+    return [...older, ...recent].sort((a, b) => a.t - b.t); };
+  const list = async id => ((await OFF.get(key(id))) || []).filter(x => x && x.sheet);
+  // Stand ablegen; why: 'auto' (beim Speichern), 'open' (beim Öffnen), 'restore' (vor dem Wiederherstellen)
+  const keep = (sh, why = 'auto', force = false) => { if (!sh || !sh.id || sh.example) return busy; const snap = clone(sh); busy = busy.then(async () => {
+    const L = await list(snap.id); const last = L[L.length - 1];
+    if (why === 'auto' && !force && last && Date.now() - last.t < GAP) return;
+    if (last && last.sig === sig(snap) && why !== 'restore') return;
+    L.push({ t: Date.now(), why, sig: sig(snap), title: stTitle(snap), n: (snap.blocks || []).length + (snap.abs || []).reduce((a, x) => a + ((x && x.blocks) || []).length, 0), sheet: snap });
+    await OFF.set(key(snap.id), thin(L)); }).catch(() => {}); return busy; };
+  return { keep, list, sig };
+})();
+const FASS_WHY = { open: 'beim Öffnen', auto: 'beim Arbeiten', restore: 'vor dem Wiederherstellen' };
+async function openFass() {
+  const sh = state.sheet; if (!sh) return; await FASS.keep(sh, 'auto', true);
+  const L = (await FASS.list(sh.id)).reverse();
+  state.dlg = { mode: 'fass', L }; renderDlg();
+}
+function fassHTML() {
+  const L = state.dlg.L || []; const fmt = t => new Date(t).toLocaleString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return `<h2 id="dlg-t">Frühere Fassungen</h2>
+    <p class="hint" style="margin-top:-4px">Stände von „${esc(stTitle(state.sheet))}“ aus diesem Browser: beim Öffnen und alle zehn Minuten beim Arbeiten. Wiederherstellen legt den jetzigen Stand vorher ebenfalls ab – du kannst also jederzeit zurück.</p>
+    ${L.length ? `<div class="cf-opts fass-l">${L.map((x, i) => `<div class="tpl fass-it"><span><b>${esc(fmt(x.t))}</b><span>${esc(relTime(x.t))} · ${esc(FASS_WHY[x.why] || '')} · ${x.n} ${x.n === 1 ? 'Baustein' : 'Bausteine'}${x.title !== stTitle(state.sheet) ? ' · „' + esc(x.title) + '“' : ''}</span></span><button type="button" class="btn sm" data-act="fass-go" data-i="${i}"${i === 0 && x.sig === FASS.sig(state.sheet) ? ' disabled title="Das ist der jetzige Stand"' : ''}>Wiederherstellen</button></div>`).join('')}</div>`
+      : '<p>Für dieses Blatt gibt es in diesem Browser noch keine früheren Fassungen. Sie entstehen beim Öffnen und während du arbeitest.</p>'}
+    <div class="row" style="margin-top:12px"><button class="btn" type="button" data-act="dlg-close">Schließen</button></div>`;
+}
+async function fassRestore(i) {
+  const x = (state.dlg && state.dlg.L || [])[i]; if (!x) return; const cur = state.sheet;
+  await FASS.keep(cur, 'restore');
+  const sh = clone(x.sheet); sh.id = cur.id; sh.updatedAt = Date.now();
+  state.dlg = null; renderDlg(); openSheet(sh, { keepArea: true }); scheduleSave();
+  toast(`Fassung vom ${new Date(x.t).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })} ist wiederhergestellt.`, 'Rückgängig', () => openFass());
+}
 /* ---------- Öffnen, Reiter wechseln ---------- */
 const LS_START = 'abw.start';
 const startWanted = () => !isBasis() && String(lsGet(LS_START)) !== '0';
 function openSheet(sh, opt = {}) {
+  if (sh && sh.id) setTimeout(() => FASS.keep(sh, 'open'), 1500);
   state.gapEdit = null; state.bkOpen = false;
   if (!opt.keepArea) { if (startWanted() && !opt.edit) { state.area = 'start'; state.out = 'blatt'; if (typeof isNarrow === 'function' && isNarrow() && state.view !== 'edit') setTimeout(() => setView('edit'), 0); } else if (state.area === 'start' || state.area === 'einst' || !state.area) { state.area = 'blatt'; state.out = 'blatt'; } }
   closeGloss(); closeZl(); closeMenu();
@@ -14717,7 +14769,7 @@ function outHTML() {
   const W = [['Arbeitsblatt', [['blatt', 'Arbeitsblatt', 0, 1], ['tipps', 'Tippkarten', nT]]], ['Präsentation', [['pres', 'Präsentation', 0, 1]]], ['Tafel', [['tafel', 'Tafelbild', nTf], ['karten', 'Tafelkarten', nK]]], ['Druck-Extras', [['a4', 'A4-Vorlagen', nA4], ['a3', 'A3-Vorlagen', nA3], ['exit', 'Exit-Tickets', nE]]]]
     .map(([g, L]) => [g, L.filter(o => !isBasis() || BASIS_OUTS.includes(o[0]))]).filter(([, L]) => L.length);
   const what = `<nav class="out-what" aria-label="Was ausgeben">${isBasis() ? '' : `<button type="button" class="ow ow-all" data-act="out-set" data-f="whole" data-v="1" aria-pressed="${!!d.whole}"><b>Ganze Stunde</b><small>alles in einem Ordner</small></button>`}
-    ${W.map(([g, L]) => `<small class="ow-g">${g}</small>${L.map(([k, l, n, always]) => `<button type="button" class="ow" data-act="out-set" data-f="out" data-v="${k}" aria-pressed="${!d.whole && state.out === k}"${!always && !n ? ' disabled title="Noch nichts angelegt"' : ''}><b>${l}</b>${n ? `<em>${n}</em>` : ''}</button>`).join('')}`).join('')}</nav>`;
+    ${W.map(([g, L]) => `<small class="ow-g">${g}</small>${L.map(([k, l, n, always]) => `<button type="button" class="ow" data-act="out-set" data-f="out" data-v="${k}" aria-pressed="${!d.whole && state.out === k}"${!always && !n ? ' disabled title="Noch nichts angelegt"' : ''}><b>${l}</b>${n ? `<em>${n}</em>` : ''}</button>`).join('')}`).join('')}<small class="ow-g">Planung</small><button type="button" class="ow" data-act="out-vp"><b>Verlaufsplan</b><small>Word oder PDF</small></button></nav>`;
   if (d.whole) { const A = stABs(); const SB2 = stBlocks();
     const L = [...A.map(x => `${esc(abLabel(x.meta, x.k))}: Schüler- und Lehrerfassung als PDF und Word, Erwartungshorizont${tipCards().length ? ', Tippkarten' : ''}, digitale Fassung`), nTf ? 'Tafelbild, vollständig und als Lückenfassung' : '', nK ? 'Tafelkarten' : '', nA4 ? 'A4-Vorlagen' : '', nA3 ? 'A3-Vorlagen in A3 und auf 2 × A4' : '', nE ? 'Exit-Tickets' : '', 'PowerPoint mit allen Folien', 'Inhaltsliste'].filter(Boolean);
     return `<h2 id="dlg-t">Ausgeben</h2><div class="out-2">${what}<div class="out-how"><div class="out-whole"><b>Ganze Stunde als Ordner</b><p>${window.abw ? 'Du wählst einen Ort, der Ordner wird dort angelegt.' : 'Der Ordner kommt als ZIP-Datei.'} Die Dateien sind durchnummeriert:</p><ul>${L.map(x => `<li>${x}</li>`).join('')}</ul></div>
@@ -14734,7 +14786,7 @@ function outHTML() {
     ${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? presPickHTML() : ''}
     ${state.out === 'vp' || state.out === 'pres' ? '' : `<div class="out-chk"><div class="out-chk-h">${checks.some(c => c.k === 'warn') ? 'Bitte kurz prüfen' : 'Alles bereit'}<span>${pages} ${state.out === 'karten' ? (pages === 1 ? 'Blatt' : 'Blätter') : (pages === 1 ? 'Seite' : 'Seiten')}</span></div>
       ${checks.length ? `<ul>${checks.map(c => `<li class="${c.k}">${esc(c.t)}</li>`).join('')}</ul>` : '<p class="out-ok">Keine Auffälligkeiten gefunden.</p>'}</div>`}
-    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button><button class="link" type="button" data-act="out-vp">Verlaufsplan</button>' : ''}</div></div></div>`;
+    <div class="row"><button class="btn primary" type="button" data-act="out-go">${go}</button>${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? '<button class="btn" type="button" data-act="out-pres">Im Browser präsentieren</button>' : ''}<button class="btn" type="button" data-act="dlg-close">Abbrechen</button>${state.out === 'blatt' && state.fassung === 'lehrer' ? '<button class="link" type="button" data-act="out-eh" style="margin-left:auto">Erwartungshorizont (.md)</button>' : ''}</div></div></div>`;
 }
 async function outGo() {
   const d = state.dlg; if (!d) return; d.done = true; lsSet(LS_OUTFMT, d.fmt);
@@ -14825,7 +14877,7 @@ function renderDlg() {
   const r = $('#dlg-root'); const d = state.dlg; r.classList.toggle('dlg-must', !!(d && d.mode === 'login' && loginForced()));
   if (!d) { r.innerHTML = ''; return; }
   const msgs = '<div class="err" id="dlg-err" role="alert"></div><div class="ok" id="dlg-ok" role="status" hidden></div>';
-  const body = d.mode === 'sharepick' ? sharePickHTML() : d.mode === 'share' ? shareDlgHTML(d) : d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
+  const body = d.mode === 'fass' ? fassHTML() : d.mode === 'sharepick' ? sharePickHTML() : d.mode === 'share' ? shareDlgHTML(d) : d.mode === 'vp' ? vpHTML() : d.mode === 'dg' ? dgHTML() : d.mode === 'ocr' ? ocrHTML() : d.mode === 'mappe' ? mappeHTML() : d.mode === 'rlp' ? rlpDlgHTML() : d.mode === 'klassen' ? klassenHTML() : d.mode === 'conflict' ? conflictHTML() : d.mode === 'help' ? helpHTML() : d.mode === 'new' ? newDlgHTML() : d.mode === 'out' ? outHTML() : d.mode === 'saveas' ? saveAsHTML() : d.mode === 'newpw'
     ? `<h2 id="dlg-t">Neues Passwort</h2><p>Leg ein neues Passwort für dein Konto fest.</p>
       <form id="dlg-form" data-mode="newpw" novalidate>
         <label class="f"><span>Neues Passwort</span><input class="inp" id="dlg-pw" type="password" autocomplete="new-password"></label>
@@ -14889,6 +14941,7 @@ async function onDlgClick(e) {
   if (act === 'sp-back') { spKeep(); state.dlg.step = 'pick'; renderDlg(); setTimeout(() => { const sel = document.querySelector('#dlg-root .sp-g button.on'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' }); const q = $('#sp-q'); if (q && q.value) q.dispatchEvent(new Event('input', { bubbles: true })); }, 20); return; }
   if (act === 'sp-cat') { spKeep(); const d = state.dlg, v = a.dataset.v; d.cats = d.cats || []; d.cats = d.cats.includes(v) ? d.cats.filter(x => x !== v) : [...d.cats, v]; renderDlg(); return; }
   if (act === 'sp-del') { const d = state.dlg; const ex = d && sharedOf(d.pick); if (ex) { d.sid = ex.id; shareDelGo(true); } return; }
+  if (act === 'fass-go') { fassRestore(+a.dataset.i); return; }
   if (act === 'cf-theirs' || act === 'cf-mine' || act === 'cf-both') { conflictResolve(act.slice(3)); return; }
   if (state.dlg.mode === 'klassen') {
     const d = state.dlg; if (d.setup) d.school = dlgVal('#kl-school'); const i = +a.dataset.i;
@@ -14930,6 +14983,7 @@ async function onDlgClick(e) {
     if (act === 'dg-off') { await dgOff(); return; }
   }
   if (state.dlg.mode === 'vp' && act === 'vp-docx') { exportVP(); return; }
+  if (state.dlg.mode === 'vp' && act === 'vp-print') { vpPrint(); return; }
   if (state.dlg.mode === 'ocr') {
     const d = state.dlg;
     if (act === 'ocr-rot') { ocrRead(); d.rot = (d.rot + 90) % 360; renderDlg(); return; }

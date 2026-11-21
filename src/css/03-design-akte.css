@@ -1,0 +1,34 @@
+/* ===== Design: Akte ===== */
+.page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
+.page.d-akte.tone{background:#F5EEDD}
+.page.d-akte::before,.page.d-akte::after{content:"";position:absolute;left:6.5mm;width:5.5mm;height:5.5mm;border-radius:50%;border:.3mm solid rgba(60,50,30,.28);background:rgba(60,50,30,.05)}
+.page.d-akte::before{top:105.75mm}
+.page.d-akte::after{top:185.75mm}
+.ak{padding-top:1mm}
+.ak-box{border:.4mm solid var(--acc)}
+.ak-band{display:flex;align-items:stretch;gap:3mm;border-bottom:.4mm solid var(--acc);min-height:7mm;padding-right:36mm}
+.ak-tab{background:var(--acc);color:#F5EEDD;font-family:var(--f-disp);font-size:11pt;letter-spacing:.25em;text-transform:uppercase;padding:1mm 4mm 0;display:flex;align-items:center}
+.ak-org{font-size:7.3pt;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;color:var(--paper-muted);min-width:0}
+.ak-row{display:flex}
+.ak-row+.ak-row{border-top:.25mm solid var(--acc)}
+.ak-f{padding:1.6mm 3mm 2mm;display:flex;flex-direction:column;gap:.8mm;min-width:0}
+.ak-f+.ak-f{border-left:.25mm solid var(--acc)}
+.ak-f>span{font-size:6.8pt;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-muted)}
+.ak-az{flex:0 0 36mm}
+.ak-az b{font-family:var(--f-disp);font-size:14pt;font-weight:400}
+.ak-betr{flex:1}
+.ak-betr b{font-family:var(--f-disp);font-size:15pt;font-weight:400;line-height:1.2}
+.ak-betr i{font-style:normal;font-size:8.5pt;color:var(--paper-muted)}
+.ak-sig .ak-line{flex:1;flex-direction:row;align-items:flex-end;gap:2mm;padding-top:3mm}
+.ak-sig .ak-dt{flex:0 0 58mm}
+.ak-line>span{white-space:nowrap}
+.ak-line u{flex:1;border-bottom:.25mm dotted var(--acc);height:4mm;text-decoration:none}
+.ak-stamp{position:absolute;right:3mm;top:-4mm;transform:rotate(-8deg);border:.8mm double #B3261E;color:#B3261E;font-family:var(--f-disp);font-size:13pt;letter-spacing:.16em;padding:1.2mm 3mm .6mm;text-transform:uppercase;opacity:.86;border-radius:1mm;white-space:nowrap;max-width:70mm;overflow:hidden}
+.d-akte .mat-no,.d-akte .task-no{background:transparent;color:var(--acc);border:.3mm solid var(--acc);border-radius:0}
+.d-akte .mat-no{font-family:var(--f-disp);font-weight:400;letter-spacing:.04em}
+.d-akte .tasks-title,.d-akte .info-kind,.d-akte .mat-cont{font-family:var(--f-disp);font-weight:400;letter-spacing:.14em}
+.d-akte .blk-h h2{font-family:var(--f-disp);font-weight:400;text-decoration:underline;text-decoration-thickness:.25mm;text-underline-offset:1mm}
+.d-akte .blk-info{background:transparent;border:.3mm dashed var(--acc);border-radius:0}
+.d-akte .tb th{background:transparent;border-bottom:.7mm double var(--acc)}
+.d-akte .q-mark{font-family:var(--f-disp)}
+

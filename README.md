@@ -6,6 +6,8 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Version 3.0 – Frühere Fassungen:** Unter „Stunden ▾ → Frühere Fassungen …“ stehen die Stände des offenen Blatts aus diesem Browser: beim Öffnen und alle zehn Minuten beim Arbeiten (die letzten 24 Stunden vollständig, davor einer je Tag, 30 Tage lang). „Wiederherstellen“ legt den jetzigen Stand vorher ebenfalls ab, man kann also immer zurück.
+- **Version 3.0 – Verlaufsplan im Ausgeben:** Der Verlaufsplan hat unter „Ausgeben“ einen eigenen Eintrag (Gruppe „Planung“). Er entsteht aus Phase, Zeit, Sozialform, Auftrag und Erwartung der Aufgaben und Unterrichtsschritte, mit Datum, Beginn, Länge (jetzt auch 75 Minuten), Stundenziel und Stundenfrage; speichern als Word oder über „Drucken oder als PDF“ im Querformat.
 - **Stunden statt Blätter:** Geplant wird je Stunde. Eine Stunde enthält ein oder mehrere Arbeitsblätter (z. B. AB 8, AB 8b Hausaufgabe, AB 8c Differenzierung) sowie Tafelkarten, Tafelbilder, A3-Vorlagen, Präsentation und Verlaufsplan. Oben im Editor stehen die ABs als Reiter; „+ Arbeitsblatt“ legt ein weiteres an (Nummer automatisch mit Buchstaben), daneben verschieben, duplizieren und löschen (mit Rückgängig). Ab zwei ABs hat die Stunde einen eigenen Titel, der in „Meine Stunden“ erscheint, zusammen mit der Zahl der Arbeitsblätter. Kurs, Design, Anrede, Niveaus, Gruppen, Tafelkarten und Verlaufsplan gelten für die ganze Stunde; Nummer, Titel, Thema, Papier und digitale Fassung je AB. Tafelbild, A3-Vorlagen, Präsentation (mit Zwischenfolie je AB) und Verlaufsplan („AB 8b, Aufgabe 1“) umfassen alle ABs der Stunde, die Mappe einer Reihe ebenfalls. Bisherige Blätter sind Stunden mit einem AB; Ordner bleiben für Reihen.
 - **Präsentieren mit zwei Bildschirmen und ohne Standby:** Während einer Präsentation (und beim Tafelbild am Beamer) bleibt der Bildschirm an, der Rechner geht nicht in den Standby (Screen Wake Lock; Chrome, Edge, Firefox, Safari). Der Knopf „Referentenansicht“ öffnet ein Beamerfenster mit der Folie; in Chrome und Edge springt es nach einmaliger Erlaubnis („Fenster verwalten“) direkt auf den zweiten Bildschirm, sonst hinüberziehen. Ein Klick darin schaltet Vollbild. Das Hauptfenster zeigt die aktuelle Folie, die nächste Folie, alle Tipps und Erwartungen als Notizen, Uhrzeit und Timer. Tasten und Presenter wirken in beiden Fenstern; Schließen des Beamerfensters beendet die Referentenansicht.
 - **Unterpunkte auf Folien:** Enthält eine Aufgabe Spiegelstriche („- …“) oder Unterpunkte („a)“, „1.“), zeigt die Folie die Einleitung als Absatz und die Unterpunkte eingerückt mit Gedankenstrich bzw. Buchstabe/Zahl – wie auf dem Arbeitsblatt. Sätze danach erscheinen wieder als Absatz.
@@ -250,3 +252,9 @@ Speicher: Der kostenlose Tarif erlaubt 500 MB Datenbank; ein Blatt braucht im Sc
 ---
 
 © 2026 Moritz Bauer
+
+## Aufbau (für die Weiterentwicklung)
+
+Seit Version 3.0 liegt der Quelltext in Teilen unter `src/` (Gestaltung in `src/css/`, Programm in `src/js/`, Reihenfolge in `src/REIHENFOLGE.txt`). `python3 tools/build.py` setzt daraus `index.html` (GitHub Pages, Windows-App) und `dist/ab-werkstatt.html` (Online-Version) zusammen.
+
+Die Tests unter `tests/` prüfen mit pytest und Playwright die wichtigsten Abläufe (Arbeitsblatt, Gliederung, Folien, Handy, Companion mit zwei Tablets, Verlaufsplan, frühere Fassungen). Sie laufen bei jedem Hochladen automatisch (GitHub Actions „Tests“); lokal mit `python3 tools/build.py && python3 -m pytest`.

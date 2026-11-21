@@ -1,0 +1,210 @@
+/* ===== Handy (Pixel & Co.): kompakte Kopfleiste, untere Leiste, große Tippziele ===== */
+#mbar,#btn-mmore{display:none}
+.mm-pop{position:fixed;z-index:46;min-width:220px;background:var(--card);border:1px solid var(--line-strong);border-radius:14px;box-shadow:0 14px 36px -14px rgba(20,30,60,.45);padding:6px;display:flex;flex-direction:column}
+.mm-pop[hidden]{display:none}
+.mm-pop button{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 12px;border:0;background:none;color:var(--ink);font:inherit;font-size:15px;text-align:left;border-radius:10px;cursor:pointer}
+.mm-pop button:active,.mm-pop button:focus-visible{background:var(--panel)}
+.mm-i{width:22px;display:grid;place-items:center;color:var(--muted)}.mm-i svg{width:20px;height:20px}
+/* verhindert, dass absolut gesetzte Teile im Editor die Seite verlängern (leerer Bereich beim Wischen) */
+#editor,#preview-scroll{contain:paint}
+@media (max-width: 640px){
+  :root{--mbar-h:64px}
+  body{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+  .crumbs{grid-area:crumbs;overflow-x:auto;scrollbar-width:none}.hd-hist{display:none}#btn-cmd,#btn-pres,#btn-stunden>span{display:none!important}
+  .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand brand" "crumbs crumbs" "status actions";gap:6px 8px;padding-top:max(8px, env(safe-area-inset-top, 0px))}
+  .brand{grid-area:brand}
+  .actions{grid-area:actions;gap:6px;flex-wrap:nowrap;justify-content:flex-end}
+  .status{grid-area:status;align-self:center;min-width:0}
+  .bar .tabs{display:none!important}
+  #btn-out,#btn-saveas,#btn-help,#btn-set,#btn-rlp,#btn-login,#btn-forum,#btn-tafel{display:none!important}
+  #btn-mmore{display:inline-grid;place-items:center}
+  .actions .btn,.actions .ib-help{min-width:44px;height:44px;padding:0 10px;border-radius:12px}
+  .actions .ib-help{width:44px;padding:0}
+  .actions .btn svg{width:20px;height:20px}
+  #btn-new .l-short{display:inline}
+  .fach-btn{min-height:36px;padding:4px 10px}
+  .rt{padding:10px 14px;min-height:44px}
+  #mbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:35;height:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px));padding:6px max(8px, env(safe-area-inset-left, 0px)) env(safe-area-inset-bottom, 0px) max(8px, env(safe-area-inset-right, 0px));background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px -12px rgba(20,30,60,.35)}
+  #mbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--muted);font:600 11.5px/1.1 var(--f-ui);border-radius:14px;margin:0 3px;-webkit-tap-highlight-color:transparent}
+  #mbar button svg{width:24px;height:24px}
+  #mbar button[aria-pressed="true"]{color:var(--tinte);background:var(--tinte-soft)}
+  #mbar .mb-add{color:#fff;background:var(--tinte);margin:2px 8px}
+  #mbar .mb-add:active{filter:brightness(.92)}
+  .area-bar{position:static;margin-left:0;margin-right:0}
+  .qbar{position:static}
+  .toast{bottom:calc(var(--mbar-h) + 14px + env(safe-area-inset-bottom, 0px))!important}
+  #tip-root{bottom:calc(var(--mbar-h) + 10px + env(safe-area-inset-bottom, 0px))}
+  .card-h .ib,.card-h button.ib,.card-h [data-act="toggle"],.card-h [data-act="up"],.card-h [data-act="down"],.card-h [data-act="menu"]{min-width:40px;min-height:40px}
+  [data-act="ins-open"]{min-width:36px;min-height:36px}
+  .seg button{min-height:38px}
+  input[type="text"],input[type="number"],input[type="time"],select,textarea,.inp{font-size:16px}
+  .hm-top{padding-top:max(10px, env(safe-area-inset-top, 0px))}
+  .hm{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+  .tour-card{bottom:auto}
+}
+@media (pointer: coarse){
+  /* Tablets und Handys: größere Tippziele, keine Zoom-Sprünge beim Tippen in Felder (iPad/iPhone zoomen unter 16 px) */
+  input[type="text"],input[type="number"],input[type="time"],input[type="search"],select,textarea,.inp,.rtx{font-size:16px}
+  .card-h [data-act="toggle"],.card-h [data-act="up"],.card-h [data-act="down"],.card-h [data-act="menu"],.card-h .ib{min-width:40px;min-height:40px}
+  .pres-tg{min-height:36px}
+  .seg button{min-height:38px}
+  .ib-help,.actions .btn{min-height:40px}
+  .rt{min-height:42px}
+  *{-webkit-tap-highlight-color:transparent}
+}
+/* Mittlere Breiten (Surface Go, iPad quer, kleine Laptops): kurze Knopftexte, Kopfleiste in einer Zeile */
+@media (min-width: 900px) and (max-width: 1440px){
+  .bar{flex-wrap:nowrap}
+  .brand{flex:0 0 auto}
+  .status{flex:1 1 auto;justify-content:flex-end;overflow:hidden}
+  .status span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .actions{flex-wrap:nowrap;flex:0 0 auto}
+  .l-long{display:none}.l-short{display:inline}
+}
+@media (min-width: 900px) and (max-width: 1100px){ .status{display:none} .actions .btn{padding-left:9px;padding-right:9px} }
+/* Tablets hochkant (iPad mini, iPad, iPad Air): dieselbe untere Leiste, Kopfleiste bleibt vollständig */
+@media (min-width: 641px) and (max-width: 899px) and (pointer: coarse){
+  :root{--mbar-h:68px}
+  body{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+  .bar .tabs{display:none!important}
+  #btn-out{display:none!important}
+  #mbar{display:grid;grid-template-columns:repeat(4,minmax(0,160px));justify-content:center;gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:35;height:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px));padding:8px 16px env(safe-area-inset-bottom, 0px);background:var(--card);border-top:1px solid var(--line);box-shadow:0 -6px 18px -12px rgba(20,30,60,.35)}
+  #mbar button{display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:none;color:var(--muted);font:600 14px/1.1 var(--f-ui);border-radius:14px;-webkit-tap-highlight-color:transparent}
+  #mbar button svg{width:22px;height:22px}
+  #mbar button[aria-pressed="true"]{color:var(--tinte);background:var(--tinte-soft)}
+  #mbar .mb-add{color:#fff;background:var(--tinte)}
+  .toast{bottom:calc(var(--mbar-h) + 14px + env(safe-area-inset-bottom, 0px))!important}
+  .hm{padding-bottom:calc(var(--mbar-h) + env(safe-area-inset-bottom, 0px))}
+}
+@media (max-width: 640px) and (pointer: coarse){
+  .soz button,.soz.arb button{min-height:40px}
+  .chk{min-height:40px}
+  .link{padding-top:6px;padding-bottom:6px}
+}
+/* Tafelkarten */
+.kk-page{width:297mm;height:210mm;padding:9mm;background:#FFFFFF}
+.kk-frame{width:100%;height:100%;border:2.4mm solid var(--kc);border-radius:7mm;display:flex;align-items:center;justify-content:center;padding:12mm 16mm;overflow:hidden}
+.kk-in{width:100%;font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";font-weight:700;color:#1C1F27;line-height:1.16;overflow-wrap:normal;word-break:normal}
+.kk-in.term{text-align:center;color:var(--kc)}
+.kk-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.42em}
+.kk-list li{position:relative;padding-left:.85em}
+.kk-list li::before{content:"";position:absolute;left:0;top:.4em;width:.36em;height:.36em;border-radius:50%;background:var(--kc)}
+.kk-page.a5{width:210mm;height:148.5mm;padding:6mm}
+.kk-page.a5 .kk-frame{border-width:1.8mm;border-radius:5mm;padding:8mm 11mm}
+.kk-sheet{width:210mm;height:297mm;background:#FFFFFF;display:flex;flex-direction:column;position:relative}
+.kk-sheet>.kk-page{flex:1 1 0;min-height:0;height:auto;break-inside:avoid}
+.kk-page.strip{width:297mm;height:105mm;padding:5mm}
+.kk-page.strip .kk-frame{border-width:1.8mm;border-radius:5mm;padding:6mm 12mm}
+.kk-sheet.quer{width:297mm;height:210mm}
+.kk-sheet.quer>.kk-page{flex:1 1 0}
+.kk-tip{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:12px;color:var(--muted);background:var(--tinte-soft);border-radius:7px;padding:6px 9px}
+.kk-tip .link{font-size:12px;padding:0}
+.kk-sheet::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:.3mm dashed #8E95A3}
+.cut{position:absolute;z-index:1;width:6.5mm;height:6.5mm;background:#FFFFFF;box-sizing:content-box}
+.kk-sheet>.cut{left:9mm;top:50%;margin-top:-3.25mm;padding:0 1.2mm}
+.bogen>.cut{left:50%;top:9mm;margin-left:-3.25mm;padding:1.2mm 0;transform:rotate(90deg)}
+#fit-host{position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;z-index:-1}
+
+/* Auszeichnung im Text */
+.page mark{background:var(--acc-mark,#FFF0A8);color:inherit;border-radius:.4mm;padding:0 .06em}
+.page u{text-decoration-thickness:.2mm;text-underline-offset:.55mm}
+.page .gap{display:inline-block;width:30mm;height:1em;border-bottom:.25mm solid var(--paper-ink);vertical-align:-.28em;margin:0 .8mm}
+.page p:has(>.gap),.page li:has(>.gap),.task-body:has(>.gap){line-height:2.05}
+.mat-body mark{padding:0 .14em;margin:0 -.14em;border-radius:0}
+.mat-body u{text-decoration:none;border-bottom:.2mm solid currentColor;padding:0 .14em;margin:0 -.14em}
+.page .rl{margin:1.2mm 0 0;padding-left:5.5mm}
+.page .rl:first-child{margin-top:0}
+.page .rl li{margin:.6mm 0 0;padding-left:.8mm}
+.page ul.rl{list-style:disc}
+.page ol.rl{list-style:decimal}
+.page ul.rl li::marker{color:var(--acc)}
+.page ol.rl li::marker{color:var(--acc);font-weight:700}
+.task-body p{margin:0}.task-body p+p{margin-top:1.2mm}
+.page .rl+p{margin-top:1.4mm}
+/* Stile für Absatz und Infokasten (nach den Designs, damit sie gelten) */
+.blk-text.st-einzug{padding-left:8mm}
+.blk-text.st-merksatz{border:.45mm solid var(--acc);border-radius:1.4mm;padding:2.6mm 4mm 2.8mm}
+.blk-text.st-klein{font-size:9pt;color:var(--paper-muted);line-height:1.4}
+.blk-info.st-rahmen{background:transparent;border:.4mm solid var(--acc);border-radius:1.2mm;padding:3mm 4mm 3.2mm;box-shadow:none}
+.blk-info.st-linie{background:transparent;border:0;border-left:1.2mm solid var(--acc);border-radius:0;padding:1mm 0 1mm 4mm;box-shadow:none}
+.blk-info.st-klein .info-text{font-size:8.8pt}
+
+/* Zeilenstücke langer Absätze: sehen aus wie ein Absatz */
+.page p.lf-c{margin-top:0!important;text-indent:0!important}
+.page .rl.lw+.rl.lw{margin-top:0}
+.page .rl li.lf-c{margin-top:0;list-style:none}
+.page .pg-body{overflow-wrap:break-word}
+
+/* Gedicht */
+.blk-mat.gedicht .mat-body p{padding-left:6mm;text-indent:-6mm}
+.blk-mat.gedicht .ln-t{text-align:left;text-align-last:auto}
+.blk-mat.gedicht .ln.vc .ln-t{padding-left:6mm}
+.blk-mat.gedicht .ln.st{padding-top:.75em}
+/* Formulierungshilfen */
+.blk-phr{border:.35mm solid var(--acc-mark,#C9D3EA);border-radius:1.4mm;padding:2.6mm 4mm 3mm}
+.phr-h{display:flex;align-items:center;gap:1.8mm;font-size:7.2pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:1.6mm}
+.phr-h .phr-i{width:4.4mm;height:4.4mm;flex:0 0 auto}
+.phr-grid{display:grid;gap:2.4mm 7mm}
+.blk-phr.c2 .phr-grid{display:block;column-count:2;column-gap:7mm;column-fill:balance}
+.blk-phr.c2 .phr-g+.phr-g{margin-top:2.4mm}
+.blk-phr.c2 .phr-g:not(.long){break-inside:avoid}
+.phr-gh{break-after:avoid}
+.phr-g li{break-inside:avoid}
+.phr-gh{font-weight:700;font-size:9.5pt;margin-bottom:.4mm}
+.phr-g ul{list-style:none;margin:0;padding:0}
+.phr-g li{position:relative;padding-left:3.6mm;font-size:9.5pt;line-height:1.4;margin-top:.6mm}
+.phr-g li::before{content:"›";position:absolute;left:0;top:-.15mm;color:var(--acc);font-weight:700}
+.d-akte .blk-phr,.d-zeitung .blk-phr{border-color:var(--acc)}
+
+/* Mess- und Druckbühne */
+#measure-host{position:fixed;left:0;top:0;width:0;height:0;overflow:visible;visibility:hidden;pointer-events:none;z-index:-1}
+#measure-host .page{height:auto;position:absolute;left:0;top:0}
+#printroot{display:none}
+@media print{
+  @page{size:A4;margin:0}
+  body{padding:0!important;margin:0!important;border:0!important;background:#fff}
+  #app,.toast,.overlay,.drawer,.scrim{display:none!important}
+  #printroot{display:block}
+  #printroot>.pout{break-after:page;box-shadow:none;margin:0}
+  #printroot>.pout:last-child{break-after:auto}
+  #printroot>.kk-sheet{overflow:hidden;break-inside:avoid;height:209.6mm}
+  #printroot>.kk-sheet:not(.quer){height:296.6mm}
+  body>*:not(#printroot){display:none!important}
+  #printroot .page{box-shadow:none}
+}
+/* Handy: kompakter Kopf (zwei schmale Zeilen), Kopf weicht beim Scrollen, eine Vorschauleiste */
+@media (max-width: 640px){
+  .bar{grid-template-columns:auto minmax(0,1fr) auto!important;grid-template-areas:"brand status actions" "crumbs crumbs crumbs"!important;gap:2px 8px!important;padding-bottom:4px!important;align-items:center;transition:margin-top .22s ease}
+  .bar .brand{gap:8px;align-items:center}.bar .brand-c{display:none!important}
+  .bar .logo-l,.bar .logo-w{font-size:17px}
+  .bar .fach-btn{min-height:30px;padding:2px 6px}
+  .bar .status{justify-self:end;font-size:0;gap:0}.bar .status span{display:none!important}.bar .status i{width:8px;height:8px}
+  .bar .actions .btn,.bar .actions .ib-help{min-width:40px;height:38px;border-radius:11px;padding:0 8px}
+  .bar .crumbs{margin:0 -4px}.bar .cr{height:30px;font-size:13px;padding:0 6px}
+  body.hd-hide .bar{margin-top:calc(-1 * var(--hdh, 100px))}
+  .area-bar .qbar{display:none!important}
+  .area-bar .olz{margin-top:4px}
+  .pv-bar{flex-wrap:nowrap!important;padding-top:6px!important;gap:6px!important;min-width:0}
+  .pv-bar #pv-opts{flex:1 1 auto;min-width:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .pv-bar #pv-opts::-webkit-scrollbar{display:none}
+  .pv-bar #pagecount,.pv-bar #btn-wide{display:none!important}
+  .pv-opts .dz-btn{font-size:0!important;gap:0!important;padding:0 10px!important}
+  .pv-bar #btn-zoom{flex:none;padding:0 6px}
+  #editor{gap:6px!important}
+  #editor .card-h{padding:6px 4px 6px 8px!important;gap:6px!important;min-height:0}
+  #editor .card-h .kind-i{width:26px;height:26px}
+  #editor .card-h .ch-k .kind{font-size:9.5px}
+  #editor .card-h .ch-t .sum{font-size:14.5px;line-height:1.25}
+  #editor .card-h .sum2{font-size:11.5px}
+  #editor .card-h .pres-tg{padding:3px 8px 3px 6px!important;min-height:30px}
+  #editor .card-h .ib{min-width:34px;min-height:34px;width:34px;height:34px}
+  #editor .ph-row{margin:0!important}
+  #editor .ins-row{margin:-9px 0!important}
+}
+/* Einfügen zwischen Karten: feine Linie mit kleinem Plus nur an der Stelle unter dem Zeiger (am Tablet unter der gewählten Karte) */
+.ins-row{height:14px!important;min-height:0!important;padding:0!important;flex:none!important;margin:-7px 0!important;cursor:pointer}
+.ins-row::before{content:'';position:absolute;left:14px;right:14px;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:var(--tinte);opacity:0;transform:scaleX(.3);transition:opacity .14s,transform .18s ease-out;pointer-events:none}
+.ins-row .ins-btn{top:50%!important;width:20px!important;height:20px!important;min-width:20px!important;min-height:20px!important;padding:0!important;border:0!important;background:var(--tinte)!important;color:var(--tinte-ink,#fff)!important;font-size:14px!important;transform:translateY(-50%) scale(.6);opacity:0!important;transition:opacity .14s,transform .18s ease-out;box-shadow:0 0 0 3px var(--bg,#F3F5F9)}
+.ins-row:hover::before{opacity:1;transform:none}
+.ins-row:hover .ins-btn,.ins-row .ins-btn:focus-visible{opacity:1!important;transform:translateY(-50%) scale(1)}
+@media (hover:none){.card.sel+.ins-row::before{opacity:.4;transform:none}.card.sel+.ins-row .ins-btn{opacity:1!important;transform:translateY(-50%) scale(.95)}}

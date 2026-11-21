@@ -1,0 +1,19 @@
+/* ===== Design: Zeitung ===== */
+.page.d-zeitung{--f-disp:"Playfair Display",Georgia,"Times New Roman",serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#555555;--paper-hair:#BDBDBD}
+.zt-top{display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;font-size:7.5pt;letter-spacing:.08em;text-transform:uppercase;color:var(--paper-muted);padding-bottom:1.4mm}
+.zt-top .hd-fields{text-transform:none;letter-spacing:0}
+.zt-rule{height:1.7mm;border-top:1mm solid var(--acc);border-bottom:.3mm solid var(--acc)}
+.zt-rule.b{border-top-width:.3mm;border-bottom-width:1mm}
+.zt-mast{font-family:"UnifrakturMaguntia","Old English Text MT",serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";font-size:31pt;line-height:1.08;text-align:center;padding:1.6mm 0 .6mm;color:var(--acc)}
+.zt-line{display:flex;justify-content:center;font-size:7.2pt;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-muted);padding-top:1.2mm}
+.zt-title{font-family:var(--f-disp);font-weight:800;font-size:22pt;line-height:1.1;margin:4mm 0 0;letter-spacing:-.01em}
+.zt-deck{font-family:var(--f-disp);font-style:italic;font-weight:600;font-size:10.5pt;margin:1.4mm 0 0;color:var(--paper-muted)}
+.d-zeitung .blk-h h2{font-family:var(--f-disp);font-weight:800;font-size:13.5pt;border-bottom:.3mm solid var(--acc);padding-bottom:1mm}
+.d-zeitung .mat-head{border-top:.3mm solid var(--acc);padding-top:1.8mm}
+.d-zeitung .mat-title{font-family:var(--f-disp);font-weight:700;font-size:11pt}
+.d-zeitung .blk-info{background:transparent;border:0;border-top:1mm solid var(--acc);border-bottom:.3mm solid var(--acc);border-radius:0;padding:2.4mm 0 2.6mm}
+.d-zeitung .info-title{font-family:var(--f-disp);font-size:11.5pt}
+.d-zeitung .tasks-title{font-family:var(--f-disp);font-size:10.5pt;letter-spacing:.06em;font-weight:800}
+.d-zeitung .task-no,.d-zeitung .mat-no{border-radius:0}
+.d-zeitung .tb th{background:transparent;border-bottom:.8mm solid var(--acc)}
+
