@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- Klick auf einen Beschriftungskasten in der Vorschau springt links direkt zu dessen Überschrift; Klick aufs Bild zu den Pfeilzielen.
 - **Bild mit Beschriftungen** erweitert: Kästen auch über und unter dem Bild; jeder Pfeil kann auf eine frei gewählte Stelle im Bild zeigen (Nummer im Editor aufs Bild ziehen). Das Bild schrumpft bei Bedarf, damit der Baustein mit dem Kopf auf eine Seite passt.
 - **A4 quer** als Papierformat für ganze Blätter (Vorschau, Druck, PDF und Word im Querformat) und der Baustein **Bild mit Beschriftungen**: Bild in der Mitte, Kästen links und rechts mit Pfeilen zum Bild (Pfeilrichtung wählbar), auf Wunsch leer zum Beschriften; in Word als dreispaltige Tabelle.
 - **Leiser Hinweiston bei 30 % Restzeit:** Fällt ein laufender Timer (Folien-Timer beim Präsentieren oder Timer der Tafelansicht) unter 30 % seiner Zeit, erklingt einmal ein weicher, leiser Doppelton – passend zum Farbwechsel der Zeitanzeige. Nicht bei „Zeit ausblenden“; in der Tafelansicht nur, wenn beim Timer der Ton eingeschaltet ist; erst ab Timern von einer Minute.

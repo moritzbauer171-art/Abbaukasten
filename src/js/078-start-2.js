@@ -352,7 +352,13 @@ function boot() {
     if (state.wide) { state.wide = false; applyResponsive(); }
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
     renderEditor(); markSel();
-    const c = $(`#editor [data-bid="${bid}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    const c = $(`#editor [data-bid="${bid}"]`); if (!c) return;
+    // Bild mit Beschriftungen: Klick auf einen Kasten springt zu dessen Feldern, Klick aufs Bild zu den Pfeilzielen
+    const lc = e.target.closest('.lb-c[data-lbi]'), lm = !lc && e.target.closest('.blk-lb .lb-mid');
+    const row = lc ? c.querySelectorAll('.lb-row-e')[+lc.dataset.lbi] : lm ? c.querySelector('[data-lbpick]') || c.querySelector('input[data-act="img"]') : null;
+    if (row) { row.scrollIntoView({ block: 'center', behavior: 'smooth' }); row.classList.remove('lb-hit'); void row.offsetWidth; row.classList.add('lb-hit');
+      const f = lc && row.querySelector(`[data-k="lb.${lc.dataset.lbi}.h"]`); if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch { } }, 350); return; }
+    c.scrollIntoView({ block: 'start', behavior: 'smooth' });
   });
   window.matchMedia('(max-width: 899px)').addEventListener('change', applyResponsive);
   try { new ResizeObserver(() => applyScale()).observe($('#preview-scroll')); } catch { window.addEventListener('resize', applyScale); }

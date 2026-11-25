@@ -1486,6 +1486,10 @@ body{transition:background-color .3s,border-color .25s}
 .lb-pick img{display:block;max-width:100%;max-height:220px;border-radius:8px}
 .lb-dot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:var(--acc,#2B45B8);color:#fff;font:700 12px/26px system-ui;text-align:center;cursor:grab;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.35)}
 .lb-dot:active{cursor:grabbing}
+@keyframes lbHit{0%{box-shadow:0 0 0 3px var(--acc,#2B45B8)}100%{box-shadow:0 0 0 3px transparent}}
+.lb-hit{animation:lbHit 1.4s ease-out}
+.blk-lb .lb-c{cursor:pointer}
+@media print{.blk-lb .lb-c{cursor:auto}}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -17669,7 +17673,13 @@ function boot() {
     if (state.wide) { state.wide = false; applyResponsive(); }
     if (window.matchMedia('(max-width: 899px)').matches) setView('edit');
     renderEditor(); markSel();
-    const c = $(`#editor [data-bid="${bid}"]`); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    const c = $(`#editor [data-bid="${bid}"]`); if (!c) return;
+    // Bild mit Beschriftungen: Klick auf einen Kasten springt zu dessen Feldern, Klick aufs Bild zu den Pfeilzielen
+    const lc = e.target.closest('.lb-c[data-lbi]'), lm = !lc && e.target.closest('.blk-lb .lb-mid');
+    const row = lc ? c.querySelectorAll('.lb-row-e')[+lc.dataset.lbi] : lm ? c.querySelector('[data-lbpick]') || c.querySelector('input[data-act="img"]') : null;
+    if (row) { row.scrollIntoView({ block: 'center', behavior: 'smooth' }); row.classList.remove('lb-hit'); void row.offsetWidth; row.classList.add('lb-hit');
+      const f = lc && row.querySelector(`[data-k="lb.${lc.dataset.lbi}.h"]`); if (f) setTimeout(() => { try { f.focus({ preventScroll: true }); } catch { } }, 350); return; }
+    c.scrollIntoView({ block: 'start', behavior: 'smooth' });
   });
   window.matchMedia('(max-width: 899px)').addEventListener('change', applyResponsive);
   try { new ResizeObserver(() => applyScale()).observe($('#preview-scroll')); } catch { window.addEventListener('resize', applyScale); }

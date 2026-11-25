@@ -82,3 +82,10 @@ def test_beschriftung_oben_unten_und_freies_ziel(lw):
     assert 70 < x['tx'] <= 90 and 10 <= x['ty'] < 30
     assert pg.locator('#pages .lb-c[data-lbi="1"][data-tx]').count() == 1
     xml = docx(pg, 'lb2.docx'); assert xml.index('Titel') < xml.index('Figuren') < xml.index('Wo spielt es?')
+
+def test_klick_auf_kasten_springt_zum_feld(lw):
+    pg = lw.open(); lw.new_lesson(pg); lw.setup(pg, [lb_block()])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(600)
+    pg.locator('#pages .lb-c[data-lbi="2"]').click(); pg.wait_for_timeout(900)
+    assert pg.evaluate("document.activeElement.dataset.k") == 'lb.2.h'
+    assert pg.locator('#editor .lb-row-e.lb-hit').count() == 1
