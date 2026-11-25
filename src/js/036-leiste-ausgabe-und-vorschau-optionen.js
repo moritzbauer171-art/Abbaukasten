@@ -5,7 +5,7 @@ function segHTML(key, opts, cur, label) {
 function renderOut() {
   const sh = state.sheet; const nT = tipCards().length; const nK = (sh.cards || []).length; const SB = stBlocks(); const nTf = SB.filter(x => x.type === 'tafel').length; const nA3 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a3').length; const nA4 = SB.filter(x => x.type === 'a3' && a3Fmt(x) === 'a4').length; const nE = exitSteps().length;
   const OUTS = { blatt: ['blatt', 'Arbeitsblatt', 0], tipps: ['tipps', 'Tippkarten', nT], karten: ['karten', 'Tafelkarten', nK], tafel: ['tafel', 'Tafelbild', nTf], a4: ['a4', 'A4-Vorlagen', nA4], a3: ['a3', 'A3-Vorlagen', nA3], exit: ['exit', 'Exit-Tickets', nE], vp: ['vp', 'Verlaufsplan', 0], pres: ['pres', 'Folien', 0] };
-  const OL = (AREA_OUTS[state.area || 'blatt'] || AREA_OUTS.blatt).map(k => OUTS[k]).filter(([k, , n], i) => i === 0 || n || state.out === k || k === 'vp');
+  const OL = (AREA_OUTS[state.area || 'blatt'] || AREA_OUTS.blatt).map(k => OUTS[k]).filter(([k, , n], i) => i === 0 || n || state.out === k || k === 'vp' || k === 'karten');
   $('#outsw').hidden = OL.length < 2;
   $('#outsw').innerHTML = OL
     .map(([k, l, n]) => `<button type="button" data-out="${k}" aria-pressed="${state.out === k}">${l}${n ? `<span>${n}</span>` : ''}</button>`).join('');
