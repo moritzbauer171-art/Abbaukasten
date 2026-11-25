@@ -212,6 +212,15 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'tbm-open': tbmOpen(bid); return;
+    case 'tbx-row-ins': case 'tbx-row-mv': case 'tbx-row-del': case 'tbx-col-ins': case 'tbx-col-mv': case 'tbx-col-del': {
+      snapshot(); const R = b.rows.length, C = b.cols.length, rng = n => Array.from({ length: n }, (_, i) => i);
+      let ord = null, isCol = act.startsWith('tbx-col');
+      const i = +(isCol ? a.dataset.ci : a.dataset.ri), N = isCol ? C : R; ord = rng(N);
+      if (act.endsWith('-ins')) { if (isCol && C >= 6) return; ord.splice(i + (+a.dataset.pos ? 1 : 0), 0, -1); }
+      else if (act.endsWith('-mv')) { const j = i + (+a.dataset.d); if (j < 0 || j >= N) return; [ord[i], ord[j]] = [ord[j], ord[i]]; }
+      else { if (N < 2) return; ord.splice(i, 1); }
+      if (isCol) tbReCols(b, ord); else tbReRows(b, ord); changed(true); return; }
     case 'tb-brush': if (!state.tbPaint) state.tbPaint = {}; state.tbPaint[bid] = a.dataset.v; renderEditor(); return;
     case 'tb-paint': case 'tb-paint-row': case 'tb-paint-col': { const br = (state.tbPaint || {})[bid] || 'gelb'; snapshot(); if (!b.bg || typeof b.bg !== 'object') b.bg = {};
       const keys = act === 'tb-paint' ? [a.dataset.c] : act === 'tb-paint-row' ? b.cols.map((_, ci) => a.dataset.ri + '.' + ci) : ['h.' + a.dataset.ci, ...b.rows.map((_, ri) => ri + '.' + a.dataset.ci)].filter(k => k[0] !== 'h' || b.cols.some(c => String(c).trim()));

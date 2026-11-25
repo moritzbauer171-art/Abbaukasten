@@ -47,7 +47,7 @@ function pvShow(n) {
   const ord = pvOrder(); const k = ord.findIndex(([x]) => x.id === bid);
   if (PVT.bid !== bid) {
     const dzB = DZ_TYPES.has(b.type) ? `<button type="button" data-pv="dz" class="${state.dz && state.dz.k === 'block' && state.dz.bid === bid ? 'on' : ''}" title="Gestaltung: ${b.type === 'material' ? 'Schrift, Größe, Zeilenabstand, Einzug, Rand' : 'Stil'}">${pvI('dz')}</button>` : '';
-    const extra = dzB + (PRES_OPT.has(b.type) ? `<button type="button" data-pv="pres-tg" class="${presOn(b) ? 'on' : ''}" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht auf einer Folie · klicken zum Entfernen' : 'Auf die Folie'}">${pvI('fol')}</button>` : '')
+    const extra = dzB + (b.type === 'table' ? `<button type="button" data-pv="tbm" title="Tabelle groß bearbeiten (Doppelklick)"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></button>` : '') + (PRES_OPT.has(b.type) ? `<button type="button" data-pv="pres-tg" class="${presOn(b) ? 'on' : ''}" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht auf einer Folie · klicken zum Entfernen' : 'Auf die Folie'}">${pvI('fol')}</button>` : '')
       + (b.type === 'tasks' ? `<button type="button" data-pv="res-tg" class="${isRes(b) ? 'on' : ''}" aria-pressed="${isRes(b)}" title="${isRes(b) ? 'Ist Reserve · klicken, um sie wieder normal zu zählen' : 'Als Reserve: auf den Folien, nicht in der Phasenleiste und nicht in der Stundenzeit'}">${pvI('res')}</button>` : '');
     if (PVT.qx == null) { try { PVT.qx = localStorage.getItem('abw.pvqx') === '1'; } catch { PVT.qx = false; } }
     const qOn = b.type === 'material' && !b.post && PVT.qx && innerWidth >= 1100 && innerHeight >= 700;
@@ -79,6 +79,7 @@ function pvInsert(at, pk, type) {
 }
 function pvAct(act) {
   const bid = PVT.bid; const blocks = state.sheet.blocks; const idx = blocks.findIndex(x => x.id === bid); const b = blocks[idx]; if (!b) return;
+  if (act === 'tbm') { pvHide(); tbmOpen(bid); return; }
   if (act === 'dz') { const n = PVT.el; if (state.dz && state.dz.k === 'block' && state.dz.bid === bid) dzClose(); else { state.sel = bid; markSel(); dzOpen('block', bid, n && n.isConnected ? n.getBoundingClientRect() : null); const tr = $('#pv-tools').getBoundingClientRect(); state.dz.x = Math.round(tr.right - Math.min(360, innerWidth - 24)); state.dz.y = Math.round(tr.bottom + 6); dzRender(); } const t = $('#pv-tools [data-pv="dz"]'); if (t) t.classList.toggle('on', !!state.dz); return; }
   if (act === 'edit') { state.sel = bid; if (state.allOpen) state.closed.delete(bid); else openOnly(bid); saveClosed(); if (window.matchMedia('(max-width: 899px)').matches) setView('edit'); renderEditor(); const c = $(`#editor [data-bid="${bid}"]`); if (c) { c.scrollIntoView({ block: 'start', behavior: 'smooth' }); c.classList.add('flash'); setTimeout(() => c.classList.remove('flash'), 1200); } return; }
   if (act === 'up' || act === 'down') {

@@ -9,6 +9,23 @@ const SOZ = {
 /* Tabellen: Hintergrundfarben für Felder, um Abschnitte sichtbar zu machen (druckfreundliche Pastelltöne) */
 const TBL_BG = { gelb: { l: 'Gelb', c: '#FFF1A8' }, orange: { l: 'Orange', c: '#FFDDB8' }, rosa: { l: 'Rosa', c: '#FAD4DA' }, lila: { l: 'Lila', c: '#E4D9F5' }, blau: { l: 'Blau', c: '#D3E6FA' }, gruen: { l: 'Grün', c: '#D5F0CC' }, grau: { l: 'Grau', c: '#E7E9ED' } };
 const tbBg = (b, r, c) => { const k = b && b.bg && b.bg[r + '.' + c]; return TBL_BG[k] ? TBL_BG[k].c : ''; };
+// Tabelle umbauen: ord = alte Indizes in neuer Reihenfolge, -1 = neue leere Zeile/Spalte; Erwartungen, Höhen, Farben, Breiten wandern mit
+function tbReRows(b, ord) {
+  const n = b.cols.length, inv = {}; ord.forEach((o, k) => { if (o >= 0) inv[o] = k; });
+  b.rows = ord.map(o => (o < 0 ? Array(n).fill('') : b.rows[o]));
+  if (Array.isArray(b.eh)) b.eh = ord.map(o => (o < 0 || !b.eh[o] ? Array(n).fill('') : b.eh[o]));
+  if (Array.isArray(b.rowH)) b.rowH = ord.map(o => (o < 0 ? '' : b.rowH[o] || ''));
+  if (b.bg) { const nb = {}; Object.entries(b.bg).forEach(([k, v]) => { const [r, c] = k.split('.'); if (r === 'h') nb[k] = v; else if (inv[+r] != null) nb[inv[+r] + '.' + c] = v; }); b.bg = nb; if (!Object.keys(nb).length) delete b.bg; }
+}
+function tbReCols(b, ord) {
+  const inv = {}; ord.forEach((o, k) => { if (o >= 0) inv[o] = k; }); const pick = (arr, fill) => ord.map(o => (o < 0 ? fill : arr[o] ?? fill));
+  const w = Array.isArray(b.cw) && b.cw.length === b.cols.length ? tbWidths(b) : null;
+  b.cols = pick(b.cols, ''); b.rows = b.rows.map(r => pick(r, ''));
+  if (Array.isArray(b.eh)) b.eh = b.eh.map(r => pick(r || [], ''));
+  if (Array.isArray(b.ck)) { b.ck = pick(b.ck, false); if (!b.ck.some(Boolean)) delete b.ck; }
+  if (w) { const avg = 100 / ord.length; const nw = ord.map(o => (o < 0 ? avg : w[o])); const sm = nw.reduce((x, y) => x + y, 0); b.cw = nw.map(x => Math.round(x * 1000 / sm) / 10); } else delete b.cw;
+  if (b.bg) { const nb = {}; Object.entries(b.bg).forEach(([k, v]) => { const [r, c] = k.split('.'); if (inv[+c] != null) nb[r + '.' + inv[+c]] = v; }); b.bg = nb; if (!Object.keys(nb).length) delete b.bg; }
+}
 /* Arbeitsformen: Piktogramme neben der Sozialform, mehrere je Aufgabe möglich */
 const ARB = {
   lesen: { label: 'Lesen', g: '<path d="M2.5 5.6c3.2-1.3 6.4-1.1 9.5 1 3.1-2.1 6.3-2.3 9.5-1v13.2c-3.2-1.3-6.4-1.1-9.5 1-3.1-2.1-6.3-2.3-9.5-1z"/><path d="M12 6.6v13.2"/>' },

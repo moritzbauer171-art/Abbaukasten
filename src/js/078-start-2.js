@@ -5,6 +5,7 @@ function boot() {
   // Die Bearbeitung einer Folie (unter der großen Folie) nutzt dieselben Handgriffe wie die Karten links
   { const E = $('#editor'), Pn = $('#pp-panel'); if (E && Pn) { const orig = E.addEventListener.bind(E); E.addEventListener = (t, f, o) => { orig(t, f, o); try { Pn.addEventListener(t, f, o); } catch {} }; } }
   // Verstecktes Kanban-Board: Doppelklick (oder Doppeltipp) aufs Logo
+  document.addEventListener('dblclick', e => { const tb = e.target.closest && e.target.closest('#pages .blk-table[data-bid]'); if (tb && state.out === 'blatt') { e.preventDefault(); try { getSelection().removeAllRanges(); } catch { } tbmOpen(tb.dataset.bid); return; } });
   document.addEventListener('dblclick', e => { if (e.target.closest && e.target.closest('.brand .logo')) { e.preventDefault(); try { getSelection().removeAllRanges(); } catch {} if (isBasis()) { toast('Das Board gibt es im Modus „Experte“ (Einstellungen ⚙ → App).'); return; } openKanban(); } });
   setUmfang(lsGet(LS_UMFANG) === 'basis' ? 'basis' : 'experte', true); state.a3p = lsGet('abw.a3p') === 'a4x2' ? 'a4x2' : 'a3';
   const ed = $('#editor');

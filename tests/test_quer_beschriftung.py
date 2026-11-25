@@ -141,3 +141,27 @@ def test_tabelle_farben(lw):
     assert pg.evaluate("__S.sheet.blocks[0].bg") == {'h.0': 'gelb'}
     pg.locator('#editor [data-act="tb-mode"][data-v=""]').first.click(); pg.wait_for_timeout(400)
     assert pg.locator('#editor [data-act="tb-mode"][data-v="farbe"]').inner_text().strip() == 'Farbe · 1'
+
+def test_tabelle_popup(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 'tb1', 'type': 'table', 'title': '', 'cols': ['A', 'B'], 'rows': [['a1', 'b1'], ['a2', 'b2']], 'cw': [70, 30], 'bg': {'1.0': 'gelb'}, 'rowHeight': 'normal'}])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(500)
+    pg.locator('#pages .blk-table').dblclick(); pg.wait_for_timeout(500)
+    assert pg.locator('#tbm .tbm-grid').count() == 1
+    T = lambda: pg.evaluate("(({cols, rows, cw, bg}) => ({cols, rows, cw: cw || null, bg: bg || null}))(__S.sheet.blocks[0])")
+    pg.locator('#tbm [data-act="tbx-row-ins"][data-ri="0"][data-pos="0"]').click(); pg.wait_for_timeout(300)
+    t = T(); assert t['rows'] == [['', ''], ['a1', 'b1'], ['a2', 'b2']] and t['bg'] == {'2.0': 'gelb'}
+    pg.locator('#tbm [data-act="tbx-row-mv"][data-ri="2"][data-d="-1"]').click(); pg.wait_for_timeout(300)
+    t = T(); assert t['rows'][1] == ['a2', 'b2'] and t['bg'] == {'1.0': 'gelb'}
+    pg.locator('#tbm [data-act="tbx-col-ins"][data-ci="0"][data-pos="1"]').click(); pg.wait_for_timeout(300)
+    t = T(); assert t['cols'] == ['A', '', 'B'] and t['rows'][2] == ['a1', '', 'b1'] and len(t['cw']) == 3 and abs(sum(t['cw']) - 100) < 0.5
+    pg.locator('#tbm [data-act="tbx-col-mv"][data-ci="2"][data-d="-1"]').click(); pg.wait_for_timeout(300)
+    assert T()['cols'] == ['A', 'B', '']
+    pg.locator('#tbm [data-act="tbx-col-del"][data-ci="2"]').click(); pg.wait_for_timeout(300)
+    pg.locator('#tbm [data-act="tbx-row-del"][data-ri="0"]').click(); pg.wait_for_timeout(300)
+    t = T(); assert t['cols'] == ['A', 'B'] and t['rows'] == [['a2', 'b2'], ['a1', 'b1']] and t['bg'] == {'0.0': 'gelb'}
+    # Schreiben im Popup kommt im Blatt an
+    c = pg.locator('#tbm .rtx[data-k="rows.0.1"]'); c.click(); pg.keyboard.press('End'); pg.keyboard.type(' neu'); pg.wait_for_timeout(900)
+    assert 'b2 neu' in pg.locator('#pages .tb').inner_text()
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
+    assert pg.locator('#tbm').count() == 0

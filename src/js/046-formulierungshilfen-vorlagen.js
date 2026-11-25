@@ -264,7 +264,7 @@ function bodyFor(b, num) {
         </table></div>
         <div class="row" style="gap:16px">${nBg ? '<button class="link" type="button" data-act="tb-bg-clear">Alle Farben entfernen</button>' : ''}<button class="link" type="button" data-act="tb-mode" data-v="">Fertig</button></div>
         <p class="hint" style="margin:0">Die Farben erscheinen auf dem Blatt, auf der Folie und in Word. Tipp: Eine Zeile in Farbe als Zwischenüberschrift trennt Abschnitte deutlich.</p>`; }
-      return `${fText('title', 'Titel (optional)', b.title, '')}
+      return `<button type="button" class="tbm-open" data-act="tbm-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>Groß bearbeiten</button>${fText('title', 'Titel (optional)', b.title, '')}
         <div class="f"><span>Eintragen</span><div class="seg sm" role="group" aria-label="Eintragen"><button type="button" data-act="tb-mode" data-v="" aria-pressed="${!ehMode}">Inhalt</button><button type="button" data-act="tb-mode" data-v="eh" aria-pressed="${ehMode}">Erwartung${nEh ? ` · ${nEh}` : ''}</button><button type="button" data-act="tb-mode" data-v="farbe" aria-pressed="false">Farbe${Object.keys(b.bg || {}).length ? ` · ${Object.keys(b.bg).length}` : ''}</button></div>${ehMode ? '<small>Die Erwartungen stehen nur in der Lehrerfassung in den Zellen. Eine Zeile = ein Punkt.</small>' : ''}</div>
         ${cols > 1 ? cwBarHTML(b) : ''}
         <div class="tbl-ed"><table style="min-width:${tbEdMin(b, each)}px"><colgroup>${tbWidths(b).map((p, ci) => `<col data-ci="${ci}" style="width:${p}%">`).join('')}${each ? '<col style="width:72px">' : ''}</colgroup>
@@ -406,7 +406,7 @@ function renderEditor(focusSel) {
   ed.scrollTop = st;
   { const L = fachLang(); if (L !== 'de') ed.querySelectorAll('.rtx, textarea, input[type="text"]').forEach(x => { x.lang = L; }); }
   if (state.dz) { if (state.dz.k === 'block' && !state.sheet.blocks.some(x => x.id === state.dz.bid) || state.out !== 'blatt') state.dz = null; dzRender(); }
-  ed.style.setProperty('--ed-mark', markColor(state.sheet.meta));
+  ed.style.setProperty('--ed-mark', markColor(state.sheet.meta)); if (TBM) tbmRender();
   if (focus) { const f = ed.querySelector(focus); if (f && f.classList.contains('rtx')) { f.focus({ preventScroll: true }); rtCaretEnd(f); } else if (f) { f.focus({ preventScroll: true }); if (f.setSelectionRange && typeof f.value === 'string' && f.type !== 'number') { const l = f.value.length; try { f.setSelectionRange(l, l); } catch {} } } }
 }
 function refreshSummaries() {
@@ -420,3 +420,55 @@ function refreshSummaries() {
   document.querySelectorAll('#editor [data-prog]').forEach(p => p.innerHTML = progressionHTML());
 }
 
+
+/* ================= Tabelle groß bearbeiten (Popup) ================= */
+const TBM_IC = { insL: '<path d="M10 5v14M3 12h4M5 10v4"/><rect x="13" y="5" width="8" height="14" rx="1.5"/>', insR: '<path d="M14 5v14M21 12h-4M19 10v4"/><rect x="3" y="5" width="8" height="14" rx="1.5"/>',
+  insU: '<path d="M5 10h14M12 3v4M10 5h4"/><rect x="5" y="13" width="14" height="8" rx="1.5"/>', insD: '<path d="M5 14h14M12 21v-4M10 19h4"/><rect x="5" y="3" width="14" height="8" rx="1.5"/>',
+  mvL: '<path d="M15 6l-6 6 6 6"/>', mvR: '<path d="M9 6l6 6-6 6"/>', mvU: '<path d="M6 15l6-6 6 6"/>', mvD: '<path d="M6 9l6 6 6-6"/>', del: '<path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/>' };
+const tbmI = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${TBM_IC[k]}</svg>`;
+let TBM = null;
+function tbmOpen(bid) { const b = state.sheet.blocks.find(x => x.id === bid && x.type === 'table'); if (!b) return; TBM = { bid }; state.sel = bid; if (typeof markSel === 'function') markSel(); tbmRender(); setTimeout(() => { const f = document.querySelector('#tbm .tbm-grid .rtx'); if (f) f.focus({ preventScroll: true }); }, 30); }
+function tbmClose() { TBM = null; const x = document.getElementById('tbm'); if (x) x.remove(); document.body.classList.remove('tbm-on'); }
+function tbmRender() {
+  if (!TBM) return; const b = state.sheet && state.sheet.blocks.find(x => x.id === TBM.bid && x.type === 'table'); if (!b) return tbmClose();
+  let box = document.getElementById('tbm');
+  if (!box) { box = document.createElement('div'); box.id = 'tbm'; box.className = 'tbm-back'; document.body.appendChild(box); document.body.classList.add('tbm-on');
+    box.addEventListener('input', onInput); box.addEventListener('change', onChange);
+    box.addEventListener('click', e => { if (e.target === box || e.target.closest('[data-tbm-x]')) { tbmClose(); return; } onClick(e); });
+    box.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.querySelector('#rt-bar:not([hidden]) .open')) { e.preventDefault(); tbmClose(); } });
+    // Spaltenbreite im Popup ziehen
+    let dr = null;
+    box.addEventListener('pointerdown', e => { const h = e.target.closest && e.target.closest('.cw-h'); if (!h) return; const card = h.closest('[data-bid]'), bb = card && target(card.dataset.bid); if (!bb) return; e.preventDefault(); dr = { h, card, b: bb, i: +h.dataset.i, bar: h.parentElement }; snapshot(); try { h.setPointerCapture(e.pointerId); } catch { } h.classList.add('drag'); });
+    box.addEventListener('pointermove', e => { if (!dr) return; const r = dr.bar.getBoundingClientRect(); if (!r.width) return; cwSet(dr.b, dr.i, (e.clientX - r.left) / r.width * 100); cwPaint(dr.card, dr.b); box.querySelectorAll('.tbm-grid col[data-ci]').forEach(c => { c.style.width = tbWidths(dr.b)[+c.dataset.ci] + '%'; }); changed(false); });
+    const end = () => { if (dr) { dr.h.classList.remove('drag'); dr = null; renderEditor(); } }; box.addEventListener('pointerup', end); box.addEventListener('pointercancel', end);
+  }
+  const gw = box.querySelector('.tbm-gw'), sx = gw ? gw.scrollLeft : 0, sy = gw ? gw.scrollTop : 0;
+  const cols = b.cols.length, paint = state.tbPaint && state.tbPaint[b.id], ehMode = !paint && state.tbEh.has(b.id), nEh = tbEhCount(b), nBg = Object.keys(b.bg || {}).length;
+  b.eh = b.rows.map((r, ri) => Array.from({ length: cols }, (_, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '')));
+  const ib = (act, ic, title, attrs, dis) => `<button type="button" class="tbm-ib${ic === 'del' ? ' del' : ''}" data-act="${act}" ${attrs} title="${title}" aria-label="${title}"${dis ? ' disabled' : ''}>${tbmI(ic)}</button>`;
+  const bgS = (r, c) => tbBg(b, r, c) ? ` style="background:${tbBg(b, r, c)}"` : '';
+  const pcell = (key, txt, lab) => `<button type="button" class="tbp-c" data-act="tb-paint" data-c="${key}" style="background:${tbBg(b, ...key.split('.')) || '#fff'}" aria-label="${lab} färben">${txt ? esc(plainText(String(txt)).slice(0, 80)) : '&nbsp;'}</button>`;
+  const hasHead = b.cols.some(c => String(c).trim()) || !paint;
+  const colTools = b.cols.map((_, ci) => `<th class="tbm-ct"><div>${ib('tbx-col-ins', 'insL', 'Spalte links einfügen', `data-ci="${ci}" data-pos="0"`, cols >= 6)}${ib('tbx-col-mv', 'mvL', 'Spalte nach links', `data-ci="${ci}" data-d="-1"`, ci === 0)}${ib('tbx-col-mv', 'mvR', 'Spalte nach rechts', `data-ci="${ci}" data-d="1"`, ci === cols - 1)}${ib('tbx-col-ins', 'insR', 'Spalte rechts einfügen', `data-ci="${ci}" data-pos="1"`, cols >= 6)}${ib('tbx-col-del', 'del', `Spalte ${ci + 1} löschen`, `data-ci="${ci}"`, cols < 2)}</div>${paint ? `<button type="button" class="tbp-rc" data-act="tb-paint-col" data-ci="${ci}">Spalte färben ↓</button>` : ''}</th>`).join('');
+  const head = hasHead ? `<tr class="tbm-hr"><td class="tbm-rt"><small>Kopf</small></td>${b.cols.map((c, ci) => `<td${bgS('h', ci)}>${paint ? pcell('h.' + ci, c, `Spaltenkopf ${ci + 1}`) : rtField(`cols.${ci}`, c, { mode: 'line', ph: `Kopf ${ci + 1}`, aria: `Spaltenkopf ${ci + 1}` })}</td>`).join('')}</tr>` : '';
+  const rows = b.rows.map((r, ri) => `<tr><td class="tbm-rt"><b>${ri + 1}</b><div>${ib('tbx-row-ins', 'insU', 'Zeile darüber einfügen', `data-ri="${ri}" data-pos="0"`)}${ib('tbx-row-mv', 'mvU', 'Zeile nach oben', `data-ri="${ri}" data-d="-1"`, ri === 0)}${ib('tbx-row-mv', 'mvD', 'Zeile nach unten', `data-ri="${ri}" data-d="1"`, ri === b.rows.length - 1)}${ib('tbx-row-ins', 'insD', 'Zeile darunter einfügen', `data-ri="${ri}" data-pos="1"`)}${ib('tbx-row-del', 'del', `Zeile ${ri + 1} löschen`, `data-ri="${ri}"`, b.rows.length < 2)}</div>${paint ? `<button type="button" class="tbp-rc" data-act="tb-paint-row" data-ri="${ri}">Zeile färben →</button>` : ''}</td>${Array.from({ length: cols }, (_, ci) => paint ? `<td>${pcell(ri + '.' + ci, r[ci], `Zeile ${ri + 1}, Spalte ${ci + 1}`)}</td>`
+    : ehMode ? `<td class="eh-td"${bgS(ri, ci)}>${String(r[ci] || '').trim() ? `<div class="tb-ehv">${inlineHTML(r[ci])}</div>` : ''}${rtField(`eh.${ri}.${ci}`, b.eh[ri][ci], { mode: 'inline', rows: 2, ph: 'Erwartung', aria: `Erwartung Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`
+    : `<td${tbCk(b, ci) ? ' class="ck-td"' : ''}${bgS(ri, ci)}>${rtField(`rows.${ri}.${ci}`, r[ci] || '', { mode: 'line', ph: tbCk(b, ci) ? '☐ Kästchen' : 'leer', aria: `Zeile ${ri + 1}, Spalte ${ci + 1}` })}</td>`).join('')}</tr>`).join('');
+  const seg = (lab, opts) => `<div class="seg sm" role="group" aria-label="${lab}">${opts}</div>`;
+  box.innerHTML = `<div class="tbm" role="dialog" aria-modal="true" aria-label="Tabelle bearbeiten"><div class="card tbm-card" data-bid="${b.id}">
+    <div class="tbm-h"><b>Tabelle bearbeiten</b><span class="tbm-sub">${cols} ${cols === 1 ? 'Spalte' : 'Spalten'} × ${b.rows.length} ${b.rows.length === 1 ? 'Zeile' : 'Zeilen'}</span><span class="tbm-sp"></span><button type="button" class="ib" data-act="undo" title="Rückgängig (Strg+Z)" aria-label="Rückgängig"${hist.past.length || hist.timer ? '' : ' disabled'}>${I.undo || '↶'}</button><button type="button" class="ib" data-act="redo" title="Wiederholen" aria-label="Wiederholen"${hist.future.length ? '' : ' disabled'}>${I.redo || '↷'}</button><button type="button" class="tbm-done" data-tbm-x>Fertig</button></div>
+    <div class="tbm-tools">
+      ${fText('title', 'Titel (optional)', b.title, '')}
+      <div class="f"><span>Eintragen</span>${seg('Eintragen', `<button type="button" data-act="tb-mode" data-v="" aria-pressed="${!paint && !ehMode}">Inhalt</button><button type="button" data-act="tb-mode" data-v="eh" aria-pressed="${ehMode}">Erwartung${nEh ? ` · ${nEh}` : ''}</button><button type="button" data-act="tb-mode" data-v="farbe" aria-pressed="${!!paint}">Farbe${nBg ? ` · ${nBg}` : ''}</button>`)}</div>
+      ${paint ? `<div class="f"><span>Farbe wählen, dann Felder antippen</span><div class="tbp-pal" role="group" aria-label="Farbe">${[...Object.keys(TBL_BG), 'weg'].map(k => `<button type="button" class="tbp-sw${k === 'weg' ? ' weg' : ''}" data-act="tb-brush" data-v="${k}" aria-pressed="${paint === k}" title="${k === 'weg' ? 'Farbe entfernen' : TBL_BG[k].l}" style="background:${k === 'weg' ? '#fff' : TBL_BG[k].c}">${k === 'weg' ? '✕' : ''}</button>`).join('')}${nBg ? '<button class="link" type="button" data-act="tb-bg-clear">Alle Farben entfernen</button>' : ''}</div></div>`
+      : `<div class="f"><span>Schreibplatz je Zeile</span>${seg('Schreibplatz je Zeile', [['normal', '8 mm'], ['hoch', '16 mm'], ['sehrhoch', '28 mm'], ['gross', '40 mm']].map(([v, l]) => `<button type="button" data-act="tb-h" data-v="${v}" aria-pressed="${(b.rowHeight || 'normal') === v}">${l}</button>`).join(''))}</div>
+      <div class="chks">${fCheck('cellLines', 'Schreiblinien in leeren Zellen', b.cellLines)}${fCheck('firstBold', 'Erste Spalte fett', b.firstBold)}</div>`}
+    </div>
+    ${cols > 1 && !paint ? `<div class="tbm-cw">${cwBarHTML(b)}</div>` : ''}
+    <div class="tbm-gw"><table class="tbm-grid"><colgroup><col style="width:150px">${tbWidths(b).map((pc, ci) => `<col data-ci="${ci}" style="width:${pc}%">`).join('')}</colgroup>
+      <tr class="tbm-ctr"><td class="tbm-rt"></td>${colTools}</tr>${head}${rows}
+    </table></div>
+    <div class="tbm-f"><button type="button" class="link" data-act="tbx-row-ins" data-ri="${b.rows.length - 1}" data-pos="1">+ Zeile am Ende</button>${cols < 6 ? `<button type="button" class="link" data-act="tbx-col-ins" data-ci="${cols - 1}" data-pos="1">+ Spalte rechts</button>` : ''}<span class="tbm-sp"></span><small class="hint">Esc oder „Fertig“ schließt. Änderungen erscheinen sofort im Blatt.</small></div>
+  </div></div>`;
+  const g2 = box.querySelector('.tbm-gw'); if (g2) { g2.scrollLeft = sx; g2.scrollTop = sy; }
+}
