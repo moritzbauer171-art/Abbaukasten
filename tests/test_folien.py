@@ -53,3 +53,27 @@ def test_ton_unter_30_prozent(lw):
     assert pg.evaluate("window.__tones") == 1
     pg.evaluate("window.__off = 50000"); pg.wait_for_timeout(800)
     assert pg.evaluate("window.__tones") == 1
+
+def test_arbeitsteilige_abs_auf_einer_folie(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    tA = {'id': 'ta', 'type': 'tasks', 'title': '', 'min': 20, 'items': [{'text': 'Analysieren Sie die Panels auf S. 12.', 'soz': 'ga'}, {'text': 'Notieren Sie Ihre Ergebnisse.', 'soz': 'ga'}]}
+    lw.setup(pg, [tA]); pg.evaluate("__S.sheet.meta.title = 'Folman: Versteck'; __RE()")
+    pg.evaluate("""(() => { const P = __S.sheet; P.abs = [{ id: 'ab1', active: true }, { id: 'ab2', meta: { nr: '', title: 'Folman: Traum', topic: '' }, zrefs: [],
+      blocks: [{ id: 'tb', type: 'tasks', title: '', min: 25, items: [{ text: 'Untersuchen Sie die Farbgebung auf S. 40.', soz: 'ga' }] }] }]; P.abActive = 0; P.stunde = { title: 'Graphic Diary' }; __RE(); __RP(); })()""")
+    pg.wait_for_timeout(500)
+    pg.locator('#editor [data-act="abx-par"]').check(); pg.wait_for_timeout(400)
+    pg.locator('#editor [data-act="abx-go"][data-abk="1"]').click(); pg.wait_for_timeout(500)
+    pg.locator('#editor [data-act="abx-par"]').check(); pg.wait_for_timeout(400)
+    assert 'parallel zu AB' in pg.locator('#editor .ab-par').inner_text()
+    pg.evaluate("__OP(0)"); pg.wait_for_timeout(1200)
+    seen = []
+    for _ in range(10):
+        seen.append(pg.locator('.pr .pr-slide').inner_text())
+        if pg.locator('.pr .pr-slide .pr-cols').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(350)
+    assert pg.locator('.pr .pr-slide .pr-col').count() == 2
+    t = pg.locator('.pr .pr-slide').inner_text()
+    assert 'Panels auf S. 12' in t and 'Farbgebung auf S. 40' in t and 'Folman: Traum' in t
+    assert '2 arbeitsblätter parallel' in t.lower() and '25' in t
+    assert any('Arbeitsteilige Phase' in s for s in seen)
+    pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'par_folie.png'))

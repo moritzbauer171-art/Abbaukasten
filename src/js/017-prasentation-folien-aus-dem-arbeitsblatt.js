@@ -36,10 +36,31 @@ function presChunks(L, poem) {
 function presSlides(quiet) {
   const P = state.sheet; const off = new Set(Array.isArray(P.meta.presOff) ? P.meta.presOff : []); const multi = !!P.abs;
   const S = off.has('title') ? [] : [{ k: 'title' }];
-  stABs().forEach(A => withAB(A.k, () => { const m = state.sheet.meta; const lab = abLabel(m, A.k); if (multi && !off.has('ab:' + A.id)) S.push({ k: 'abhead', lab, title: m.title || '', topic: m.topic || '', ab: lab }); presSlidesAB(off, multi ? lab : '', multi ? A.id : '').forEach(x => S.push(x)); }));
+  const G = [];
+  stABs().forEach(A => withAB(A.k, () => { const m = state.sheet.meta; const lab = abLabel(m, A.k); const L = [];
+    if (multi && !off.has('ab:' + A.id)) L.push({ k: 'abhead', lab, title: m.title || '', topic: m.topic || '', ab: lab });
+    presSlidesAB(off, multi ? lab : '', multi ? A.id : '').forEach(x => L.push(x)); G.push({ lab, title: plainText(m.title || ''), par: multi && !!m.par, L }); }));
+  // Arbeitsteilige ABs (nebeneinander, mit Haken) laufen parallel: eine Zwischenfolie, eine Aufgabenfolie mit je einer Spalte pro AB
+  for (let i = 0; i < G.length;) {
+    let j = i; if (G[i].par) while (j + 1 < G.length && G[j + 1].par) j++;
+    if (j > i) { presParallel(G.slice(i, j + 1), off).forEach(x => S.push(x)); i = j + 1; continue; }
+    G[i].L.forEach(x => S.push(x)); i++;
+  }
   presPhases(S);
   if (!quiet) renderPreview();
   return S;
+}
+function presParallel(G, off) {
+  const labs = G.map(g => g.lab).join(' · '), out = [], pre = [], post = [], cols = [];
+  G.forEach(g => { const body = g.L.filter(x => x.k !== 'abhead'); const fi = body.findIndex(x => x.k === 'tasks');
+    body.forEach((x, n) => { if (x.k === 'tasks') return; (fi < 0 || n < fi ? pre : post).push(x); });
+    const items = body.filter(x => x.k === 'tasks').flatMap(x => x.items.map(it => ({ ...it, abl: g.lab }))); if (items.length) cols.push({ g: '', name: g.lab, sub: g.title, items }); });
+  if (G.some(g => g.L.some(x => x.k === 'abhead'))) out.push({ k: 'abhead', lab: labs, title: 'Arbeitsteilige Phase', topic: '', par: G.map(g => ({ lab: g.lab, title: g.title })), ab: labs });
+  pre.forEach(x => out.push(x));
+  if (cols.length > 1) { const items = cols.flatMap(c => c.items); out.push({ k: 'tasks', bid: items[0].bid, items, segs: [{ t: 'cols', cols }], abpar: true }); }
+  else if (cols.length === 1) G.forEach(g => g.L.filter(x => x.k === 'tasks').forEach(x => out.push(x)));
+  post.forEach(x => out.push(x));
+  out.forEach(x => { x.ab = labs; }); return out;
 }
 // Phase je Folie: Aufgaben haben ihre eigene, Zitat oder Bild vor der ersten Aufgabe gelten als Einstieg, das Tafelbild als Sicherung (wie im Verlaufsplan),
 // alle anderen Folien übernehmen die Phase der nächsten Aufgabe. S.bar = Phasen der Stunde für die Leiste unten.

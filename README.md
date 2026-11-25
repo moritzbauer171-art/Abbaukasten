@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Arbeitsteilige ABs**: Haken „Arbeitsteilig“ bei mehreren ABs einer Stunde – nebeneinanderliegende ABs mit Haken bekommen eine gemeinsame Zwischenfolie und eine Aufgabenfolie mit je einer Spalte pro AB (Zeit = längstes AB).
 - **Tabelle groß bearbeiten**: Popup (Knopf, Werkzeugleiste oder Doppelklick in der Vorschau) mit Zeilen/Spalten an beliebiger Stelle einfügen, verschieben, löschen; Spaltenbreite, Farben, Erwartungen.
 - Tabellen: Modus **Farbe** – Felder, ganze Zeilen oder Spalten in sieben Pastelltönen hinterlegen, um Abschnitte zu trennen (Blatt, Folie, Word, Druck).
 - Neue Arbeitsform **Moderationskarten** mit Piktogramm: setzt unter die Aufgabe den Hinweis „Notieren Sie Ihre Ergebnisse gut leserlich auf Moderationskarten. Präsentieren Sie Ihre Ergebnisse im Plenum.“ – auf Blatt, Folie und in Word.

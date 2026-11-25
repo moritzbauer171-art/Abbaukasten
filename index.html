@@ -3363,6 +3363,13 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .xt-ln i{display:block;height:7.5mm;border-bottom:.25mm solid #B7BCC6}
 
 
+
+.pr-par{display:flex;gap:28px;flex-wrap:wrap;margin-top:40px}
+.pr-par-c{display:flex;flex-direction:column;gap:8px;padding:22px 30px;border-radius:18px;border:4px solid var(--acc);min-width:260px;max-width:620px}
+.pr-par-c b{font-size:34px;color:var(--acc)}
+.pr-par-c span{font-size:30px;font-weight:600;line-height:1.25}
+.ab-par{display:flex;align-items:flex-start;gap:6px;font-size:13px;margin:6px 0 2px;cursor:pointer}
+.ab-par input{margin-top:2px}
 /* ===== Startseite ===== */
 #home-root:empty{display:none}
 .hm{position:fixed;inset:0;z-index:38;background:var(--desk);overflow:auto;-webkit-overflow-scrolling:touch;contain:layout paint}
@@ -5450,7 +5457,7 @@ function basisClamp() {
 /* ================= Stunde: ein oder mehrere Arbeitsblätter =================
    Das gespeicherte Dokument ist die Stunde. Das aktive AB liegt wie bisher in meta (nr, title, topic, dg, paper), blocks und zrefs;
    weitere ABs liegen in abs[k] (aktives Fach: { id, active: true }). Kurs, Design, Anrede, Tafelkarten, Verlaufsplan usw. gelten für die ganze Stunde. */
-const AB_KEYS = ['nr', 'title', 'topic', 'dg', 'paper'];
+const AB_KEYS = ['nr', 'title', 'topic', 'dg', 'paper', 'par'];
 const stTitle = sh => (sh && sh.abs && sh.stunde && String(sh.stunde.title || '').trim()) || (sh && sh.meta && sh.meta.title) || 'Ohne Titel';
 const stNr = sh => (!sh.abs || !sh.abActive ? sh.meta.nr : ((sh.abs[0] && sh.abs[0].meta) || {}).nr) || '';
 function abNorm(sh) {
@@ -5482,6 +5489,7 @@ function abBarHTML() {
   const P = state.sheet; const A = stABs(); const multi = A.length > 1;
   return `<div class="ab-bar">${multi ? `<label class="ab-st"><span>Stunde</span><input type="text" data-st="title" value="${esc(stTitle(P))}" placeholder="Titel der Stunde" aria-label="Titel der Stunde"></label>` : ''}
     <div class="ab-tabs" role="tablist" aria-label="Arbeitsblätter dieser Stunde">${A.map(x => `<button type="button" role="tab" class="ab-tab" data-act="abx-go" data-abk="${x.k}" aria-selected="${x.k === (P.abActive || 0)}" title="${esc(plainText(x.meta.title || '') || 'ohne Titel')}"><b>${esc(abLabel(x.meta, x.k))}</b><span>${esc(plainText(x.meta.title || '') || 'ohne Titel')}</span></button>`).join('')}<button type="button" class="ab-add" data-act="abx-add" title="Weiteres Arbeitsblatt in dieser Stunde anlegen, z. B. Hausaufgabe oder Differenzierung">+ Arbeitsblatt</button></div>
+    ${multi ? `<label class="ab-par" title="Arbeitsteilig: Nebeneinanderliegende ABs mit diesem Haken laufen gleichzeitig. In der Präsentation stehen ihre Aufgaben auf einer gemeinsamen Folie, je AB eine Spalte."><input type="checkbox" data-act="abx-par"${P.meta.par ? ' checked' : ''}> <span><b>Arbeitsteilig</b> – läuft parallel zu ${(() => { const k = P.abActive || 0, nb = A.filter(x => x.k !== k && Math.abs(x.k - k) === 1 && x.meta.par); return nb.length ? nb.map(x => esc(abLabel(x.meta, x.k))).join(' und ') : 'den Nachbar-ABs mit Haken'; })()}</span></label>` : ''}
     <div class="ab-acts">${multi ? `<button class="link" type="button" data-act="abx-left"${P.abActive ? '' : ' disabled'}>← nach vorn</button><button class="link" type="button" data-act="abx-right"${P.abActive < A.length - 1 ? '' : ' disabled'}>nach hinten →</button><button class="link" type="button" data-act="abx-dup">Duplizieren</button><button class="link danger" type="button" data-act="abx-del">Dieses AB löschen</button>` : '<small class="hint">Eine Stunde kann mehrere Arbeitsblätter haben.</small>'}${isBasis() ? '' : '<button class="link" type="button" data-act="abx-out" style="margin-left:auto" title="Alle ABs, Tafelkarten, Tafelbild, A3-Vorlagen und Präsentation in einen Ordner">Ganze Stunde ausgeben</button>'}</div></div>`;
 }
 function abGo(k) {
@@ -5504,6 +5512,7 @@ function abAct(act, a) {
   if (act === 'abx-add') { abAdd(); return; }
   if (act === 'abx-out') { openOut(); if (state.dlg) { state.dlg.whole = true; renderDlg(); } return; }
   if (!P.abs) return; const k = P.abActive; if (hist.timer) histCommit();
+  if (act === 'abx-par') { if (a.checked) P.meta.par = true; else delete P.meta.par; changed(true); clearTimeout(renderTimer); renderPreview(); return; }
   if (act === 'abx-left' || act === 'abx-right') { const j = act === 'abx-left' ? k - 1 : k + 1; if (j < 0 || j >= P.abs.length) return; [P.abs[k], P.abs[j]] = [P.abs[j], P.abs[k]]; P.abActive = j; changed(true); clearTimeout(renderTimer); renderPreview(); return; }
   if (act === 'abx-dup') {
     const c = clone({ meta: abPick(P.meta), blocks: P.blocks }); c.id = 'ab' + uid(); c.zrefs = []; c.blocks.forEach(b => { b.id = 'b' + uid(); }); c.meta.title = (c.meta.title || 'Arbeitsblatt') + ' (Kopie)'; delete c.meta.dg;
@@ -6753,10 +6762,31 @@ function presChunks(L, poem) {
 function presSlides(quiet) {
   const P = state.sheet; const off = new Set(Array.isArray(P.meta.presOff) ? P.meta.presOff : []); const multi = !!P.abs;
   const S = off.has('title') ? [] : [{ k: 'title' }];
-  stABs().forEach(A => withAB(A.k, () => { const m = state.sheet.meta; const lab = abLabel(m, A.k); if (multi && !off.has('ab:' + A.id)) S.push({ k: 'abhead', lab, title: m.title || '', topic: m.topic || '', ab: lab }); presSlidesAB(off, multi ? lab : '', multi ? A.id : '').forEach(x => S.push(x)); }));
+  const G = [];
+  stABs().forEach(A => withAB(A.k, () => { const m = state.sheet.meta; const lab = abLabel(m, A.k); const L = [];
+    if (multi && !off.has('ab:' + A.id)) L.push({ k: 'abhead', lab, title: m.title || '', topic: m.topic || '', ab: lab });
+    presSlidesAB(off, multi ? lab : '', multi ? A.id : '').forEach(x => L.push(x)); G.push({ lab, title: plainText(m.title || ''), par: multi && !!m.par, L }); }));
+  // Arbeitsteilige ABs (nebeneinander, mit Haken) laufen parallel: eine Zwischenfolie, eine Aufgabenfolie mit je einer Spalte pro AB
+  for (let i = 0; i < G.length;) {
+    let j = i; if (G[i].par) while (j + 1 < G.length && G[j + 1].par) j++;
+    if (j > i) { presParallel(G.slice(i, j + 1), off).forEach(x => S.push(x)); i = j + 1; continue; }
+    G[i].L.forEach(x => S.push(x)); i++;
+  }
   presPhases(S);
   if (!quiet) renderPreview();
   return S;
+}
+function presParallel(G, off) {
+  const labs = G.map(g => g.lab).join(' · '), out = [], pre = [], post = [], cols = [];
+  G.forEach(g => { const body = g.L.filter(x => x.k !== 'abhead'); const fi = body.findIndex(x => x.k === 'tasks');
+    body.forEach((x, n) => { if (x.k === 'tasks') return; (fi < 0 || n < fi ? pre : post).push(x); });
+    const items = body.filter(x => x.k === 'tasks').flatMap(x => x.items.map(it => ({ ...it, abl: g.lab }))); if (items.length) cols.push({ g: '', name: g.lab, sub: g.title, items }); });
+  if (G.some(g => g.L.some(x => x.k === 'abhead'))) out.push({ k: 'abhead', lab: labs, title: 'Arbeitsteilige Phase', topic: '', par: G.map(g => ({ lab: g.lab, title: g.title })), ab: labs });
+  pre.forEach(x => out.push(x));
+  if (cols.length > 1) { const items = cols.flatMap(c => c.items); out.push({ k: 'tasks', bid: items[0].bid, items, segs: [{ t: 'cols', cols }], abpar: true }); }
+  else if (cols.length === 1) G.forEach(g => g.L.filter(x => x.k === 'tasks').forEach(x => out.push(x)));
+  post.forEach(x => out.push(x));
+  out.forEach(x => { x.ab = labs; }); return out;
 }
 // Phase je Folie: Aufgaben haben ihre eigene, Zitat oder Bild vor der ersten Aufgabe gelten als Einstieg, das Tafelbild als Sicherung (wie im Verlaufsplan),
 // alle anderen Folien übernehmen die Phase der nächsten Aufgabe. S.bar = Phasen der Stunde für die Leiste unten.
@@ -7271,7 +7301,7 @@ const prTaskHTML = (it, m) => {
   const st = prLinesOf(it, m); return st.length ? `<p>${st.join('<br>')}</p>` : ''; };
 // Zeit einer Aufgabenfolie: Zeilen nacheinander, Gruppenspalten parallel (längste Gruppe)
 // Zeit einer Aufgabenfolie = Zeit des Bausteins; nebeneinanderstehende Gruppen-Bausteine laufen parallel (längster zählt)
-const tsMin = s => { const by = {}; s.items.forEach(x => { by[x.bid] = x.bmin || 0; }); const v = Object.values(by); return v.length > 1 ? Math.max(0, ...v) : (v[0] || 0); };
+const tsMin = s => { if (s.abpar) { const per = {}; s.items.forEach(x => { (per[x.abl] = per[x.abl] || {})[x.bid] = x.bmin || 0; }); return Math.max(0, ...Object.values(per).map(o => Object.values(o).reduce((a, v) => a + v, 0))); } const by = {}; s.items.forEach(x => { by[x.bid] = x.bmin || 0; }); const v = Object.values(by); return v.length > 1 ? Math.max(0, ...v) : (v[0] || 0); };
 const tsTimer = s => ((s.items.find(x => x.btimer) || {}).btimer || '');
 const prMin = s => (s.k === 'tasks' ? tsMin(s) : s.k === 'step' ? itMin(s.b) : 0);
 const tsHaAll = s => s.items.every(x => itPh(x.it) === 'ha');
@@ -7280,6 +7310,7 @@ const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k =
 const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols.length) : a), 0);
 function tsKick(s, m) {
   const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
+  if (s.abpar) return 'Arbeitsteilig · ' + ng + ' Arbeitsblätter parallel';
   const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }
@@ -7290,7 +7321,7 @@ function tsMeta(x, s, m, col) {
   const sozU = tsSoz(s); const phD = (s.phs || []).length > 1;
   return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', !tsArb(s).length && arbOf(x.it).length ? arbOf(x.it).map(k => ARB[k].label).join(', ') : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
-const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : x.no ? 'Aufgabe ' + x.no : 'Auftrag') : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
+const tsLab = (x, s, m) => [x.abl || '', s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : x.no ? 'Aufgabe ' + x.no : 'Auftrag') : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
 // Größe des Timers auf den Folien (Standard für alle Stunden, mit dem Konto gespeichert)
 const TM_SIZES = { s: { label: 'klein', px: 24, pt: 14, h: 0.4 }, m: { label: 'mittel', px: 34, pt: 18, h: 0.52 }, l: { label: 'groß', px: 46, pt: 22, h: 0.64 }, xl: { label: 'sehr groß', px: 64, pt: 30, h: 0.84 } };
 // Anzeige des Timers auf den Folien: Restminuten, Endzeit oder beides
@@ -7321,7 +7352,8 @@ function presSlideHTML(s, bar) {
     case 'foto': return fotoSlideHTML(s);
     case 'blank': if (s.pk) return `<div class="pr-blank pr-pk pat-weiss" aria-label="Pro-und-Contra-Tafel"><div class="pr-pk-in" style="height:${s.h || 900}px;transform:translateY(${-(s.sy || 0)}px)"><h2 class="pr-pk-q${s.q ? '' : ' empty'}">${s.q ? esc(s.q) : 'Stundenfrage im Kopf der Stunde eintragen'}</h2><div class="pr-pk-h${s.either ? ' either' : ''}"><b class="pro">${esc((s.lab || [])[0] || 'Pro')}</b><b class="con">${esc((s.lab || [])[1] || 'Contra')}</b></div><div class="pr-pk-b"></div></div></div>`;
       return `<div class="pr-blank pat-${inkPatBase(s.pat)}" style="background-position:${inkBgPos(s) || '0 0'}" aria-label="${INK_TPLS[s.pat] ? 'Tafel: ' + INK_TPLS[s.pat].l : 'Leere Tafelseite'}">${inkTplSvg(s.pat).replace('<svg class="pr-tpl"', `<svg class="pr-tpl" style="transform:translateY(${-(s.sy || 0)}px)"`)}</div>`;
-    case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
+    case 'abhead': if (s.par) return `<div class="pr-body pr-tbody"><div class="pr-h1 sm">Arbeitsteilige Phase</div><div class="pr-par">${s.par.map(x => `<div class="pr-par-c"><b>${esc(x.lab)}</b><span>${esc(x.title || '')}</span></div>`).join('')}</div></div>`;
+      return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
       return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
     case 'mat': {

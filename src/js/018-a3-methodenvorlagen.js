@@ -375,7 +375,7 @@ const prTaskHTML = (it, m) => {
   const st = prLinesOf(it, m); return st.length ? `<p>${st.join('<br>')}</p>` : ''; };
 // Zeit einer Aufgabenfolie: Zeilen nacheinander, Gruppenspalten parallel (längste Gruppe)
 // Zeit einer Aufgabenfolie = Zeit des Bausteins; nebeneinanderstehende Gruppen-Bausteine laufen parallel (längster zählt)
-const tsMin = s => { const by = {}; s.items.forEach(x => { by[x.bid] = x.bmin || 0; }); const v = Object.values(by); return v.length > 1 ? Math.max(0, ...v) : (v[0] || 0); };
+const tsMin = s => { if (s.abpar) { const per = {}; s.items.forEach(x => { (per[x.abl] = per[x.abl] || {})[x.bid] = x.bmin || 0; }); return Math.max(0, ...Object.values(per).map(o => Object.values(o).reduce((a, v) => a + v, 0))); } const by = {}; s.items.forEach(x => { by[x.bid] = x.bmin || 0; }); const v = Object.values(by); return v.length > 1 ? Math.max(0, ...v) : (v[0] || 0); };
 const tsTimer = s => ((s.items.find(x => x.btimer) || {}).btimer || '');
 const prMin = s => (s.k === 'tasks' ? tsMin(s) : s.k === 'step' ? itMin(s.b) : 0);
 const tsHaAll = s => s.items.every(x => itPh(x.it) === 'ha');
@@ -384,6 +384,7 @@ const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k =
 const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols.length) : a), 0);
 function tsKick(s, m) {
   const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
+  if (s.abpar) return 'Arbeitsteilig · ' + ng + ' Arbeitsblätter parallel';
   const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }
@@ -394,7 +395,7 @@ function tsMeta(x, s, m, col) {
   const sozU = tsSoz(s); const phD = (s.phs || []).length > 1;
   return [!col && x.g ? grpName(m, x.g) : '', x.it.tag && (!col || tfStr(x.it.tag).trim() !== col.sub) ? x.it.tag : '', !sozU && SOZ[x.it.soz] ? SOZ[x.it.soz].label : '', !tsArb(s).length && arbOf(x.it).length ? arbOf(x.it).map(k => ARB[k].label).join(', ') : '', phD && itPh(x.it) ? PHASEN[itPh(x.it)].label : ''].filter(Boolean).join(' · ');
 }
-const tsLab = (x, s, m) => [s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : x.no ? 'Aufgabe ' + x.no : 'Auftrag') : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
+const tsLab = (x, s, m) => [x.abl || '', s.items.length > 1 ? (itPh(x.it) === 'ha' ? 'Hausaufgabe' : x.no ? 'Aufgabe ' + x.no : 'Auftrag') : '', x.g ? grpName(m, x.g) : ''].filter(Boolean).join(' · ');
 // Größe des Timers auf den Folien (Standard für alle Stunden, mit dem Konto gespeichert)
 const TM_SIZES = { s: { label: 'klein', px: 24, pt: 14, h: 0.4 }, m: { label: 'mittel', px: 34, pt: 18, h: 0.52 }, l: { label: 'groß', px: 46, pt: 22, h: 0.64 }, xl: { label: 'sehr groß', px: 64, pt: 30, h: 0.84 } };
 // Anzeige des Timers auf den Folien: Restminuten, Endzeit oder beides
@@ -425,7 +426,8 @@ function presSlideHTML(s, bar) {
     case 'foto': return fotoSlideHTML(s);
     case 'blank': if (s.pk) return `<div class="pr-blank pr-pk pat-weiss" aria-label="Pro-und-Contra-Tafel"><div class="pr-pk-in" style="height:${s.h || 900}px;transform:translateY(${-(s.sy || 0)}px)"><h2 class="pr-pk-q${s.q ? '' : ' empty'}">${s.q ? esc(s.q) : 'Stundenfrage im Kopf der Stunde eintragen'}</h2><div class="pr-pk-h${s.either ? ' either' : ''}"><b class="pro">${esc((s.lab || [])[0] || 'Pro')}</b><b class="con">${esc((s.lab || [])[1] || 'Contra')}</b></div><div class="pr-pk-b"></div></div></div>`;
       return `<div class="pr-blank pat-${inkPatBase(s.pat)}" style="background-position:${inkBgPos(s) || '0 0'}" aria-label="${INK_TPLS[s.pat] ? 'Tafel: ' + INK_TPLS[s.pat].l : 'Leere Tafelseite'}">${inkTplSvg(s.pat).replace('<svg class="pr-tpl"', `<svg class="pr-tpl" style="transform:translateY(${-(s.sy || 0)}px)"`)}</div>`;
-    case 'abhead': return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
+    case 'abhead': if (s.par) return `<div class="pr-body pr-tbody"><div class="pr-h1 sm">Arbeitsteilige Phase</div><div class="pr-par">${s.par.map(x => `<div class="pr-par-c"><b>${esc(x.lab)}</b><span>${esc(x.title || '')}</span></div>`).join('')}</div></div>`;
+      return `<div class="pr-body pr-tbody"><div class="pr-nr ab"><b>${esc(s.lab)}</b></div><div class="pr-h1 sm">${inlineHTML(s.title || '')}</div>${s.topic ? `<div class="pr-sub">${esc(deQuoteStr(s.topic))}</div>` : ''}</div>`;
     case 'title': { if (state.sheet.abs) { const A = stABs(); return `<div class="pr-body pr-tbody"><div class="pr-h1">${esc(stTitle(state.sheet))}</div><div class="pr-sub">${A.map(x => esc(abLabel(x.meta, x.k) + ': ' + plainText(x.meta.title || ''))).join('<br>')}</div><div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`; } }
       return `<div class="pr-body pr-tbody">${m.nr ? `<div class="pr-nr"><small>AB</small><b>${esc(m.nr)}</b></div>` : ''}<div class="pr-h1">${inlineHTML(m.title || 'Arbeitsblatt')}</div>${m.topic ? `<div class="pr-sub">${esc(deQuoteStr(m.topic))}</div>` : ''}<div class="pr-course">${esc([m.course, m.school].filter(Boolean).join(' · '))}</div></div>`;
     case 'mat': {
