@@ -6776,16 +6776,20 @@ function presSlides(quiet) {
   if (!quiet) renderPreview();
   return S;
 }
+// Arbeitsteilige ABs: der n-te Aufgabenbaustein jedes ABs kommt mit den n-ten der anderen auf eine Folie (je AB eine Spalte);
+// andere Folien bleiben an ihrem Platz zwischen den Aufgabenfolien
 function presParallel(G, off) {
-  const labs = G.map(g => g.lab).join(' · '), out = [], pre = [], post = [], cols = [];
-  G.forEach(g => { const body = g.L.filter(x => x.k !== 'abhead'); const fi = body.findIndex(x => x.k === 'tasks');
-    body.forEach((x, n) => { if (x.k === 'tasks') return; (fi < 0 || n < fi ? pre : post).push(x); });
-    const items = body.filter(x => x.k === 'tasks').flatMap(x => x.items.map(it => ({ ...it, abl: g.lab }))); if (items.length) cols.push({ g: '', name: g.lab, sub: g.title, items }); });
+  const labs = G.map(g => g.lab).join(' · '), out = [];
+  const P = G.map(g => { const segs = [[]], T = []; g.L.forEach(x => { if (x.k === 'abhead') return; if (x.k === 'tasks') { T.push(x); segs.push([]); } else segs[segs.length - 1].push(x); }); return { g, segs, T }; });
   if (G.some(g => g.L.some(x => x.k === 'abhead'))) out.push({ k: 'abhead', lab: labs, title: 'Arbeitsteilige Phase', topic: '', par: G.map(g => ({ lab: g.lab, title: g.title })), ab: labs });
-  pre.forEach(x => out.push(x));
-  if (cols.length > 1) { const items = cols.flatMap(c => c.items); out.push({ k: 'tasks', bid: items[0].bid, items, segs: [{ t: 'cols', cols }], abpar: true }); }
-  else if (cols.length === 1) G.forEach(g => g.L.filter(x => x.k === 'tasks').forEach(x => out.push(x)));
-  post.forEach(x => out.push(x));
+  const N = Math.max(0, ...P.map(p => p.T.length));
+  for (let n = 0; n <= N; n++) {
+    P.forEach(p => (p.segs[n] || []).forEach(x => out.push(x)));
+    if (n === N) break;
+    const here = P.filter(p => p.T[n]);
+    if (here.length > 1) { const cols = here.map(p => ({ g: '', name: p.g.lab, sub: p.g.title, items: p.T[n].items.map(it => ({ ...it, abl: p.g.lab })) })); const items = cols.flatMap(c => c.items); out.push({ k: 'tasks', bid: items[0].bid, items, segs: [{ t: 'cols', cols }], abpar: true }); }
+    else here.forEach(p => out.push(p.T[n]));
+  }
   out.forEach(x => { x.ab = labs; }); return out;
 }
 // Phase je Folie: Aufgaben haben ihre eigene, Zitat oder Bild vor der ersten Aufgabe gelten als Einstieg, das Tafelbild als Sicherung (wie im Verlaufsplan),
@@ -7310,7 +7314,8 @@ const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k =
 const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols.length) : a), 0);
 function tsKick(s, m) {
   const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
-  if (s.abpar) return 'Arbeitsteilig · ' + ng + ' Arbeitsblätter parallel';
+  if (s.abpar) { const C = s.segs[0].cols.map(c => c.items.map(x => x.no).filter(Boolean).join(',')); const ns = s.segs[0].cols[0].items.map(x => x.no).filter(Boolean);
+    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + ' ABs parallel'].filter(Boolean).join(' · '); }
   const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }

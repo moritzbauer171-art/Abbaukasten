@@ -57,9 +57,10 @@ def test_ton_unter_30_prozent(lw):
 def test_arbeitsteilige_abs_auf_einer_folie(lw):
     pg = lw.open(); lw.new_lesson(pg)
     tA = {'id': 'ta', 'type': 'tasks', 'title': '', 'min': 20, 'items': [{'text': 'Analysieren Sie die Panels auf S. 12.', 'soz': 'ga'}, {'text': 'Notieren Sie Ihre Ergebnisse.', 'soz': 'ga'}]}
-    lw.setup(pg, [tA]); pg.evaluate("__S.sheet.meta.title = 'Folman: Versteck'; __RE()")
+    tA2 = {'id': 'ta2', 'type': 'tasks', 'title': '', 'min': 10, 'items': [{'text': 'Deuten Sie die Leerstelle.', 'soz': 'pa'}, {'text': 'Begründen Sie Ihre Deutung.', 'soz': 'ea'}]}
+    lw.setup(pg, [tA, tA2]); pg.evaluate("__S.sheet.meta.title = 'Folman: Versteck'; __RE()")
     pg.evaluate("""(() => { const P = __S.sheet; P.abs = [{ id: 'ab1', active: true }, { id: 'ab2', meta: { nr: '', title: 'Folman: Traum', topic: '' }, zrefs: [],
-      blocks: [{ id: 'tb', type: 'tasks', title: '', min: 25, items: [{ text: 'Untersuchen Sie die Farbgebung auf S. 40.', soz: 'ga' }] }] }]; P.abActive = 0; P.stunde = { title: 'Graphic Diary' }; __RE(); __RP(); })()""")
+      blocks: [{ id: 'tb', type: 'tasks', title: '', min: 25, items: [{ text: 'Untersuchen Sie die Farbgebung auf S. 40.', soz: 'ga' }, { text: 'Halten Sie Ihre Beobachtungen fest.', soz: 'ga' }] }, { id: 'tb2', type: 'tasks', title: '', min: 10, items: [{ text: 'Vergleichen Sie mit dem Tagebuch.', soz: 'pa' }, { text: 'Bewerten Sie die Umsetzung.', soz: 'ea' }] }] }]; P.abActive = 0; P.stunde = { title: 'Graphic Diary' }; __RE(); __RP(); })()""")
     pg.wait_for_timeout(500)
     pg.locator('#editor [data-act="abx-par"]').check(); pg.wait_for_timeout(400)
     pg.locator('#editor [data-act="abx-go"][data-abk="1"]').click(); pg.wait_for_timeout(500)
@@ -74,6 +75,10 @@ def test_arbeitsteilige_abs_auf_einer_folie(lw):
     assert pg.locator('.pr .pr-slide .pr-col').count() == 2
     t = pg.locator('.pr .pr-slide').inner_text()
     assert 'Panels auf S. 12' in t and 'Farbgebung auf S. 40' in t and 'Folman: Traum' in t
-    assert '2 arbeitsblätter parallel' in t.lower() and '25' in t
+    assert 'aufgaben 1–2 · arbeitsteilig · 2 abs parallel' in t.lower() and '25' in t
     assert any('Arbeitsteilige Phase' in s for s in seen)
+    assert 'Vergleichen Sie' not in t and 'Deuten Sie' not in t
+    pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
+    t2 = pg.locator('.pr .pr-slide').inner_text()
+    assert pg.locator('.pr .pr-slide .pr-col').count() == 2 and 'Deuten Sie' in t2 and 'Bewerten Sie' in t2 and 'Panels' not in t2 and '10' in t2 and 'aufgaben 3–4' in t2.lower()
     pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'par_folie.png'))
