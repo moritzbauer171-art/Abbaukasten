@@ -407,17 +407,17 @@ async function exportDOCX() {
           const n = b.cols.length; const widths = tbWidths(b).map(p => Math.round(CW * p / 100)); widths[n - 1] += CW - widths.reduce((a, x) => a + x, 0);
           const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => LINE(s, 4, RULE)).join('');
           const hasHead = b.cols.some(c => c.trim());
-          const head = hasHead ? xtr(b.cols.map((c, i) => xtc(xp(xrInline(ckCellWord(c), { b: 1, sz: 19 }), tbCk(b, i) ? { jc: 'center' } : {}), { w: widths[i], shd: AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
+          const head = hasHead ? xtr(b.cols.map((c, i) => xtc(xp(xrInline(ckCellWord(c), { b: 1, sz: 19 }), tbCk(b, i) ? { jc: 'center' } : {}), { w: widths[i], shd: tbBg(b, 'h', i) ? tbBg(b, 'h', i).slice(1) : AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
           const lineBdr = '<w:pBdr><w:bottom w:val="single" w:sz="2" w:space="0" w:color="C8CCD5"/></w:pBdr>';
           const rows = b.rows.map((r, ri) => {
             const hmm = tbRowMM(b, ri), N = tbLines(hmm);
             return xtr(Array.from({ length: n }, (_, i) => {
-              const c = ckCellWord(r[i] || ''); const w = widths[i];
+              const c = ckCellWord(r[i] || ''); const w = widths[i]; const sh = tbBg(b, ri, i) ? { shd: tbBg(b, ri, i).slice(1) } : {};
               const eh = v.lehrer ? tbEh(b, ri, i) : [];
-              if (!eh.length && tbCk(b, i) && !String(c).trim()) return xtc(xp(xr('☐', { sz: 28 }), { jc: 'center' }), { w, v: 'center' });
-              if (eh.length) return xtc((String(c).trim() ? xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })) : '') + eh.map(x => xp(xr(eh.length > 1 ? '– ' : '', { sz: 17, color: '2A2D35' }) + xrInline(x, { sz: 17, color: '2A2D35' }), { bdr: '<w:pBdr><w:left w:val="single" w:sz="12" w:space="4" w:color="9AA0AA"/></w:pBdr>', before: 20 })).join(''), { w });
-              if (b.cellLines && !String(c).trim() && N > 1) return xtc(Array.from({ length: N - 1 }, (_, j) => xp('', { line: TW(j ? hmm / N : Math.max(2, hmm / N - 1.6)), rule: 'exact', bdr: lineBdr, mark: 2 })).join(''), { w });
-              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 }), tbCk(b, i) ? { jc: 'center' } : {}), { w, ...(tbCk(b, i) ? { v: 'center' } : {}) });
+              if (!eh.length && tbCk(b, i) && !String(c).trim()) return xtc(xp(xr('☐', { sz: 28 }), { jc: 'center' }), { w, v: 'center', ...sh });
+              if (eh.length) return xtc((String(c).trim() ? xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })) : '') + eh.map(x => xp(xr(eh.length > 1 ? '– ' : '', { sz: 17, color: '2A2D35' }) + xrInline(x, { sz: 17, color: '2A2D35' }), { bdr: '<w:pBdr><w:left w:val="single" w:sz="12" w:space="4" w:color="9AA0AA"/></w:pBdr>', before: 20 })).join(''), { w, ...sh });
+              if (b.cellLines && !String(c).trim() && N > 1) return xtc(Array.from({ length: N - 1 }, (_, j) => xp('', { line: TW(j ? hmm / N : Math.max(2, hmm / N - 1.6)), rule: 'exact', bdr: lineBdr, mark: 2 })).join(''), { w, ...sh });
+              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 }), tbCk(b, i) ? { jc: 'center' } : {}), { w, ...sh, ...(tbCk(b, i) ? { v: 'center' } : {}) });
             }).join(''), { h: TW(hmm), cant: 1 });
           }).join('');
           parts.push(xtbl(widths, head + rows, bd, `<w:top w:w="${TW(1.6)}" w:type="dxa"/><w:left w:w="${TW(2)}" w:type="dxa"/><w:bottom w:w="${TW(1.6)}" w:type="dxa"/><w:right w:w="${TW(2)}" w:type="dxa"/>`));

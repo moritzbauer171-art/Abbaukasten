@@ -131,14 +131,14 @@ function buildBlock(b, ctx) {
     }
     case 'table': {
       const cols = b.cols.length;
-      const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map((c, i) => `<th${tbCk(b, i) ? ' class="ckc"' : ''}>${ckCellHTML(c)}</th>`).join('')}</tr></thead>` : '';
+      const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map((c, i) => `<th${tbCk(b, i) ? ' class="ckc"' : ''}${tbBg(b, 'h', i) ? ` style="background:${tbBg(b, 'h', i)}"` : ''}>${ckCellHTML(c)}</th>`).join('')}</tr></thead>` : '';
       const colg = `<colgroup>${tbWidths(b).map(p => `<col style="width:${p.toFixed(2)}%">`).join('')}</colgroup>`;
       const rows = b.rows.map((r, ri) => { const h = tbRowMM(b, ri), N = tbLines(h); return `<tr>${Array.from({ length: cols }, (_, i) => {
         const c = r[i] || ''; const eh = ctx.view && ctx.view.lehrer ? tbEh(b, ri, i) : [];
         const ehH = eh.length ? `<div class="tb-eh">${eh.length > 1 ? `<ul>${eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : inlineHTML(eh[0])}</div>` : '';
-        const ckc = tbCk(b, i); if (ckc && !eh.length && !String(c).trim()) return `<td class="ckc" style="height:${h}mm">${CK_SVG(false)}</td>`;
+        const ckc = tbCk(b, i), bgc = tbBg(b, ri, i) ? `;background:${tbBg(b, ri, i)}` : ''; if (ckc && !eh.length && !String(c).trim()) return `<td class="ckc" style="height:${h}mm${bgc}">${CK_SVG(false)}</td>`;
         const ln = !ckc && !eh.length && b.cellLines && !String(c).trim() && N > 1 ? Array.from({ length: N - 1 }, (_, j) => `<i class="cl" style="top:${((j + 1) * h / N).toFixed(2)}mm"></i>`).join('') : '';
-        return `<td style="height:${h}mm"${ln ? ' class="lc"' : ckc ? ' class="ckc"' : ''}>${ckCellHTML(c)}${ehH}${ln}</td>`; }).join('')}</tr>`; }).join('');
+        return `<td style="height:${h}mm${bgc}"${ln ? ' class="lc"' : ckc ? ' class="ckc"' : ''}>${ckCellHTML(c)}${ehH}${ln}</td>`; }).join('')}</tr>`; }).join('');
       const n = put(`<div class="blk blk-table">${b.title ? `<div class="tb-title">${inlineHTML(b.title)}</div>` : ''}<table class="tb${b.firstBold ? ' fb' : ''}">${colg}${head}<tbody>${rows}</tbody></table></div>`);
       const atoms = [...n.querySelectorAll('tbody tr')];
       return {

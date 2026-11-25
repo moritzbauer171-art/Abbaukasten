@@ -119,3 +119,25 @@ def test_moderationskarten(lw):
     pg.locator('#editor [data-act="arb"][data-i="1"][data-v="karten"]').click(); pg.wait_for_timeout(500)
     assert pg.locator('#pages .task-hint').count() == 2
     xml = docx(pg, 'karten.docx'); assert xml.count('gut leserlich auf Moderationskarten') == 2
+
+def test_tabelle_farben(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 'tb1', 'type': 'table', 'title': '', 'cols': ['Figur', 'Merkmal'], 'rows': [['Anne', ''], ['Peter', ''], ['Abschnitt 2', ''], ['Otto', '']], 'rowHeight': 'normal'}])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(500)
+    pg.locator('#editor [data-act="tb-mode"][data-v="farbe"]').click(); pg.wait_for_timeout(400)
+    pg.locator('#editor [data-act="tb-brush"][data-v="blau"]').click(); pg.wait_for_timeout(300)
+    pg.locator('#editor [data-act="tb-paint-row"][data-ri="2"]').click(); pg.wait_for_timeout(400)
+    pg.locator('#editor [data-act="tb-brush"][data-v="gelb"]').click(); pg.wait_for_timeout(300)
+    pg.locator('#editor [data-act="tb-paint"][data-c="h.0"]').click(); pg.wait_for_timeout(600)
+    bg = pg.evaluate("__S.sheet.blocks[0].bg")
+    assert bg == {'2.0': 'blau', '2.1': 'blau', 'h.0': 'gelb'}
+    cs = pg.evaluate("[...document.querySelectorAll('#pages .tb tbody tr')].map(r => getComputedStyle(r.cells[0]).backgroundColor)")
+    assert cs[2] == 'rgb(211, 230, 250)' and cs[0] != cs[2]
+    assert pg.evaluate("getComputedStyle(document.querySelector('#pages .tb th')).backgroundColor") == 'rgb(255, 241, 168)'
+    xml = docx(pg, 'farbe.docx'); assert 'D3E6FA' in xml and 'FFF1A8' in xml
+    # Zeile nochmal mit derselben Farbe: Farbe wieder weg
+    pg.locator('#editor [data-act="tb-brush"][data-v="blau"]').click(); pg.wait_for_timeout(300)
+    pg.locator('#editor [data-act="tb-paint-row"][data-ri="2"]').click(); pg.wait_for_timeout(400)
+    assert pg.evaluate("__S.sheet.blocks[0].bg") == {'h.0': 'gelb'}
+    pg.locator('#editor [data-act="tb-mode"][data-v=""]').first.click(); pg.wait_for_timeout(400)
+    assert pg.locator('#editor [data-act="tb-mode"][data-v="farbe"]').inner_text().strip() == 'Farbe · 1'

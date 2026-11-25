@@ -6,6 +6,9 @@ const SOZ = {
   tps: { label: 'Think-Pair-Share', short: 'TPS' },
   pl: { label: 'Plenum', short: 'Plenum' }
 };
+/* Tabellen: Hintergrundfarben für Felder, um Abschnitte sichtbar zu machen (druckfreundliche Pastelltöne) */
+const TBL_BG = { gelb: { l: 'Gelb', c: '#FFF1A8' }, orange: { l: 'Orange', c: '#FFDDB8' }, rosa: { l: 'Rosa', c: '#FAD4DA' }, lila: { l: 'Lila', c: '#E4D9F5' }, blau: { l: 'Blau', c: '#D3E6FA' }, gruen: { l: 'Grün', c: '#D5F0CC' }, grau: { l: 'Grau', c: '#E7E9ED' } };
+const tbBg = (b, r, c) => { const k = b && b.bg && b.bg[r + '.' + c]; return TBL_BG[k] ? TBL_BG[k].c : ''; };
 /* Arbeitsformen: Piktogramme neben der Sozialform, mehrere je Aufgabe möglich */
 const ARB = {
   lesen: { label: 'Lesen', g: '<path d="M2.5 5.6c3.2-1.3 6.4-1.1 9.5 1 3.1-2.1 6.3-2.3 9.5-1v13.2c-3.2-1.3-6.4-1.1-9.5 1-3.1-2.1-6.3-2.3-9.5-1z"/><path d="M12 6.6v13.2"/>' },

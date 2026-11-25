@@ -212,6 +212,12 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'tb-brush': if (!state.tbPaint) state.tbPaint = {}; state.tbPaint[bid] = a.dataset.v; renderEditor(); return;
+    case 'tb-paint': case 'tb-paint-row': case 'tb-paint-col': { const br = (state.tbPaint || {})[bid] || 'gelb'; snapshot(); if (!b.bg || typeof b.bg !== 'object') b.bg = {};
+      const keys = act === 'tb-paint' ? [a.dataset.c] : act === 'tb-paint-row' ? b.cols.map((_, ci) => a.dataset.ri + '.' + ci) : ['h.' + a.dataset.ci, ...b.rows.map((_, ri) => ri + '.' + a.dataset.ci)].filter(k => k[0] !== 'h' || b.cols.some(c => String(c).trim()));
+      const set = act !== 'tb-paint' && keys.every(k => b.bg[k] === br) ? 'weg' : br; // ganze Zeile/Spalte nochmal: Farbe wieder weg
+      keys.forEach(k => { if (set === 'weg') delete b.bg[k]; else b.bg[k] = set; }); if (!Object.keys(b.bg).length) delete b.bg; changed(true); renderEditor(); return; }
+    case 'tb-bg-clear': snapshot(); delete b.bg; changed(true); renderEditor(); return;
     case 'row-add': b.rows.push(Array(b.cols.length).fill('')); changed(true); return;
     case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); if (Array.isArray(b.eh)) b.eh.length = Math.min(b.eh.length, b.rows.length); changed(true); } return;
     case 'col-add': if (b.cols.length < 6) { const n = b.cols.length; if (Array.isArray(b.cw) && b.cw.length === n) b.cw = [...tbWidths(b).map(x => x * n / (n + 1)), 100 / (n + 1)].map(x => Math.round(x * 10) / 10); if (Array.isArray(b.ck)) b.ck.push(false); b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
@@ -322,7 +328,9 @@ function onClick(e) {
     case 'dz-more': state.dzMore = !(state.dzMore || !!DESIGNS[designOf(state.sheet.meta)].more); renderEditor(); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
     case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { mm[f] = a.dataset.v || 'n'; changed(true); } return; }
-    case 'tb-mode': if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
+    case 'tb-mode': if (!state.tbPaint) state.tbPaint = {};
+      if (a.dataset.v === 'farbe') { state.tbPaint[bid] = state.tbPaint[bid] || 'gelb'; state.tbEh.delete(bid); renderEditor(); return; }
+      delete state.tbPaint[bid]; if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
     case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;

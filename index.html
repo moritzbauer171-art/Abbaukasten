@@ -1497,6 +1497,16 @@ body{transition:background-color .3s,border-color .25s}
 .lb-hit{animation:lbHit 1.4s ease-out}
 .blk-lb .lb-c{cursor:pointer}
 @media print{.blk-lb .lb-c{cursor:auto}}
+.tb td,.tb th,.pr-tbl td,.pr-tbl th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tbp-pal{display:flex;gap:6px;flex-wrap:wrap}
+.tbp-sw{width:30px;height:30px;border-radius:8px;border:1px solid rgba(0,0,0,.18);cursor:pointer;font-size:13px;color:#6B7280;padding:0}
+.tbp-sw[aria-pressed="true"]{outline:2.5px solid var(--acc,#2B45B8);outline-offset:2px}
+.tbl-ed.tbp table{border-collapse:separate;border-spacing:3px;width:100%;table-layout:auto;min-width:0}
+.tbl-ed.tbp td{padding:0;border:0}
+.tbp-c{display:block;width:100%;min-height:34px;border:1px solid rgba(0,0,0,.14);border-radius:6px;font-size:12px;text-align:left;padding:4px 6px;cursor:pointer;color:#1C1F27;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbp-c:hover{box-shadow:inset 0 0 0 2px var(--acc,#2B45B8)}
+.tbp-rc{font-size:11px;padding:2px 4px;border:0;background:none;color:var(--acc,#2B45B8);cursor:pointer;white-space:nowrap}
+.tbp-x{width:1%;white-space:nowrap}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -5152,6 +5162,9 @@ const SOZ = {
   tps: { label: 'Think-Pair-Share', short: 'TPS' },
   pl: { label: 'Plenum', short: 'Plenum' }
 };
+/* Tabellen: Hintergrundfarben für Felder, um Abschnitte sichtbar zu machen (druckfreundliche Pastelltöne) */
+const TBL_BG = { gelb: { l: 'Gelb', c: '#FFF1A8' }, orange: { l: 'Orange', c: '#FFDDB8' }, rosa: { l: 'Rosa', c: '#FAD4DA' }, lila: { l: 'Lila', c: '#E4D9F5' }, blau: { l: 'Blau', c: '#D3E6FA' }, gruen: { l: 'Grün', c: '#D5F0CC' }, grau: { l: 'Grau', c: '#E7E9ED' } };
+const tbBg = (b, r, c) => { const k = b && b.bg && b.bg[r + '.' + c]; return TBL_BG[k] ? TBL_BG[k].c : ''; };
 /* Arbeitsformen: Piktogramme neben der Sozialform, mehrere je Aufgabe möglich */
 const ARB = {
   lesen: { label: 'Lesen', g: '<path d="M2.5 5.6c3.2-1.3 6.4-1.1 9.5 1 3.1-2.1 6.3-2.3 9.5-1v13.2c-3.2-1.3-6.4-1.1-9.5 1-3.1-2.1-6.3-2.3-9.5-1z"/><path d="M12 6.6v13.2"/>' },
@@ -7293,7 +7306,7 @@ function presSlideHTML(s, bar) {
     case 'info': return presHead(esc(s.b.kind || 'Info'), inlineHTML(s.b.title || ''), '') + `<div class="pr-body"><div class="pr-fit pr-info">${parasHTML(s.b.text || '')}</div></div>`;
     case 'quote': return `<div class="pr-body"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(s.b.text || '')}</div>${s.b.author ? `<div class="pr-auth">${inlineHTML(s.b.author)}</div>` : ''}</div></div>`;
     case 'image': return (s.b.caption ? presHead('', inlineHTML(s.b.caption), '') : '') + `<div class="pr-body pr-imgb"><img class="pr-img" src="${esc(s.b.src)}" alt="${esc(plainText(s.b.caption || 'Bild'))}"></div>${s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
-    case 'table': { const b = s.b; return presHead('Tabelle', esc(b.title || ''), '') + `<div class="pr-body"><div class="pr-fit"><table class="pr-tbl">${b.cols.some(c => String(c).trim()) ? `<tr>${b.cols.map(c => `<th>${inlineHTML(prCk(c))}</th>`).join('')}</tr>` : ''}${(b.rows || []).map(r => `<tr>${b.cols.map((_, i) => `<td>${inlineHTML(prCk(r[i]))}</td>`).join('')}</tr>`).join('')}</table></div></div>`; }
+    case 'table': { const b = s.b; return presHead('Tabelle', esc(b.title || ''), '') + `<div class="pr-body"><div class="pr-fit"><table class="pr-tbl">${b.cols.some(c => String(c).trim()) ? `<tr>${b.cols.map((c, i) => `<th${tbBg(b, 'h', i) ? ` style="background:${tbBg(b, 'h', i)}"` : ''}>${inlineHTML(prCk(c))}</th>`).join('')}</tr>` : ''}${(b.rows || []).map((r, ri) => `<tr>${b.cols.map((_, i) => `<td${tbBg(b, ri, i) ? ` style="background:${tbBg(b, ri, i)}"` : ''}>${inlineHTML(prCk(r[i]))}</td>`).join('')}</tr>`).join('')}</table></div></div>`; }
     case 'phr': return presHead('', inlineHTML(s.b.title || 'Formulierungshilfen'), '') + `<div class="pr-body"><div class="pr-fit pr-phr">${phrGroups(s.b).map(g => `<div>${g.head ? `<b>${inlineHTML(g.head)}</b>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`;
     case 'match': { const M = s.M; return presHead(s.b.sort ? 'Sortieren' : 'Zuordnen', inlineHTML(s.b.title || ''), '') + `<div class="pr-body"><div class="pr-fit pr-match"><ul>${M.left.map((x, i) => `<li><b>${i + 1}</b>${inlineHTML(x.a)}</li>`).join('')}</ul><ul>${M.right.map((x, i) => `<li><b>${String.fromCharCode(65 + i)}</b>${inlineHTML(x.b)}</li>`).join('')}</ul></div></div>`; }
     case 'qr': return presHead('', 'Digitale Fassung', '') + `<div class="pr-body pr-qrb"><img src="${QR.dataURL(s.link, 10)}" alt="QR-Code zur digitalen Fassung"><div>${esc(s.link)}</div></div>`;
@@ -10863,14 +10876,14 @@ function buildBlock(b, ctx) {
     }
     case 'table': {
       const cols = b.cols.length;
-      const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map((c, i) => `<th${tbCk(b, i) ? ' class="ckc"' : ''}>${ckCellHTML(c)}</th>`).join('')}</tr></thead>` : '';
+      const head = b.cols.some(c => c.trim()) ? `<thead><tr>${b.cols.map((c, i) => `<th${tbCk(b, i) ? ' class="ckc"' : ''}${tbBg(b, 'h', i) ? ` style="background:${tbBg(b, 'h', i)}"` : ''}>${ckCellHTML(c)}</th>`).join('')}</tr></thead>` : '';
       const colg = `<colgroup>${tbWidths(b).map(p => `<col style="width:${p.toFixed(2)}%">`).join('')}</colgroup>`;
       const rows = b.rows.map((r, ri) => { const h = tbRowMM(b, ri), N = tbLines(h); return `<tr>${Array.from({ length: cols }, (_, i) => {
         const c = r[i] || ''; const eh = ctx.view && ctx.view.lehrer ? tbEh(b, ri, i) : [];
         const ehH = eh.length ? `<div class="tb-eh">${eh.length > 1 ? `<ul>${eh.map(x => `<li>${inlineHTML(x)}</li>`).join('')}</ul>` : inlineHTML(eh[0])}</div>` : '';
-        const ckc = tbCk(b, i); if (ckc && !eh.length && !String(c).trim()) return `<td class="ckc" style="height:${h}mm">${CK_SVG(false)}</td>`;
+        const ckc = tbCk(b, i), bgc = tbBg(b, ri, i) ? `;background:${tbBg(b, ri, i)}` : ''; if (ckc && !eh.length && !String(c).trim()) return `<td class="ckc" style="height:${h}mm${bgc}">${CK_SVG(false)}</td>`;
         const ln = !ckc && !eh.length && b.cellLines && !String(c).trim() && N > 1 ? Array.from({ length: N - 1 }, (_, j) => `<i class="cl" style="top:${((j + 1) * h / N).toFixed(2)}mm"></i>`).join('') : '';
-        return `<td style="height:${h}mm"${ln ? ' class="lc"' : ckc ? ' class="ckc"' : ''}>${ckCellHTML(c)}${ehH}${ln}</td>`; }).join('')}</tr>`; }).join('');
+        return `<td style="height:${h}mm${bgc}"${ln ? ' class="lc"' : ckc ? ' class="ckc"' : ''}>${ckCellHTML(c)}${ehH}${ln}</td>`; }).join('')}</tr>`; }).join('');
       const n = put(`<div class="blk blk-table">${b.title ? `<div class="tb-title">${inlineHTML(b.title)}</div>` : ''}<table class="tb${b.firstBold ? ' fb' : ''}">${colg}${head}<tbody>${rows}</tbody></table></div>`);
       const atoms = [...n.querySelectorAll('tbody tr')];
       return {
@@ -12096,9 +12109,20 @@ function bodyFor(b, num) {
     case 'table': {
       const cols = b.cols.length; if (!Array.isArray(b.rowH)) b.rowH = []; const each = !!b.rowEach;
       b.eh = b.rows.map((r, ri) => Array.from({ length: cols }, (_, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '')));
-      const ehMode = state.tbEh.has(b.id); const nEh = tbEhCount(b);
+      const paint = state.tbPaint && state.tbPaint[b.id]; const ehMode = !paint && state.tbEh.has(b.id); const nEh = tbEhCount(b);
+      if (paint) { const nBg = Object.keys(b.bg || {}).length, sw = k => (TBL_BG[k] ? TBL_BG[k].c : '#fff');
+        const cell = (key, txt, lab) => `<td><button type="button" class="tbp-c" data-act="tb-paint" data-c="${key}" style="background:${tbBg(b, ...key.split('.')) || '#fff'}" aria-label="${lab} färben">${txt ? esc(String(txt).replace(/[*_~]/g, '').slice(0, 40)) : '&nbsp;'}</button></td>`;
+        return `${fText('title', 'Titel (optional)', b.title, '')}
+        <div class="f"><span>Eintragen</span><div class="seg sm" role="group" aria-label="Eintragen"><button type="button" data-act="tb-mode" data-v="" aria-pressed="false">Inhalt</button><button type="button" data-act="tb-mode" data-v="eh" aria-pressed="false">Erwartung${nEh ? ` · ${nEh}` : ''}</button><button type="button" data-act="tb-mode" data-v="farbe" aria-pressed="true">Farbe${nBg ? ` · ${nBg}` : ''}</button></div></div>
+        <div class="f"><span>Farbe wählen, dann Felder antippen</span><div class="tbp-pal" role="group" aria-label="Farbe">${[...Object.keys(TBL_BG), 'weg'].map(k => `<button type="button" class="tbp-sw${k === 'weg' ? ' weg' : ''}" data-act="tb-brush" data-v="${k}" aria-pressed="${paint === k}" title="${k === 'weg' ? 'Farbe entfernen' : TBL_BG[k].l}" style="background:${k === 'weg' ? '#fff' : sw(k)}">${k === 'weg' ? '✕' : ''}</button>`).join('')}</div></div>
+        <div class="tbl-ed tbp"><table><tr><td class="tbp-x"></td>${b.cols.map((_, ci) => `<td><button type="button" class="tbp-rc" data-act="tb-paint-col" data-ci="${ci}" title="Ganze Spalte ${ci + 1} färben">Spalte ↓</button></td>`).join('')}</tr>
+          ${b.cols.some(c => String(c).trim()) ? `<tr><td class="tbp-x"><small>Kopf</small></td>${b.cols.map((c, ci) => cell('h.' + ci, c, `Spaltenkopf ${ci + 1}`)).join('')}</tr>` : ''}
+          ${b.rows.map((r, ri) => `<tr><td class="tbp-x"><button type="button" class="tbp-rc" data-act="tb-paint-row" data-ri="${ri}" title="Ganze Zeile ${ri + 1} färben">Zeile →</button></td>${b.cols.map((_, ci) => cell(ri + '.' + ci, r[ci], `Zeile ${ri + 1}, Spalte ${ci + 1}`)).join('')}</tr>`).join('')}
+        </table></div>
+        <div class="row" style="gap:16px">${nBg ? '<button class="link" type="button" data-act="tb-bg-clear">Alle Farben entfernen</button>' : ''}<button class="link" type="button" data-act="tb-mode" data-v="">Fertig</button></div>
+        <p class="hint" style="margin:0">Die Farben erscheinen auf dem Blatt, auf der Folie und in Word. Tipp: Eine Zeile in Farbe als Zwischenüberschrift trennt Abschnitte deutlich.</p>`; }
       return `${fText('title', 'Titel (optional)', b.title, '')}
-        <div class="f"><span>Eintragen</span><div class="seg sm" role="group" aria-label="Eintragen"><button type="button" data-act="tb-mode" data-v="" aria-pressed="${!ehMode}">Inhalt</button><button type="button" data-act="tb-mode" data-v="eh" aria-pressed="${ehMode}">Erwartung${nEh ? ` · ${nEh}` : ''}</button></div>${ehMode ? '<small>Die Erwartungen stehen nur in der Lehrerfassung in den Zellen. Eine Zeile = ein Punkt.</small>' : ''}</div>
+        <div class="f"><span>Eintragen</span><div class="seg sm" role="group" aria-label="Eintragen"><button type="button" data-act="tb-mode" data-v="" aria-pressed="${!ehMode}">Inhalt</button><button type="button" data-act="tb-mode" data-v="eh" aria-pressed="${ehMode}">Erwartung${nEh ? ` · ${nEh}` : ''}</button><button type="button" data-act="tb-mode" data-v="farbe" aria-pressed="false">Farbe${Object.keys(b.bg || {}).length ? ` · ${Object.keys(b.bg).length}` : ''}</button></div>${ehMode ? '<small>Die Erwartungen stehen nur in der Lehrerfassung in den Zellen. Eine Zeile = ein Punkt.</small>' : ''}</div>
         ${cols > 1 ? cwBarHTML(b) : ''}
         <div class="tbl-ed"><table style="min-width:${tbEdMin(b, each)}px"><colgroup>${tbWidths(b).map((p, ci) => `<col data-ci="${ci}" style="width:${p}%">`).join('')}${each ? '<col style="width:72px">' : ''}</colgroup>
           <tr>${b.cols.map((c, ci) => `<td>${rtField(`cols.${ci}`, c, { mode: 'line', ph: `Kopf ${ci + 1}`, aria: `Spaltenkopf ${ci + 1}` })}</td>`).join('')}${each ? '<td class="rh-c rh-h">Höhe<br>in mm</td>' : ''}</tr>
@@ -12470,6 +12494,12 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'tb-brush': if (!state.tbPaint) state.tbPaint = {}; state.tbPaint[bid] = a.dataset.v; renderEditor(); return;
+    case 'tb-paint': case 'tb-paint-row': case 'tb-paint-col': { const br = (state.tbPaint || {})[bid] || 'gelb'; snapshot(); if (!b.bg || typeof b.bg !== 'object') b.bg = {};
+      const keys = act === 'tb-paint' ? [a.dataset.c] : act === 'tb-paint-row' ? b.cols.map((_, ci) => a.dataset.ri + '.' + ci) : ['h.' + a.dataset.ci, ...b.rows.map((_, ri) => ri + '.' + a.dataset.ci)].filter(k => k[0] !== 'h' || b.cols.some(c => String(c).trim()));
+      const set = act !== 'tb-paint' && keys.every(k => b.bg[k] === br) ? 'weg' : br; // ganze Zeile/Spalte nochmal: Farbe wieder weg
+      keys.forEach(k => { if (set === 'weg') delete b.bg[k]; else b.bg[k] = set; }); if (!Object.keys(b.bg).length) delete b.bg; changed(true); renderEditor(); return; }
+    case 'tb-bg-clear': snapshot(); delete b.bg; changed(true); renderEditor(); return;
     case 'row-add': b.rows.push(Array(b.cols.length).fill('')); changed(true); return;
     case 'row-del': if (b.rows.length > 1) { b.rows.pop(); if (Array.isArray(b.rowH)) b.rowH.length = Math.min(b.rowH.length, b.rows.length); if (Array.isArray(b.eh)) b.eh.length = Math.min(b.eh.length, b.rows.length); changed(true); } return;
     case 'col-add': if (b.cols.length < 6) { const n = b.cols.length; if (Array.isArray(b.cw) && b.cw.length === n) b.cw = [...tbWidths(b).map(x => x * n / (n + 1)), 100 / (n + 1)].map(x => Math.round(x * 10) / 10); if (Array.isArray(b.ck)) b.ck.push(false); b.cols.push(''); b.rows.forEach(r => r.push('')); changed(true); } return;
@@ -12580,7 +12610,9 @@ function onClick(e) {
     case 'dz-more': state.dzMore = !(state.dzMore || !!DESIGNS[designOf(state.sheet.meta)].more); renderEditor(); return;
     case 'blk-stil': b.stil = a.dataset.v; changed(true); return;
     case 'meta-set': { const mm = state.sheet.meta; const f = a.dataset.f; if (f === 'headGap' || f === 'botGap') { mm[f] = a.dataset.v || 'n'; changed(true); } return; }
-    case 'tb-mode': if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
+    case 'tb-mode': if (!state.tbPaint) state.tbPaint = {};
+      if (a.dataset.v === 'farbe') { state.tbPaint[bid] = state.tbPaint[bid] || 'gelb'; state.tbEh.delete(bid); renderEditor(); return; }
+      delete state.tbPaint[bid]; if (a.dataset.v) { state.tbEh.add(bid); if (state.fassung !== 'lehrer') { state.fassung = 'lehrer'; renderOut(); toast('Vorschau zeigt jetzt die Lehrerfassung'); } } else state.tbEh.delete(bid); renderEditor(); scheduleRender(); return;
     case 'tb-h': b.rowHeight = a.dataset.v; if (a.dataset.v === 'eigen' && !b.rowMM) b.rowMM = 50; changed(true); return;
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
@@ -16437,17 +16469,17 @@ async function exportDOCX() {
           const n = b.cols.length; const widths = tbWidths(b).map(p => Math.round(CW * p / 100)); widths[n - 1] += CW - widths.reduce((a, x) => a + x, 0);
           const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(s => LINE(s, 4, RULE)).join('');
           const hasHead = b.cols.some(c => c.trim());
-          const head = hasHead ? xtr(b.cols.map((c, i) => xtc(xp(xrInline(ckCellWord(c), { b: 1, sz: 19 }), tbCk(b, i) ? { jc: 'center' } : {}), { w: widths[i], shd: AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
+          const head = hasHead ? xtr(b.cols.map((c, i) => xtc(xp(xrInline(ckCellWord(c), { b: 1, sz: 19 }), tbCk(b, i) ? { jc: 'center' } : {}), { w: widths[i], shd: tbBg(b, 'h', i) ? tbBg(b, 'h', i).slice(1) : AT, v: 'bottom' })).join(''), { header: 1, cant: 1 }) : '';
           const lineBdr = '<w:pBdr><w:bottom w:val="single" w:sz="2" w:space="0" w:color="C8CCD5"/></w:pBdr>';
           const rows = b.rows.map((r, ri) => {
             const hmm = tbRowMM(b, ri), N = tbLines(hmm);
             return xtr(Array.from({ length: n }, (_, i) => {
-              const c = ckCellWord(r[i] || ''); const w = widths[i];
+              const c = ckCellWord(r[i] || ''); const w = widths[i]; const sh = tbBg(b, ri, i) ? { shd: tbBg(b, ri, i).slice(1) } : {};
               const eh = v.lehrer ? tbEh(b, ri, i) : [];
-              if (!eh.length && tbCk(b, i) && !String(c).trim()) return xtc(xp(xr('☐', { sz: 28 }), { jc: 'center' }), { w, v: 'center' });
-              if (eh.length) return xtc((String(c).trim() ? xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })) : '') + eh.map(x => xp(xr(eh.length > 1 ? '– ' : '', { sz: 17, color: '2A2D35' }) + xrInline(x, { sz: 17, color: '2A2D35' }), { bdr: '<w:pBdr><w:left w:val="single" w:sz="12" w:space="4" w:color="9AA0AA"/></w:pBdr>', before: 20 })).join(''), { w });
-              if (b.cellLines && !String(c).trim() && N > 1) return xtc(Array.from({ length: N - 1 }, (_, j) => xp('', { line: TW(j ? hmm / N : Math.max(2, hmm / N - 1.6)), rule: 'exact', bdr: lineBdr, mark: 2 })).join(''), { w });
-              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 }), tbCk(b, i) ? { jc: 'center' } : {}), { w, ...(tbCk(b, i) ? { v: 'center' } : {}) });
+              if (!eh.length && tbCk(b, i) && !String(c).trim()) return xtc(xp(xr('☐', { sz: 28 }), { jc: 'center' }), { w, v: 'center', ...sh });
+              if (eh.length) return xtc((String(c).trim() ? xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 })) : '') + eh.map(x => xp(xr(eh.length > 1 ? '– ' : '', { sz: 17, color: '2A2D35' }) + xrInline(x, { sz: 17, color: '2A2D35' }), { bdr: '<w:pBdr><w:left w:val="single" w:sz="12" w:space="4" w:color="9AA0AA"/></w:pBdr>', before: 20 })).join(''), { w, ...sh });
+              if (b.cellLines && !String(c).trim() && N > 1) return xtc(Array.from({ length: N - 1 }, (_, j) => xp('', { line: TW(j ? hmm / N : Math.max(2, hmm / N - 1.6)), rule: 'exact', bdr: lineBdr, mark: 2 })).join(''), { w, ...sh });
+              return xtc(xp(xrInline(c, { sz: 19, b: b.firstBold && i === 0 }), tbCk(b, i) ? { jc: 'center' } : {}), { w, ...sh, ...(tbCk(b, i) ? { v: 'center' } : {}) });
             }).join(''), { h: TW(hmm), cant: 1 });
           }).join('');
           parts.push(xtbl(widths, head + rows, bd, `<w:top w:w="${TW(1.6)}" w:type="dxa"/><w:left w:w="${TW(2)}" w:type="dxa"/><w:bottom w:w="${TW(1.6)}" w:type="dxa"/><w:right w:w="${TW(2)}" w:type="dxa"/>`));
