@@ -26,7 +26,7 @@ function preparePrint() {
   const key = p => `s${+p.dataset.w || 210}x${+p.dataset.h || 297}`; const keys = [...new Set(pages.map(key))];
   const mixed = keys.length > 1;
   st.textContent = mixed ? '@media print{@page{margin:0}' + keys.map(k => { const [a, z] = k.slice(1).split('x'); return `@page ${k}{size:${a}mm ${z}mm;margin:0}`; }).join('') + '}' : `@media print{@page{size:${w}mm ${h}mm;margin:0}}`;
-  pages.forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; if (mixed) c.style.setProperty('page', key(p)); c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); pr.appendChild(c); });
+  pages.forEach(p => { const c = p.cloneNode(true); c.style.transform = 'none'; c.style.position = 'relative'; if (mixed) c.style.setProperty('page', key(p)); c.querySelectorAll('.lb-tip').forEach(n => n.remove()); c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); pr.appendChild(c); });
   return { mixed, landscape: !mixed && w > h, size: Math.max(w, h) > 300 ? 'A3' : 'A4', n: pages.length, name: fileBase() + outSuffix() + '.pdf' };
 }
 

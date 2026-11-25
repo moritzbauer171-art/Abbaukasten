@@ -89,3 +89,20 @@ def test_klick_auf_kasten_springt_zum_feld(lw):
     pg.locator('#pages .lb-c[data-lbi="2"]').click(); pg.wait_for_timeout(900)
     assert pg.evaluate("document.activeElement.dataset.k") == 'lb.2.h'
     assert pg.locator('#editor .lb-row-e.lb-hit').count() == 1
+
+def test_pfeilspitze_im_blatt_ziehen_und_stile(lw):
+    pg = lw.open(); lw.new_lesson(pg); lw.setup(pg, [lb_block()])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(700)
+    tip = pg.locator('#pages .lb-tip[data-lbi="2"]'); assert tip.count() == 1
+    pg.locator('#pages .blk-lb').hover(); t = tip.bounding_box(); m = pg.locator('#pages .lb-mid img').bounding_box()
+    pg.mouse.move(t['x'] + t['width'] / 2, t['y'] + t['height'] / 2); pg.mouse.down()
+    pg.mouse.move(m['x'] + m['width'] * 0.5, m['y'] + m['height'] * 0.5, steps=8); pg.mouse.up(); pg.wait_for_timeout(800)
+    x = pg.evaluate("__S.sheet.blocks[0].lb[2]")
+    assert 35 < x['tx'] < 65 and 35 < x['ty'] < 65
+    assert pg.locator('#editor .lb-dot[data-lbdot="2"]').count() == 1
+    for v in ['gerade', 'strich', 'kraeftig', 'punkt']:
+        pg.locator(f'#editor [data-act="lb-arr"][data-v="{v}"]').click(); pg.wait_for_timeout(500)
+        assert pg.locator(f'#pages .lb-ov.s-{v}').count() == 1
+    assert pg.locator('#pages .lb-ov .lb-pt').count() == 3
+    # Griffe landen nicht im Druck
+    assert pg.evaluate("getComputedStyle(document.querySelector('#pages .lb-tip')).display") != 'none'

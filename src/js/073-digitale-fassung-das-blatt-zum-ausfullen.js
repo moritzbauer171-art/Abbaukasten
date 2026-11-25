@@ -201,7 +201,7 @@ function dgRuntime(K) {
           c = await window.html2canvas(pg, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false, windowWidth: Math.max(1200, pg.offsetWidth + 40),
             onclone: d => {
               const e = d.querySelector('[data-snap="1"]'); if (!e) return;
-              d.querySelectorAll('.dg-tt,.dg-bar,.dg-res,.dg-panel').forEach(x => x.remove());
+              d.querySelectorAll('.dg-tt,.dg-bar,.dg-res,.dg-panel,.lb-tip').forEach(x => x.remove());
               const r2 = d.getElementById('printroot'); if (r2) r2.style.zoom = '1';
               [...e.querySelectorAll('input, textarea')].forEach((x, k) => { const o = ins[k]; const sp = d.createElement(x.tagName === 'TEXTAREA' ? 'div' : 'span'); sp.className = x.className + ' dg-snap'; sp.style.cssText = x.style.cssText; sp.textContent = o ? o.value : x.value; x.replaceWith(sp); });
             } });

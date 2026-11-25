@@ -170,7 +170,14 @@
 .blk-lb .lb-t{font-size:.94em;line-height:1.35}
 .blk-lb .lb-wl{height:8mm;border-bottom:.25mm solid #9AA1AE}
 .blk-lb .lb-ov{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.blk-lb .lb-ov path{fill:none;stroke:var(--paper-ink,#1C1F27);stroke-width:.45;stroke-linecap:round;stroke-linejoin:round}
+.blk-lb .lb-ov .lb-a{fill:none;stroke:var(--paper-ink,#1C1F27);stroke-width:.45;stroke-linecap:round;stroke-linejoin:round}
+.blk-lb .lb-ov.s-strich .lb-a:not(.lb-hd){stroke-dasharray:1.6 1.3}
+.blk-lb .lb-ov.s-kraeftig .lb-a{stroke-width:.95}
+.blk-lb .lb-ov .lb-pt{fill:var(--paper-ink,#1C1F27);stroke:none}
+.blk-lb .lb-ov .lb-tip{fill:var(--acc,#2B45B8);fill-opacity:.0;stroke:var(--acc,#2B45B8);stroke-width:.4;stroke-opacity:0;pointer-events:all;cursor:grab;transition:fill-opacity .15s,stroke-opacity .15s}
+#pages .blk-lb:hover .lb-ov .lb-tip{fill-opacity:.18;stroke-opacity:.9}
+#pages .blk-lb .lb-ov .lb-tip:hover{fill-opacity:.4}
+@media print{.lb-tip{display:none}}
 .blk-lb .mat-head{margin-bottom:3mm}
 .lb-ed{display:grid;gap:10px;margin:6px 0}
 .lb-row-e{border:1px solid var(--line);border-radius:10px;padding:8px 10px}

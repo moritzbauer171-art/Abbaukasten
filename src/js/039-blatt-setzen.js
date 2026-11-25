@@ -421,12 +421,12 @@ function lbHTML(b, ctx) {
   const L = (b.lb || []).filter(Boolean), mode = b.lbMode || '', tag = ctx.mt && ctx.mt[b.id];
   const nl = Math.max(2, Math.min(6, +(b.lbLines || 3)));
   const card = (x, i) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
-    const ft = x.tx != null && x.ty != null ? ` data-tx="${Math.max(0, Math.min(100, +x.tx))}" data-ty="${Math.max(0, Math.min(100, +x.ty))}"` : '';
+    const ft = x.tx != null && x.ty != null ? ` data-tx="${Math.max(-15, Math.min(115, +x.tx))}" data-ty="${Math.max(-15, Math.min(115, +x.ty))}"` : '';
     return `<div class="lb-c lb-${lbSide(x)}" data-lbi="${i}" data-at="${x.at || 'm'}"${ft}>${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${mode ? '<div class="lb-wl"></div>'.repeat(nl) : ''}</div>`; };
   const pick = s => L.map((x, i) => lbSide(x) === s ? card(x, i) : '').join('');
   const img = b.src ? `<img src="${esc(b.src)}" alt="">` : '<div class="img-empty">Bild hinzufügen</div>';
   const mid = Math.max(25, Math.min(70, +b.width || 42)), top = pick('o'), bot = pick('u');
-  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%">${top ? `<div class="lb-row o">${top}</div>` : ''}<div class="lb-mrow"><div class="lb-col l">${pick('l')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${pick('r')}</div></div>${bot ? `<div class="lb-row u">${bot}</div>` : ''}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
+  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}" data-arr="${['gerade', 'strich', 'kraeftig', 'punkt'].includes(b.lbArr) ? b.lbArr : 'bogen'}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%">${top ? `<div class="lb-row o">${top}</div>` : ''}<div class="lb-mrow"><div class="lb-col l">${pick('l')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${pick('r')}</div></div>${bot ? `<div class="lb-row u">${bot}</div>` : ''}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
 }
 // Pfeile als Ebene über dem Baustein: vom Kasten zum gewählten Punkt im Bild (oder automatisch zum Bildrand)
 function lbArrows(root = document.getElementById('pages')) {
@@ -440,6 +440,7 @@ function lbArrows(root = document.getElementById('pages')) {
     const u = v => v / mmPx; // Bildschirmpixel → mm; das SVG rechnet in mm
     const I = im.getBoundingClientRect(), ix = u(I.left - G.left), iy = u(I.top - G.top), iw = u(I.width), ih = u(I.height);
     const W = u(G.width), H = u(G.height), gap = 1.6, cl = (v, a, z) => Math.max(a, Math.min(z, v));
+    const sty = (g.closest('.blk-lb') || {}).dataset ? g.closest('.blk-lb').dataset.arr || 'bogen' : 'bogen', curve = sty !== 'gerade';
     let d = '';
     g.querySelectorAll('.lb-c').forEach(c => {
       const C = c.getBoundingClientRect(), cx = u(C.left - G.left), cy = u(C.top - G.top), cw = u(C.width), ch = u(C.height);
@@ -455,13 +456,15 @@ function lbArrows(root = document.getElementById('pages')) {
       else { x1 = cl(x0, ix + 4, ix + iw - 4); y1 = s === 'o' ? iy - gap : iy + ih + gap; }
       const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy); if (len < 3) return;
       // leichte Biegung wie gezeichnet: Kontrollpunkt seitlich der Mitte
-      const bend = Math.min(0.22 * len, 9) * (s === 'r' || s === 'u' ? -1 : 1) * (dy >= 0 ? 1 : -1) * (s === 'o' || s === 'u' ? -1 : 1);
+      const bend = (curve ? 1 : 0) * Math.min(0.22 * len, 9) * (s === 'r' || s === 'u' ? -1 : 1) * (dy >= 0 ? 1 : -1) * (s === 'o' || s === 'u' ? -1 : 1);
       const qx = (x0 + x1) / 2 - dy / len * bend, qy = (y0 + y1) / 2 + dx / len * bend;
       const tx = x1 - qx, ty = y1 - qy, tl = Math.hypot(tx, ty) || 1, ux = tx / tl, uy = ty / tl, hl = 2.4, a = 0.5;
       const hx = (cs, sn) => `${(x1 - hl * (ux * Math.cos(a) * cs - uy * Math.sin(a) * sn)).toFixed(2)} ${(y1 - hl * (uy * Math.cos(a) * cs + ux * Math.sin(a) * sn)).toFixed(2)}`;
-      d += `<path class="lb-a" d="M${x0.toFixed(2)} ${y0.toFixed(2)} Q${qx.toFixed(2)} ${qy.toFixed(2)} ${x1.toFixed(2)} ${y1.toFixed(2)}"/><path class="lb-a lb-hd" d="M${hx(1, 1)} L${x1.toFixed(2)} ${y1.toFixed(2)} L${hx(1, -1)}"/>`;
+      const f2 = v => v.toFixed(2);
+      d += `<path class="lb-a" d="M${f2(x0)} ${f2(y0)} Q${f2(qx)} ${f2(qy)} ${f2(x1)} ${f2(y1)}"/>` + (sty === 'punkt' ? `<circle class="lb-a lb-hd lb-pt" cx="${f2(x1)}" cy="${f2(y1)}" r="1.1"/>` : `<path class="lb-a lb-hd" d="M${hx(1, 1)} L${f2(x1)} ${f2(y1)} L${hx(1, -1)}"/>`)
+        + `<circle class="lb-tip" data-lbi="${c.dataset.lbi}" cx="${f2(x1)}" cy="${f2(y1)}" r="2.6"><title>Pfeilspitze verschieben</title></circle>`;
     });
-    if (d) g.insertAdjacentHTML('beforeend', `<svg class="lb-ov" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" preserveAspectRatio="none" aria-hidden="true">${d}</svg>`);
+    if (d) g.insertAdjacentHTML('beforeend', `<svg class="lb-ov s-${sty}" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" preserveAspectRatio="none" aria-hidden="true">${d}</svg>`);
   });
 }
 
@@ -479,6 +482,21 @@ document.addEventListener('pointerdown', e => {
   const up = () => { dot.removeEventListener('pointermove', move); dot.removeEventListener('pointerup', up); dot.removeEventListener('pointercancel', up); changed(true); };
   dot.addEventListener('pointermove', move); dot.addEventListener('pointerup', up); dot.addEventListener('pointercancel', up);
 });
+
+// Pfeilspitze direkt im Blatt ziehen: der Pfeil zeigt danach frei auf diese Stelle
+document.addEventListener('pointerdown', e => {
+  const tip = e.target.closest && e.target.closest('#pages .lb-tip'); if (!tip) return;
+  const blk = tip.closest('.blk-lb[data-bid]'), b = blk && target(blk.dataset.bid), i = +tip.dataset.lbi, x = b && b.lb && b.lb[i]; if (!x) return;
+  const im = blk.querySelector('.lb-mid img, .lb-mid .img-empty'), c = blk.querySelector(`.lb-c[data-lbi="${i}"]`); if (!im || !c) return;
+  e.preventDefault(); e.stopPropagation(); snapshot(); let moved = false;
+  const move = ev => { const r = im.getBoundingClientRect(); moved = true;
+    x.tx = Math.round(Math.max(-15, Math.min(115, (ev.clientX - r.left) / r.width * 100)) * 10) / 10; x.ty = Math.round(Math.max(-15, Math.min(115, (ev.clientY - r.top) / r.height * 100)) * 10) / 10;
+    c.dataset.tx = x.tx; c.dataset.ty = x.ty; lbArrows(); };
+  const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.removeEventListener('pointercancel', up);
+    const eat = ev => { ev.stopPropagation(); ev.preventDefault(); }; window.addEventListener('click', eat, { capture: true, once: true }); setTimeout(() => window.removeEventListener('click', eat, { capture: true }), 350);
+    if (moved) { changed(true); renderEditor(); } };
+  document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); document.addEventListener('pointercancel', up);
+}, true);
 
 let fontsOK = false;
 function layout() {

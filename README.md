@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- Beschriftungspfeile: Spitze direkt im Blatt mit der Maus verschieben; fünf Pfeilstile (Bogen, Gerade, Gestrichelt, Kräftig, Linie mit Punkt).
 - Klick auf einen Beschriftungskasten in der Vorschau springt links direkt zu dessen Überschrift; Klick aufs Bild zu den Pfeilzielen.
 - **Bild mit Beschriftungen** erweitert: Kästen auch über und unter dem Bild; jeder Pfeil kann auf eine frei gewählte Stelle im Bild zeigen (Nummer im Editor aufs Bild ziehen). Das Bild schrumpft bei Bedarf, damit der Baustein mit dem Kopf auf eine Seite passt.
 - **A4 quer** als Papierformat für ganze Blätter (Vorschau, Druck, PDF und Word im Querformat) und der Baustein **Bild mit Beschriftungen**: Bild in der Mitte, Kästen links und rechts mit Pfeilen zum Bild (Pfeilrichtung wählbar), auf Wunsch leer zum Beschriften; in Word als dreispaltige Tabelle.

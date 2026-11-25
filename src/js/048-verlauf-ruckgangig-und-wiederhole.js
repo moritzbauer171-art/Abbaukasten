@@ -327,6 +327,7 @@ function onClick(e) {
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
     case 'src-form': srcFormSet(b, a.dataset.v); changed(true); renderEditor(); return;
+    case 'lb-arr': if (a.dataset.v) b.lbArr = a.dataset.v; else delete b.lbArr; changed(true); renderEditor(); return;
     case 'lb-mode': if (a.dataset.v) b.lbMode = a.dataset.v; else delete b.lbMode; changed(true); renderEditor(); return;
     case 'lb-side': case 'lb-at': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; x[act === 'lb-side' ? 's' : 'at'] = a.dataset.v; changed(true); renderEditor(); return; }
     case 'lb-free': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; snapshot(); const sd = x.s || 'l'; x.tx = sd === 'l' ? 25 : sd === 'r' ? 75 : 50; x.ty = sd === 'o' ? 25 : sd === 'u' ? 75 : 50; changed(true); renderEditor(); return; }

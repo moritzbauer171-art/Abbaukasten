@@ -129,7 +129,7 @@ async function pagesToPdf(pages, name, props) {
             const host = doc.createElement('div'); host.style.cssText = 'position:absolute;left:0;top:0;margin:0;padding:0;background:#fff;z-index:9999';
             doc.body.appendChild(host); host.appendChild(c);
             c.style.transform = 'none'; c.style.boxShadow = 'none'; c.style.position = 'relative';
-            c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel'));
+            c.querySelectorAll('.is-sel,.zsel').forEach(n => n.classList.remove('is-sel', 'zsel')); c.querySelectorAll('.lb-tip').forEach(n => n.remove());
             const app = doc.getElementById('app'); if (app) app.style.display = 'none';
             const mh = doc.getElementById('measure-host'); if (mh) mh.remove();
             doc.documentElement.style.padding = '0'; doc.body.style.padding = '0'; doc.body.style.margin = '0';
