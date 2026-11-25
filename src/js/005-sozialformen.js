@@ -17,6 +17,12 @@ const ARB = {
   sehen: { label: 'Video sehen', g: '<rect x="2.5" y="4" width="19" height="13.5" rx="2"/><path d="M10 7.9v5.7l4.9-2.85z" class="f"/><path d="M8 21h8"/>' },
   zeichnen: { label: 'Zeichnen', g: '<path d="M12 3a9 9 0 1 0 0 18c1.3 0 1.9-.8 1.9-1.8 0-1.4-1.3-1.7-1.3-3 0-1 .8-1.7 1.9-1.7h2.3A4.2 4.2 0 0 0 21 10.3C21 6.2 17 3 12 3z"/><circle cx="7.6" cy="11" r="1.2" class="f"/><circle cx="10.4" cy="7.2" r="1.2" class="f"/><circle cx="15" cy="7.4" r="1.2" class="f"/>' }
 };
+// Moderationskarten: Ergebnisse auf Karten notieren und im Plenum präsentieren – mit festem Hinweis unter der Aufgabe
+Object.assign(ARB, {
+  karten: { label: 'Moderationskarten', hint: 'Notieren Sie Ihre Ergebnisse gut leserlich auf Moderationskarten. Präsentieren Sie Ihre Ergebnisse im Plenum.',
+    g: '<path d="M7.5 6.6V4.3a1.2 1.2 0 0 1 1.2-1.2h11.1a1.2 1.2 0 0 1 1.2 1.2v8.4a1.2 1.2 0 0 1-1.2 1.2h-1.6"/><rect x="3" y="7.4" width="14.6" height="10.6" rx="1.2"/><path d="M6 11.3h8.6M6 14.6h5.6"/><path d="M10.3 18v3.2M7.6 21.2h5.4"/>' }
+});
+const arbHints = it => arbOf(it).map(k => ARB[k].hint).filter(Boolean);
 Object.assign(ARB, {
   kreuz: { label: 'Ankreuzen', gs: 1, g: '<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M8 8l8 8M16 8l-8 8"/>' },
   einkreisen: { label: 'Einkreisen', gs: 1, g: '<ellipse cx="12" cy="12" rx="9.5" ry="6.5"/><path d="M8 12h8"/>' },

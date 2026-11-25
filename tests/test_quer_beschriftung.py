@@ -106,3 +106,16 @@ def test_pfeilspitze_im_blatt_ziehen_und_stile(lw):
     assert pg.locator('#pages .lb-ov .lb-pt').count() == 3
     # Griffe landen nicht im Druck
     assert pg.evaluate("getComputedStyle(document.querySelector('#pages .lb-tip')).display") != 'none'
+
+def test_moderationskarten(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 't1', 'type': 'tasks', 'title': '', 'items': [{'text': 'Sammeln Sie Argumente.', 'soz': 'ga', 'arb': ['karten']}, {'text': 'Lesen Sie den Text.', 'soz': 'ea'}]}])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(600)
+    H = 'Notieren Sie Ihre Ergebnisse gut leserlich auf Moderationskarten. Präsentieren Sie Ihre Ergebnisse im Plenum.'
+    assert pg.locator('#pages .task-hint').count() == 1
+    assert pg.locator('#pages .task-hint').inner_text() == H
+    assert pg.locator('#pages img.arb[alt="Moderationskarten"]').count() == 1
+    # Auswahl im Editor schaltet Piktogramm und Hinweis um
+    pg.locator('#editor [data-act="arb"][data-i="1"][data-v="karten"]').click(); pg.wait_for_timeout(500)
+    assert pg.locator('#pages .task-hint').count() == 2
+    xml = docx(pg, 'karten.docx'); assert xml.count('gut leserlich auf Moderationskarten') == 2

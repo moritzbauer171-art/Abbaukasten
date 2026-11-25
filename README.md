@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- Neue Arbeitsform **Moderationskarten** mit Piktogramm: setzt unter die Aufgabe den Hinweis „Notieren Sie Ihre Ergebnisse gut leserlich auf Moderationskarten. Präsentieren Sie Ihre Ergebnisse im Plenum.“ – auf Blatt, Folie und in Word.
 - Beschriftungspfeile: Spitze direkt im Blatt mit der Maus verschieben; fünf Pfeilstile (Bogen, Gerade, Gestrichelt, Kräftig, Linie mit Punkt).
 - Klick auf einen Beschriftungskasten in der Vorschau springt links direkt zu dessen Überschrift; Klick aufs Bild zu den Pfeilzielen.
 - **Bild mit Beschriftungen** erweitert: Kästen auch über und unter dem Bild; jeder Pfeil kann auf eine frei gewählte Stelle im Bild zeigen (Nummer im Editor aufs Bild ziehen). Das Bild schrumpft bei Bedarf, damit der Baustein mit dem Kopf auf eine Seite passt.
