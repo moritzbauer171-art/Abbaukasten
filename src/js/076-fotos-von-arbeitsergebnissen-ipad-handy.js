@@ -8,12 +8,41 @@ function fotoChannel() {
   if (!fotoOK()) return null; if (fotoCh.ch && fotoCh.uid === store.user.id) return fotoCh.ch;
   try { if (fotoCh.ch) store.sb.removeChannel(fotoCh.ch); } catch {}
   const ch = store.sb.channel('lw-foto:' + store.user.id, { config: { broadcast: { self: false, ack: false }, private: true } });
-  ch.on('broadcast', { event: 'f' }, ({ payload }) => fotoCh.h.forEach(f => { try { f(payload || {}); } catch (e) { console.error(e); } }));
+  ch.on('broadcast', { event: 'f' }, ({ payload }) => fotoHand(payload || {}));
   ch.subscribe(st => { fotoCh.ok = st === 'SUBSCRIBED'; });
   fotoCh.ch = ch; fotoCh.uid = store.user.id; return ch;
 }
-const fotoSend = msg => { const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} };
-const fotoListen = f => { fotoChannel(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
+// Jede Nachricht kann doppelt ankommen (Live-Kanal im Internet und Direktverbindung): Kennung merken, zweites Exemplar verwerfen
+const fotoSeen = { s: new Set(), q: [] };
+function fotoHand(m) {
+  if (m && m._i) { if (fotoSeen.s.has(m._i)) return; fotoSeen.s.add(m._i); fotoSeen.q.push(m._i); if (fotoSeen.q.length > 800) fotoSeen.s.delete(fotoSeen.q.shift()); }
+  fotoCh.h.forEach(f => { try { f(m || {}); } catch (e) { console.error(e); } });
+}
+const fotoSend = msg => { if (!msg._i) msg._i = Math.random().toString(36).slice(2, 11); const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} lanSend(msg); };
+const fotoListen = f => { fotoChannel(); lanInit(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
+/* ---------- Direktverbindung über den Hotspot des Laptops (Windows-App) ----------
+   Laptop: die App öffnet einen kleinen Server; die Seite verbindet sich mit ws://127.0.0.1.
+   iPad: öffnet http://<Laptop>:<Port>/?tafel&lan=<Schlüssel> und verbindet sich mit demselben Server. Kein Konto nötig. */
+const LAN_T = (() => { try { return new URLSearchParams(location.search).get('lan') || ''; } catch { return ''; } })();
+const LAN = { ws: null, url: '', info: null, init: false, retry: 0, t: 0, h: new Set() };
+const lanOn = () => !!(LAN.ws && LAN.ws.readyState === 1);
+const lanPage = () => !!LAN_T && location.protocol === 'http:';
+function lanSend(msg) { if (!lanOn()) return false; try { LAN.ws.send(JSON.stringify(msg)); return true; } catch { return false; } }
+function lanConnect(url) {
+  if (!url) return; LAN.url = url; clearTimeout(LAN.t); try { if (LAN.ws) { LAN.ws.onclose = null; LAN.ws.close(); } } catch {}
+  let ws; try { ws = new WebSocket(url); } catch { return; } LAN.ws = ws;
+  ws.onopen = () => { LAN.retry = 0; LAN.h.forEach(f => { try { f(true); } catch {} }); };
+  ws.onmessage = e => { let m = null; try { m = JSON.parse(e.data); } catch {} if (m && typeof m === 'object') fotoHand(m); };
+  ws.onclose = () => { if (LAN.ws !== ws) return; LAN.h.forEach(f => { try { f(false); } catch {} }); if (LAN.url) LAN.t = setTimeout(() => lanConnect(LAN.url), Math.min(8000, 800 * ++LAN.retry)); };
+  ws.onerror = () => {};
+}
+function lanStop() { LAN.url = ''; clearTimeout(LAN.t); try { if (LAN.ws) LAN.ws.close(); } catch {} LAN.ws = null; }
+async function lanDesk(on) { const D = window.abDesktop; if (!D || !D.lan) return null; let r = null; try { r = await D.lan(on); } catch (e) { console.error(e); } LAN.info = r; if (r && r.on && r.ws) { if (LAN.url !== r.ws || !lanOn()) lanConnect(r.ws); } else if (r && !r.on) lanStop(); return r; }
+function lanInit() {
+  if (LAN.init) return; LAN.init = true;
+  if (lanPage()) lanConnect(`ws://${location.host}/lw-ws?t=${encodeURIComponent(LAN_T)}`);
+  else if (window.abDesktop && window.abDesktop.lan) lanDesk();
+}
 const FOTO_COLS = 'id,sheet_id,path,w,h,ink,keep,created_at,expires_at';
 async function fotoList(sheetId) { const r = await store.sb.from('ab_fotos').select(FOTO_COLS).eq('sheet_id', sheetId).or('keep.eq.true,expires_at.gt.' + new Date().toISOString()).order('created_at'); if (r.error) throw r.error; return r.data || []; }
 const fotoUrlC = {};

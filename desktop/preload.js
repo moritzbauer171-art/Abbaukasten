@@ -18,5 +18,8 @@ contextBridge.exposeInMainWorld('abDesktop', {
   extend: () => ipcRenderer.invoke('lw:extend'),
   restore: () => ipcRenderer.invoke('lw:restore'),
   fullscreen: on => ipcRenderer.invoke('lw:fullscreen', on),
+  // Direktverbindung zum iPad über den Hotspot des Laptops
+  lan: on => ipcRenderer.invoke('lw:lan', on),
+  hotspot: () => ipcRenderer.invoke('lw:hotspot'),
   onDisplays: cb => { const f = (e, n) => cb(n); ipcRenderer.on('lw:displays', f); return () => ipcRenderer.removeListener('lw:displays', f); }
 });

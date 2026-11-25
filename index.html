@@ -2131,6 +2131,17 @@ body.lfc-on{overflow:hidden}
 .lfc-prw .tw .tw-c.tw-ctl{display:flex!important}.lfc-prw .tw .tw-h .tw-ctl{display:inline-flex!important}
 .lfc-prw .tw .tw-h{cursor:grab}
 .lfc-prw .tw .tw-c button{min-height:38px;min-width:38px;font-size:17px}.lfc-prw .tw .tw-c select{min-height:38px;font-size:17px}
+
+.lan-pan .lan-p{margin:0 0 12px;line-height:1.45;font-size:14px}
+.lan-pan .lan-s,.lan-pan small{display:block;color:var(--muted,#666);font-size:12.5px;line-height:1.35;margin-top:4px}
+.lan-pan .lan-err,.lan-pan .lan-warn{color:#B42318}.lan-pan .lan-ok{color:#13795B}
+.lan-ol{margin:8px 0 10px;padding-left:20px;display:grid;gap:12px;font-size:14px}
+.lan-ol .btn{margin-top:6px}
+.lan-qr{margin-top:8px}.lan-qr code{font-size:11px;word-break:break-all;color:var(--muted,#666)}
+.lan-st{font-weight:700;font-size:14px;color:var(--muted,#666);margin-bottom:6px}.lan-st.ok{color:#13795B}
+.lan-f{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line,#ddd);padding-top:8px}
+.pr-landot{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:#F59E0B;box-shadow:0 0 0 2px #fff}.pr-landot.ok{background:#16A34A}
+.pr-lanbtn{position:relative}
 /* ===== Kanban ===== */
 .kb-ov{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;color:var(--ink);font:15px/1.4 var(--f-ui);outline:none;background:radial-gradient(1200px 600px at 10% -10%,rgba(47,111,219,.14),transparent 60%),radial-gradient(900px 500px at 100% 110%,rgba(142,78,198,.13),transparent 60%),var(--desk);animation:kbIn .22s ease-out}
 .kb-ov.kb-out{animation:kbOut .18s ease-in forwards}
@@ -8408,7 +8419,7 @@ function openPres(start, opts = {}) {
   pkLab();
   const curSl = () => (BOARD.open ? (BOARD.kind === 'pk' ? BOARD.pk : BOARD.kind === 'foto' ? BOARD.foto : BOARD.s) : S[P.i]);
   // Fotos vom iPad/Handy: erst nur hier in der Vorschau; „Zeigen“ (hier oder am Gerät) legt sie als Sicherungsfolie auf den Beamer
-  const foOn = !opts.board && fotoOK() && !!(state.sheet && state.sheet.id);
+  const foOn = !opts.board && (fotoOK() || !!(window.abDesktop && window.abDesktop.lan)) && !!(state.sheet && state.sheet.id);
   const FO = { list: [], loaded: false };
   BOARD.foto = { k: 'foto', id: 'foto', items: [], view: { s: 1, cx: .5, cy: .5 }, live: null, las: null };
   const boarding = () => BOARD.open || !!opts.board;
@@ -8665,6 +8676,7 @@ function openPres(start, opts = {}) {
     { const tp = e.target.closest('.pr-slide .pr-tps-s'); if (tp) { tpsSet(+tp.dataset.tps); return; } }
     if (e.target.closest('.pr-more')) { blankMore(); return; }
     if (e.target.closest('.pr-vscroll')) return;
+    if (e.target.closest('.lan-pan')) { lanPanAct(e); return; }
     if (foOn && e.target.closest('.lf-pan')) { if (e.target.closest('[data-lf="x"]')) foPanT(false); else fotoPanelAct(e, foPan(), state.sheet.id, FO.list, foRender, items => foShow(items)); return; }
     if (e.target.closest('.pr-slide .lf-slide')) return;
     { const fs = e.target.closest('[data-foshow]'); if (fs && foOn) { const f = FO.list.find(x => x.id === fs.dataset.foshow); if (f) { f._new = false; foBadge(); foShow([f]); } return; } }
@@ -8675,6 +8687,7 @@ function openPres(start, opts = {}) {
     if (k === 'next') next(); else if (k === 'prev') prev(); else if (k === 'close') close(); else if (k === 'tip') tip(); else if (k === 'eh') ehT();
     else if (k === 'ref') refOpen(); else if (k === 'black') blank(BL || 's'); else if (k === 'swap') { if (window.abDesktop && window.abDesktop.audSwap) window.abDesktop.audSwap().then(r => { if (r && r.ok) setTimeout(() => { scale(); awScale(); }, 200); else toast('Zum Tauschen braucht es zwei Bildschirme.'); }); } else if (k === 'board') boardT(b.dataset.kind || 'tafel'); else if (k === 'laser') laserT();
     else if (k === 'fotos') foPanT();
+    else if (k === 'lan') lanPanT();
     else if (k === 'ytbig') ytBigSet(!ytBig);
     else if (k === 'ytauf') ytAufSet();
     else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tmshow') { const ks = Object.keys(TM_SHOW); state.prefs.tmShow = ks[(ks.indexOf(tmMode()) + 1) % ks.length]; savePrefs(); b.textContent = TM_SHOW[tmMode()].label; tmShow(); } else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
@@ -8700,10 +8713,29 @@ function openPres(start, opts = {}) {
     dl.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); dl.querySelector('[data-pk="ok"]').click(); } else if (e.key === 'Escape') { e.preventDefault(); dl.hidden = true; ov.focus(); } });
     lbSync();
   }
-  if (foOn) {
+  if (foOn && window.abDesktop && window.abDesktop.lan) ov.insertAdjacentHTML('beforeend', '<div class="lf-pan lan-pan" hidden role="dialog" aria-label="iPad direkt verbinden"><div class="lf-ph"><b>iPad direkt verbinden</b><button type="button" data-lan="x" aria-label="Schließen">×</button></div><div class="lan-body"></div></div>');
+  if (foOn && fotoOK()) {
     ov.insertAdjacentHTML('beforeend', '<div class="lf-pan" hidden role="dialog" aria-label="Fotos dieser Stunde"><div class="lf-ph"><b>📷 Fotos dieser Stunde</b><button type="button" data-lf="x" aria-label="Schließen">×</button></div><div class="lf-body"></div></div>');
   }
-  function foPan() { return $p('.lf-pan'); }
+  function foPan() { return $p('.lf-pan:not(.lan-pan)'); }
+  // Direktverbindung: Hotspot des Laptops, QR-Code fürs iPad, Status
+  function lanPanHTML(r) {
+    const peer = LFC && LFC.peer && Date.now() - LFC.peer < 15000;
+    if (!r) return '<p>Die Direktverbindung gibt es nur in der Windows-App.</p>';
+    if (!r.on) return `<p class="lan-p">Für Schul-WLANs, die den Live-Kanal sperren: Das iPad verbindet sich direkt mit diesem Laptop – über den <b>mobilen Hotspot von Windows</b>. Stift, Tafel und Fernbedienung laufen dann ohne Umweg übers Internet.</p>${r.err ? `<p class="lan-err">${esc(r.err)}</p>` : ''}<button type="button" class="btn primary" data-lan="on">Direktverbindung einschalten</button><small class="lan-s">Fragt Windows nach der Firewall: „Zugriff zulassen“ und beide Netzwerkarten anhaken.</small>`;
+    const st = peer ? '<div class="lan-st ok">● iPad verbunden</div>' : `<div class="lan-st">○ Wartet auf das iPad${r.n > 1 ? ' · ' + (r.n - 1) + ' Gerät verbunden' : ''}</div>`;
+    return `${st}<ol class="lan-ol">
+      <li><b>Hotspot am Laptop einschalten</b><br><button type="button" class="btn sm" data-lan="hs">Hotspot-Einstellungen öffnen</button><small>„Mobiler Hotspot“ an. Dort stehen auch WLAN-Name und Kennwort.</small>${r.hotspot ? '<small class="lan-ok">Hotspot ist an.</small>' : '<small class="lan-warn">Der Hotspot scheint noch aus zu sein.</small>'}</li>
+      <li><b>iPad mit dem WLAN des Laptops verbinden</b><small>Einstellungen → WLAN → Name aus Schritt 1.</small></li>
+      <li><b>QR-Code mit der iPad-Kamera scannen</b>${r.url ? `<div class="lf-qr lan-qr"><img src="${QR.dataURL(r.url, 5)}" alt="QR-Code"><div><small>Öffnet LehrWerk Tafel direkt. Tipp: In Safari „Teilen → Zum Home-Bildschirm“, dann reicht künftig ein Tipp.</small><code>${esc(r.url)}</code></div></div>` : '<small class="lan-warn">Keine Adresse gefunden – ist der Hotspot an?</small>'}</li></ol>
+      <div class="lan-f"><button type="button" class="link" data-lan="re">Aktualisieren</button><button type="button" class="link danger" data-lan="off">Direktverbindung ausschalten</button></div>`;
+  }
+  let lanT = 0;
+  async function lanRender(want) { const p = $p('.lan-pan'); if (!p) return; const r = await lanDesk(want); if (!document.body.contains(ov)) return; p.querySelector('.lan-body').innerHTML = lanPanHTML(r); lanDot(); }
+  function lanDot() { const on = lanOn(), peer = LFC && LFC.peer && Date.now() - LFC.peer < 15000; ov.querySelectorAll('.pr-landot').forEach(i => { i.hidden = !on; i.classList.toggle('ok', !!peer); }); }
+  function lanPanT(on) { const p = $p('.lan-pan'); if (!p) return; on = on === undefined ? p.hidden : on; p.hidden = !on; ov.querySelectorAll('[data-p="lan"]').forEach(b => b.setAttribute('aria-expanded', String(on))); clearInterval(lanT); if (on) { lanRender(); lanT = setInterval(() => { if (!document.body.contains(ov)) clearInterval(lanT); else lanRender(); }, 3000); } else ov.focus(); }
+  function lanPanAct(e) { const b = e.target.closest('[data-lan]'); if (!b) return; const a = b.dataset.lan;
+    if (a === 'x') lanPanT(false); else if (a === 'on') lanRender(true); else if (a === 'off') lanRender(false); else if (a === 're') lanRender(); else if (a === 'hs') { try { window.abDesktop.hotspot(); } catch {} } }
   // Zustand für das Companion-Gerät
   var LFC = LFC || { sid: Math.random().toString(36).slice(2, 10), t: 0, pt: 0 };
   function lfcState() { const pk = BOARD.pk; return { t: 'pres', sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', yt: slide && slide.querySelector('.pr-yt') && !BOARD.open ? (ytOn === P.i ? 'on' : 'ready') : '', ytbig: ytBig, ytauf: ytAuf, ythas: !!(slide && slide.querySelector('.pr-yt-auf')), tm: !!TBo.isOn(), cur: P.cur, max: P.max, up: +state.sheet.updatedAt || 0, board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
@@ -8722,7 +8754,7 @@ function openPres(start, opts = {}) {
   const foUpd = () => { const h = fotoSlideHTML(BOARD.foto); const tmp = document.createElement('div'); tmp.innerHTML = h; const nw = tmp.querySelector('.lf-sw'); if (!nw) return;
     [slide, awOk() ? AW.document.querySelector('.pr-slide') : null].forEach(r => { const w = r && r.querySelector('.lf-sw'); if (!w) return; w.style.transform = nw.style.transform; const a = w.querySelector('.lf-ink'), b = nw.querySelector('.lf-ink'); if (a && b) a.replaceWith(b.cloneNode(true)); const l1 = w.querySelector('.lf-las'), l2 = nw.querySelector('.lf-las'); if (l1) l1.remove(); if (l2) w.appendChild(l2.cloneNode(true)); }); };
   if (foOn) {
-    foLoad();
+    if (fotoOK()) foLoad();
     const off = fotoListen(m => {
       if (!document.body.contains(ov)) return; const sid = state.sheet && state.sheet.id;
       if (m.t === 'new' && m.sheet === sid) foLoad().then(() => toast('Neues Foto vom Zweitgerät – erst einmal nur hier.', 'Zeigen', () => { const f = FO.list.find(x => x.id === m.id); if (f) foShow([f]); }));
@@ -8742,6 +8774,7 @@ function openPres(start, opts = {}) {
       if (['hi', 'ping', 'board', 'bop', 'blas', 'bsy', 'bmore', 'bpat', 'nav'].includes(m.t)) { LFC.peer = Date.now(); if (m.d) (LFC.devs = LFC.devs || {})[m.d] = Date.now(); }
       const slk = m.key === 'sl'; const key = m.key === 'pk' && pkOn ? 'pk' : 'tafel', bk = key === 'pk' ? BOARD.pk : BOARD.s, ik = slk ? inkKey(S[P.i]) : key === 'pk' ? 'pk' : BOARD.s.id, cur = BOARD.open && BOARD.kind === key;
       if (slk && (m.t === 'bsy' || m.t === 'bmore')) return;
+      if (m.t === 'shreq' && m.id === state.sheet.id) { lanSend({ t: 'shdata', q: m.q, id: m.id, data: JSON.parse(JSON.stringify(state.sheet)), _i: m.q + 'd' }); return; }
       if (m.t === 'hi') { fotoSend(lfcState()); lfcFull('tafel'); lfcFull('sl'); if (pkOn) lfcFull('pk'); LFC.tk = ''; lfcTfl(true); }
       else if (m.t === 'board') { if (m.kind === 'pk' && !pkOn) return; const k2 = m.kind === 'pk' ? 'pk' : 'tafel'; if (m.on && !(BOARD.open && BOARD.kind === k2)) boardSet(true, k2); else if (!m.on && BOARD.open && BOARD.kind === k2) boardSet(false); else lfcHb(); }
       else if (m.t === 'bop') { INK.remote.op(ik, m); if (!slk && key === 'pk' && m.op !== 'live') pkSave(); }
@@ -8752,12 +8785,12 @@ function openPres(start, opts = {}) {
       else if (m.t === 'bpat') { if (inkPatOk(m.pat)) { BOARD.s.pat = m.pat; if (BOARD.open && BOARD.kind === 'tafel') show(); else lfcHb(); } }
       else if (m.t === 'nav') { if (m.a === 'goto') { const j = Math.max(0, Math.min(S.length - 1, +m.i || 0)); if (BOARD.open) boardSet(false); P.i = j; show(); lfcHb(); } else if (m.a === 'next') next(); else if (m.a === 'prev') prev(); else if (m.a === 'black') blank(BL || 's'); else if (m.a === 'ytplay') { if (ytOn !== P.i) ytPlay(); else ytCmd(awOk() ? AW.document : document, 'playVideo'); } else if (m.a === 'ytpause') ytCmd(awOk() ? AW.document : document, 'pauseVideo'); else if (m.a === 'ytstop') { if (ytOn === P.i) ytStop(); } else if (m.a === 'ytbig') { if (ytOn === P.i) ytBigSet(!ytBig); } else if (m.a === 'ytauf') { if (ytOn === P.i) ytAufSet(); } else if (m.a === 'mode') { const mb = $p('[data-p="mode"]'); if (mb) mb.click(); setTimeout(() => { lfcHb(); lfcTfl(true); }, 60); } }
     });
-    const hbI = setInterval(() => fotoSend(lfcState()), 4000);
+    const hbI = setInterval(() => { fotoSend(lfcState()); try { lanDot(); } catch {} }, 4000);
     ov.addEventListener('lw-close', () => { offL(); clearInterval(hbI); fotoSend({ t: 'presend', sid: LFC.sid }); }, { once: true });
     // Mausrad zoomt ein einzelnes Foto auch hier
     stage.addEventListener('wheel', e => { if (!(BOARD.open && BOARD.kind === 'foto' && BOARD.foto.items.length === 1)) return; e.preventDefault(); const v = BOARD.foto.view; BOARD.foto.view = { cx: v.cx, cy: v.cy, s: Math.max(1, Math.min(8, (v.s || 1) * (e.deltaY < 0 ? 1.15 : 1 / 1.15))) }; foUpd(); }, { passive: false });
   }
-  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns">${foOn ? '<button type="button" class="pr-tafelbtn pr-fobtn" data-p="fotos" data-label="Fotos" aria-expanded="false" title="Fotos vom iPad oder Handy: QR-Code, neue Fotos, Sicherungsfolie (F)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.7l1.6-2.2h6.4L16.8 7h2.7A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Fotos</span><i class="pr-fobadge" hidden></i></button>' : ''}<button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
+  if (!opts.board) stage.insertAdjacentHTML('beforeend', `<div class="pr-fbtns">${foOn && window.abDesktop && window.abDesktop.lan ? '<button type="button" class="pr-tafelbtn pr-lanbtn" data-p="lan" data-label="iPad direkt" aria-expanded="false" title="iPad direkt verbinden, ohne Internet-Live-Kanal (z. B. im Schul-WLAN)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.8" width="12" height="18.4" rx="2"/><path d="M10.5 18h3"/><path d="M2.5 9.5a7 7 0 0 1 0 5M21.5 9.5a7 7 0 0 1 0 5"/></svg><span>iPad direkt</span><i class="pr-landot" hidden></i></button>' : ''}${foOn && fotoOK() ? '<button type="button" class="pr-tafelbtn pr-fobtn" data-p="fotos" data-label="Fotos" aria-expanded="false" title="Fotos vom iPad oder Handy: QR-Code, neue Fotos, Sicherungsfolie (F)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.7l1.6-2.2h6.4L16.8 7h2.7A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="13" r="3.6"/></svg><span>Fotos</span><i class="pr-fobadge" hidden></i></button>' : ''}<button type="button" class="pr-tafelbtn" data-p="board" data-kind="tafel" data-label="Tafel" aria-pressed="false" title="Leere Tafel öffnen und wieder schließen (B)">${TAFEL_IC}<span>Tafel</span></button>${pkOn ? `<button type="button" class="pr-tafelbtn pr-pkbtn" data-p="board" data-kind="pk" data-label="Pro / Contra" aria-pressed="false" title="Pro-und-Contra-Tafel zur Stundenfrage: wird mit der Stunde gespeichert (K)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5"/><path d="M12 8v12.5M2.5 8h19M6 13.5h3M7.5 12v3M15 13.5h3"/></svg><span>Pro / Contra</span></button>` : ''}</div>`);
   scale(); show(); ov.focus();
   const D = window.abDesktop;
   if (D && D.displays && !opts.board) {
@@ -16818,12 +16851,41 @@ function fotoChannel() {
   if (!fotoOK()) return null; if (fotoCh.ch && fotoCh.uid === store.user.id) return fotoCh.ch;
   try { if (fotoCh.ch) store.sb.removeChannel(fotoCh.ch); } catch {}
   const ch = store.sb.channel('lw-foto:' + store.user.id, { config: { broadcast: { self: false, ack: false }, private: true } });
-  ch.on('broadcast', { event: 'f' }, ({ payload }) => fotoCh.h.forEach(f => { try { f(payload || {}); } catch (e) { console.error(e); } }));
+  ch.on('broadcast', { event: 'f' }, ({ payload }) => fotoHand(payload || {}));
   ch.subscribe(st => { fotoCh.ok = st === 'SUBSCRIBED'; });
   fotoCh.ch = ch; fotoCh.uid = store.user.id; return ch;
 }
-const fotoSend = msg => { const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} };
-const fotoListen = f => { fotoChannel(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
+// Jede Nachricht kann doppelt ankommen (Live-Kanal im Internet und Direktverbindung): Kennung merken, zweites Exemplar verwerfen
+const fotoSeen = { s: new Set(), q: [] };
+function fotoHand(m) {
+  if (m && m._i) { if (fotoSeen.s.has(m._i)) return; fotoSeen.s.add(m._i); fotoSeen.q.push(m._i); if (fotoSeen.q.length > 800) fotoSeen.s.delete(fotoSeen.q.shift()); }
+  fotoCh.h.forEach(f => { try { f(m || {}); } catch (e) { console.error(e); } });
+}
+const fotoSend = msg => { if (!msg._i) msg._i = Math.random().toString(36).slice(2, 11); const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} lanSend(msg); };
+const fotoListen = f => { fotoChannel(); lanInit(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
+/* ---------- Direktverbindung über den Hotspot des Laptops (Windows-App) ----------
+   Laptop: die App öffnet einen kleinen Server; die Seite verbindet sich mit ws://127.0.0.1.
+   iPad: öffnet http://<Laptop>:<Port>/?tafel&lan=<Schlüssel> und verbindet sich mit demselben Server. Kein Konto nötig. */
+const LAN_T = (() => { try { return new URLSearchParams(location.search).get('lan') || ''; } catch { return ''; } })();
+const LAN = { ws: null, url: '', info: null, init: false, retry: 0, t: 0, h: new Set() };
+const lanOn = () => !!(LAN.ws && LAN.ws.readyState === 1);
+const lanPage = () => !!LAN_T && location.protocol === 'http:';
+function lanSend(msg) { if (!lanOn()) return false; try { LAN.ws.send(JSON.stringify(msg)); return true; } catch { return false; } }
+function lanConnect(url) {
+  if (!url) return; LAN.url = url; clearTimeout(LAN.t); try { if (LAN.ws) { LAN.ws.onclose = null; LAN.ws.close(); } } catch {}
+  let ws; try { ws = new WebSocket(url); } catch { return; } LAN.ws = ws;
+  ws.onopen = () => { LAN.retry = 0; LAN.h.forEach(f => { try { f(true); } catch {} }); };
+  ws.onmessage = e => { let m = null; try { m = JSON.parse(e.data); } catch {} if (m && typeof m === 'object') fotoHand(m); };
+  ws.onclose = () => { if (LAN.ws !== ws) return; LAN.h.forEach(f => { try { f(false); } catch {} }); if (LAN.url) LAN.t = setTimeout(() => lanConnect(LAN.url), Math.min(8000, 800 * ++LAN.retry)); };
+  ws.onerror = () => {};
+}
+function lanStop() { LAN.url = ''; clearTimeout(LAN.t); try { if (LAN.ws) LAN.ws.close(); } catch {} LAN.ws = null; }
+async function lanDesk(on) { const D = window.abDesktop; if (!D || !D.lan) return null; let r = null; try { r = await D.lan(on); } catch (e) { console.error(e); } LAN.info = r; if (r && r.on && r.ws) { if (LAN.url !== r.ws || !lanOn()) lanConnect(r.ws); } else if (r && !r.on) lanStop(); return r; }
+function lanInit() {
+  if (LAN.init) return; LAN.init = true;
+  if (lanPage()) lanConnect(`ws://${location.host}/lw-ws?t=${encodeURIComponent(LAN_T)}`);
+  else if (window.abDesktop && window.abDesktop.lan) lanDesk();
+}
 const FOTO_COLS = 'id,sheet_id,path,w,h,ink,keep,created_at,expires_at';
 async function fotoList(sheetId) { const r = await store.sb.from('ab_fotos').select(FOTO_COLS).eq('sheet_id', sheetId).or('keep.eq.true,expires_at.gt.' + new Date().toISOString()).order('created_at'); if (r.error) throw r.error; return r.data || []; }
 const fotoUrlC = {};
@@ -17208,7 +17270,7 @@ function lfcStart(O = {}) {
   const boardOn = k => !!PR && PR.board === k;
   const kOf = () => (tab === 'fol' ? 'sl' : tab);
   const drawTab = () => tab === 'fol' || tab === 'tafel' || tab === 'pk';
-  const modes = () => [['fol', 'Folie'], ['tafel', 'Tafel'], ...(PR && PR.gp ? [['pk', 'Pro/Contra']] : []), ['cam', 'Fotos']];
+  const modes = () => [['fol', 'Folie'], ['tafel', 'Tafel'], ...(PR && PR.gp ? [['pk', 'Pro/Contra']] : []), ...(fotoOK() ? [['cam', 'Fotos']] : [])];
   // ---------- Kopfzeile: links zurück, Mitte Ort, rechts Modi, Referent, ⋯ ----------
   const renderTop = () => {
     tl.innerHTML = `<button type="button" class="lfc-tb" data-l="exit" aria-label="Zurück zu LehrWerk">${lfcIc('back', 22)}</button><i class="lfc-dotc${live() ? ' ok' : ''}" title="${live() ? 'Verbunden' : 'Nicht verbunden'}"></i>`;
@@ -17251,7 +17313,7 @@ function lfcStart(O = {}) {
   const withSh = fn => { const keep = state.sheet; try { state.sheet = SL.sh; return fn(); } finally { state.sheet = keep; } };
   const slLoad = async () => {
     if (!PR || SL.busy || (SL.id === PR.sheet && SL.up >= (PR.up || 0))) return; SL.busy = true;
-    try { const r = await store.sb.from('ab_arbeitsblaetter').select('data').eq('id', PR.sheet).maybeSingle(); const d = r.data && r.data.data;
+    try { const d = !fotoOK() && lanOn() ? await lanSheet(PR.sheet) : await (async () => { const r = await store.sb.from('ab_arbeitsblaetter').select('data').eq('id', PR.sheet).maybeSingle(); return r.data && r.data.data; })();
       if (d) { SL.sh = normalizeSheet(d); SL.S = withSh(() => presSlides(true)); SL.id = PR.sheet;
         if ((+d.updatedAt || 0) < (PR.up || 0) && SL.retry++ < 4) { SL.up = +d.updatedAt || 0; setTimeout(slLoad, 2500); } else { SL.retry = 0; SL.up = PR.up || 0; } } else { SL.id = PR.sheet; SL.up = PR.up || 0; SL.S = null; } }
     catch (err) { console.error(err); SL.id = PR.sheet; SL.up = PR.up || 0; }
@@ -17508,6 +17570,12 @@ function lfcStart(O = {}) {
     root.remove(); document.body.classList.remove('lfc-on'); if (fsEl()) fsGo(false); if (manual && PR) lfcBan.skip = PR.sid; }
   return { close };
 }
+// Stunde direkt vom Laptop holen (Direktverbindung, iPad ohne Anmeldung)
+function lanSheet(id) {
+  return new Promise(res => { const q = Math.random().toString(36).slice(2, 9); let done = false;
+    const off = fotoListen(m => { if (m.t === 'shdata' && m.q === q) { done = true; off(); res(m.data || null); } });
+    lanSend({ t: 'shreq', id, q, _i: q + 'r' }); setTimeout(() => { if (!done) { off(); res(null); } }, 15000); });
+}
 // Hinweis im normalen LehrWerk: „Präsentation läuft – als Tafel verbinden“
 const lfcBan = { el: null, skip: '', last: null, t: 0 };
 // Seite „LehrWerk Tafel“ (…/?tafel): ohne Manifest, damit „Zum Home-Bildschirm“ genau diese Adresse speichert
@@ -17517,6 +17585,7 @@ function lfcPage() {
   try { const vp = document.querySelector('meta[name="viewport"]'); if (vp) vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; } catch {}
   add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' }); add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }); add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'apple-mobile-web-app-title', content: 'LehrWerk Tafel' }); add('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }); add('meta', { name: 'theme-color', content: '#1c1c1e' }); document.title = 'LehrWerk Tafel';
+  if (lanPage()) { lanInit(); setTimeout(() => lfcStart({ page: true }), 300); return; }
   const go = setInterval(() => { if (store.user && fotoOK()) { clearInterval(go); lfcStart({ page: true }); } else if (store.sb && !store.user && !state.dlg) openDlg('login'); }, 500);
 }
 function lfcWatch() {
@@ -17530,7 +17599,7 @@ function lfcWatch() {
     lfcBan.el.querySelector('.lfc-bx').onclick = () => { lfcBan.skip = (lfcBan.last || {}).sid || ''; hide(); };
   };
   const tick = setInterval(() => {
-    if (on || !fotoOK()) return; on = true; clearInterval(tick);
+    if (on || !(fotoOK() || lanOn())) return; on = true; clearInterval(tick);
     fotoListen(m => {
       if (m.t === 'pres') { lfcBan.last = m; clearTimeout(lfcBan.t); lfcBan.t = setTimeout(hide, 15000);
         if (document.querySelector('.pr') || document.getElementById('lfc-root') || m.sid === lfcBan.skip) { hide(); return; } show(m); }

@@ -377,3 +377,14 @@ body.lfc-on{overflow:hidden}
 .lfc-prw .tw .tw-c.tw-ctl{display:flex!important}.lfc-prw .tw .tw-h .tw-ctl{display:inline-flex!important}
 .lfc-prw .tw .tw-h{cursor:grab}
 .lfc-prw .tw .tw-c button{min-height:38px;min-width:38px;font-size:17px}.lfc-prw .tw .tw-c select{min-height:38px;font-size:17px}
+
+.lan-pan .lan-p{margin:0 0 12px;line-height:1.45;font-size:14px}
+.lan-pan .lan-s,.lan-pan small{display:block;color:var(--muted,#666);font-size:12.5px;line-height:1.35;margin-top:4px}
+.lan-pan .lan-err,.lan-pan .lan-warn{color:#B42318}.lan-pan .lan-ok{color:#13795B}
+.lan-ol{margin:8px 0 10px;padding-left:20px;display:grid;gap:12px;font-size:14px}
+.lan-ol .btn{margin-top:6px}
+.lan-qr{margin-top:8px}.lan-qr code{font-size:11px;word-break:break-all;color:var(--muted,#666)}
+.lan-st{font-weight:700;font-size:14px;color:var(--muted,#666);margin-bottom:6px}.lan-st.ok{color:#13795B}
+.lan-f{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line,#ddd);padding-top:8px}
+.pr-landot{position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:#F59E0B;box-shadow:0 0 0 2px #fff}.pr-landot.ok{background:#16A34A}
+.pr-lanbtn{position:relative}

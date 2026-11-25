@@ -180,6 +180,44 @@ ipcMain.handle('lw:restore', async () => { if (!switched) return; switched = fal
 app.on('before-quit', () => { if (switched) { switched = false; try { execFile(path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'DisplaySwitch.exe'), ['/clone'], { windowsHide: true }); } catch {} } });
 ipcMain.handle('ab:reveal', (e, p) => { shell.showItemInFolder(p); });
 
+// ---------- Direktverbindung zum iPad (Hotspot des Laptops, ohne Internet-Live-Kanal) ----------
+const { createLan, addresses, typeOf } = require('./lan');
+const lanCache = new Map();
+async function lanFile(p) {
+  // aktuelle Online-Version bevorzugen, sonst zuletzt geladene, sonst die mitgelieferte Kopie
+  try {
+    const r = await net.fetch(new URL(p, ONLINE_URL).href);
+    if (r.ok) { const f = { buf: Buffer.from(await r.arrayBuffer()), type: r.headers.get('content-type') || typeOf(p) }; lanCache.set(p, f); return f; }
+  } catch {}
+  if (lanCache.has(p)) return lanCache.get(p);
+  const local = path.join(__dirname, 'app', p);
+  if (local.startsWith(path.join(__dirname, 'app')) && fs.existsSync(local) && fs.statSync(local).isFile()) return { buf: fs.readFileSync(local), type: typeOf(p) };
+  return null;
+}
+let LAN = null;
+function lanToken() {
+  const prefs = readJSON(prefsPath(), {});
+  if (prefs.lanToken && /^[a-z0-9]{12,}$/.test(prefs.lanToken)) return prefs.lanToken;
+  const t = require('crypto').randomBytes(9).toString('hex'); writeJSON(prefsPath(), { ...prefs, lanToken: t }); return t;
+}
+function lanInfo(err) {
+  const on = !!(LAN && LAN.running()), A = addresses(), token = lanToken(), port = on ? LAN.port() : 0;
+  const host = (A.find(a => a.hotspot) || A[0] || {}).address || '';
+  return { on, port, token, addrs: A, hotspot: A.some(a => a.hotspot), url: on && host ? `http://${host}:${port}/?tafel&lan=${token}` : '', ws: on ? `ws://127.0.0.1:${port}/lw-ws?t=${token}` : '', n: on ? LAN.clients() : 0, err: err || '' };
+}
+ipcMain.handle('lw:lan', async (e, want) => {
+  const prefs = readJSON(prefsPath(), {});
+  if (want === true || want === false) writeJSON(prefsPath(), { ...prefs, lanOn: want });
+  const on = want === true || (want !== false && !!prefs.lanOn);
+  if (on && !(LAN && LAN.running())) {
+    LAN = LAN || createLan({ token: lanToken(), getFile: lanFile });
+    try { await LAN.start(47811); } catch (err) { return lanInfo('Der Rechner konnte die Verbindung nicht öffnen (' + (err && err.code || err) + ').'); }
+  } else if (!on && LAN) LAN.stop();
+  return lanInfo();
+});
+ipcMain.handle('lw:hotspot', () => shell.openExternal(process.platform === 'win32' ? 'ms-settings:network-mobilehotspot' : 'x-apple.systempreferences:com.apple.preferences.sharing'));
+app.on('before-quit', () => { if (LAN) LAN.stop(); });
+
 // ---------- Menü ----------
 function menu() {
   const click = sel => () => win && win.webContents.executeJavaScript(`(document.querySelector(${JSON.stringify(sel)})||{click(){}}).click()`);

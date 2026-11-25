@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **iPad direkt verbinden** (Windows-App ab 3.2): Für Schul-WLANs, die den Live-Kanal sperren. Das iPad verbindet sich über den mobilen Hotspot von Windows direkt mit dem Laptop (QR-Code im Präsentationsmodus unter „iPad direkt“); Stift, Tafel und Fernbedienung laufen ohne Umweg übers Internet, das iPad braucht kein Konto.
 - **Arbeitsteilige ABs**: Haken „Arbeitsteilig“ bei mehreren ABs einer Stunde – nebeneinanderliegende ABs mit Haken bekommen eine gemeinsame Zwischenfolie und je Aufgabenbaustein eine Folie: der n-te Baustein jedes ABs steht mit den n-ten der anderen nebeneinander (je AB eine Spalte, Zeit = längstes AB).
 - **Tabelle groß bearbeiten**: Popup (Knopf, Werkzeugleiste oder Doppelklick in der Vorschau) mit Zeilen/Spalten an beliebiger Stelle einfügen, verschieben, löschen; Spaltenbreite, Farben, Erwartungen.
 - Tabellen: Modus **Farbe** – Felder, ganze Zeilen oder Spalten in sieben Pastelltönen hinterlegen, um Abschnitte zu trennen (Blatt, Folie, Word, Druck).

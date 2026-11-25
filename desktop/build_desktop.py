@@ -108,7 +108,7 @@ def assemble(platform, zipname, exe_from, exe_to):
         if f.name not in keep and f.suffix == '.pak': f.unlink()
     dst = tgt / 'resources' / 'app'
     dst.mkdir()
-    for f in ('main.js', 'preload.js', 'offline.html'): shutil.copy(SRC / f, dst / f)
+    for f in ('main.js', 'preload.js', 'lan.js', 'offline.html'): shutil.copy(SRC / f, dst / f)
     (dst / 'package.json').write_text(json.dumps({**PKG, 'version': VERSION}, ensure_ascii=False, indent=2))
     shutil.copytree(app, dst / 'app')
     (dst / 'build').mkdir()
