@@ -1460,24 +1460,32 @@ body{transition:background-color .3s,border-color .25s}
 .task-soz .soz-gap{display:block;width:8mm;flex:0 0 auto}
 
 /* Bild mit Beschriftungen */
-.blk-lb .lb-g{display:grid;grid-template-columns:minmax(0,1fr) var(--lbm,42%) minmax(0,1fr);gap:0 11mm;align-items:center}
-.blk-lb .lb-col{display:flex;flex-direction:column;gap:7mm;justify-content:space-around;min-height:100%}
+.blk-lb .lb-g{position:relative}
+.blk-lb .lb-mrow{display:grid;grid-template-columns:minmax(0,1fr) var(--lbm,42%) minmax(0,1fr);gap:0 11mm;align-items:center}
+.blk-lb .lb-col{display:flex;flex-direction:column;gap:7mm;justify-content:space-around}
+.blk-lb .lb-row{display:flex;gap:6mm;justify-content:center;align-items:stretch}
+.blk-lb .lb-row.o{margin-bottom:10mm}.blk-lb .lb-row.u{margin-top:10mm}
+.blk-lb .lb-row .lb-c{flex:0 1 62mm}
 .blk-lb .lb-mid{display:flex;justify-content:center}
 .blk-lb .lb-mid img{max-width:100%;max-height:120mm;object-fit:contain;display:block}
+.page.a4q .blk-lb .lb-mid img{max-height:100mm}
+.blk-lb .lb-g:has(.lb-row) .lb-mid img{max-height:95mm}
+.page.a4q .blk-lb .lb-g:has(.lb-row) .lb-mid img{max-height:70mm}
 .blk-lb .lb-mid .img-empty{width:100%;height:60mm}
 .blk-lb .lb-c{position:relative;border:.3mm solid color-mix(in srgb,var(--acc,#2B45B8) 45%,#fff);border-radius:3mm;padding:2.6mm 3.4mm;background:color-mix(in srgb,var(--acc,#2B45B8) 5%,var(--paper,#fff))}
 .blk-lb .lb-h{display:block;font-weight:800;color:var(--acc,#2B45B8);margin-bottom:.8mm}
 .blk-lb .lb-t{font-size:.94em;line-height:1.35}
 .blk-lb .lb-wl{height:8mm;border-bottom:.25mm solid #9AA1AE}
-.blk-lb .lb-a{position:absolute;top:50%;width:11mm;height:9.2mm;margin-top:-4.6mm;fill:none;stroke:var(--paper-ink,#1C1F27);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
-.blk-lb .lb-l .lb-a{left:100%}
-.blk-lb .lb-r .lb-a{right:100%;transform:scaleX(-1)}
-.blk-lb .lb-c.at-o .lb-a{top:12%}.blk-lb .lb-c.at-u .lb-a{top:88%}
+.blk-lb .lb-ov{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.blk-lb .lb-ov path{fill:none;stroke:var(--paper-ink,#1C1F27);stroke-width:.45;stroke-linecap:round;stroke-linejoin:round}
 .blk-lb .mat-head{margin-bottom:3mm}
 .lb-ed{display:grid;gap:10px;margin:6px 0}
-.lb-row{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-.lb-row-h{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}.lb-row-h b{flex:1;font-size:13px}
-.page.a4q .blk-lb .lb-mid img{max-height:100mm}
+.lb-row-e{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.lb-row-h{display:flex;align-items:center;gap:6px 8px;margin-bottom:4px;flex-wrap:wrap}.lb-row-h b{flex:1;font-size:13px}
+.lb-pick{position:relative;display:block;width:fit-content;max-width:100%;margin:4px 0 2px;touch-action:none;user-select:none}
+.lb-pick img{display:block;max-width:100%;max-height:220px;border-radius:8px}
+.lb-dot{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:var(--acc,#2B45B8);color:#fff;font:700 12px/26px system-ui;text-align:center;cursor:grab;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.35)}
+.lb-dot:active{cursor:grabbing}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -11120,18 +11128,70 @@ function setAccent(node, meta) {
   node.classList.toggle('tone', d === 'akte' && meta.tone !== false);
 }
 
-// Bild mit Beschriftungen: Bild in der Mitte, Kästen links und rechts, jeder mit einem Pfeil zum Bild
-const LB_ARR = { o: 'M2 26 C 14 24, 22 16, 34 5', m: 'M2 15 C 12 9, 24 21, 34 15', u: 'M2 4 C 14 6, 22 14, 34 25' };
+// Bild mit Beschriftungen: Bild in der Mitte, Kästen links, rechts, oben oder unten. Die Pfeile zeichnet lbArrows() nach dem Setzen.
+const lbSide = x => (['l', 'r', 'o', 'u'].includes(x.s) ? x.s : 'l');
 function lbHTML(b, ctx) {
   const L = (b.lb || []).filter(Boolean), mode = b.lbMode || '', tag = ctx.mt && ctx.mt[b.id];
-  const card = (x, side) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
-    const nl = mode ? Math.max(2, Math.min(6, +(b.lbLines || 3))) : 0;
-    return `<div class="lb-c lb-${side} at-${x.at || 'm'}">${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${nl ? '<div class="lb-wl"></div>'.repeat(nl) : ''}<svg class="lb-a" viewBox="0 0 36 30" aria-hidden="true"><path d="${LB_ARR[x.at || 'm']}"/><path class="lb-hd" d="${{ o: 'M27 4.5 L34 5 L32.5 11.5', m: 'M28.5 10.5 L34 15 L28.5 19.5', u: 'M32.5 18.5 L34 25 L27 25.5' }[x.at || 'm']}"/></svg></div>`; };
-  const l = L.filter(x => x.s !== 'r'), r = L.filter(x => x.s === 'r');
+  const nl = Math.max(2, Math.min(6, +(b.lbLines || 3)));
+  const card = (x, i) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
+    const ft = x.tx != null && x.ty != null ? ` data-tx="${Math.max(0, Math.min(100, +x.tx))}" data-ty="${Math.max(0, Math.min(100, +x.ty))}"` : '';
+    return `<div class="lb-c lb-${lbSide(x)}" data-lbi="${i}" data-at="${x.at || 'm'}"${ft}>${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${mode ? '<div class="lb-wl"></div>'.repeat(nl) : ''}</div>`; };
+  const pick = s => L.map((x, i) => lbSide(x) === s ? card(x, i) : '').join('');
   const img = b.src ? `<img src="${esc(b.src)}" alt="">` : '<div class="img-empty">Bild hinzufügen</div>';
-  const mid = Math.max(25, Math.min(70, +b.width || 42));
-  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%"><div class="lb-col l">${l.map(x => card(x, 'l')).join('')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${r.map(x => card(x, 'r')).join('')}</div></div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
+  const mid = Math.max(25, Math.min(70, +b.width || 42)), top = pick('o'), bot = pick('u');
+  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%">${top ? `<div class="lb-row o">${top}</div>` : ''}<div class="lb-mrow"><div class="lb-col l">${pick('l')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${pick('r')}</div></div>${bot ? `<div class="lb-row u">${bot}</div>` : ''}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
 }
+// Pfeile als Ebene über dem Baustein: vom Kasten zum gewählten Punkt im Bild (oder automatisch zum Bildrand)
+function lbArrows(root = document.getElementById('pages')) {
+  if (!root) return;
+  root.querySelectorAll('.blk-lb .lb-g').forEach(g => {
+    const old = g.querySelector(':scope > svg.lb-ov'); if (old) old.remove();
+    const im = g.querySelector('.lb-mid img, .lb-mid .img-empty'); if (!im) return;
+    if (im.tagName === 'IMG' && !im.complete) { im.addEventListener('load', () => lbArrows(root), { once: true }); }
+    const page = g.closest('.page'); const G = g.getBoundingClientRect(); if (!G.width) return;
+    const pw = page ? +page.dataset.w || 210 : 210, mmPx = page ? page.getBoundingClientRect().width / pw : G.width / 180;
+    const u = v => v / mmPx; // Bildschirmpixel → mm; das SVG rechnet in mm
+    const I = im.getBoundingClientRect(), ix = u(I.left - G.left), iy = u(I.top - G.top), iw = u(I.width), ih = u(I.height);
+    const W = u(G.width), H = u(G.height), gap = 1.6, cl = (v, a, z) => Math.max(a, Math.min(z, v));
+    let d = '';
+    g.querySelectorAll('.lb-c').forEach(c => {
+      const C = c.getBoundingClientRect(), cx = u(C.left - G.left), cy = u(C.top - G.top), cw = u(C.width), ch = u(C.height);
+      const s = c.classList.contains('lb-r') ? 'r' : c.classList.contains('lb-o') ? 'o' : c.classList.contains('lb-u') ? 'u' : 'l';
+      const sh = { o: -0.22, m: 0, u: 0.22 }[c.dataset.at] || 0, free = c.dataset.tx != null;
+      let x0, y0, x1, y1;
+      if (s === 'l') { x0 = cx + cw + 1; y0 = cy + ch / 2; }
+      else if (s === 'r') { x0 = cx - 1; y0 = cy + ch / 2; }
+      else if (s === 'o') { x0 = cx + cw / 2; y0 = cy + ch + 1; }
+      else { x0 = cx + cw / 2; y0 = cy - 1; }
+      if (free) { x1 = ix + iw * c.dataset.tx / 100; y1 = iy + ih * c.dataset.ty / 100; }
+      else if (s === 'l' || s === 'r') { x1 = s === 'l' ? ix - gap : ix + iw + gap; y1 = cl(y0 + sh * ih, iy + 4, iy + ih - 4); }
+      else { x1 = cl(x0, ix + 4, ix + iw - 4); y1 = s === 'o' ? iy - gap : iy + ih + gap; }
+      const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy); if (len < 3) return;
+      // leichte Biegung wie gezeichnet: Kontrollpunkt seitlich der Mitte
+      const bend = Math.min(0.22 * len, 9) * (s === 'r' || s === 'u' ? -1 : 1) * (dy >= 0 ? 1 : -1) * (s === 'o' || s === 'u' ? -1 : 1);
+      const qx = (x0 + x1) / 2 - dy / len * bend, qy = (y0 + y1) / 2 + dx / len * bend;
+      const tx = x1 - qx, ty = y1 - qy, tl = Math.hypot(tx, ty) || 1, ux = tx / tl, uy = ty / tl, hl = 2.4, a = 0.5;
+      const hx = (cs, sn) => `${(x1 - hl * (ux * Math.cos(a) * cs - uy * Math.sin(a) * sn)).toFixed(2)} ${(y1 - hl * (uy * Math.cos(a) * cs + ux * Math.sin(a) * sn)).toFixed(2)}`;
+      d += `<path class="lb-a" d="M${x0.toFixed(2)} ${y0.toFixed(2)} Q${qx.toFixed(2)} ${qy.toFixed(2)} ${x1.toFixed(2)} ${y1.toFixed(2)}"/><path class="lb-a lb-hd" d="M${hx(1, 1)} L${x1.toFixed(2)} ${y1.toFixed(2)} L${hx(1, -1)}"/>`;
+    });
+    if (d) g.insertAdjacentHTML('beforeend', `<svg class="lb-ov" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" preserveAspectRatio="none" aria-hidden="true">${d}</svg>`);
+  });
+}
+
+// Zielpunkte im Editor ziehen: Pfeile in der Vorschau folgen sofort, gespeichert wird beim Loslassen
+document.addEventListener('pointerdown', e => {
+  const dot = e.target.closest && e.target.closest('#editor .lb-dot'); if (!dot) return;
+  const box = dot.closest('[data-lbpick]'), card = dot.closest('[data-bid]'); if (!box || !card) return;
+  const b = target(card.dataset.bid), i = +dot.dataset.lbdot, x = b && b.lb && b.lb[i]; if (!x) return;
+  e.preventDefault(); snapshot(); try { dot.setPointerCapture(e.pointerId); } catch { }
+  const pv = () => document.querySelectorAll(`#pages [data-bid="${card.dataset.bid}"] .lb-c[data-lbi="${i}"]`);
+  const move = ev => { const r = box.querySelector('img').getBoundingClientRect();
+    x.tx = Math.round(Math.max(0, Math.min(100, (ev.clientX - r.left) / r.width * 100)) * 10) / 10; x.ty = Math.round(Math.max(0, Math.min(100, (ev.clientY - r.top) / r.height * 100)) * 10) / 10;
+    dot.style.left = x.tx + '%'; dot.style.top = x.ty + '%';
+    const cs = [...pv()]; if (cs.length) { cs.forEach(c => { c.dataset.tx = x.tx; c.dataset.ty = x.ty; }); lbArrows(); } };
+  const up = () => { dot.removeEventListener('pointermove', move); dot.removeEventListener('pointerup', up); dot.removeEventListener('pointercancel', up); changed(true); };
+  dot.addEventListener('pointermove', move); dot.addEventListener('pointerup', up); dot.addEventListener('pointercancel', up);
+});
 
 let fontsOK = false;
 function layout() {
@@ -11146,6 +11206,11 @@ function layout() {
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
   for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks' && rst(b)) ctx.t = 0; items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
+  // Bild mit Beschriftungen soll mit dem Kopf auf eine Seite passen: Bild schrittweise verkleinern (nicht unter 40 mm)
+  { const hd = items.find(it => it.type === 'head' && it.el); const lim = AVAIL - (hd ? hd.h + GAP : 0);
+    items.forEach(it => { if (!it.el || !it.el.classList.contains('blk-lb')) return; const im = it.el.querySelector('.lb-mid img'); if (!im || it.h <= lim) return;
+      let mx = parseFloat(getComputedStyle(im).maxHeight) / MMPX || 120;
+      while (it.h > lim && mx > 40) { mx -= 6; im.style.maxHeight = mx + 'mm'; measure(it); } }); }
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
   const tag = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? grpName(meta, v.grp) : '', v.lvl !== 'all' ? LV[v.lvl].sym : ''].filter(Boolean).join(' · ');
@@ -11292,7 +11357,7 @@ function renderPreview0() {
     : `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
   if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
   $('#pv-hint').hidden = true;
-  renderOut(); applyScale(); markSel(); markZl();
+  renderOut(); applyScale(); markSel(); markZl(); lbArrows(host);
 }
 function applyScale() {
   const pane = $('#preview-scroll'); const cs = getComputedStyle(pane);
@@ -11803,16 +11868,18 @@ const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid
 
 function lbEdHTML(b) {
   const seg = (act, i, cur, opts, lab) => `<div class="seg sm" role="group" aria-label="${lab}">${opts.map(([v, t, ti]) => `<button type="button" data-act="${act}" data-i="${i}" data-v="${v}" aria-pressed="${cur === v}"${ti ? ` title="${ti}"` : ''}>${t}</button>`).join('')}</div>`;
-  const L = b.lb || [];
-  return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+  const L = b.lb || [], free = x => x.tx != null && x.ty != null;
+  const dots = L.map((x, i) => free(x) ? `<span class="lb-dot" data-lbdot="${i}" style="left:${+x.tx}%;top:${+x.ty}%" title="Pfeilziel von Kasten ${i + 1} – ziehen">${i + 1}</span>` : '').join('');
+  return `${b.src ? `<div class="lb-pick" data-lbpick>${`<img src="${esc(b.src)}" alt="Bild – hier die Pfeilziele hinziehen" draggable="false">`}${dots}</div>${L.some(free) ? '<small class="hint">Ziehe die Nummern auf die Stelle im Bild, auf die der Pfeil zeigen soll.</small>' : ''}` : ''}
     <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
     <label class="f"><span>Bildbreite in der Mitte: ${Math.round(+b.width || 42)} %</span><input type="range" min="25" max="70" step="1" value="${+b.width || 42}" data-k="width" data-num="1"></label>
     ${fText('caption', 'Überschrift über dem Bild (optional)', b.caption, 'z. B. Wie gestalte ich meine Lesekiste?')}
     <div class="f"><span>Für die Kinder</span>${seg('lb-mode', 0, b.lbMode || '', [['', 'Ausgefüllt'], ['text', 'Text leer', 'Überschriften stehen, darunter Linien zum Schreiben'], ['ganz', 'Alles leer', 'Nur Kästen mit Linien und Pfeilen – zum Beschriften']], 'Für die Kinder')}</div>
-    <div class="lb-ed">${L.map((x, i) => `<div class="lb-row">
-      <div class="lb-row-h"><b>Kasten ${i + 1}</b>${seg('lb-side', i, x.s === 'r' ? 'r' : 'l', [['l', 'links'], ['r', 'rechts']], 'Seite')}${seg('lb-at', i, x.at || 'm', [['o', '↗', 'Pfeil nach oben'], ['m', '→', 'Pfeil zur Mitte'], ['u', '↘', 'Pfeil nach unten']], 'Pfeil')}<button class="ib" type="button" data-act="lb-del" data-i="${i}" title="Kasten entfernen" aria-label="Kasten ${i + 1} entfernen">${I.x}</button></div>
-      ${fText(`lb.${i}.h`, 'Überschrift', x.h, 'z. B. Klappentext')}${fArea(`lb.${i}.t`, 'Text', x.t, 2, 'z. B. Suche eine passende Stelle für den Klappentext.')}</div>`).join('')}</div>
-    ${L.length < 8 ? '<button class="link" type="button" data-act="lb-add">+ Kasten</button>' : ''}
+    <div class="lb-ed">${L.map((x, i) => { const sd = ['l', 'r', 'o', 'u'].includes(x.s) ? x.s : 'l'; return `<div class="lb-row-e">
+      <div class="lb-row-h"><b>Kasten ${i + 1}</b>${seg('lb-side', i, sd, [['l', 'links'], ['o', 'oben'], ['u', 'unten'], ['r', 'rechts']], 'Lage des Kastens')}<button class="ib" type="button" data-act="lb-del" data-i="${i}" title="Kasten entfernen" aria-label="Kasten ${i + 1} entfernen">${I.x}</button></div>
+      <div class="lb-row-h">${free(x) ? `<span class="hint">Pfeil zeigt auf die Stelle ${i + 1} im Bild</span><button class="link" type="button" data-act="lb-auto" data-i="${i}">Pfeil wieder automatisch</button>` : `${sd === 'l' || sd === 'r' ? seg('lb-at', i, x.at || 'm', [['o', sd === 'l' ? '↗' : '↖', 'Pfeil nach oben'], ['m', sd === 'l' ? '→' : '←', 'Pfeil zur Mitte'], ['u', sd === 'l' ? '↘' : '↙', 'Pfeil nach unten']], 'Pfeil') : ''}${b.src ? `<button class="link" type="button" data-act="lb-free" data-i="${i}">Pfeilziel im Bild wählen</button>` : ''}`}</div>
+      ${fText(`lb.${i}.h`, 'Überschrift', x.h, 'z. B. Klappentext')}${fArea(`lb.${i}.t`, 'Text', x.t, 2, 'z. B. Suche eine passende Stelle für den Klappentext.')}</div>`; }).join('')}</div>
+    ${L.length < 10 ? '<button class="link" type="button" data-act="lb-add">+ Kasten</button>' : ''}
     ${fText('source', 'Quelle des Bildes', b.source, '')}`;
 }
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;
@@ -12482,6 +12549,8 @@ function onClick(e) {
     case 'src-form': srcFormSet(b, a.dataset.v); changed(true); renderEditor(); return;
     case 'lb-mode': if (a.dataset.v) b.lbMode = a.dataset.v; else delete b.lbMode; changed(true); renderEditor(); return;
     case 'lb-side': case 'lb-at': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; x[act === 'lb-side' ? 's' : 'at'] = a.dataset.v; changed(true); renderEditor(); return; }
+    case 'lb-free': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; snapshot(); const sd = x.s || 'l'; x.tx = sd === 'l' ? 25 : sd === 'r' ? 75 : 50; x.ty = sd === 'o' ? 25 : sd === 'u' ? 75 : 50; changed(true); renderEditor(); return; }
+    case 'lb-auto': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; snapshot(); delete x.tx; delete x.ty; changed(true); renderEditor(); return; }
     case 'lb-add': { snapshot(); const L = b.lb || (b.lb = []); const nl = L.filter(x => x.s !== 'r').length, nr = L.length - nl; L.push({ h: '', t: '', s: nl > nr ? 'r' : 'l', at: 'm' }); changed(true); renderEditor(); return; }
     case 'lb-del': { snapshot(); b.lb.splice(+a.dataset.i, 1); changed(true); renderEditor(); return; }
     case 'mat-kind': case 'img-kind': if (a.dataset.v) b.mk = a.dataset.v; else delete b.mk; changed(true); renderEditor(); return;
@@ -16022,7 +16091,7 @@ async function mappeGo() {
   // Die Seiten kommen kurz in die Vorschau; PDF und Druck verarbeiten sie dort wie gewohnt
   const host = $('#pages'); host.innerHTML = '';
   res.units.forEach(u => { u.classList.add('pout'); const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(u); host.appendChild(slot); });
-  applyScale(); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
+  applyScale(); lbArrows(host); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
   const name = 'Mappe_' + slug(opt.title || 'Reihe') + (opt.fassung === 'lehrer' ? '_Lehrerfassung' : '') + '.pdf';
   try {
     if (opt.fmt === 'print') { overlay(''); await fontsIn(document); doPrint(); }
@@ -16413,10 +16482,10 @@ async function exportDOCX() {
             // Bild mit Beschriftungen: dreispaltige Tabelle, Kästen links und rechts, Bild in der Mitte (ohne Pfeile)
             const mid = Math.max(25, Math.min(70, +b.width || 42)), side = Math.round(CW * (100 - mid) / 200), cen = CW - 2 * side;
             const mode = b.lbMode || '', BOX = LINE('top', 8, A) + LINE('left', 8, A) + LINE('bottom', 8, A) + LINE('right', 8, A);
-            const card = x => { const r = []; if (mode !== 'ganz') r.push(xp(xrInline(x.h || '', { b: 1, color: A }), { after: 40 }));
+            const card = (x, cw = side) => { const r = []; if (mode !== 'ganz') r.push(xp(xrInline(x.h || '', { b: 1, color: A }), { after: 40 }));
               if (!mode) String(x.t || '').split('\n').forEach(t => r.push(xp(xrInline(t), { after: 0 })));
               else for (let i = 0; i < Math.max(2, Math.min(6, +(b.lbLines || 3))); i++) r.push(xp('', { line: 440, rule: 'exact', bdr: `<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="9AA1AE"/></w:pBdr>` }));
-              return xtbl([side - 170], xtr(xtc(r.join(''), { w: side - 170, borders: BOX })), NOB, '<w:top w:w="85" w:type="dxa"/><w:left w:w="113" w:type="dxa"/><w:bottom w:w="85" w:type="dxa"/><w:right w:w="113" w:type="dxa"/>') + xp('', { after: 120, line: 120, rule: 'exact' }); };
+              return xtbl([cw - 170], xtr(xtc(r.join(''), { w: cw - 170, borders: BOX })), NOB, '<w:top w:w="85" w:type="dxa"/><w:left w:w="113" w:type="dxa"/><w:bottom w:w="85" w:type="dxa"/><w:right w:w="113" w:type="dxa"/>') + xp('', { after: 120, line: 120, rule: 'exact' }); };
             const col = L => L.map(card).join('') || xp('');
             let imgX = xp(xr('[Bild]', { i: 1, color: GREY }), { jc: 'center' });
             if (b.src) try { const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
@@ -16424,7 +16493,11 @@ async function exportDOCX() {
               imgX = xp(`<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`, { jc: 'center', line: 240 });
             } catch { }
             if (b.caption || tagsW[b.id]) parts.push(xp((tagsW[b.id] ? xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') : '') + xrInline(b.caption || '', { b: 1, sz: 22 }), { keepNext: true, after: 120 }));
-            parts.push(xtbl([side, cen, side], xtr(xtc(col(b.lb.filter(x => x.s !== 'r')), { w: side, v: 'center' }) + xtc(imgX, { w: cen, v: 'center' }) + xtc(col(b.lb.filter(x => x.s === 'r')), { w: side, v: 'center' })), NOB));
+            const sd = x => (['l', 'r', 'o', 'u'].includes(x.s) ? x.s : 'l');
+            const rowT = L => { if (!L.length) return; const n = Math.min(L.length, 4), w = Math.floor(CW / n); for (let k = 0; k < L.length; k += n) parts.push(xtbl(Array(n).fill(w), xtr(L.slice(k, k + n).map(x => xtc(card(x, w), { w })).join('') + (L.slice(k, k + n).length < n ? Array(n - L.slice(k, k + n).length).fill(xtc('', { w })).join('') : '')), NOB)); };
+            rowT(b.lb.filter(x => sd(x) === 'o'));
+            parts.push(xtbl([side, cen, side], xtr(xtc(col(b.lb.filter(x => sd(x) === 'l')), { w: side, v: 'center' }) + xtc(imgX, { w: cen, v: 'center' }) + xtc(col(b.lb.filter(x => sd(x) === 'r')), { w: side, v: 'center' })), NOB));
+            rowT(b.lb.filter(x => sd(x) === 'u'));
             if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { jc: 'center' }));
             break;
           }

@@ -61,16 +61,18 @@ const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid
 
 function lbEdHTML(b) {
   const seg = (act, i, cur, opts, lab) => `<div class="seg sm" role="group" aria-label="${lab}">${opts.map(([v, t, ti]) => `<button type="button" data-act="${act}" data-i="${i}" data-v="${v}" aria-pressed="${cur === v}"${ti ? ` title="${ti}"` : ''}>${t}</button>`).join('')}</div>`;
-  const L = b.lb || [];
-  return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+  const L = b.lb || [], free = x => x.tx != null && x.ty != null;
+  const dots = L.map((x, i) => free(x) ? `<span class="lb-dot" data-lbdot="${i}" style="left:${+x.tx}%;top:${+x.ty}%" title="Pfeilziel von Kasten ${i + 1} – ziehen">${i + 1}</span>` : '').join('');
+  return `${b.src ? `<div class="lb-pick" data-lbpick>${`<img src="${esc(b.src)}" alt="Bild – hier die Pfeilziele hinziehen" draggable="false">`}${dots}</div>${L.some(free) ? '<small class="hint">Ziehe die Nummern auf die Stelle im Bild, auf die der Pfeil zeigen soll.</small>' : ''}` : ''}
     <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
     <label class="f"><span>Bildbreite in der Mitte: ${Math.round(+b.width || 42)} %</span><input type="range" min="25" max="70" step="1" value="${+b.width || 42}" data-k="width" data-num="1"></label>
     ${fText('caption', 'Überschrift über dem Bild (optional)', b.caption, 'z. B. Wie gestalte ich meine Lesekiste?')}
     <div class="f"><span>Für die Kinder</span>${seg('lb-mode', 0, b.lbMode || '', [['', 'Ausgefüllt'], ['text', 'Text leer', 'Überschriften stehen, darunter Linien zum Schreiben'], ['ganz', 'Alles leer', 'Nur Kästen mit Linien und Pfeilen – zum Beschriften']], 'Für die Kinder')}</div>
-    <div class="lb-ed">${L.map((x, i) => `<div class="lb-row">
-      <div class="lb-row-h"><b>Kasten ${i + 1}</b>${seg('lb-side', i, x.s === 'r' ? 'r' : 'l', [['l', 'links'], ['r', 'rechts']], 'Seite')}${seg('lb-at', i, x.at || 'm', [['o', '↗', 'Pfeil nach oben'], ['m', '→', 'Pfeil zur Mitte'], ['u', '↘', 'Pfeil nach unten']], 'Pfeil')}<button class="ib" type="button" data-act="lb-del" data-i="${i}" title="Kasten entfernen" aria-label="Kasten ${i + 1} entfernen">${I.x}</button></div>
-      ${fText(`lb.${i}.h`, 'Überschrift', x.h, 'z. B. Klappentext')}${fArea(`lb.${i}.t`, 'Text', x.t, 2, 'z. B. Suche eine passende Stelle für den Klappentext.')}</div>`).join('')}</div>
-    ${L.length < 8 ? '<button class="link" type="button" data-act="lb-add">+ Kasten</button>' : ''}
+    <div class="lb-ed">${L.map((x, i) => { const sd = ['l', 'r', 'o', 'u'].includes(x.s) ? x.s : 'l'; return `<div class="lb-row-e">
+      <div class="lb-row-h"><b>Kasten ${i + 1}</b>${seg('lb-side', i, sd, [['l', 'links'], ['o', 'oben'], ['u', 'unten'], ['r', 'rechts']], 'Lage des Kastens')}<button class="ib" type="button" data-act="lb-del" data-i="${i}" title="Kasten entfernen" aria-label="Kasten ${i + 1} entfernen">${I.x}</button></div>
+      <div class="lb-row-h">${free(x) ? `<span class="hint">Pfeil zeigt auf die Stelle ${i + 1} im Bild</span><button class="link" type="button" data-act="lb-auto" data-i="${i}">Pfeil wieder automatisch</button>` : `${sd === 'l' || sd === 'r' ? seg('lb-at', i, x.at || 'm', [['o', sd === 'l' ? '↗' : '↖', 'Pfeil nach oben'], ['m', sd === 'l' ? '→' : '←', 'Pfeil zur Mitte'], ['u', sd === 'l' ? '↘' : '↙', 'Pfeil nach unten']], 'Pfeil') : ''}${b.src ? `<button class="link" type="button" data-act="lb-free" data-i="${i}">Pfeilziel im Bild wählen</button>` : ''}`}</div>
+      ${fText(`lb.${i}.h`, 'Überschrift', x.h, 'z. B. Klappentext')}${fArea(`lb.${i}.t`, 'Text', x.t, 2, 'z. B. Suche eine passende Stelle für den Klappentext.')}</div>`; }).join('')}</div>
+    ${L.length < 10 ? '<button class="link" type="button" data-act="lb-add">+ Kasten</button>' : ''}
     ${fText('source', 'Quelle des Bildes', b.source, '')}`;
 }
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;

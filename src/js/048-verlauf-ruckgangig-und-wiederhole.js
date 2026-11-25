@@ -329,6 +329,8 @@ function onClick(e) {
     case 'src-form': srcFormSet(b, a.dataset.v); changed(true); renderEditor(); return;
     case 'lb-mode': if (a.dataset.v) b.lbMode = a.dataset.v; else delete b.lbMode; changed(true); renderEditor(); return;
     case 'lb-side': case 'lb-at': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; x[act === 'lb-side' ? 's' : 'at'] = a.dataset.v; changed(true); renderEditor(); return; }
+    case 'lb-free': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; snapshot(); const sd = x.s || 'l'; x.tx = sd === 'l' ? 25 : sd === 'r' ? 75 : 50; x.ty = sd === 'o' ? 25 : sd === 'u' ? 75 : 50; changed(true); renderEditor(); return; }
+    case 'lb-auto': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; snapshot(); delete x.tx; delete x.ty; changed(true); renderEditor(); return; }
     case 'lb-add': { snapshot(); const L = b.lb || (b.lb = []); const nl = L.filter(x => x.s !== 'r').length, nr = L.length - nl; L.push({ h: '', t: '', s: nl > nr ? 'r' : 'l', at: 'm' }); changed(true); renderEditor(); return; }
     case 'lb-del': { snapshot(); b.lb.splice(+a.dataset.i, 1); changed(true); renderEditor(); return; }
     case 'mat-kind': case 'img-kind': if (a.dataset.v) b.mk = a.dataset.v; else delete b.mk; changed(true); renderEditor(); return;

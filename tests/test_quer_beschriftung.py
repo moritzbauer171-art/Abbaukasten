@@ -38,13 +38,13 @@ def test_beschriftung_blatt_und_word(lw):
     pg.evaluate("__RP()"); pg.wait_for_timeout(600)
     assert pg.locator('#pages .blk-lb .lb-c').count() == 3
     assert pg.locator('#pages .blk-lb .lb-col.l .lb-c').count() == 2
-    assert pg.locator('#pages .blk-lb .lb-a').count() == 3
-    assert 'Figuren' in pg.locator('#pages .blk-lb').inner_text()
-    # Pfeile zeigen zum Bild: linke Kästen enden links vom Bild, rechte rechts davon
-    g = pg.evaluate("""(() => { const r = s => document.querySelector(s).getBoundingClientRect();
-      return [r('#pages .lb-col.l .lb-a').right, r('#pages .lb-mid').left, r('#pages .lb-col.r .lb-a').left, r('#pages .lb-mid').right]; })()""")
-    assert g[0] <= g[1] + 2 and g[2] >= g[3] - 2
-    assert pg.locator('#editor .lb-row').count() == 3
+    assert pg.locator('#pages .blk-lb svg.lb-ov path.lb-a:not(.lb-hd)').count() == 3
+    # Pfeile enden am Bild: linke Pfeile links vom Bild, rechte rechts davon
+    g = pg.evaluate("""(() => { const ps = [...document.querySelectorAll('#pages .lb-ov path.lb-a:not(.lb-hd)')].map(p => p.getBBox());
+      const sv = document.querySelector('#pages .lb-ov'), m = document.querySelector('#pages .lb-mid img').getBoundingClientRect(), G = sv.getBoundingClientRect(), k = sv.viewBox.baseVal.width / G.width;
+      return { l: [ps[0].x + ps[0].width, (m.left - G.left) * k], r: [ps[2].x, (m.right - G.left) * k] }; })()""")
+    assert g['l'][0] <= g['l'][1] + 0.5 and g['r'][0] >= g['r'][1] - 0.5
+    assert pg.locator('#editor .lb-row-e').count() == 3
     xml = docx(pg, 'lb.docx')
     assert 'Figuren' in xml and 'Wo spielt es?' in xml and '<w:drawing>' in xml
 
@@ -61,10 +61,24 @@ def test_beschriftung_aus_palette(lw):
     pg.locator('[data-act="add"][data-pk="beschriftet"]').first.click(); pg.wait_for_timeout(700)
     b = pg.evaluate("__S.sheet.blocks.find(x => Array.isArray(x.lb))")
     assert b and b['type'] == 'image' and len(b['lb']) == 4
-    assert pg.locator('#editor .lb-row').count() == 4
+    assert pg.locator('#editor .lb-row-e').count() == 4
     pg.locator('#editor [data-act="lb-add"]').click(); pg.wait_for_timeout(400)
     assert pg.evaluate("__S.sheet.blocks.find(x => Array.isArray(x.lb)).lb.length") == 5
     pg.locator('#editor [data-act="lb-at"][data-i="0"][data-v="m"]').click(); pg.wait_for_timeout(300)
     assert pg.evaluate("__S.sheet.blocks.find(x => Array.isArray(x.lb)).lb[0].at") == 'm'
     pg.locator('#editor [data-act="lb-mode"][data-v="text"]').click(); pg.wait_for_timeout(500)
     assert pg.locator('#pages .blk-lb.lb-leer').count() == 1
+
+def test_beschriftung_oben_unten_und_freies_ziel(lw):
+    pg = lw.open(); lw.new_lesson(pg); b = lb_block(); b['lb'][0]['s'] = 'o'; b['lb'][2]['s'] = 'u'; lw.setup(pg, [b])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(600)
+    assert pg.locator('#pages .lb-row.o .lb-c').count() == 1 and pg.locator('#pages .lb-row.u .lb-c').count() == 1
+    pg.locator('#editor [data-act="lb-free"][data-i="1"]').click(); pg.wait_for_timeout(600)
+    dot = pg.locator('#editor .lb-dot[data-lbdot="1"]'); assert dot.count() == 1
+    bx = pg.locator('#editor [data-lbpick] img').bounding_box(); d = dot.bounding_box()
+    pg.mouse.move(d['x'] + d['width'] / 2, d['y'] + d['height'] / 2); pg.mouse.down()
+    pg.mouse.move(bx['x'] + bx['width'] * 0.8, bx['y'] + bx['height'] * 0.2, steps=6); pg.mouse.up(); pg.wait_for_timeout(700)
+    x = pg.evaluate("__S.sheet.blocks[0].lb[1]")
+    assert 70 < x['tx'] <= 90 and 10 <= x['ty'] < 30
+    assert pg.locator('#pages .lb-c[data-lbi="1"][data-tx]').count() == 1
+    xml = docx(pg, 'lb2.docx'); assert xml.index('Titel') < xml.index('Figuren') < xml.index('Wo spielt es?')

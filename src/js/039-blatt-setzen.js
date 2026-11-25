@@ -415,18 +415,70 @@ function setAccent(node, meta) {
   node.classList.toggle('tone', d === 'akte' && meta.tone !== false);
 }
 
-// Bild mit Beschriftungen: Bild in der Mitte, Kästen links und rechts, jeder mit einem Pfeil zum Bild
-const LB_ARR = { o: 'M2 26 C 14 24, 22 16, 34 5', m: 'M2 15 C 12 9, 24 21, 34 15', u: 'M2 4 C 14 6, 22 14, 34 25' };
+// Bild mit Beschriftungen: Bild in der Mitte, Kästen links, rechts, oben oder unten. Die Pfeile zeichnet lbArrows() nach dem Setzen.
+const lbSide = x => (['l', 'r', 'o', 'u'].includes(x.s) ? x.s : 'l');
 function lbHTML(b, ctx) {
   const L = (b.lb || []).filter(Boolean), mode = b.lbMode || '', tag = ctx.mt && ctx.mt[b.id];
-  const card = (x, side) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
-    const nl = mode ? Math.max(2, Math.min(6, +(b.lbLines || 3))) : 0;
-    return `<div class="lb-c lb-${side} at-${x.at || 'm'}">${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${nl ? '<div class="lb-wl"></div>'.repeat(nl) : ''}<svg class="lb-a" viewBox="0 0 36 30" aria-hidden="true"><path d="${LB_ARR[x.at || 'm']}"/><path class="lb-hd" d="${{ o: 'M27 4.5 L34 5 L32.5 11.5', m: 'M28.5 10.5 L34 15 L28.5 19.5', u: 'M32.5 18.5 L34 25 L27 25.5' }[x.at || 'm']}"/></svg></div>`; };
-  const l = L.filter(x => x.s !== 'r'), r = L.filter(x => x.s === 'r');
+  const nl = Math.max(2, Math.min(6, +(b.lbLines || 3)));
+  const card = (x, i) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
+    const ft = x.tx != null && x.ty != null ? ` data-tx="${Math.max(0, Math.min(100, +x.tx))}" data-ty="${Math.max(0, Math.min(100, +x.ty))}"` : '';
+    return `<div class="lb-c lb-${lbSide(x)}" data-lbi="${i}" data-at="${x.at || 'm'}"${ft}>${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${mode ? '<div class="lb-wl"></div>'.repeat(nl) : ''}</div>`; };
+  const pick = s => L.map((x, i) => lbSide(x) === s ? card(x, i) : '').join('');
   const img = b.src ? `<img src="${esc(b.src)}" alt="">` : '<div class="img-empty">Bild hinzufügen</div>';
-  const mid = Math.max(25, Math.min(70, +b.width || 42));
-  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%"><div class="lb-col l">${l.map(x => card(x, 'l')).join('')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${r.map(x => card(x, 'r')).join('')}</div></div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
+  const mid = Math.max(25, Math.min(70, +b.width || 42)), top = pick('o'), bot = pick('u');
+  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%">${top ? `<div class="lb-row o">${top}</div>` : ''}<div class="lb-mrow"><div class="lb-col l">${pick('l')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${pick('r')}</div></div>${bot ? `<div class="lb-row u">${bot}</div>` : ''}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
 }
+// Pfeile als Ebene über dem Baustein: vom Kasten zum gewählten Punkt im Bild (oder automatisch zum Bildrand)
+function lbArrows(root = document.getElementById('pages')) {
+  if (!root) return;
+  root.querySelectorAll('.blk-lb .lb-g').forEach(g => {
+    const old = g.querySelector(':scope > svg.lb-ov'); if (old) old.remove();
+    const im = g.querySelector('.lb-mid img, .lb-mid .img-empty'); if (!im) return;
+    if (im.tagName === 'IMG' && !im.complete) { im.addEventListener('load', () => lbArrows(root), { once: true }); }
+    const page = g.closest('.page'); const G = g.getBoundingClientRect(); if (!G.width) return;
+    const pw = page ? +page.dataset.w || 210 : 210, mmPx = page ? page.getBoundingClientRect().width / pw : G.width / 180;
+    const u = v => v / mmPx; // Bildschirmpixel → mm; das SVG rechnet in mm
+    const I = im.getBoundingClientRect(), ix = u(I.left - G.left), iy = u(I.top - G.top), iw = u(I.width), ih = u(I.height);
+    const W = u(G.width), H = u(G.height), gap = 1.6, cl = (v, a, z) => Math.max(a, Math.min(z, v));
+    let d = '';
+    g.querySelectorAll('.lb-c').forEach(c => {
+      const C = c.getBoundingClientRect(), cx = u(C.left - G.left), cy = u(C.top - G.top), cw = u(C.width), ch = u(C.height);
+      const s = c.classList.contains('lb-r') ? 'r' : c.classList.contains('lb-o') ? 'o' : c.classList.contains('lb-u') ? 'u' : 'l';
+      const sh = { o: -0.22, m: 0, u: 0.22 }[c.dataset.at] || 0, free = c.dataset.tx != null;
+      let x0, y0, x1, y1;
+      if (s === 'l') { x0 = cx + cw + 1; y0 = cy + ch / 2; }
+      else if (s === 'r') { x0 = cx - 1; y0 = cy + ch / 2; }
+      else if (s === 'o') { x0 = cx + cw / 2; y0 = cy + ch + 1; }
+      else { x0 = cx + cw / 2; y0 = cy - 1; }
+      if (free) { x1 = ix + iw * c.dataset.tx / 100; y1 = iy + ih * c.dataset.ty / 100; }
+      else if (s === 'l' || s === 'r') { x1 = s === 'l' ? ix - gap : ix + iw + gap; y1 = cl(y0 + sh * ih, iy + 4, iy + ih - 4); }
+      else { x1 = cl(x0, ix + 4, ix + iw - 4); y1 = s === 'o' ? iy - gap : iy + ih + gap; }
+      const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy); if (len < 3) return;
+      // leichte Biegung wie gezeichnet: Kontrollpunkt seitlich der Mitte
+      const bend = Math.min(0.22 * len, 9) * (s === 'r' || s === 'u' ? -1 : 1) * (dy >= 0 ? 1 : -1) * (s === 'o' || s === 'u' ? -1 : 1);
+      const qx = (x0 + x1) / 2 - dy / len * bend, qy = (y0 + y1) / 2 + dx / len * bend;
+      const tx = x1 - qx, ty = y1 - qy, tl = Math.hypot(tx, ty) || 1, ux = tx / tl, uy = ty / tl, hl = 2.4, a = 0.5;
+      const hx = (cs, sn) => `${(x1 - hl * (ux * Math.cos(a) * cs - uy * Math.sin(a) * sn)).toFixed(2)} ${(y1 - hl * (uy * Math.cos(a) * cs + ux * Math.sin(a) * sn)).toFixed(2)}`;
+      d += `<path class="lb-a" d="M${x0.toFixed(2)} ${y0.toFixed(2)} Q${qx.toFixed(2)} ${qy.toFixed(2)} ${x1.toFixed(2)} ${y1.toFixed(2)}"/><path class="lb-a lb-hd" d="M${hx(1, 1)} L${x1.toFixed(2)} ${y1.toFixed(2)} L${hx(1, -1)}"/>`;
+    });
+    if (d) g.insertAdjacentHTML('beforeend', `<svg class="lb-ov" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" preserveAspectRatio="none" aria-hidden="true">${d}</svg>`);
+  });
+}
+
+// Zielpunkte im Editor ziehen: Pfeile in der Vorschau folgen sofort, gespeichert wird beim Loslassen
+document.addEventListener('pointerdown', e => {
+  const dot = e.target.closest && e.target.closest('#editor .lb-dot'); if (!dot) return;
+  const box = dot.closest('[data-lbpick]'), card = dot.closest('[data-bid]'); if (!box || !card) return;
+  const b = target(card.dataset.bid), i = +dot.dataset.lbdot, x = b && b.lb && b.lb[i]; if (!x) return;
+  e.preventDefault(); snapshot(); try { dot.setPointerCapture(e.pointerId); } catch { }
+  const pv = () => document.querySelectorAll(`#pages [data-bid="${card.dataset.bid}"] .lb-c[data-lbi="${i}"]`);
+  const move = ev => { const r = box.querySelector('img').getBoundingClientRect();
+    x.tx = Math.round(Math.max(0, Math.min(100, (ev.clientX - r.left) / r.width * 100)) * 10) / 10; x.ty = Math.round(Math.max(0, Math.min(100, (ev.clientY - r.top) / r.height * 100)) * 10) / 10;
+    dot.style.left = x.tx + '%'; dot.style.top = x.ty + '%';
+    const cs = [...pv()]; if (cs.length) { cs.forEach(c => { c.dataset.tx = x.tx; c.dataset.ty = x.ty; }); lbArrows(); } };
+  const up = () => { dot.removeEventListener('pointermove', move); dot.removeEventListener('pointerup', up); dot.removeEventListener('pointercancel', up); changed(true); };
+  dot.addEventListener('pointermove', move); dot.addEventListener('pointerup', up); dot.addEventListener('pointercancel', up);
+});
 
 let fontsOK = false;
 function layout() {
@@ -441,6 +493,11 @@ function layout() {
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
   for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks' && rst(b)) ctx.t = 0; items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
+  // Bild mit Beschriftungen soll mit dem Kopf auf eine Seite passen: Bild schrittweise verkleinern (nicht unter 40 mm)
+  { const hd = items.find(it => it.type === 'head' && it.el); const lim = AVAIL - (hd ? hd.h + GAP : 0);
+    items.forEach(it => { if (!it.el || !it.el.classList.contains('blk-lb')) return; const im = it.el.querySelector('.lb-mid img'); if (!im || it.h <= lim) return;
+      let mx = parseFloat(getComputedStyle(im).maxHeight) / MMPX || 120;
+      while (it.h > lim && mx > 40) { mx -= 6; im.style.maxHeight = mx + 'mm'; measure(it); } }); }
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
   const tag = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? grpName(meta, v.grp) : '', v.lvl !== 'all' ? LV[v.lvl].sym : ''].filter(Boolean).join(' · ');

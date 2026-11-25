@@ -100,7 +100,7 @@ async function mappeGo() {
   // Die Seiten kommen kurz in die Vorschau; PDF und Druck verarbeiten sie dort wie gewohnt
   const host = $('#pages'); host.innerHTML = '';
   res.units.forEach(u => { u.classList.add('pout'); const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(u); host.appendChild(slot); });
-  applyScale(); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
+  applyScale(); lbArrows(host); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
   const name = 'Mappe_' + slug(opt.title || 'Reihe') + (opt.fassung === 'lehrer' ? '_Lehrerfassung' : '') + '.pdf';
   try {
     if (opt.fmt === 'print') { overlay(''); await fontsIn(document); doPrint(); }
@@ -491,10 +491,10 @@ async function exportDOCX() {
             // Bild mit Beschriftungen: dreispaltige Tabelle, Kästen links und rechts, Bild in der Mitte (ohne Pfeile)
             const mid = Math.max(25, Math.min(70, +b.width || 42)), side = Math.round(CW * (100 - mid) / 200), cen = CW - 2 * side;
             const mode = b.lbMode || '', BOX = LINE('top', 8, A) + LINE('left', 8, A) + LINE('bottom', 8, A) + LINE('right', 8, A);
-            const card = x => { const r = []; if (mode !== 'ganz') r.push(xp(xrInline(x.h || '', { b: 1, color: A }), { after: 40 }));
+            const card = (x, cw = side) => { const r = []; if (mode !== 'ganz') r.push(xp(xrInline(x.h || '', { b: 1, color: A }), { after: 40 }));
               if (!mode) String(x.t || '').split('\n').forEach(t => r.push(xp(xrInline(t), { after: 0 })));
               else for (let i = 0; i < Math.max(2, Math.min(6, +(b.lbLines || 3))); i++) r.push(xp('', { line: 440, rule: 'exact', bdr: `<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="9AA1AE"/></w:pBdr>` }));
-              return xtbl([side - 170], xtr(xtc(r.join(''), { w: side - 170, borders: BOX })), NOB, '<w:top w:w="85" w:type="dxa"/><w:left w:w="113" w:type="dxa"/><w:bottom w:w="85" w:type="dxa"/><w:right w:w="113" w:type="dxa"/>') + xp('', { after: 120, line: 120, rule: 'exact' }); };
+              return xtbl([cw - 170], xtr(xtc(r.join(''), { w: cw - 170, borders: BOX })), NOB, '<w:top w:w="85" w:type="dxa"/><w:left w:w="113" w:type="dxa"/><w:bottom w:w="85" w:type="dxa"/><w:right w:w="113" w:type="dxa"/>') + xp('', { after: 120, line: 120, rule: 'exact' }); };
             const col = L => L.map(card).join('') || xp('');
             let imgX = xp(xr('[Bild]', { i: 1, color: GREY }), { jc: 'center' });
             if (b.src) try { const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
@@ -502,7 +502,11 @@ async function exportDOCX() {
               imgX = xp(`<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`, { jc: 'center', line: 240 });
             } catch { }
             if (b.caption || tagsW[b.id]) parts.push(xp((tagsW[b.id] ? xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') : '') + xrInline(b.caption || '', { b: 1, sz: 22 }), { keepNext: true, after: 120 }));
-            parts.push(xtbl([side, cen, side], xtr(xtc(col(b.lb.filter(x => x.s !== 'r')), { w: side, v: 'center' }) + xtc(imgX, { w: cen, v: 'center' }) + xtc(col(b.lb.filter(x => x.s === 'r')), { w: side, v: 'center' })), NOB));
+            const sd = x => (['l', 'r', 'o', 'u'].includes(x.s) ? x.s : 'l');
+            const rowT = L => { if (!L.length) return; const n = Math.min(L.length, 4), w = Math.floor(CW / n); for (let k = 0; k < L.length; k += n) parts.push(xtbl(Array(n).fill(w), xtr(L.slice(k, k + n).map(x => xtc(card(x, w), { w })).join('') + (L.slice(k, k + n).length < n ? Array(n - L.slice(k, k + n).length).fill(xtc('', { w })).join('') : '')), NOB)); };
+            rowT(b.lb.filter(x => sd(x) === 'o'));
+            parts.push(xtbl([side, cen, side], xtr(xtc(col(b.lb.filter(x => sd(x) === 'l')), { w: side, v: 'center' }) + xtc(imgX, { w: cen, v: 'center' }) + xtc(col(b.lb.filter(x => sd(x) === 'r')), { w: side, v: 'center' })), NOB));
+            rowT(b.lb.filter(x => sd(x) === 'u'));
             if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { jc: 'center' }));
             break;
           }

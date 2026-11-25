@@ -93,7 +93,7 @@ function renderPreview0() {
     : `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
   if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
   $('#pv-hint').hidden = true;
-  renderOut(); applyScale(); markSel(); markZl();
+  renderOut(); applyScale(); markSel(); markZl(); lbArrows(host);
 }
 function applyScale() {
   const pane = $('#preview-scroll'); const cs = getComputedStyle(pane);
