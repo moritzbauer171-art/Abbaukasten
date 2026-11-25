@@ -167,7 +167,7 @@ function outHTML() {
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
-      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
+      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
     ${state.out === 'a3' ? `<div class="f"><span>Papier</span>${seg('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3')}</div>` : ''}
     ${state.out === 'tafel' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung)}</div>` : ''}</div>
     ${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? presPickHTML() : ''}

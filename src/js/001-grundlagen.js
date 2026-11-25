@@ -86,6 +86,7 @@ const TYPE_ICON = {
   text: '<path d="M4 6h16M4 10h16M4 14h16M4 18h10"/>',
   quote: '<path d="M10.5 6.5C7 7.6 5 10.2 5 13.6V18h5v-5H7.3c.2-2 1.4-3.6 3.6-4.6zM19.5 6.5c-3.5 1.1-5.5 3.7-5.5 7.1V18h5v-5h-2.7c.2-2 1.4-3.6 3.6-4.6z" fill="currentColor" stroke="none"/>',
   qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z"/>',
+  beschriftet: '<rect x="8.5" y="8" width="7" height="8" rx="1.2"/><rect x="2.5" y="4" width="4" height="3" rx=".6"/><rect x="17.5" y="4" width="4" height="3" rx=".6"/><rect x="2.5" y="17" width="4" height="3" rx=".6"/><rect x="17.5" y="17" width="4" height="3" rx=".6"/><path d="M6.5 7l2 2M17.5 7l-2 2M6.5 17l2-2M17.5 17l-2-2"/>',
   image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
   post: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8" cy="8.5" r="2"/><path d="M11.5 7.6h5.5M11.5 10h3.5M7 13.8h10M7 16.8h7"/>',
   match: '<circle cx="5.5" cy="6" r="1.7"/><circle cx="5.5" cy="12" r="1.7"/><circle cx="5.5" cy="18" r="1.7"/><circle cx="18.5" cy="6" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/><circle cx="18.5" cy="18" r="1.7"/><path d="M7.4 6.4 16.6 17.6M7.4 12l9.2-5.6M7.4 18l9.2-5.6"/>',
@@ -98,7 +99,7 @@ const TYPE_ICON = {
 };
 Object.keys({ kreuz: 1, ordnen: 1, suchsel: 1, silben: 1, abschreib: 1, bildschreib: 1, selbst: 1 }).forEach(k => { TYPE_ICON['gs-' + k] = () => GSA[k].ic; });
 const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${typeof TYPE_ICON[k] === 'function' ? TYPE_ICON[k]() : TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
-const iconKey = b => b.type === 'material' && b.post ? 'post' : b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type === 'gsa' ? 'gs-' + gsaK(b) : b.type;
+const iconKey = b => b.type === 'material' && b.post ? 'post' : b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type === 'gsa' ? 'gs-' + gsaK(b) : b.type === 'image' && Array.isArray(b.lb) ? 'beschriftet' : b.type;
 // Tabellen: Höhe einer Zeile in mm (Voreinstellung, eigene Höhe oder Höhe dieser Zeile)
 const TB_H = { normal: 8, hoch: 16, sehrhoch: 28, gross: 40 };
 const tbBaseMM = b => b.rowHeight === 'eigen' ? Math.max(5, Math.min(250, Number(b.rowMM) || 50)) : TB_H[b.rowHeight] || 8;
@@ -108,7 +109,7 @@ const tbRowMM = (b, ri) => { const own = b.rowEach && Array.isArray(b.rowH) ? Nu
 const tbEh = (b, ri, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '').split('\n').map(x => x.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
 const tbEhCount = b => b.rows.reduce((n, r, ri) => n + r.reduce((k, _, ci) => k + (tbEh(b, ri, ci).length ? 1 : 0), 0), 0);
 const tbLines = h => Math.max(1, Math.round(h / 9));
-const typeLabel = b => b.type === 'gsa' ? GSA[gsaK(b)].label : b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
+const typeLabel = b => b.type === 'gsa' ? GSA[gsaK(b)].label : b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && Array.isArray(b.lb) ? 'Bild mit Beschriftungen' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
   poem:     { label:'Gedicht',       desc:'Verse und Strophen' },
@@ -133,9 +134,10 @@ const TYPES = {
 /* Bausteinliste je Fach. Ein Eintrag ist eine Bausteinart mit Voreinstellungen (pre). Gedichte gibt es nur in Deutsch. */
 const PAL_POST = () => PAL('material', { k: 'post', label: 'Post', desc: 'Beitrag aus sozialen Netzwerken, mit Zeilennummern', ic: 'post', pre: { post: { pf: 'x', name: '', handle: '', date: '', re: '', rp: '', li: '', fiktiv: true }, fmt: { font: 'sans', align: 'left', indent: false } } });
 const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
+const PAL_LB = () => PAL('image', { k: 'beschriftet', label: 'Bild mit Beschriftungen', desc: 'Bild in der Mitte, Kästen mit Pfeilen rundherum', ic: 'beschriftet', pre: { width: 42, lb: [{ h: '', t: '', s: 'l', at: 'o' }, { h: '', t: '', s: 'l', at: 'u' }, { h: '', t: '', s: 'r', at: 'o' }, { h: '', t: '', s: 'r', at: 'u' }] } });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
+  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'beschriftet', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : t === 'beschriftet' ? PAL_LB() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
   get en() { return this.deutsch; }, get es() { return this.deutsch; }, get fr() { return this.deutsch; },
   ma: [
     PAL('tasks', { desc: 'mit Operator-Check (KMK Mathematik)' }), PAL('lines', { k: 'rechen', label: 'Rechenkästchen', desc: 'Kariertes Feld zum Rechnen', pre: { style: 'kaestchen', count: 8 } }),
@@ -165,7 +167,7 @@ const PALETTE = {
 const PAL_GSA = () => Object.entries(GSA).map(([k, x]) => PAL('gsa', { k: 'gs-' + k, label: x.label, desc: x.desc, ic: 'gs-' + k, pre: { gk: k, ...(k === 'ordnen' ? { items: [{ t: '' }, { t: '' }, { t: '' }, { t: '' }] } : k === 'selbst' ? { items: [{ t: 'Ich kann …' }, { t: 'Ich kann …' }, { t: 'Ich kann …' }] } : {}) } }));
 const PALETTE_GS = () => [PAL('material', { label: 'Lesetext', desc: 'Text zum Lesen, große Schrift, auf Wunsch mit Silben' }), PAL('poem'), PAL('tasks', { desc: 'Arbeitsaufträge mit Handlungsverben' }), ...PAL_GSA(),
   PAL('match', { label: 'Verbinden', desc: 'Wörter, Sätze oder Bilder mit Linien verbinden' }), PAL_SORT(), PAL('lines', { k: 'lineatur', label: 'Lineatur', desc: 'Schreiblinien passend zur Klassenstufe', pre: { count: 4 } }), PAL('lines', { k: 'malfeld', label: 'Malfeld', desc: 'Freie Fläche zum Malen', ic: 'zeichnung', pre: { style: 'rahmen', count: 9 } }),
-  PAL('image'), PAL('info', { desc: 'Merke, Tipp' }), PAL('table'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')];
+  PAL('image'), PAL_LB(), PAL('info', { desc: 'Merke, Tipp' }), PAL('table'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')];
 let PAL_GS_CACHE = null;
 const paletteFor = () => isGS() ? (PAL_GS_CACHE = PAL_GS_CACHE || PALETTE_GS()) : PALETTE[fachKey()] || PALETTE[fachBase()] || PALETTE.deutsch;
 function paletteBlock(k, type) {

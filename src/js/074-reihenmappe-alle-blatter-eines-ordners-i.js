@@ -112,7 +112,7 @@ let busy = false;
 
 /* ---------- Word (.docx), selbst gebautes OOXML ---------- */
 const TW = mm => Math.round(mm * 56.6929);
-const CW = TW(174);
+let CW = TW(174); // Satzbreite; bei A4 quer 261 mm (wird beim Export gesetzt)
 const xesc = s => String(s ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const SANS = 'Arial', SERIF = 'Georgia';
 function xr(text, o = {}) {
@@ -187,7 +187,7 @@ async function exportDOCX() {
   try {
     overlay('Word-Datei wird erstellt …');
     await loadScript(LIBS.zip);
-    const sh = state.sheet, m = sh.meta; const acc = ACCENTS[m.accent] || ACCENTS.tinte;
+    const sh = state.sheet, m = sh.meta; const acc = ACCENTS[m.accent] || ACCENTS.tinte; const QUER = m.paper === 'a4q'; CW = TW(QUER ? 261 : 174);
     const A = acc.c.slice(1).toUpperCase(), AT = acc.t.slice(1).toUpperCase(), GREY = '5A606E', RULE = '8E95A3';
     DOCX_ACC = A; DOCX_MARK = mixHex(acc.c, .74).slice(1);
     const step = Number(m.lineStep) || 5;
@@ -205,7 +205,7 @@ async function exportDOCX() {
       try { const n = media.length + 1; media.push({ n, bytes: await arbPNG(k, acc.c), ext: 'png' }); arbRel[k] = n; } catch {}
     }
     const picXml = (rel, cx, cy, label) => { const id = ++drawId; return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="${xesc(label)}" descr="${xesc(label)}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="soz${rel}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${rel}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`; };
-    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/><w:footnotePr><w:numRestart w:val="eachSect"/></w:footnotePr>${first ? '' : '<w:type w:val="continuous"/>'}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
+    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/><w:footnotePr><w:numRestart w:val="eachSect"/></w:footnotePr>${first ? '' : '<w:type w:val="continuous"/>'}${QUER ? '<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>' : '<w:pgSz w:w="11906" w:h="16838"/>'}<w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
     const closeSect = (ln, two) => { parts.push(xp('', { line: 20, rule: 'exact', mark: 2, sect: sect(ln, two) })); first = false; secOpen = false; };
     const spacer = () => xp('', { line: TW(5), rule: 'exact', mark: 4 });
 
@@ -487,10 +487,29 @@ async function exportDOCX() {
           break;
         }
         case 'image': {
+          if (Array.isArray(b.lb)) {
+            // Bild mit Beschriftungen: dreispaltige Tabelle, Kästen links und rechts, Bild in der Mitte (ohne Pfeile)
+            const mid = Math.max(25, Math.min(70, +b.width || 42)), side = Math.round(CW * (100 - mid) / 200), cen = CW - 2 * side;
+            const mode = b.lbMode || '', BOX = LINE('top', 8, A) + LINE('left', 8, A) + LINE('bottom', 8, A) + LINE('right', 8, A);
+            const card = x => { const r = []; if (mode !== 'ganz') r.push(xp(xrInline(x.h || '', { b: 1, color: A }), { after: 40 }));
+              if (!mode) String(x.t || '').split('\n').forEach(t => r.push(xp(xrInline(t), { after: 0 })));
+              else for (let i = 0; i < Math.max(2, Math.min(6, +(b.lbLines || 3))); i++) r.push(xp('', { line: 440, rule: 'exact', bdr: `<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="9AA1AE"/></w:pBdr>` }));
+              return xtbl([side - 170], xtr(xtc(r.join(''), { w: side - 170, borders: BOX })), NOB, '<w:top w:w="85" w:type="dxa"/><w:left w:w="113" w:type="dxa"/><w:bottom w:w="85" w:type="dxa"/><w:right w:w="113" w:type="dxa"/>') + xp('', { after: 120, line: 120, rule: 'exact' }); };
+            const col = L => L.map(card).join('') || xp('');
+            let imgX = xp(xr('[Bild]', { i: 1, color: GREY }), { jc: 'center' });
+            if (b.src) try { const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
+              const wEmu = Math.round((cen - 170) / 56.6929 * 36000), hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
+              imgX = xp(`<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`, { jc: 'center', line: 240 });
+            } catch { }
+            if (b.caption || tagsW[b.id]) parts.push(xp((tagsW[b.id] ? xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') : '') + xrInline(b.caption || '', { b: 1, sz: 22 }), { keepNext: true, after: 120 }));
+            parts.push(xtbl([side, cen, side], xtr(xtc(col(b.lb.filter(x => x.s !== 'r')), { w: side, v: 'center' }) + xtc(imgX, { w: cen, v: 'center' }) + xtc(col(b.lb.filter(x => x.s === 'r')), { w: side, v: 'center' })), NOB));
+            if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { jc: 'center' }));
+            break;
+          }
           if (!b.src) break;
           try {
             const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
-            const wEmu = Math.round(174 * (b.width || 80) / 100 * 36000); const hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
+            const wEmu = Math.round((CW === TW(174) ? 174 : CW / 56.6929) * (b.width || 80) / 100 * 36000); const hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
             const drawing = `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
             if (tagsW[b.id]) parts.push(xp(xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') + xrInline(b.caption || '', { b: 1, sz: 20 }), { keepNext: true, after: 100 }));
             parts.push(xp(drawing, { jc: 'center', line: 240 }));
@@ -534,6 +553,6 @@ async function exportDOCX() {
     overlay('');
     await deliver(fileBase() + outSuffix().replace('_A5', '') + '.docx', blob);
   } catch (err) { console.error(err); overlay(''); toast('Word-Datei konnte nicht erstellt werden. Bitte erneut versuchen.'); }
-  finally { overlay(''); busy = false; }
+  finally { overlay(''); busy = false; CW = TW(174); }
 }
 

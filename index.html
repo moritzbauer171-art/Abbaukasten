@@ -1459,6 +1459,25 @@ body{transition:background-color .3s,border-color .25s}
 .task-soz img.arb{width:5.2mm;height:5.2mm;margin-top:.2mm}
 .task-soz .soz-gap{display:block;width:8mm;flex:0 0 auto}
 
+/* Bild mit Beschriftungen */
+.blk-lb .lb-g{display:grid;grid-template-columns:minmax(0,1fr) var(--lbm,42%) minmax(0,1fr);gap:0 11mm;align-items:center}
+.blk-lb .lb-col{display:flex;flex-direction:column;gap:7mm;justify-content:space-around;min-height:100%}
+.blk-lb .lb-mid{display:flex;justify-content:center}
+.blk-lb .lb-mid img{max-width:100%;max-height:120mm;object-fit:contain;display:block}
+.blk-lb .lb-mid .img-empty{width:100%;height:60mm}
+.blk-lb .lb-c{position:relative;border:.3mm solid color-mix(in srgb,var(--acc,#2B45B8) 45%,#fff);border-radius:3mm;padding:2.6mm 3.4mm;background:color-mix(in srgb,var(--acc,#2B45B8) 5%,var(--paper,#fff))}
+.blk-lb .lb-h{display:block;font-weight:800;color:var(--acc,#2B45B8);margin-bottom:.8mm}
+.blk-lb .lb-t{font-size:.94em;line-height:1.35}
+.blk-lb .lb-wl{height:8mm;border-bottom:.25mm solid #9AA1AE}
+.blk-lb .lb-a{position:absolute;top:50%;width:11mm;height:9.2mm;margin-top:-4.6mm;fill:none;stroke:var(--paper-ink,#1C1F27);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.blk-lb .lb-l .lb-a{left:100%}
+.blk-lb .lb-r .lb-a{right:100%;transform:scaleX(-1)}
+.blk-lb .lb-c.at-o .lb-a{top:12%}.blk-lb .lb-c.at-u .lb-a{top:88%}
+.blk-lb .mat-head{margin-bottom:3mm}
+.lb-ed{display:grid;gap:10px;margin:6px 0}
+.lb-row{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.lb-row-h{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}.lb-row-h b{flex:1;font-size:13px}
+.page.a4q .blk-lb .lb-mid img{max-height:100mm}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -3233,6 +3252,9 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 
 /* Zwei A5 auf A4 quer */
 .page.a5{width:148mm;height:210mm;padding:10mm 11mm 0}
+/* A4 quer: gleiche Ränder wie A4 hoch, nur breiter und niedriger */
+.page.a4q{width:297mm;height:210mm}
+#measure-host .page.a4q{height:auto}
 .page.a5 .pg-foot{left:11mm;right:11mm;bottom:6mm}
 .page.a5 .pg-badge{right:11mm;top:3.5mm}
 .page.a5.d-akte::before{left:3.5mm;top:62.25mm}
@@ -3963,6 +3985,7 @@ const TYPE_ICON = {
   text: '<path d="M4 6h16M4 10h16M4 14h16M4 18h10"/>',
   quote: '<path d="M10.5 6.5C7 7.6 5 10.2 5 13.6V18h5v-5H7.3c.2-2 1.4-3.6 3.6-4.6zM19.5 6.5c-3.5 1.1-5.5 3.7-5.5 7.1V18h5v-5h-2.7c.2-2 1.4-3.6 3.6-4.6z" fill="currentColor" stroke="none"/>',
   qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z"/>',
+  beschriftet: '<rect x="8.5" y="8" width="7" height="8" rx="1.2"/><rect x="2.5" y="4" width="4" height="3" rx=".6"/><rect x="17.5" y="4" width="4" height="3" rx=".6"/><rect x="2.5" y="17" width="4" height="3" rx=".6"/><rect x="17.5" y="17" width="4" height="3" rx=".6"/><path d="M6.5 7l2 2M17.5 7l-2 2M6.5 17l2-2M17.5 17l-2-2"/>',
   image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
   post: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8" cy="8.5" r="2"/><path d="M11.5 7.6h5.5M11.5 10h3.5M7 13.8h10M7 16.8h7"/>',
   match: '<circle cx="5.5" cy="6" r="1.7"/><circle cx="5.5" cy="12" r="1.7"/><circle cx="5.5" cy="18" r="1.7"/><circle cx="18.5" cy="6" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/><circle cx="18.5" cy="18" r="1.7"/><path d="M7.4 6.4 16.6 17.6M7.4 12l9.2-5.6M7.4 18l9.2-5.6"/>',
@@ -3975,7 +3998,7 @@ const TYPE_ICON = {
 };
 Object.keys({ kreuz: 1, ordnen: 1, suchsel: 1, silben: 1, abschreib: 1, bildschreib: 1, selbst: 1 }).forEach(k => { TYPE_ICON['gs-' + k] = () => GSA[k].ic; });
 const typeIcon = (k, cls = 'ty-i') => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${typeof TYPE_ICON[k] === 'function' ? TYPE_ICON[k]() : TYPE_ICON[k] || TYPE_ICON.text}</svg>`;
-const iconKey = b => b.type === 'material' && b.post ? 'post' : b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type === 'gsa' ? 'gs-' + gsaK(b) : b.type;
+const iconKey = b => b.type === 'material' && b.post ? 'post' : b.type === 'material' && b.mk === 'q' ? 'quelle' : b.type === 'material' && b.mk === 'd' ? 'darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'poem' : b.type === 'lines' && b.style === 'rahmen' ? 'zeichnung' : b.type === 'gsa' ? 'gs-' + gsaK(b) : b.type === 'image' && Array.isArray(b.lb) ? 'beschriftet' : b.type;
 // Tabellen: Höhe einer Zeile in mm (Voreinstellung, eigene Höhe oder Höhe dieser Zeile)
 const TB_H = { normal: 8, hoch: 16, sehrhoch: 28, gross: 40 };
 const tbBaseMM = b => b.rowHeight === 'eigen' ? Math.max(5, Math.min(250, Number(b.rowMM) || 50)) : TB_H[b.rowHeight] || 8;
@@ -3985,7 +4008,7 @@ const tbRowMM = (b, ri) => { const own = b.rowEach && Array.isArray(b.rowH) ? Nu
 const tbEh = (b, ri, ci) => String((b.eh && b.eh[ri] && b.eh[ri][ci]) || '').split('\n').map(x => x.trim().replace(/^[-–•]\s*/, '')).filter(Boolean);
 const tbEhCount = b => b.rows.reduce((n, r, ri) => n + r.reduce((k, _, ci) => k + (tbEh(b, ri, ci).length ? 1 : 0), 0), 0);
 const tbLines = h => Math.max(1, Math.round(h / 9));
-const typeLabel = b => b.type === 'gsa' ? GSA[gsaK(b)].label : b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
+const typeLabel = b => b.type === 'gsa' ? GSA[gsaK(b)].label : b.type === 'a3' ? (a3Fmt(b) === 'a4' ? 'A4-Vorlage' : 'A3-Vorlage') : b.type === 'material' && b.post ? 'Post' : b.type === 'image' && Array.isArray(b.lb) ? 'Bild mit Beschriftungen' : b.type === 'image' && b.mk === 'q' ? 'Bildquelle' : b.type === 'image' && b.mk === 'a' ? 'Abbildung' : b.type === 'lines' && b.style === 'rahmen' ? 'Zeichenfläche' : b.type === 'material' && b.mk === 'q' ? 'Quelle' : b.type === 'material' && b.mk === 'd' ? 'Darstellung' : b.type === 'material' && b.form === 'gedicht' ? 'Gedicht' : (TYPES[b.type] || {}).label || '';
 const TYPES = {
   material: { label:'Material',      desc:'Text mit Zeilennummern' },
   poem:     { label:'Gedicht',       desc:'Verse und Strophen' },
@@ -4010,9 +4033,10 @@ const TYPES = {
 /* Bausteinliste je Fach. Ein Eintrag ist eine Bausteinart mit Voreinstellungen (pre). Gedichte gibt es nur in Deutsch. */
 const PAL_POST = () => PAL('material', { k: 'post', label: 'Post', desc: 'Beitrag aus sozialen Netzwerken, mit Zeilennummern', ic: 'post', pre: { post: { pf: 'x', name: '', handle: '', date: '', re: '', rp: '', li: '', fiktiv: true }, fmt: { font: 'sans', align: 'left', indent: false } } });
 const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[type].label, desc: o.desc || TYPES[type].desc, ic: o.ic || type, pre: o.pre || null });
+const PAL_LB = () => PAL('image', { k: 'beschriftet', label: 'Bild mit Beschriftungen', desc: 'Bild in der Mitte, Kästen mit Pfeilen rundherum', ic: 'beschriftet', pre: { width: 42, lb: [{ h: '', t: '', s: 'l', at: 'o' }, { h: '', t: '', s: 'l', at: 'u' }, { h: '', t: '', s: 'r', at: 'o' }, { h: '', t: '', s: 'r', at: 'u' }] } });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
+  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'beschriftet', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : t === 'beschriftet' ? PAL_LB() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
   get en() { return this.deutsch; }, get es() { return this.deutsch; }, get fr() { return this.deutsch; },
   ma: [
     PAL('tasks', { desc: 'mit Operator-Check (KMK Mathematik)' }), PAL('lines', { k: 'rechen', label: 'Rechenkästchen', desc: 'Kariertes Feld zum Rechnen', pre: { style: 'kaestchen', count: 8 } }),
@@ -4042,7 +4066,7 @@ const PALETTE = {
 const PAL_GSA = () => Object.entries(GSA).map(([k, x]) => PAL('gsa', { k: 'gs-' + k, label: x.label, desc: x.desc, ic: 'gs-' + k, pre: { gk: k, ...(k === 'ordnen' ? { items: [{ t: '' }, { t: '' }, { t: '' }, { t: '' }] } : k === 'selbst' ? { items: [{ t: 'Ich kann …' }, { t: 'Ich kann …' }, { t: 'Ich kann …' }] } : {}) } }));
 const PALETTE_GS = () => [PAL('material', { label: 'Lesetext', desc: 'Text zum Lesen, große Schrift, auf Wunsch mit Silben' }), PAL('poem'), PAL('tasks', { desc: 'Arbeitsaufträge mit Handlungsverben' }), ...PAL_GSA(),
   PAL('match', { label: 'Verbinden', desc: 'Wörter, Sätze oder Bilder mit Linien verbinden' }), PAL_SORT(), PAL('lines', { k: 'lineatur', label: 'Lineatur', desc: 'Schreiblinien passend zur Klassenstufe', pre: { count: 4 } }), PAL('lines', { k: 'malfeld', label: 'Malfeld', desc: 'Freie Fläche zum Malen', ic: 'zeichnung', pre: { style: 'rahmen', count: 9 } }),
-  PAL('image'), PAL('info', { desc: 'Merke, Tipp' }), PAL('table'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')];
+  PAL('image'), PAL_LB(), PAL('info', { desc: 'Merke, Tipp' }), PAL('table'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('heading'), PAL('text'), PAL('quote'), PAL('qr'), PAL('pagebreak')];
 let PAL_GS_CACHE = null;
 const paletteFor = () => isGS() ? (PAL_GS_CACHE = PAL_GS_CACHE || PALETTE_GS()) : PALETTE[fachKey()] || PALETTE[fachBase()] || PALETTE.deutsch;
 function paletteBlock(k, type) {
@@ -9047,7 +9071,7 @@ const QR = (() => {
 })();
 
 /* ================= Ansicht: Fassung, Gruppen, Papier ================= */
-const GEO = { a4: { avail: 264 }, a5: { avail: 182 } };
+const GEO = { a4: { avail: 264 }, a4q: { avail: 177 }, a5: { avail: 182 } };
 // Freiraum über der Fußzeile (mm): normal / mehr / viel
 const BOT_GAP = { a4: { '': 9, m: 17, l: 27 }, a5: { '': 6, m: 11, l: 18 } };
 function sheetView() { const m = state.sheet.meta; return { lehrer: state.fassung === 'lehrer', grp: m.groupsOn && grpList(m).some(g => g.k === state.grp) ? state.grp : 'all', lvl: state.sheet.meta.levelsOn ? (state.lvl || 'all') : 'all' }; }
@@ -10097,7 +10121,7 @@ function gTargets(bid) {
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
     case 'qr': return [[b, 'title'], [b, 'note']];
     case 'match': return [[b, 'title'], ...(b.sort ? [...(b.cats || []).map(c => [c, 't']), ...(b.words || []).map(w => [w, 't'])] : (b.pairs || []).flatMap(p => [[p, 'a'], [p, 'b']]))];
-    case 'image': return [[b, 'caption']];
+    case 'image': return [[b, 'caption'], ...(b.lb || []).flatMap(x => [[x, 'h'], [x, 't']])];
     default: return [];
   }
 }
@@ -10557,7 +10581,7 @@ function newDlgHTML() {
       <div class="row"><label class="f narrow"><span>${isK ? 'Nr.' : 'AB-Nr.'}</span><input class="inp" id="nw-nr" value="${esc(d.nr)}" placeholder="7"></label>
         <label class="f" style="flex:1"><span>Titel</span><input class="inp" id="nw-title" value="${esc(d.titleSet ? d.title : defTitle)}" placeholder="${d.tpl === 'copy' ? 'leer = Titel der Grundlage' : 'Worum geht es?'}" maxlength="140"></label></div>
       ${isK ? '' : `<label class="f"><span>Thema / Unterzeile <em class="opt">optional</em></span><input class="inp" id="nw-topic" value="${esc(d.topic)}" placeholder="${({ gp: 'z. B. Die Weimarer Republik zwischen Krise und Stabilität', bio: 'z. B. Fotosynthese: Licht als Energiequelle' })[kl.fach] || 'z. B. Sprache der Distanz im literarischen Text'}" maxlength="200"></label>`}
-      <div class="row nw-row"><div class="f"><span>Papier</span><div class="seg sm" role="group">${[['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, l]) => `<button type="button" data-act="nw-paper" data-v="${v}" aria-pressed="${d.paper === v}">${l}</button>`).join('')}</div></div>
+      <div class="row nw-row"><div class="f"><span>Papier</span><div class="seg sm" role="group">${[['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, l]) => `<button type="button" data-act="nw-paper" data-v="${v}" aria-pressed="${d.paper === v}">${l}</button>`).join('')}</div></div>
         ${fs.length ? `<label class="f" style="flex:1"><span>Ordner</span><select id="nw-f"><option value="">Ohne Ordner</option>${fs.map(f => `<option value="${esc(f.id)}"${f.id === d.folder ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>` : ''}</div>
     </div>
     <div class="row"><button class="btn primary" type="button" data-act="nw-go">Blatt anlegen und bearbeiten</button><button class="btn" type="button" data-act="dlg-close">Abbrechen</button></div>`;
@@ -10777,6 +10801,7 @@ function buildBlock(b, ctx) {
       return { type: 'qr', el: put(`<div class="blk blk-qr">${pic}<div class="qr-t">${b.title ? `<b>${inlineHTML(b.title)}</b>` : ''}<span class="qr-url">${url ? esc(url) : 'Link eintragen'}</span>${b.note ? `<span class="qr-note">${inlineHTML(b.note)}</span>` : ''}</div></div>`) };
     }
     case 'image': {
+      if (Array.isArray(b.lb)) return { type: 'image', el: put(lbHTML(b, ctx)) };
       const img = b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
       const tag = ctx.mt && ctx.mt[b.id];
       if (tag) return { type: 'image', el: put(`<div class="blk blk-img lab"><div class="mat-head"><span class="mat-no">${designOf(meta) === 'akte' ? 'Anlage ' : ''}${tag}</span><span class="mat-title">${inlineHTML(b.caption) || '&nbsp;'}</span></div><div class="img-c">${img}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };
@@ -11095,11 +11120,24 @@ function setAccent(node, meta) {
   node.classList.toggle('tone', d === 'akte' && meta.tone !== false);
 }
 
+// Bild mit Beschriftungen: Bild in der Mitte, Kästen links und rechts, jeder mit einem Pfeil zum Bild
+const LB_ARR = { o: 'M2 26 C 14 24, 22 16, 34 5', m: 'M2 15 C 12 9, 24 21, 34 15', u: 'M2 4 C 14 6, 22 14, 34 25' };
+function lbHTML(b, ctx) {
+  const L = (b.lb || []).filter(Boolean), mode = b.lbMode || '', tag = ctx.mt && ctx.mt[b.id];
+  const card = (x, side) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
+    const nl = mode ? Math.max(2, Math.min(6, +(b.lbLines || 3))) : 0;
+    return `<div class="lb-c lb-${side} at-${x.at || 'm'}">${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${nl ? '<div class="lb-wl"></div>'.repeat(nl) : ''}<svg class="lb-a" viewBox="0 0 36 30" aria-hidden="true"><path d="${LB_ARR[x.at || 'm']}"/><path class="lb-hd" d="${{ o: 'M27 4.5 L34 5 L32.5 11.5', m: 'M28.5 10.5 L34 15 L28.5 19.5', u: 'M32.5 18.5 L34 25 L27 25.5' }[x.at || 'm']}"/></svg></div>`; };
+  const l = L.filter(x => x.s !== 'r'), r = L.filter(x => x.s === 'r');
+  const img = b.src ? `<img src="${esc(b.src)}" alt="">` : '<div class="img-empty">Bild hinzufügen</div>';
+  const mid = Math.max(25, Math.min(70, +b.width || 42));
+  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%"><div class="lb-col l">${l.map(x => card(x, 'l')).join('')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${r.map(x => card(x, 'r')).join('')}</div></div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
+}
+
 let fontsOK = false;
 function layout() {
   const sh = state.sheet, meta = sh.meta; const v = sheetView();
-  const buch = meta.paper === 'buch'; const a5 = meta.paper === 'a5x2' || buch; AVAIL = (GEO[a5 ? 'a5' : 'a4'].avail - (BOT_GAP[a5 ? 'a5' : 'a4'][meta.botGap] ?? BOT_GAP[a5 ? 'a5' : 'a4'][''])) * MMPX;
-  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5); ZL_MAP = {};
+  const buch = meta.paper === 'buch'; const a5 = meta.paper === 'a5x2' || buch; const q = meta.paper === 'a4q'; AVAIL = (GEO[a5 ? 'a5' : q ? 'a4q' : 'a4'].avail - (BOT_GAP[a5 ? 'a5' : 'a4'][meta.botGap] ?? BOT_GAP[a5 ? 'a5' : 'a4'][''])) * MMPX;
+  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5); mp.classList.toggle('a4q', q); ZL_MAP = {};
   const body = mp.querySelector('.pg-body'); body.innerHTML = '';
   const ctx = { m: 0, t: 0, meta, body, acc: pageAcc(meta).c, bg: pageBg(meta), view: v, mt: matTags(sh.blocks.filter(b => blockVisible(b, v))) };
   const items = [];
@@ -11114,7 +11152,7 @@ function layout() {
   const out = pages.map((p, i) => {
     const pg = document.createElement('div'); pg.className = 'page'; setAccent(pg, meta); pg.classList.toggle('a5', a5);
     if (isGS()) { const jg = gsJg(); pg.classList.add('gs'); pg.style.setProperty('--gsfs', (jg <= 2 ? 15 : jg <= 4 ? 13 : 12) + 'pt'); }
-    pg.dataset.w = 210; pg.dataset.h = 297;
+    if (q) { pg.classList.add('a4q'); pg.dataset.w = 297; pg.dataset.h = 210; } else { pg.dataset.w = 210; pg.dataset.h = 297; }
     const pb = document.createElement('div'); pb.className = 'pg-body'; pg.appendChild(pb);
     p.list.forEach(pl => pb.appendChild(pl.whole ? pl.it.el.cloneNode(true) : pl.it.assemble(pl.s, pl.e)));
     const left = [meta.school, meta.course].filter(Boolean).map(esc).join(' · ');
@@ -11247,7 +11285,7 @@ function renderPreview0() {
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
   const buch = state.out === 'blatt' && state.sheet.meta.paper === 'buch';
   const kH = state.out === 'karten' && state.kkHalf;
-  const [one, many, unit] = state.out === 'exit' ? ['Seite', 'Seiten', 'Exit-Tickets'] : state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'a4' ? ['Seite', 'Seiten', 'A4'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  const [one, many, unit] = state.out === 'exit' ? ['Seite', 'Seiten', 'Exit-Tickets'] : state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'a4' ? ['Seite', 'Seiten', 'A4'] : state.out === 'blatt' && state.sheet.meta.paper === 'a4q' ? ['Seite', 'Seiten', 'A4 quer'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
   const cnt = state.out === 'karten' ? (state.kkCount || 0) : out.length;
   const nB = state.bookPages || 0;
   $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`
@@ -11763,6 +11801,20 @@ const phrGroups = b => (Array.isArray(b.groups) ? b.groups : []).map(g => ({ hea
 
 const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid km-sm" role="group" aria-label="Stil">${Object.entries(S).map(([k, x]) => `<button type="button" class="km" data-act="blk-stil" data-v="${k}" aria-pressed="${(b.stil || '') === k}" title="${esc(x.d)}"><svg viewBox="0 0 64 40" aria-hidden="true">${x.pic}</svg><b>${x.label}</b></button>`).join('')}</div></div>`;
 
+function lbEdHTML(b) {
+  const seg = (act, i, cur, opts, lab) => `<div class="seg sm" role="group" aria-label="${lab}">${opts.map(([v, t, ti]) => `<button type="button" data-act="${act}" data-i="${i}" data-v="${v}" aria-pressed="${cur === v}"${ti ? ` title="${ti}"` : ''}>${t}</button>`).join('')}</div>`;
+  const L = b.lb || [];
+  return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+    <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
+    <label class="f"><span>Bildbreite in der Mitte: ${Math.round(+b.width || 42)} %</span><input type="range" min="25" max="70" step="1" value="${+b.width || 42}" data-k="width" data-num="1"></label>
+    ${fText('caption', 'Überschrift über dem Bild (optional)', b.caption, 'z. B. Wie gestalte ich meine Lesekiste?')}
+    <div class="f"><span>Für die Kinder</span>${seg('lb-mode', 0, b.lbMode || '', [['', 'Ausgefüllt'], ['text', 'Text leer', 'Überschriften stehen, darunter Linien zum Schreiben'], ['ganz', 'Alles leer', 'Nur Kästen mit Linien und Pfeilen – zum Beschriften']], 'Für die Kinder')}</div>
+    <div class="lb-ed">${L.map((x, i) => `<div class="lb-row">
+      <div class="lb-row-h"><b>Kasten ${i + 1}</b>${seg('lb-side', i, x.s === 'r' ? 'r' : 'l', [['l', 'links'], ['r', 'rechts']], 'Seite')}${seg('lb-at', i, x.at || 'm', [['o', '↗', 'Pfeil nach oben'], ['m', '→', 'Pfeil zur Mitte'], ['u', '↘', 'Pfeil nach unten']], 'Pfeil')}<button class="ib" type="button" data-act="lb-del" data-i="${i}" title="Kasten entfernen" aria-label="Kasten ${i + 1} entfernen">${I.x}</button></div>
+      ${fText(`lb.${i}.h`, 'Überschrift', x.h, 'z. B. Klappentext')}${fArea(`lb.${i}.t`, 'Text', x.t, 2, 'z. B. Suche eine passende Stelle für den Klappentext.')}</div>`).join('')}</div>
+    ${L.length < 8 ? '<button class="link" type="button" data-act="lb-add">+ Kasten</button>' : ''}
+    ${fText('source', 'Quelle des Bildes', b.source, '')}`;
+}
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;
 const fCheck = (k, label, v) => `<label class="chk"><input type="checkbox" data-k="${k}"${v ? ' checked' : ''}>${label}</label>`;
 const fSelect = (k, label, v, opts) => `<label class="f"><span>${label}</span><select data-k="${k}">${opts.map(([val, t]) => `<option value="${esc(val)}"${String(val) === String(v) ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
@@ -11793,7 +11845,7 @@ function sumDetail(b) {
       case 'material': { const w = wc(b.text), g = (b.glossary || []).length; return [w ? pl(w, 'Wort', 'Wörter') : 'noch kein Text', g ? pl(g, 'Worterklärung', 'Worterklärungen') : '', String(b.source || '').trim() ? '' : 'ohne Quelle'].filter(Boolean).join(' · '); }
       case 'tasks': { const L = b.items || []; const noEh = L.filter(it => String(it.text || '').trim() && !ehLines(it).length).length; return [pl(L.length, 'Aufgabe', 'Aufgaben'), noEh ? (noEh === L.length ? 'ohne Erwartung' : `${noEh} ohne Erwartung`) : 'Erwartung ✓'].join(' · '); }
       case 'info': case 'text': case 'quote': { const w = wc(b.text); return w ? plainText(b.text).trim().slice(0, 70) : 'noch leer'; }
-      case 'image': return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
+      case 'image': if (Array.isArray(b.lb)) return `${b.lb.length} Kästen${b.lbMode ? ' · zum Beschriften' : ''}${b.src ? '' : ' · noch kein Bild'}`; return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
       default: { const ph = itPh(b), mn = itMin(b); return [ph ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · '); }
     }
   } catch { return ''; }
@@ -11868,7 +11920,7 @@ function summary(b, num) {
     case 'heading': return b.text || 'leer';
     case 'text': return (plainText(b.text) || 'leer').slice(0, 60);
     case 'quote': return (plainText(b.text) || 'leer').slice(0, 60);
-    case 'image': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (b.src ? (b.caption || 'Bild') : 'noch kein Bild');
+    case 'image': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (Array.isArray(b.lb) ? (b.caption || 'Bild mit Beschriftungen') + ` · ${b.lb.length} Kästen` : '') + (Array.isArray(b.lb) ? '' : b.src ? (b.caption || 'Bild') : 'noch kein Bild');
     case 'qr': return b.title || b.url || 'noch kein Link';
     case 'match': { const L = mtLayout(b); if (L.sort) { const nd = L.right.length - L.sol.length; return L.left.length ? `Sortieren · ${L.left.length} ${L.left.length === 1 ? 'Oberbegriff' : 'Oberbegriffe'} · ${L.right.length} ${L.right.length === 1 ? 'Wort' : 'Wörter'}${nd ? ` (${nd} Ablenker)` : ''} · ${b.mode === 'buchstaben' ? 'Nummern' : 'Linien'}` : 'noch keine Oberbegriffe'; } return L.sol.length ? `${L.sol.length} ${L.sol.length === 1 ? 'Paar' : 'Paare'}${L.right.length > L.sol.length ? ` · ${L.right.length - L.sol.filter(x => x.rk >= 0).length} Ablenker` : ''} · ${b.mode === 'buchstaben' ? 'Buchstaben' : 'Linien'}` : 'noch keine Paare'; }
     default: return 'Rest beginnt auf neuer Seite';
@@ -11998,7 +12050,7 @@ function bodyFor(b, num) {
     case 'tafel': return tafelEditor(b);
     case 'a3': return a3Editor(b);
     case 'step': return stepEditor(b);
-    case 'image': return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+    case 'image': if (Array.isArray(b.lb)) return lbEdHTML(b); return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachBase() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachBase() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
@@ -12021,7 +12073,7 @@ function metaCard() {
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung trägst du bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum x-pro"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
-      <button type="button" class="set-link" data-act="settings" data-tab="kurs"><i>${areaIc('einst')}</i><span><b>Einstellungen</b><small>${esc([isK ? 'Klausur' : '', m.course, m.anrede === 'du' ? 'du' : 'Sie', DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[m.paper || 'a4']].filter(Boolean).join(' · '))}</small></span><em>›</em></button>
+      <button type="button" class="set-link" data-act="settings" data-tab="kurs"><i>${areaIc('einst')}</i><span><b>Einstellungen</b><small>${esc([isK ? 'Klausur' : '', m.course, m.anrede === 'du' ? 'du' : 'Sie', DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', a4q: 'A4 quer', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[m.paper || 'a4']].filter(Boolean).join(' · '))}</small></span><em>›</em></button>
     </div></div>`;
 }
 // Eigene Karte für alles, was das Aussehen der Seite bestimmt
@@ -12030,13 +12082,13 @@ function seiteCard() {
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   const paper = m.paper || 'a4'; const gl = { n: 'normal', m: 'mehr', l: 'viel' };
-  const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
+  const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', a4q: 'A4 quer', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'seite' ? ' sel' : ''}" data-bid="seite">
     <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('seite')}</span><span class="kind">Seite</span><span class="sum">${esc(sum)}</span></div>
     <div class="card-b">
       ${designEditor(m)}
       ${colors}
-      <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
+      <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
       <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
 
     </div></div>`;
@@ -12428,6 +12480,10 @@ function onClick(e) {
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
     case 'src-form': srcFormSet(b, a.dataset.v); changed(true); renderEditor(); return;
+    case 'lb-mode': if (a.dataset.v) b.lbMode = a.dataset.v; else delete b.lbMode; changed(true); renderEditor(); return;
+    case 'lb-side': case 'lb-at': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; x[act === 'lb-side' ? 's' : 'at'] = a.dataset.v; changed(true); renderEditor(); return; }
+    case 'lb-add': { snapshot(); const L = b.lb || (b.lb = []); const nl = L.filter(x => x.s !== 'r').length, nr = L.length - nl; L.push({ h: '', t: '', s: nl > nr ? 'r' : 'l', at: 'm' }); changed(true); renderEditor(); return; }
+    case 'lb-del': { snapshot(); b.lb.splice(+a.dataset.i, 1); changed(true); renderEditor(); return; }
     case 'mat-kind': case 'img-kind': if (a.dataset.v) b.mk = a.dataset.v; else delete b.mk; changed(true); renderEditor(); return;
     case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;
@@ -14860,7 +14916,7 @@ function outHTML() {
     ${state.out === 'blatt' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['schueler', 'Schülerfassung'], ['lehrer', 'Lehrerfassung']], state.fassung)}</div>
       ${sh.meta.groupsOn ? `<div class="f"><span>Gruppe</span>${seg('grp', [['all', 'Alle'], ...grpList(sh.meta).map(x => [x.k, esc(grpName(sh.meta, x.k))])], sheetView().grp)}</div>` : ''}
       ${sh.meta.levelsOn ? `<div class="f"><span>Niveau</span>${seg('lvl', [['all', 'Alle'], ['b', '★ Basis'], ['s', '★★ Standard'], ['e', '★★★ Experte']], state.lvl || 'all')}</div>` : ''}
-      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
+      <div class="f"><span>Papier</span>${seg('paper', [['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']], sh.meta.paper || 'a4')}</div>` : ''}
     ${state.out === 'a3' ? `<div class="f"><span>Papier</span>${seg('a3p', [['a3', 'A3'], ['a4x2', '2 × A4 zum Kleben']], state.a3p || 'a3')}</div>` : ''}
     ${state.out === 'tafel' ? `<div class="f"><span>Fassung</span>${seg('fassung', [['lehrer', 'Vollständig'], ['schueler', 'Lückenfassung']], state.fassung)}</div>` : ''}</div>
     ${d.fmt === 'pptx' && (state.out === 'blatt' || state.out === 'pres') ? presPickHTML() : ''}
@@ -15978,7 +16034,7 @@ let busy = false;
 
 /* ---------- Word (.docx), selbst gebautes OOXML ---------- */
 const TW = mm => Math.round(mm * 56.6929);
-const CW = TW(174);
+let CW = TW(174); // Satzbreite; bei A4 quer 261 mm (wird beim Export gesetzt)
 const xesc = s => String(s ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const SANS = 'Arial', SERIF = 'Georgia';
 function xr(text, o = {}) {
@@ -16053,7 +16109,7 @@ async function exportDOCX() {
   try {
     overlay('Word-Datei wird erstellt …');
     await loadScript(LIBS.zip);
-    const sh = state.sheet, m = sh.meta; const acc = ACCENTS[m.accent] || ACCENTS.tinte;
+    const sh = state.sheet, m = sh.meta; const acc = ACCENTS[m.accent] || ACCENTS.tinte; const QUER = m.paper === 'a4q'; CW = TW(QUER ? 261 : 174);
     const A = acc.c.slice(1).toUpperCase(), AT = acc.t.slice(1).toUpperCase(), GREY = '5A606E', RULE = '8E95A3';
     DOCX_ACC = A; DOCX_MARK = mixHex(acc.c, .74).slice(1);
     const step = Number(m.lineStep) || 5;
@@ -16071,7 +16127,7 @@ async function exportDOCX() {
       try { const n = media.length + 1; media.push({ n, bytes: await arbPNG(k, acc.c), ext: 'png' }); arbRel[k] = n; } catch {}
     }
     const picXml = (rel, cx, cy, label) => { const id = ++drawId; return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="${xesc(label)}" descr="${xesc(label)}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="soz${rel}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${rel}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`; };
-    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/><w:footnotePr><w:numRestart w:val="eachSect"/></w:footnotePr>${first ? '' : '<w:type w:val="continuous"/>'}<w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
+    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/><w:footnotePr><w:numRestart w:val="eachSect"/></w:footnotePr>${first ? '' : '<w:type w:val="continuous"/>'}${QUER ? '<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>' : '<w:pgSz w:w="11906" w:h="16838"/>'}<w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
     const closeSect = (ln, two) => { parts.push(xp('', { line: 20, rule: 'exact', mark: 2, sect: sect(ln, two) })); first = false; secOpen = false; };
     const spacer = () => xp('', { line: TW(5), rule: 'exact', mark: 4 });
 
@@ -16353,10 +16409,29 @@ async function exportDOCX() {
           break;
         }
         case 'image': {
+          if (Array.isArray(b.lb)) {
+            // Bild mit Beschriftungen: dreispaltige Tabelle, Kästen links und rechts, Bild in der Mitte (ohne Pfeile)
+            const mid = Math.max(25, Math.min(70, +b.width || 42)), side = Math.round(CW * (100 - mid) / 200), cen = CW - 2 * side;
+            const mode = b.lbMode || '', BOX = LINE('top', 8, A) + LINE('left', 8, A) + LINE('bottom', 8, A) + LINE('right', 8, A);
+            const card = x => { const r = []; if (mode !== 'ganz') r.push(xp(xrInline(x.h || '', { b: 1, color: A }), { after: 40 }));
+              if (!mode) String(x.t || '').split('\n').forEach(t => r.push(xp(xrInline(t), { after: 0 })));
+              else for (let i = 0; i < Math.max(2, Math.min(6, +(b.lbLines || 3))); i++) r.push(xp('', { line: 440, rule: 'exact', bdr: `<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="9AA1AE"/></w:pBdr>` }));
+              return xtbl([side - 170], xtr(xtc(r.join(''), { w: side - 170, borders: BOX })), NOB, '<w:top w:w="85" w:type="dxa"/><w:left w:w="113" w:type="dxa"/><w:bottom w:w="85" w:type="dxa"/><w:right w:w="113" w:type="dxa"/>') + xp('', { after: 120, line: 120, rule: 'exact' }); };
+            const col = L => L.map(card).join('') || xp('');
+            let imgX = xp(xr('[Bild]', { i: 1, color: GREY }), { jc: 'center' });
+            if (b.src) try { const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
+              const wEmu = Math.round((cen - 170) / 56.6929 * 36000), hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
+              imgX = xp(`<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`, { jc: 'center', line: 240 });
+            } catch { }
+            if (b.caption || tagsW[b.id]) parts.push(xp((tagsW[b.id] ? xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') : '') + xrInline(b.caption || '', { b: 1, sz: 22 }), { keepNext: true, after: 120 }));
+            parts.push(xtbl([side, cen, side], xtr(xtc(col(b.lb.filter(x => x.s !== 'r')), { w: side, v: 'center' }) + xtc(imgX, { w: cen, v: 'center' }) + xtc(col(b.lb.filter(x => x.s === 'r')), { w: side, v: 'center' })), NOB));
+            if (b.source) parts.push(xp(xrInline(b.source, { sz: 15, color: GREY }), { jc: 'center' }));
+            break;
+          }
           if (!b.src) break;
           try {
             const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
-            const wEmu = Math.round(174 * (b.width || 80) / 100 * 36000); const hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
+            const wEmu = Math.round((CW === TW(174) ? 174 : CW / 56.6929) * (b.width || 80) / 100 * 36000); const hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
             const drawing = `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
             if (tagsW[b.id]) parts.push(xp(xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') + xrInline(b.caption || '', { b: 1, sz: 20 }), { keepNext: true, after: 100 }));
             parts.push(xp(drawing, { jc: 'center', line: 240 }));
@@ -16400,7 +16475,7 @@ async function exportDOCX() {
     overlay('');
     await deliver(fileBase() + outSuffix().replace('_A5', '') + '.docx', blob);
   } catch (err) { console.error(err); overlay(''); toast('Word-Datei konnte nicht erstellt werden. Bitte erneut versuchen.'); }
-  finally { overlay(''); busy = false; }
+  finally { overlay(''); busy = false; CW = TW(174); }
 }
 
 /* ================= Ansicht, Drucken ================= */

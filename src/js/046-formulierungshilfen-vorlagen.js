@@ -59,6 +59,20 @@ const phrGroups = b => (Array.isArray(b.groups) ? b.groups : []).map(g => ({ hea
 
 const stilTiles = (b, S) => `<div class="f"><span>Stil</span><div class="km-grid km-sm" role="group" aria-label="Stil">${Object.entries(S).map(([k, x]) => `<button type="button" class="km" data-act="blk-stil" data-v="${k}" aria-pressed="${(b.stil || '') === k}" title="${esc(x.d)}"><svg viewBox="0 0 64 40" aria-hidden="true">${x.pic}</svg><b>${x.label}</b></button>`).join('')}</div></div>`;
 
+function lbEdHTML(b) {
+  const seg = (act, i, cur, opts, lab) => `<div class="seg sm" role="group" aria-label="${lab}">${opts.map(([v, t, ti]) => `<button type="button" data-act="${act}" data-i="${i}" data-v="${v}" aria-pressed="${cur === v}"${ti ? ` title="${ti}"` : ''}>${t}</button>`).join('')}</div>`;
+  const L = b.lb || [];
+  return `${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+    <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
+    <label class="f"><span>Bildbreite in der Mitte: ${Math.round(+b.width || 42)} %</span><input type="range" min="25" max="70" step="1" value="${+b.width || 42}" data-k="width" data-num="1"></label>
+    ${fText('caption', 'Überschrift über dem Bild (optional)', b.caption, 'z. B. Wie gestalte ich meine Lesekiste?')}
+    <div class="f"><span>Für die Kinder</span>${seg('lb-mode', 0, b.lbMode || '', [['', 'Ausgefüllt'], ['text', 'Text leer', 'Überschriften stehen, darunter Linien zum Schreiben'], ['ganz', 'Alles leer', 'Nur Kästen mit Linien und Pfeilen – zum Beschriften']], 'Für die Kinder')}</div>
+    <div class="lb-ed">${L.map((x, i) => `<div class="lb-row">
+      <div class="lb-row-h"><b>Kasten ${i + 1}</b>${seg('lb-side', i, x.s === 'r' ? 'r' : 'l', [['l', 'links'], ['r', 'rechts']], 'Seite')}${seg('lb-at', i, x.at || 'm', [['o', '↗', 'Pfeil nach oben'], ['m', '→', 'Pfeil zur Mitte'], ['u', '↘', 'Pfeil nach unten']], 'Pfeil')}<button class="ib" type="button" data-act="lb-del" data-i="${i}" title="Kasten entfernen" aria-label="Kasten ${i + 1} entfernen">${I.x}</button></div>
+      ${fText(`lb.${i}.h`, 'Überschrift', x.h, 'z. B. Klappentext')}${fArea(`lb.${i}.t`, 'Text', x.t, 2, 'z. B. Suche eine passende Stelle für den Klappentext.')}</div>`).join('')}</div>
+    ${L.length < 8 ? '<button class="link" type="button" data-act="lb-add">+ Kasten</button>' : ''}
+    ${fText('source', 'Quelle des Bildes', b.source, '')}`;
+}
 const fArea = (k, label, v, rows = 3, ph = '', cls = '', hint = '') => `<label class="f"><span>${label}</span><textarea data-k="${k}" rows="${rows}" placeholder="${esc(ph)}" class="${cls}">${esc(v)}</textarea>${hint ? `<small>${hint}</small>` : ''}</label>`;
 const fCheck = (k, label, v) => `<label class="chk"><input type="checkbox" data-k="${k}"${v ? ' checked' : ''}>${label}</label>`;
 const fSelect = (k, label, v, opts) => `<label class="f"><span>${label}</span><select data-k="${k}">${opts.map(([val, t]) => `<option value="${esc(val)}"${String(val) === String(v) ? ' selected' : ''}>${esc(t)}</option>`).join('')}</select></label>`;
@@ -89,7 +103,7 @@ function sumDetail(b) {
       case 'material': { const w = wc(b.text), g = (b.glossary || []).length; return [w ? pl(w, 'Wort', 'Wörter') : 'noch kein Text', g ? pl(g, 'Worterklärung', 'Worterklärungen') : '', String(b.source || '').trim() ? '' : 'ohne Quelle'].filter(Boolean).join(' · '); }
       case 'tasks': { const L = b.items || []; const noEh = L.filter(it => String(it.text || '').trim() && !ehLines(it).length).length; return [pl(L.length, 'Aufgabe', 'Aufgaben'), noEh ? (noEh === L.length ? 'ohne Erwartung' : `${noEh} ohne Erwartung`) : 'Erwartung ✓'].join(' · '); }
       case 'info': case 'text': case 'quote': { const w = wc(b.text); return w ? plainText(b.text).trim().slice(0, 70) : 'noch leer'; }
-      case 'image': return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
+      case 'image': if (Array.isArray(b.lb)) return `${b.lb.length} Kästen${b.lbMode ? ' · zum Beschriften' : ''}${b.src ? '' : ' · noch kein Bild'}`; return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
       default: { const ph = itPh(b), mn = itMin(b); return [ph ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · '); }
     }
   } catch { return ''; }
@@ -164,7 +178,7 @@ function summary(b, num) {
     case 'heading': return b.text || 'leer';
     case 'text': return (plainText(b.text) || 'leer').slice(0, 60);
     case 'quote': return (plainText(b.text) || 'leer').slice(0, 60);
-    case 'image': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (b.src ? (b.caption || 'Bild') : 'noch kein Bild');
+    case 'image': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (Array.isArray(b.lb) ? (b.caption || 'Bild mit Beschriftungen') + ` · ${b.lb.length} Kästen` : '') + (Array.isArray(b.lb) ? '' : b.src ? (b.caption || 'Bild') : 'noch kein Bild');
     case 'qr': return b.title || b.url || 'noch kein Link';
     case 'match': { const L = mtLayout(b); if (L.sort) { const nd = L.right.length - L.sol.length; return L.left.length ? `Sortieren · ${L.left.length} ${L.left.length === 1 ? 'Oberbegriff' : 'Oberbegriffe'} · ${L.right.length} ${L.right.length === 1 ? 'Wort' : 'Wörter'}${nd ? ` (${nd} Ablenker)` : ''} · ${b.mode === 'buchstaben' ? 'Nummern' : 'Linien'}` : 'noch keine Oberbegriffe'; } return L.sol.length ? `${L.sol.length} ${L.sol.length === 1 ? 'Paar' : 'Paare'}${L.right.length > L.sol.length ? ` · ${L.right.length - L.sol.filter(x => x.rk >= 0).length} Ablenker` : ''} · ${b.mode === 'buchstaben' ? 'Buchstaben' : 'Linien'}` : 'noch keine Paare'; }
     default: return 'Rest beginnt auf neuer Seite';
@@ -294,7 +308,7 @@ function bodyFor(b, num) {
     case 'tafel': return tafelEditor(b);
     case 'a3': return a3Editor(b);
     case 'step': return stepEditor(b);
-    case 'image': return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
+    case 'image': if (Array.isArray(b.lb)) return lbEdHTML(b); return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachBase() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachBase() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
@@ -317,7 +331,7 @@ function metaCard() {
         ${fText('exam.hilfsmittel', 'Hilfsmittel', ex.hilfsmittel, '')}
         <small class="hint">Die erste Seite wird zum Deckblatt. Die Gewichtung trägst du bei den Aufgaben ein. Thema-Feld und Hinweiskasten entfallen wie im Abitur.</small>` : ''}
       ${(() => { const ids = rlpSheetIds(state.sheet); return ids.length ? `<div class="f rlp-sum x-pro"><span>Standards auf diesem Blatt</span><div class="rlp-codes">${ids.slice(0, 14).map(id => { const x = rlpInfo(id); return `<code title="${esc(x.t)}">${esc(x.own ? rlpShort(x.t, 22) : x.code)}</code>`; }).join('')}${ids.length > 14 ? `<small>+${ids.length - 14}</small>` : ''}<button class="link" type="button" data-act="rlp-sheet">Übersicht</button></div></div>` : ''; })()}
-      <button type="button" class="set-link" data-act="settings" data-tab="kurs"><i>${areaIc('einst')}</i><span><b>Einstellungen</b><small>${esc([isK ? 'Klausur' : '', m.course, m.anrede === 'du' ? 'du' : 'Sie', DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[m.paper || 'a4']].filter(Boolean).join(' · '))}</small></span><em>›</em></button>
+      <button type="button" class="set-link" data-act="settings" data-tab="kurs"><i>${areaIc('einst')}</i><span><b>Einstellungen</b><small>${esc([isK ? 'Klausur' : '', m.course, m.anrede === 'du' ? 'du' : 'Sie', DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', a4q: 'A4 quer', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[m.paper || 'a4']].filter(Boolean).join(' · '))}</small></span><em>›</em></button>
     </div></div>`;
 }
 // Eigene Karte für alles, was das Aussehen der Seite bestimmt
@@ -326,13 +340,13 @@ function seiteCard() {
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
   const paper = m.paper || 'a4'; const gl = { n: 'normal', m: 'mehr', l: 'viel' };
-  const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
+  const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', a4q: 'A4 quer', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'seite' ? ' sel' : ''}" data-bid="seite">
     <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('seite')}</span><span class="kind">Seite</span><span class="sum">${esc(sum)}</span></div>
     <div class="card-b">
       ${designEditor(m)}
       ${colors}
-      <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
+      <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
       <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
 
     </div></div>`;

@@ -327,6 +327,10 @@ function onClick(e) {
     case 'blk-set': if (['padTop', 'padBot'].includes(a.dataset.f)) { if (a.dataset.v) b[a.dataset.f] = a.dataset.v; else delete b[a.dataset.f]; changed(true); } return;
     case 'mat-form': if (a.dataset.v) b.form = a.dataset.v; else delete b.form; changed(true); return;
     case 'src-form': srcFormSet(b, a.dataset.v); changed(true); renderEditor(); return;
+    case 'lb-mode': if (a.dataset.v) b.lbMode = a.dataset.v; else delete b.lbMode; changed(true); renderEditor(); return;
+    case 'lb-side': case 'lb-at': { const x = (b.lb || [])[+a.dataset.i]; if (!x) return; x[act === 'lb-side' ? 's' : 'at'] = a.dataset.v; changed(true); renderEditor(); return; }
+    case 'lb-add': { snapshot(); const L = b.lb || (b.lb = []); const nl = L.filter(x => x.s !== 'r').length, nr = L.length - nl; L.push({ h: '', t: '', s: nl > nr ? 'r' : 'l', at: 'm' }); changed(true); renderEditor(); return; }
+    case 'lb-del': { snapshot(); b.lb.splice(+a.dataset.i, 1); changed(true); renderEditor(); return; }
     case 'mat-kind': case 'img-kind': if (a.dataset.v) b.mk = a.dataset.v; else delete b.mk; changed(true); renderEditor(); return;
     case 'phr-cols': b.cols = +a.dataset.v || 2; changed(true); return;
     case 'phr-add': (b.groups = b.groups || []).push({ head: '', text: '' }); changed(true); return;

@@ -86,7 +86,7 @@ function renderPreview0() {
   const a5 = state.out === 'blatt' && state.sheet.meta.paper === 'a5x2';
   const buch = state.out === 'blatt' && state.sheet.meta.paper === 'buch';
   const kH = state.out === 'karten' && state.kkHalf;
-  const [one, many, unit] = state.out === 'exit' ? ['Seite', 'Seiten', 'Exit-Tickets'] : state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'a4' ? ['Seite', 'Seiten', 'A4'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
+  const [one, many, unit] = state.out === 'exit' ? ['Seite', 'Seiten', 'Exit-Tickets'] : state.out === 'a3' ? ['Seite', 'Seiten', state.a3p === 'a4x2' ? 'A4 zum Zusammenkleben' : 'A3'] : state.out === 'a4' ? ['Seite', 'Seiten', 'A4'] : state.out === 'blatt' && state.sheet.meta.paper === 'a4q' ? ['Seite', 'Seiten', 'A4 quer'] : state.out === 'tafel' ? ['Tafelbild', 'Tafelbilder', 'A4 quer'] : state.out === 'karten' ? ['Karte', 'Karten', kH ? 'A4' : 'A4 quer'] : a5 ? ['Bogen', 'Bögen', '2 × A5 auf A4 quer'] : ['Seite', 'Seiten', 'A4'];
   const cnt = state.out === 'karten' ? (state.kkCount || 0) : out.length;
   const nB = state.bookPages || 0;
   $('#pagecount').textContent = buch ? `${nB} ${nB === 1 ? 'Seite' : 'Seiten'} auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'} · A5 als Buch auf A4 quer`

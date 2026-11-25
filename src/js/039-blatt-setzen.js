@@ -96,6 +96,7 @@ function buildBlock(b, ctx) {
       return { type: 'qr', el: put(`<div class="blk blk-qr">${pic}<div class="qr-t">${b.title ? `<b>${inlineHTML(b.title)}</b>` : ''}<span class="qr-url">${url ? esc(url) : 'Link eintragen'}</span>${b.note ? `<span class="qr-note">${inlineHTML(b.note)}</span>` : ''}</div></div>`) };
     }
     case 'image': {
+      if (Array.isArray(b.lb)) return { type: 'image', el: put(lbHTML(b, ctx)) };
       const img = b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
       const tag = ctx.mt && ctx.mt[b.id];
       if (tag) return { type: 'image', el: put(`<div class="blk blk-img lab"><div class="mat-head"><span class="mat-no">${designOf(meta) === 'akte' ? 'Anlage ' : ''}${tag}</span><span class="mat-title">${inlineHTML(b.caption) || '&nbsp;'}</span></div><div class="img-c">${img}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };
@@ -414,11 +415,24 @@ function setAccent(node, meta) {
   node.classList.toggle('tone', d === 'akte' && meta.tone !== false);
 }
 
+// Bild mit Beschriftungen: Bild in der Mitte, Kästen links und rechts, jeder mit einem Pfeil zum Bild
+const LB_ARR = { o: 'M2 26 C 14 24, 22 16, 34 5', m: 'M2 15 C 12 9, 24 21, 34 15', u: 'M2 4 C 14 6, 22 14, 34 25' };
+function lbHTML(b, ctx) {
+  const L = (b.lb || []).filter(Boolean), mode = b.lbMode || '', tag = ctx.mt && ctx.mt[b.id];
+  const card = (x, side) => { const head = mode === 'ganz' ? '' : inlineHTML(x.h || ''); const txt = mode ? '' : inlineHTML(x.t || '').replace(/\n/g, '<br>');
+    const nl = mode ? Math.max(2, Math.min(6, +(b.lbLines || 3))) : 0;
+    return `<div class="lb-c lb-${side} at-${x.at || 'm'}">${head ? `<b class="lb-h">${head}</b>` : mode === 'ganz' ? '' : '<b class="lb-h">&nbsp;</b>'}${txt ? `<div class="lb-t">${txt}</div>` : ''}${nl ? '<div class="lb-wl"></div>'.repeat(nl) : ''}<svg class="lb-a" viewBox="0 0 36 30" aria-hidden="true"><path d="${LB_ARR[x.at || 'm']}"/><path class="lb-hd" d="${{ o: 'M27 4.5 L34 5 L32.5 11.5', m: 'M28.5 10.5 L34 15 L28.5 19.5', u: 'M32.5 18.5 L34 25 L27 25.5' }[x.at || 'm']}"/></svg></div>`; };
+  const l = L.filter(x => x.s !== 'r'), r = L.filter(x => x.s === 'r');
+  const img = b.src ? `<img src="${esc(b.src)}" alt="">` : '<div class="img-empty">Bild hinzufügen</div>';
+  const mid = Math.max(25, Math.min(70, +b.width || 42));
+  return `<div class="blk blk-img blk-lb${mode ? ' lb-leer' : ''}">${tag || b.caption ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.caption || '') || '&nbsp;'}</span></div>` : ''}<div class="lb-g" style="--lbm:${mid}%"><div class="lb-col l">${l.map(x => card(x, 'l')).join('')}</div><div class="lb-mid">${img}</div><div class="lb-col r">${r.map(x => card(x, 'r')).join('')}</div></div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`;
+}
+
 let fontsOK = false;
 function layout() {
   const sh = state.sheet, meta = sh.meta; const v = sheetView();
-  const buch = meta.paper === 'buch'; const a5 = meta.paper === 'a5x2' || buch; AVAIL = (GEO[a5 ? 'a5' : 'a4'].avail - (BOT_GAP[a5 ? 'a5' : 'a4'][meta.botGap] ?? BOT_GAP[a5 ? 'a5' : 'a4'][''])) * MMPX;
-  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5); ZL_MAP = {};
+  const buch = meta.paper === 'buch'; const a5 = meta.paper === 'a5x2' || buch; const q = meta.paper === 'a4q'; AVAIL = (GEO[a5 ? 'a5' : q ? 'a4q' : 'a4'].avail - (BOT_GAP[a5 ? 'a5' : 'a4'][meta.botGap] ?? BOT_GAP[a5 ? 'a5' : 'a4'][''])) * MMPX;
+  const mp = $('#measure'); setAccent(mp, meta); mp.classList.toggle('a5', a5); mp.classList.toggle('a4q', q); ZL_MAP = {};
   const body = mp.querySelector('.pg-body'); body.innerHTML = '';
   const ctx = { m: 0, t: 0, meta, body, acc: pageAcc(meta).c, bg: pageBg(meta), view: v, mt: matTags(sh.blocks.filter(b => blockVisible(b, v))) };
   const items = [];
@@ -433,7 +447,7 @@ function layout() {
   const out = pages.map((p, i) => {
     const pg = document.createElement('div'); pg.className = 'page'; setAccent(pg, meta); pg.classList.toggle('a5', a5);
     if (isGS()) { const jg = gsJg(); pg.classList.add('gs'); pg.style.setProperty('--gsfs', (jg <= 2 ? 15 : jg <= 4 ? 13 : 12) + 'pt'); }
-    pg.dataset.w = 210; pg.dataset.h = 297;
+    if (q) { pg.classList.add('a4q'); pg.dataset.w = 297; pg.dataset.h = 210; } else { pg.dataset.w = 210; pg.dataset.h = 297; }
     const pb = document.createElement('div'); pb.className = 'pg-body'; pg.appendChild(pb);
     p.list.forEach(pl => pb.appendChild(pl.whole ? pl.it.el.cloneNode(true) : pl.it.assemble(pl.s, pl.e)));
     const left = [meta.school, meta.course].filter(Boolean).map(esc).join(' · ');

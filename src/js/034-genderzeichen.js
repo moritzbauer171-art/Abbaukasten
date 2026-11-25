@@ -27,7 +27,7 @@ function gTargets(bid) {
     case 'table': return [[b, 'title'], ...b.cols.map((_, j) => [b.cols, j]), ...b.rows.flatMap(r => r.map((_, j) => [r, j]))];
     case 'qr': return [[b, 'title'], [b, 'note']];
     case 'match': return [[b, 'title'], ...(b.sort ? [...(b.cats || []).map(c => [c, 't']), ...(b.words || []).map(w => [w, 't'])] : (b.pairs || []).flatMap(p => [[p, 'a'], [p, 'b']]))];
-    case 'image': return [[b, 'caption']];
+    case 'image': return [[b, 'caption'], ...(b.lb || []).flatMap(x => [[x, 'h'], [x, 't']])];
     default: return [];
   }
 }
