@@ -37,9 +37,11 @@ jobs:
         run: |
           NOTES="Windows 10 und 11, 64 Bit, ohne Installation. ZIP entpacken (Ordner zusammenlassen) und LehrWerk.exe doppelklicken. Meldet Windows „Der Computer wurde durch Windows geschützt“: „Weitere Informationen“ → „Trotzdem ausführen“. Die App lädt immer die aktuelle Online-Version; neue Funktionen kommen ohne neuen Download. Version $AB_VERSION, Stand ${GITHUB_SHA::7}."
           git tag -f windows && git push -f origin windows
+          # eigener Dateiname: Ersetzen der alten Datei scheitert bei GitHub mit Fehler 500
+          cp desktop/out/LehrWerk-Windows-x64.zip desktop/out/LehrWerk-Windows.zip
           if gh release view windows >/dev/null 2>&1; then
-            gh release upload windows desktop/out/LehrWerk-Windows-x64.zip --clobber
+            gh release upload windows desktop/out/LehrWerk-Windows.zip --clobber
             gh release edit windows --title "LehrWerk für Windows ($AB_VERSION)" --notes "$NOTES" --latest
           else
-            gh release create windows desktop/out/LehrWerk-Windows-x64.zip --title "LehrWerk für Windows ($AB_VERSION)" --notes "$NOTES" --latest
+            gh release create windows desktop/out/LehrWerk-Windows.zip --title "LehrWerk für Windows ($AB_VERSION)" --notes "$NOTES" --latest
           fi
