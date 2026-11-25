@@ -37,11 +37,18 @@ jobs:
         run: |
           NOTES="Windows 10 und 11, 64 Bit, ohne Installation. ZIP entpacken (Ordner zusammenlassen) und LehrWerk.exe doppelklicken. Meldet Windows „Der Computer wurde durch Windows geschützt“: „Weitere Informationen“ → „Trotzdem ausführen“. Die App lädt immer die aktuelle Online-Version; neue Funktionen kommen ohne neuen Download. Version $AB_VERSION, Stand ${GITHUB_SHA::7}."
           git tag -f windows && git push -f origin windows
-          # eigener Dateiname: Ersetzen der alten Datei scheitert bei GitHub mit Fehler 500
+          # Jede Version unter eigenem Namen ablegen: Ersetzen bestehender Dateien scheitert bei GitHub zeitweise mit Fehler 500
+          F="LehrWerk-Windows-$AB_VERSION.zip"
+          cp desktop/out/LehrWerk-Windows-x64.zip "desktop/out/$F"
           cp desktop/out/LehrWerk-Windows-x64.zip desktop/out/LehrWerk-Windows.zip
           if gh release view windows >/dev/null 2>&1; then
-            gh release upload windows desktop/out/LehrWerk-Windows.zip --clobber
+            gh release upload windows "desktop/out/$F"
             gh release edit windows --title "LehrWerk für Windows ($AB_VERSION)" --notes "$NOTES" --latest
           else
-            gh release create windows desktop/out/LehrWerk-Windows.zip --title "LehrWerk für Windows ($AB_VERSION)" --notes "$NOTES" --latest
+            gh release create windows "desktop/out/$F" --title "LehrWerk für Windows ($AB_VERSION)" --notes "$NOTES" --latest
           fi
+          # feste Namen für den Download-Link und für ältere App-Versionen (3.1 sucht ...-x64.zip) – darf scheitern
+          gh release upload windows desktop/out/LehrWerk-Windows.zip --clobber || echo "::warning::LehrWerk-Windows.zip nicht ersetzt"
+          gh release upload windows desktop/out/LehrWerk-Windows-x64.zip --clobber || echo "::warning::LehrWerk-Windows-x64.zip nicht ersetzt"
+          # ältere versionierte Dateien aufräumen
+          for a in $(gh release view windows --json assets -q '.assets[].name' | grep -E '^LehrWerk-Windows-[0-9]+\.[0-9]+\.[0-9]+\.zip$' | grep -vx "$F"); do gh release delete-asset windows "$a" -y || true; done

@@ -352,9 +352,17 @@ async function updCheck(manual) {
   try { const r = await net.fetch(REL_API, { headers: { 'User-Agent': 'LehrWerk', Accept: 'application/vnd.github+json' } }); if (!r.ok) throw new Error('HTTP ' + r.status); rel = await r.json(); }
   catch (err) { if (manual) dialog.showMessageBox(win, { type: 'warning', title: APP_NAME, message: 'Die Suche nach Updates hat nicht geklappt.', detail: 'Bitte prüfe die Internetverbindung.' }); return; }
   const m = /\(([\d.]+)\)/.exec(rel.name || ''); const latest = m && m[1]; const mine = app.getVersion();
-  const asset = (rel.assets || []).find(a => a.name === 'LehrWerk-Windows-x64.zip');
+  // Jede Version liegt unter eigenem Namen (LehrWerk-Windows-<Version>.zip); ohne passende Datei kein automatisches Update
+  const asset = (rel.assets || []).find(a => a.name === `LehrWerk-Windows-${latest}.zip`);
   if (!latest || !newer(latest, mine)) { if (manual) dialog.showMessageBox(win, { type: 'info', title: APP_NAME, message: 'LehrWerk ist auf dem neuesten Stand.', detail: `Version ${mine}` }); return; }
   if (!manual && updState().skip === latest) return;
+  // Schutz vor Schleifen: wurde diese Version schon installiert und läuft trotzdem noch die alte, nicht erneut automatisch versuchen
+  if (updState().tried === latest || !asset) {
+    if (!manual && updState().told === latest) return; updSave({ told: latest });
+    const q = await dialog.showMessageBox(win, { type: 'info', title: APP_NAME, icon: iconPath(), noLink: true, defaultId: 0, cancelId: 1, buttons: ['Download-Seite öffnen', 'Später'],
+      message: `Eine neue Version von LehrWerk ist da: ${latest}`, detail: `Du hast ${mine}. Das automatische Update ist hier nicht möglich. Lade die neue Version bitte einmal von der Download-Seite (LehrWerk-Windows.zip), entpacke sie und ersetze den alten Ordner.` });
+    if (q.response === 0) shell.openExternal(REL_PAGE); return;
+  }
   const r = await dialog.showMessageBox(win, { type: 'question', title: APP_NAME, icon: iconPath(), noLink: true, defaultId: 0, cancelId: 1,
     buttons: ['Jetzt aktualisieren', 'Später', 'Diese Version überspringen'],
     message: `Eine neue Version von LehrWerk ist da: ${latest}`,
@@ -362,6 +370,7 @@ async function updCheck(manual) {
   if (r.response === 2) { updSave({ skip: latest }); return; }
   if (r.response !== 0) return;
   if (process.platform !== 'win32' || !asset) { shell.openExternal(REL_PAGE); return; }
+  updSave({ tried: latest });
   updInstall(asset.browser_download_url, latest).catch(err => {
     try { win.setProgressBar(-1); } catch {}
     dialog.showMessageBox(win, { type: 'warning', title: APP_NAME, buttons: ['Download-Seite öffnen', 'Schließen'], defaultId: 0, cancelId: 1, message: 'Das Update konnte nicht automatisch installiert werden.', detail: String(err && err.message || err) + '\n\nDu kannst die neue Version auch selbst herunterladen und über den alten Ordner entpacken.' })
