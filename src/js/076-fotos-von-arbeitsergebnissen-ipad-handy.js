@@ -9,39 +9,52 @@ function fotoChannel() {
   try { if (fotoCh.ch) store.sb.removeChannel(fotoCh.ch); } catch {}
   const ch = store.sb.channel('lw-foto:' + store.user.id, { config: { broadcast: { self: false, ack: false }, private: true } });
   ch.on('broadcast', { event: 'f' }, ({ payload }) => fotoHand(payload || {}));
-  ch.subscribe(st => { fotoCh.ok = st === 'SUBSCRIBED'; });
-  fotoCh.ch = ch; fotoCh.uid = store.user.id; return ch;
+  ch.subscribe(st => { fotoCh.ok = st === 'SUBSCRIBED'; if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') fbSet(true); });
+  // Kommt der Live-Kanal nicht zustande (z. B. Schul-WLAN sperrt ihn), auf die Ersatzverbindung umschalten
+  setTimeout(() => { if (fotoCh.ch === ch && !fotoCh.ok) fbSet(true); }, 7000);
+  fotoCh.ch = ch; fotoCh.uid = store.user.id; fbStart(); return ch;
 }
-// Jede Nachricht kann doppelt ankommen (Live-Kanal im Internet und Direktverbindung): Kennung merken, zweites Exemplar verwerfen
+// Jede Nachricht kann doppelt ankommen (Live-Kanal und Ersatzverbindung): Kennung merken, zweites Exemplar verwerfen
 const fotoSeen = { s: new Set(), q: [] };
 function fotoHand(m) {
-  if (m && m._i) { if (fotoSeen.s.has(m._i)) return; fotoSeen.s.add(m._i); fotoSeen.q.push(m._i); if (fotoSeen.q.length > 800) fotoSeen.s.delete(fotoSeen.q.shift()); }
+  if (m && m._i) { if (fotoSeen.s.has(m._i)) return; fotoSeen.s.add(m._i); fotoSeen.q.push(m._i); if (fotoSeen.q.length > 1500) fotoSeen.s.delete(fotoSeen.q.shift()); }
   fotoCh.h.forEach(f => { try { f(m || {}); } catch (e) { console.error(e); } });
 }
-const fotoSend = msg => { if (!msg._i) msg._i = Math.random().toString(36).slice(2, 11); const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} lanSend(msg); };
-const fotoListen = f => { fotoChannel(); lanInit(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
-/* ---------- Direktverbindung über den Hotspot des Laptops (Windows-App) ----------
-   Laptop: die App öffnet einen kleinen Server; die Seite verbindet sich mit ws://127.0.0.1.
-   iPad: öffnet http://<Laptop>:<Port>/?tafel&lan=<Schlüssel> und verbindet sich mit demselben Server. Kein Konto nötig. */
-const LAN_T = (() => { try { return new URLSearchParams(location.search).get('lan') || ''; } catch { return ''; } })();
-const LAN = { ws: null, url: '', info: null, init: false, retry: 0, t: 0, h: new Set() };
-const lanOn = () => !!(LAN.ws && LAN.ws.readyState === 1);
-const lanPage = () => !!LAN_T && location.protocol === 'http:';
-function lanSend(msg) { if (!lanOn()) return false; try { LAN.ws.send(JSON.stringify(msg)); return true; } catch { return false; } }
-function lanConnect(url) {
-  if (!url) return; LAN.url = url; clearTimeout(LAN.t); try { if (LAN.ws) { LAN.ws.onclose = null; LAN.ws.close(); } } catch {}
-  let ws; try { ws = new WebSocket(url); } catch { return; } LAN.ws = ws;
-  ws.onopen = () => { LAN.retry = 0; LAN.h.forEach(f => { try { f(true); } catch {} }); };
-  ws.onmessage = e => { let m = null; try { m = JSON.parse(e.data); } catch {} if (m && typeof m === 'object') fotoHand(m); };
-  ws.onclose = () => { if (LAN.ws !== ws) return; LAN.h.forEach(f => { try { f(false); } catch {} }); if (LAN.url) LAN.t = setTimeout(() => lanConnect(LAN.url), Math.min(8000, 800 * ++LAN.retry)); };
-  ws.onerror = () => {};
+const fotoSend = msg => { if (!msg._i) msg._i = Math.random().toString(36).slice(2, 11); const ch = fotoChannel(); if (ch) try { ch.send({ type: 'broadcast', event: 'f', payload: msg }); } catch {} if (FB.on) fbQueue(msg); };
+const fotoListen = f => { fotoChannel(); fotoCh.h.add(f); return () => fotoCh.h.delete(f); };
+/* ---------- Ersatzverbindung über die Tabelle ab_relay ----------
+   Sperrt ein Netz den Live-Kanal (WebSocket), laufen die Nachrichten über normale Web-Anfragen:
+   Senden gesammelt alle 150 ms, Abholen alle 0,5 s. Ohne Ersatzbetrieb wird nur alle 4 s nachgesehen,
+   ob ein anderes Gerät ihn nutzt – dann schaltet dieses Gerät mit um. */
+const FB = { on: false, init: false, last: 0, q: [], qt: 0, t: 0, busy: false, dev: Math.random().toString(36).slice(2, 10), h: new Set(), err: 0 };
+const FB_LAST = new Set(['stk', 'las', 'view', 'blas', 'tfv', 'ping']);
+function fbSet(on) { if (FB.on === on) return; FB.on = on; FB.h.forEach(f => { try { f(on); } catch {} }); if (on) { clearTimeout(FB.t); fbPoll(); } }
+function fbQueue(m) {
+  // Zwischenstände (Stiftspitze, Laser, Ansicht) nur als letzten Stand schicken
+  const k = FB_LAST.has(m.t) || (m.t === 'bop' && m.op === 'live') ? m.t + '|' + (m.op || '') + '|' + (m.id || m.k || m.key || '') + '|' + (m.d || '') : '';
+  if (k) { const j = FB.q.findIndex(x => x._k === k); if (j >= 0) FB.q.splice(j, 1); }
+  FB.q.push(k ? { ...m, _k: k } : m); if (!FB.qt) FB.qt = setTimeout(fbFlush, 150);
 }
-function lanStop() { LAN.url = ''; clearTimeout(LAN.t); try { if (LAN.ws) LAN.ws.close(); } catch {} LAN.ws = null; }
-async function lanDesk(on) { const D = window.abDesktop; if (!D || !D.lan) return null; let r = null; try { r = await D.lan(on); } catch (e) { console.error(e); } LAN.info = r; if (r && r.on && r.ws) { if (LAN.url !== r.ws || !lanOn()) lanConnect(r.ws); } else if (r && !r.on) lanStop(); return r; }
-function lanInit() {
-  if (LAN.init) return; LAN.init = true;
-  if (lanPage()) lanConnect(`ws://${location.host}/lw-ws?t=${encodeURIComponent(LAN_T)}`);
-  else if (window.abDesktop && window.abDesktop.lan) lanDesk();
+async function fbFlush() {
+  FB.qt = 0; if (!FB.q.length || !fotoOK()) { FB.q = []; return; }
+  const rows = FB.q.splice(0).map(({ _k, ...m }) => ({ payload: { ...m, _d: FB.dev } }));
+  try { const r = await store.sb.from('ab_relay').insert(rows); if (r.error) throw r.error; FB.err = 0; }
+  catch (e) { FB.err++; console.warn('Ersatzverbindung: Senden', e && e.message || e); }
+}
+async function fbStart() {
+  if (FB.init || !fotoOK()) return; FB.init = true;
+  try { const r = await store.sb.from('ab_relay').select('id').order('id', { ascending: false }).limit(1); FB.last = (r.data && r.data[0] && r.data[0].id) || 0; } catch {}
+  clearTimeout(FB.t); FB.t = setTimeout(fbPoll, FB.on ? 50 : 4000);
+}
+async function fbPoll() {
+  clearTimeout(FB.t); if (FB.busy) { FB.t = setTimeout(fbPoll, 300); return; } if (!fotoOK() || !FB.init) return; FB.busy = true;
+  try {
+    const r = await store.sb.from('ab_relay').select('id,payload').gt('id', FB.last).order('id', { ascending: true }).limit(300);
+    if (r.error) throw r.error; FB.err = 0;
+    for (const row of r.data || []) { FB.last = Math.max(FB.last, row.id); const m = row.payload || {}; if (m._d === FB.dev) continue; if (!FB.on) fbSet(true); fotoHand(m); }
+  } catch (e) { FB.err++; }
+  FB.busy = false;
+  FB.t = setTimeout(fbPoll, FB.on ? (FB.err ? 2000 : 500) : 4000);
 }
 const FOTO_COLS = 'id,sheet_id,path,w,h,ink,keep,created_at,expires_at';
 async function fotoList(sheetId) { const r = await store.sb.from('ab_fotos').select(FOTO_COLS).eq('sheet_id', sheetId).or('keep.eq.true,expires_at.gt.' + new Date().toISOString()).order('created_at'); if (r.error) throw r.error; return r.data || []; }

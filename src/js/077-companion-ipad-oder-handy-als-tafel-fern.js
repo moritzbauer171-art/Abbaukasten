@@ -50,10 +50,10 @@ function lfcStart(O = {}) {
   const boardOn = k => !!PR && PR.board === k;
   const kOf = () => (tab === 'fol' ? 'sl' : tab);
   const drawTab = () => tab === 'fol' || tab === 'tafel' || tab === 'pk';
-  const modes = () => [['fol', 'Folie'], ['tafel', 'Tafel'], ...(PR && PR.gp ? [['pk', 'Pro/Contra']] : []), ...(fotoOK() ? [['cam', 'Fotos']] : [])];
+  const modes = () => [['fol', 'Folie'], ['tafel', 'Tafel'], ...(PR && PR.gp ? [['pk', 'Pro/Contra']] : []), ['cam', 'Fotos']];
   // ---------- Kopfzeile: links zurück, Mitte Ort, rechts Modi, Referent, ⋯ ----------
   const renderTop = () => {
-    tl.innerHTML = `<button type="button" class="lfc-tb" data-l="exit" aria-label="Zurück zu LehrWerk">${lfcIc('back', 22)}</button><i class="lfc-dotc${live() ? ' ok' : ''}" title="${live() ? 'Verbunden' : 'Nicht verbunden'}"></i>`;
+    tl.innerHTML = `<button type="button" class="lfc-tb" data-l="exit" aria-label="Zurück zu LehrWerk">${lfcIc('back', 22)}</button><i class="lfc-dotc${live() ? ' ok' : ''}${FB.on ? ' fb' : ''}" title="${live() ? (FB.on ? 'Verbunden über die Ersatzverbindung (Live-Kanal im Netz gesperrt)' : 'Verbunden') : 'Nicht verbunden'}"></i>${FB.on ? '<span class="lfc-fb" title="Dieses Netz sperrt den Live-Kanal. Die Verbindung läuft über normale Web-Anfragen – mit etwas Verzögerung.">Ersatzverbindung</span>' : ''}`;
     if (!live()) { tc.innerHTML = '<b>Companion</b>'; tr.innerHTML = ''; return; }
     const lab = tab === 'fol' ? `<b>${PR.i + 1} / ${PR.n}</b><span>${esc(PR.lab || '')}${PR.max ? ` · Schritt ${PR.cur || 0}/${PR.max}` : ''}</span>` : tab === 'tafel' ? `<b>Tafel</b><span>${boardOn('tafel') ? 'am Beamer' : 'nur hier · beim Schreiben am Beamer'}</span>` : tab === 'pk' ? `<b>Pro / Contra</b><span>${boardOn('pk') ? 'am Beamer' : 'nur hier'}</span>` : `<b>Fotos</b><span>${esc(PR.title || '')}</span>`;
     tc.innerHTML = `<button type="button" class="lfc-tcb" data-l="${tab === 'fol' ? 'over' : 'none'}"${tab === 'fol' ? ' aria-label="Alle Folien zeigen"' : ''}>${lab}</button>`;
@@ -93,7 +93,7 @@ function lfcStart(O = {}) {
   const withSh = fn => { const keep = state.sheet; try { state.sheet = SL.sh; return fn(); } finally { state.sheet = keep; } };
   const slLoad = async () => {
     if (!PR || SL.busy || (SL.id === PR.sheet && SL.up >= (PR.up || 0))) return; SL.busy = true;
-    try { const d = !fotoOK() && lanOn() ? await lanSheet(PR.sheet) : await (async () => { const r = await store.sb.from('ab_arbeitsblaetter').select('data').eq('id', PR.sheet).maybeSingle(); return r.data && r.data.data; })();
+    try { const r = await store.sb.from('ab_arbeitsblaetter').select('data').eq('id', PR.sheet).maybeSingle(); const d = r.data && r.data.data;
       if (d) { SL.sh = normalizeSheet(d); SL.S = withSh(() => presSlides(true)); SL.id = PR.sheet;
         if ((+d.updatedAt || 0) < (PR.up || 0) && SL.retry++ < 4) { SL.up = +d.updatedAt || 0; setTimeout(slLoad, 2500); } else { SL.retry = 0; SL.up = PR.up || 0; } } else { SL.id = PR.sheet; SL.up = PR.up || 0; SL.S = null; } }
     catch (err) { console.error(err); SL.id = PR.sheet; SL.up = PR.up || 0; }
@@ -350,12 +350,6 @@ function lfcStart(O = {}) {
     root.remove(); document.body.classList.remove('lfc-on'); if (fsEl()) fsGo(false); if (manual && PR) lfcBan.skip = PR.sid; }
   return { close };
 }
-// Stunde direkt vom Laptop holen (Direktverbindung, iPad ohne Anmeldung)
-function lanSheet(id) {
-  return new Promise(res => { const q = Math.random().toString(36).slice(2, 9); let done = false;
-    const off = fotoListen(m => { if (m.t === 'shdata' && m.q === q) { done = true; off(); res(m.data || null); } });
-    lanSend({ t: 'shreq', id, q, _i: q + 'r' }); setTimeout(() => { if (!done) { off(); res(null); } }, 15000); });
-}
 // Hinweis im normalen LehrWerk: „Präsentation läuft – als Tafel verbinden“
 const lfcBan = { el: null, skip: '', last: null, t: 0 };
 // Seite „LehrWerk Tafel“ (…/?tafel): ohne Manifest, damit „Zum Home-Bildschirm“ genau diese Adresse speichert
@@ -365,7 +359,6 @@ function lfcPage() {
   try { const vp = document.querySelector('meta[name="viewport"]'); if (vp) vp.content = 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'; } catch {}
   add('link', { rel: 'apple-touch-icon', href: 'icons/apple-touch-icon.png' }); add('meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }); add('meta', { name: 'mobile-web-app-capable', content: 'yes' });
   add('meta', { name: 'apple-mobile-web-app-title', content: 'LehrWerk Tafel' }); add('meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }); add('meta', { name: 'theme-color', content: '#1c1c1e' }); document.title = 'LehrWerk Tafel';
-  if (lanPage()) { lanInit(); setTimeout(() => lfcStart({ page: true }), 300); return; }
   const go = setInterval(() => { if (store.user && fotoOK()) { clearInterval(go); lfcStart({ page: true }); } else if (store.sb && !store.user && !state.dlg) openDlg('login'); }, 500);
 }
 function lfcWatch() {
@@ -379,7 +372,7 @@ function lfcWatch() {
     lfcBan.el.querySelector('.lfc-bx').onclick = () => { lfcBan.skip = (lfcBan.last || {}).sid || ''; hide(); };
   };
   const tick = setInterval(() => {
-    if (on || !(fotoOK() || lanOn())) return; on = true; clearInterval(tick);
+    if (on || !fotoOK()) return; on = true; clearInterval(tick);
     fotoListen(m => {
       if (m.t === 'pres') { lfcBan.last = m; clearTimeout(lfcBan.t); lfcBan.t = setTimeout(hide, 15000);
         if (document.querySelector('.pr') || document.getElementById('lfc-root') || m.sid === lfcBan.skip) { hide(); return; } show(m); }

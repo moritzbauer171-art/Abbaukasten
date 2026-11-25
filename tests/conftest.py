@@ -55,8 +55,9 @@ class LW:
     """Eine geöffnete LehrWerk-Seite mit kleinen Hilfen."""
     def __init__(self, ctx, page_file):
         self.ctx, self.file, self.errs = ctx, page_file, []
-    def open(self, url_suffix='', viewport=None):
+    def open(self, url_suffix='', viewport=None, init=None):
         pg = self.ctx.new_page()
+        if init: pg.add_init_script(init)
         if viewport: pg.set_viewport_size(viewport)
         pg.on('pageerror', lambda e: self.errs.append(str(e)))
         pg.goto('file://' + str(self.file) + url_suffix); pg.wait_for_timeout(1800)

@@ -78,3 +78,28 @@ create or replace function public.ab_digital_get(p_id text)
 returns text language sql stable security definer set search_path = ''
 as $$ select d.html from public.ab_digital d where d.id = p_id $$;
 grant execute on function public.ab_digital_get(text) to anon, authenticated;
+
+-- Companion-Ersatzverbindung (wenn ein Netz den Live-Kanal sperrt): Nachrichten über normale Web-Anfragen
+create table if not exists public.ab_relay (
+  id bigint generated always as identity primary key,
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  payload jsonb not null,
+  created_at timestamptz not null default now(),
+  constraint ab_relay_groesse check (pg_column_size(payload) < 1500000)
+);
+create index if not exists ab_relay_user_id_idx on public.ab_relay (user_id, id);
+create index if not exists ab_relay_created_idx on public.ab_relay (created_at);
+alter table public.ab_relay enable row level security;
+create policy ab_relay_lesen on public.ab_relay for select to authenticated using (user_id = (select auth.uid()));
+create policy ab_relay_schreiben on public.ab_relay for insert to authenticated with check (user_id = (select auth.uid()));
+create policy ab_relay_loeschen on public.ab_relay for delete to authenticated using (user_id = (select auth.uid()));
+grant select, insert, delete on public.ab_relay to authenticated;
+revoke all on public.ab_relay from anon;
+create or replace function public.ab_relay_aufraeumen() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if new.id % 40 = 0 then delete from public.ab_relay where created_at < now() - interval '3 minutes'; end if;
+  return new;
+end $$;
+revoke all on function public.ab_relay_aufraeumen() from public, anon, authenticated;
+create trigger ab_relay_aufraeumen after insert on public.ab_relay for each row execute function public.ab_relay_aufraeumen();
