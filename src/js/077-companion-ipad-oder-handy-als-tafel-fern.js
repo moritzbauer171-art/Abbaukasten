@@ -56,7 +56,7 @@ function lfcStart(O = {}) {
   const backSync = () => {
     const off = live() && PR && (PR.board || PR.bl); let b = root.querySelector(':scope > .lfc-back');
     if (!off) { if (b) b.remove(); return; }
-    const what = PR.bl ? 'Beamer ist schwarz' : PR.board === 'pk' ? 'Pro/Contra am Beamer' : 'Tafel am Beamer';
+    const what = PR.bl ? 'Beamer ist schwarz' : PR.board === 'pk' ? 'Pro/Contra am Beamer' : PR.board === 'foto' ? 'Foto am Beamer' : 'Tafel am Beamer';
     const html = `${lfcIc('fol', 16)}<span>Zurück zur Folie ${PR.i + 1}</span><small>${what}</small>`;
     if (!b) { b = el(`<button type="button" class="lfc-back" data-l="toslide"></button>`); root.appendChild(b); }
     if (b.innerHTML !== html) b.innerHTML = html; b.title = what + ' – tippen, um die Folie wieder zu zeigen';
@@ -334,6 +334,8 @@ function lfcStart(O = {}) {
   window.addEventListener('resize', onRs);
   // ---------- Live-Kanal ----------
   const takePres = m => {
+    // Laptop hat eine neuere Fassung: die Companion-Seite einmal neu laden (nicht mitten im Schreiben)
+    if (page && m.v && m.v !== LW_BUILD && !T.live) { let tried = ''; try { tried = sessionStorage.getItem('lfc.reload') || ''; } catch {} if (tried !== m.v) { try { sessionStorage.setItem('lfc.reload', m.v); } catch {} location.reload(); return; } }
     const old = PR || {}; const was = live(); PR = m; lastHb = Date.now();
     const panning = Date.now() - T.panT < 900;
     if (m.tafel) { B.tafel.h = m.tafel.h || 900; B.tafel.pat = m.tafel.pat || 'kariert'; if (!panning) B.tafel.sy = m.tafel.sy || 0; }

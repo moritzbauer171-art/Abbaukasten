@@ -59,3 +59,18 @@ def test_knopf_zurueck_zur_folie(lw):
     assert pad.locator('.lfc-back').is_visible() and 'schwarz' in pad.locator('.lfc-back').inner_text()
     pad.locator('.lfc-back').click(); pad.wait_for_timeout(1500); assert pad.locator('.lfc-back').count() == 0
     pad.screenshot(path=str(__import__('conftest').OUT / 'back_end.png'))
+
+def test_knopf_bei_foto_am_beamer(lw):
+    from conftest import blocks_standard
+    pg = lw.open(); lw.new_lesson(pg); lw.setup(pg, blocks_standard()); pg.evaluate("__SV()"); pg.wait_for_timeout(400)
+    pad = lw.open('?tafel', viewport={'width': 1180, 'height': 820})
+    pg.evaluate("__OP(0)")
+    try: pad.wait_for_selector('.lfc-tkm', timeout=12000)
+    except Exception: pad.reload(); pad.wait_for_selector('.lfc-tkm', timeout=15000)
+    pad.wait_for_timeout(800); assert pad.locator('.lfc-back').count() == 0
+    pg.evaluate("__FS([{ id: 'f1', path: 'x/f1.jpg', ink: [] }])"); pg.wait_for_timeout(1500)
+    assert pg.locator('.pr-boarding').count() == 1
+    assert pad.locator('.lfc-back').is_visible(), 'Knopf fehlt bei Foto am Beamer'
+    assert 'Foto' in pad.locator('.lfc-back').inner_text()
+    pad.locator('.lfc-back').click(); pad.wait_for_timeout(1500)
+    assert pg.locator('.pr-boarding').count() == 0 and pad.locator('.lfc-back').count() == 0

@@ -22,6 +22,7 @@ HOOKS = [('const state = {', 'const state = window.__S = {'),
          ('function saveNow() {', 'window.__SV = () => saveNow(); function saveNow() {'),
          ('function openVP() {', 'window.__VP = () => openVP(); function openVP() {'),
          ("const kOf = () => (tab === 'fol' ? 'sl' : tab);", "const kOf = () => (tab === 'fol' ? 'sl' : tab); window.__LB = () => B;"),
+         ('async function foShow(items, v) {', 'window.__FS = (...a) => foShow(...a); async function foShow(items, v) {'),
          ('function lfcFull(key) {', 'window.__PCT = () => INK.remote.keyed(BOARD.s.id).length;\n  function lfcFull(key) {')]
 
 @pytest.fixture(scope='session')

@@ -3983,6 +3983,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
+const LW_BUILD = 'cd45621d37';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -8716,7 +8717,7 @@ function openPres(start, opts = {}) {
   function foPan() { return $p('.lf-pan'); }
   // Zustand für das Companion-Gerät
   var LFC = LFC || { sid: Math.random().toString(36).slice(2, 10), t: 0, pt: 0 };
-  function lfcState() { const pk = BOARD.pk; return { t: 'pres', sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', yt: slide && slide.querySelector('.pr-yt') && !BOARD.open ? (ytOn === P.i ? 'on' : 'ready') : '', ytbig: ytBig, ytauf: ytAuf, ythas: !!(slide && slide.querySelector('.pr-yt-auf')), tm: !!TBo.isOn(), cur: P.cur, max: P.max, up: +state.sheet.updatedAt || 0, board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
+  function lfcState() { const pk = BOARD.pk; return { t: 'pres', v: LW_BUILD, sid: LFC.sid, sheet: state.sheet.id, title: plainText(state.sheet.meta.title || '') || 'Stunde', gp: !!pkOn, i: P.i, n: S.length, lab: S[P.i] ? tbStripLab(S[P.i]) : '', nx: S[P.i + 1] ? tbStripLab(S[P.i + 1]) : '', yt: slide && slide.querySelector('.pr-yt') && !BOARD.open ? (ytOn === P.i ? 'on' : 'ready') : '', ytbig: ytBig, ytauf: ytAuf, ythas: !!(slide && slide.querySelector('.pr-yt-auf')), tm: !!TBo.isOn(), cur: P.cur, max: P.max, up: +state.sheet.updatedAt || 0, board: BOARD.open ? BOARD.kind : '', bl: BL, tafel: { h: BOARD.s.h || 900, sy: BOARD.s.sy || 0, pat: BOARD.s.pat || 'kariert' }, pk: pkOn ? { q: pk.q, lab: pk.lab, either: !!pk.either, h: pk.h || 900, sy: pk.sy || 0 } : null }; }
   function lfcHb() { if (!foOn || !LFC) return; clearTimeout(LFC.t); LFC.t = setTimeout(() => { if (document.body.contains(ov)) { fotoSend(lfcState()); lfcTfl(); } }, 120); }
   function lfcFull(key) { if (!foOn) return; if (key === 'sl') { const sl0 = S[P.i]; if (sl0) fotoSend({ t: 'bfull', key, i: P.i, ink: INK.remote.keyed(inkKey(sl0)) }); return; } fotoSend({ t: 'bfull', key, ink: INK.remote.keyed(key === 'pk' ? 'pk' : BOARD.s.id) }); }
   function lfcTfl(force) { if (!foOn || !LFC || !LFC.peer || Date.now() - LFC.peer > 600000) return; const now = Date.now(); if (!force && now - (LFC.tt || 0) < 1500) { clearTimeout(LFC.tq); LFC.tq = setTimeout(() => lfcTfl(), 1500 - (now - (LFC.tt || 0)) + 20); return; }
@@ -17268,7 +17269,7 @@ function lfcStart(O = {}) {
   const backSync = () => {
     const off = live() && PR && (PR.board || PR.bl); let b = root.querySelector(':scope > .lfc-back');
     if (!off) { if (b) b.remove(); return; }
-    const what = PR.bl ? 'Beamer ist schwarz' : PR.board === 'pk' ? 'Pro/Contra am Beamer' : 'Tafel am Beamer';
+    const what = PR.bl ? 'Beamer ist schwarz' : PR.board === 'pk' ? 'Pro/Contra am Beamer' : PR.board === 'foto' ? 'Foto am Beamer' : 'Tafel am Beamer';
     const html = `${lfcIc('fol', 16)}<span>Zurück zur Folie ${PR.i + 1}</span><small>${what}</small>`;
     if (!b) { b = el(`<button type="button" class="lfc-back" data-l="toslide"></button>`); root.appendChild(b); }
     if (b.innerHTML !== html) b.innerHTML = html; b.title = what + ' – tippen, um die Folie wieder zu zeigen';
@@ -17546,6 +17547,8 @@ function lfcStart(O = {}) {
   window.addEventListener('resize', onRs);
   // ---------- Live-Kanal ----------
   const takePres = m => {
+    // Laptop hat eine neuere Fassung: die Companion-Seite einmal neu laden (nicht mitten im Schreiben)
+    if (page && m.v && m.v !== LW_BUILD && !T.live) { let tried = ''; try { tried = sessionStorage.getItem('lfc.reload') || ''; } catch {} if (tried !== m.v) { try { sessionStorage.setItem('lfc.reload', m.v); } catch {} location.reload(); return; } }
     const old = PR || {}; const was = live(); PR = m; lastHb = Date.now();
     const panning = Date.now() - T.panT < 900;
     if (m.tafel) { B.tafel.h = m.tafel.h || 900; B.tafel.pat = m.tafel.pat || 'kariert'; if (!panning) B.tafel.sy = m.tafel.sy || 0; }

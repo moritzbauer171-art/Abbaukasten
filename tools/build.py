@@ -29,7 +29,9 @@ def index_html(src):
             + head.strip() + '\n</head>\n<body>\n' + body.strip() + '\n</body>\n</html>\n')
 
 if __name__ == '__main__':
-    src = join(); idx = index_html(src)
+    src = join()
+    # Bauversion: Kennung aus dem Inhalt; der Companion lädt sich neu, wenn der Laptop eine andere hat
+    import hashlib; src = src.replace('__LW_BUILD__', hashlib.sha1(src.encode()).hexdigest()[:10]); idx = index_html(src)
     if '--check' in sys.argv:
         ok = (ROOT / 'index.html').read_text() == idx
         print('index.html ist aktuell' if ok else 'index.html ist veraltet – bitte tools/build.py ausführen'); sys.exit(0 if ok else 1)

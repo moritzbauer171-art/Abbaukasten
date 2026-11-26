@@ -1,3 +1,4 @@
+const LW_BUILD = '__LW_BUILD__';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
