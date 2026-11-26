@@ -167,21 +167,29 @@ def test_tabelle_popup(lw):
     assert pg.locator('#tbm').count() == 0
 
 def test_raketenaufgabe(lw):
+    from conftest import OUT
     pg = lw.open(); lw.new_lesson(pg)
-    lw.setup(pg, [{'id': 't1', 'type': 'tasks', 'title': '', 'items': [{'text': 'Beschreiben Sie die Panels.', 'soz': 'ea'}, {'text': 'Entwerfen Sie ein eigenes Panel zu einer Tagebuchstelle.', 'soz': 'ea'}]}])
+    lw.setup(pg, [{'id': 't1', 'type': 'tasks', 'title': '', 'items': [{'text': 'Beschreiben Sie die Panels.', 'soz': 'ea'}, {'text': 'Entwerfen Sie ein eigenes Panel zu einer Tagebuchstelle.', 'soz': 'ea'}, {'text': 'Vergleichen Sie mit dem Tagebuch.', 'soz': 'pa'}]}])
     pg.evaluate("__RP()"); pg.wait_for_timeout(400)
     pg.locator('#editor [data-act="it-rk"][data-i="1"]').click(); pg.wait_for_timeout(500)
     assert pg.evaluate("__S.sheet.blocks[0].items[1].rk") is True
-    assert pg.locator('#pages .task-rk').count() == 1
-    assert 'raketenaufgabe' in pg.locator('#pages .task').nth(1).inner_text().lower()
-    pg.locator('#pages .blk-tasks').screenshot(path=str(__import__('conftest').OUT / 'rk_blatt.png'))
-    xml = docx(pg, 'rk.docx'); assert 'Raketenaufgabe' in xml.upper() or 'RAKETENAUFGABE' in xml
+    # Standard: kleine Rakete an der Nummer
+    assert pg.locator('#pages .task-rkb').count() == 1 and pg.locator('#pages .task-rksec').count() == 0
+    pg.locator('#pages .blk-tasks').screenshot(path=str(OUT / 'rk_nr.png'))
+    xml = docx(pg, 'rk.docx'); assert '🚀' in xml
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
+    # Eigener Abschnitt: Raketenaufgabe wandert ans Ende, Überschrift davor
+    pg.locator('#editor [data-act="rk-style"][data-v="abschnitt"]').click(); pg.wait_for_timeout(500)
+    assert pg.evaluate("__S.sheet.blocks[0].items.map(x => !!x.rk)") == [False, False, True]
+    assert pg.locator('#pages .task-rksec').count() == 1 and pg.locator('#pages .task-rkb').count() == 0
+    assert 'fertig sind' in pg.locator('#pages .task-rksec').inner_text()
+    pg.locator('#editor [data-rkh]').fill('Raketenstart'); pg.wait_for_timeout(700)
+    assert 'Raketenstart' in pg.locator('#pages .task-rksec').inner_text()
+    pg.locator('#pages .blk-tasks').screenshot(path=str(OUT / 'rk_ab.png'))
+    xml = docx(pg, 'rk2.docx'); assert 'Raketenstart' in xml
     pg.keyboard.press('Escape'); pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
     for _ in range(5):
-        if pg.locator('.pr .pr-slide .pr-rk').count(): break
+        if pg.locator('.pr .pr-slide .pr-rksec').count(): break
         pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
-    assert pg.locator('.pr .pr-slide .pr-rk').count() == 1
-    pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'rk_folie.png'))
-    pg.keyboard.press('Escape'); pg.wait_for_timeout(400)
-    pg.locator('#editor [data-act="it-rk"][data-i="1"]').click(); pg.wait_for_timeout(400)
-    assert pg.locator('#pages .task-rk').count() == 0
+    assert pg.locator('.pr .pr-slide .pr-rksec').count() == 1
+    pg.locator('.pr .pr-slide').screenshot(path=str(OUT / 'rk_folie.png'))

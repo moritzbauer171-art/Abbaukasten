@@ -37,6 +37,7 @@ function onInput(e) {
   if (t.dataset && t.dataset.zt != null) { const [sch, i, f] = t.dataset.zt.split('|'); const L = zeitenOf(sch).map(z => ({ ...z })); if (!L[+i]) return; L[+i][f] = f === 'l' ? t.value : hmOk(t.value) || t.value; zeitenSet(sch, L); const d = t.closest('.zt-row') && t.closest('.zt-row').querySelector('.zt-d'); if (d) { const n = hm(L[+i].e) - hm(L[+i].s); d.textContent = n > 0 ? n + ' Min.' : ''; } return; }
   if (t.dataset && t.dataset.bkq != null) { state.bkQ = t.value; const l = $('#bk-list'); if (l) l.innerHTML = bkList(); return; }
   if (t.dataset && t.dataset.sf != null) { state.sheet.meta.frage = t.value; changed(false); return; }
+  if (t.dataset && t.dataset.rkh != null) { state.sheet.meta.rkHead = t.value; changed(false); return; }
   if (t.dataset && t.dataset.st === 'title') { if (!state.sheet.stunde) state.sheet.stunde = {}; state.sheet.stunde.title = t.value; changed(false); return; }
   if (t.dataset && t.dataset.rlpq != null) { state.rlpQ = t.value; rlpFilter(t.closest('.rlp-f')); return; }
   if (isRt && rtAuto(e, t)) return;
@@ -212,7 +213,8 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
-    case 'it-rk': { const it = (b.items || [])[+a.dataset.i]; if (!it) return; if (it.rk) delete it.rk; else it.rk = true; changed(true); renderEditor(); return; }
+    case 'it-rk': { const it = (b.items || [])[+a.dataset.i]; if (!it) return; snapshot(); if (it.rk) delete it.rk; else it.rk = true; if (rkStyle(state.sheet.meta) === 'abschnitt') rkSort(b); changed(true); renderEditor(); return; }
+    case 'rk-style': snapshot(); if (a.dataset.v === 'abschnitt') { state.sheet.meta.rkStyle = 'abschnitt'; state.sheet.blocks.forEach(rkSort); } else delete state.sheet.meta.rkStyle; changed(true); renderEditor(); return;
     case 'chat-dev': b.opt = b.opt || {}; if (a.dataset.v) b.opt.dev = a.dataset.v; else delete b.opt.dev; changed(true); renderEditor(); return;
     case 'chat-st': b.style = a.dataset.v; changed(true); renderEditor(); return;
     case 'chat-p': { const m = (b.msgs || [])[+a.dataset.i]; if (!m) return; m.p = +a.dataset.v; changed(true); renderEditor(); return; }

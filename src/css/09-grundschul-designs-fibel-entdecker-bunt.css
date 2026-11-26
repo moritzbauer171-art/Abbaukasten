@@ -958,3 +958,8 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-chatw .ch-ip .ch-ph{width:23em}
 .pr-rk{display:flex;width:fit-content;align-items:center;gap:.3em;font-size:.5em;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);margin-bottom:.25em}
 .pr-rk .rk-i{width:1.4em;height:1.4em}
+.pr-no{position:relative}
+.pr-rkb{position:absolute;right:-.42em;top:-.42em;width:.62em;height:.62em;border-radius:50%;background:#fff;color:var(--acc);display:grid;place-items:center}
+.pr-rkb .rk-i{width:.55em;height:.55em;stroke-width:2.2}
+.pr-rksec{display:flex;align-items:center;gap:.35em;color:var(--acc);font-weight:800;font-size:.5em;letter-spacing:.02em;margin:1.1em 0 .35em}
+.pr-rksec .rk-i{width:1.3em;height:1.3em}.pr-rksec i{flex:1;border-top:2px solid color-mix(in srgb,var(--acc) 50%,transparent)}
