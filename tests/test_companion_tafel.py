@@ -32,3 +32,30 @@ def test_tafelansicht_vom_tablet(lw):
     after = pg.evaluate("parseFloat(document.querySelector('.pr .tw-symbol').style.left)")
     assert after < before - 40
     pad.wait_for_timeout(1800); pad.screenshot(path=str(OUT / 'tm_pad2.png'))
+
+def test_knopf_zurueck_zur_folie(lw):
+    from conftest import blocks_standard
+    pg = lw.open(); lw.new_lesson(pg); lw.setup(pg, blocks_standard()); pg.evaluate("__SV()"); pg.wait_for_timeout(400)
+    pad = lw.open('?tafel', viewport={'width': 1180, 'height': 820})
+    pg.evaluate("__OP(0)")
+    try: pad.wait_for_selector('.lfc-tkm', timeout=12000)
+    except Exception: pad.reload(); pad.wait_for_selector('.lfc-tkm', timeout=15000)
+    pad.wait_for_timeout(800)
+    assert pad.locator('.lfc-back').count() == 0
+    # Tafel an den Beamer
+    pad.click('.lfc-tkm'); pad.wait_for_timeout(300); pad.click('.lfc-modes [data-tab="tafel"]'); pad.wait_for_timeout(800)
+    pad.locator('.lfc-fx').click(); pad.wait_for_timeout(1500)
+    assert pg.locator('.pr.pr-boarding, .pr-boarding').count() == 1
+    assert pad.locator('.lfc-back').is_visible()
+    # auch im Fotos-Bereich sichtbar
+    pad.click('.lfc-tkm'); pad.wait_for_timeout(300)
+    if pad.locator('.lfc-modes [data-tab="cam"]').count(): pad.click('.lfc-modes [data-tab="cam"]'); pad.wait_for_timeout(600); assert pad.locator('.lfc-back').is_visible()
+    pad.locator('.lfc-back').click(); pad.wait_for_timeout(1500)
+    assert pg.locator('.pr-boarding').count() == 0
+    assert pad.locator('.lfc-back').count() == 0
+    assert pad.locator('.lfc-seg [data-tab="fol"][aria-selected="true"], .lfc2').count() >= 1
+    # Beamer schwarz → Knopf erscheint, Tipp schaltet wieder an
+    pg.locator('.pr-bar button', has_text='Schwarz').first.click(); pg.wait_for_timeout(1500)
+    assert pad.locator('.lfc-back').is_visible() and 'schwarz' in pad.locator('.lfc-back').inner_text()
+    pad.locator('.lfc-back').click(); pad.wait_for_timeout(1500); assert pad.locator('.lfc-back').count() == 0
+    pad.screenshot(path=str(__import__('conftest').OUT / 'back_end.png'))

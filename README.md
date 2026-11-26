@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- Companion: Knopf **„Zurück zur Folie“** oben in der Mitte, immer sichtbar, solange am Beamer Tafel, Pro/Contra oder Schwarz läuft – ein Tipp zeigt wieder die aktuelle Folie.
 - **Companion-Ersatzverbindung**: Sperrt ein Netz (z. B. Schul-WLAN) den Live-Kanal, schalten iPad und Laptop nach wenigen Sekunden selbst auf normale Web-Anfragen um (Tabelle `ab_relay`, nur eigene Einträge, löscht sich selbst). Stift, Tafel, Fernbedienung laufen mit etwa einer halben Sekunde Verzögerung; oben erscheint „Ersatzverbindung“.
 - **Arbeitsteilige ABs**: Haken „Arbeitsteilig“ bei mehreren ABs einer Stunde – nebeneinanderliegende ABs mit Haken bekommen eine gemeinsame Zwischenfolie und je Aufgabenbaustein eine Folie: der n-te Baustein jedes ABs steht mit den n-ten der anderen nebeneinander (je AB eine Spalte, Zeit = längstes AB).
 - **Tabelle groß bearbeiten**: Popup (Knopf, Werkzeugleiste oder Doppelklick in der Vorschau) mit Zeilen/Spalten an beliebiger Stelle einfügen, verschieben, löschen; Spaltenbreite, Farben, Erwartungen.

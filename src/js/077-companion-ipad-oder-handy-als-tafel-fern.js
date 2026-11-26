@@ -52,7 +52,17 @@ function lfcStart(O = {}) {
   const drawTab = () => tab === 'fol' || tab === 'tafel' || tab === 'pk';
   const modes = () => [['fol', 'Folie'], ['tafel', 'Tafel'], ...(PR && PR.gp ? [['pk', 'Pro/Contra']] : []), ['cam', 'Fotos']];
   // ---------- Kopfzeile: links zurück, Mitte Ort, rechts Modi, Referent, ⋯ ----------
+  // Immer sichtbar, wenn am Beamer gerade keine Folie läuft (Tafel, Pro/Contra, schwarz): ein Tipp holt die Folie zurück
+  const backSync = () => {
+    const off = live() && PR && (PR.board || PR.bl); let b = root.querySelector(':scope > .lfc-back');
+    if (!off) { if (b) b.remove(); return; }
+    const what = PR.bl ? 'Beamer ist schwarz' : PR.board === 'pk' ? 'Pro/Contra am Beamer' : 'Tafel am Beamer';
+    const html = `${lfcIc('fol', 16)}<span>Zurück zur Folie ${PR.i + 1}</span><small>${what}</small>`;
+    if (!b) { b = el(`<button type="button" class="lfc-back" data-l="toslide"></button>`); root.appendChild(b); }
+    if (b.innerHTML !== html) b.innerHTML = html; b.title = what + ' – tippen, um die Folie wieder zu zeigen';
+  };
   const renderTop = () => {
+    backSync();
     tl.innerHTML = `<button type="button" class="lfc-tb" data-l="exit" aria-label="Zurück zu LehrWerk">${lfcIc('back', 22)}</button><i class="lfc-dotc${live() ? ' ok' : ''}${FB.on ? ' fb' : ''}" title="${live() ? (FB.on ? 'Verbunden über die Ersatzverbindung (Live-Kanal im Netz gesperrt)' : 'Verbunden') : 'Nicht verbunden'}"></i>${FB.on ? '<span class="lfc-fb" title="Dieses Netz sperrt den Live-Kanal. Die Verbindung läuft über normale Web-Anfragen – mit etwas Verzögerung.">Ersatzverbindung</span>' : ''}`;
     if (!live()) { tc.innerHTML = '<b>Companion</b>'; tr.innerHTML = ''; return; }
     const lab = tab === 'fol' ? `<b>${PR.i + 1} / ${PR.n}</b><span>${esc(PR.lab || '')}${PR.max ? ` · Schritt ${PR.cur || 0}/${PR.max}` : ''}</span>` : tab === 'tafel' ? `<b>Tafel</b><span>${boardOn('tafel') ? 'am Beamer' : 'nur hier · beim Schreiben am Beamer'}</span>` : tab === 'pk' ? `<b>Pro / Contra</b><span>${boardOn('pk') ? 'am Beamer' : 'nur hier'}</span>` : `<b>Fotos</b><span>${esc(PR.title || '')}</span>`;
@@ -299,6 +309,7 @@ function lfcStart(O = {}) {
     const cl = e.target.closest('[data-col]'); if (cl) { if (T.tool !== 'hl') T.tool = 'pen'; T.btool = T.tool; T.col[T.tool] = cl.dataset.col; palSync(); palRe(); sinkSoon(); main.querySelectorAll('[data-tool]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.tool === T.tool))); main.querySelectorAll('[data-col]').forEach(x => x.setAttribute('aria-pressed', String(x === cl))); return; }
     const w = e.target.closest('[data-w]'); if (w) { T.w = w.dataset.w; shEl.querySelectorAll('[data-w]').forEach(x => x.setAttribute('aria-pressed', String(x === w))); return; }
     const pt = e.target.closest('[data-pat]'); if (pt) { sheet(''); B.tafel.pat = pt.dataset.pat; send({ t: 'bpat', pat: pt.dataset.pat }); drawSl(); return; }
+    if (e.target.closest('.lfc-back')) { if (SHEET) sheet(''); if (PR && PR.board) send({ t: 'board', kind: PR.board, on: false }); nav('slide'); if (PR) { PR.board = ''; PR.bl = ''; } MODO = false; if (tab !== 'fol') { tab = 'fol'; T.tool = 'nav'; } render(); return; }
     const nv = e.target.closest('[data-nav]'); if (nv) { if (SHEET) sheet(''); nav(nv.dataset.nav); return; }
     const b = e.target.closest('[data-l]'); if (!b) return; const a = b.dataset.l;
     if (a === 'exit') close(true);
