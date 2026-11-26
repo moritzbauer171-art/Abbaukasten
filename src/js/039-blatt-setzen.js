@@ -517,6 +517,10 @@ function layout() {
     items.forEach(it => { if (!it.el || !it.el.classList.contains('blk-lb')) return; const im = it.el.querySelector('.lb-mid img'); if (!im || it.h <= lim) return;
       let mx = parseFloat(getComputedStyle(im).maxHeight) / MMPX || 120;
       while (it.h > lim && mx > 40) { mx -= 6; im.style.maxHeight = mx + 'mm'; measure(it); } }); }
+  // Chat im iPhone-Format genauso: als Ganzes verkleinern, bis es mit dem Kopf auf eine Seite passt
+  { const hd = items.find(it => it.type === 'head' && it.el); const lim = AVAIL - (hd ? hd.h + GAP : 0);
+    items.forEach(it => { if (!it.el || !it.el.classList.contains('ch-ip') || it.h <= lim) return;
+      let f = parseFloat(getComputedStyle(it.el).fontSize) || 13; const f0 = f; while (it.h > lim && f > f0 * 0.5) { f *= 0.93; it.el.style.fontSize = f.toFixed(2) + 'px'; measure(it); } }); }
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
   const tag = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? grpName(meta, v.grp) : '', v.lvl !== 'all' ? LV[v.lvl].sym : ''].filter(Boolean).join(' · ');

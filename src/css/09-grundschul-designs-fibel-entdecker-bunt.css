@@ -955,3 +955,4 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-chatw .blk-chat{font-size:1em;width:100%}
 .pr-chatw .blk-chat .ch-ph{width:min(var(--chw,72%),38em)}
 .pr-chatw .ch-fk{font-size:.6em;color:#888}
+.pr-chatw .ch-ip .ch-ph{width:23em}

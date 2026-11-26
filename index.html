@@ -1652,6 +1652,32 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .ch-mr .rtx{min-height:44px}
 .blk-chat{position:relative}
 .ch-lnn{position:absolute;width:6mm;text-align:right;transform:translateY(-50%);font-size:8pt;color:var(--paper-muted,#777);font-family:var(--font-text,inherit);line-height:1}
+/* Chat: Snap (wie Snapchat) – keine Blasen, alles links, farbiger Strich, Namen in Großbuchstaben */
+.blk-chat.cs-snap{--bg:#fff;--hd:#fff;--hdc:#111;--meta:#9A9A9A;--sys:transparent;--sysc:#9A9A9A;--in:#F2F2F2}
+.cs-snap .ch-h{border-bottom:.06em solid #EEE}.cs-snap .ch-h .ch-av{background:#FFFC00;color:#111}
+.cs-snap .ch-hi .ch-i{background:#F2F2F2;border-radius:50%;padding:.28em;width:1.7em;height:1.7em}
+.cs-snap .ch-m{flex-direction:column;align-items:stretch;gap:0}
+.cs-snap .ch-m.me{justify-content:flex-start}
+.cs-snap .ch-n{color:var(--pc);font-size:.72em;letter-spacing:.03em;margin:0 0 .15em}
+.cs-snap .ch-m .ch-bub,.cs-snap .ch-m.me .ch-bub{max-width:100%;background:none;box-shadow:none;border-radius:0;border-left:.16em solid var(--pc);padding:.05em .55em;color:#111}
+.cs-snap .ch-m.ot.first .ch-bub,.cs-snap .ch-m.me.first .ch-bub{border-radius:0}
+.cs-snap .ch-z{display:none}
+.cs-snap .ch-sys span{text-transform:uppercase;font-size:.68em;letter-spacing:.06em;font-weight:600}
+.cs-snap .ch-camb{width:2em;height:2em;border-radius:50%;background:#F2F2F2;display:grid;place-items:center;color:#111}
+.cs-snap .ch-inp{background:#F2F2F2;color:#9A9A9A}.cs-snap .ch-snd{color:#555}
+/* iPhone-Format: Seitenverhältnis 9 : 19,5, Rahmen, Dynamic Island, Statusleiste, Home-Balken */
+.blk-chat.ch-ip{font-size:calc(.95em * var(--chs,1))}
+.ch-ip .ch-ph{width:23em;aspect-ratio:9/19.5;border:.55em solid #1C1C1E;border-radius:3.1em;box-shadow:0 0 0 .1em #6B6B70,inset 0 0 0 .08em rgba(255,255,255,.08);position:relative}
+.ch-ip .ch-b{flex:1;min-height:0;overflow:hidden;justify-content:flex-end}
+.ch-sb{display:flex;align-items:center;justify-content:space-between;padding:.65em 1.5em .25em 1.9em;background:var(--hd);color:var(--hdc);font-size:.92em;position:relative}
+.ch-sb b{font-weight:650;letter-spacing:.01em}
+.ch-isl{position:absolute;left:50%;top:.45em;transform:translateX(-50%);width:6.6em;height:1.85em;border-radius:1em;background:#000}
+.ch-sbi{display:flex;gap:.3em;align-items:center}.ch-sbi svg{height:.78em;width:auto;fill:currentColor}
+.ch-ip .ch-h{padding-top:.4em}
+.ch-home{display:flex;justify-content:center;padding:.35em 0 .45em;background:var(--bg)}
+.ch-home span{width:8.2em;height:.3em;border-radius:.2em;background:#111;opacity:.85}
+.cs-dunkel .ch-home span{background:#fff}.ch-ip .ch-in{padding-bottom:.4em}
+.cs-gruen.ch-ip .ch-home,.cs-hell.ch-ip .ch-home{background:var(--in)}.cs-hell.ch-ip .ch-in{border-top:0}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -3493,6 +3519,7 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-chatw .blk-chat{font-size:1em;width:100%}
 .pr-chatw .blk-chat .ch-ph{width:min(var(--chw,72%),38em)}
 .pr-chatw .ch-fk{font-size:.6em;color:#888}
+.pr-chatw .ch-ip .ch-ph{width:23em}
 /* ===== Startseite ===== */
 #home-root:empty{display:none}
 .hm{position:fixed;inset:0;z-index:38;background:var(--desk);overflow:auto;-webkit-overflow-scrolling:touch;contain:layout paint}
@@ -4096,7 +4123,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = '1758851f8a';
+const LW_BUILD = '03856e9a64';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -9943,17 +9970,17 @@ function adderHTML(A = 'blatt') {
 // Gestaltung angelehnt an bekannte Messenger – ohne Logos und Markennamen auf dem Blatt
 const CHAT_ST = {
   gruen: { l: 'Grün', hint: 'wie WhatsApp' }, blau: { l: 'Blau', hint: 'wie iMessage' }, verlauf: { l: 'Verlauf', hint: 'wie Instagram' },
-  hell: { l: 'Hellblau', hint: 'wie Telegram' }, dunkel: { l: 'Dunkel', hint: 'wie Discord' }, sms: { l: 'Schlicht', hint: 'SMS, gut zum Drucken' }, ki: { l: 'KI-Chat', hint: 'wie ein Chatbot' }
+  hell: { l: 'Hellblau', hint: 'wie Telegram' }, snap: { l: 'Snap', hint: 'wie Snapchat' }, dunkel: { l: 'Dunkel', hint: 'wie Discord' }, sms: { l: 'Schlicht', hint: 'SMS, gut zum Drucken' }, ki: { l: 'KI-Chat', hint: 'wie ein Chatbot' }
 };
 const CHAT_PC = ['#1F7A8C', '#C2410C', '#7C3AED', '#15803D', '#B91C1C', '#0369A1', '#A16207', '#BE185D'];
 const chatSt = b => (CHAT_ST[b.style] ? b.style : 'gruen');
 const chatPeople = b => (Array.isArray(b.people) && b.people.length ? b.people : [{ n: 'Ich' }, { n: 'Person' }]);
 const chatIni = n => postIni(n);
-const CHAT_IC = { back: '<path d="M14.5 5.5 8 12l6.5 6.5"/>', call: '<path d="M6.6 3.8 9 4.2l1.3 3.6-1.8 1.4a12 12 0 0 0 6.3 6.3l1.4-1.8 3.6 1.3.4 2.4a2 2 0 0 1-2 2.1A16.5 16.5 0 0 1 4.5 5.8a2 2 0 0 1 2.1-2z"/>', vid: '<rect x="3" y="6.5" width="12.5" height="11" rx="2.2"/><path d="m15.5 10.5 5-3v9l-5-3z"/>', more: '<circle cx="12" cy="5.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18.5" r="1.2"/>', send: '<path d="M4 12 20 4l-4 16-4-6.5z"/>', mic: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3.5"/>', plus: '<path d="M12 5v14M5 12h14"/>', ticks: '<path d="m2.5 12.5 4 4 8-9M9.5 16.5l1 0 8-9"/>' };
+const CHAT_IC = { back: '<path d="M14.5 5.5 8 12l6.5 6.5"/>', call: '<path d="M6.6 3.8 9 4.2l1.3 3.6-1.8 1.4a12 12 0 0 0 6.3 6.3l1.4-1.8 3.6 1.3.4 2.4a2 2 0 0 1-2 2.1A16.5 16.5 0 0 1 4.5 5.8a2 2 0 0 1 2.1-2z"/>', vid: '<rect x="3" y="6.5" width="12.5" height="11" rx="2.2"/><path d="m15.5 10.5 5-3v9l-5-3z"/>', more: '<circle cx="12" cy="5.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18.5" r="1.2"/>', send: '<path d="M4 12 20 4l-4 16-4-6.5z"/>', mic: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3.5"/>', plus: '<path d="M12 5v14M5 12h14"/>', ticks: '<path d="m2.5 12.5 4 4 8-9M9.5 16.5l1 0 8-9"/>', cam: '<path d="M4 8.5a2 2 0 0 1 2-2h2l1.5-2h5L16 6.5h2a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.3"/>', smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0"/><circle cx="9.3" cy="10" r=".6"/><circle cx="14.7" cy="10" r=".6"/>' };
 const chatI = (k, c = '') => `<svg class="ch-i${c ? ' ' + c : ''}" viewBox="0 0 24 24" aria-hidden="true">${CHAT_IC[k]}</svg>`;
 function chatHTML(b, tag) {
   const st = chatSt(b), P = chatPeople(b), o = b.opt || {}, M = Array.isArray(b.msgs) ? b.msgs : [], h = b.head || {};
-  const group = P.length > 2, ki = st === 'ki', dark = st === 'dunkel';
+  const group = P.length > 2, ki = st === 'ki', dark = st === 'dunkel', snap = st === 'snap', ip = o.dev === 'iphone';
   const name = String(h.name || '').trim() || (group ? 'Gruppe' : (P[1] && P[1].n) || 'Chat');
   const lines = n => '<span class="ch-wl"></span>'.repeat(n);
   let prev = null;
@@ -9963,16 +9990,20 @@ function chatHTML(b, tag) {
     const first = prev !== pi, nx = M[i + 1], last = !nx || nx.sys || (+nx.p || 0) !== pi; prev = pi;
     const txt = String(m.t || '').trim();
     const inner = txt ? inlineHTML(txt).replace(/\n/g, '<br>') : lines(Math.max(1, Math.min(6, +m.ln || 2)));
-    const showName = first && (dark || (!me && !ki && group && o.names !== false));
+    const showName = first && (dark || snap || (!me && !ki && group && o.names !== false));
     const meta = (o.time !== false && m.z && !ki ? `<span class="ch-z">${esc(m.z)}${me && o.read !== false && !ki && !dark ? chatI('ticks', 'ch-tk') : ''}</span>` : '');
     const av = (dark || (!me && (ki || (group && st !== 'blau' && st !== 'sms')))) ? `<span class="ch-av sm" style="--pc:${col}">${ki ? 'KI' : esc(chatIni(who.n))}</span>` : '';
+    if (snap) return `<div data-mi="${i}" class="ch-m ${me ? 'me' : 'ot'}${first ? ' first' : ''}${txt ? '' : ' leer'}" style="--pc:${me ? '#F23C57' : P.length > 2 ? col : '#0EADFF'}">${showName ? `<b class="ch-n">${esc((String(who.n || '').trim() || 'Person').toUpperCase())}</b>` : ''}<div class="ch-bub"><div class="ch-t">${inner}</div>${o.time !== false && m.z ? `<span class="ch-z">${esc(m.z)}</span>` : ''}</div></div>`;
     return `<div data-mi="${i}" class="ch-m ${me ? 'me' : 'ot'}${first ? ' first' : ''}${last ? ' last' : ''}${txt ? '' : ' leer'}" style="--pc:${col}">${av ? (first ? av : '<span class="ch-av sm ph"></span>') : ''}<div class="ch-bub">${showName ? `<b class="ch-n">${esc(String(who.n || '').trim() || 'Person')}${dark && m.z && o.time !== false ? `<span class="ch-z">${esc(m.z)}</span>` : ''}</b>` : ''}<div class="ch-t">${inner}</div>${dark ? '' : meta}</div></div>`;
   }).join('');
   const head = ki ? `<div class="ch-h"><span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : ''}</span></div>`
     : `<div class="ch-h">${dark ? '<span class="ch-hash">#</span>' : chatI('back', 'ch-bk')}${dark ? '' : `<span class="ch-av">${esc(chatIni(name))}</span>`}<span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : group && st !== 'dunkel' ? `<small>${esc(P.map(x => String(x.n || '').trim()).filter(Boolean).join(', '))}</small>` : ''}</span>${dark ? '' : `<span class="ch-hi">${st === 'blau' ? chatI('vid') : chatI('vid') + chatI('call')}${st === 'gruen' ? chatI('more') : ''}</span>`}</div>`;
-  const bar = o.bar !== false ? `<div class="ch-in">${ki || dark ? '' : chatI('plus', 'ch-pl')}<span class="ch-inp">${ki ? 'Nachricht an die KI …' : dark ? 'Nachricht an #' + esc(name) : 'Nachricht'}</span>${chatI(ki || st === 'blau' || st === 'verlauf' ? 'send' : 'mic', 'ch-snd')}</div>` : '';
+  const bar = o.bar !== false ? (snap ? `<div class="ch-in"><span class="ch-camb">${chatI('cam')}</span><span class="ch-inp">Chat senden</span>${chatI('smile', 'ch-snd')}${chatI('mic', 'ch-snd')}</div>` : `<div class="ch-in">${ki || dark ? '' : chatI('plus', 'ch-pl')}<span class="ch-inp">${ki ? 'Nachricht an die KI …' : dark ? 'Nachricht an #' + esc(name) : 'Nachricht'}</span>${chatI(ki || st === 'blau' || st === 'verlauf' ? 'send' : 'mic', 'ch-snd')}</div>`) : '';
+  // iPhone: Statusleiste mit Dynamic Island oben, Home-Balken unten
+  const sb = ip ? `<div class="ch-sb"><b>9:41</b><span class="ch-isl"></span><span class="ch-sbi"><svg viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.5 6.9a6.4 6.4 0 0 1 9 0l-1.5 1.5a4.3 4.3 0 0 0-6 0zM1.2 4.6a9.6 9.6 0 0 1 13.6 0l-1.5 1.5a7.5 7.5 0 0 0-10.6 0z"/></svg><svg viewBox="0 0 27 12" aria-hidden="true"><rect x=".6" y=".6" width="22.5" height="10.8" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="2.3" y="2.3" width="16" height="7.4" rx="1.8"/><path d="M24.6 4.2v3.6a1.9 1.9 0 0 0 0-3.6z" opacity=".5"/></svg></span></div>` : '';
+  const home = ip ? '<div class="ch-home"><span></span></div>' : '';
   const w = Math.max(40, Math.min(100, +b.width || 72));
-  return `<div class="blk blk-chat cs-${st}${o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
+  return `<div class="blk blk-chat cs-${st}${ip ? ' ch-ip' : o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%;--chs:${(w / 72).toFixed(3)}">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${sb}${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}${home}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
 }
 
 // Zeilenangaben im Chat: nach dem Setzen die gedruckten Zeilen in den Blasen zählen, jede 5. am Rand vermerken.
@@ -9991,6 +10022,7 @@ function chatLines(root = document.getElementById('pages')) {
       const t = m.querySelector('.ch-t'); if (!t || m.classList.contains('leer') || !t.textContent.trim()) return;
       const r = document.createRange(); r.selectNodeContents(t);
       const tops = []; [...r.getClientRects()].filter(x => x.width > .5 && x.height > .5).forEach(x => { const y = x.top + x.height / 2; if (!tops.some(v => Math.abs(v.y - y) < x.height * .45)) tops.push({ y, h: x.height }); });
+      const B = (c.querySelector('.ch-b') || ph).getBoundingClientRect(); for (let k = tops.length - 1; k >= 0; k--) if (tops[k].y < B.top || tops[k].y > B.bottom) tops.splice(k, 1);
       tops.sort((a, b) => a.y - b.y); const s0 = n + 1;
       tops.forEach(v => { n++; if (n % step === 0) out.push(`<span class="ch-lnn" style="top:${((v.y - C.top) / mmPx).toFixed(2)}mm;left:${((PH.left - C.left) / mmPx - 8).toFixed(2)}mm">${n}</span>`); });
       if (tops.length) map[m.dataset.mi] = [s0, n];
@@ -11549,6 +11581,10 @@ function layout() {
     items.forEach(it => { if (!it.el || !it.el.classList.contains('blk-lb')) return; const im = it.el.querySelector('.lb-mid img'); if (!im || it.h <= lim) return;
       let mx = parseFloat(getComputedStyle(im).maxHeight) / MMPX || 120;
       while (it.h > lim && mx > 40) { mx -= 6; im.style.maxHeight = mx + 'mm'; measure(it); } }); }
+  // Chat im iPhone-Format genauso: als Ganzes verkleinern, bis es mit dem Kopf auf eine Seite passt
+  { const hd = items.find(it => it.type === 'head' && it.el); const lim = AVAIL - (hd ? hd.h + GAP : 0);
+    items.forEach(it => { if (!it.el || !it.el.classList.contains('ch-ip') || it.h <= lim) return;
+      let f = parseFloat(getComputedStyle(it.el).fontSize) || 13; const f0 = f; while (it.h > lim && f > f0 * 0.5) { f *= 0.93; it.el.style.fontSize = f.toFixed(2) + 'px'; measure(it); } }); }
   const pages = paginate(items);
   SPLIT_MATS = new Set(); pages.forEach(p => p.list.forEach(pl => { if (!pl.whole && pl.it.type === 'material' && !(pl.s === 0 && pl.e === pl.it.atoms.length)) SPLIT_MATS.add(pl.it.el.dataset.bid); }));
   const tag = [v.lehrer ? 'Lehrerfassung' : '', v.grp !== 'all' ? grpName(meta, v.grp) : '', v.lvl !== 'all' ? LV[v.lvl].sym : ''].filter(Boolean).join(' · ');
@@ -12624,7 +12660,7 @@ function tbmRender() {
 /* Chat-Editor */
 function chatEdHTML(b) {
   const P = chatPeople(b), M = Array.isArray(b.msgs) ? b.msgs : [], o = b.opt || {}, st = chatSt(b);
-  const sw = { gruen: ['#075E54', '#D9FDD3', '#fff'], blau: ['#F6F6F6', '#0A84FF', '#E9E9EB'], verlauf: ['#fff', '#7B3FE4', '#EFEFEF'], hell: ['#517DA2', '#EFFDDE', '#fff'], dunkel: ['#2B2D31', '#5865F2', '#313338'], sms: ['#fff', '#EDEDED', '#fff'], ki: ['#fff', '#F0F0F0', '#10A37F'] };
+  const sw = { gruen: ['#075E54', '#D9FDD3', '#fff'], blau: ['#F6F6F6', '#0A84FF', '#E9E9EB'], verlauf: ['#fff', '#7B3FE4', '#EFEFEF'], hell: ['#517DA2', '#EFFDDE', '#fff'], snap: ['#FFFC00', '#F23C57', '#0EADFF'], dunkel: ['#2B2D31', '#5865F2', '#313338'], sms: ['#fff', '#EDEDED', '#fff'], ki: ['#fff', '#F0F0F0', '#10A37F'] };
   const pc = i => (i === 0 ? '#9CA3AF' : CHAT_PC[(i - 1) % CHAT_PC.length]);
   const pseg = (i, cur) => `<div class="seg sm" role="group" aria-label="Wer schreibt?">${P.map((x, k) => `<button type="button" data-act="chat-p" data-i="${i}" data-v="${k}" aria-pressed="${cur === k}"><span class="ch-dot" style="background:${pc(k)};display:inline-block;margin-right:4px;vertical-align:-1px"></span>${esc(String(x.n || '').trim() || 'Person ' + k)}${k === 0 ? ' (rechts)' : ''}</button>`).join('')}</div>`;
   return `${fText('title', 'Überschrift (optional)', b.title, 'z. B. Chatverlauf der Klassengruppe')}
@@ -12635,8 +12671,9 @@ function chatEdHTML(b) {
       <div class="ch-mr-h">${m.sys ? '<b style="font-size:12.5px">Hinweis in der Mitte</b>' : pseg(i, Math.max(0, Math.min(P.length - 1, +m.p || 0)))}<span class="sp"></span>${m.sys ? '' : `<input class="ch-zi" data-k="msgs.${i}.z" value="${esc(m.z || '')}" placeholder="Zeit" aria-label="Uhrzeit Nachricht ${i + 1}">`}<button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="-1" title="nach oben" aria-label="Nachricht nach oben"${i === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="1" title="nach unten" aria-label="Nachricht nach unten"${i === M.length - 1 ? ' disabled' : ''}>↓</button><button class="ib" type="button" data-act="chat-del" data-i="${i}" title="Nachricht löschen" aria-label="Nachricht ${i + 1} löschen">${I.x}</button></div>
       ${rtField(`msgs.${i}.t`, m.t || '', { mode: 'inline', rows: 2, ph: m.sys ? 'z. B. Heute · Tom wurde hinzugefügt' : 'Nachricht … (leer = Linien zum Ausfüllen)', aria: `Nachricht ${i + 1}` })}</div>`).join('')}</div>
       <div class="row" style="gap:14px"><button class="link" type="button" data-act="chat-add">+ Nachricht</button><button class="link" type="button" data-act="chat-sys">+ Hinweis in der Mitte</button></div></div>
-    <label class="f"><span>Breite: ${Math.round(+b.width || 72)} %</span><input type="range" min="40" max="100" step="2" value="${+b.width || 72}" data-k="width" data-num="1"></label>
-    <div class="chks">${fCheck('opt.ln', 'Zeilenangaben (für Textbelege)', !!o.ln)}${fCheck('opt.frame', 'Handyrahmen', o.frame !== false)}${fCheck('opt.time', 'Uhrzeiten', o.time !== false)}${fCheck('opt.read', 'Lesehäkchen', o.read !== false)}${P.length > 2 ? fCheck('opt.names', 'Namen in der Gruppe', o.names !== false) : ''}${fCheck('opt.bar', 'Eingabezeile unten', o.bar !== false)}${fCheck('fiktiv', 'Hinweis „Fiktiver Chatverlauf“', b.fiktiv !== false)}</div>`;
+    <div class="f"><span>Format</span><div class="seg sm" role="group" aria-label="Format"><button type="button" data-act="chat-dev" data-v="" aria-pressed="${o.dev !== 'iphone'}">Frei – Höhe nach Inhalt</button><button type="button" data-act="chat-dev" data-v="iphone" aria-pressed="${o.dev === 'iphone'}">iPhone</button></div>${o.dev === 'iphone' ? '<small class="hint">Wie ein echter Bildschirm: Passen nicht alle Nachrichten hinein, werden oben die älteren abgeschnitten – wie beim Scrollen.</small>' : ''}</div>
+    <label class="f"><span>${o.dev === 'iphone' ? 'Größe' : 'Breite'}: ${Math.round(+b.width || 72)} %</span><input type="range" min="40" max="100" step="2" value="${+b.width || 72}" data-k="width" data-num="1"></label>
+    <div class="chks">${fCheck('opt.ln', 'Zeilenangaben (für Textbelege)', !!o.ln)}${o.dev === 'iphone' ? '' : fCheck('opt.frame', 'Handyrahmen', o.frame !== false)}${fCheck('opt.time', 'Uhrzeiten', o.time !== false)}${fCheck('opt.read', 'Lesehäkchen', o.read !== false)}${P.length > 2 ? fCheck('opt.names', 'Namen in der Gruppe', o.names !== false) : ''}${fCheck('opt.bar', 'Eingabezeile unten', o.bar !== false)}${fCheck('fiktiv', 'Hinweis „Fiktiver Chatverlauf“', b.fiktiv !== false)}</div>`;
 }
 /* ---------- Änderungen ---------- */
 function target(bid) { return bid === 'meta' || bid === 'seite' || bid === 'stunde' ? state.sheet.meta : bid === 'karten' ? state.sheet : state.sheet.blocks.find(b => b.id === bid); }
@@ -12855,6 +12892,7 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'chat-dev': b.opt = b.opt || {}; if (a.dataset.v) b.opt.dev = a.dataset.v; else delete b.opt.dev; changed(true); renderEditor(); return;
     case 'chat-st': b.style = a.dataset.v; changed(true); renderEditor(); return;
     case 'chat-p': { const m = (b.msgs || [])[+a.dataset.i]; if (!m) return; m.p = +a.dataset.v; changed(true); renderEditor(); return; }
     case 'chat-add': case 'chat-sys': { snapshot(); const M = b.msgs || (b.msgs = []); const P = chatPeople(b); const lastP = [...M].reverse().find(m => !m.sys);

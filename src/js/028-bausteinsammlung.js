@@ -133,17 +133,17 @@ function adderHTML(A = 'blatt') {
 // Gestaltung angelehnt an bekannte Messenger – ohne Logos und Markennamen auf dem Blatt
 const CHAT_ST = {
   gruen: { l: 'Grün', hint: 'wie WhatsApp' }, blau: { l: 'Blau', hint: 'wie iMessage' }, verlauf: { l: 'Verlauf', hint: 'wie Instagram' },
-  hell: { l: 'Hellblau', hint: 'wie Telegram' }, dunkel: { l: 'Dunkel', hint: 'wie Discord' }, sms: { l: 'Schlicht', hint: 'SMS, gut zum Drucken' }, ki: { l: 'KI-Chat', hint: 'wie ein Chatbot' }
+  hell: { l: 'Hellblau', hint: 'wie Telegram' }, snap: { l: 'Snap', hint: 'wie Snapchat' }, dunkel: { l: 'Dunkel', hint: 'wie Discord' }, sms: { l: 'Schlicht', hint: 'SMS, gut zum Drucken' }, ki: { l: 'KI-Chat', hint: 'wie ein Chatbot' }
 };
 const CHAT_PC = ['#1F7A8C', '#C2410C', '#7C3AED', '#15803D', '#B91C1C', '#0369A1', '#A16207', '#BE185D'];
 const chatSt = b => (CHAT_ST[b.style] ? b.style : 'gruen');
 const chatPeople = b => (Array.isArray(b.people) && b.people.length ? b.people : [{ n: 'Ich' }, { n: 'Person' }]);
 const chatIni = n => postIni(n);
-const CHAT_IC = { back: '<path d="M14.5 5.5 8 12l6.5 6.5"/>', call: '<path d="M6.6 3.8 9 4.2l1.3 3.6-1.8 1.4a12 12 0 0 0 6.3 6.3l1.4-1.8 3.6 1.3.4 2.4a2 2 0 0 1-2 2.1A16.5 16.5 0 0 1 4.5 5.8a2 2 0 0 1 2.1-2z"/>', vid: '<rect x="3" y="6.5" width="12.5" height="11" rx="2.2"/><path d="m15.5 10.5 5-3v9l-5-3z"/>', more: '<circle cx="12" cy="5.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18.5" r="1.2"/>', send: '<path d="M4 12 20 4l-4 16-4-6.5z"/>', mic: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3.5"/>', plus: '<path d="M12 5v14M5 12h14"/>', ticks: '<path d="m2.5 12.5 4 4 8-9M9.5 16.5l1 0 8-9"/>' };
+const CHAT_IC = { back: '<path d="M14.5 5.5 8 12l6.5 6.5"/>', call: '<path d="M6.6 3.8 9 4.2l1.3 3.6-1.8 1.4a12 12 0 0 0 6.3 6.3l1.4-1.8 3.6 1.3.4 2.4a2 2 0 0 1-2 2.1A16.5 16.5 0 0 1 4.5 5.8a2 2 0 0 1 2.1-2z"/>', vid: '<rect x="3" y="6.5" width="12.5" height="11" rx="2.2"/><path d="m15.5 10.5 5-3v9l-5-3z"/>', more: '<circle cx="12" cy="5.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18.5" r="1.2"/>', send: '<path d="M4 12 20 4l-4 16-4-6.5z"/>', mic: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3.5"/>', plus: '<path d="M12 5v14M5 12h14"/>', ticks: '<path d="m2.5 12.5 4 4 8-9M9.5 16.5l1 0 8-9"/>', cam: '<path d="M4 8.5a2 2 0 0 1 2-2h2l1.5-2h5L16 6.5h2a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.3"/>', smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 0 0 7 0"/><circle cx="9.3" cy="10" r=".6"/><circle cx="14.7" cy="10" r=".6"/>' };
 const chatI = (k, c = '') => `<svg class="ch-i${c ? ' ' + c : ''}" viewBox="0 0 24 24" aria-hidden="true">${CHAT_IC[k]}</svg>`;
 function chatHTML(b, tag) {
   const st = chatSt(b), P = chatPeople(b), o = b.opt || {}, M = Array.isArray(b.msgs) ? b.msgs : [], h = b.head || {};
-  const group = P.length > 2, ki = st === 'ki', dark = st === 'dunkel';
+  const group = P.length > 2, ki = st === 'ki', dark = st === 'dunkel', snap = st === 'snap', ip = o.dev === 'iphone';
   const name = String(h.name || '').trim() || (group ? 'Gruppe' : (P[1] && P[1].n) || 'Chat');
   const lines = n => '<span class="ch-wl"></span>'.repeat(n);
   let prev = null;
@@ -153,16 +153,20 @@ function chatHTML(b, tag) {
     const first = prev !== pi, nx = M[i + 1], last = !nx || nx.sys || (+nx.p || 0) !== pi; prev = pi;
     const txt = String(m.t || '').trim();
     const inner = txt ? inlineHTML(txt).replace(/\n/g, '<br>') : lines(Math.max(1, Math.min(6, +m.ln || 2)));
-    const showName = first && (dark || (!me && !ki && group && o.names !== false));
+    const showName = first && (dark || snap || (!me && !ki && group && o.names !== false));
     const meta = (o.time !== false && m.z && !ki ? `<span class="ch-z">${esc(m.z)}${me && o.read !== false && !ki && !dark ? chatI('ticks', 'ch-tk') : ''}</span>` : '');
     const av = (dark || (!me && (ki || (group && st !== 'blau' && st !== 'sms')))) ? `<span class="ch-av sm" style="--pc:${col}">${ki ? 'KI' : esc(chatIni(who.n))}</span>` : '';
+    if (snap) return `<div data-mi="${i}" class="ch-m ${me ? 'me' : 'ot'}${first ? ' first' : ''}${txt ? '' : ' leer'}" style="--pc:${me ? '#F23C57' : P.length > 2 ? col : '#0EADFF'}">${showName ? `<b class="ch-n">${esc((String(who.n || '').trim() || 'Person').toUpperCase())}</b>` : ''}<div class="ch-bub"><div class="ch-t">${inner}</div>${o.time !== false && m.z ? `<span class="ch-z">${esc(m.z)}</span>` : ''}</div></div>`;
     return `<div data-mi="${i}" class="ch-m ${me ? 'me' : 'ot'}${first ? ' first' : ''}${last ? ' last' : ''}${txt ? '' : ' leer'}" style="--pc:${col}">${av ? (first ? av : '<span class="ch-av sm ph"></span>') : ''}<div class="ch-bub">${showName ? `<b class="ch-n">${esc(String(who.n || '').trim() || 'Person')}${dark && m.z && o.time !== false ? `<span class="ch-z">${esc(m.z)}</span>` : ''}</b>` : ''}<div class="ch-t">${inner}</div>${dark ? '' : meta}</div></div>`;
   }).join('');
   const head = ki ? `<div class="ch-h"><span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : ''}</span></div>`
     : `<div class="ch-h">${dark ? '<span class="ch-hash">#</span>' : chatI('back', 'ch-bk')}${dark ? '' : `<span class="ch-av">${esc(chatIni(name))}</span>`}<span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : group && st !== 'dunkel' ? `<small>${esc(P.map(x => String(x.n || '').trim()).filter(Boolean).join(', '))}</small>` : ''}</span>${dark ? '' : `<span class="ch-hi">${st === 'blau' ? chatI('vid') : chatI('vid') + chatI('call')}${st === 'gruen' ? chatI('more') : ''}</span>`}</div>`;
-  const bar = o.bar !== false ? `<div class="ch-in">${ki || dark ? '' : chatI('plus', 'ch-pl')}<span class="ch-inp">${ki ? 'Nachricht an die KI …' : dark ? 'Nachricht an #' + esc(name) : 'Nachricht'}</span>${chatI(ki || st === 'blau' || st === 'verlauf' ? 'send' : 'mic', 'ch-snd')}</div>` : '';
+  const bar = o.bar !== false ? (snap ? `<div class="ch-in"><span class="ch-camb">${chatI('cam')}</span><span class="ch-inp">Chat senden</span>${chatI('smile', 'ch-snd')}${chatI('mic', 'ch-snd')}</div>` : `<div class="ch-in">${ki || dark ? '' : chatI('plus', 'ch-pl')}<span class="ch-inp">${ki ? 'Nachricht an die KI …' : dark ? 'Nachricht an #' + esc(name) : 'Nachricht'}</span>${chatI(ki || st === 'blau' || st === 'verlauf' ? 'send' : 'mic', 'ch-snd')}</div>`) : '';
+  // iPhone: Statusleiste mit Dynamic Island oben, Home-Balken unten
+  const sb = ip ? `<div class="ch-sb"><b>9:41</b><span class="ch-isl"></span><span class="ch-sbi"><svg viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.5 6.9a6.4 6.4 0 0 1 9 0l-1.5 1.5a4.3 4.3 0 0 0-6 0zM1.2 4.6a9.6 9.6 0 0 1 13.6 0l-1.5 1.5a7.5 7.5 0 0 0-10.6 0z"/></svg><svg viewBox="0 0 27 12" aria-hidden="true"><rect x=".6" y=".6" width="22.5" height="10.8" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="2.3" y="2.3" width="16" height="7.4" rx="1.8"/><path d="M24.6 4.2v3.6a1.9 1.9 0 0 0 0-3.6z" opacity=".5"/></svg></span></div>` : '';
+  const home = ip ? '<div class="ch-home"><span></span></div>' : '';
   const w = Math.max(40, Math.min(100, +b.width || 72));
-  return `<div class="blk blk-chat cs-${st}${o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
+  return `<div class="blk blk-chat cs-${st}${ip ? ' ch-ip' : o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%;--chs:${(w / 72).toFixed(3)}">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${sb}${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}${home}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
 }
 
 // Zeilenangaben im Chat: nach dem Setzen die gedruckten Zeilen in den Blasen zählen, jede 5. am Rand vermerken.
@@ -181,6 +185,7 @@ function chatLines(root = document.getElementById('pages')) {
       const t = m.querySelector('.ch-t'); if (!t || m.classList.contains('leer') || !t.textContent.trim()) return;
       const r = document.createRange(); r.selectNodeContents(t);
       const tops = []; [...r.getClientRects()].filter(x => x.width > .5 && x.height > .5).forEach(x => { const y = x.top + x.height / 2; if (!tops.some(v => Math.abs(v.y - y) < x.height * .45)) tops.push({ y, h: x.height }); });
+      const B = (c.querySelector('.ch-b') || ph).getBoundingClientRect(); for (let k = tops.length - 1; k >= 0; k--) if (tops[k].y < B.top || tops[k].y > B.bottom) tops.splice(k, 1);
       tops.sort((a, b) => a.y - b.y); const s0 = n + 1;
       tops.forEach(v => { n++; if (n % step === 0) out.push(`<span class="ch-lnn" style="top:${((v.y - C.top) / mmPx).toFixed(2)}mm;left:${((PH.left - C.left) / mmPx - 8).toFixed(2)}mm">${n}</span>`); });
       if (tops.length) map[m.dataset.mi] = [s0, n];

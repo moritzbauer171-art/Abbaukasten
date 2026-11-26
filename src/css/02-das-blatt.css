@@ -345,3 +345,29 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .ch-mr .rtx{min-height:44px}
 .blk-chat{position:relative}
 .ch-lnn{position:absolute;width:6mm;text-align:right;transform:translateY(-50%);font-size:8pt;color:var(--paper-muted,#777);font-family:var(--font-text,inherit);line-height:1}
+/* Chat: Snap (wie Snapchat) – keine Blasen, alles links, farbiger Strich, Namen in Großbuchstaben */
+.blk-chat.cs-snap{--bg:#fff;--hd:#fff;--hdc:#111;--meta:#9A9A9A;--sys:transparent;--sysc:#9A9A9A;--in:#F2F2F2}
+.cs-snap .ch-h{border-bottom:.06em solid #EEE}.cs-snap .ch-h .ch-av{background:#FFFC00;color:#111}
+.cs-snap .ch-hi .ch-i{background:#F2F2F2;border-radius:50%;padding:.28em;width:1.7em;height:1.7em}
+.cs-snap .ch-m{flex-direction:column;align-items:stretch;gap:0}
+.cs-snap .ch-m.me{justify-content:flex-start}
+.cs-snap .ch-n{color:var(--pc);font-size:.72em;letter-spacing:.03em;margin:0 0 .15em}
+.cs-snap .ch-m .ch-bub,.cs-snap .ch-m.me .ch-bub{max-width:100%;background:none;box-shadow:none;border-radius:0;border-left:.16em solid var(--pc);padding:.05em .55em;color:#111}
+.cs-snap .ch-m.ot.first .ch-bub,.cs-snap .ch-m.me.first .ch-bub{border-radius:0}
+.cs-snap .ch-z{display:none}
+.cs-snap .ch-sys span{text-transform:uppercase;font-size:.68em;letter-spacing:.06em;font-weight:600}
+.cs-snap .ch-camb{width:2em;height:2em;border-radius:50%;background:#F2F2F2;display:grid;place-items:center;color:#111}
+.cs-snap .ch-inp{background:#F2F2F2;color:#9A9A9A}.cs-snap .ch-snd{color:#555}
+/* iPhone-Format: Seitenverhältnis 9 : 19,5, Rahmen, Dynamic Island, Statusleiste, Home-Balken */
+.blk-chat.ch-ip{font-size:calc(.95em * var(--chs,1))}
+.ch-ip .ch-ph{width:23em;aspect-ratio:9/19.5;border:.55em solid #1C1C1E;border-radius:3.1em;box-shadow:0 0 0 .1em #6B6B70,inset 0 0 0 .08em rgba(255,255,255,.08);position:relative}
+.ch-ip .ch-b{flex:1;min-height:0;overflow:hidden;justify-content:flex-end}
+.ch-sb{display:flex;align-items:center;justify-content:space-between;padding:.65em 1.5em .25em 1.9em;background:var(--hd);color:var(--hdc);font-size:.92em;position:relative}
+.ch-sb b{font-weight:650;letter-spacing:.01em}
+.ch-isl{position:absolute;left:50%;top:.45em;transform:translateX(-50%);width:6.6em;height:1.85em;border-radius:1em;background:#000}
+.ch-sbi{display:flex;gap:.3em;align-items:center}.ch-sbi svg{height:.78em;width:auto;fill:currentColor}
+.ch-ip .ch-h{padding-top:.4em}
+.ch-home{display:flex;justify-content:center;padding:.35em 0 .45em;background:var(--bg)}
+.ch-home span{width:8.2em;height:.3em;border-radius:.2em;background:#111;opacity:.85}
+.cs-dunkel .ch-home span{background:#fff}.ch-ip .ch-in{padding-bottom:.4em}
+.cs-gruen.ch-ip .ch-home,.cs-hell.ch-ip .ch-home{background:var(--in)}.cs-hell.ch-ip .ch-in{border-top:0}

@@ -65,3 +65,20 @@ def test_chat_zeilenangaben(lw):
     xml = docx(pg, 'chat_ln.docx'); assert 'Z. 1–' in xml
     pg.locator('#editor [data-k="opt.ln"]').uncheck(); pg.wait_for_timeout(600)
     assert pg.locator('#pages .ch-lnn').count() == 0
+
+def test_chat_snap_und_iphone(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    b = chat('snap'); lw.setup(pg, [b]); pg.evaluate("__RP()"); pg.wait_for_timeout(400)
+    assert pg.locator('#pages .cs-snap .ch-n').first.inner_text() == 'LEA'
+    assert pg.evaluate("getComputedStyle(document.querySelector('#pages .ch-m.me .ch-bub')).backgroundColor") in ('rgba(0, 0, 0, 0)', 'transparent')
+    pg.locator('#editor [data-act="chat-dev"][data-v="iphone"]').click(); pg.wait_for_timeout(500)
+    assert pg.locator('#pages .ch-ip .ch-isl').count() == 1 and pg.locator('#pages .ch-ip .ch-home').count() == 1
+    r = pg.evaluate("(() => { const p = document.querySelector('#pages .ch-ph').getBoundingClientRect(); return p.height / p.width; })()")
+    assert 2.1 < r < 2.2
+    # viele Nachrichten: oben abgeschnitten wie beim Scrollen, Seite bleibt eine
+    pg.evaluate("__S.sheet.blocks[0].msgs = Array.from({length: 40}, (_, i) => ({ p: i % 3, t: 'Nachricht ' + (i + 1), z: '18:00' })); __RE(); __RP()"); pg.wait_for_timeout(600)
+    assert pg.locator('#pages .page').count() == 1
+    assert 'Nachricht 40' in pg.locator('#pages .ch-b').inner_text()
+    # Querformat: iPhone wird kleiner, bleibt auf einer Seite
+    pg.evaluate("__S.sheet.meta.paper = 'a4q'; __RE(); __RP()"); pg.wait_for_timeout(700)
+    assert pg.locator('#pages .page').count() == 1
