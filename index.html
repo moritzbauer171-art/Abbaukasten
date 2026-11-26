@@ -1681,14 +1681,15 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .rk-i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em;flex:none}
 .tx-rk{display:inline-flex;align-items:center;gap:4px}.tx-rk .rk-i{width:14px;height:14px}
 .task-no{position:relative}
-.task-rkb{position:absolute;right:-2.3mm;top:-2.3mm;width:4.4mm;height:4.4mm;border-radius:50%;background:var(--paper,#fff);color:var(--acc);display:grid;place-items:center;box-shadow:0 0 0 .2mm var(--paper,#fff)}
-.task-rkb .rk-i{width:3.8mm;height:3.8mm;stroke-width:2}
 .task-rksec{display:flex;align-items:center;gap:1.6mm;margin:3.5mm 0 1.2mm;color:var(--acc);font-weight:700;font-size:8.5pt}
 .task-rksec .rk-i{width:4mm;height:4mm}.task-rksec i{flex:1;border-top:.25mm solid color-mix(in srgb,var(--acc) 55%,transparent)}
 .rk-set{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:8px 0 4px;padding:8px 10px;border:1px dashed var(--line);border-radius:10px}
 .rk-set>span{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600}.rk-set .rk-i{width:16px;height:16px}
 .rk-set .rk-hd{flex:1 1 220px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:13px}
 .rk-set .hint{flex-basis:100%}
+.task-no.rk{background:transparent;color:var(--acc);border:.3mm solid var(--acc)}
+.task-no.rk .rk-i{width:4.4mm;height:4.4mm;stroke-width:2}
+.task-ed-h .no.rk{display:inline-grid;place-items:center;color:var(--acc,#2B45B8)}.task-ed-h .no.rk .rk-i{width:16px;height:16px}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -3538,6 +3539,8 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-rkb .rk-i{width:.55em;height:.55em;stroke-width:2.2}
 .pr-rksec{display:flex;align-items:center;gap:.35em;color:var(--acc);font-weight:800;font-size:.5em;letter-spacing:.02em;margin:1.1em 0 .35em}
 .pr-rksec .rk-i{width:1.3em;height:1.3em}.pr-rksec i{flex:1;border-top:2px solid color-mix(in srgb,var(--acc) 50%,transparent)}
+.pr-no.rk{background:transparent;color:var(--acc);box-shadow:inset 0 0 0 3px var(--acc)}
+.pr-no.rk .rk-i{width:.8em;height:.8em;stroke-width:2.2}
 /* ===== Startseite ===== */
 #home-root:empty{display:none}
 .hm{position:fixed;inset:0;z-index:38;background:var(--desk);overflow:auto;-webkit-overflow-scrolling:touch;contain:layout paint}
@@ -4141,7 +4144,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = 'b97eb0f6a9';
+const LW_BUILD = '16d21902f6';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -5402,6 +5405,8 @@ function tbReCols(b, ord) {
 const RK_SVG = '<svg class="rk-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8c3.2 2.2 4.6 5.6 4.6 9.6l-1.9 3.1H9.3l-1.9-3.1c0-4 1.4-7.4 4.6-9.6z"/><circle cx="12" cy="9.4" r="1.7"/><path d="M7.4 12.4 4.6 15.6l3 1.1M16.6 12.4l2.8 3.2-3 1.1M10.3 18.2 12 21.5l1.7-3.3"/></svg>';
 // Darstellung: 'nr' = kleine Rakete an der Nummer (Standard), 'abschnitt' = eigener Abschnitt am Ende des Aufgabenbausteins
 const rkStyle = m => (m && m.rkStyle === 'abschnitt' ? 'abschnitt' : 'nr');
+// Rakete statt Nummer: die Aufgabe zählt nicht mit
+const itRkN = (it, m = state.sheet && state.sheet.meta) => !!(it && it.rk) && rkStyle(m) === 'nr';
 const rkHead = m => String((m && m.rkHead) || '').trim() || 'Für alle, die schon fertig sind';
 // Im Abschnitt-Modus stehen Raketenaufgaben am Ende ihres Bausteins (in den Daten selbst, damit Blatt, Folie und Word übereinstimmen)
 function rkSort(b) { if (!b || b.type !== 'tasks' || !Array.isArray(b.items)) return; const a = b.items.filter(x => !x.rk), r = b.items.filter(x => x.rk); if (r.length && a.length) b.items = [...a, ...r]; }
@@ -5720,7 +5725,7 @@ const isRes = b => !!(b && b.res);
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
   const rows = []; let t = 0; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it) && !itRkN(it, sh.meta)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
     const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
     // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
     const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });
@@ -7043,7 +7048,7 @@ function presSlidesAB(off, lab, abId) {
   const mats = presCollect(true); const S = []; let t = 0;
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it); if (!fo) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo ? 0 : t, fo, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
+    if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it), rkn = itRkN(it, m); if (!fo && !rkn) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo || rkn ? 0 : t, fo, rkn, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
     if (PRES_OPT.has(b.type) && !presOn(b)) return;
     if (b.type === 'step') { const f = stepSlideFol(b) || (PP.edit && b.pp && stepFol(b) !== 'aus' ? 'text' : ''); if (f === 'quiz') { const Q = qzList(b); Q.forEach((x, i) => S.push({ k: 'step', b, fol: f, qz: x, qi: i, qn: Q.length })); } else if (f) S.push({ k: 'step', b, fol: f }); return; }
@@ -7073,7 +7078,7 @@ function presPick() {
     if (multi) L.push({ key: 'ab:' + A.id, label: `${abLabel(m, A.k)} · ${short(m.title, 50) || 'ohne Titel'} (Zwischenfolie)`, head: true });
     A.blocks.forEach(b => {
       if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, opt: b, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
-      else if (b.type === 'tasks') { if (rst(b)) t = 0; b.items.forEach((it, i) => { if (!itFo(it)) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
+      else if (b.type === 'tasks') { if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it, P.meta); if (!itFo(it) && !rkn) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
       else if (b.type === 'tafel') L.push({ key: b.id, opt: b, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
       else if (b.type === 'step') { if (stepSlideFol(b)) L.push({ key: b.id, label: `${itPh(b) ? PHASEN[itPh(b)].label : 'Schritt'} · ${stepLabel(b)}`, task: true }); }
       else if (b.type === 'info') L.push({ key: b.id, opt: b, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
@@ -7170,7 +7175,7 @@ function a3Norm(b) {
 }
 function a3TaskList() {
   const L = []; let t = 0;
-  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
+  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
   return L;
 }
 function a3TaskHTML(b) {
@@ -7392,7 +7397,7 @@ function a4Fill(b, v) {
   const sh = state.sheet, du = sh.meta.anrede === 'du'; const mats = sh.blocks.filter(x => x.type === 'material' && plainText(x.text || '').trim());
   const keep = arr => arr.filter(x => Object.values(x).some(y => tfStr(y).trim()));
   if (v === 'rollen') { b.cards = [...keep(b.cards), ...A4_ROLES(du)]; if (!tfStr(b.cardHead).trim()) b.cardHead = 'Rollenkarte'; return 'Vier Gruppenrollen angefügt.'; }
-  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
+  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { const rkn = itRkN(it, sh.meta); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
   if (v === 'absatz' || v === 'saetze') {
     const mb = mats[0]; if (!mb) return 'Das Blatt hat noch kein Material mit Text.';
     const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l) && l !== MAT_BL).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
@@ -7549,7 +7554,7 @@ function presSlideHTML(s, bar) {
       const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s);
       const rkAb = rkStyle(m) === 'abschnitt';
       const item = (x, col, k, L) => { const meta = tsMeta(x, s, m, col); const sec = x.it.rk && rkAb && !(L && L[k - 1] && L[k - 1].it.rk) ? `<div class="pr-rksec">${RK_SVG}<span>${esc(rkHead(m))}</span><i></i></div>` : '';
-        return `${sec}<div class="pr-it${x.it.rk ? ' rk' : ''}">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' ? '' : ' fo'}">${itPh(x.it) === 'ha' ? 'HA' : x.no || '•'}${x.it.rk && !rkAb ? `<span class="pr-rkb">${RK_SVG}</span>` : ''}</span>` : ''}<div class="pr-itb pr-task">${x.it.rk && !multi && !rkAb ? `<span class="pr-rk">${RK_SVG}Raketenaufgabe</span>` : ''}${prTaskHTML(x.it, m)}${arbHints(x.it).map(h => `<div class="pr-ihint">${esc(h)}</div>`).join('')}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
+        return `${sec}<div class="pr-it${x.it.rk ? ' rk' : ''}">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' || x.rkn ? '' : ' fo'}${x.rkn ? ' rk' : ''}"${x.rkn ? ' title="Raketenaufgabe"' : ''}>${itPh(x.it) === 'ha' ? 'HA' : x.rkn ? RK_SVG : x.no || '•'}</span>` : ''}<div class="pr-itb pr-task">${x.rkn && !multi ? `<span class="pr-rk">${RK_SVG}Raketenaufgabe</span>` : ''}${prTaskHTML(x.it, m)}${arbHints(x.it).map(h => `<div class="pr-ihint">${esc(h)}</div>`).join('')}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
       const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map((x, k, L) => item(x, undefined, k, L)).join('')}</div>`
         : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map((x, k, L) => item(x, c, k, L)).join('')}</div>`).join('')}</div>`; })()).join('');
       const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));
@@ -7604,7 +7609,7 @@ function vpRows() {
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
       const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
       ITb.forEach((it, k) => {
-        const fo = itFo(it); if (!fo) t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
+        const fo = itFo(it); if (!fo && !itRkN(it, m)) t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
         const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
         const media = fo ? ['Folie', ...(refs.length ? [`${ab} (${refs.join(', ')})`] : [])] : [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
         if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));
@@ -7612,7 +7617,7 @@ function vpRows() {
         if (tipsOf(it).length) media.push(`Tippkarten (${tipsOf(it).length})`);
         if (!fo && m.dg && m.dg.id && (it.soz === 'ea' || it.soz === 'pa' || it.soz === 'tps')) media.push('digitale Fassung (Tablet)');
         const g = itGrp(b, it, m);
-        bRows.push({ no: fo ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: isRes(b) ? '' : bg, res: isRes(b), gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
+        bRows.push({ no: fo || itRkN(it, m) ? 0 : t, fo, abLab, it, ph, min: 0, soz: SOZ[it.soz] ? SOZ[it.soz].label : '', task: taskText(it, m), eh: ehLines(it), media, tag: it.tag || '', g: isRes(b) ? '' : bg, res: isRes(b), gName: g ? grpName(m, g) : '', blk: b.id, isHa: allHa });
       });
       if (bRows.length) { bRows[0].min = itMin(b); bRows[0].span = bRows.length; bRows.slice(1).forEach(r => { r.cont = true; r.head = bRows[0]; }); bRows.forEach(r => rows.push(r)); }
     });
@@ -9641,7 +9646,7 @@ const lvOk = (x, v) => !v || !v.lvl || v.lvl === 'all' || !Array.isArray(x.lv) |
 const itFo = it => !!(it && it.fo);
 const foOnly = b => !!b && b.type === 'tasks' && Array.isArray(b.items) && b.items.length > 0 && b.items.every(itFo);
 const rst = b => !!b.restart && !foOnly(b);
-const itNos = (b, from) => { let c = from; return (b.items || []).map(it => (itFo(it) ? 0 : c++)); };
+const itNos = (b, from) => { let c = from; return (b.items || []).map(it => (itFo(it) || itRkN(it) ? 0 : c++)); };
 const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v) && !(v && !v.pres && foOnly(b));
 // Aufgaben der gewählten Stufe: nur die Aufgaben dieser Stufe, mit dem Text für Basis oder Experte, wenn einer eingetragen ist
 const grpOk = (x, v) => !v || !v.grp || v.grp === 'all' || !x.grp || x.grp === v.grp;
@@ -11100,7 +11105,7 @@ function numbering(sheet) {
   for (const b of sheet.blocks) {
     if (b.type === 'material') map[b.id] = { m: ++m, tag: tags[b.id] };
     if (b.type === 'image' && tags[b.id]) map[b.id] = { tag: tags[b.id] };
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
+    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it) && !itRkN(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
   }
   return map;
 }
@@ -11212,13 +11217,15 @@ function buildBlock(b, ctx) {
     case 'tasks': {
       const show = meta.showAFB && !isGS(); const ITS = itemsFor(b, ctx.view); const anySoz = ITS.some(it => SOZ[it.soz]); const nArb = Math.max(0, ...ITS.map(it => arbOf(it).length)); const hasSoz = anySoz || nArb > 0;
       const picW = (anySoz ? 8 : 0) + nArb * 6.2 + (anySoz && nArb ? 1 : 0);
+      let tc = 0;
       const items = ITS.map((it, i) => {
         const r = opsRange(detectOps(it.text));
         const soz = hasSoz ? `<span class="task-soz">${anySoz ? (SOZ[it.soz] ? `<img src="${sozURI(it.soz, ctx.acc, ctx.bg)}" alt="${SOZ[it.soz].label}" title="${SOZ[it.soz].label}">` : '<i class="soz-gap"></i>') : ''}${arbOf(it).map(k => `<img class="arb" src="${arbURI(k, ctx.acc)}" alt="${ARB[k].label}" title="${ARB[k].label}">`).join('')}</span>` : '';
         const rkS = it.rk && rkStyle(meta) === 'abschnitt' && !(ITS[i - 1] && ITS[i - 1].rk) ? `<div class="task-rksec">${RK_SVG}<span>${esc(rkHead(meta))}</span><i></i></div>` : '';
-        return `${rkS}<div class="task${it.rk ? ' rk' : ''}"><span class="task-no">${ctx.t + i + 1}${it.rk && rkStyle(meta) === 'nr' ? `<span class="task-rkb" title="Raketenaufgabe">${RK_SVG}</span>` : ''}</span>${soz}<div class="task-body">${ctx.view && ctx.view.grp === 'all' && meta.groupsOn && it.grp ? `<span class="task-tag grp">${esc(grpName(meta, it.grp))}</span>` : ''}${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}${(() => { const tp = lvTipOf(it, ctx.view, meta); return tp ? `<div class="task-tip"><b>Tipp:</b> ${inlineHTML(tp)}</div>` : ''; })()}${arbHints(it).map(h => `<div class="task-hint">${esc(h)}</div>`).join('')}${ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(it.lv) ? `<span class="lv-tag">${it.lv.map(x => LV[x].sym).join(' · ')}</span>` : ''}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view, i === 0 && itMin(b) ? { min: itMin(b), n: ITS.length, from: ctx.t + 1, to: ctx.t + ITS.length } : null)}</span>${taskEH(it, ctx.view)}</div>`;
+        const rkn = itRkN(it, meta); if (!rkn) tc++;
+        return `${rkS}<div class="task${it.rk ? ' rk' : ''}"><span class="task-no${rkn ? ' rk' : ''}"${rkn ? ' title="Raketenaufgabe"' : ''}>${rkn ? RK_SVG : ctx.t + tc}</span>${soz}<div class="task-body">${ctx.view && ctx.view.grp === 'all' && meta.groupsOn && it.grp ? `<span class="task-tag grp">${esc(grpName(meta, it.grp))}</span>` : ''}${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}${(() => { const tp = lvTipOf(it, ctx.view, meta); return tp ? `<div class="task-tip"><b>Tipp:</b> ${inlineHTML(tp)}</div>` : ''; })()}${arbHints(it).map(h => `<div class="task-hint">${esc(h)}</div>`).join('')}${ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(it.lv) ? `<span class="lv-tag">${it.lv.map(x => LV[x].sym).join(' · ')}</span>` : ''}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view, i === 0 && itMin(b) ? { min: itMin(b), n: ITS.length, from: ctx.t + 1, to: ctx.t + ITS.length } : null)}</span>${taskEH(it, ctx.view)}</div>`;
       }).join('');
-      ctx.t += ITS.length;
+      ctx.t += tc;
       const n = put(`<div class="blk blk-tasks${hasSoz ? ' has-soz' : ''}"${hasSoz ? ` style="--picw:${picW}mm"` : ''}>${b.title ? `<div class="tasks-title">${esc(b.title)}</div>` : ''}${items}</div>`);
       return { type: 'tasks', el: n, atoms: [...n.children], keepFirst: b.title ? 2 : 1, keepLast: 1 };
     }
@@ -12344,7 +12351,7 @@ function pruefList() {
       if (String(b.memo || '').trim()) add(b.id, `${lab}: ${String(b.memo).trim().slice(0, 80)}`);
       if (!String(b.text || '').trim()) add(b.id, `${lab} hat noch keinen Text.`);
       if (!String(b.source || '').trim()) add(b.id, `${lab} hat keine Quellenangabe.`, 'n'); }
-    if (b.type === 'tasks') (b.items || []).forEach(it => { if (itFo(it)) return; tno++; if (!String(it.text || '').trim()) add(b.id, `Aufgabe ${tno} ist leer.`); else if (!ehLines(it).length) add(b.id, `Aufgabe ${tno} hat noch keine Erwartung.`, 'n'); });
+    if (b.type === 'tasks') (b.items || []).forEach(it => { if (itFo(it)) return; const lab = itRkN(it) ? 'Die Raketenaufgabe' : `Aufgabe ${++tno}`; if (!String(it.text || '').trim()) add(b.id, `${lab} ist leer.`); else if (!ehLines(it).length) add(b.id, `${lab} hat noch keine Erwartung.`, 'n'); });
     if ((b.type === 'info' || b.type === 'text') && !plainText(b.text || '').trim()) add(b.id, `${typeLabel(b)} ist noch leer.`);
     if (b.type === 'heading' && !String(b.text || '').trim()) add(b.id, 'Eine Überschrift ist leer.', 'n');
     if (b.type === 'image' && !b.src) add(b.id, 'Ein Bild-Baustein hat noch kein Bild.');
@@ -12429,7 +12436,7 @@ function bodyFor(b, num) {
       const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
       const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : ''].filter(Boolean).join(' · ');
       return `${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
-          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
+          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : itRkN(it) ? `<span class="no rk" title="Raketenaufgabe – zählt nicht mit">${RK_SVG}</span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
           ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: nos[i] ? `Aufgabe ${nos[i]}` : 'Auftrag nur auf der Folie' })}
@@ -15342,7 +15349,7 @@ const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.n
 function rlpCoverage(sheets) {
   const cov = {}; let nTasks = 0, nTagged = 0;
   sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; (b.items || []).forEach(it => {
-    const fo = itFo(it); if (!fo) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
+    const fo = itFo(it); if (!fo && !itRkN(it)) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
     ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!fo && !e.t.includes(t)) e.t.push(t); });
   }); }); });
   return { cov, nTasks, nTagged };
@@ -16922,12 +16929,12 @@ async function exportDOCX() {
           const bmW = itMin(b); const anyMin = ITW.some(it => v.lehrer && itPh(it)) || ((v.lehrer || m.showMin) && bmW && ITW.length);
           const afbW = (showA || anyPts || anyMin) ? TW(20) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
           const rows = ITW.map((it, ii) => {
-            tNo++;
+            const rkn = itRkN(it, m); if (!rkn) tNo++;
             const r = opsRange(detectOps(it.text));
             const mnW = ii === 0 && bmW ? bmW + ' Min.' + (ITW.length > 1 ? ` (für ${tNo}–${tNo + ITW.length - 1})` : '') : '', phW = itPh(it);
             const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null, v.lehrer && phW ? [PHASEN[phW].label, 0] : null, v.lehrer && mnW ? [mnW, 0] : !v.lehrer && m.showMin && mnW ? ['ca. ' + mnW, 0] : null].filter(Boolean);
             const rkAbW = rkStyle(m) === 'abschnitt';
-            const cells = xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A }) + (it.rk && !rkAbW ? xr(' 🚀', { sz: 14 }) : '')), { w: nW })
+            const cells = xtc(xp(rkn ? xr('🚀', { sz: 21 }) : xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp((sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : '') + arbOf(it).filter(k => arbRel[k]).map(k => picXml(arbRel[k], 198000, 198000, ARB[k].label)).join('')), { w: sW }) : '')
               + xtc((() => { const tt = taskText(it, m); const tagS = [v.grp === 'all' && m.groupsOn && it.grp ? grpName(m, it.grp) : '', it.tag || ''].filter(Boolean).join(' · '); const tagR = tagS ? xr(tagS.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; const tp = lvTipOf(it, v, m); const tipP = tp ? xp(xr('Tipp: ', { b: 1, sz: 17, color: A }) + xrInline(tp, { sz: 17, color: GREY }), { before: 40 }) : ''; return (/\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 }))) + tipP + arbHints(it).map(h => xp(xr(h, { i: 1, sz: 18, color: GREY }), { before: 40 })).join(''); })(), { w: tW })
               + (afbW ? xtc(rt.map(([t, bold]) => xp(xr(t, { sz: bold ? 18 : 15, b: bold, color: bold ? '1C1F27' : GREY }), { jc: 'right' })).join('') || xp(''), { w: afbW }) : '');

@@ -3,7 +3,7 @@ const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.n
 function rlpCoverage(sheets) {
   const cov = {}; let nTasks = 0, nTagged = 0;
   sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; (b.items || []).forEach(it => {
-    const fo = itFo(it); if (!fo) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
+    const fo = itFo(it); if (!fo && !itRkN(it)) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
     ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!fo && !e.t.includes(t)) e.t.push(t); });
   }); }); });
   return { cov, nTasks, nTagged };

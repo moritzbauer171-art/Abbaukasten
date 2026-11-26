@@ -173,15 +173,18 @@ def test_raketenaufgabe(lw):
     pg.evaluate("__RP()"); pg.wait_for_timeout(400)
     pg.locator('#editor [data-act="it-rk"][data-i="1"]').click(); pg.wait_for_timeout(500)
     assert pg.evaluate("__S.sheet.blocks[0].items[1].rk") is True
-    # Standard: kleine Rakete an der Nummer
-    assert pg.locator('#pages .task-rkb').count() == 1 and pg.locator('#pages .task-rksec').count() == 0
+    # Standard: Rakete statt Nummer, zählt nicht mit
+    nos = pg.evaluate("[...document.querySelectorAll('#pages .task-no')].map(x => x.classList.contains('rk') ? 'R' : x.textContent.trim())")
+    assert nos == ['1', 'R', '2'], nos
+    assert pg.locator('#editor .task-ed-h .no.rk').count() == 1
     pg.locator('#pages .blk-tasks').screenshot(path=str(OUT / 'rk_nr.png'))
-    xml = docx(pg, 'rk.docx'); assert '🚀' in xml
+    xml = docx(pg, 'rk.docx'); assert '🚀' in xml and '>3<' not in xml
     pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
     # Eigener Abschnitt: Raketenaufgabe wandert ans Ende, Überschrift davor
     pg.locator('#editor [data-act="rk-style"][data-v="abschnitt"]').click(); pg.wait_for_timeout(500)
     assert pg.evaluate("__S.sheet.blocks[0].items.map(x => !!x.rk)") == [False, False, True]
-    assert pg.locator('#pages .task-rksec').count() == 1 and pg.locator('#pages .task-rkb').count() == 0
+    assert pg.locator('#pages .task-rksec').count() == 1 and pg.locator('#pages .task-no.rk').count() == 0
+    assert pg.evaluate("[...document.querySelectorAll('#pages .task-no')].map(x => x.textContent.trim())") == ['1', '2', '3']
     assert 'fertig sind' in pg.locator('#pages .task-rksec').inner_text()
     pg.locator('#editor [data-rkh]').fill('Raketenstart'); pg.wait_for_timeout(700)
     assert 'Raketenstart' in pg.locator('#pages .task-rksec').inner_text()
@@ -193,3 +196,15 @@ def test_raketenaufgabe(lw):
         pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
     assert pg.locator('.pr .pr-slide .pr-rksec').count() == 1
     pg.locator('.pr .pr-slide').screenshot(path=str(OUT / 'rk_folie.png'))
+
+def test_rakete_folie_zaehlt_nicht(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 't1', 'type': 'tasks', 'title': '', 'items': [{'text': 'Beschreiben Sie die Panels.', 'soz': 'ea'}, {'text': 'Entwerfen Sie ein Panel.', 'soz': 'ea', 'rk': True}, {'text': 'Vergleichen Sie.', 'soz': 'pa'}]}])
+    pg.evaluate("__RP(); __OP(0)"); pg.wait_for_timeout(1200)
+    for _ in range(5):
+        if pg.locator('.pr .pr-slide .pr-no').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
+    nos = pg.evaluate("[...document.querySelectorAll('.pr .pr-slide .pr-no')].map(x => x.classList.contains('rk') ? 'R' : x.textContent.trim())")
+    assert nos == ['1', 'R', '2'], nos
+    assert 'aufgaben 1–2' in pg.locator('.pr .pr-slide').inner_text().lower()
+    pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'rk_folie2.png'))

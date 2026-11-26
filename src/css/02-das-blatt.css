@@ -374,11 +374,12 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .rk-i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em;flex:none}
 .tx-rk{display:inline-flex;align-items:center;gap:4px}.tx-rk .rk-i{width:14px;height:14px}
 .task-no{position:relative}
-.task-rkb{position:absolute;right:-2.3mm;top:-2.3mm;width:4.4mm;height:4.4mm;border-radius:50%;background:var(--paper,#fff);color:var(--acc);display:grid;place-items:center;box-shadow:0 0 0 .2mm var(--paper,#fff)}
-.task-rkb .rk-i{width:3.8mm;height:3.8mm;stroke-width:2}
 .task-rksec{display:flex;align-items:center;gap:1.6mm;margin:3.5mm 0 1.2mm;color:var(--acc);font-weight:700;font-size:8.5pt}
 .task-rksec .rk-i{width:4mm;height:4mm}.task-rksec i{flex:1;border-top:.25mm solid color-mix(in srgb,var(--acc) 55%,transparent)}
 .rk-set{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:8px 0 4px;padding:8px 10px;border:1px dashed var(--line);border-radius:10px}
 .rk-set>span{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600}.rk-set .rk-i{width:16px;height:16px}
 .rk-set .rk-hd{flex:1 1 220px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;font:inherit;font-size:13px}
 .rk-set .hint{flex-basis:100%}
+.task-no.rk{background:transparent;color:var(--acc);border:.3mm solid var(--acc)}
+.task-no.rk .rk-i{width:4.4mm;height:4.4mm;stroke-width:2}
+.task-ed-h .no.rk{display:inline-grid;place-items:center;color:var(--acc,#2B45B8)}.task-ed-h .no.rk .rk-i{width:16px;height:16px}

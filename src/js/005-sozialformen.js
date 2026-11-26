@@ -30,6 +30,8 @@ function tbReCols(b, ord) {
 const RK_SVG = '<svg class="rk-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8c3.2 2.2 4.6 5.6 4.6 9.6l-1.9 3.1H9.3l-1.9-3.1c0-4 1.4-7.4 4.6-9.6z"/><circle cx="12" cy="9.4" r="1.7"/><path d="M7.4 12.4 4.6 15.6l3 1.1M16.6 12.4l2.8 3.2-3 1.1M10.3 18.2 12 21.5l1.7-3.3"/></svg>';
 // Darstellung: 'nr' = kleine Rakete an der Nummer (Standard), 'abschnitt' = eigener Abschnitt am Ende des Aufgabenbausteins
 const rkStyle = m => (m && m.rkStyle === 'abschnitt' ? 'abschnitt' : 'nr');
+// Rakete statt Nummer: die Aufgabe zählt nicht mit
+const itRkN = (it, m = state.sheet && state.sheet.meta) => !!(it && it.rk) && rkStyle(m) === 'nr';
 const rkHead = m => String((m && m.rkHead) || '').trim() || 'Für alle, die schon fertig sind';
 // Im Abschnitt-Modus stehen Raketenaufgaben am Ende ihres Bausteins (in den Daten selbst, damit Blatt, Folie und Word übereinstimmen)
 function rkSort(b) { if (!b || b.type !== 'tasks' || !Array.isArray(b.items)) return; const a = b.items.filter(x => !x.rk), r = b.items.filter(x => x.rk); if (r.length && a.length) b.items = [...a, ...r]; }

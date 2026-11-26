@@ -9,7 +9,7 @@ function numbering(sheet) {
   for (const b of sheet.blocks) {
     if (b.type === 'material') map[b.id] = { m: ++m, tag: tags[b.id] };
     if (b.type === 'image' && tags[b.id]) map[b.id] = { tag: tags[b.id] };
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
+    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it) && !itRkN(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
   }
   return map;
 }
@@ -121,13 +121,15 @@ function buildBlock(b, ctx) {
     case 'tasks': {
       const show = meta.showAFB && !isGS(); const ITS = itemsFor(b, ctx.view); const anySoz = ITS.some(it => SOZ[it.soz]); const nArb = Math.max(0, ...ITS.map(it => arbOf(it).length)); const hasSoz = anySoz || nArb > 0;
       const picW = (anySoz ? 8 : 0) + nArb * 6.2 + (anySoz && nArb ? 1 : 0);
+      let tc = 0;
       const items = ITS.map((it, i) => {
         const r = opsRange(detectOps(it.text));
         const soz = hasSoz ? `<span class="task-soz">${anySoz ? (SOZ[it.soz] ? `<img src="${sozURI(it.soz, ctx.acc, ctx.bg)}" alt="${SOZ[it.soz].label}" title="${SOZ[it.soz].label}">` : '<i class="soz-gap"></i>') : ''}${arbOf(it).map(k => `<img class="arb" src="${arbURI(k, ctx.acc)}" alt="${ARB[k].label}" title="${ARB[k].label}">`).join('')}</span>` : '';
         const rkS = it.rk && rkStyle(meta) === 'abschnitt' && !(ITS[i - 1] && ITS[i - 1].rk) ? `<div class="task-rksec">${RK_SVG}<span>${esc(rkHead(meta))}</span><i></i></div>` : '';
-        return `${rkS}<div class="task${it.rk ? ' rk' : ''}"><span class="task-no">${ctx.t + i + 1}${it.rk && rkStyle(meta) === 'nr' ? `<span class="task-rkb" title="Raketenaufgabe">${RK_SVG}</span>` : ''}</span>${soz}<div class="task-body">${ctx.view && ctx.view.grp === 'all' && meta.groupsOn && it.grp ? `<span class="task-tag grp">${esc(grpName(meta, it.grp))}</span>` : ''}${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}${(() => { const tp = lvTipOf(it, ctx.view, meta); return tp ? `<div class="task-tip"><b>Tipp:</b> ${inlineHTML(tp)}</div>` : ''; })()}${arbHints(it).map(h => `<div class="task-hint">${esc(h)}</div>`).join('')}${ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(it.lv) ? `<span class="lv-tag">${it.lv.map(x => LV[x].sym).join(' · ')}</span>` : ''}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view, i === 0 && itMin(b) ? { min: itMin(b), n: ITS.length, from: ctx.t + 1, to: ctx.t + ITS.length } : null)}</span>${taskEH(it, ctx.view)}</div>`;
+        const rkn = itRkN(it, meta); if (!rkn) tc++;
+        return `${rkS}<div class="task${it.rk ? ' rk' : ''}"><span class="task-no${rkn ? ' rk' : ''}"${rkn ? ' title="Raketenaufgabe"' : ''}>${rkn ? RK_SVG : ctx.t + tc}</span>${soz}<div class="task-body">${ctx.view && ctx.view.grp === 'all' && meta.groupsOn && it.grp ? `<span class="task-tag grp">${esc(grpName(meta, it.grp))}</span>` : ''}${it.tag ? `<span class="task-tag">${esc(it.tag)}</span>` : ''}${(() => { const tt = taskText(it, meta); return (/\n/.test(tt.trim()) ? parasHTML(tt) : inlineHTML(tt)) || '<span style="color:var(--paper-hair)">Aufgabentext</span>'; })()}${(() => { const tp = lvTipOf(it, ctx.view, meta); return tp ? `<div class="task-tip"><b>Tipp:</b> ${inlineHTML(tp)}</div>` : ''; })()}${arbHints(it).map(h => `<div class="task-hint">${esc(h)}</div>`).join('')}${ctx.view && ctx.view.lvl === 'all' && meta.levelsOn && Array.isArray(it.lv) ? `<span class="lv-tag">${it.lv.map(x => LV[x].sym).join(' · ')}</span>` : ''}</div><span class="task-afb">${taskRight(it, r, meta, ctx.view, i === 0 && itMin(b) ? { min: itMin(b), n: ITS.length, from: ctx.t + 1, to: ctx.t + ITS.length } : null)}</span>${taskEH(it, ctx.view)}</div>`;
       }).join('');
-      ctx.t += ITS.length;
+      ctx.t += tc;
       const n = put(`<div class="blk blk-tasks${hasSoz ? ' has-soz' : ''}"${hasSoz ? ` style="--picw:${picW}mm"` : ''}>${b.title ? `<div class="tasks-title">${esc(b.title)}</div>` : ''}${items}</div>`);
       return { type: 'tasks', el: n, atoms: [...n.children], keepFirst: b.title ? 2 : 1, keepLast: 1 };
     }

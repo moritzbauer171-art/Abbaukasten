@@ -60,7 +60,7 @@ function a3Norm(b) {
 }
 function a3TaskList() {
   const L = []; let t = 0;
-  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
+  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
   return L;
 }
 function a3TaskHTML(b) {
@@ -282,7 +282,7 @@ function a4Fill(b, v) {
   const sh = state.sheet, du = sh.meta.anrede === 'du'; const mats = sh.blocks.filter(x => x.type === 'material' && plainText(x.text || '').trim());
   const keep = arr => arr.filter(x => Object.values(x).some(y => tfStr(y).trim()));
   if (v === 'rollen') { b.cards = [...keep(b.cards), ...A4_ROLES(du)]; if (!tfStr(b.cardHead).trim()) b.cardHead = 'Rollenkarte'; return 'Vier Gruppenrollen angefügt.'; }
-  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { if (!itFo(it)) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
+  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { const rkn = itRkN(it, sh.meta); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
   if (v === 'absatz' || v === 'saetze') {
     const mb = mats[0]; if (!mb) return 'Das Blatt hat noch kein Material mit Text.';
     const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l) && l !== MAT_BL).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
@@ -439,7 +439,7 @@ function presSlideHTML(s, bar) {
       const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s);
       const rkAb = rkStyle(m) === 'abschnitt';
       const item = (x, col, k, L) => { const meta = tsMeta(x, s, m, col); const sec = x.it.rk && rkAb && !(L && L[k - 1] && L[k - 1].it.rk) ? `<div class="pr-rksec">${RK_SVG}<span>${esc(rkHead(m))}</span><i></i></div>` : '';
-        return `${sec}<div class="pr-it${x.it.rk ? ' rk' : ''}">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' ? '' : ' fo'}">${itPh(x.it) === 'ha' ? 'HA' : x.no || '•'}${x.it.rk && !rkAb ? `<span class="pr-rkb">${RK_SVG}</span>` : ''}</span>` : ''}<div class="pr-itb pr-task">${x.it.rk && !multi && !rkAb ? `<span class="pr-rk">${RK_SVG}Raketenaufgabe</span>` : ''}${prTaskHTML(x.it, m)}${arbHints(x.it).map(h => `<div class="pr-ihint">${esc(h)}</div>`).join('')}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
+        return `${sec}<div class="pr-it${x.it.rk ? ' rk' : ''}">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' || x.rkn ? '' : ' fo'}${x.rkn ? ' rk' : ''}"${x.rkn ? ' title="Raketenaufgabe"' : ''}>${itPh(x.it) === 'ha' ? 'HA' : x.rkn ? RK_SVG : x.no || '•'}</span>` : ''}<div class="pr-itb pr-task">${x.rkn && !multi ? `<span class="pr-rk">${RK_SVG}Raketenaufgabe</span>` : ''}${prTaskHTML(x.it, m)}${arbHints(x.it).map(h => `<div class="pr-ihint">${esc(h)}</div>`).join('')}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
       const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map((x, k, L) => item(x, undefined, k, L)).join('')}</div>`
         : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map((x, k, L) => item(x, c, k, L)).join('')}</div>`).join('')}</div>`; })()).join('');
       const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));
