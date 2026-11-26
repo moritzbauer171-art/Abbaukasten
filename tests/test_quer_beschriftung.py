@@ -165,3 +165,23 @@ def test_tabelle_popup(lw):
     assert 'b2 neu' in pg.locator('#pages .tb').inner_text()
     pg.keyboard.press('Escape'); pg.wait_for_timeout(300)
     assert pg.locator('#tbm').count() == 0
+
+def test_raketenaufgabe(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 't1', 'type': 'tasks', 'title': '', 'items': [{'text': 'Beschreiben Sie die Panels.', 'soz': 'ea'}, {'text': 'Entwerfen Sie ein eigenes Panel zu einer Tagebuchstelle.', 'soz': 'ea'}]}])
+    pg.evaluate("__RP()"); pg.wait_for_timeout(400)
+    pg.locator('#editor [data-act="it-rk"][data-i="1"]').click(); pg.wait_for_timeout(500)
+    assert pg.evaluate("__S.sheet.blocks[0].items[1].rk") is True
+    assert pg.locator('#pages .task-rk').count() == 1
+    assert 'raketenaufgabe' in pg.locator('#pages .task').nth(1).inner_text().lower()
+    pg.locator('#pages .blk-tasks').screenshot(path=str(__import__('conftest').OUT / 'rk_blatt.png'))
+    xml = docx(pg, 'rk.docx'); assert 'Raketenaufgabe' in xml.upper() or 'RAKETENAUFGABE' in xml
+    pg.keyboard.press('Escape'); pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
+    for _ in range(5):
+        if pg.locator('.pr .pr-slide .pr-rk').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
+    assert pg.locator('.pr .pr-slide .pr-rk').count() == 1
+    pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'rk_folie.png'))
+    pg.keyboard.press('Escape'); pg.wait_for_timeout(400)
+    pg.locator('#editor [data-act="it-rk"][data-i="1"]').click(); pg.wait_for_timeout(400)
+    assert pg.locator('#pages .task-rk').count() == 0

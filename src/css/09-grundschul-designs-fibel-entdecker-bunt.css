@@ -956,3 +956,5 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-chatw .blk-chat .ch-ph{width:min(var(--chw,72%),38em)}
 .pr-chatw .ch-fk{font-size:.6em;color:#888}
 .pr-chatw .ch-ip .ch-ph{width:23em}
+.pr-rk{display:flex;width:fit-content;align-items:center;gap:.3em;font-size:.5em;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--acc);margin-bottom:.25em}
+.pr-rk .rk-i{width:1.4em;height:1.4em}

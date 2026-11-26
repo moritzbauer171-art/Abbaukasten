@@ -437,7 +437,7 @@ function presSlideHTML(s, bar) {
     }
     case 'tasks': {
       const multi = s.items.length > 1; const mn = tsMin(s); const sz = tsSoz(s);
-      const item = (x, col) => { const meta = tsMeta(x, s, m, col); return `<div class="pr-it">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' ? '' : ' fo'}">${itPh(x.it) === 'ha' ? 'HA' : x.no || '•'}</span>` : ''}<div class="pr-itb pr-task">${prTaskHTML(x.it, m)}${arbHints(x.it).map(h => `<div class="pr-ihint">${esc(h)}</div>`).join('')}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
+      const item = (x, col) => { const meta = tsMeta(x, s, m, col); return `<div class="pr-it">${multi ? `<span class="pr-no${x.no || itPh(x.it) === 'ha' ? '' : ' fo'}">${itPh(x.it) === 'ha' ? 'HA' : x.no || '•'}</span>` : ''}<div class="pr-itb pr-task">${x.it.rk ? `<span class="pr-rk">${RK_SVG}Raketenaufgabe</span>` : ''}${prTaskHTML(x.it, m)}${arbHints(x.it).map(h => `<div class="pr-ihint">${esc(h)}</div>`).join('')}${meta ? `<div class="pr-imeta">${esc(meta)}</div>` : ''}</div></div>`; };
       const body = s.segs.map(g => g.t === 'rows' ? `<div class="pr-rows">${g.items.map(x => item(x)).join('')}</div>`
         : (() => { const n = g.cols.length, nc = n <= 3 ? n : n === 4 ? 2 : 3; return `<div class="pr-cols nc${nc}" style="--nc:${nc}">${g.cols.map(c => `<div class="pr-col"><div class="pr-col-h"><b>${esc(c.name)}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ''}</div>${c.items.map(x => item(x, c)).join('')}</div>`).join('')}</div>`; })()).join('');
       const tips = []; s.items.forEach(x => tipsOf(x.it).forEach((t, j) => tips.push([tsLab(x, s, m), t, j + 1])));

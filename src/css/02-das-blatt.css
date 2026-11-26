@@ -371,3 +371,7 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .ch-home span{width:8.2em;height:.3em;border-radius:.2em;background:#111;opacity:.85}
 .cs-dunkel .ch-home span{background:#fff}.ch-ip .ch-in{padding-bottom:.4em}
 .cs-gruen.ch-ip .ch-home,.cs-hell.ch-ip .ch-home{background:var(--in)}.cs-hell.ch-ip .ch-in{border-top:0}
+.rk-i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em;flex:none}
+.task-tag.task-rk{display:inline-flex;align-items:center;gap:.25em}
+.task-tag.task-rk .rk-i{width:1.25em;height:1.25em}
+.tx-rk{display:inline-flex;align-items:center;gap:4px}.tx-rk .rk-i{width:14px;height:14px}

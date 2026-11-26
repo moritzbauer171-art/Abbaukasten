@@ -26,6 +26,8 @@ function tbReCols(b, ord) {
   if (w) { const avg = 100 / ord.length; const nw = ord.map(o => (o < 0 ? avg : w[o])); const sm = nw.reduce((x, y) => x + y, 0); b.cw = nw.map(x => Math.round(x * 1000 / sm) / 10); } else delete b.cw;
   if (b.bg) { const nb = {}; Object.entries(b.bg).forEach(([k, v]) => { const [r, c] = k.split('.'); if (inv[+c] != null) nb[r + '.' + inv[+c]] = v; }); b.bg = nb; if (!Object.keys(nb).length) delete b.bg; }
 }
+/* Raketenaufgabe: Zusatzaufgabe für alle, die schon fertig sind */
+const RK_SVG = '<svg class="rk-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8c3.2 2.2 4.6 5.6 4.6 9.6l-1.9 3.1H9.3l-1.9-3.1c0-4 1.4-7.4 4.6-9.6z"/><circle cx="12" cy="9.4" r="1.7"/><path d="M7.4 12.4 4.6 15.6l3 1.1M16.6 12.4l2.8 3.2-3 1.1M10.3 18.2 12 21.5l1.7-3.3"/></svg>';
 /* Arbeitsformen: Piktogramme neben der Sozialform, mehrere je Aufgabe möglich */
 const ARB = {
   lesen: { label: 'Lesen', g: '<path d="M2.5 5.6c3.2-1.3 6.4-1.1 9.5 1 3.1-2.1 6.3-2.3 9.5-1v13.2c-3.2-1.3-6.4-1.1-9.5 1-3.1-2.1-6.3-2.3-9.5-1z"/><path d="M12 6.6v13.2"/>' },

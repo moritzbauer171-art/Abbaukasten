@@ -4,8 +4,11 @@ from conftest import blocks_standard
 BLOCK = "window.__blockRT = true;"
 
 def pad_tafel(t):
-    try: t.wait_for_selector('.lfc-tkm', timeout=20000)
-    except Exception: t.reload(); t.wait_for_selector('.lfc-tkm', timeout=20000)
+    for k in range(3):
+        try: t.wait_for_selector('.lfc-tkm', timeout=15000); break
+        except Exception:
+            if k == 2: raise
+            t.reload()
     t.click('.lfc-tkm'); t.wait_for_timeout(300); t.click('.lfc-modes [data-tab="tafel"]'); t.wait_for_timeout(1200); t.locator('.lfc-palb [data-tool="pen"]').click(); t.wait_for_timeout(300)
 
 def draw(t, n):

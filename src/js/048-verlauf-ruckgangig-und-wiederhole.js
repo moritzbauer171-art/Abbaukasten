@@ -212,6 +212,7 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'it-rk': { const it = (b.items || [])[+a.dataset.i]; if (!it) return; if (it.rk) delete it.rk; else it.rk = true; changed(true); renderEditor(); return; }
     case 'chat-dev': b.opt = b.opt || {}; if (a.dataset.v) b.opt.dev = a.dataset.v; else delete b.opt.dev; changed(true); renderEditor(); return;
     case 'chat-st': b.style = a.dataset.v; changed(true); renderEditor(); return;
     case 'chat-p': { const m = (b.msgs || [])[+a.dataset.i]; if (!m) return; m.p = +a.dataset.v; changed(true); renderEditor(); return; }
