@@ -949,3 +949,9 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-par-c span{font-size:30px;font-weight:600;line-height:1.25}
 .ab-par{display:flex;align-items:flex-start;gap:6px;font-size:13px;margin:6px 0 2px;cursor:pointer}
 .ab-par input{margin-top:2px}
+
+.pr-chatw{overflow:hidden}
+.pr-chatw .pr-fit{width:100%}
+.pr-chatw .blk-chat{font-size:1em;width:100%}
+.pr-chatw .blk-chat .ch-ph{width:min(var(--chw,72%),38em)}
+.pr-chatw .ch-fk{font-size:.6em;color:#888}

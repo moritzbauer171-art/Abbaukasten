@@ -105,6 +105,7 @@ function sumDetail(b) {
     switch (b.type) {
       case 'material': { const w = wc(b.text), g = (b.glossary || []).length; return [w ? pl(w, 'Wort', 'Wörter') : 'noch kein Text', g ? pl(g, 'Worterklärung', 'Worterklärungen') : '', String(b.source || '').trim() ? '' : 'ohne Quelle'].filter(Boolean).join(' · '); }
       case 'tasks': { const L = b.items || []; const noEh = L.filter(it => String(it.text || '').trim() && !ehLines(it).length).length; return [pl(L.length, 'Aufgabe', 'Aufgaben'), noEh ? (noEh === L.length ? 'ohne Erwartung' : `${noEh} ohne Erwartung`) : 'Erwartung ✓'].join(' · '); }
+      case 'chat': { const n = (b.msgs || []).filter(m => !m.sys).length, e = (b.msgs || []).filter(m => !m.sys && !String(m.t || '').trim()).length; return [pl(n, 'Nachricht', 'Nachrichten'), e ? e + ' zum Ausfüllen' : '', CHAT_ST[chatSt(b)].l].filter(Boolean).join(' · '); }
       case 'info': case 'text': case 'quote': { const w = wc(b.text); return w ? plainText(b.text).trim().slice(0, 70) : 'noch leer'; }
       case 'image': if (Array.isArray(b.lb)) return `${b.lb.length} Kästen${b.lbMode ? ' · zum Beschriften' : ''}${b.src ? '' : ' · noch kein Bild'}`; return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
       default: { const ph = itPh(b), mn = itMin(b); return [ph ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · '); }
@@ -170,6 +171,7 @@ function summary(b, num) {
   switch (b.type) {
     case 'material': return `${num[b.id].tag || 'M' + num[b.id].m} · ${b.title || 'ohne Titel'}`;
     case 'tasks': { const r = num[b.id]; const fo = r.nFo ? (r.nFo === 1 ? '1 Auftrag nur auf der Folie' : r.nFo + ' Aufträge nur auf der Folie') : ''; return (r.to < r.from ? (fo || 'keine Aufgaben') : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (fo ? ' · ' + fo : '')) + (b.title ? ' · ' + b.title : '') + (itMin(b) ? ` · ${itMin(b)} Min.` : '') + (itMin(b) && b.timer ? ' · Timer' : ''); }
+    case 'chat': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (b.title || (b.head && b.head.name) || 'Chat') + ` · ${(b.msgs || []).length} Nachrichten`;
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
     case 'step': return `${itPh(b) ? PHASEN[itPh(b)].label + ' · ' : ''}${stepLabel(b)}${itMin(b) ? ' · ' + itMin(b) + ' Min.' : ''} · nicht auf dem Blatt`;
@@ -233,6 +235,7 @@ function bodyFor(b, num) {
         <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div></div>` : ''}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
+    case 'chat': return chatEdHTML(b);
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS_BY[fachBase()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}
       ${stilTiles(b, ST_INFO)}`;
@@ -471,4 +474,22 @@ function tbmRender() {
     <div class="tbm-f"><button type="button" class="link" data-act="tbx-row-ins" data-ri="${b.rows.length - 1}" data-pos="1">+ Zeile am Ende</button>${cols < 6 ? `<button type="button" class="link" data-act="tbx-col-ins" data-ci="${cols - 1}" data-pos="1">+ Spalte rechts</button>` : ''}<span class="tbm-sp"></span><small class="hint">Esc oder „Fertig“ schließt. Änderungen erscheinen sofort im Blatt.</small></div>
   </div></div>`;
   const g2 = box.querySelector('.tbm-gw'); if (g2) { g2.scrollLeft = sx; g2.scrollTop = sy; }
+}
+
+/* Chat-Editor */
+function chatEdHTML(b) {
+  const P = chatPeople(b), M = Array.isArray(b.msgs) ? b.msgs : [], o = b.opt || {}, st = chatSt(b);
+  const sw = { gruen: ['#075E54', '#D9FDD3', '#fff'], blau: ['#F6F6F6', '#0A84FF', '#E9E9EB'], verlauf: ['#fff', '#7B3FE4', '#EFEFEF'], hell: ['#517DA2', '#EFFDDE', '#fff'], dunkel: ['#2B2D31', '#5865F2', '#313338'], sms: ['#fff', '#EDEDED', '#fff'], ki: ['#fff', '#F0F0F0', '#10A37F'] };
+  const pc = i => (i === 0 ? '#9CA3AF' : CHAT_PC[(i - 1) % CHAT_PC.length]);
+  const pseg = (i, cur) => `<div class="seg sm" role="group" aria-label="Wer schreibt?">${P.map((x, k) => `<button type="button" data-act="chat-p" data-i="${i}" data-v="${k}" aria-pressed="${cur === k}"><span class="ch-dot" style="background:${pc(k)};display:inline-block;margin-right:4px;vertical-align:-1px"></span>${esc(String(x.n || '').trim() || 'Person ' + k)}${k === 0 ? ' (rechts)' : ''}</button>`).join('')}</div>`;
+  return `${fText('title', 'Überschrift (optional)', b.title, 'z. B. Chatverlauf der Klassengruppe')}
+    <div class="f"><span>Aussehen</span><div class="ch-sts">${Object.entries(CHAT_ST).map(([k, x]) => `<button type="button" class="ch-stb" data-act="chat-st" data-v="${k}" aria-pressed="${st === k}"><i>${sw[k].map(c => `<span style="background:${c};border:1px solid rgba(0,0,0,.15)"></span>`).join('')}</i><b>${x.l}</b><small>${x.hint}</small></button>`).join('')}</div></div>
+    <div class="row">${fText('head.name', 'Name oben', b.head && b.head.name, P.length > 2 ? 'z. B. Klasse 10b 📚' : 'z. B. Lea')}${fText('head.sub', 'Zeile darunter', b.head && b.head.sub, 'z. B. online')}</div>
+    <div class="f"><span>Personen im Chat</span><div class="ch-ppl">${P.map((x, k) => `<div class="ch-pr"><span class="ch-dot" style="background:${pc(k)}"></span>${fText(`people.${k}.n`, k === 0 ? 'Ich – erscheint rechts' : 'Person ' + k, x.n, k === 0 ? 'Ich' : 'Name')}${k > 1 ? `<button class="ib" type="button" data-act="chat-pdel" data-i="${k}" title="Person entfernen" aria-label="Person ${k} entfernen">${I.x}</button>` : ''}</div>`).join('')}</div>${P.length < 8 ? '<button class="link" type="button" data-act="chat-padd">+ Person</button>' : ''}</div>
+    <div class="f"><span>Nachrichten <small class="hint">Leeres Textfeld = Schreiblinien in der Blase, zum Ausfüllen</small></span><div class="ch-msgs">${M.map((m, i) => `<div class="ch-mr${m.sys ? ' sys' : ''}">
+      <div class="ch-mr-h">${m.sys ? '<b style="font-size:12.5px">Hinweis in der Mitte</b>' : pseg(i, Math.max(0, Math.min(P.length - 1, +m.p || 0)))}<span class="sp"></span>${m.sys ? '' : `<input class="ch-zi" data-k="msgs.${i}.z" value="${esc(m.z || '')}" placeholder="Zeit" aria-label="Uhrzeit Nachricht ${i + 1}">`}<button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="-1" title="nach oben" aria-label="Nachricht nach oben"${i === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="1" title="nach unten" aria-label="Nachricht nach unten"${i === M.length - 1 ? ' disabled' : ''}>↓</button><button class="ib" type="button" data-act="chat-del" data-i="${i}" title="Nachricht löschen" aria-label="Nachricht ${i + 1} löschen">${I.x}</button></div>
+      ${rtField(`msgs.${i}.t`, m.t || '', { mode: 'inline', rows: 2, ph: m.sys ? 'z. B. Heute · Tom wurde hinzugefügt' : 'Nachricht … (leer = Linien zum Ausfüllen)', aria: `Nachricht ${i + 1}` })}</div>`).join('')}</div>
+      <div class="row" style="gap:14px"><button class="link" type="button" data-act="chat-add">+ Nachricht</button><button class="link" type="button" data-act="chat-sys">+ Hinweis in der Mitte</button></div></div>
+    <label class="f"><span>Breite: ${Math.round(+b.width || 72)} %</span><input type="range" min="40" max="100" step="2" value="${+b.width || 72}" data-k="width" data-num="1"></label>
+    <div class="chks">${fCheck('opt.ln', 'Zeilenangaben (für Textbelege)', !!o.ln)}${fCheck('opt.frame', 'Handyrahmen', o.frame !== false)}${fCheck('opt.time', 'Uhrzeiten', o.time !== false)}${fCheck('opt.read', 'Lesehäkchen', o.read !== false)}${P.length > 2 ? fCheck('opt.names', 'Namen in der Gruppe', o.names !== false) : ''}${fCheck('opt.bar', 'Eingabezeile unten', o.bar !== false)}${fCheck('fiktiv', 'Hinweis „Fiktiver Chatverlauf“', b.fiktiv !== false)}</div>`;
 }

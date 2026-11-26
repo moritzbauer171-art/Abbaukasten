@@ -23,6 +23,9 @@ function newBlock(type) {
     case 'material': return { id, type, title: '', text: '', glossary: [], source: '', lineNumbers: true, fmt: {}, memo: '', nl: 1 };
     case 'tasks': return { id, type, title: '', restart: false, items: [{ text: '', tag: '' }] };
     case 'info': return { id, type, kind: 'Merke', title: '', text: '' };
+    case 'chat': return { id, type, title: '', style: 'gruen', head: { name: 'Lerngruppe Deutsch', sub: '' }, people: [{ n: 'Ich' }, { n: 'Lea' }, { n: 'Tom' }],
+      msgs: [{ p: 1, t: 'Habt ihr die Aufgabe für morgen schon?', z: '18:02' }, { p: 2, t: 'Welche Aufgabe?? 😅', z: '18:04' }, { p: 0, t: '', z: '18:05' }],
+      opt: { time: true, names: true, read: true, frame: true, bar: true }, width: 72, fiktiv: true };
     case 'table': return { id, type, title: '', cols: ['', '', ''], rows: [['', '', ''], ['', '', ''], ['', '', '']], rowHeight: 'normal', firstBold: false };
     case 'lines': return { id, type, count: 8, style: 'linien' };
     case 'gsa': return { id, type, gk: 'kreuz', title: '', mode: '', items: [{ t: '', ok: true }, { t: '', ok: false }, { t: '', ok: true }], words: '', text: '', lin: '', mb: false, size: '10', dirs: 'hv', showList: true, count: true, per: '1', fh: '80', rows: 3, seed: 1 + Math.floor(Math.random() * 1e6), src: '', ex: '' };

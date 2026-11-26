@@ -100,7 +100,7 @@ async function mappeGo() {
   // Die Seiten kommen kurz in die Vorschau; PDF und Druck verarbeiten sie dort wie gewohnt
   const host = $('#pages'); host.innerHTML = '';
   res.units.forEach(u => { u.classList.add('pout'); const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(u); host.appendChild(slot); });
-  applyScale(); lbArrows(host); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
+  applyScale(); lbArrows(host); chatLines(host); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
   const name = 'Mappe_' + slug(opt.title || 'Reihe') + (opt.fassung === 'lehrer' ? '_Lehrerfassung' : '') + '.pdf';
   try {
     if (opt.fmt === 'print') { overlay(''); await fontsIn(document); doPrint(); }
@@ -170,8 +170,8 @@ const LINE = (s, sz, col) => `<w:${s} w:val="single" w:sz="${sz}" w:space="0" w:
 function xtc(content, o = {}) {
   return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.span ? `<w:gridSpan w:val="${o.span}"/>` : ''}${o.vm ? `<w:vMerge${o.vm === 'restart' ? ' w:val="restart"' : ''}/>` : ''}${o.borders ? `<w:tcBorders>${o.borders}</w:tcBorders>` : ''}${o.shd ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>` : ''}${o.mar ? `<w:tcMar>${o.mar}</w:tcMar>` : ''}${o.v ? `<w:vAlign w:val="${o.v}"/>` : ''}</w:tcPr>${content || '<w:p><w:pPr><w:suppressLineNumbers/></w:pPr></w:p>'}</w:tc>`;
 }
-function xtbl(widths, rowsXml, borders, mar) {
-  return `<w:tbl><w:tblPr><w:tblW w:w="${widths.reduce((a, b) => a + b, 0)}" w:type="dxa"/><w:tblBorders>${borders}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar>${mar || '<w:top w:w="0" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="85" w:type="dxa"/>'}</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rowsXml}</w:tbl>`;
+function xtbl(widths, rowsXml, borders, mar, ind) {
+  return `<w:tbl><w:tblPr><w:tblW w:w="${widths.reduce((a, b) => a + b, 0)}" w:type="dxa"/>${ind ? `<w:tblInd w:w="${ind}" w:type="dxa"/>` : ''}<w:tblBorders>${borders}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar>${mar || '<w:top w:w="0" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="85" w:type="dxa"/>'}</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rowsXml}</w:tbl>`;
 }
 const xtr = (cells, o = {}) => `<w:tr><w:trPr>${o.cant ? '<w:cantSplit/>' : ''}${o.h ? `<w:trHeight w:val="${o.h}" w:hRule="${o.rule || 'atLeast'}"/>` : ''}${o.header ? '<w:tblHeader/>' : ''}</w:trPr>${cells}</w:tr>`;
 const NOB = NIL('top') + NIL('left') + NIL('bottom') + NIL('right') + NIL('insideH') + NIL('insideV');
@@ -364,6 +364,34 @@ async function exportDOCX() {
           }
           const bd = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 6, DOCX_MARK)).join('') + NIL('insideH') + NIL('insideV');
           parts.push(xtbl(Array(cols).fill(w), rows.join(''), bd, `<w:top w:w="${TW(1.5)}" w:type="dxa"/><w:left w:w="${TW(3)}" w:type="dxa"/><w:bottom w:w="${TW(2)}" w:type="dxa"/><w:right w:w="${TW(3)}" w:type="dxa"/>`));
+          break;
+        }
+        case 'chat': {
+          // Chat in Word: je Nachricht eine eingefärbte Zelle, eigene rechts, andere links; ohne Handyrahmen
+          const st = chatSt(b), P = chatPeople(b), o = b.opt || {}, h = b.head || {};
+          const C = { gruen: ['075E54', 'D9FDD3', 'FFFFFF', 'EFE7DD'], blau: ['F6F6F6', 'DCEBFF', 'E9E9EB', 'FFFFFF'], verlauf: ['FFFFFF', 'E7DCFA', 'EFEFEF', 'FFFFFF'], hell: ['517DA2', 'EFFDDE', 'FFFFFF', 'DDEBD3'], dunkel: ['2B2D31', 'E9EAFD', 'F2F3F5', 'FFFFFF'], sms: ['FFFFFF', 'EDEDED', 'FFFFFF', 'FFFFFF'], ki: ['FFFFFF', 'F0F0F0', 'FFFFFF', 'FFFFFF'] }[st];
+          const hdDark = ['gruen', 'hell', 'dunkel'].includes(st);
+          if (b.title || tagsW[b.id]) parts.push(xp((tagsW[b.id] ? xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') : '') + xrInline(b.title || '', { b: 1, sz: 22 }), { keepNext: true, after: 80 }));
+          const name = String(h.name || '').trim() || (P.length > 2 ? 'Gruppe' : (P[1] && P[1].n) || 'Chat');
+          const W = Math.round(CW * Math.max(40, Math.min(100, +b.width || 72)) / 100), bw = Math.round(W * 0.74), gap = W - bw, ind = Math.round((CW - W) / 2);
+          const BOX = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, 'BFBFBF')).join('');
+          const rows = [];
+          rows.push(xtr(xtc(xp(xr(name, { b: 1, sz: 20, color: hdDark ? 'FFFFFF' : '111111' }) + (h.sub ? xr('   ' + h.sub, { sz: 15, color: hdDark ? 'E8E8E8' : '777777' }) : ''), { keepNext: true }), { w: W, span: 2, shd: C[0], borders: BOX })));
+          let prev = null;
+          (b.msgs || []).forEach((m, i) => {
+            if (m.sys) { prev = null; rows.push(xtr(xtc(xp(xrInline(m.t || '', { sz: 15, i: 1, color: '666666' }), { jc: 'center', before: 40, after: 40 }), { w: W, span: 2, shd: C[3] }))); return; }
+            const pi = Math.max(0, Math.min(P.length - 1, +m.p || 0)), me = pi === 0, first = prev !== pi; prev = pi;
+            const txt = String(m.t || '').trim(), col = CHAT_PC[(pi - 1 + CHAT_PC.length) % CHAT_PC.length].slice(1);
+            const nm = first && (st === 'dunkel' || (!me && st !== 'ki' && P.length > 2 && o.names !== false)) ? xp(xr(String(P[pi].n || '').trim() || 'Person', { b: 1, sz: 15, color: col }), { after: 0 }) : '';
+            const body = txt ? xpRich(txt, { sz: 19 }, { gap: 20 }) : Array.from({ length: Math.max(1, Math.min(6, +m.ln || 2)) }, () => xp('', { line: 440, rule: 'exact', bdr: '<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="8C8C8C"/></w:pBdr>' })).join('');
+            const lr = o.ln && CHAT_LN[b.id] && CHAT_LN[b.id][i]; const lnP = lr ? xp(xr('Z. ' + (lr[0] === lr[1] ? lr[0] : lr[0] + '–' + lr[1]), { sz: 13, color: '888888' }), { after: 0 }) : '';
+            const tm = o.time !== false && m.z ? xp(xr(m.z + (me && o.read !== false && st !== 'ki' && st !== 'dunkel' ? ' ✓✓' : ''), { sz: 13, color: '888888' }), { jc: 'right', before: 0 }) : '';
+            const bub = xtc(lnP + nm + body + tm, { w: bw, shd: me ? C[1] : C[2], borders: ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, 'D0D0D0')).join(''), mar: `<w:top w:w="${TW(1.2)}" w:type="dxa"/><w:left w:w="${TW(2.5)}" w:type="dxa"/><w:bottom w:w="${TW(1.2)}" w:type="dxa"/><w:right w:w="${TW(2.5)}" w:type="dxa"/>` });
+            const sp = xtc(xp(''), { w: gap, shd: C[3] });
+            rows.push(xtr(me && st !== 'dunkel' ? sp + bub : bub + sp, { cant: 1 }));
+          });
+          parts.push(xtbl([bw, gap], rows.join(''), NOB, '', ind));
+          if (b.fiktiv !== false) parts.push(xp(xr('Fiktiver Chatverlauf', { i: 1, sz: 14, color: '888888' }), { jc: 'center', before: 40 }));
           break;
         }
         case 'info': {

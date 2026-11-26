@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- Neuer Baustein **Chat**: Chatverlauf im Messenger-Look mit sieben Stilen (Grün, Blau, Verlauf, Hellblau, Dunkel, Schlicht, KI-Chat – angelehnt an bekannte Messenger, ohne Logos), Personen, Uhrzeiten, Lesehäkchen, Hinweisen in der Mitte, Handyrahmen; leere Nachricht = Schreiblinien zum Ausfüllen; zuschaltbare Zeilenangaben für Textbelege; zählt als Material (M1 …); auf Folie, im Druck und in Word.
 - Companion: Knopf **„Zurück zur Folie“** oben in der Mitte, immer sichtbar, solange am Beamer Tafel, Pro/Contra oder Schwarz läuft – ein Tipp zeigt wieder die aktuelle Folie.
 - **Companion-Ersatzverbindung**: Sperrt ein Netz (z. B. Schul-WLAN) den Live-Kanal, schalten iPad und Laptop nach wenigen Sekunden selbst auf normale Web-Anfragen um (Tabelle `ab_relay`, nur eigene Einträge, löscht sich selbst). Stift, Tafel, Fernbedienung laufen mit etwa einer halben Sekunde Verzögerung; oben erscheint „Ersatzverbindung“.
 - **Arbeitsteilige ABs**: Haken „Arbeitsteilig“ bei mehreren ABs einer Stunde – nebeneinanderliegende ABs mit Haken bekommen eine gemeinsame Zwischenfolie und je Aufgabenbaustein eine Folie: der n-te Baustein jedes ABs steht mit den n-ten der anderen nebeneinander (je AB eine Spalte, Zeit = längstes AB).

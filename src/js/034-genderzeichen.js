@@ -18,6 +18,7 @@ function gTargets(bid) {
   switch (b.type) {
     case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
     case 'info': return [[b, 'title'], [b, 'text']];
+    case 'chat': return [[b, 'title'], ...(b.msgs || []).map(m => [m, 't'])];
     case 'phrases': return [[b, 'title'], ...(b.groups || []).flatMap(g => [[g, 'head'], [g, 'text']])];
     case 'step': return ['title', 'head', 'text', 'quote', 'author', 'cap', 'note', 'eh', 'media', 'qs'].map(k => [b, k]);
     case 'a3': a3Norm(b); return [[b, 'title'], [b, 'task'], [b, 'impulse'], [b, 'rules'], ...['legend', 'sections', 'cols', 'aspects', 'experts'].flatMap(k => b[k].map((_, i) => [b[k], i]))];

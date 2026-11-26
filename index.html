@@ -1545,6 +1545,113 @@ body{transition:background-color .3s,border-color .25s}
 .tbm-f{display:flex;align-items:center;gap:18px;padding:10px 16px;border-top:1px solid var(--line)}
 body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 @media (max-width:700px){.tbm-back{padding:0}.tbm{width:100vw;max-height:100vh;height:100vh;border-radius:0}.tbm-cw{padding-left:16px}}
+/* ================= Chat ================= */
+.blk-chat{--bg:#EFE7DD;--hd:#075E54;--hdc:#fff;--me:#D9FDD3;--mec:#111B21;--ot:#fff;--otc:#111B21;--meta:#667781;--tk:#53BDEB;--sys:#E1F2FB;--sysc:#54656F;--in:#fff;font-size:.95em;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.blk-chat .mat-head{margin-bottom:2.5mm}
+.ch-ph{width:var(--chw,72%);margin:0 auto;background:var(--bg);border-radius:.7em;overflow:hidden;border:.06em solid rgba(0,0,0,.16);display:flex;flex-direction:column;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.3}
+.blk-chat.frm .ch-ph{border:.42em solid #1C1F27;border-radius:1.5em;box-shadow:0 0 0 .08em #555}
+.ch-h{display:flex;align-items:center;gap:.55em;padding:.55em .8em;background:var(--hd);color:var(--hdc)}
+.blk-chat.frm .ch-h{padding-top:1em}
+.ch-i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ch-bk{margin-right:-.2em}
+.ch-av{width:2.1em;height:2.1em;border-radius:50%;background:color-mix(in srgb,var(--pc,#8696A0) 85%,#fff);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.82em;flex:none}
+.ch-h .ch-av{background:#DFE5E7;color:#54656F}
+.ch-av.sm{width:1.75em;height:1.75em;font-size:.72em;align-self:flex-end}
+.ch-av.ph{visibility:hidden}
+.ch-hn{display:flex;flex-direction:column;min-width:0;flex:1}
+.ch-hn b{font-size:1.02em;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-hn small{font-size:.74em;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-hi{display:flex;gap:.9em}
+.ch-b{padding:.7em .7em .8em;display:flex;flex-direction:column;gap:.16em}
+.ch-m{display:flex;align-items:flex-end;gap:.35em;max-width:100%}
+.ch-m.first{margin-top:.38em}
+.ch-m.me{justify-content:flex-end}
+.ch-bub{max-width:78%;padding:.36em .6em .3em;border-radius:.6em;background:var(--ot);color:var(--otc);box-shadow:0 .05em .08em rgba(0,0,0,.13);position:relative}
+.ch-m.me .ch-bub{background:var(--me);color:var(--mec)}
+.ch-m.ot.first .ch-bub{border-top-left-radius:.15em}.ch-m.me.first .ch-bub{border-top-right-radius:.15em}
+.ch-n{display:flex;gap:.5em;align-items:baseline;font-size:.8em;font-weight:700;color:var(--pc);margin-bottom:.1em}
+.ch-t{font-size:.95em;overflow-wrap:anywhere}
+.ch-z{float:right;margin:.35em 0 -.15em .8em;font-size:.68em;color:var(--meta);display:inline-flex;align-items:center;gap:.15em;white-space:nowrap}
+.ch-tk{width:1.35em;height:1.1em;color:var(--tk);stroke-width:2}
+.ch-m.leer .ch-bub{min-width:58%}
+.ch-wl{display:block;height:1.6em;border-bottom:.06em solid color-mix(in srgb,currentColor 45%,transparent)}
+.ch-sys{display:flex;justify-content:center;margin:.45em 0 .2em}
+.ch-sys span{font-size:.74em;padding:.25em .7em;border-radius:.5em;background:var(--sys);color:var(--sysc);text-align:center}
+.ch-in{display:flex;align-items:center;gap:.5em;padding:.45em .6em .55em;background:var(--bg);color:var(--meta)}
+.blk-chat.frm .ch-in{padding-bottom:1em}
+.ch-inp{flex:1;background:var(--in);border-radius:1.2em;padding:.4em .85em;font-size:.86em;color:#8696A0}
+.ch-snd{width:1.3em;height:1.3em}
+.ch-fk{text-align:center;font-size:.72em;color:var(--paper-muted,#777);margin-top:1.2mm;font-style:italic}
+/* Blau (wie iMessage) */
+.blk-chat.cs-blau{--bg:#fff;--hd:#F6F6F6;--hdc:#111;--me:#0A84FF;--mec:#fff;--ot:#E9E9EB;--otc:#111;--meta:#8E8E93;--sys:transparent;--sysc:#8E8E93;--in:#fff}
+.cs-blau .ch-h{flex-direction:row;border-bottom:.06em solid #DDD}.cs-blau .ch-h .ch-av{background:linear-gradient(#A5ABB8,#858994);color:#fff}
+.cs-blau .ch-hi,.cs-blau .ch-bk{color:#0A84FF}
+.cs-blau .ch-bub{border-radius:1.1em;box-shadow:none;padding:.4em .75em}
+.cs-blau .ch-m.ot.first .ch-bub,.cs-blau .ch-m.me.first .ch-bub{border-radius:1.1em}
+.cs-blau .ch-m.me.last .ch-bub{border-bottom-right-radius:.3em}.cs-blau .ch-m.ot.last .ch-bub{border-bottom-left-radius:.3em}
+.cs-blau .ch-n{color:#8E8E93;font-weight:500;margin-left:.2em}
+.cs-blau .ch-z{color:inherit;opacity:.65}.cs-blau .ch-tk{display:none}
+.cs-blau .ch-inp{border:.06em solid #C7C7CC;background:#fff}.cs-blau .ch-snd{color:#0A84FF}.cs-blau .ch-in{border-top:.06em solid #eee}
+/* Verlauf (wie Instagram) */
+.blk-chat.cs-verlauf{--bg:#fff;--hd:#fff;--hdc:#111;--me:#7B3FE4;--mec:#fff;--ot:#EFEFEF;--otc:#111;--meta:#8E8E8E;--sys:transparent;--sysc:#8E8E8E;--in:#fff}
+.cs-verlauf .ch-h{border-bottom:.06em solid #EEE}.cs-verlauf .ch-h .ch-av{background:linear-gradient(45deg,#F9CE34,#EE2A7B,#6228D7);color:#fff;box-shadow:0 0 0 .12em #fff,0 0 0 .22em #EE2A7B}
+.cs-verlauf .ch-bub{border-radius:1.2em;box-shadow:none;padding:.45em .8em}
+.cs-verlauf .ch-m.me .ch-bub{background:linear-gradient(135deg,#8A3AB9 0%,#5B51D8 55%,#3A7BFF 100%)}
+.cs-verlauf .ch-m.ot.first .ch-bub,.cs-verlauf .ch-m.me.first .ch-bub{border-radius:1.2em}
+.cs-verlauf .ch-n{color:#8E8E8E;font-weight:500}.cs-verlauf .ch-z{color:inherit;opacity:.6}.cs-verlauf .ch-tk{display:none}
+.cs-verlauf .ch-inp{border:.06em solid #DBDBDB;background:#fff}
+/* Hellblau (wie Telegram) */
+.blk-chat.cs-hell{--bg:#C9DDB8;--hd:#517DA2;--hdc:#fff;--me:#EFFDDE;--mec:#000;--ot:#fff;--otc:#000;--meta:#6E9A62;--tk:#4FAE4E;--sys:rgba(0,0,0,.18);--sysc:#fff;--in:#fff}
+.cs-hell .ch-h .ch-av{background:#7BC862;color:#fff}.cs-hell .ch-bub{border-radius:.75em}
+.cs-hell .ch-m.ot .ch-z{color:#A0ACB6}
+.cs-hell .ch-in{background:#fff;border-top:.06em solid #ddd}.cs-hell .ch-inp{background:transparent;padding-left:.2em}
+/* Dunkel (wie Discord): keine Blasen, Name und Bild links */
+.blk-chat.cs-dunkel{--bg:#313338;--hd:#2B2D31;--hdc:#F2F3F5;--me:transparent;--mec:#DBDEE1;--ot:transparent;--otc:#DBDEE1;--meta:#949BA4;--sys:transparent;--sysc:#949BA4;--in:#383A40}
+.cs-dunkel .ch-h{border-bottom:.08em solid #1F2023}.cs-dunkel .ch-hash{font-size:1.4em;color:#80848E;font-weight:300}
+.cs-dunkel .ch-m,.cs-dunkel .ch-m.me{justify-content:flex-start;align-items:flex-start}
+.cs-dunkel .ch-m.me{--pc:#5865F2}
+.cs-dunkel .ch-bub{box-shadow:none;padding:0 .2em;max-width:100%;border-radius:0}
+.cs-dunkel .ch-m:not(.first) .ch-av.ph{height:0}
+.cs-dunkel .ch-av.sm{align-self:flex-start}
+.cs-dunkel .ch-n{font-size:.88em;color:color-mix(in srgb,var(--pc) 70%,#fff)}
+.cs-dunkel .ch-n .ch-z{float:none;margin:0;font-weight:400;font-size:.8em}
+.cs-dunkel .ch-wl{border-color:#80848E}
+.cs-dunkel .ch-in{padding:.6em .7em}.cs-dunkel .ch-inp{border-radius:.5em;background:#383A40;color:#80848E}
+.cs-dunkel .ch-sys span{background:transparent;border-top:.06em solid #3F4147;border-radius:0;padding-top:.4em;width:100%}
+/* Schlicht (SMS): nur Linien, gut für Schwarz-Weiß */
+.blk-chat.cs-sms{--bg:#fff;--hd:#fff;--hdc:#111;--me:#fff;--mec:#111;--ot:#fff;--otc:#111;--meta:#888;--sys:transparent;--sysc:#777;--in:#fff}
+.cs-sms .ch-h{border-bottom:.08em solid #222}.cs-sms .ch-h .ch-av{background:#fff;color:#111;border:.08em solid #222}
+.cs-sms .ch-bub{border:.08em solid #222;box-shadow:none;border-radius:.8em}
+.cs-sms .ch-m.me .ch-bub{background:#EDEDED}
+.cs-sms .ch-n{color:#111}.cs-sms .ch-tk{color:#888}
+.cs-sms .ch-inp{border:.08em solid #999}
+/* KI-Chat: eigene Fragen in Blasen rechts, Antworten frei links */
+.blk-chat.cs-ki{--bg:#fff;--hd:#fff;--hdc:#111;--me:#F0F0F0;--mec:#111;--ot:transparent;--otc:#1A1A1A;--meta:#888;--sys:transparent;--sysc:#888;--in:#fff}
+.cs-ki .ch-h{justify-content:center;border-bottom:.06em solid #EEE;text-align:center}.cs-ki .ch-hn{align-items:center}
+.cs-ki .ch-bub{box-shadow:none;border-radius:1.2em}
+.cs-ki .ch-m.ot .ch-bub{padding-left:.1em;max-width:88%}
+.cs-ki .ch-m.ot .ch-av{align-self:flex-start;background:#10A37F;font-size:.62em}
+.cs-ki .ch-m.ot .ch-n{color:#111}
+.cs-ki .ch-m.first{margin-top:.7em}
+.cs-ki .ch-inp{border:.06em solid #DDD;border-radius:1.4em;padding:.55em 1em}
+.cs-ki .ch-snd{background:#111;color:#fff;border-radius:50%;padding:.25em;width:1.6em;height:1.6em}
+/* Editor */
+.ch-sts{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+.ch-stb{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:6px 8px;border-radius:9px;border:1px solid var(--line);background:var(--bg,#fff);cursor:pointer;text-align:left}
+.ch-stb i{display:flex;gap:3px;margin-bottom:3px}.ch-stb i span{width:16px;height:9px;border-radius:5px}
+.ch-stb b{font-size:12.5px}.ch-stb small{font-size:11px;color:var(--muted,#6B7280)}
+.ch-stb[aria-pressed="true"]{outline:2px solid var(--acc,#2B45B8);outline-offset:1px}
+.ch-ppl{display:grid;gap:6px}.ch-pr{display:flex;gap:6px;align-items:center}.ch-pr .f{flex:1;margin:0}
+.ch-dot{width:12px;height:12px;border-radius:50%;flex:none}
+.ch-msgs{display:grid;gap:8px;margin:6px 0}
+.ch-mr{border:1px solid var(--line);border-radius:10px;padding:7px 9px}
+.ch-mr.sys{background:color-mix(in srgb,var(--line) 30%,transparent)}
+.ch-mr-h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.ch-mr-h .sp{flex:1}
+.ch-mr-h input.ch-zi{width:64px;padding:3px 6px;font-size:12.5px;border:1px solid var(--line);border-radius:6px}
+.ch-mr .rtx{min-height:44px}
+.blk-chat{position:relative}
+.ch-lnn{position:absolute;width:6mm;text-align:right;transform:translateY(-50%);font-size:8pt;color:var(--paper-muted,#777);font-family:var(--font-text,inherit);line-height:1}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
 .page.d-akte.tone{background:#F5EEDD}
@@ -3380,6 +3487,12 @@ html[data-prvt]::view-transition-old(root){display:none}html[data-prvt]::view-tr
 .pr-par-c span{font-size:30px;font-weight:600;line-height:1.25}
 .ab-par{display:flex;align-items:flex-start;gap:6px;font-size:13px;margin:6px 0 2px;cursor:pointer}
 .ab-par input{margin-top:2px}
+
+.pr-chatw{overflow:hidden}
+.pr-chatw .pr-fit{width:100%}
+.pr-chatw .blk-chat{font-size:1em;width:100%}
+.pr-chatw .blk-chat .ch-ph{width:min(var(--chw,72%),38em)}
+.pr-chatw .ch-fk{font-size:.6em;color:#888}
 /* ===== Startseite ===== */
 #home-root:empty{display:none}
 .hm{position:fixed;inset:0;z-index:38;background:var(--desk);overflow:auto;-webkit-overflow-scrolling:touch;contain:layout paint}
@@ -3983,7 +4096,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = 'cd45621d37';
+const LW_BUILD = '1758851f8a';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -4073,6 +4186,7 @@ const TYPE_ICON = {
   quote: '<path d="M10.5 6.5C7 7.6 5 10.2 5 13.6V18h5v-5H7.3c.2-2 1.4-3.6 3.6-4.6zM19.5 6.5c-3.5 1.1-5.5 3.7-5.5 7.1V18h5v-5h-2.7c.2-2 1.4-3.6 3.6-4.6z" fill="currentColor" stroke="none"/>',
   qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z"/>',
   beschriftet: '<rect x="8.5" y="8" width="7" height="8" rx="1.2"/><rect x="2.5" y="4" width="4" height="3" rx=".6"/><rect x="17.5" y="4" width="4" height="3" rx=".6"/><rect x="2.5" y="17" width="4" height="3" rx=".6"/><rect x="17.5" y="17" width="4" height="3" rx=".6"/><path d="M6.5 7l2 2M17.5 7l-2 2M6.5 17l2-2M17.5 17l-2-2"/>',
+  chat: '<path d="M4 5.5h11a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-3.5 3v-3H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z"/><path d="M19 9.5h1a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v2.5L16 18.5h-3"/>',
   image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
   post: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8" cy="8.5" r="2"/><path d="M11.5 7.6h5.5M11.5 10h3.5M7 13.8h10M7 16.8h7"/>',
   match: '<circle cx="5.5" cy="6" r="1.7"/><circle cx="5.5" cy="12" r="1.7"/><circle cx="5.5" cy="18" r="1.7"/><circle cx="18.5" cy="6" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/><circle cx="18.5" cy="18" r="1.7"/><path d="M7.4 6.4 16.6 17.6M7.4 12l9.2-5.6M7.4 18l9.2-5.6"/>',
@@ -4113,6 +4227,7 @@ const TYPES = {
   quote:    { label:'Zitat',         desc:'Impuls zum Einstieg' },
   qr:       { label:'QR-Code',       desc:'Link zu Video, Quelle' },
   image:    { label:'Bild',          desc:'Grafik, Schaubild' },
+  chat:     { label:'Chat',          desc:'Chatverlauf wie im Messenger' },
   pagebreak:{ label:'Seitenumbruch', desc:'Rest auf neue Seite' },
   gsa:      { label:'Grundschul-Aufgabe', desc:'Ankreuzen, Reihenfolge, Suchsel, Silben, Abschreiben, Bild und Schreiben, Selbsteinschätzung' }
 };
@@ -4123,7 +4238,7 @@ const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[t
 const PAL_LB = () => PAL('image', { k: 'beschriftet', label: 'Bild mit Beschriftungen', desc: 'Bild in der Mitte, Kästen mit Pfeilen rundherum', ic: 'beschriftet', pre: { width: 42, lb: [{ h: '', t: '', s: 'l', at: 'o' }, { h: '', t: '', s: 'l', at: 'u' }, { h: '', t: '', s: 'r', at: 'o' }, { h: '', t: '', s: 'r', at: 'u' }] } });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'beschriftet', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : t === 'beschriftet' ? PAL_LB() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
+  get deutsch() { const v = ['material', 'poem', 'post', 'chat', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'beschriftet', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : t === 'beschriftet' ? PAL_LB() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
   get en() { return this.deutsch; }, get es() { return this.deutsch; }, get fr() { return this.deutsch; },
   ma: [
     PAL('tasks', { desc: 'mit Operator-Check (KMK Mathematik)' }), PAL('lines', { k: 'rechen', label: 'Rechenkästchen', desc: 'Kariertes Feld zum Rechnen', pre: { style: 'kaestchen', count: 8 } }),
@@ -4135,7 +4250,7 @@ const PALETTE = {
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Text- oder Bildquelle (Q1), im Baustein umschaltbar', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
-    PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(),
+    PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(), PAL('chat'),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
     PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('table'),
     PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal', cw: [16, 44, 40] } }),
@@ -6737,7 +6852,7 @@ function tafelEditor(b) {
 
 /* ================= Präsentation: Folien aus dem Arbeitsblatt (im Browser und als PowerPoint) =================
    Material mit denselben Zeilen und Zeilennummern wie auf dem Blatt, je Aufgabe eine Folie, Erwartung und Tipps für die Lehrkraft. */
-const PR_MAX = { tasks: 60, step: 60, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
+const PR_MAX = { chat: 30, tasks: 60, step: 60, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
 function presCollect(quiet) {
   const keep = { fassung: state.fassung, out: state.out, gapEdit: state.gapEdit, bookPages: state.bookPages, grp: state.grp };
   const mats = {}; let pages = [];
@@ -6886,6 +7001,7 @@ function presSlidesAB(off, lab, abId) {
     if (b.type === 'info' && (plainText(b.text || '').trim() || tfStr(b.title).trim())) S.push({ k: 'info', b });
     else if (b.type === 'quote' && plainText(b.text || '').trim()) S.push({ k: 'quote', b });
     else if (b.type === 'image' && b.src) S.push({ k: 'image', b });
+    else if (b.type === 'chat') S.push({ k: 'chat', b });
     else if (b.type === 'table' && Array.isArray(b.cols) && b.cols.length) S.push({ k: 'table', b });
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
@@ -6911,6 +7027,7 @@ function presPick() {
       else if (b.type === 'info') L.push({ key: b.id, opt: b, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
       else if (b.type === 'quote') L.push({ key: b.id, opt: b, label: 'Zitat · ' + short(b.text, 50) });
       else if (b.type === 'image' && b.src) L.push({ key: b.id, opt: b, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
+      else if (b.type === 'chat') L.push({ key: b.id, opt: b, label: 'Chat' + (b.title ? ' · ' + short(b.title, 50) : '') });
       else if (b.type === 'table') L.push({ key: b.id, opt: b, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
       else if (b.type === 'phrases') L.push({ key: b.id, opt: b, label: short(b.title || 'Formulierungshilfen', 60) });
       else if (b.type === 'match') L.push({ key: b.id, opt: b, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });
@@ -7408,6 +7525,7 @@ function presSlideHTML(s, bar) {
     case 'tafel': { const cl = tfTpl(s.b) === 'cluster' && !tfStr(s.b.center).trim(); return presHead('Tafelbild', !cl && tfStrip(s.b.title || '').trim() ? inlineHTML(tfStrip(s.b.title)) : '', '') + `<div class="pr-body"><div class="pr-fit pr-tafel">${tafelHTML(cl ? s.b : { ...s.b, title: '' }, { gaps: false, steps: true })}</div></div>`; }
     case 'info': return presHead(esc(s.b.kind || 'Info'), inlineHTML(s.b.title || ''), '') + `<div class="pr-body"><div class="pr-fit pr-info">${parasHTML(s.b.text || '')}</div></div>`;
     case 'quote': return `<div class="pr-body"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(s.b.text || '')}</div>${s.b.author ? `<div class="pr-auth">${inlineHTML(s.b.author)}</div>` : ''}</div></div>`;
+    case 'chat': return (s.b.title ? presHead('', inlineHTML(s.b.title), '') : '') + `<div class="pr-body pr-chatw"><div class="pr-fit">${chatHTML({ ...s.b, title: '' }, '')}</div></div>`;
     case 'image': return (s.b.caption ? presHead('', inlineHTML(s.b.caption), '') : '') + `<div class="pr-body pr-imgb"><img class="pr-img" src="${esc(s.b.src)}" alt="${esc(plainText(s.b.caption || 'Bild'))}"></div>${s.b.source ? `<div class="pr-src">${inlineHTML(s.b.source)}</div>` : ''}`;
     case 'table': { const b = s.b; return presHead('Tabelle', esc(b.title || ''), '') + `<div class="pr-body"><div class="pr-fit"><table class="pr-tbl">${b.cols.some(c => String(c).trim()) ? `<tr>${b.cols.map((c, i) => `<th${tbBg(b, 'h', i) ? ` style="background:${tbBg(b, 'h', i)}"` : ''}>${inlineHTML(prCk(c))}</th>`).join('')}</tr>` : ''}${(b.rows || []).map((r, ri) => `<tr>${b.cols.map((_, i) => `<td${tbBg(b, ri, i) ? ` style="background:${tbBg(b, ri, i)}"` : ''}>${inlineHTML(prCk(r[i]))}</td>`).join('')}</tr>`).join('')}</table></div></div>`; }
     case 'phr': return presHead('', inlineHTML(s.b.title || 'Formulierungshilfen'), '') + `<div class="pr-body"><div class="pr-fit pr-phr">${phrGroups(s.b).map(g => `<div>${g.head ? `<b>${inlineHTML(g.head)}</b>` : ''}<ul>${g.lines.map(l => `<li>${inlineHTML(l)}</li>`).join('')}</ul></div>`).join('')}</div></div>`;
@@ -7900,7 +8018,7 @@ const tbStripLab = s => {
     case 'tasks': { const nos = s.items.map(x => x.no).filter(Boolean); return tsHaAll(s) ? 'Hausaufgabe' : nos.length > 1 ? `Aufgaben ${nos[0]}–${nos[nos.length - 1]}` : nos.length ? 'Aufgabe ' + nos[0] : 'Auftrag'; }
     case 'step': return s.fol === 'video' ? 'Video' : s.fol === 'quiz' ? 'Quiz' : s.fol === 'zitat' ? 'Zitat' : s.fol === 'bild' ? 'Bild' : s.fol === 'frage' ? 'Stundenfrage' : plainText(tfStr(s.b.head).trim() || stepHeadDef(s.b));
     case 'mat': return (s.tag || 'Material') + (matTitle(s.b) ? ' · ' + plainText(matTitle(s.b)) : '');
-    case 'tafel': return 'Tafelbild'; case 'info': return s.b.kind || 'Info'; case 'quote': return 'Zitat'; case 'image': return 'Bild';
+    case 'tafel': return 'Tafelbild'; case 'info': return s.b.kind || 'Info'; case 'quote': return 'Zitat'; case 'image': return 'Bild'; case 'chat': return 'Chat';
     case 'blank': return 'Tafelseite'; case 'table': return 'Tabelle'; case 'phr': return 'Wortspeicher'; case 'match': return s.b.sort ? 'Sortieren' : 'Zuordnen'; case 'qr': return 'QR-Code';
   }
   return 'Folie';
@@ -9820,6 +9938,66 @@ function adderHTML(A = 'blatt') {
       <small class="hint">Eigene Bausteine speicherst du über ⋯ an der jeweiligen Karte.</small></div></div>`;
 }
 
+
+/* ================= Chat ================= */
+// Gestaltung angelehnt an bekannte Messenger – ohne Logos und Markennamen auf dem Blatt
+const CHAT_ST = {
+  gruen: { l: 'Grün', hint: 'wie WhatsApp' }, blau: { l: 'Blau', hint: 'wie iMessage' }, verlauf: { l: 'Verlauf', hint: 'wie Instagram' },
+  hell: { l: 'Hellblau', hint: 'wie Telegram' }, dunkel: { l: 'Dunkel', hint: 'wie Discord' }, sms: { l: 'Schlicht', hint: 'SMS, gut zum Drucken' }, ki: { l: 'KI-Chat', hint: 'wie ein Chatbot' }
+};
+const CHAT_PC = ['#1F7A8C', '#C2410C', '#7C3AED', '#15803D', '#B91C1C', '#0369A1', '#A16207', '#BE185D'];
+const chatSt = b => (CHAT_ST[b.style] ? b.style : 'gruen');
+const chatPeople = b => (Array.isArray(b.people) && b.people.length ? b.people : [{ n: 'Ich' }, { n: 'Person' }]);
+const chatIni = n => postIni(n);
+const CHAT_IC = { back: '<path d="M14.5 5.5 8 12l6.5 6.5"/>', call: '<path d="M6.6 3.8 9 4.2l1.3 3.6-1.8 1.4a12 12 0 0 0 6.3 6.3l1.4-1.8 3.6 1.3.4 2.4a2 2 0 0 1-2 2.1A16.5 16.5 0 0 1 4.5 5.8a2 2 0 0 1 2.1-2z"/>', vid: '<rect x="3" y="6.5" width="12.5" height="11" rx="2.2"/><path d="m15.5 10.5 5-3v9l-5-3z"/>', more: '<circle cx="12" cy="5.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18.5" r="1.2"/>', send: '<path d="M4 12 20 4l-4 16-4-6.5z"/>', mic: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3.5"/>', plus: '<path d="M12 5v14M5 12h14"/>', ticks: '<path d="m2.5 12.5 4 4 8-9M9.5 16.5l1 0 8-9"/>' };
+const chatI = (k, c = '') => `<svg class="ch-i${c ? ' ' + c : ''}" viewBox="0 0 24 24" aria-hidden="true">${CHAT_IC[k]}</svg>`;
+function chatHTML(b, tag) {
+  const st = chatSt(b), P = chatPeople(b), o = b.opt || {}, M = Array.isArray(b.msgs) ? b.msgs : [], h = b.head || {};
+  const group = P.length > 2, ki = st === 'ki', dark = st === 'dunkel';
+  const name = String(h.name || '').trim() || (group ? 'Gruppe' : (P[1] && P[1].n) || 'Chat');
+  const lines = n => '<span class="ch-wl"></span>'.repeat(n);
+  let prev = null;
+  const body = M.map((m, i) => {
+    if (m.sys) { prev = null; return `<div class="ch-sys"><span>${inlineHTML(m.t || '') || '&nbsp;'}</span></div>`; }
+    const pi = Math.max(0, Math.min(P.length - 1, +m.p || 0)), me = pi === 0, who = P[pi] || {}, col = CHAT_PC[(pi - 1 + CHAT_PC.length) % CHAT_PC.length];
+    const first = prev !== pi, nx = M[i + 1], last = !nx || nx.sys || (+nx.p || 0) !== pi; prev = pi;
+    const txt = String(m.t || '').trim();
+    const inner = txt ? inlineHTML(txt).replace(/\n/g, '<br>') : lines(Math.max(1, Math.min(6, +m.ln || 2)));
+    const showName = first && (dark || (!me && !ki && group && o.names !== false));
+    const meta = (o.time !== false && m.z && !ki ? `<span class="ch-z">${esc(m.z)}${me && o.read !== false && !ki && !dark ? chatI('ticks', 'ch-tk') : ''}</span>` : '');
+    const av = (dark || (!me && (ki || (group && st !== 'blau' && st !== 'sms')))) ? `<span class="ch-av sm" style="--pc:${col}">${ki ? 'KI' : esc(chatIni(who.n))}</span>` : '';
+    return `<div data-mi="${i}" class="ch-m ${me ? 'me' : 'ot'}${first ? ' first' : ''}${last ? ' last' : ''}${txt ? '' : ' leer'}" style="--pc:${col}">${av ? (first ? av : '<span class="ch-av sm ph"></span>') : ''}<div class="ch-bub">${showName ? `<b class="ch-n">${esc(String(who.n || '').trim() || 'Person')}${dark && m.z && o.time !== false ? `<span class="ch-z">${esc(m.z)}</span>` : ''}</b>` : ''}<div class="ch-t">${inner}</div>${dark ? '' : meta}</div></div>`;
+  }).join('');
+  const head = ki ? `<div class="ch-h"><span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : ''}</span></div>`
+    : `<div class="ch-h">${dark ? '<span class="ch-hash">#</span>' : chatI('back', 'ch-bk')}${dark ? '' : `<span class="ch-av">${esc(chatIni(name))}</span>`}<span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : group && st !== 'dunkel' ? `<small>${esc(P.map(x => String(x.n || '').trim()).filter(Boolean).join(', '))}</small>` : ''}</span>${dark ? '' : `<span class="ch-hi">${st === 'blau' ? chatI('vid') : chatI('vid') + chatI('call')}${st === 'gruen' ? chatI('more') : ''}</span>`}</div>`;
+  const bar = o.bar !== false ? `<div class="ch-in">${ki || dark ? '' : chatI('plus', 'ch-pl')}<span class="ch-inp">${ki ? 'Nachricht an die KI …' : dark ? 'Nachricht an #' + esc(name) : 'Nachricht'}</span>${chatI(ki || st === 'blau' || st === 'verlauf' ? 'send' : 'mic', 'ch-snd')}</div>` : '';
+  const w = Math.max(40, Math.min(100, +b.width || 72));
+  return `<div class="blk blk-chat cs-${st}${o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
+}
+
+// Zeilenangaben im Chat: nach dem Setzen die gedruckten Zeilen in den Blasen zählen, jede 5. am Rand vermerken.
+// Die Zeilen je Nachricht merkt sich CHAT_LN (für den Word-Export: „Z. 7–8“).
+const CHAT_LN = {};
+function chatLines(root = document.getElementById('pages')) {
+  if (!root) return;
+  root.querySelectorAll('.blk-chat').forEach(c => {
+    c.querySelectorAll(':scope > .ch-lnn').forEach(x => x.remove());
+    const bid = (c.closest('[data-bid]') || c).dataset.bid; if (!c.classList.contains('ch-ln')) { if (bid) delete CHAT_LN[bid]; return; }
+    const ph = c.querySelector('.ch-ph'), page = c.closest('.page'); if (!ph || !page) return;
+    const C = c.getBoundingClientRect(), PH = ph.getBoundingClientRect(); if (!C.width) return;
+    const mmPx = page.getBoundingClientRect().width / (+page.dataset.w || 210), step = +c.dataset.step || 5;
+    let n = 0; const map = {}, out = [];
+    c.querySelectorAll('.ch-m[data-mi]').forEach(m => {
+      const t = m.querySelector('.ch-t'); if (!t || m.classList.contains('leer') || !t.textContent.trim()) return;
+      const r = document.createRange(); r.selectNodeContents(t);
+      const tops = []; [...r.getClientRects()].filter(x => x.width > .5 && x.height > .5).forEach(x => { const y = x.top + x.height / 2; if (!tops.some(v => Math.abs(v.y - y) < x.height * .45)) tops.push({ y, h: x.height }); });
+      tops.sort((a, b) => a.y - b.y); const s0 = n + 1;
+      tops.forEach(v => { n++; if (n % step === 0) out.push(`<span class="ch-lnn" style="top:${((v.y - C.top) / mmPx).toFixed(2)}mm;left:${((PH.left - C.left) / mmPx - 8).toFixed(2)}mm">${n}</span>`); });
+      if (tops.length) map[m.dataset.mi] = [s0, n];
+    });
+    if (bid) CHAT_LN[bid] = map; if (out.length) c.insertAdjacentHTML('beforeend', out.join(''));
+  });
+}
 /* ================= Menü an der Karte (⋯) ================= */
 const menu = { open: null };
 function openMenu(bid, anchor) { menu.open = { bid, rect: rectOf(anchor) }; renderMenu(); }
@@ -10257,6 +10435,7 @@ function gTargets(bid) {
   switch (b.type) {
     case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
     case 'info': return [[b, 'title'], [b, 'text']];
+    case 'chat': return [[b, 'title'], ...(b.msgs || []).map(m => [m, 't'])];
     case 'phrases': return [[b, 'title'], ...(b.groups || []).flatMap(g => [[g, 'head'], [g, 'text']])];
     case 'step': return ['title', 'head', 'text', 'quote', 'author', 'cap', 'note', 'eh', 'media', 'qs'].map(k => [b, k]);
     case 'a3': a3Norm(b); return [[b, 'title'], [b, 'task'], [b, 'impulse'], [b, 'rules'], ...['legend', 'sections', 'cols', 'aspects', 'experts'].flatMap(k => b[k].map((_, i) => [b[k], i]))];
@@ -10382,6 +10561,9 @@ function newBlock(type) {
     case 'material': return { id, type, title: '', text: '', glossary: [], source: '', lineNumbers: true, fmt: {}, memo: '', nl: 1 };
     case 'tasks': return { id, type, title: '', restart: false, items: [{ text: '', tag: '' }] };
     case 'info': return { id, type, kind: 'Merke', title: '', text: '' };
+    case 'chat': return { id, type, title: '', style: 'gruen', head: { name: 'Lerngruppe Deutsch', sub: '' }, people: [{ n: 'Ich' }, { n: 'Lea' }, { n: 'Tom' }],
+      msgs: [{ p: 1, t: 'Habt ihr die Aufgabe für morgen schon?', z: '18:02' }, { p: 2, t: 'Welche Aufgabe?? 😅', z: '18:04' }, { p: 0, t: '', z: '18:05' }],
+      opt: { time: true, names: true, read: true, frame: true, bar: true }, width: 72, fiktiv: true };
     case 'table': return { id, type, title: '', cols: ['', '', ''], rows: [['', '', ''], ['', '', ''], ['', '', '']], rowHeight: 'normal', firstBold: false };
     case 'lines': return { id, type, count: 8, style: 'linien' };
     case 'gsa': return { id, type, gk: 'kreuz', title: '', mode: '', items: [{ t: '', ok: true }, { t: '', ok: false }, { t: '', ok: true }], words: '', text: '', lin: '', mb: false, size: '10', dirs: 'hv', showList: true, count: true, per: '1', fh: '80', rows: 3, seed: 1 + Math.floor(Math.random() * 1e6), src: '', ex: '' };
@@ -10850,10 +11032,10 @@ const canPrint = location.protocol === 'file:' || (!isFramed && !window.claude);
 
 /* ================= Blatt setzen (Messen + Umbrechen) ================= */
 const MK_LETTER = { m: 'M', q: 'Q', d: 'D', a: 'Abb.' };
-const matLetter = b => b.type === 'material' ? (MK_LETTER[b.mk] || 'M') : (b.type === 'image' && MK_LETTER[b.mk] ? MK_LETTER[b.mk] : '');
+const matLetter = b => b.type === 'chat' ? 'M' : b.type === 'material' ? (MK_LETTER[b.mk] || 'M') : (b.type === 'image' && MK_LETTER[b.mk] ? MK_LETTER[b.mk] : '');
 // Nummern je Art: M1, M2 …, Q1, Q2 …, D1 … in der Reihenfolge auf dem Blatt
 function matTags(blocks) { const c = {}, map = {}; for (const b of blocks) { const L = matLetter(b); if (!L) continue; c[L] = (c[L] || 0) + 1; map[b.id] = L + (L.endsWith('.') ? ' ' : '') + c[L]; } return map; }
-const matTitle = b => b.type === 'image' ? b.caption : b.title;
+const matTitle = b => b.type === 'image' ? b.caption : b.type === 'chat' ? (b.title || 'Chat' + (b.head && b.head.name ? ': ' + b.head.name : '')) : b.title;
 function numbering(sheet) {
   const map = {}; let m = 0, t = 0; const tags = matTags(sheet.blocks);
   for (const b of sheet.blocks) {
@@ -10945,6 +11127,7 @@ function buildBlock(b, ctx) {
       const pic = src ? `<img src="${src}" alt="QR-Code" style="width:${sz}mm;height:${sz}mm">` : `<div class="qr-empty" style="width:${sz}mm;height:${sz}mm">${url ? 'Link zu lang' : 'QR-Code'}</div>`;
       return { type: 'qr', el: put(`<div class="blk blk-qr">${pic}<div class="qr-t">${b.title ? `<b>${inlineHTML(b.title)}</b>` : ''}<span class="qr-url">${url ? esc(url) : 'Link eintragen'}</span>${b.note ? `<span class="qr-note">${inlineHTML(b.note)}</span>` : ''}</div></div>`) };
     }
+    case 'chat': return { type: 'chat', el: put(chatHTML(b, ctx.mt && ctx.mt[b.id])) };
     case 'image': {
       if (Array.isArray(b.lb)) return { type: 'image', el: put(lbHTML(b, ctx)) };
       const img = b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
@@ -11512,7 +11695,7 @@ function renderPreview0() {
     : `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
   if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
   $('#pv-hint').hidden = true;
-  renderOut(); applyScale(); markSel(); markZl(); lbArrows(host);
+  renderOut(); applyScale(); markSel(); markZl(); lbArrows(host); chatLines(host);
 }
 function applyScale() {
   const pane = $('#preview-scroll'); const cs = getComputedStyle(pane);
@@ -12067,6 +12250,7 @@ function sumDetail(b) {
     switch (b.type) {
       case 'material': { const w = wc(b.text), g = (b.glossary || []).length; return [w ? pl(w, 'Wort', 'Wörter') : 'noch kein Text', g ? pl(g, 'Worterklärung', 'Worterklärungen') : '', String(b.source || '').trim() ? '' : 'ohne Quelle'].filter(Boolean).join(' · '); }
       case 'tasks': { const L = b.items || []; const noEh = L.filter(it => String(it.text || '').trim() && !ehLines(it).length).length; return [pl(L.length, 'Aufgabe', 'Aufgaben'), noEh ? (noEh === L.length ? 'ohne Erwartung' : `${noEh} ohne Erwartung`) : 'Erwartung ✓'].join(' · '); }
+      case 'chat': { const n = (b.msgs || []).filter(m => !m.sys).length, e = (b.msgs || []).filter(m => !m.sys && !String(m.t || '').trim()).length; return [pl(n, 'Nachricht', 'Nachrichten'), e ? e + ' zum Ausfüllen' : '', CHAT_ST[chatSt(b)].l].filter(Boolean).join(' · '); }
       case 'info': case 'text': case 'quote': { const w = wc(b.text); return w ? plainText(b.text).trim().slice(0, 70) : 'noch leer'; }
       case 'image': if (Array.isArray(b.lb)) return `${b.lb.length} Kästen${b.lbMode ? ' · zum Beschriften' : ''}${b.src ? '' : ' · noch kein Bild'}`; return b.src ? (b.caption ? plainText(b.caption).slice(0, 60) : 'Bild vorhanden') : 'noch kein Bild';
       default: { const ph = itPh(b), mn = itMin(b); return [ph ? PHASEN[ph].label : '', mn ? mn + ' Min.' : ''].filter(Boolean).join(' · '); }
@@ -12132,6 +12316,7 @@ function summary(b, num) {
   switch (b.type) {
     case 'material': return `${num[b.id].tag || 'M' + num[b.id].m} · ${b.title || 'ohne Titel'}`;
     case 'tasks': { const r = num[b.id]; const fo = r.nFo ? (r.nFo === 1 ? '1 Auftrag nur auf der Folie' : r.nFo + ' Aufträge nur auf der Folie') : ''; return (r.to < r.from ? (fo || 'keine Aufgaben') : (r.from === r.to ? `Aufgabe ${r.from}` : `Aufgaben ${r.from}–${r.to}`) + (fo ? ' · ' + fo : '')) + (b.title ? ' · ' + b.title : '') + (itMin(b) ? ` · ${itMin(b)} Min.` : '') + (itMin(b) && b.timer ? ' · Timer' : ''); }
+    case 'chat': return (num[b.id] && num[b.id].tag ? num[b.id].tag + ' · ' : '') + (b.title || (b.head && b.head.name) || 'Chat') + ` · ${(b.msgs || []).length} Nachrichten`;
     case 'info': return `${b.kind}${b.title ? ' · ' + b.title : ''}`;
     case 'table': return `${b.cols.length} Spalten × ${b.rows.length} Zeilen${b.title ? ' · ' + b.title : ''}`;
     case 'step': return `${itPh(b) ? PHASEN[itPh(b)].label + ' · ' : ''}${stepLabel(b)}${itMin(b) ? ' · ' + itMin(b) + ' Min.' : ''} · nicht auf dem Blatt`;
@@ -12195,6 +12380,7 @@ function bodyFor(b, num) {
         <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div></div>` : ''}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
+    case 'chat': return chatEdHTML(b);
     case 'info': return `<div class="row">${fSelect('kind', 'Art', b.kind, [...new Set([...(INFO_KINDS_BY[fachKey()] || INFO_KINDS_BY[fachBase()] || INFO_KINDS), b.kind].filter(Boolean))].map(k => [k, k]))}${fText('title', 'Titel (optional)', b.title, '')}</div>
       ${fRich('text', 'Text', b.text, { rows: 4, hint: RT_HINT })}
       ${stilTiles(b, ST_INFO)}`;
@@ -12434,6 +12620,24 @@ function tbmRender() {
   </div></div>`;
   const g2 = box.querySelector('.tbm-gw'); if (g2) { g2.scrollLeft = sx; g2.scrollTop = sy; }
 }
+
+/* Chat-Editor */
+function chatEdHTML(b) {
+  const P = chatPeople(b), M = Array.isArray(b.msgs) ? b.msgs : [], o = b.opt || {}, st = chatSt(b);
+  const sw = { gruen: ['#075E54', '#D9FDD3', '#fff'], blau: ['#F6F6F6', '#0A84FF', '#E9E9EB'], verlauf: ['#fff', '#7B3FE4', '#EFEFEF'], hell: ['#517DA2', '#EFFDDE', '#fff'], dunkel: ['#2B2D31', '#5865F2', '#313338'], sms: ['#fff', '#EDEDED', '#fff'], ki: ['#fff', '#F0F0F0', '#10A37F'] };
+  const pc = i => (i === 0 ? '#9CA3AF' : CHAT_PC[(i - 1) % CHAT_PC.length]);
+  const pseg = (i, cur) => `<div class="seg sm" role="group" aria-label="Wer schreibt?">${P.map((x, k) => `<button type="button" data-act="chat-p" data-i="${i}" data-v="${k}" aria-pressed="${cur === k}"><span class="ch-dot" style="background:${pc(k)};display:inline-block;margin-right:4px;vertical-align:-1px"></span>${esc(String(x.n || '').trim() || 'Person ' + k)}${k === 0 ? ' (rechts)' : ''}</button>`).join('')}</div>`;
+  return `${fText('title', 'Überschrift (optional)', b.title, 'z. B. Chatverlauf der Klassengruppe')}
+    <div class="f"><span>Aussehen</span><div class="ch-sts">${Object.entries(CHAT_ST).map(([k, x]) => `<button type="button" class="ch-stb" data-act="chat-st" data-v="${k}" aria-pressed="${st === k}"><i>${sw[k].map(c => `<span style="background:${c};border:1px solid rgba(0,0,0,.15)"></span>`).join('')}</i><b>${x.l}</b><small>${x.hint}</small></button>`).join('')}</div></div>
+    <div class="row">${fText('head.name', 'Name oben', b.head && b.head.name, P.length > 2 ? 'z. B. Klasse 10b 📚' : 'z. B. Lea')}${fText('head.sub', 'Zeile darunter', b.head && b.head.sub, 'z. B. online')}</div>
+    <div class="f"><span>Personen im Chat</span><div class="ch-ppl">${P.map((x, k) => `<div class="ch-pr"><span class="ch-dot" style="background:${pc(k)}"></span>${fText(`people.${k}.n`, k === 0 ? 'Ich – erscheint rechts' : 'Person ' + k, x.n, k === 0 ? 'Ich' : 'Name')}${k > 1 ? `<button class="ib" type="button" data-act="chat-pdel" data-i="${k}" title="Person entfernen" aria-label="Person ${k} entfernen">${I.x}</button>` : ''}</div>`).join('')}</div>${P.length < 8 ? '<button class="link" type="button" data-act="chat-padd">+ Person</button>' : ''}</div>
+    <div class="f"><span>Nachrichten <small class="hint">Leeres Textfeld = Schreiblinien in der Blase, zum Ausfüllen</small></span><div class="ch-msgs">${M.map((m, i) => `<div class="ch-mr${m.sys ? ' sys' : ''}">
+      <div class="ch-mr-h">${m.sys ? '<b style="font-size:12.5px">Hinweis in der Mitte</b>' : pseg(i, Math.max(0, Math.min(P.length - 1, +m.p || 0)))}<span class="sp"></span>${m.sys ? '' : `<input class="ch-zi" data-k="msgs.${i}.z" value="${esc(m.z || '')}" placeholder="Zeit" aria-label="Uhrzeit Nachricht ${i + 1}">`}<button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="-1" title="nach oben" aria-label="Nachricht nach oben"${i === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="1" title="nach unten" aria-label="Nachricht nach unten"${i === M.length - 1 ? ' disabled' : ''}>↓</button><button class="ib" type="button" data-act="chat-del" data-i="${i}" title="Nachricht löschen" aria-label="Nachricht ${i + 1} löschen">${I.x}</button></div>
+      ${rtField(`msgs.${i}.t`, m.t || '', { mode: 'inline', rows: 2, ph: m.sys ? 'z. B. Heute · Tom wurde hinzugefügt' : 'Nachricht … (leer = Linien zum Ausfüllen)', aria: `Nachricht ${i + 1}` })}</div>`).join('')}</div>
+      <div class="row" style="gap:14px"><button class="link" type="button" data-act="chat-add">+ Nachricht</button><button class="link" type="button" data-act="chat-sys">+ Hinweis in der Mitte</button></div></div>
+    <label class="f"><span>Breite: ${Math.round(+b.width || 72)} %</span><input type="range" min="40" max="100" step="2" value="${+b.width || 72}" data-k="width" data-num="1"></label>
+    <div class="chks">${fCheck('opt.ln', 'Zeilenangaben (für Textbelege)', !!o.ln)}${fCheck('opt.frame', 'Handyrahmen', o.frame !== false)}${fCheck('opt.time', 'Uhrzeiten', o.time !== false)}${fCheck('opt.read', 'Lesehäkchen', o.read !== false)}${P.length > 2 ? fCheck('opt.names', 'Namen in der Gruppe', o.names !== false) : ''}${fCheck('opt.bar', 'Eingabezeile unten', o.bar !== false)}${fCheck('fiktiv', 'Hinweis „Fiktiver Chatverlauf“', b.fiktiv !== false)}</div>`;
+}
 /* ---------- Änderungen ---------- */
 function target(bid) { return bid === 'meta' || bid === 'seite' || bid === 'stunde' ? state.sheet.meta : bid === 'karten' ? state.sheet : state.sheet.blocks.find(b => b.id === bid); }
 function setPath(obj, path, v) { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) { if (o[ks[i]] == null || typeof o[ks[i]] !== 'object') o[ks[i]] = {}; o = o[ks[i]]; } o[ks[ks.length - 1]] = v; }
@@ -12651,6 +12855,15 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'chat-st': b.style = a.dataset.v; changed(true); renderEditor(); return;
+    case 'chat-p': { const m = (b.msgs || [])[+a.dataset.i]; if (!m) return; m.p = +a.dataset.v; changed(true); renderEditor(); return; }
+    case 'chat-add': case 'chat-sys': { snapshot(); const M = b.msgs || (b.msgs = []); const P = chatPeople(b); const lastP = [...M].reverse().find(m => !m.sys);
+      if (act === 'chat-sys') M.push({ sys: true, t: '' }); else { const np = lastP ? ((+lastP.p || 0) + 1) % P.length : 1; const z = lastP && /^\d{1,2}:\d{2}$/.test(lastP.z || '') ? (() => { const [h, mi] = lastP.z.split(':').map(Number); const t = h * 60 + mi + 1; return String(Math.floor(t / 60) % 24).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); })() : ''; M.push({ p: np, t: '', z }); }
+      changed(true); renderEditor(); setTimeout(() => { const f = $(`#editor [data-bid="${bid}"] [data-k="msgs.${M.length - 1}.t"]`); if (f) f.focus(); }, 30); return; }
+    case 'chat-del': snapshot(); b.msgs.splice(+a.dataset.i, 1); changed(true); renderEditor(); return;
+    case 'chat-mv': { const i = +a.dataset.i, j = i + (+a.dataset.d); if (j < 0 || j >= b.msgs.length) return; snapshot(); [b.msgs[i], b.msgs[j]] = [b.msgs[j], b.msgs[i]]; changed(true); renderEditor(); return; }
+    case 'chat-padd': snapshot(); (b.people = chatPeople(b)).push({ n: '' }); changed(true); renderEditor(); return;
+    case 'chat-pdel': { const k = +a.dataset.i; snapshot(); b.people = chatPeople(b); b.people.splice(k, 1); (b.msgs || []).forEach(m => { if (m.sys) return; if (+m.p === k) m.p = 1; else if (+m.p > k) m.p = +m.p - 1; }); changed(true); renderEditor(); return; }
     case 'tbm-open': tbmOpen(bid); return;
     case 'tbx-row-ins': case 'tbx-row-mv': case 'tbx-row-del': case 'tbx-col-ins': case 'tbx-col-mv': case 'tbx-col-del': {
       snapshot(); const R = b.rows.length, C = b.cols.length, rng = n => Array.from({ length: n }, (_, i) => i);
@@ -16329,7 +16542,7 @@ async function mappeGo() {
   // Die Seiten kommen kurz in die Vorschau; PDF und Druck verarbeiten sie dort wie gewohnt
   const host = $('#pages'); host.innerHTML = '';
   res.units.forEach(u => { u.classList.add('pout'); const slot = document.createElement('div'); slot.className = 'slot'; slot.appendChild(u); host.appendChild(slot); });
-  applyScale(); lbArrows(host); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
+  applyScale(); lbArrows(host); chatLines(host); $('#pagecount').textContent = `Mappe · ${res.total} Seiten`;
   const name = 'Mappe_' + slug(opt.title || 'Reihe') + (opt.fassung === 'lehrer' ? '_Lehrerfassung' : '') + '.pdf';
   try {
     if (opt.fmt === 'print') { overlay(''); await fontsIn(document); doPrint(); }
@@ -16399,8 +16612,8 @@ const LINE = (s, sz, col) => `<w:${s} w:val="single" w:sz="${sz}" w:space="0" w:
 function xtc(content, o = {}) {
   return `<w:tc><w:tcPr><w:tcW w:w="${o.w}" w:type="dxa"/>${o.span ? `<w:gridSpan w:val="${o.span}"/>` : ''}${o.vm ? `<w:vMerge${o.vm === 'restart' ? ' w:val="restart"' : ''}/>` : ''}${o.borders ? `<w:tcBorders>${o.borders}</w:tcBorders>` : ''}${o.shd ? `<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>` : ''}${o.mar ? `<w:tcMar>${o.mar}</w:tcMar>` : ''}${o.v ? `<w:vAlign w:val="${o.v}"/>` : ''}</w:tcPr>${content || '<w:p><w:pPr><w:suppressLineNumbers/></w:pPr></w:p>'}</w:tc>`;
 }
-function xtbl(widths, rowsXml, borders, mar) {
-  return `<w:tbl><w:tblPr><w:tblW w:w="${widths.reduce((a, b) => a + b, 0)}" w:type="dxa"/><w:tblBorders>${borders}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar>${mar || '<w:top w:w="0" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="85" w:type="dxa"/>'}</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rowsXml}</w:tbl>`;
+function xtbl(widths, rowsXml, borders, mar, ind) {
+  return `<w:tbl><w:tblPr><w:tblW w:w="${widths.reduce((a, b) => a + b, 0)}" w:type="dxa"/>${ind ? `<w:tblInd w:w="${ind}" w:type="dxa"/>` : ''}<w:tblBorders>${borders}</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar>${mar || '<w:top w:w="0" w:type="dxa"/><w:left w:w="85" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="85" w:type="dxa"/>'}</w:tblCellMar><w:tblLook w:val="0000"/></w:tblPr><w:tblGrid>${widths.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rowsXml}</w:tbl>`;
 }
 const xtr = (cells, o = {}) => `<w:tr><w:trPr>${o.cant ? '<w:cantSplit/>' : ''}${o.h ? `<w:trHeight w:val="${o.h}" w:hRule="${o.rule || 'atLeast'}"/>` : ''}${o.header ? '<w:tblHeader/>' : ''}</w:trPr>${cells}</w:tr>`;
 const NOB = NIL('top') + NIL('left') + NIL('bottom') + NIL('right') + NIL('insideH') + NIL('insideV');
@@ -16593,6 +16806,34 @@ async function exportDOCX() {
           }
           const bd = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 6, DOCX_MARK)).join('') + NIL('insideH') + NIL('insideV');
           parts.push(xtbl(Array(cols).fill(w), rows.join(''), bd, `<w:top w:w="${TW(1.5)}" w:type="dxa"/><w:left w:w="${TW(3)}" w:type="dxa"/><w:bottom w:w="${TW(2)}" w:type="dxa"/><w:right w:w="${TW(3)}" w:type="dxa"/>`));
+          break;
+        }
+        case 'chat': {
+          // Chat in Word: je Nachricht eine eingefärbte Zelle, eigene rechts, andere links; ohne Handyrahmen
+          const st = chatSt(b), P = chatPeople(b), o = b.opt || {}, h = b.head || {};
+          const C = { gruen: ['075E54', 'D9FDD3', 'FFFFFF', 'EFE7DD'], blau: ['F6F6F6', 'DCEBFF', 'E9E9EB', 'FFFFFF'], verlauf: ['FFFFFF', 'E7DCFA', 'EFEFEF', 'FFFFFF'], hell: ['517DA2', 'EFFDDE', 'FFFFFF', 'DDEBD3'], dunkel: ['2B2D31', 'E9EAFD', 'F2F3F5', 'FFFFFF'], sms: ['FFFFFF', 'EDEDED', 'FFFFFF', 'FFFFFF'], ki: ['FFFFFF', 'F0F0F0', 'FFFFFF', 'FFFFFF'] }[st];
+          const hdDark = ['gruen', 'hell', 'dunkel'].includes(st);
+          if (b.title || tagsW[b.id]) parts.push(xp((tagsW[b.id] ? xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') : '') + xrInline(b.title || '', { b: 1, sz: 22 }), { keepNext: true, after: 80 }));
+          const name = String(h.name || '').trim() || (P.length > 2 ? 'Gruppe' : (P[1] && P[1].n) || 'Chat');
+          const W = Math.round(CW * Math.max(40, Math.min(100, +b.width || 72)) / 100), bw = Math.round(W * 0.74), gap = W - bw, ind = Math.round((CW - W) / 2);
+          const BOX = ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, 'BFBFBF')).join('');
+          const rows = [];
+          rows.push(xtr(xtc(xp(xr(name, { b: 1, sz: 20, color: hdDark ? 'FFFFFF' : '111111' }) + (h.sub ? xr('   ' + h.sub, { sz: 15, color: hdDark ? 'E8E8E8' : '777777' }) : ''), { keepNext: true }), { w: W, span: 2, shd: C[0], borders: BOX })));
+          let prev = null;
+          (b.msgs || []).forEach((m, i) => {
+            if (m.sys) { prev = null; rows.push(xtr(xtc(xp(xrInline(m.t || '', { sz: 15, i: 1, color: '666666' }), { jc: 'center', before: 40, after: 40 }), { w: W, span: 2, shd: C[3] }))); return; }
+            const pi = Math.max(0, Math.min(P.length - 1, +m.p || 0)), me = pi === 0, first = prev !== pi; prev = pi;
+            const txt = String(m.t || '').trim(), col = CHAT_PC[(pi - 1 + CHAT_PC.length) % CHAT_PC.length].slice(1);
+            const nm = first && (st === 'dunkel' || (!me && st !== 'ki' && P.length > 2 && o.names !== false)) ? xp(xr(String(P[pi].n || '').trim() || 'Person', { b: 1, sz: 15, color: col }), { after: 0 }) : '';
+            const body = txt ? xpRich(txt, { sz: 19 }, { gap: 20 }) : Array.from({ length: Math.max(1, Math.min(6, +m.ln || 2)) }, () => xp('', { line: 440, rule: 'exact', bdr: '<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="8C8C8C"/></w:pBdr>' })).join('');
+            const lr = o.ln && CHAT_LN[b.id] && CHAT_LN[b.id][i]; const lnP = lr ? xp(xr('Z. ' + (lr[0] === lr[1] ? lr[0] : lr[0] + '–' + lr[1]), { sz: 13, color: '888888' }), { after: 0 }) : '';
+            const tm = o.time !== false && m.z ? xp(xr(m.z + (me && o.read !== false && st !== 'ki' && st !== 'dunkel' ? ' ✓✓' : ''), { sz: 13, color: '888888' }), { jc: 'right', before: 0 }) : '';
+            const bub = xtc(lnP + nm + body + tm, { w: bw, shd: me ? C[1] : C[2], borders: ['top', 'left', 'bottom', 'right'].map(x => LINE(x, 4, 'D0D0D0')).join(''), mar: `<w:top w:w="${TW(1.2)}" w:type="dxa"/><w:left w:w="${TW(2.5)}" w:type="dxa"/><w:bottom w:w="${TW(1.2)}" w:type="dxa"/><w:right w:w="${TW(2.5)}" w:type="dxa"/>` });
+            const sp = xtc(xp(''), { w: gap, shd: C[3] });
+            rows.push(xtr(me && st !== 'dunkel' ? sp + bub : bub + sp, { cant: 1 }));
+          });
+          parts.push(xtbl([bw, gap], rows.join(''), NOB, '', ind));
+          if (b.fiktiv !== false) parts.push(xp(xr('Fiktiver Chatverlauf', { i: 1, sz: 14, color: '888888' }), { jc: 'center', before: 40 }));
           break;
         }
         case 'info': {

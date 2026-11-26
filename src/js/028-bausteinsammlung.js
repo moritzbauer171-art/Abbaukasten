@@ -128,3 +128,63 @@ function adderHTML(A = 'blatt') {
       <small class="hint">Eigene Bausteine speicherst du über ⋯ an der jeweiligen Karte.</small></div></div>`;
 }
 
+
+/* ================= Chat ================= */
+// Gestaltung angelehnt an bekannte Messenger – ohne Logos und Markennamen auf dem Blatt
+const CHAT_ST = {
+  gruen: { l: 'Grün', hint: 'wie WhatsApp' }, blau: { l: 'Blau', hint: 'wie iMessage' }, verlauf: { l: 'Verlauf', hint: 'wie Instagram' },
+  hell: { l: 'Hellblau', hint: 'wie Telegram' }, dunkel: { l: 'Dunkel', hint: 'wie Discord' }, sms: { l: 'Schlicht', hint: 'SMS, gut zum Drucken' }, ki: { l: 'KI-Chat', hint: 'wie ein Chatbot' }
+};
+const CHAT_PC = ['#1F7A8C', '#C2410C', '#7C3AED', '#15803D', '#B91C1C', '#0369A1', '#A16207', '#BE185D'];
+const chatSt = b => (CHAT_ST[b.style] ? b.style : 'gruen');
+const chatPeople = b => (Array.isArray(b.people) && b.people.length ? b.people : [{ n: 'Ich' }, { n: 'Person' }]);
+const chatIni = n => postIni(n);
+const CHAT_IC = { back: '<path d="M14.5 5.5 8 12l6.5 6.5"/>', call: '<path d="M6.6 3.8 9 4.2l1.3 3.6-1.8 1.4a12 12 0 0 0 6.3 6.3l1.4-1.8 3.6 1.3.4 2.4a2 2 0 0 1-2 2.1A16.5 16.5 0 0 1 4.5 5.8a2 2 0 0 1 2.1-2z"/>', vid: '<rect x="3" y="6.5" width="12.5" height="11" rx="2.2"/><path d="m15.5 10.5 5-3v9l-5-3z"/>', more: '<circle cx="12" cy="5.5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="18.5" r="1.2"/>', send: '<path d="M4 12 20 4l-4 16-4-6.5z"/>', mic: '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3.5"/>', plus: '<path d="M12 5v14M5 12h14"/>', ticks: '<path d="m2.5 12.5 4 4 8-9M9.5 16.5l1 0 8-9"/>' };
+const chatI = (k, c = '') => `<svg class="ch-i${c ? ' ' + c : ''}" viewBox="0 0 24 24" aria-hidden="true">${CHAT_IC[k]}</svg>`;
+function chatHTML(b, tag) {
+  const st = chatSt(b), P = chatPeople(b), o = b.opt || {}, M = Array.isArray(b.msgs) ? b.msgs : [], h = b.head || {};
+  const group = P.length > 2, ki = st === 'ki', dark = st === 'dunkel';
+  const name = String(h.name || '').trim() || (group ? 'Gruppe' : (P[1] && P[1].n) || 'Chat');
+  const lines = n => '<span class="ch-wl"></span>'.repeat(n);
+  let prev = null;
+  const body = M.map((m, i) => {
+    if (m.sys) { prev = null; return `<div class="ch-sys"><span>${inlineHTML(m.t || '') || '&nbsp;'}</span></div>`; }
+    const pi = Math.max(0, Math.min(P.length - 1, +m.p || 0)), me = pi === 0, who = P[pi] || {}, col = CHAT_PC[(pi - 1 + CHAT_PC.length) % CHAT_PC.length];
+    const first = prev !== pi, nx = M[i + 1], last = !nx || nx.sys || (+nx.p || 0) !== pi; prev = pi;
+    const txt = String(m.t || '').trim();
+    const inner = txt ? inlineHTML(txt).replace(/\n/g, '<br>') : lines(Math.max(1, Math.min(6, +m.ln || 2)));
+    const showName = first && (dark || (!me && !ki && group && o.names !== false));
+    const meta = (o.time !== false && m.z && !ki ? `<span class="ch-z">${esc(m.z)}${me && o.read !== false && !ki && !dark ? chatI('ticks', 'ch-tk') : ''}</span>` : '');
+    const av = (dark || (!me && (ki || (group && st !== 'blau' && st !== 'sms')))) ? `<span class="ch-av sm" style="--pc:${col}">${ki ? 'KI' : esc(chatIni(who.n))}</span>` : '';
+    return `<div data-mi="${i}" class="ch-m ${me ? 'me' : 'ot'}${first ? ' first' : ''}${last ? ' last' : ''}${txt ? '' : ' leer'}" style="--pc:${col}">${av ? (first ? av : '<span class="ch-av sm ph"></span>') : ''}<div class="ch-bub">${showName ? `<b class="ch-n">${esc(String(who.n || '').trim() || 'Person')}${dark && m.z && o.time !== false ? `<span class="ch-z">${esc(m.z)}</span>` : ''}</b>` : ''}<div class="ch-t">${inner}</div>${dark ? '' : meta}</div></div>`;
+  }).join('');
+  const head = ki ? `<div class="ch-h"><span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : ''}</span></div>`
+    : `<div class="ch-h">${dark ? '<span class="ch-hash">#</span>' : chatI('back', 'ch-bk')}${dark ? '' : `<span class="ch-av">${esc(chatIni(name))}</span>`}<span class="ch-hn"><b>${esc(name)}</b>${h.sub ? `<small>${esc(h.sub)}</small>` : group && st !== 'dunkel' ? `<small>${esc(P.map(x => String(x.n || '').trim()).filter(Boolean).join(', '))}</small>` : ''}</span>${dark ? '' : `<span class="ch-hi">${st === 'blau' ? chatI('vid') : chatI('vid') + chatI('call')}${st === 'gruen' ? chatI('more') : ''}</span>`}</div>`;
+  const bar = o.bar !== false ? `<div class="ch-in">${ki || dark ? '' : chatI('plus', 'ch-pl')}<span class="ch-inp">${ki ? 'Nachricht an die KI …' : dark ? 'Nachricht an #' + esc(name) : 'Nachricht'}</span>${chatI(ki || st === 'blau' || st === 'verlauf' ? 'send' : 'mic', 'ch-snd')}</div>` : '';
+  const w = Math.max(40, Math.min(100, +b.width || 72));
+  return `<div class="blk blk-chat cs-${st}${o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
+}
+
+// Zeilenangaben im Chat: nach dem Setzen die gedruckten Zeilen in den Blasen zählen, jede 5. am Rand vermerken.
+// Die Zeilen je Nachricht merkt sich CHAT_LN (für den Word-Export: „Z. 7–8“).
+const CHAT_LN = {};
+function chatLines(root = document.getElementById('pages')) {
+  if (!root) return;
+  root.querySelectorAll('.blk-chat').forEach(c => {
+    c.querySelectorAll(':scope > .ch-lnn').forEach(x => x.remove());
+    const bid = (c.closest('[data-bid]') || c).dataset.bid; if (!c.classList.contains('ch-ln')) { if (bid) delete CHAT_LN[bid]; return; }
+    const ph = c.querySelector('.ch-ph'), page = c.closest('.page'); if (!ph || !page) return;
+    const C = c.getBoundingClientRect(), PH = ph.getBoundingClientRect(); if (!C.width) return;
+    const mmPx = page.getBoundingClientRect().width / (+page.dataset.w || 210), step = +c.dataset.step || 5;
+    let n = 0; const map = {}, out = [];
+    c.querySelectorAll('.ch-m[data-mi]').forEach(m => {
+      const t = m.querySelector('.ch-t'); if (!t || m.classList.contains('leer') || !t.textContent.trim()) return;
+      const r = document.createRange(); r.selectNodeContents(t);
+      const tops = []; [...r.getClientRects()].filter(x => x.width > .5 && x.height > .5).forEach(x => { const y = x.top + x.height / 2; if (!tops.some(v => Math.abs(v.y - y) < x.height * .45)) tops.push({ y, h: x.height }); });
+      tops.sort((a, b) => a.y - b.y); const s0 = n + 1;
+      tops.forEach(v => { n++; if (n % step === 0) out.push(`<span class="ch-lnn" style="top:${((v.y - C.top) / mmPx).toFixed(2)}mm;left:${((PH.left - C.left) / mmPx - 8).toFixed(2)}mm">${n}</span>`); });
+      if (tops.length) map[m.dataset.mi] = [s0, n];
+    });
+    if (bid) CHAT_LN[bid] = map; if (out.length) c.insertAdjacentHTML('beforeend', out.join(''));
+  });
+}

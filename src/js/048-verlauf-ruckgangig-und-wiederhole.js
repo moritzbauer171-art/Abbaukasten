@@ -212,6 +212,15 @@ function onClick(e) {
     case 'task-add': b.items.push({ text: '', tag: '' }); changed(true); { const f = $(`#editor [data-bid="${bid}"] [data-k="items.${b.items.length - 1}.text"]`); if (f) f.focus(); } return;
     case 'task-del': { const i = +a.dataset.i; snapshot(); b.items.splice(i, 1); changed(true); toast('Aufgabe entfernt', 'Rückgängig', histUndo); return; }
     case 'task-up': { const i = +a.dataset.i; if (i > 0) { [b.items[i - 1], b.items[i]] = [b.items[i], b.items[i - 1]]; changed(true); } return; }
+    case 'chat-st': b.style = a.dataset.v; changed(true); renderEditor(); return;
+    case 'chat-p': { const m = (b.msgs || [])[+a.dataset.i]; if (!m) return; m.p = +a.dataset.v; changed(true); renderEditor(); return; }
+    case 'chat-add': case 'chat-sys': { snapshot(); const M = b.msgs || (b.msgs = []); const P = chatPeople(b); const lastP = [...M].reverse().find(m => !m.sys);
+      if (act === 'chat-sys') M.push({ sys: true, t: '' }); else { const np = lastP ? ((+lastP.p || 0) + 1) % P.length : 1; const z = lastP && /^\d{1,2}:\d{2}$/.test(lastP.z || '') ? (() => { const [h, mi] = lastP.z.split(':').map(Number); const t = h * 60 + mi + 1; return String(Math.floor(t / 60) % 24).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); })() : ''; M.push({ p: np, t: '', z }); }
+      changed(true); renderEditor(); setTimeout(() => { const f = $(`#editor [data-bid="${bid}"] [data-k="msgs.${M.length - 1}.t"]`); if (f) f.focus(); }, 30); return; }
+    case 'chat-del': snapshot(); b.msgs.splice(+a.dataset.i, 1); changed(true); renderEditor(); return;
+    case 'chat-mv': { const i = +a.dataset.i, j = i + (+a.dataset.d); if (j < 0 || j >= b.msgs.length) return; snapshot(); [b.msgs[i], b.msgs[j]] = [b.msgs[j], b.msgs[i]]; changed(true); renderEditor(); return; }
+    case 'chat-padd': snapshot(); (b.people = chatPeople(b)).push({ n: '' }); changed(true); renderEditor(); return;
+    case 'chat-pdel': { const k = +a.dataset.i; snapshot(); b.people = chatPeople(b); b.people.splice(k, 1); (b.msgs || []).forEach(m => { if (m.sys) return; if (+m.p === k) m.p = 1; else if (+m.p > k) m.p = +m.p - 1; }); changed(true); renderEditor(); return; }
     case 'tbm-open': tbmOpen(bid); return;
     case 'tbx-row-ins': case 'tbx-row-mv': case 'tbx-row-del': case 'tbx-col-ins': case 'tbx-col-mv': case 'tbx-col-del': {
       snapshot(); const R = b.rows.length, C = b.cols.length, rng = n => Array.from({ length: n }, (_, i) => i);

@@ -57,7 +57,7 @@ const tbStripLab = s => {
     case 'tasks': { const nos = s.items.map(x => x.no).filter(Boolean); return tsHaAll(s) ? 'Hausaufgabe' : nos.length > 1 ? `Aufgaben ${nos[0]}–${nos[nos.length - 1]}` : nos.length ? 'Aufgabe ' + nos[0] : 'Auftrag'; }
     case 'step': return s.fol === 'video' ? 'Video' : s.fol === 'quiz' ? 'Quiz' : s.fol === 'zitat' ? 'Zitat' : s.fol === 'bild' ? 'Bild' : s.fol === 'frage' ? 'Stundenfrage' : plainText(tfStr(s.b.head).trim() || stepHeadDef(s.b));
     case 'mat': return (s.tag || 'Material') + (matTitle(s.b) ? ' · ' + plainText(matTitle(s.b)) : '');
-    case 'tafel': return 'Tafelbild'; case 'info': return s.b.kind || 'Info'; case 'quote': return 'Zitat'; case 'image': return 'Bild';
+    case 'tafel': return 'Tafelbild'; case 'info': return s.b.kind || 'Info'; case 'quote': return 'Zitat'; case 'image': return 'Bild'; case 'chat': return 'Chat';
     case 'blank': return 'Tafelseite'; case 'table': return 'Tabelle'; case 'phr': return 'Wortspeicher'; case 'match': return s.b.sort ? 'Sortieren' : 'Zuordnen'; case 'qr': return 'QR-Code';
   }
   return 'Folie';

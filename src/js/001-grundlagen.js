@@ -88,6 +88,7 @@ const TYPE_ICON = {
   quote: '<path d="M10.5 6.5C7 7.6 5 10.2 5 13.6V18h5v-5H7.3c.2-2 1.4-3.6 3.6-4.6zM19.5 6.5c-3.5 1.1-5.5 3.7-5.5 7.1V18h5v-5h-2.7c.2-2 1.4-3.6 3.6-4.6z" fill="currentColor" stroke="none"/>',
   qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2.5v2.5H14zM17.5 17.5H20V20h-2.5z"/>',
   beschriftet: '<rect x="8.5" y="8" width="7" height="8" rx="1.2"/><rect x="2.5" y="4" width="4" height="3" rx=".6"/><rect x="17.5" y="4" width="4" height="3" rx=".6"/><rect x="2.5" y="17" width="4" height="3" rx=".6"/><rect x="17.5" y="17" width="4" height="3" rx=".6"/><path d="M6.5 7l2 2M17.5 7l-2 2M6.5 17l2-2M17.5 17l-2-2"/>',
+  chat: '<path d="M4 5.5h11a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-3.5 3v-3H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z"/><path d="M19 9.5h1a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v2.5L16 18.5h-3"/>',
   image: '<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17.5 5-4.5 3.5 3 3-2.5 4.5 4"/>',
   post: '<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8" cy="8.5" r="2"/><path d="M11.5 7.6h5.5M11.5 10h3.5M7 13.8h10M7 16.8h7"/>',
   match: '<circle cx="5.5" cy="6" r="1.7"/><circle cx="5.5" cy="12" r="1.7"/><circle cx="5.5" cy="18" r="1.7"/><circle cx="18.5" cy="6" r="1.7"/><circle cx="18.5" cy="12" r="1.7"/><circle cx="18.5" cy="18" r="1.7"/><path d="M7.4 6.4 16.6 17.6M7.4 12l9.2-5.6M7.4 18l9.2-5.6"/>',
@@ -128,6 +129,7 @@ const TYPES = {
   quote:    { label:'Zitat',         desc:'Impuls zum Einstieg' },
   qr:       { label:'QR-Code',       desc:'Link zu Video, Quelle' },
   image:    { label:'Bild',          desc:'Grafik, Schaubild' },
+  chat:     { label:'Chat',          desc:'Chatverlauf wie im Messenger' },
   pagebreak:{ label:'Seitenumbruch', desc:'Rest auf neue Seite' },
   gsa:      { label:'Grundschul-Aufgabe', desc:'Ankreuzen, Reihenfolge, Suchsel, Silben, Abschreiben, Bild und Schreiben, Selbsteinschätzung' }
 };
@@ -138,7 +140,7 @@ const PAL = (type, o = {}) => ({ k: o.k || type, type, label: o.label || TYPES[t
 const PAL_LB = () => PAL('image', { k: 'beschriftet', label: 'Bild mit Beschriftungen', desc: 'Bild in der Mitte, Kästen mit Pfeilen rundherum', ic: 'beschriftet', pre: { width: 42, lb: [{ h: '', t: '', s: 'l', at: 'o' }, { h: '', t: '', s: 'l', at: 'u' }, { h: '', t: '', s: 'r', at: 'o' }, { h: '', t: '', s: 'r', at: 'u' }] } });
 const PAL_SORT = () => PAL('match', { k: 'sortieren', label: 'Sortieren', desc: 'Wörter Oberbegriffen zuordnen, mehrere je Begriff', pre: { sort: true, cats: [{ id: 'c1', t: '' }, { id: 'c2', t: '' }], words: [{ t: '', c: 'c1' }, { t: '', c: 'c1' }, { t: '', c: 'c2' }, { t: '', c: 'c2' }] } });
 const PALETTE = {
-  get deutsch() { const v = ['material', 'poem', 'post', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'beschriftet', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : t === 'beschriftet' ? PAL_LB() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
+  get deutsch() { const v = ['material', 'poem', 'post', 'chat', 'tasks', 'match', 'sort', 'info', 'phrases', 'tafel', 'a3', 'step', 'table', 'lines', 'heading', 'text', 'quote', 'qr', 'image', 'beschriftet', 'pagebreak'].map(t => t === 'post' ? PAL_POST() : t === 'sort' ? PAL_SORT() : t === 'beschriftet' ? PAL_LB() : PAL(t)).concat(PAL_GSA()); Object.defineProperty(this, 'deutsch', { value: v }); return v; },
   get en() { return this.deutsch; }, get es() { return this.deutsch; }, get fr() { return this.deutsch; },
   ma: [
     PAL('tasks', { desc: 'mit Operator-Check (KMK Mathematik)' }), PAL('lines', { k: 'rechen', label: 'Rechenkästchen', desc: 'Kariertes Feld zum Rechnen', pre: { style: 'kaestchen', count: 8 } }),
@@ -150,7 +152,7 @@ const PALETTE = {
   gp: [
     PAL('material', { k: 'quelle', label: 'Quelle', desc: 'Text- oder Bildquelle (Q1), im Baustein umschaltbar', ic: 'quelle', pre: { mk: 'q' } }),
     PAL('material', { k: 'darstellung', label: 'Darstellung', desc: 'Text aus Forschung oder Schulbuch (D1)', ic: 'darstellung', pre: { mk: 'd' } }),
-    PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(),
+    PAL('material', { desc: 'Zeitungsartikel, Rede, Gesetzestext (M1)' }), PAL_POST(), PAL('chat'),
     PAL('image', { k: 'bildquelle', label: 'Bildquelle', desc: 'Karikatur, Foto, Plakat (Q)', pre: { mk: 'q', caption: '' } }),
     PAL('tasks'), PAL('match'), PAL_SORT(), PAL('info'), PAL('phrases'), PAL('tafel'), PAL('a3'), PAL('step'), PAL('table'),
     PAL('table', { k: 'zeitleiste', label: 'Zeitleiste', desc: 'Datum, Ereignis, Bedeutung', ic: 'zeitleiste', pre: { cols: ['Datum', 'Ereignis', 'Bedeutung'], rows: Array.from({ length: 6 }, () => ['', '', '']), rowHeight: 'normal', cw: [16, 44, 40] } }),

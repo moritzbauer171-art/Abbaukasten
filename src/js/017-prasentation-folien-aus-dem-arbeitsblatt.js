@@ -1,6 +1,6 @@
 /* ================= Präsentation: Folien aus dem Arbeitsblatt (im Browser und als PowerPoint) =================
    Material mit denselben Zeilen und Zeilennummern wie auf dem Blatt, je Aufgabe eine Folie, Erwartung und Tipps für die Lehrkraft. */
-const PR_MAX = { tasks: 60, step: 60, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
+const PR_MAX = { chat: 30, tasks: 60, step: 60, mat: 40, tafel: 36, info: 46, quote: 60, table: 32, phr: 34, match: 40 };
 function presCollect(quiet) {
   const keep = { fassung: state.fassung, out: state.out, gapEdit: state.gapEdit, bookPages: state.bookPages, grp: state.grp };
   const mats = {}; let pages = [];
@@ -149,6 +149,7 @@ function presSlidesAB(off, lab, abId) {
     if (b.type === 'info' && (plainText(b.text || '').trim() || tfStr(b.title).trim())) S.push({ k: 'info', b });
     else if (b.type === 'quote' && plainText(b.text || '').trim()) S.push({ k: 'quote', b });
     else if (b.type === 'image' && b.src) S.push({ k: 'image', b });
+    else if (b.type === 'chat') S.push({ k: 'chat', b });
     else if (b.type === 'table' && Array.isArray(b.cols) && b.cols.length) S.push({ k: 'table', b });
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
@@ -174,6 +175,7 @@ function presPick() {
       else if (b.type === 'info') L.push({ key: b.id, opt: b, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
       else if (b.type === 'quote') L.push({ key: b.id, opt: b, label: 'Zitat · ' + short(b.text, 50) });
       else if (b.type === 'image' && b.src) L.push({ key: b.id, opt: b, label: 'Bild' + (b.caption ? ' · ' + short(b.caption, 50) : '') });
+      else if (b.type === 'chat') L.push({ key: b.id, opt: b, label: 'Chat' + (b.title ? ' · ' + short(b.title, 50) : '') });
       else if (b.type === 'table') L.push({ key: b.id, opt: b, label: 'Tabelle' + (b.title ? ' · ' + short(b.title, 50) : '') });
       else if (b.type === 'phrases') L.push({ key: b.id, opt: b, label: short(b.title || 'Formulierungshilfen', 60) });
       else if (b.type === 'match') L.push({ key: b.id, opt: b, label: (b.sort ? 'Sortieren' : 'Zuordnen') + (b.title ? ' · ' + short(b.title, 50) : '') });

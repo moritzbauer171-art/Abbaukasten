@@ -1,9 +1,9 @@
 /* ================= Blatt setzen (Messen + Umbrechen) ================= */
 const MK_LETTER = { m: 'M', q: 'Q', d: 'D', a: 'Abb.' };
-const matLetter = b => b.type === 'material' ? (MK_LETTER[b.mk] || 'M') : (b.type === 'image' && MK_LETTER[b.mk] ? MK_LETTER[b.mk] : '');
+const matLetter = b => b.type === 'chat' ? 'M' : b.type === 'material' ? (MK_LETTER[b.mk] || 'M') : (b.type === 'image' && MK_LETTER[b.mk] ? MK_LETTER[b.mk] : '');
 // Nummern je Art: M1, M2 …, Q1, Q2 …, D1 … in der Reihenfolge auf dem Blatt
 function matTags(blocks) { const c = {}, map = {}; for (const b of blocks) { const L = matLetter(b); if (!L) continue; c[L] = (c[L] || 0) + 1; map[b.id] = L + (L.endsWith('.') ? ' ' : '') + c[L]; } return map; }
-const matTitle = b => b.type === 'image' ? b.caption : b.title;
+const matTitle = b => b.type === 'image' ? b.caption : b.type === 'chat' ? (b.title || 'Chat' + (b.head && b.head.name ? ': ' + b.head.name : '')) : b.title;
 function numbering(sheet) {
   const map = {}; let m = 0, t = 0; const tags = matTags(sheet.blocks);
   for (const b of sheet.blocks) {
@@ -95,6 +95,7 @@ function buildBlock(b, ctx) {
       const pic = src ? `<img src="${src}" alt="QR-Code" style="width:${sz}mm;height:${sz}mm">` : `<div class="qr-empty" style="width:${sz}mm;height:${sz}mm">${url ? 'Link zu lang' : 'QR-Code'}</div>`;
       return { type: 'qr', el: put(`<div class="blk blk-qr">${pic}<div class="qr-t">${b.title ? `<b>${inlineHTML(b.title)}</b>` : ''}<span class="qr-url">${url ? esc(url) : 'Link eintragen'}</span>${b.note ? `<span class="qr-note">${inlineHTML(b.note)}</span>` : ''}</div></div>`) };
     }
+    case 'chat': return { type: 'chat', el: put(chatHTML(b, ctx.mt && ctx.mt[b.id])) };
     case 'image': {
       if (Array.isArray(b.lb)) return { type: 'image', el: put(lbHTML(b, ctx)) };
       const img = b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
