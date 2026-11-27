@@ -64,7 +64,7 @@ function lbEdHTML(b) {
   const L = b.lb || [], free = x => x.tx != null && x.ty != null;
   const dots = L.map((x, i) => free(x) ? `<span class="lb-dot" data-lbdot="${i}" style="left:${+x.tx}%;top:${+x.ty}%" title="Pfeilziel von Kasten ${i + 1} – ziehen">${i + 1}</span>` : '').join('');
   return `${b.src ? `<div class="lb-pick" data-lbpick>${`<img src="${esc(b.src)}" alt="Bild – hier die Pfeilziele hinziehen" draggable="false">`}${dots}</div>${L.some(free) ? '<small class="hint">Ziehe die Nummern auf die Stelle im Bild, auf die der Pfeil zeigen soll.</small>' : ''}` : ''}
-    <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
+    <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img">${b.src ? '' : '<small class="hint">oder ein kopiertes Bild mit Strg+V (Mac: ⌘V) einfügen</small>'}</label>
     <label class="f"><span>Bildbreite in der Mitte: ${Math.round(+b.width || 42)} %</span><input type="range" min="25" max="70" step="1" value="${+b.width || 42}" data-k="width" data-num="1"></label>
     ${fText('caption', 'Überschrift über dem Bild (optional)', b.caption, 'z. B. Wie gestalte ich meine Lesekiste?')}
     <div class="f"><span>Für die Kinder</span>${seg('lb-mode', 0, b.lbMode || '', [['', 'Ausgefüllt'], ['text', 'Text leer', 'Überschriften stehen, darunter Linien zum Schreiben'], ['ganz', 'Alles leer', 'Nur Kästen mit Linien und Pfeilen – zum Beschriften']], 'Für die Kinder')}</div>
@@ -328,7 +328,7 @@ function bodyFor(b, num) {
     case 'a3': return a3Editor(b);
     case 'step': return stepEditor(b);
     case 'image': if (Array.isArray(b.lb)) return lbEdHTML(b); return `${srcFormSeg(b)}${b.src ? `<img class="thumb" src="${esc(b.src)}" alt="Vorschau des Bildes">` : ''}
-      <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img"></label>
+      <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img">${b.src ? '' : '<small class="hint">oder ein kopiertes Bild mit Strg+V (Mac: ⌘V) einfügen</small>'}</label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachBase() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachBase() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
       <div class="row">${fSelect('width', 'Breite', b.width, [[40, '40 %'], [60, '60 %'], [80, '80 %'], [100, 'volle Breite']])}</div>`;

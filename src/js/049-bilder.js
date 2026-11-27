@@ -17,3 +17,30 @@ async function handleImage(file, b) {
   } catch { toast('Das Bild ließ sich nicht öffnen. Bitte JPG oder PNG wählen.'); }
 }
 
+// Bild aus der Zwischenablage (Strg+V / ⌘V): füllt einen leeren, gewählten Bild-Baustein, sonst neuer Bild-Baustein hinter dem gewählten
+function clipImage(cd) {
+  if (!cd) return null;
+  const f = [...(cd.files || [])].find(x => /^image\//.test(x.type)); if (f) return f;
+  for (const it of [...(cd.items || [])]) if (it.kind === 'file' && /^image\//.test(it.type)) { const g = it.getAsFile(); if (g) return g; }
+  return null;
+}
+async function pasteImage(f) {
+  const blocks = state.sheet.blocks; const cur = state.sel && state.sel !== 'meta' ? blocks.find(b => b.id === state.sel) : null;
+  if (hist.timer) histCommit();
+  if (cur && cur.type === 'image' && !cur.src) { await handleImage(f, cur); renderEditor(); toast('Bild aus der Zwischenablage eingefügt', 'Rückgängig', histUndo); return; }
+  const nb = paletteBlock('image', 'image');
+  let at = cur ? blocks.indexOf(cur) + 1 : blocks.length;
+  if (!cur) { const A = state.area || 'blatt'; let li = -1; blocks.forEach((x, j) => { if (inArea(x, A) || (A === 'blatt' && x.type === 'pagebreak')) li = j; }); if (li >= 0) at = li + 1; }
+  blocks.splice(at, 0, nb); state.sel = nb.id; openOnly(nb.id);
+  await handleImage(f, nb); renderEditor();
+  const nc = $(`#editor [data-bid="${nb.id}"]`); if (nc) nc.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  toast('Bild aus der Zwischenablage eingefügt', 'Rückgängig', histUndo);
+}
+document.addEventListener('paste', e => {
+  if (e.defaultPrevented || !state.sheet || state.dlg || document.querySelector('.pr')) return;
+  const f = clipImage(e.clipboardData); if (!f) return;
+  const t = e.target; const ed = t && t.closest && t.closest('input,textarea,[contenteditable="true"],[contenteditable=""]');
+  if (ed && ((e.clipboardData.getData('text/plain') || '').trim())) return; // Text mit Bild (z. B. aus Word) bleibt Text
+  if ((state.area || 'blatt') !== 'blatt' && !(state.sel && (state.sheet.blocks.find(b => b.id === state.sel) || {}).type === 'image')) return;
+  e.preventDefault(); pasteImage(f);
+});

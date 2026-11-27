@@ -105,3 +105,18 @@ def test_chat_nicht_automatisch_auf_folie(lw):
     assert 'chat' not in ks and 'tasks' in ks, ks
     pg.evaluate("__S.sheet.blocks[0].pres = true")
     assert 'chat' in pg.evaluate("__PS(true).map(s => s.k)")
+
+PASTE = """async () => { const c = document.createElement('canvas'); c.width = 40; c.height = 30; const g = c.getContext('2d'); g.fillStyle = '#c33'; g.fillRect(0, 0, 40, 30);
+  const blob = await new Promise(r => c.toBlob(r, 'image/png')); const dt = new DataTransfer(); dt.items.add(new File([blob], 'x.png', { type: 'image/png' }));
+  const ev = new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true }); document.body.dispatchEvent(ev); }"""
+
+def test_bild_aus_zwischenablage(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 't1', 'type': 'tasks', 'title': '', 'items': [{'text': 'A', 'soz': 'ea'}]}, {'id': 't2', 'type': 'tasks', 'title': '', 'items': [{'text': 'B', 'soz': 'ea'}]}])
+    pg.evaluate("__S.sel = 't1'"); pg.evaluate(PASTE); pg.wait_for_timeout(900)
+    st = pg.evaluate("__S.sheet.blocks.map(b => b.type + ':' + (b.type === 'image' ? (b.src || '').slice(0, 10) : b.id))")
+    assert st == ['tasks:t1', 'image:data:image', 'tasks:t2'], st
+    assert pg.locator('#pages img').count() >= 1
+    # leerer, gewählter Bild-Baustein wird gefüllt
+    pg.evaluate("__S.sheet.blocks.push({ id: 'im', type: 'image', src: '', caption: '' }); __S.sel = 'im'"); pg.evaluate(PASTE); pg.wait_for_timeout(900)
+    assert pg.evaluate("__S.sheet.blocks.length") == 4 and pg.evaluate("__S.sheet.blocks[3].src.startsWith('data:image')")

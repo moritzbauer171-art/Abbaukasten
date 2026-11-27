@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Bilder aus der Zwischenablage**: Strg+V (⌘V) fügt ein kopiertes Bild als neuen Bild-Baustein hinter dem gewählten ein bzw. füllt einen leeren, gewählten Bild-Baustein.
 - **Chats auf den Folien nur auf Wunsch** (Knopf „Auf die Folie“ wie bei Material). Bei arbeitsteiligen Aufgaben stehen gleiche Aufträge einmal über die ganze Folie, nur abweichende (z. B. Raketenaufgaben) in Spalten.
 - **Arbeitsteilige Aufgaben innerhalb eines ABs** (z. B. Fenster-/Wandseite): beim Überfahren einer Seite „Arbeitsteilig zu den Aufgaben davor“ – oder im Aufgabenbaustein unter „Mehr“. Beide Aufgabenbausteine bekommen dieselben Nummern, auf der Folie stehen sie nebeneinander (Spaltenkopf = Überschrift davor), danach zählt es hinter der höchsten Nummer weiter.
 - Chat: Feld **Quelle** – steht klein unter dem Chat (neben „Fiktiver Chatverlauf“ oder allein), auch auf der Folie und in Word.
