@@ -391,7 +391,7 @@ async function exportDOCX() {
             rows.push(xtr(me && st !== 'dunkel' ? sp + bub : bub + sp, { cant: 1 }));
           });
           parts.push(xtbl([bw, gap], rows.join(''), NOB, '', ind));
-          if (b.fiktiv !== false || String(b.source || '').trim()) parts.push(xp((b.fiktiv !== false ? xr('Fiktiver Chatverlauf', { i: 1, sz: 14, color: '888888' }) : '') + (b.fiktiv !== false && String(b.source || '').trim() ? xr(' · ', { sz: 14, color: '888888' }) : '') + (String(b.source || '').trim() ? xr('Quelle: ', { i: 1, sz: 14, color: '888888' }) + xrInline(String(b.source).trim(), { i: 1, sz: 14, color: '888888' }) : ''), { jc: 'center', before: 40 }));
+          if (b.fiktiv !== false || String(b.source || '').trim()) parts.push(xp((b.fiktiv !== false ? xr('Fiktiver Chatverlauf', { i: 1, sz: 18, color: '4A4F5A' }) : '') + (b.fiktiv !== false && String(b.source || '').trim() ? xr(' · ', { sz: 18, color: '4A4F5A' }) : '') + (String(b.source || '').trim() ? xr('Quelle: ', { i: 1, sz: 18, color: '4A4F5A' }) + xrInline(String(b.source).trim(), { i: 1, sz: 18, color: '4A4F5A' }) : ''), { jc: 'center', before: 40 }));
           break;
         }
         case 'info': {

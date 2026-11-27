@@ -274,7 +274,7 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .blk-chat.frm .ch-in{padding-bottom:1em}
 .ch-inp{flex:1;background:var(--in);border-radius:1.2em;padding:.4em .85em;font-size:.86em;color:#8696A0}
 .ch-snd{width:1.3em;height:1.3em}
-.ch-fk{text-align:center;font-size:.72em;color:var(--paper-muted,#777);margin-top:1.2mm;font-style:italic}
+.ch-fk{text-align:center;font-size:9pt;line-height:1.35;color:#4A4F5A;margin-top:1.8mm;font-style:italic}
 /* Blau (wie iMessage) */
 .blk-chat.cs-blau{--bg:#fff;--hd:#F6F6F6;--hdc:#111;--me:#0A84FF;--mec:#fff;--ot:#E9E9EB;--otc:#111;--meta:#8E8E93;--sys:transparent;--sysc:#8E8E93;--in:#fff}
 .cs-blau .ch-h{flex-direction:row;border-bottom:.06em solid #DDD}.cs-blau .ch-h .ch-av{background:linear-gradient(#A5ABB8,#858994);color:#fff}
