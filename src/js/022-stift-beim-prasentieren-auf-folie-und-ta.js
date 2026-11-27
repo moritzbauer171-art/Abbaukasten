@@ -457,9 +457,10 @@ function openPres(start, opts = {}) {
   const ytCmd = (doc, func) => { const f = doc && doc.querySelector('.pr-slide .pr-yt iframe'); if (f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*'); };
   const ytPlay = () => {
     const box = slide.querySelector('.pr-yt'); if (!box) return; ytOn = P.i;
-    const ifr = `<iframe src="${esc(box.dataset.src)}" title="YouTube-Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    const ard = box.dataset.kind === 'ard';
+    const ifr = `<iframe src="${esc(box.dataset.src)}" title="${ard ? 'Video aus der ARD Mediathek' : 'YouTube-Video'}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
     if (awOk()) { const ab = AW.document.querySelector('.pr-slide .pr-yt'); if (ab) { ab.classList.add('on'); ab.innerHTML = ifr; }
-      box.classList.add('remote'); box.querySelector('.pr-yt-ph').innerHTML = `<span class="pr-yt-t">Läuft im Beamerfenster</span><span class="pr-yt-ctl"><button type="button" class="btn" data-yt="pause">Pause</button><button type="button" class="btn" data-yt="play">Weiter</button><button type="button" class="btn" data-yt="stop">Video schließen</button></span>`; }
+      box.classList.add('remote'); box.querySelector('.pr-yt-ph').innerHTML = `<span class="pr-yt-t">Läuft im Beamerfenster</span><span class="pr-yt-ctl">${ard ? '' : '<button type="button" class="btn" data-yt="pause">Pause</button><button type="button" class="btn" data-yt="play">Weiter</button>'}<button type="button" class="btn" data-yt="stop">Video schließen</button></span>${ard ? '<span class="pr-yt-s">Pause und Vorspulen direkt im Player auf dem Beamer</span>' : ''}`; }
     else { box.classList.add('on'); box.innerHTML = ifr + '<button type="button" class="pr-yt-x" data-yt="stop" title="Video schließen">×</button>'; }
     setTimeout(() => ov.focus(), 400); try { ytCls(); } catch {} lfcHb();
   };
@@ -788,7 +789,7 @@ async function exportPPTX() {
         const head1 = tfStr(b.head).trim() ? plainText(b.head) : stepHeadDef(b);
         if (s.fol === 'video' && yv) {
           head(sl, '', b.cap ? plainText(b.cap) : 'Video', chipsOf(b, ph, mn, b.timer));
-          sl.addText([{ text: '▶  Video auf YouTube öffnen', options: { hyperlink: { url: link }, bold: true, color: ACC } }, { text: (yv.st || yv.en ? `Ausschnitt ${yv.st ? ytFmt(yv.st) : '0:00'}${yv.en ? '–' + ytFmt(yv.en) : ''}` : ''), options: { breakLine: false, color: GREY, fontSize: 18 } }], { x: X, y: Y0 + 0.4, w: tw, h: 1.4, fontFace: F, fontSize: 28, valign: 'middle', margin: 0 });
+          sl.addText([{ text: yv.kind === 'ard' ? '▶  Video in der ARD Mediathek öffnen' : '▶  Video auf YouTube öffnen', options: { hyperlink: { url: link }, bold: true, color: ACC } }, { text: (yv.st || yv.en ? `Ausschnitt ${yv.st ? ytFmt(yv.st) : '0:00'}${yv.en ? '–' + ytFmt(yv.en) : ''}` : ''), options: { breakLine: false, color: GREY, fontSize: 18 } }], { x: X, y: Y0 + 0.4, w: tw, h: 1.4, fontFace: F, fontSize: 28, valign: 'middle', margin: 0 });
           addQR(Y0, BOT - Y0);
         } else if (s.fol === 'quiz') {
           const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [plainText(o).trim(), j]).filter(([o]) => o);

@@ -112,3 +112,20 @@ def test_seite_arbeitsteilig_fenster_wand(lw):
     # gleiche Aufträge einmal über die ganze Breite, nur die Raketen in Spalten
     sl = [x for x in pg.evaluate("__PS(true).filter(s => s.abpar).map(s => s.segs.map(g => g.t === 'rows' ? 'r' + g.items.length : 'c' + g.cols.map(c => c.items.length).join('/')))")]
     assert sl[-1] == ['r2', 'c1/1'], sl
+
+def test_video_ard_mediathek(lw):
+    pg = lw.open(); lw.new_lesson(pg); b = blocks_standard()
+    url = 'https://www.ardmediathek.de/video/terra-x/der-volksempfaenger/zdf/Y3JpZDovL2JyLmRlL2Jyb2FkY2FzdC9GMjAyNldPMDA0MzE0QTA?isChildContent'
+    b.insert(1, {'id': 'v1', 'type': 'step', 'tpl': 'video', 'title': '', 'ph': 'ein', 'min': '5', 'soz': 'pl', 'fol': 'video', 'head': '', 'cap': 'Doku', 'text': '', 'yt': url, 'quote': '', 'author': '', 'src': '', 'note': '', 'eh': '', 'media': ''})
+    lw.setup(pg, b)
+    v = pg.evaluate("__YI(__S.sheet.blocks[1])")
+    assert v['kind'] == 'ard' and v['id'] == 'Y3JpZDovL2JyLmRlL2Jyb2FkY2FzdC9GMjAyNldPMDA0MzE0QTA'
+    assert pg.evaluate("__YE(__YI(__S.sheet.blocks[1]), true)") == 'https://www.ardmediathek.de/embed/Y3JpZDovL2JyLmRlL2Jyb2FkY2FzdC9GMjAyNldPMDA0MzE0QTA'
+    pg.route('https://www.ardmediathek.de/**', lambda r: r.fulfill(status=200, body='<html><body>ARD</body></html>', content_type='text/html'))
+    pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
+    for _ in range(8):
+        if pg.locator('.pr .pr-slide .pr-yt').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(300)
+    assert 'ARD Mediathek' in pg.locator('.pr .pr-slide .pr-yt').inner_text()
+    pg.locator('.pr .pr-slide .pr-yt-go').click(); pg.wait_for_timeout(800)
+    assert pg.locator('.pr .pr-slide .pr-yt iframe').get_attribute('src').startswith('https://www.ardmediathek.de/embed/Y3JpZDovL')

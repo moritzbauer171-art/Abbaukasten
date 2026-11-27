@@ -180,7 +180,7 @@ function stepNew(k) {
 }
 // Bereich „Präsentation“
 // Zwischenfolien = Unterrichtsschritte, die nur in der Präsentation stehen
-const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['video', 'Video', 'YouTube-Link, läuft auf der Folie'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
+const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['video', 'Video', 'YouTube oder ARD Mediathek, läuft auf der Folie'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
 function zwNew(k, at) {
   const blocks = state.sheet.blocks; at = Math.max(0, Math.min(blocks.length, +at || 0));
   snapshot(); const nb = paletteBlock('step', 'step'); nb.tpl = 'frei'; blocks.splice(at, 0, nb);

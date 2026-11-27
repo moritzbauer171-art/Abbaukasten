@@ -64,13 +64,16 @@ function ytSec(v) {
   return 0;
 }
 const ytFmt = n => { n = Math.max(0, n | 0); const h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), x = n % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
+// ARD Mediathek: die Video-ID (beginnt mit „Y3JpZDovL“) steht am Ende des normalen Links; abgespielt wird über den offiziellen ARD-Player (/embed/)
+function ardId(u) { const m = String(u || '').trim().match(/ardmediathek\.de\/(?:[^?#]*\/)?(Y3JpZDovL[A-Za-z0-9_-]+)/); return m ? m[1] : ''; }
 function ytInfo(b) {
+  const aid = ardId(b.yt); if (aid) { const raw = String(b.yt).trim(); return { kind: 'ard', id: aid, st: 0, en: 0, watch: /^https?:\/\//.test(raw) ? raw.split('#')[0] : 'https://www.ardmediathek.de/video/' + aid }; }
   const id = ytId(b.yt); if (!id) return null;
   const urlT = (String(b.yt).match(/[?&#](?:t|start)=([0-9hms:]+)/) || [])[1];
   const st = ytSec(b.ytS) || ytSec(urlT), en = ytSec(b.ytE);
-  return { id, st, en: en > st ? en : 0, watch: `https://www.youtube.com/watch?v=${id}${st ? '&t=' + st + 's' : ''}` };
+  return { kind: 'yt', id, st, en: en > st ? en : 0, watch: `https://www.youtube.com/watch?v=${id}${st ? '&t=' + st + 's' : ''}` };
 }
-const ytEmbed = (v, auto) => `https://www.youtube.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
+const ytEmbed = (v, auto) => v.kind === 'ard' ? `https://www.ardmediathek.de/embed/${v.id}` : `https://www.youtube.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
 function stepSlideFol(b) {
   const f = stepFol(b); const t = tfStr(b.text).trim();
   if (f === 'aus') return '';
@@ -79,7 +82,7 @@ function stepSlideFol(b) {
   if (f === 'zitat' && !tfStr(b.quote).trim()) return t ? 'text' : '';
   if (f === 'text' && !t && !tfStr(b.head).trim() && !tfStr(b.link).trim()) return '';
   if (f === 'quiz' && !qzList(b).length) return t ? 'text' : '';
-  if (f === 'video' && !ytId(b.yt)) return t ? 'text' : '';
+  if (f === 'video' && !ytInfo(b)) return t ? 'text' : '';
   return f;
 }
 function stepEditor(b, pp) {
@@ -99,8 +102,8 @@ function stepEditor(b, pp) {
     ${fol === 'quiz' ? fText('head', 'Überschrift auf der Folie', b.head, 'Quiz') + qzEditor(b) : ''}
     ${fol === 'zitat' ? ta('quote', 'Zitat', 3, '') + fText('author', 'Quelle oder Autor', b.author, '') : ''}
     ${fol === 'bild' ? `<div class="f"><span>Bild</span>${b.src ? `<div class="st-img"><img src="${esc(b.src)}" alt=""><button class="link" type="button" data-act="st-img-del">Bild entfernen</button></div>` : ''}<input type="file" accept="image/*" data-act="img" aria-label="${b.src ? 'Bild ersetzen' : 'Bild wählen'}"></div>${fText('cap', 'Bildunterschrift (optional)', b.cap, '')}` : ''}
-    ${fol === 'video' ? (() => { const v = ytInfo(b); return `${fText('yt', 'YouTube-Link', b.yt, 'https://www.youtube.com/watch?v=…')}${tfStr(b.yt).trim() && !v ? '<small class="hint warn">Das sieht nicht nach einem YouTube-Link aus. Kopiere die Adresse aus der Adresszeile oder über „Teilen“.</small>' : ''}
-      <div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>
+    ${fol === 'video' ? (() => { const v = ytInfo(b); return `${fText('yt', 'Video-Link (YouTube oder ARD Mediathek)', b.yt, 'https://www.youtube.com/watch?v=… oder https://www.ardmediathek.de/video/…')}${tfStr(b.yt).trim() && !v ? '<small class="hint warn">Das sieht weder nach YouTube noch nach einem Video der ARD Mediathek aus. Kopiere die Adresse aus der Adresszeile, während das Video geöffnet ist.</small>' : ''}
+      ${v && v.kind === 'ard' ? '<small class="hint">ARD Mediathek erkannt – spielt im ARD-Player auf der Folie. Start und Ende lassen sich hier nicht festlegen; spule im Player vor.</small>' : `<div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>`}
       ${fText('cap', 'Überschrift auf der Folie (optional)', b.cap, 'z. B. Erklärvideo: Die Weimarer Verfassung')}
       ${ta('text', 'Beobachtungsauftrag (optional, steht über dem Video)', 2, m.anrede === 'du' ? 'z. B. Achte darauf, wie …' : 'z. B. Achten Sie darauf, wie …')}
       <small class="hint">${v ? `Erkannt: Video ${esc(v.id)}${v.st ? ', ab ' + ytFmt(v.st) : ''}${v.en ? ' bis ' + ytFmt(v.en) : ''}. ` : ''}Das Video läuft in der Präsentation direkt auf der Folie, sobald du auf den Play-Knopf klickst. Es braucht Internet und lädt erst beim Klick. Bist du im selben Browser bei YouTube angemeldet, erkennt der Player das meist (in Chrome und Edge, in Safari kaum), etwa für Premium ohne Werbung.</small>`; })() : ''}

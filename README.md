@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Videos aus der ARD Mediathek**: Im Video-Schritt neben YouTube-Links auch Links aus der ARD Mediathek – abgespielt im offiziellen ARD-Player (/embed/) auf der Folie, lädt erst beim Klick; QR-Code und PowerPoint-Link führen zur Mediathek.
 - **Sprech-, Denk-, Ruf- und Flüsterblasen auf Bildern** im Comic-Stil (Bild-Baustein → „+ Sprechblase“ usw.): frei verschiebbar über die ganze Breite, z. B. links und rechts neben dem Foto; Schwanz bzw. Gedankenbläschen zeigen auf eine Person; Comic-Schrift; mit Text oder leer mit Linien zum Ausfüllen. Auf Blatt, Folie, PowerPoint und Word; im Blatt direkt verschiebbar.
 - **Links aus Webseiten** werden beim Einfügen nicht mehr als Unterstreichung übernommen; im Material gibt es „Alle Unterstreichungen im Text entfernen“.
 - **Vorschau bleibt stehen**: Beim Neuaufbau nach einer Änderung (z. B. Worterklärung) behält die Vorschau ihre Höhe und Scrollposition.

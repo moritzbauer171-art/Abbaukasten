@@ -4182,7 +4182,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = '9244244086';
+const LW_BUILD = '4c813e8ca2';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -5963,13 +5963,16 @@ function ytSec(v) {
   return 0;
 }
 const ytFmt = n => { n = Math.max(0, n | 0); const h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), x = n % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
+// ARD Mediathek: die Video-ID (beginnt mit „Y3JpZDovL“) steht am Ende des normalen Links; abgespielt wird über den offiziellen ARD-Player (/embed/)
+function ardId(u) { const m = String(u || '').trim().match(/ardmediathek\.de\/(?:[^?#]*\/)?(Y3JpZDovL[A-Za-z0-9_-]+)/); return m ? m[1] : ''; }
 function ytInfo(b) {
+  const aid = ardId(b.yt); if (aid) { const raw = String(b.yt).trim(); return { kind: 'ard', id: aid, st: 0, en: 0, watch: /^https?:\/\//.test(raw) ? raw.split('#')[0] : 'https://www.ardmediathek.de/video/' + aid }; }
   const id = ytId(b.yt); if (!id) return null;
   const urlT = (String(b.yt).match(/[?&#](?:t|start)=([0-9hms:]+)/) || [])[1];
   const st = ytSec(b.ytS) || ytSec(urlT), en = ytSec(b.ytE);
-  return { id, st, en: en > st ? en : 0, watch: `https://www.youtube.com/watch?v=${id}${st ? '&t=' + st + 's' : ''}` };
+  return { kind: 'yt', id, st, en: en > st ? en : 0, watch: `https://www.youtube.com/watch?v=${id}${st ? '&t=' + st + 's' : ''}` };
 }
-const ytEmbed = (v, auto) => `https://www.youtube.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
+const ytEmbed = (v, auto) => v.kind === 'ard' ? `https://www.ardmediathek.de/embed/${v.id}` : `https://www.youtube.com/embed/${v.id}?rel=0&playsinline=1&enablejsapi=1${auto ? '&autoplay=1' : ''}${v.st ? '&start=' + v.st : ''}${v.en ? '&end=' + v.en : ''}`;
 function stepSlideFol(b) {
   const f = stepFol(b); const t = tfStr(b.text).trim();
   if (f === 'aus') return '';
@@ -5978,7 +5981,7 @@ function stepSlideFol(b) {
   if (f === 'zitat' && !tfStr(b.quote).trim()) return t ? 'text' : '';
   if (f === 'text' && !t && !tfStr(b.head).trim() && !tfStr(b.link).trim()) return '';
   if (f === 'quiz' && !qzList(b).length) return t ? 'text' : '';
-  if (f === 'video' && !ytId(b.yt)) return t ? 'text' : '';
+  if (f === 'video' && !ytInfo(b)) return t ? 'text' : '';
   return f;
 }
 function stepEditor(b, pp) {
@@ -5998,8 +6001,8 @@ function stepEditor(b, pp) {
     ${fol === 'quiz' ? fText('head', 'Überschrift auf der Folie', b.head, 'Quiz') + qzEditor(b) : ''}
     ${fol === 'zitat' ? ta('quote', 'Zitat', 3, '') + fText('author', 'Quelle oder Autor', b.author, '') : ''}
     ${fol === 'bild' ? `<div class="f"><span>Bild</span>${b.src ? `<div class="st-img"><img src="${esc(b.src)}" alt=""><button class="link" type="button" data-act="st-img-del">Bild entfernen</button></div>` : ''}<input type="file" accept="image/*" data-act="img" aria-label="${b.src ? 'Bild ersetzen' : 'Bild wählen'}"></div>${fText('cap', 'Bildunterschrift (optional)', b.cap, '')}` : ''}
-    ${fol === 'video' ? (() => { const v = ytInfo(b); return `${fText('yt', 'YouTube-Link', b.yt, 'https://www.youtube.com/watch?v=…')}${tfStr(b.yt).trim() && !v ? '<small class="hint warn">Das sieht nicht nach einem YouTube-Link aus. Kopiere die Adresse aus der Adresszeile oder über „Teilen“.</small>' : ''}
-      <div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>
+    ${fol === 'video' ? (() => { const v = ytInfo(b); return `${fText('yt', 'Video-Link (YouTube oder ARD Mediathek)', b.yt, 'https://www.youtube.com/watch?v=… oder https://www.ardmediathek.de/video/…')}${tfStr(b.yt).trim() && !v ? '<small class="hint warn">Das sieht weder nach YouTube noch nach einem Video der ARD Mediathek aus. Kopiere die Adresse aus der Adresszeile, während das Video geöffnet ist.</small>' : ''}
+      ${v && v.kind === 'ard' ? '<small class="hint">ARD Mediathek erkannt – spielt im ARD-Player auf der Folie. Start und Ende lassen sich hier nicht festlegen; spule im Player vor.</small>' : `<div class="row2">${fText('ytS', 'Start (optional, z. B. 1:30)', b.ytS, '0:00')}${fText('ytE', 'Ende (optional)', b.ytE, '')}</div>`}
       ${fText('cap', 'Überschrift auf der Folie (optional)', b.cap, 'z. B. Erklärvideo: Die Weimarer Verfassung')}
       ${ta('text', 'Beobachtungsauftrag (optional, steht über dem Video)', 2, m.anrede === 'du' ? 'z. B. Achte darauf, wie …' : 'z. B. Achten Sie darauf, wie …')}
       <small class="hint">${v ? `Erkannt: Video ${esc(v.id)}${v.st ? ', ab ' + ytFmt(v.st) : ''}${v.en ? ' bis ' + ytFmt(v.en) : ''}. ` : ''}Das Video läuft in der Präsentation direkt auf der Folie, sobald du auf den Play-Knopf klickst. Es braucht Internet und lädt erst beim Klick. Bist du im selben Browser bei YouTube angemeldet, erkennt der Player das meist (in Chrome und Edge, in Safari kaum), etwa für Premium ohne Werbung.</small>`; })() : ''}
@@ -6448,7 +6451,7 @@ function stepNew(k) {
 }
 // Bereich „Präsentation“
 // Zwischenfolien = Unterrichtsschritte, die nur in der Präsentation stehen
-const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['video', 'Video', 'YouTube-Link, läuft auf der Folie'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
+const ZW_KINDS = [['sichs', 'Sicherung', 'schlichte Folie „Sicherung“'], ['frei', 'Impuls oder Auftrag', 'Überschrift und Text'], ['frage', 'Stundenfrage', 'aus dem Kopf der Stunde'], ['zitat', 'Zitat', 'groß gesetzt'], ['bild', 'Bild', 'stummer Impuls'], ['video', 'Video', 'YouTube oder ARD Mediathek, läuft auf der Folie'], ['equiz', 'Quiz', 'Fragen zum Aufdecken'], ['kapitel', 'Zwischentitel', 'großer Titel'], ['vergl', 'Ergebnisse vergleichen', 'Partnerarbeit'], ['reserve', 'Reserve', 'nur, wenn Zeit bleibt']];
 function zwNew(k, at) {
   const blocks = state.sheet.blocks; at = Math.max(0, Math.min(blocks.length, +at || 0));
   snapshot(); const nb = paletteBlock('step', 'step'); nb.tpl = 'frei'; blocks.splice(at, 0, nb);
@@ -7700,7 +7703,7 @@ function presSlideHTML(s, bar) {
       if (s.fol === 'titel') return (chips ? presHead('', '', chips) : '') + `<div class="pr-body pr-zw${hq}"><div class="pr-zw-h">${head}</div>${tfStr(b.text).trim() ? `<div class="pr-zw-t">${inlineHTML(b.text)}</div>` : ''}${qr}</div>` + pops;
       if (s.fol === 'zitat') return `<div class="pr-body st-zitat${hq}"><div class="pr-fit pr-quote"><div class="pr-q">${parasHTML(b.quote)}</div>${b.author ? `<div class="pr-auth">${inlineHTML(b.author)}</div>` : ''}</div>${qr}</div>` + pops;
       if (s.fol === 'video') { const v = ytInfo(b);
-        return presHead('', b.cap ? inlineHTML(b.cap) : 'Video', chips) + `<div class="pr-body pr-vidb">${tfStr(b.text).trim() ? `<div class="pr-yt-auf">${inlineHTML(b.text)}</div>` : ''}<div class="pr-yt" data-yt="${esc(v.id)}" data-src="${esc(ytEmbed(v, true))}"><div class="pr-yt-ph"><span class="pr-yt-go" role="button" tabindex="0" aria-label="Video abspielen"><svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7c-.8-2.9-2.5-5.4-5.4-6.2C55.8.1 34 0 34 0S12.2.1 6.9 1.5C4 2.3 2.3 4.8 1.5 7.7.1 13 0 24 0 24s.1 11 1.5 16.3c.8 2.9 2.5 5.4 5.4 6.2C12.2 47.9 34 48 34 48s21.8-.1 27.1-1.5c2.9-.8 4.6-3.3 5.4-6.2C67.9 35 68 24 68 24s-.1-11-1.5-16.3z" fill="#E33"/><path d="M45 24 27 14v20" fill="#fff"/></svg></span><span class="pr-yt-t">Video abspielen${v.st || v.en ? ` <small>${v.st ? ytFmt(v.st) : '0:00'}${v.en ? '–' + ytFmt(v.en) : ''}</small>` : ''}</span><span class="pr-yt-s">Lädt erst beim Klick von YouTube</span></div><div class="pr-yt-qr"><img src="${QR.dataURL(v.watch, 8)}" alt="QR-Code zum Video"><span>${esc(linkShort(v.watch))}</span></div></div></div>` + pops; }
+        return presHead('', b.cap ? inlineHTML(b.cap) : 'Video', chips) + `<div class="pr-body pr-vidb">${tfStr(b.text).trim() ? `<div class="pr-yt-auf">${inlineHTML(b.text)}</div>` : ''}<div class="pr-yt${v.kind === 'ard' ? ' ard' : ''}" data-yt="${esc(v.id)}" data-kind="${v.kind}" data-src="${esc(ytEmbed(v, true))}"><div class="pr-yt-ph"><span class="pr-yt-go" role="button" tabindex="0" aria-label="Video abspielen">${v.kind === 'ard' ? '<svg viewBox="0 0 68 48" aria-hidden="true"><rect width="68" height="48" rx="10" fill="#003480"/><path d="M45 24 27 14v20" fill="#fff"/></svg>' : '<svg viewBox="0 0 68 48" aria-hidden="true"><path d="M66.5 7.7c-.8-2.9-2.5-5.4-5.4-6.2C55.8.1 34 0 34 0S12.2.1 6.9 1.5C4 2.3 2.3 4.8 1.5 7.7.1 13 0 24 0 24s.1 11 1.5 16.3c.8 2.9 2.5 5.4 5.4 6.2C12.2 47.9 34 48 34 48s21.8-.1 27.1-1.5c2.9-.8 4.6-3.3 5.4-6.2C67.9 35 68 24 68 24s-.1-11-1.5-16.3z" fill="#E33"/><path d="M45 24 27 14v20" fill="#fff"/></svg>'}</span><span class="pr-yt-t">Video abspielen${v.st || v.en ? ` <small>${v.st ? ytFmt(v.st) : '0:00'}${v.en ? '–' + ytFmt(v.en) : ''}</small>` : ''}</span><span class="pr-yt-s">Lädt erst beim Klick ${v.kind === 'ard' ? 'aus der ARD Mediathek' : 'von YouTube'}</span></div><div class="pr-yt-qr"><img src="${QR.dataURL(v.watch, 8)}" alt="QR-Code zum Video"><span>${esc(linkShort(v.watch))}</span></div></div></div>` + pops; }
       if (s.fol === 'bild') return (b.cap ? presHead('', inlineHTML(b.cap), chips) : '') + `<div class="pr-body pr-imgb${hq}"><img class="pr-img" src="${esc(b.src)}" alt="${esc(plainText(b.cap || 'Bild'))}">${qr}</div>` + pops;
       if (s.fol === 'quiz') { const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [o, j]).filter(([o]) => tfStr(o).trim());
         const body = open ? `<div class="qz-q">${inlineHTML(x.q)}</div>${tfStr(x.a).trim() ? `<div class="qz-a" data-st="1"><small>Lösung</small>${parasHTML(x.a)}</div>` : ''}`
@@ -8957,9 +8960,10 @@ function openPres(start, opts = {}) {
   const ytCmd = (doc, func) => { const f = doc && doc.querySelector('.pr-slide .pr-yt iframe'); if (f && f.contentWindow) f.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), '*'); };
   const ytPlay = () => {
     const box = slide.querySelector('.pr-yt'); if (!box) return; ytOn = P.i;
-    const ifr = `<iframe src="${esc(box.dataset.src)}" title="YouTube-Video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+    const ard = box.dataset.kind === 'ard';
+    const ifr = `<iframe src="${esc(box.dataset.src)}" title="${ard ? 'Video aus der ARD Mediathek' : 'YouTube-Video'}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
     if (awOk()) { const ab = AW.document.querySelector('.pr-slide .pr-yt'); if (ab) { ab.classList.add('on'); ab.innerHTML = ifr; }
-      box.classList.add('remote'); box.querySelector('.pr-yt-ph').innerHTML = `<span class="pr-yt-t">Läuft im Beamerfenster</span><span class="pr-yt-ctl"><button type="button" class="btn" data-yt="pause">Pause</button><button type="button" class="btn" data-yt="play">Weiter</button><button type="button" class="btn" data-yt="stop">Video schließen</button></span>`; }
+      box.classList.add('remote'); box.querySelector('.pr-yt-ph').innerHTML = `<span class="pr-yt-t">Läuft im Beamerfenster</span><span class="pr-yt-ctl">${ard ? '' : '<button type="button" class="btn" data-yt="pause">Pause</button><button type="button" class="btn" data-yt="play">Weiter</button>'}<button type="button" class="btn" data-yt="stop">Video schließen</button></span>${ard ? '<span class="pr-yt-s">Pause und Vorspulen direkt im Player auf dem Beamer</span>' : ''}`; }
     else { box.classList.add('on'); box.innerHTML = ifr + '<button type="button" class="pr-yt-x" data-yt="stop" title="Video schließen">×</button>'; }
     setTimeout(() => ov.focus(), 400); try { ytCls(); } catch {} lfcHb();
   };
@@ -9288,7 +9292,7 @@ async function exportPPTX() {
         const head1 = tfStr(b.head).trim() ? plainText(b.head) : stepHeadDef(b);
         if (s.fol === 'video' && yv) {
           head(sl, '', b.cap ? plainText(b.cap) : 'Video', chipsOf(b, ph, mn, b.timer));
-          sl.addText([{ text: '▶  Video auf YouTube öffnen', options: { hyperlink: { url: link }, bold: true, color: ACC } }, { text: (yv.st || yv.en ? `Ausschnitt ${yv.st ? ytFmt(yv.st) : '0:00'}${yv.en ? '–' + ytFmt(yv.en) : ''}` : ''), options: { breakLine: false, color: GREY, fontSize: 18 } }], { x: X, y: Y0 + 0.4, w: tw, h: 1.4, fontFace: F, fontSize: 28, valign: 'middle', margin: 0 });
+          sl.addText([{ text: yv.kind === 'ard' ? '▶  Video in der ARD Mediathek öffnen' : '▶  Video auf YouTube öffnen', options: { hyperlink: { url: link }, bold: true, color: ACC } }, { text: (yv.st || yv.en ? `Ausschnitt ${yv.st ? ytFmt(yv.st) : '0:00'}${yv.en ? '–' + ytFmt(yv.en) : ''}` : ''), options: { breakLine: false, color: GREY, fontSize: 18 } }], { x: X, y: Y0 + 0.4, w: tw, h: 1.4, fontFace: F, fontSize: 28, valign: 'middle', margin: 0 });
           addQR(Y0, BOT - Y0);
         } else if (s.fol === 'quiz') {
           const x = s.qz; const open = x.t === 'open'; const O = x.o.map((o, j) => [plainText(o).trim(), j]).filter(([o]) => o);
