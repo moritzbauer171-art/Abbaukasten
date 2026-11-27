@@ -70,3 +70,53 @@ function abAct(act, a) {
   }
 }
 
+
+/* Seite als neues AB abtrennen: alle Bausteine, die auf dieser Seite der Vorschau beginnen, wandern in ein neues AB direkt dahinter.
+   „arbeitsteilig“ markiert beide ABs als parallel – ihre Aufträge stehen dann nebeneinander auf der Folie. */
+function pageBids() {
+  const seen = new Set();
+  return [...document.querySelectorAll('#pages .page')].map(pg => { const L = []; pg.querySelectorAll('[data-bid]').forEach(n => { const id = n.dataset.bid; if (!id || seen.has(id) || L.includes(id)) return; L.push(id); }); L.forEach(id => seen.add(id)); return L; });
+}
+function abSplitPage(pi, par) {
+  const P = state.sheet; const per = pageBids(); const mv = new Set(per[pi] || []);
+  const ids = P.blocks.filter(b => mv.has(b.id)).map(b => b.id);
+  if (!ids.length) { toast('Auf dieser Seite beginnt kein eigener Baustein – sie setzt nur einen Baustein von der Seite davor fort.'); return; }
+  const onSheet = new Set(per.flat()); if (P.blocks.filter(b => onSheet.has(b.id)).every(b => mv.has(b.id))) { toast('Das ist das ganze Arbeitsblatt – für ein zweites AB mindestens zwei Seiten mit eigenen Bausteinen.'); return; }
+  if (hist.timer) histCommit();
+  if (!P.abs) { P.abs = [{ id: 'ab' + uid(), active: true }]; P.abActive = 0; P.stunde = { title: P.meta.title || '' }; }
+  const k = P.abActive, nr0 = String(P.meta.nr || '').trim(), num = /^\d+$/.test(nr0);
+  let nr = '';
+  if (num && par) { P.meta.nr = nr0 + 'a'; nr = nr0 + 'b'; } else if (num) nr = nr0 + String.fromCharCode(97 + P.abs.length);
+  const meta = { nr, title: P.meta.title || 'Arbeitsblatt', topic: P.meta.topic || '' };
+  if (par) { P.meta.par = true; meta.par = true; }
+  const moved = P.blocks.filter(b => mv.has(b.id)); P.blocks = P.blocks.filter(b => !mv.has(b.id));
+  P.abs.splice(k + 1, 0, { id: 'ab' + uid(), meta, blocks: moved, zrefs: [] });
+  state.sel = null; changed(true); clearTimeout(renderTimer); renderPreview();
+  toast(`Seite ${pi + 1} ist jetzt ${abLabel(meta, k + 1)}${par ? ' – arbeitsteilig, Aufträge nebeneinander auf der Folie' : ''}`, 'Rückgängig', histUndo);
+}
+// Knopf beim Überfahren einer Seite
+(() => {
+  let cur = -1, hideT = 0;
+  const btn = () => { let b = document.getElementById('pg-split'); if (b) return b;
+    b = document.createElement('div'); b.id = 'pg-split'; b.hidden = true;
+    b.innerHTML = '<button type="button" class="pgs-b" aria-haspopup="true" aria-expanded="false" title="Diese Seite als eigenes Arbeitsblatt abtrennen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7.5" height="17" rx="1.5"/><rect x="13" y="3.5" width="7.5" height="17" rx="1.5" stroke-dasharray="2.4 2"/></svg><span>Seite als neues AB</span></button><div class="pgs-m" hidden><button type="button" data-pgs="1"><b>Als eigenes AB</b><small>Bausteine dieser Seite wandern in ein neues AB dahinter</small></button><button type="button" data-pgs="2"><b>Als eigenes AB, arbeitsteilig</b><small>Beide ABs laufen parallel – Aufträge nebeneinander auf der Folie</small></button></div>';
+    document.body.appendChild(b);
+    b.addEventListener('mouseenter', () => clearTimeout(hideT)); b.addEventListener('mouseleave', () => { hideT = setTimeout(hide, 300); });
+    b.addEventListener('click', e => { const m = b.querySelector('.pgs-m'), t = e.target.closest('.pgs-b'), o = e.target.closest('[data-pgs]');
+      if (t) { m.hidden = !m.hidden; t.setAttribute('aria-expanded', String(!m.hidden)); return; }
+      if (o && cur >= 0) { const pi = cur; hide(); abSplitPage(pi, o.dataset.pgs === '2'); } });
+    return b; };
+  const top0 = () => { const sc = document.getElementById('preview-scroll'); return sc ? sc.getBoundingClientRect().top : 0; };
+  const hide = () => { const b = document.getElementById('pg-split'); if (b) { b.hidden = true; b.querySelector('.pgs-m').hidden = true; } cur = -1; };
+  document.addEventListener('mouseover', e => {
+    const pg = e.target.closest && e.target.closest('#pages .page');
+    if (!pg) { if (cur >= 0 && !(e.target.closest && e.target.closest('#pg-split'))) { clearTimeout(hideT); hideT = setTimeout(hide, 300); } return; }
+    const P = state.sheet; const pages = [...document.querySelectorAll('#pages .page')];
+    if (state.out !== 'blatt' || pages.length < 2) return hide();
+    clearTimeout(hideT); const i = pages.indexOf(pg); const b = btn(); if (i === cur && !b.hidden) return; cur = i;
+    const r = pg.getBoundingClientRect(); b.style.left = Math.max(8, r.right - 8) + 'px'; b.style.top = Math.max(top0() + 8, r.top + 8) + 'px'; b.hidden = false; b.querySelector('.pgs-m').hidden = true;
+    void P;
+  });
+  // beim Scrollen mitwandern statt verschwinden
+  document.addEventListener('scroll', () => { const b = document.getElementById('pg-split'); if (!b || b.hidden || cur < 0) return; const pg = document.querySelectorAll('#pages .page')[cur]; if (!pg) return hide(); const r = pg.getBoundingClientRect(); if (r.bottom < top0() + 60 || r.top > innerHeight - 20) return hide(); b.style.left = Math.max(8, r.right - 8) + 'px'; b.style.top = Math.max(top0() + 8, r.top + 8) + 'px'; }, true);
+})();

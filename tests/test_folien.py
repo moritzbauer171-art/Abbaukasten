@@ -82,3 +82,29 @@ def test_arbeitsteilige_abs_auf_einer_folie(lw):
     t2 = pg.locator('.pr .pr-slide').inner_text()
     assert pg.locator('.pr .pr-slide .pr-col').count() == 2 and 'Deuten Sie' in t2 and 'Bewerten Sie' in t2 and 'Panels' not in t2 and '10' in t2 and 'aufgaben 3–4' in t2.lower()
     pg.locator('.pr .pr-slide').screenshot(path=str(__import__('conftest').OUT / 'par_folie.png'))
+
+def test_seite_als_neues_ab_arbeitsteilig(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    tA = {'id': 'ta', 'type': 'tasks', 'title': '', 'items': [{'text': 'Analysieren Sie die Panels auf S. 12.', 'soz': 'ga'}]}
+    tB = {'id': 'tb', 'type': 'tasks', 'title': '', 'items': [{'text': 'Untersuchen Sie die Farbgebung auf S. 40.', 'soz': 'ga'}]}
+    lw.setup(pg, [tA, {'id': 'pb', 'type': 'pagebreak'}, tB]); pg.evaluate("__S.sheet.meta.nr = '6'; __RE(); __RP()"); pg.wait_for_timeout(600)
+    assert pg.locator('#pages .page').count() == 2
+    pg.locator('#pages .page').nth(1).hover(); pg.wait_for_timeout(300)
+    assert pg.locator('#pg-split').is_visible()
+    pg.locator('#pg-split .pgs-b').click(); pg.wait_for_timeout(200)
+    pg.locator('#pg-split [data-pgs="2"]').click(); pg.wait_for_timeout(800)
+    st = pg.evaluate("(({ abs, blocks, meta }) => ({ n: abs && abs.length, ids: blocks.map(b => b.id), par: !!meta.par, nr: meta.nr, nb: abs && abs[1].blocks.map(b => b.id), nbpar: abs && abs[1].meta.par, nbnr: abs && abs[1].meta.nr }))(__S.sheet)")
+    assert st['n'] == 2 and 'tb' not in st['ids'] and st['nb'] == ['tb'] and st['par'] and st['nbpar'] and st['nr'] == '6a' and st['nbnr'] == '6b', st
+    assert pg.locator('#pages .page').count() == 1
+    pg.evaluate("__OP(0)"); pg.wait_for_timeout(1200)
+    for _ in range(8):
+        if pg.locator('.pr .pr-slide .pr-cols').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(350)
+    t = pg.locator('.pr .pr-slide').inner_text()
+    assert pg.locator('.pr .pr-slide .pr-col').count() == 2 and 'Panels auf S. 12' in t and 'Farbgebung auf S. 40' in t
+
+def test_seite_abtrennen_nur_eine_seite(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 'ta', 'type': 'tasks', 'title': '', 'items': [{'text': 'A', 'soz': 'ea'}]}]); pg.evaluate("__RP()"); pg.wait_for_timeout(400)
+    pg.locator('#pages .page').first.hover(); pg.wait_for_timeout(300)
+    assert not pg.locator('#pg-split').is_visible()

@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Seite als neues AB**: Beim Überfahren einer Seite der Vorschau (ab zwei Seiten) erscheint oben rechts ein Knopf – alle Bausteine, die auf dieser Seite beginnen, wandern in ein neues AB direkt dahinter; wahlweise gleich arbeitsteilig (beide ABs parallel, Nummern 6a/6b, Aufträge nebeneinander auf der Folie). Rückgängig möglich.
 - Chat: Feld **Quelle** – steht klein unter dem Chat (neben „Fiktiver Chatverlauf“ oder allein), auch auf der Folie und in Word.
 - **Raketenaufgabe**: Schalter „Rakete“ an jeder Aufgabe. Darstellung je Blatt wählbar: Rakete statt Nummer, zählt nicht mit (Standard) oder eigener Abschnitt am Ende mit frei wählbarer Überschrift („Für alle, die schon fertig sind“); Raketenaufgaben wandern dann ans Ende des Bausteins. Blatt, Folie, Word.
 - Chat: Stil **Snap** (wie Snapchat: ohne Blasen, farbiger Strich, Namen in Großbuchstaben) und Format **iPhone** (Seitenverhältnis 9 : 19,5, Rahmen mit Dynamic Island, Statusleiste, Home-Balken; ältere Nachrichten oben abgeschnitten wie beim Scrollen; passt sich automatisch der Seite an).
