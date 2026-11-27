@@ -542,8 +542,8 @@ async function exportDOCX() {
           }
           if (!b.src) break;
           try {
-            const bytes = await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
-            const wEmu = Math.round((CW === TW(174) ? 174 : CW / 56.6929) * (b.width || 80) / 100 * 36000); const hEmu = Math.round(wEmu * ((b.h || 1) / (b.w || 1)));
+            const bb = bubOn(b); const bytes = bb ? await bubComposite(b) : await imageBytes(b.src); const n = media.length + 1; media.push({ n, bytes });
+            const wEmu = Math.round((CW === TW(174) ? 174 : CW / 56.6929) * (bb ? 100 : (b.width || 80)) / 100 * 36000); const hEmu = Math.round(bb ? wEmu * bubRatio(b) : wEmu * ((b.h || 1) / (b.w || 1)));
             const drawing = `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${wEmu}" cy="${hEmu}"/><wp:docPr id="${n}" name="Bild ${n}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.jpeg"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${wEmu}" cy="${hEmu}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
             if (tagsW[b.id]) parts.push(xp(xr(tagsW[b.id], { b: 1, sz: 17, color: A }) + xr('   ') + xrInline(b.caption || '', { b: 1, sz: 20 }), { keepNext: true, after: 100 }));
             parts.push(xp(drawing, { jc: 'center', line: 240 }));

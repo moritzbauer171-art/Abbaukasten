@@ -62,6 +62,7 @@ js/046-formulierungshilfen-vorlagen.js
 js/047-anderungen.js
 js/048-verlauf-ruckgangig-und-wiederhole.js
 js/049-bilder.js
+js/049a-sprech-und-denkblasen.js
 js/050-ablage.js
 js/051-startseite-facher-und-klassen-zuletzt-be.js
 js/052-vorschau-werkzeugleiste-beim-uberfahren.js

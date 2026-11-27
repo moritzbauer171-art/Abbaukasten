@@ -377,6 +377,9 @@ function onClick(e) {
     case 'unfold-all': state.allOpen = true; state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'wl': { const it = b.items[+a.dataset.i]; if (it) { it.wl = it.wl === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'mat-noul': { const n = ulCount(b.text); b.text = ulStrip(b.text); changed(true); toast(n === 1 ? '1 Unterstreichung entfernt' : n + ' Unterstreichungen entfernt', 'Rückgängig', histUndo); return; }
+    case 'bub-add': { if (!Array.isArray(b.bub)) b.bub = []; if (!b.bub.length && (+b.width || 80) > 50) b.width = 50; b.bub.push(bubNew(b, BUB_K[a.dataset.v] ? a.dataset.v : 'sprech')); changed(true); return; }
+    case 'bub-k': { const o = (b.bub || [])[+a.dataset.i]; if (o) { o.k = a.dataset.v; changed(true); } return; }
+    case 'bub-del': { (b.bub || []).splice(+a.dataset.i, 1); changed(true); return; }
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'arb': { const it = b.items[+a.dataset.i]; if (it) { const k = a.dataset.v, L = arbOf(it); it.arb = L.includes(k) ? L.filter(x => x !== k) : [...L, k]; if (!it.arb.length) delete it.arb; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;

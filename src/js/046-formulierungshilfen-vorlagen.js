@@ -333,7 +333,8 @@ function bodyFor(b, num) {
       <label class="f"><span>${b.src ? 'Bild ersetzen' : 'Bild wählen'}</span><input type="file" accept="image/*" data-act="img">${b.src ? '' : '<small class="hint">oder ein kopiertes Bild mit Strg+V (Mac: ⌘V) einfügen</small>'}</label>
       <div class="f"><span>Beschriftung</span><div class="seg sm" role="group" aria-label="Beschriftung">${[['', 'ohne'], ['m', 'M'], ...(fachBase() === 'gp' || b.mk === 'q' || b.mk === 'd' ? [['q', 'Q'], ['d', 'D']] : []), ...(fachBase() === 'bio' || b.mk === 'a' ? [['a', 'Abb.']] : [])].map(([v, l]) => `<button type="button" data-act="img-kind" data-v="${v}" aria-pressed="${(b.mk || '') === v}" title="${{ '': 'ohne Nummer', m: 'Material (M1, M2 …)', q: 'Quelle (Q1, Q2 …)', d: 'Darstellung (D1, D2 …)', a: 'Abbildung (Abb. 1, Abb. 2 …)' }[v]}">${l}</button>`).join('')}</div></div>
       ${fText('caption', b.mk ? 'Titel (steht neben der Nummer)' : 'Bildunterschrift', b.caption, b.mk ? 'z. B. Karikatur von Thomas Theodor Heine (1923)' : '')}${fText('source', 'Quelle', b.source, '')}
-      <div class="row">${fSelect('width', 'Breite', b.width, [[40, '40 %'], [60, '60 %'], [80, '80 %'], [100, 'volle Breite']])}</div>`;
+      <div class="row">${fSelect('width', 'Breite', b.width, [[40, '40 %'], [50, '50 %'], [60, '60 %'], [80, '80 %'], [100, 'volle Breite']])}</div>
+      ${bubEdHTML(b)}`;
     default: return '<p class="hint" style="margin:0">Alles danach beginnt auf einer neuen Seite.</p>';
   }
 }

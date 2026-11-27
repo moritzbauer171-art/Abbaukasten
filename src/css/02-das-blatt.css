@@ -400,3 +400,24 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .wl-seg{margin-left:4px}.wl-seg button{font-size:11px;letter-spacing:.02em;padding:2px 6px}
 .wx-set{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--tinte-soft,#EEF1FB)}.wx-set .f{margin-top:6px}
 #preview-scroll{overflow-anchor:none}
+/* Sprech- und Denkblasen im Comic-Stil: die Formen zeichnet bubDraw als SVG passend zu den Textfeldern; Maße in cqw, damit Blatt, Folie und Editor gleich aussehen */
+.bub-st{position:relative;container-type:inline-size;width:100%;margin:0 auto;text-align:center}
+.bub-st>img{display:block;margin:0 auto;height:auto;max-width:none}
+.bub-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.bub{position:absolute;transform:translate(-50%,-50%);box-sizing:border-box;font:700 1.85cqw/1.15 'Comic Neue','Caveat','Comic Sans MS',cursive;color:#1C1F27;text-align:center}
+.bub-l{display:block;height:3.6cqw;border-bottom:max(1px,.14cqw) dotted #8A91A0}
+.bub.k-denk .bub-l{margin:0 7%}
+.bub-tx{display:block;overflow-wrap:break-word;hyphens:manual}
+@media screen{#pages .bub{cursor:move}}
+/* Folie */
+.pr-bub{container-type:size;display:flex;align-items:center;justify-content:center}
+.pr-bub .bub-st{width:min(100cqw,calc(100cqh * var(--ar)));flex:0 0 auto}
+/* Editor */
+.bub-ed .bub-pick{position:relative;margin:6px 0 4px;padding:6px 0;border:1px solid var(--line,#ddd);border-radius:8px;background:#fff;user-select:none;-webkit-user-select:none}
+.bub-ed .bub-st.ed .bub{pointer-events:none}
+.bub-h{position:absolute;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--tinte,#2B45B8);color:#fff;font:700 11px/20px system-ui,sans-serif;text-align:center;cursor:grab;touch-action:none;z-index:2;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.bub-h.tip{width:12px;height:12px;background:#fff;border:2.5px solid var(--tinte,#2B45B8);box-sizing:border-box}
+.bub-pick{padding:0!important}.bub-pick .bub-h{margin-top:0}
+.bub-row{margin-top:8px;padding:8px 10px;border:1px solid var(--line,#e3e5ea);border-radius:10px}
+.bub-row-h{display:flex;align-items:center;gap:8px}.bub-row-h b{width:20px;height:20px;border-radius:50%;background:var(--tinte,#2B45B8);color:#fff;font-size:11px;display:grid;place-items:center}.bub-row-h .ib{margin-left:auto}
+.bub-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.bub-add .btn{display:inline-flex;align-items:center;gap:5px}

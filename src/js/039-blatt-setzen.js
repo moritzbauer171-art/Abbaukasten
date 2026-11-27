@@ -98,7 +98,7 @@ function buildBlock(b, ctx) {
     case 'chat': return { type: 'chat', el: put(chatHTML(b, ctx.mt && ctx.mt[b.id])) };
     case 'image': {
       if (Array.isArray(b.lb)) return { type: 'image', el: put(lbHTML(b, ctx)) };
-      const img = b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
+      const img = bubOn(b) ? bubStage(b) : b.src ? `<img src="${esc(b.src)}" alt="" style="width:${b.width || 80}%">` : '<div class="img-empty">Bild hinzufügen</div>';
       const tag = ctx.mt && ctx.mt[b.id];
       if (tag) return { type: 'image', el: put(`<div class="blk blk-img lab"><div class="mat-head"><span class="mat-no">${designOf(meta) === 'akte' ? 'Anlage ' : ''}${tag}</span><span class="mat-title">${inlineHTML(b.caption) || '&nbsp;'}</span></div><div class="img-c">${img}</div>${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };
       return { type: 'image', el: put(`<div class="blk blk-img">${img}${b.caption ? `<div class="img-cap">${inlineHTML(b.caption)}</div>` : ''}${b.source ? `<div class="img-src">${inlineHTML(b.source)}</div>` : ''}</div>`) };

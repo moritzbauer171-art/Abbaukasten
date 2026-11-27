@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Sprech-, Denk-, Ruf- und Flüsterblasen auf Bildern** im Comic-Stil (Bild-Baustein → „+ Sprechblase“ usw.): frei verschiebbar über die ganze Breite, z. B. links und rechts neben dem Foto; Schwanz bzw. Gedankenbläschen zeigen auf eine Person; Comic-Schrift; mit Text oder leer mit Linien zum Ausfüllen. Auf Blatt, Folie, PowerPoint und Word; im Blatt direkt verschiebbar.
 - **Links aus Webseiten** werden beim Einfügen nicht mehr als Unterstreichung übernommen; im Material gibt es „Alle Unterstreichungen im Text entfernen“.
 - **Vorschau bleibt stehen**: Beim Neuaufbau nach einer Änderung (z. B. Worterklärung) behält die Vorschau ihre Höhe und Scrollposition.
 - **Wahlaufgaben**: Im Aufgabenbaustein „Wahlaufgabe“ anhaken – die Aufgaben werden Alternativen mit einer Nummer (3 a/b/c), Arbeitsanweisung „Wählen Sie eine der folgenden Aufgaben aus.“ (änderbar) und Schwierigkeitsgrad ★☆☆/★★☆/★★★ je Aufgabe; auf Blatt, Folie, Word und im Erwartungshorizont.

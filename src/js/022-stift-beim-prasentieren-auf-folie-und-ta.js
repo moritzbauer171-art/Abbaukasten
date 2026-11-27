@@ -392,7 +392,7 @@ function openPres(start, opts = {}) {
     P.max = Math.max(0, ...[...slide.querySelectorAll('[data-st]')].map(e => +e.dataset.st)); P.cur = 0;
     if (slide.querySelector('.pr-timer')) slide.insertAdjacentHTML('afterbegin', '<div class="pr-tbar" aria-hidden="true"><i></i></div>');
     const im = slide.querySelector('img.pr-img'); if (im && !im.complete) im.onload = fit;
-    fit(); TBo.slide(P.i); INK.slide(sl); INK.on(sl.k === 'blank'); try { if (sl.k !== 'blank' && !BOARD.open && foOn && LFC) { clearTimeout(LFC.st); LFC.st = setTimeout(() => lfcFull('sl'), 160); } } catch {} ov.classList.toggle('pr-blankcur', sl.k === 'blank'); ov.classList.toggle('pr-pkcur', !!sl.pk); hsSync();
+    fit(); bubScan(slide); TBo.slide(P.i); INK.slide(sl); INK.on(sl.k === 'blank'); try { if (sl.k !== 'blank' && !BOARD.open && foOn && LFC) { clearTimeout(LFC.st); LFC.st = setTimeout(() => lfcFull('sl'), 160); } } catch {} ov.classList.toggle('pr-blankcur', sl.k === 'blank'); ov.classList.toggle('pr-pkcur', !!sl.pk); hsSync();
     warnClose();
     if (slide.querySelector('.pr-timer[data-auto]') && T.slide !== P.i) tmWarn('Diese Folie startet ihren eigenen Timer und ersetzt ihn.', 'Neuen Timer starten', tmStart);
     lfcHb();
@@ -847,7 +847,7 @@ async function exportPPTX() {
         if (s.b.author) sl.addText(plainText(s.b.author), { x: X + 0.6, y: BOT - 0.75, w: CW - 1.2, h: 0.5, fontFace: F, fontSize: 20, color: GREY, align: 'right', margin: 0 });
       } else if (s.k === 'image') {
         const y = s.b.caption ? Y0 : 0.5; if (s.b.caption) head(sl, '', plainText(s.b.caption));
-        const src = s.b.src; await imgIn(sl, /^data:/.test(src) ? src : null, /^data:/.test(src) ? null : src, X, y, CW, BOT - y - (s.b.source ? 0.4 : 0));
+        const src = bubOn(s.b) ? await bubCompositeURL(s.b) : s.b.src; await imgIn(sl, /^data:/.test(src) ? src : null, /^data:/.test(src) ? null : src, X, y, CW, BOT - y - (s.b.source ? 0.4 : 0));
         if (s.b.source) sl.addText(plainText(s.b.source), { x: X, y: BOT - 0.3, w: CW, h: 0.3, fontFace: F, fontSize: 11, color: LIGHT, margin: 0 });
       } else if (s.k === 'table') {
         const b = s.b; head(sl, 'Tabelle', plainText(b.title || ''));
