@@ -246,6 +246,15 @@ const lvOk = (x, v) => !v || !v.lvl || v.lvl === 'all' || !Array.isArray(x.lv) |
 const itFo = it => !!(it && it.fo);
 const foOnly = b => !!b && b.type === 'tasks' && Array.isArray(b.items) && b.items.length > 0 && b.items.every(itFo);
 const rst = b => !!b.restart && !foOnly(b);
+// Arbeitsteiliger Aufgabenbaustein (b.par): läuft parallel zum Aufgabenbaustein davor, beginnt mit derselben Nummer;
+// der nächste normale Baustein zählt hinter der höchsten Nummer weiter. TN = Zähler-Gedächtnis je Durchlauf.
+const parB = b => !!(b && b.type === 'tasks' && b.par);
+function tnAt(b, t, TN) {
+  if (rst(b)) { t = 0; TN.s = null; TN.hi = null; }
+  if (parB(b) && TN.s != null) { TN.hi = Math.max(TN.hi || 0, t); return TN.s; }
+  if (TN.hi != null) { t = Math.max(t, TN.hi); TN.hi = null; }
+  TN.s = t; return t;
+}
 const itNos = (b, from) => { let c = from; return (b.items || []).map(it => (itFo(it) || itRkN(it) ? 0 : c++)); };
 const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v) && !(v && !v.pres && foOnly(b));
 // Aufgaben der gewählten Stufe: nur die Aufgaben dieser Stufe, mit dem Text für Basis oder Experte, wenn einer eingetragen ist
@@ -272,8 +281,8 @@ function taskEH(it, v) {
 function buildCover(meta, sh, v, body) {
   const ex = meta.exam || {};
   const vis = sh.blocks.filter(b => blockVisible(b, v)); const mtags = matTags(vis); const mats = vis.filter(b => mtags[b.id]);
-  const tasks = []; let t = 0;
-  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
+  const tasks = []; let t = 0; const TN = {};
+  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; t = tnAt(b, t, TN); itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
   const sub = [meta.course, ex.halbjahr].filter(Boolean).map(esc).join(' · ');
   const node = el(`<div class="blk blk-cover" data-bid="meta">
     <div class="cv-top"><span>${esc(meta.school || '')}</span><span>${esc(meta.course || '')}</span></div>

@@ -127,10 +127,10 @@ function pruefList() {
   const sh = state.sheet, m = sh.meta, num = numbering(sh), L = [];
   const add = (bid, t, k = 'w') => L.push({ bid, t, k });
   if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') add('meta', 'Das Blatt hat noch keinen Titel.');
-  let tno = 0;
+  let tno = 0; const TN = {};
   sh.blocks.forEach(b => {
     if (blockArea(b) !== 'blatt') return;
-    if (b.type === 'tasks' && rst(b)) tno = 0;
+    if (b.type === 'tasks') tno = tnAt(b, tno, TN);
     if (b.type === 'material') { const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';
       if (String(b.memo || '').trim()) add(b.id, `${lab}: ${String(b.memo).trim().slice(0, 80)}`);
       if (!String(b.text || '').trim()) add(b.id, `${lab} hat noch keinen Text.`);
@@ -218,7 +218,8 @@ function bodyFor(b, num) {
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}</div>` : ''}</div>`; }
     case 'tasks': {
       const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
-      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : ''].filter(Boolean).join(' · ');
+      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : '', b.par ? 'arbeitsteilig' : ''].filter(Boolean).join(' · ');
+      const hasPrev = state.sheet.blocks.slice(0, state.sheet.blocks.indexOf(b)).some(x => x.type === 'tasks');
       return `${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
           <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : itRkN(it) ? `<span class="no rk" title="Raketenaufgabe – zählt nicht mit">${RK_SVG}</span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
@@ -231,9 +232,9 @@ function bodyFor(b, num) {
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
         ${b.items.some(it => it.rk) ? `<div class="rk-set"><span>${RK_SVG}Raketenaufgaben</span><div class="seg sm" role="group" aria-label="Darstellung der Raketenaufgaben"><button type="button" data-act="rk-style" data-v="nr" aria-pressed="${rkStyle(state.sheet.meta) === 'nr'}">Rakete an der Nummer</button><button type="button" data-act="rk-style" data-v="abschnitt" aria-pressed="${rkStyle(state.sheet.meta) === 'abschnitt'}">Eigener Abschnitt am Ende</button></div>${rkStyle(state.sheet.meta) === 'abschnitt' ? `<input type="text" class="rk-hd" data-rkh value="${esc(state.sheet.meta.rkHead || '')}" placeholder="Für alle, die schon fertig sind" aria-label="Überschrift des Raketen-Abschnitts">` : ''}<small class="hint">Gilt für das ganze Blatt.</small></div>` : ''}
-        <div class="more-card">${moreBtn('b:' + b.id, bSum, 'Mehr zum Baustein: Überschrift, Zeit, Timer')}${bm ? `<div class="more-in">${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
+        <div class="more-card">${moreBtn('b:' + b.id, bSum, 'Mehr zum Baustein: Überschrift, Zeit, Timer, arbeitsteilig')}${bm ? `<div class="more-in">${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
         ${timeCtl(b, 'Zeit (Min.)')}
-        <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div></div>` : ''}</div>
+        <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}${hasPrev || b.par ? fCheck('par', 'Arbeitsteilig: parallel zu den Aufgaben davor (gleiche Nummern, auf der Folie nebeneinander)', b.par) : ''}</div></div>` : ''}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'chat': return chatEdHTML(b);

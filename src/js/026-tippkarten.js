@@ -1,8 +1,8 @@
 /* ================= Tippkarten (gestufte Hilfen) ================= */
 function tipCards() {
-  const sh = state.sheet, meta = sh.meta; const cards = []; let t = 0;
+  const sh = state.sheet, meta = sh.meta; const cards = []; let t = 0; const TN = {};
   for (const b of sh.blocks) {
-    if (b.type !== 'tasks') continue; if (rst(b)) t = 0;
+    if (b.type !== 'tasks') continue; t = tnAt(b, t, TN);
     const v = sheetView(); if (!blockVisible(b, v)) continue;
     for (const it of itemsFor(b, v)) { t++; const tips = tipsOf(it); tips.forEach((tx, j) => cards.push({ no: t, lvl: j + 1, of: tips.length, text: tx, grp: itGrp(b, it, meta) ? grpName(meta, itGrp(b, it, meta)) : '' })); }
   }

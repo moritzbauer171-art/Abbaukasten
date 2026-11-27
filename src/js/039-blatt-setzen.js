@@ -5,11 +5,11 @@ const matLetter = b => b.type === 'chat' ? 'M' : b.type === 'material' ? (MK_LET
 function matTags(blocks) { const c = {}, map = {}; for (const b of blocks) { const L = matLetter(b); if (!L) continue; c[L] = (c[L] || 0) + 1; map[b.id] = L + (L.endsWith('.') ? ' ' : '') + c[L]; } return map; }
 const matTitle = b => b.type === 'image' ? b.caption : b.type === 'chat' ? (b.title || 'Chat' + (b.head && b.head.name ? ': ' + b.head.name : '')) : b.title;
 function numbering(sheet) {
-  const map = {}; let m = 0, t = 0; const tags = matTags(sheet.blocks);
+  const map = {}; let m = 0, t = 0; const TN = {}; const tags = matTags(sheet.blocks);
   for (const b of sheet.blocks) {
     if (b.type === 'material') map[b.id] = { m: ++m, tag: tags[b.id] };
     if (b.type === 'image' && tags[b.id]) map[b.id] = { tag: tags[b.id] };
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it) && !itRkN(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
+    if (b.type === 'tasks') { t = tnAt(b, t, TN); const from = t + 1; t += b.items.filter(it => !itFo(it) && !itRkN(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
   }
   return map;
 }
@@ -513,7 +513,7 @@ function layout() {
   if (meta.mode === 'klausur') items.push(buildCover(meta, sh, v, body), { type: 'pagebreak' }, buildRunHead(meta, body));
   else { items.push(buildHead(meta, body)); if (v.lvl !== 'all') { const hd = items[items.length - 1].el; if (hd) hd.insertAdjacentHTML('beforeend', `<span class="lv-mark" title="Niveau ${LV[v.lvl].name}">${LV[v.lvl].sym}</span>`); } }
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
-  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks' && rst(b)) ctx.t = 0; items.push(buildBlock(b, ctx)); }
+  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks') ctx.t = tnAt(b, ctx.t, ctx.tn || (ctx.tn = {})); items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
   // Bild mit Beschriftungen soll mit dem Kopf auf eine Seite passen: Bild schrittweise verkleinern (nicht unter 40 mm)
   { const hd = items.find(it => it.type === 'head' && it.el); const lim = AVAIL - (hd ? hd.h + GAP : 0);

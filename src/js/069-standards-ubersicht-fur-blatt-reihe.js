@@ -2,7 +2,7 @@
 const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.nr : (m.title || 'Ohne Titel'); };
 function rlpCoverage(sheets) {
   const cov = {}; let nTasks = 0, nTagged = 0;
-  sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; (b.items || []).forEach(it => {
+  sheets.forEach(sh => { let t = 0; const TN = {}; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; t = tnAt(b, t, TN); (b.items || []).forEach(it => {
     const fo = itFo(it); if (!fo && !itRkN(it)) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
     ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!fo && !e.t.includes(t)) e.t.push(t); });
   }); }); });
@@ -118,9 +118,9 @@ function outChecks() {
     if (v.lehrer) warn('Lehrerfassung: Erwartungen und Lösungen sind sichtbar. Nicht an die Klasse austeilen.');
     if (v.grp !== 'all') note(`Nur ${grpName(state.sheet.meta, v.grp)}: Bausteine und Aufgaben der anderen Gruppen fehlen.`);
     if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') warn('Das Blatt hat noch keinen richtigen Titel.');
-    const num = numbering(sh); let tno = 0;
+    const num = numbering(sh); let tno = 0; const TN = {};
     sh.blocks.forEach(b => {
-      if (b.type === 'tasks' && rst(b)) tno = 0;
+      if (b.type === 'tasks') tno = tnAt(b, tno, TN);
       if (!blockVisible(b, v)) return;
       if (b.type === 'material') {
         const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';

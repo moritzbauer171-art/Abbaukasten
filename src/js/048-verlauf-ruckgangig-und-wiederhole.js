@@ -98,7 +98,7 @@ function onChange(e) {
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || k === 'yt' || k === 'ytS' || k === 'ytE' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'par' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || k === 'yt' || k === 'ytS' || k === 'ytE' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;

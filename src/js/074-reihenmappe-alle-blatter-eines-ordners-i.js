@@ -225,7 +225,7 @@ async function exportDOCX() {
       parts.push(xtbl([TW(44), CW - TW(44)], frow('Name', '') + frow('Datum', ex.datum) + (ex.zeit ? frow('Bearbeitungszeit', ex.zeit) : '') + (ex.hilfsmittel ? frow('Hilfsmittel', ex.hilfsmittel) : ''), fbd));
       const matsC = blocksV.filter(b => tagsW[b.id]);
       if (matsC.length) { parts.push(xp(xr('Materialgrundlage', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 })); matsC.forEach(b => parts.push(xp(xr(tagsW[b.id] + '   ', { b: 1, sz: 20, color: A }) + xrInline(matTitle(b) || 'ohne Titel', { sz: 20 }), { after: 40 }))); }
-      const tl = []; let tt = 0; blocksV.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) tt = 0; itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
+      const tl = []; let tt = 0; const TN = {}; blocksV.forEach(b => { if (b.type !== 'tasks') return; tt = tnAt(b, tt, TN); itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
       if (tl.length) {
         parts.push(xp(xr('Aufgaben', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 }));
         const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(q => LINE(q, 4, RULE)).join('');
@@ -243,9 +243,9 @@ async function exportDOCX() {
     if (tagW) parts.push(xp(xr(tagW, { b: 1, sz: 18, color: v.lehrer ? 'B3261E' : A }) + (v.grp !== 'all' && grpAdd(m, v.grp) ? xr('   ' + grpAdd(m, v.grp), { sz: 18, color: GREY }) : ''), { before: 120 }));
     secOpen = true;
 
-    let mNo = 0, tNo = 0; const foot = [];
+    let mNo = 0, tNo = 0; const TN = {}; const foot = [];
     for (const b of blocksV) {
-      if (b.type === 'tasks' && rst(b)) tNo = 0;
+      if (b.type === 'tasks') tNo = tnAt(b, tNo, TN);
       if (b.type === 'pagebreak') { parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'); continue; }
       if (b.type === 'material') {
         mNo++;

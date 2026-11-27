@@ -7,10 +7,10 @@ function vpRows() {
   const rows = []; let imp = null;
   stABs().forEach(A => withAB(A.k, () => {
     const sh = state.sheet, m = sh.meta; const tags = matTags(sh.blocks); const mats = sh.blocks.filter(b => tags[b.id]); const ab = abLabel(m, A.k); const abLab = multi ? ab : '';
-    let t = 0, firstTask = -1;
+    let t = 0, firstTask = -1; const TN = {};
     sh.blocks.forEach((b, bi) => {
       if (b.type === 'step') { if (blockVisible(b, v)) rows.push({ ...stepRow(b, tafel), res: isRes(b) }); return; }
-      if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; if (firstTask < 0) firstTask = bi;
+      if (b.type !== 'tasks' || !blockVisible(b, v)) return; t = tnAt(b, t, TN); if (firstTask < 0) firstTask = bi;
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
       const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
       ITb.forEach((it, k) => {

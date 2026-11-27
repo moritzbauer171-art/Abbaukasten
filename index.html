@@ -1694,12 +1694,8 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 #pg-split[hidden]{display:none}
 .pgs-b{display:inline-flex;align-items:center;gap:6px;padding:5px 11px 5px 8px;border-radius:999px;border:1px solid var(--line,#ddd);background:rgba(255,255,255,.96);color:var(--ink,#1C1F27);font:600 12.5px/1.1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);opacity:.92}
 .pgs-b:hover{opacity:1;border-color:var(--acc,#2B45B8);color:var(--acc,#2B45B8)}
+.pgs-b.on{opacity:1;background:var(--acc,#2B45B8);border-color:var(--acc,#2B45B8);color:#fff}.pgs-b.on:hover{color:#fff;filter:brightness(1.08)}
 .pgs-b svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7}
-.pgs-m{display:grid;gap:2px;padding:5px;border-radius:12px;background:#fff;border:1px solid var(--line,#ddd);box-shadow:0 8px 24px rgba(0,0,0,.16);width:270px}
-.pgs-m[hidden]{display:none}
-.pgs-m button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:8px 10px;border:0;border-radius:8px;background:none;cursor:pointer;font:inherit}
-.pgs-m button:hover{background:color-mix(in srgb,var(--acc,#2B45B8) 9%,#fff)}
-.pgs-m b{font-size:13px}.pgs-m small{font-size:11.5px;color:var(--muted,#6B7280);line-height:1.3}
 @media print{#pg-split{display:none!important}}
 /* ===== Design: Akte ===== */
 .page.d-akte{--f-ui:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-text:"Courier Prime","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--f-disp:"Special Elite","Courier New",Courier,monospace,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";--paper-rule:#6F6A60;--paper-hair:#B9B2A2;--paper-muted:#5E5A52;font-size:10pt}
@@ -4155,7 +4151,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = '7a0f8c6769';
+const LW_BUILD = '36d72a1263';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -5727,48 +5723,46 @@ function pageBids() {
   const seen = new Set();
   return [...document.querySelectorAll('#pages .page')].map(pg => { const L = []; pg.querySelectorAll('[data-bid]').forEach(n => { const id = n.dataset.bid; if (!id || seen.has(id) || L.includes(id)) return; L.push(id); }); L.forEach(id => seen.add(id)); return L; });
 }
-function abSplitPage(pi, par) {
-  const P = state.sheet; const per = pageBids(); const mv = new Set(per[pi] || []);
-  const ids = P.blocks.filter(b => mv.has(b.id)).map(b => b.id);
-  if (!ids.length) { toast('Auf dieser Seite beginnt kein eigener Baustein – sie setzt nur einen Baustein von der Seite davor fort.'); return; }
-  const onSheet = new Set(per.flat()); if (P.blocks.filter(b => onSheet.has(b.id)).every(b => mv.has(b.id))) { toast('Das ist das ganze Arbeitsblatt – für ein zweites AB mindestens zwei Seiten mit eigenen Bausteinen.'); return; }
-  if (hist.timer) histCommit();
-  if (!P.abs) { P.abs = [{ id: 'ab' + uid(), active: true }]; P.abActive = 0; P.stunde = { title: P.meta.title || '' }; }
-  const k = P.abActive, nr0 = String(P.meta.nr || '').trim(), num = /^\d+$/.test(nr0);
-  let nr = '';
-  if (num && par) { P.meta.nr = nr0 + 'a'; nr = nr0 + 'b'; } else if (num) nr = nr0 + String.fromCharCode(97 + P.abs.length);
-  const meta = { nr, title: P.meta.title || 'Arbeitsblatt', topic: P.meta.topic || '' };
-  if (par) { P.meta.par = true; meta.par = true; }
-  const moved = P.blocks.filter(b => mv.has(b.id)); P.blocks = P.blocks.filter(b => !mv.has(b.id));
-  P.abs.splice(k + 1, 0, { id: 'ab' + uid(), meta, blocks: moved, zrefs: [] });
-  state.sel = null; changed(true); clearTimeout(renderTimer); renderPreview();
-  toast(`Seite ${pi + 1} ist jetzt ${abLabel(meta, k + 1)}${par ? ' – arbeitsteilig, Aufträge nebeneinander auf der Folie' : ''}`, 'Rückgängig', histUndo);
+// Aufgaben einer Seite arbeitsteilig zum Aufgabenbaustein davor stellen (z. B. Fenster-/Wandseite): gleiche Nummern, auf der Folie nebeneinander
+function pageParTask(pi) {
+  const P = state.sheet; const on = new Set(pageBids()[pi] || []);
+  const bi = P.blocks.findIndex(b => b.type === 'tasks' && on.has(b.id)); if (bi < 0) return null;
+  return P.blocks.slice(0, bi).some(b => b.type === 'tasks') ? P.blocks[bi] : null;
+}
+function parToggle(b) {
+  if (!b) return; if (hist.timer) histCommit();
+  b.par = !b.par; changed(true); clearTimeout(renderTimer); renderPreview(); if (typeof renderEditor === 'function') renderEditor();
+  toast(b.par ? 'Arbeitsteilig: Diese Aufgaben laufen parallel zu den Aufgaben davor – gleiche Nummern, auf der Folie nebeneinander' : 'Nicht mehr arbeitsteilig – die Aufgaben zählen wieder weiter', 'Rückgängig', histUndo);
 }
 // Knopf beim Überfahren einer Seite
 (() => {
   let cur = -1, hideT = 0;
+  const IC = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4" width="7" height="16" rx="1.4"/><rect x="13.5" y="4" width="7" height="16" rx="1.4"/></svg>';
   const btn = () => { let b = document.getElementById('pg-split'); if (b) return b;
     b = document.createElement('div'); b.id = 'pg-split'; b.hidden = true;
-    b.innerHTML = '<button type="button" class="pgs-b" aria-haspopup="true" aria-expanded="false" title="Diese Seite als eigenes Arbeitsblatt abtrennen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7.5" height="17" rx="1.5"/><rect x="13" y="3.5" width="7.5" height="17" rx="1.5" stroke-dasharray="2.4 2"/></svg><span>Seite als neues AB</span></button><div class="pgs-m" hidden><button type="button" data-pgs="1"><b>Als eigenes AB</b><small>Bausteine dieser Seite wandern in ein neues AB dahinter</small></button><button type="button" data-pgs="2"><b>Als eigenes AB, arbeitsteilig</b><small>Beide ABs laufen parallel – Aufträge nebeneinander auf der Folie</small></button></div>';
+    b.innerHTML = '<button type="button" class="pgs-b" aria-pressed="false"></button>';
     document.body.appendChild(b);
     b.addEventListener('mouseenter', () => clearTimeout(hideT)); b.addEventListener('mouseleave', () => { hideT = setTimeout(hide, 300); });
-    b.addEventListener('click', e => { const m = b.querySelector('.pgs-m'), t = e.target.closest('.pgs-b'), o = e.target.closest('[data-pgs]');
-      if (t) { m.hidden = !m.hidden; t.setAttribute('aria-expanded', String(!m.hidden)); return; }
-      if (o && cur >= 0) { const pi = cur; hide(); abSplitPage(pi, o.dataset.pgs === '2'); } });
+    b.addEventListener('click', e => { if (!e.target.closest('.pgs-b') || cur < 0) return; const t = pageParTask(cur); parToggle(t); paint(t); });
     return b; };
+  const paint = t => { const b = btn().querySelector('.pgs-b'); const on = !!(t && t.par);
+    b.setAttribute('aria-pressed', String(on)); b.classList.toggle('on', on);
+    b.innerHTML = IC + '<span>' + (on ? 'Arbeitsteilig ✓' : 'Arbeitsteilig zu den Aufgaben davor') + '</span>';
+    b.title = on ? 'Die Aufgaben dieser Seite laufen parallel zu den Aufgaben davor (gleiche Nummern, auf der Folie nebeneinander) · klicken zum Aufheben' : 'Die Aufgaben dieser Seite laufen parallel zu den Aufgaben davor, z. B. Fenster- und Wandseite: gleiche Nummern, auf der Folie nebeneinander'; };
   const top0 = () => { const sc = document.getElementById('preview-scroll'); return sc ? sc.getBoundingClientRect().top : 0; };
-  const hide = () => { const b = document.getElementById('pg-split'); if (b) { b.hidden = true; b.querySelector('.pgs-m').hidden = true; } cur = -1; };
+  const hide = () => { const b = document.getElementById('pg-split'); if (b) b.hidden = true; cur = -1; };
+  const place = pg => { const b = btn(), r = pg.getBoundingClientRect(); b.style.left = Math.max(8, r.right - 8) + 'px'; b.style.top = Math.max(top0() + 8, r.top + 8) + 'px'; };
   document.addEventListener('mouseover', e => {
     const pg = e.target.closest && e.target.closest('#pages .page');
     if (!pg) { if (cur >= 0 && !(e.target.closest && e.target.closest('#pg-split'))) { clearTimeout(hideT); hideT = setTimeout(hide, 300); } return; }
-    const P = state.sheet; const pages = [...document.querySelectorAll('#pages .page')];
+    const pages = [...document.querySelectorAll('#pages .page')];
     if (state.out !== 'blatt' || pages.length < 2) return hide();
-    clearTimeout(hideT); const i = pages.indexOf(pg); const b = btn(); if (i === cur && !b.hidden) return; cur = i;
-    const r = pg.getBoundingClientRect(); b.style.left = Math.max(8, r.right - 8) + 'px'; b.style.top = Math.max(top0() + 8, r.top + 8) + 'px'; b.hidden = false; b.querySelector('.pgs-m').hidden = true;
-    void P;
+    clearTimeout(hideT); const i = pages.indexOf(pg); const b = btn(); if (i === cur && !b.hidden) return;
+    const t = pageParTask(i); if (!t) return hide();
+    cur = i; paint(t); place(pg); b.hidden = false;
   });
   // beim Scrollen mitwandern statt verschwinden
-  document.addEventListener('scroll', () => { const b = document.getElementById('pg-split'); if (!b || b.hidden || cur < 0) return; const pg = document.querySelectorAll('#pages .page')[cur]; if (!pg) return hide(); const r = pg.getBoundingClientRect(); if (r.bottom < top0() + 60 || r.top > innerHeight - 20) return hide(); b.style.left = Math.max(8, r.right - 8) + 'px'; b.style.top = Math.max(top0() + 8, r.top + 8) + 'px'; }, true);
+  document.addEventListener('scroll', () => { const b = document.getElementById('pg-split'); if (!b || b.hidden || cur < 0) return; const pg = document.querySelectorAll('#pages .page')[cur]; if (!pg) return hide(); const r = pg.getBoundingClientRect(); if (r.bottom < top0() + 40 || r.top > innerHeight - 40) return hide(); place(pg); }, true);
 })();
 /* ================= Phase und Zeit je Aufgabe (Phasierung nach Tilman von Brand) ================= */
 const PHASEN = {
@@ -5785,8 +5779,8 @@ const itPh = it => (it && PHASEN[it.ph] ? it.ph : '');
 const isRes = b => !!(b && b.res);
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
-  const rows = []; let t = 0; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } if (rst(b)) t = 0; const its = b.items || []; const nAb = its.filter(it => !itFo(it) && !itRkN(it, sh.meta)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
+  const rows = []; let t = 0; const TN = {}; const m = sh.meta || {};
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } t = tnAt(b, t, TN); const its = b.items || []; const nAb = its.filter(it => !itFo(it) && !itRkN(it, sh.meta)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
     const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
     // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
     const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });
@@ -7091,6 +7085,27 @@ function presTaskSlide(L, bid, m) {
   }
   return { k: 'tasks', bid, items: L, segs };
 }
+// Arbeitsteilige Aufgabenbausteine (b.par) kommen auf die Folie des Aufgabenbausteins davor: je Baustein eine Spalte,
+// Spaltenkopf = Überschrift des Bausteins oder die Überschrift davor („Fensterseite – MyAI in Snapchat“)
+function presParMerge(S, sh) {
+  const B = sh.blocks; const at = id => B.findIndex(x => x.id === id);
+  const colOf = (s, k) => { const i = at(s.bid), b = B[i]; let n = b && tfStr(b.title).trim() ? plainText(b.title).trim() : '';
+    if (!n) for (let j = i - 1; j >= 0; j--) { if (B[j].type === 'tasks') break; if (B[j].type === 'heading' && plainText(B[j].text || '').trim()) { n = plainText(B[j].text).trim(); break; } }
+    if (!n) n = 'Gruppe ' + String.fromCharCode(65 + k);
+    const mm = n.match(/^(.{2,40}?)\s+[-–—:]\s+(.+)$/); const name = mm ? mm[1] : n, sub = mm ? mm[2] : '';
+    return { g: '', name, sub, items: s.items.map(x => ({ ...x, abl: name })) }; };
+  const R = []; let host = null;
+  S.forEach(s => {
+    if (s.k === 'tasks' && !s.abpar) {
+      const b = B[at(s.bid)];
+      if (parB(b) && host) { host.cols.push(colOf(s, host.cols.length)); const items = host.cols.flatMap(c => c.items);
+        R[host.i] = { ...host.s, items, segs: [{ t: 'cols', cols: host.cols }], abpar: true, parIn: true }; return; }
+      if (!parB(b)) host = { i: R.length, s, cols: [colOf(s, 0)] };
+    }
+    R.push(s);
+  });
+  return R;
+}
 // Bausteine, die nur Aufgaben je einer anderen Gruppe enthalten (z. B. über ⋯ zugeordnet), laufen parallel und kommen auf eine Folie
 function presMerge(S, m) {
   const R = [];
@@ -7106,10 +7121,10 @@ const presOn = b => b.pres === true;
 const presBtn = b => PRES_OPT.has(b.type) ? `<button type="button" class="pres-tg${presOn(b) ? ' on' : ''}" data-act="pres-tg" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht in der Präsentation auf einer eigenen Folie · klicken zum Entfernen' : 'Steht nicht in der Präsentation · klicken, um ihn auf eine Folie zu bringen'}"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="10" rx="1.2"/><path d="M10 11.5v3M7 14.5h6"/>${presOn(b) ? '<path d="m7 6.5 2 2 4-4"/>' : ''}</svg><span>${presOn(b) ? 'Auf der Folie' : 'Auf die Folie'}</span></button>` : '';
 function presSlidesAB(off, lab, abId) {
   const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false, grp: 'all', pres: true };
-  const mats = presCollect(true); const S = []; let t = 0;
+  const mats = presCollect(true); const S = []; let t = 0; const TN = {};
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it), rkn = itRkN(it, m); if (!fo && !rkn) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo || rkn ? 0 : t, fo, rkn, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
+    if (b.type === 'tasks') { t = tnAt(b, t, TN); const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it), rkn = itRkN(it, m); if (!fo && !rkn) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo || rkn ? 0 : t, fo, rkn, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
     if (PRES_OPT.has(b.type) && !presOn(b)) return;
     if (b.type === 'step') { const f = stepSlideFol(b) || (PP.edit && b.pp && stepFol(b) !== 'aus' ? 'text' : ''); if (f === 'quiz') { const Q = qzList(b); Q.forEach((x, i) => S.push({ k: 'step', b, fol: f, qz: x, qi: i, qn: Q.length })); } else if (f) S.push({ k: 'step', b, fol: f }); return; }
@@ -7124,7 +7139,7 @@ function presSlidesAB(off, lab, abId) {
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
   });
-  const R = m.groupsOn ? presMerge(S, m) : S;
+  const R = presParMerge(m.groupsOn ? presMerge(S, m) : S, sh);
   const qk = abId ? 'qr:' + abId : 'qr';
   if (m.dg && m.dg.id && !off.has(qk)) R.push({ k: 'qr', link: dgLink(m.dg.id) });
   if (lab) R.forEach(x => { x.ab = lab; });
@@ -7135,11 +7150,11 @@ function presPick() {
   const P = state.sheet; const multi = !!P.abs; const L = [{ key: 'title', label: 'Titelfolie' }];
   const short = (x, n) => { const p = plainText(x || '').replace(/\s+/g, ' ').trim(); return p.length > n ? p.slice(0, n - 1).replace(/\s+\S*$/, '') + ' …' : p; };
   stABs().forEach(A => {
-    const m = A.meta; const num = numbering({ ...P, meta: m, blocks: A.blocks }); let t = 0;
+    const m = A.meta; const num = numbering({ ...P, meta: m, blocks: A.blocks }); let t = 0; const TN = {};
     if (multi) L.push({ key: 'ab:' + A.id, label: `${abLabel(m, A.k)} · ${short(m.title, 50) || 'ohne Titel'} (Zwischenfolie)`, head: true });
     A.blocks.forEach(b => {
       if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, opt: b, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
-      else if (b.type === 'tasks') { if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it, P.meta); if (!itFo(it) && !rkn) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
+      else if (b.type === 'tasks') { t = tnAt(b, t, TN); b.items.forEach((it, i) => { const rkn = itRkN(it, P.meta); if (!itFo(it) && !rkn) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
       else if (b.type === 'tafel') L.push({ key: b.id, opt: b, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
       else if (b.type === 'step') { if (stepSlideFol(b)) L.push({ key: b.id, label: `${itPh(b) ? PHASEN[itPh(b)].label : 'Schritt'} · ${stepLabel(b)}`, task: true }); }
       else if (b.type === 'info') L.push({ key: b.id, opt: b, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
@@ -7235,8 +7250,8 @@ function a3Norm(b) {
   return b;
 }
 function a3TaskList() {
-  const L = []; let t = 0;
-  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
+  const L = []; let t = 0; const TN = {};
+  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; t = tnAt(b, t, TN); b.items.forEach((it, i) => { const rkn = itRkN(it); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
   return L;
 }
 function a3TaskHTML(b) {
@@ -7458,7 +7473,7 @@ function a4Fill(b, v) {
   const sh = state.sheet, du = sh.meta.anrede === 'du'; const mats = sh.blocks.filter(x => x.type === 'material' && plainText(x.text || '').trim());
   const keep = arr => arr.filter(x => Object.values(x).some(y => tfStr(y).trim()));
   if (v === 'rollen') { b.cards = [...keep(b.cards), ...A4_ROLES(du)]; if (!tfStr(b.cardHead).trim()) b.cardHead = 'Rollenkarte'; return 'Vier Gruppenrollen angefügt.'; }
-  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { const rkn = itRkN(it, sh.meta); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
+  if (v === 'aufgaben') { const L = []; let t = 0; const TN = {}; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; t = tnAt(x, t, TN); x.items.forEach(it => { const rkn = itRkN(it, sh.meta); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
   if (v === 'absatz' || v === 'saetze') {
     const mb = mats[0]; if (!mb) return 'Das Blatt hat noch kein Material mit Text.';
     const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l) && l !== MAT_BL).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
@@ -7561,7 +7576,7 @@ const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols
 function tsKick(s, m) {
   const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
   if (s.abpar) { const C = s.segs[0].cols.map(c => c.items.map(x => x.no).filter(Boolean).join(',')); const ns = s.segs[0].cols[0].items.map(x => x.no).filter(Boolean);
-    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + ' ABs parallel'].filter(Boolean).join(' · '); }
+    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + (s.parIn ? ' Gruppen' : ' ABs') + ' parallel'].filter(Boolean).join(' · '); }
   const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }
@@ -7663,10 +7678,10 @@ function vpRows() {
   const rows = []; let imp = null;
   stABs().forEach(A => withAB(A.k, () => {
     const sh = state.sheet, m = sh.meta; const tags = matTags(sh.blocks); const mats = sh.blocks.filter(b => tags[b.id]); const ab = abLabel(m, A.k); const abLab = multi ? ab : '';
-    let t = 0, firstTask = -1;
+    let t = 0, firstTask = -1; const TN = {};
     sh.blocks.forEach((b, bi) => {
       if (b.type === 'step') { if (blockVisible(b, v)) rows.push({ ...stepRow(b, tafel), res: isRes(b) }); return; }
-      if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; if (firstTask < 0) firstTask = bi;
+      if (b.type !== 'tasks' || !blockVisible(b, v)) return; t = tnAt(b, t, TN); if (firstTask < 0) firstTask = bi;
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
       const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
       ITb.forEach((it, k) => {
@@ -9707,6 +9722,15 @@ const lvOk = (x, v) => !v || !v.lvl || v.lvl === 'all' || !Array.isArray(x.lv) |
 const itFo = it => !!(it && it.fo);
 const foOnly = b => !!b && b.type === 'tasks' && Array.isArray(b.items) && b.items.length > 0 && b.items.every(itFo);
 const rst = b => !!b.restart && !foOnly(b);
+// Arbeitsteiliger Aufgabenbaustein (b.par): läuft parallel zum Aufgabenbaustein davor, beginnt mit derselben Nummer;
+// der nächste normale Baustein zählt hinter der höchsten Nummer weiter. TN = Zähler-Gedächtnis je Durchlauf.
+const parB = b => !!(b && b.type === 'tasks' && b.par);
+function tnAt(b, t, TN) {
+  if (rst(b)) { t = 0; TN.s = null; TN.hi = null; }
+  if (parB(b) && TN.s != null) { TN.hi = Math.max(TN.hi || 0, t); return TN.s; }
+  if (TN.hi != null) { t = Math.max(t, TN.hi); TN.hi = null; }
+  TN.s = t; return t;
+}
 const itNos = (b, from) => { let c = from; return (b.items || []).map(it => (itFo(it) || itRkN(it) ? 0 : c++)); };
 const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v) && !(v && !v.pres && foOnly(b));
 // Aufgaben der gewählten Stufe: nur die Aufgaben dieser Stufe, mit dem Text für Basis oder Experte, wenn einer eingetragen ist
@@ -9733,8 +9757,8 @@ function taskEH(it, v) {
 function buildCover(meta, sh, v, body) {
   const ex = meta.exam || {};
   const vis = sh.blocks.filter(b => blockVisible(b, v)); const mtags = matTags(vis); const mats = vis.filter(b => mtags[b.id]);
-  const tasks = []; let t = 0;
-  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; if (rst(b)) t = 0; itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
+  const tasks = []; let t = 0; const TN = {};
+  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; t = tnAt(b, t, TN); itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
   const sub = [meta.course, ex.halbjahr].filter(Boolean).map(esc).join(' · ');
   const node = el(`<div class="blk blk-cover" data-bid="meta">
     <div class="cv-top"><span>${esc(meta.school || '')}</span><span>${esc(meta.course || '')}</span></div>
@@ -9769,9 +9793,9 @@ function fitUp(inner, frame, maxPx) {
 
 /* ================= Tippkarten (gestufte Hilfen) ================= */
 function tipCards() {
-  const sh = state.sheet, meta = sh.meta; const cards = []; let t = 0;
+  const sh = state.sheet, meta = sh.meta; const cards = []; let t = 0; const TN = {};
   for (const b of sh.blocks) {
-    if (b.type !== 'tasks') continue; if (rst(b)) t = 0;
+    if (b.type !== 'tasks') continue; t = tnAt(b, t, TN);
     const v = sheetView(); if (!blockVisible(b, v)) continue;
     for (const it of itemsFor(b, v)) { t++; const tips = tipsOf(it); tips.forEach((tx, j) => cards.push({ no: t, lvl: j + 1, of: tips.length, text: tx, grp: itGrp(b, it, meta) ? grpName(meta, itGrp(b, it, meta)) : '' })); }
   }
@@ -10589,7 +10613,7 @@ function ehMarkdown() {
   if (m.topic && !isK) L.push('', `Thema: ${m.topic}`);
   const mtags = matTags(sh.blocks); const mats = sh.blocks.filter(b => mtags[b.id]);
   if (mats.length) { L.push('', '## Materialien', ''); mats.forEach(b => L.push(`- **${mtags[b.id]}:** ${plainMd(matTitle(b)) || 'ohne Titel'}${b.source ? ` (${plainMd(b.source)})` : ''}`)); }
-  L.push('', '## Aufgaben'); let t = 0;
+  L.push('', '## Aufgaben'); let t = 0; const TN = {};
   sh.blocks.forEach(b => {
     if (b.type === 'table' && tbEhCount(b)) {
       L.push('', `### Tabelle${b.title ? ': ' + plainMd(b.title) : ''}`, '');
@@ -10601,7 +10625,7 @@ function ehMarkdown() {
     if (b.type === 'material' && gapList(b).length) { L.push('', `### Lückentext${b.title ? ': ' + plainMd(b.title) : ''}`, '', gapList(b).map((x, i) => `${i + 1}. ${plainMd(x.w)}`).join(' · ')); }
     if (b.type === 'match' && b.sort) { const M = mtLayout(b); if (M.sol.length) { L.push('', `### Sortieren${b.title ? ': ' + plainMd(b.title) : ''}`, ''); M.left.forEach((c, li) => { const ws = M.sol.filter(x => x.li === li).map(x => plainMd(M.right[x.rk].b)); L.push(`- ${b.mode === 'buchstaben' ? (li + 1) + ' – ' : ''}${plainMd(c.a)}: ${ws.join(', ') || '–'}`); }); const dist = M.right.filter((_, rk) => !M.sol.some(x => x.rk === rk)); if (dist.length) L.push(`- Ablenker: ${dist.map(w => plainMd(w.b)).join(', ')}`); } return; }
     if (b.type === 'match') { const M = mtLayout(b); const ok = M.sol.filter(x => x.rk >= 0); if (ok.length) { L.push('', `### Zuordnen${b.title ? ': ' + plainMd(b.title) : ''}`, ''); ok.forEach(x => L.push(`- ${b.mode === 'buchstaben' ? x.L + ' – ' + x.R + ': ' : ''}${plainMd(M.left[x.li].a)} → ${plainMd(M.right[x.rk].b)}`)); } return; }
-    if (b.type !== 'tasks') return; if (rst(b)) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
+    if (b.type !== 'tasks') return; t = tnAt(b, t, TN); const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
     const itsEH = itemsFor(b, vEH); if (itMin(b) && itsEH.length) L.push('', `_Bearbeitungszeit: ${itMin(b)} Min.${itsEH.length > 1 ? ` für die Aufgaben ${t + 1}–${t + itsEH.length}` : ''}_`);
     itsEH.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);
@@ -11162,11 +11186,11 @@ const matLetter = b => b.type === 'chat' ? 'M' : b.type === 'material' ? (MK_LET
 function matTags(blocks) { const c = {}, map = {}; for (const b of blocks) { const L = matLetter(b); if (!L) continue; c[L] = (c[L] || 0) + 1; map[b.id] = L + (L.endsWith('.') ? ' ' : '') + c[L]; } return map; }
 const matTitle = b => b.type === 'image' ? b.caption : b.type === 'chat' ? (b.title || 'Chat' + (b.head && b.head.name ? ': ' + b.head.name : '')) : b.title;
 function numbering(sheet) {
-  const map = {}; let m = 0, t = 0; const tags = matTags(sheet.blocks);
+  const map = {}; let m = 0, t = 0; const TN = {}; const tags = matTags(sheet.blocks);
   for (const b of sheet.blocks) {
     if (b.type === 'material') map[b.id] = { m: ++m, tag: tags[b.id] };
     if (b.type === 'image' && tags[b.id]) map[b.id] = { tag: tags[b.id] };
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const from = t + 1; t += b.items.filter(it => !itFo(it) && !itRkN(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
+    if (b.type === 'tasks') { t = tnAt(b, t, TN); const from = t + 1; t += b.items.filter(it => !itFo(it) && !itRkN(it)).length; map[b.id] = { from, to: t, nFo: b.items.filter(itFo).length }; }
   }
   return map;
 }
@@ -11670,7 +11694,7 @@ function layout() {
   if (meta.mode === 'klausur') items.push(buildCover(meta, sh, v, body), { type: 'pagebreak' }, buildRunHead(meta, body));
   else { items.push(buildHead(meta, body)); if (v.lvl !== 'all') { const hd = items[items.length - 1].el; if (hd) hd.insertAdjacentHTML('beforeend', `<span class="lv-mark" title="Niveau ${LV[v.lvl].name}">${LV[v.lvl].sym}</span>`); } }
   if (v.grp !== 'all') items.push(buildGroupBadge(meta, v.grp, body));
-  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks' && rst(b)) ctx.t = 0; items.push(buildBlock(b, ctx)); }
+  for (const b of sh.blocks) { if (!blockVisible(b, v)) continue; if (b.type === 'tafel' && b.onSheet === 'aus') continue; if (b.type === 'a3' || b.type === 'step') continue; if (b.type === 'tasks') ctx.t = tnAt(b, ctx.t, ctx.tn || (ctx.tn = {})); items.push(buildBlock(b, ctx)); }
   items.forEach(it => { if (it.el) measure(it); });
   // Bild mit Beschriftungen soll mit dem Kopf auf eine Seite passen: Bild schrittweise verkleinern (nicht unter 40 mm)
   { const hd = items.find(it => it.type === 'head' && it.el); const lim = AVAIL - (hd ? hd.h + GAP : 0);
@@ -12404,10 +12428,10 @@ function pruefList() {
   const sh = state.sheet, m = sh.meta, num = numbering(sh), L = [];
   const add = (bid, t, k = 'w') => L.push({ bid, t, k });
   if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') add('meta', 'Das Blatt hat noch keinen Titel.');
-  let tno = 0;
+  let tno = 0; const TN = {};
   sh.blocks.forEach(b => {
     if (blockArea(b) !== 'blatt') return;
-    if (b.type === 'tasks' && rst(b)) tno = 0;
+    if (b.type === 'tasks') tno = tnAt(b, tno, TN);
     if (b.type === 'material') { const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';
       if (String(b.memo || '').trim()) add(b.id, `${lab}: ${String(b.memo).trim().slice(0, 80)}`);
       if (!String(b.text || '').trim()) add(b.id, `${lab} hat noch keinen Text.`);
@@ -12495,7 +12519,8 @@ function bodyFor(b, num) {
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}</div>` : ''}</div>`; }
     case 'tasks': {
       const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
-      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : ''].filter(Boolean).join(' · ');
+      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : '', b.par ? 'arbeitsteilig' : ''].filter(Boolean).join(' · ');
+      const hasPrev = state.sheet.blocks.slice(0, state.sheet.blocks.indexOf(b)).some(x => x.type === 'tasks');
       return `${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
           <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : itRkN(it) ? `<span class="no rk" title="Raketenaufgabe – zählt nicht mit">${RK_SVG}</span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
@@ -12508,9 +12533,9 @@ function bodyFor(b, num) {
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
         ${b.items.some(it => it.rk) ? `<div class="rk-set"><span>${RK_SVG}Raketenaufgaben</span><div class="seg sm" role="group" aria-label="Darstellung der Raketenaufgaben"><button type="button" data-act="rk-style" data-v="nr" aria-pressed="${rkStyle(state.sheet.meta) === 'nr'}">Rakete an der Nummer</button><button type="button" data-act="rk-style" data-v="abschnitt" aria-pressed="${rkStyle(state.sheet.meta) === 'abschnitt'}">Eigener Abschnitt am Ende</button></div>${rkStyle(state.sheet.meta) === 'abschnitt' ? `<input type="text" class="rk-hd" data-rkh value="${esc(state.sheet.meta.rkHead || '')}" placeholder="Für alle, die schon fertig sind" aria-label="Überschrift des Raketen-Abschnitts">` : ''}<small class="hint">Gilt für das ganze Blatt.</small></div>` : ''}
-        <div class="more-card">${moreBtn('b:' + b.id, bSum, 'Mehr zum Baustein: Überschrift, Zeit, Timer')}${bm ? `<div class="more-in">${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
+        <div class="more-card">${moreBtn('b:' + b.id, bSum, 'Mehr zum Baustein: Überschrift, Zeit, Timer, arbeitsteilig')}${bm ? `<div class="more-in">${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
         ${timeCtl(b, 'Zeit (Min.)')}
-        <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}</div></div>` : ''}</div>
+        <div class="chks">${fCheck('restart', 'Nummerierung neu bei 1 beginnen', b.restart)}${hasPrev || b.par ? fCheck('par', 'Arbeitsteilig: parallel zu den Aufgaben davor (gleiche Nummern, auf der Folie nebeneinander)', b.par) : ''}</div></div>` : ''}</div>
         <div class="prog" data-prog>${progressionHTML()}</div>`;
     }
     case 'chat': return chatEdHTML(b);
@@ -12876,7 +12901,7 @@ function onChange(e) {
   if (k === 'groupsOn' && !v) state.grp = 'all';
   if (/^items\.\d+\.grp$/.test(k) && !v) { const it = target(card.dataset.bid).items[+k.split('.')[1]]; if (it) delete it.grp; }
   if (k === 'levelsOn' && !v) state.lvl = 'all';
-  changed((t.type === 'checkbox' && (k === 'restart' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || k === 'yt' || k === 'ytS' || k === 'ytE' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
+  changed((t.type === 'checkbox' && (k === 'restart' || k === 'par' || k === 'rowEach' || k === 'lineNumbers' || k.startsWith('fmt.') || k === 'groupsOn' || k === 'gapBank' || k === 'post.fiktiv' || k === 'levelsOn' || k === 'lvTip' || k === 'showName' || k === 'showDate')) || k === 'anrede' || k === 'lesson' || k === 'taskRef' || k === 'yt' || k === 'ytS' || k === 'ytE' || /^items\.\d+\.(ph|min|grp)$/.test(k) || ((k === 'ph' || k === 'soz' || k === 'exit' || k === 'min') && target(card.dataset.bid) && (target(card.dataset.bid).type === 'step' || (k === 'min' && target(card.dataset.bid).type === 'tasks'))));
 }
 /* Karten ziehen: an der Kopfzeile greifen, zwischen andere Karten fallen lassen */
 let edDrag = null;
@@ -15410,7 +15435,7 @@ const HELP = [
 const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.nr : (m.title || 'Ohne Titel'); };
 function rlpCoverage(sheets) {
   const cov = {}; let nTasks = 0, nTagged = 0;
-  sheets.forEach(sh => { let t = 0; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; (b.items || []).forEach(it => {
+  sheets.forEach(sh => { let t = 0; const TN = {}; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; t = tnAt(b, t, TN); (b.items || []).forEach(it => {
     const fo = itFo(it); if (!fo && !itRkN(it)) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
     ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!fo && !e.t.includes(t)) e.t.push(t); });
   }); }); });
@@ -15526,9 +15551,9 @@ function outChecks() {
     if (v.lehrer) warn('Lehrerfassung: Erwartungen und Lösungen sind sichtbar. Nicht an die Klasse austeilen.');
     if (v.grp !== 'all') note(`Nur ${grpName(state.sheet.meta, v.grp)}: Bausteine und Aufgaben der anderen Gruppen fehlen.`);
     if (!String(m.title || '').trim() || m.title === 'Neues Arbeitsblatt') warn('Das Blatt hat noch keinen richtigen Titel.');
-    const num = numbering(sh); let tno = 0;
+    const num = numbering(sh); let tno = 0; const TN = {};
     sh.blocks.forEach(b => {
-      if (b.type === 'tasks' && rst(b)) tno = 0;
+      if (b.type === 'tasks') tno = tnAt(b, tno, TN);
       if (!blockVisible(b, v)) return;
       if (b.type === 'material') {
         const lab = num[b.id] ? num[b.id].tag || 'M' + num[b.id].m : 'M';
@@ -16806,7 +16831,7 @@ async function exportDOCX() {
       parts.push(xtbl([TW(44), CW - TW(44)], frow('Name', '') + frow('Datum', ex.datum) + (ex.zeit ? frow('Bearbeitungszeit', ex.zeit) : '') + (ex.hilfsmittel ? frow('Hilfsmittel', ex.hilfsmittel) : ''), fbd));
       const matsC = blocksV.filter(b => tagsW[b.id]);
       if (matsC.length) { parts.push(xp(xr('Materialgrundlage', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 })); matsC.forEach(b => parts.push(xp(xr(tagsW[b.id] + '   ', { b: 1, sz: 20, color: A }) + xrInline(matTitle(b) || 'ohne Titel', { sz: 20 }), { after: 40 }))); }
-      const tl = []; let tt = 0; blocksV.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) tt = 0; itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
+      const tl = []; let tt = 0; const TN = {}; blocksV.forEach(b => { if (b.type !== 'tasks') return; tt = tnAt(b, tt, TN); itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
       if (tl.length) {
         parts.push(xp(xr('Aufgaben', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 }));
         const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(q => LINE(q, 4, RULE)).join('');
@@ -16824,9 +16849,9 @@ async function exportDOCX() {
     if (tagW) parts.push(xp(xr(tagW, { b: 1, sz: 18, color: v.lehrer ? 'B3261E' : A }) + (v.grp !== 'all' && grpAdd(m, v.grp) ? xr('   ' + grpAdd(m, v.grp), { sz: 18, color: GREY }) : ''), { before: 120 }));
     secOpen = true;
 
-    let mNo = 0, tNo = 0; const foot = [];
+    let mNo = 0, tNo = 0; const TN = {}; const foot = [];
     for (const b of blocksV) {
-      if (b.type === 'tasks' && rst(b)) tNo = 0;
+      if (b.type === 'tasks') tNo = tnAt(b, tNo, TN);
       if (b.type === 'pagebreak') { parts.push('<w:p><w:pPr><w:suppressLineNumbers/></w:pPr><w:r><w:br w:type="page"/></w:r></w:p>'); continue; }
       if (b.type === 'material') {
         mNo++;

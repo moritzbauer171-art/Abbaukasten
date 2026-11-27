@@ -59,8 +59,8 @@ function a3Norm(b) {
   return b;
 }
 function a3TaskList() {
-  const L = []; let t = 0;
-  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
+  const L = []; let t = 0; const TN = {};
+  state.sheet.blocks.forEach(b => { if (b.type !== 'tasks') return; t = tnAt(b, t, TN); b.items.forEach((it, i) => { const rkn = itRkN(it); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) { const p = plainText(it.text).replace(/\s+/g, ' ').trim(); L.push([b.id + ':' + i, `${itFo(it) ? 'Auftrag (Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}: ${p.length > 70 ? p.slice(0, 68) + ' …' : p}`]); } }); });
   return L;
 }
 function a3TaskHTML(b) {
@@ -282,7 +282,7 @@ function a4Fill(b, v) {
   const sh = state.sheet, du = sh.meta.anrede === 'du'; const mats = sh.blocks.filter(x => x.type === 'material' && plainText(x.text || '').trim());
   const keep = arr => arr.filter(x => Object.values(x).some(y => tfStr(y).trim()));
   if (v === 'rollen') { b.cards = [...keep(b.cards), ...A4_ROLES(du)]; if (!tfStr(b.cardHead).trim()) b.cardHead = 'Rollenkarte'; return 'Vier Gruppenrollen angefügt.'; }
-  if (v === 'aufgaben') { const L = []; let t = 0; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; if (rst(x)) t = 0; x.items.forEach(it => { const rkn = itRkN(it, sh.meta); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
+  if (v === 'aufgaben') { const L = []; let t = 0; const TN = {}; sh.blocks.forEach(x => { if (x.type !== 'tasks') return; t = tnAt(x, t, TN); x.items.forEach(it => { const rkn = itRkN(it, sh.meta); if (!itFo(it) && !rkn) t++; if (tfStr(it.text).trim()) L.push({ h: itFo(it) ? 'Auftrag' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t, t: taskText(it, sh.meta) }); }); }); if (!L.length) return 'Das Blatt hat noch keine Aufgaben.'; if (b.cardHead === 'Rollenkarte' && !keep(b.cards).length) b.cardHead = ''; b.cards = [...keep(b.cards), ...L]; return L.length + ' Aufgaben als Karten angefügt.'; }
   if (v === 'absatz' || v === 'saetze') {
     const mb = mats[0]; if (!mb) return 'Das Blatt hat noch kein Material mit Text.';
     const paras = matParas(mb.text).map(p => p.filter(l => !MH_RE.test(l) && l !== MAT_BL).join(' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
@@ -385,7 +385,7 @@ const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols
 function tsKick(s, m) {
   const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
   if (s.abpar) { const C = s.segs[0].cols.map(c => c.items.map(x => x.no).filter(Boolean).join(',')); const ns = s.segs[0].cols[0].items.map(x => x.no).filter(Boolean);
-    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + ' ABs parallel'].filter(Boolean).join(' · '); }
+    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + (s.parIn ? ' Gruppen' : ' ABs') + ' parallel'].filter(Boolean).join(' · '); }
   const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }

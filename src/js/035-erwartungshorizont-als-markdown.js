@@ -6,7 +6,7 @@ function ehMarkdown() {
   if (m.topic && !isK) L.push('', `Thema: ${m.topic}`);
   const mtags = matTags(sh.blocks); const mats = sh.blocks.filter(b => mtags[b.id]);
   if (mats.length) { L.push('', '## Materialien', ''); mats.forEach(b => L.push(`- **${mtags[b.id]}:** ${plainMd(matTitle(b)) || 'ohne Titel'}${b.source ? ` (${plainMd(b.source)})` : ''}`)); }
-  L.push('', '## Aufgaben'); let t = 0;
+  L.push('', '## Aufgaben'); let t = 0; const TN = {};
   sh.blocks.forEach(b => {
     if (b.type === 'table' && tbEhCount(b)) {
       L.push('', `### Tabelle${b.title ? ': ' + plainMd(b.title) : ''}`, '');
@@ -18,7 +18,7 @@ function ehMarkdown() {
     if (b.type === 'material' && gapList(b).length) { L.push('', `### Lückentext${b.title ? ': ' + plainMd(b.title) : ''}`, '', gapList(b).map((x, i) => `${i + 1}. ${plainMd(x.w)}`).join(' · ')); }
     if (b.type === 'match' && b.sort) { const M = mtLayout(b); if (M.sol.length) { L.push('', `### Sortieren${b.title ? ': ' + plainMd(b.title) : ''}`, ''); M.left.forEach((c, li) => { const ws = M.sol.filter(x => x.li === li).map(x => plainMd(M.right[x.rk].b)); L.push(`- ${b.mode === 'buchstaben' ? (li + 1) + ' – ' : ''}${plainMd(c.a)}: ${ws.join(', ') || '–'}`); }); const dist = M.right.filter((_, rk) => !M.sol.some(x => x.rk === rk)); if (dist.length) L.push(`- Ablenker: ${dist.map(w => plainMd(w.b)).join(', ')}`); } return; }
     if (b.type === 'match') { const M = mtLayout(b); const ok = M.sol.filter(x => x.rk >= 0); if (ok.length) { L.push('', `### Zuordnen${b.title ? ': ' + plainMd(b.title) : ''}`, ''); ok.forEach(x => L.push(`- ${b.mode === 'buchstaben' ? x.L + ' – ' + x.R + ': ' : ''}${plainMd(M.left[x.li].a)} → ${plainMd(M.right[x.rk].b)}`)); } return; }
-    if (b.type !== 'tasks') return; if (rst(b)) t = 0; const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
+    if (b.type !== 'tasks') return; t = tnAt(b, t, TN); const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
     const itsEH = itemsFor(b, vEH); if (itMin(b) && itsEH.length) L.push('', `_Bearbeitungszeit: ${itMin(b)} Min.${itsEH.length > 1 ? ` für die Aufgaben ${t + 1}–${t + itsEH.length}` : ''}_`);
     itsEH.forEach(it => {
       t++; const ops = detectOps(it.text); const r = opsRange(ops);

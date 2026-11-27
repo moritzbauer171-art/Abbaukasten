@@ -121,6 +121,27 @@ function presTaskSlide(L, bid, m) {
   }
   return { k: 'tasks', bid, items: L, segs };
 }
+// Arbeitsteilige Aufgabenbausteine (b.par) kommen auf die Folie des Aufgabenbausteins davor: je Baustein eine Spalte,
+// Spaltenkopf = Überschrift des Bausteins oder die Überschrift davor („Fensterseite – MyAI in Snapchat“)
+function presParMerge(S, sh) {
+  const B = sh.blocks; const at = id => B.findIndex(x => x.id === id);
+  const colOf = (s, k) => { const i = at(s.bid), b = B[i]; let n = b && tfStr(b.title).trim() ? plainText(b.title).trim() : '';
+    if (!n) for (let j = i - 1; j >= 0; j--) { if (B[j].type === 'tasks') break; if (B[j].type === 'heading' && plainText(B[j].text || '').trim()) { n = plainText(B[j].text).trim(); break; } }
+    if (!n) n = 'Gruppe ' + String.fromCharCode(65 + k);
+    const mm = n.match(/^(.{2,40}?)\s+[-–—:]\s+(.+)$/); const name = mm ? mm[1] : n, sub = mm ? mm[2] : '';
+    return { g: '', name, sub, items: s.items.map(x => ({ ...x, abl: name })) }; };
+  const R = []; let host = null;
+  S.forEach(s => {
+    if (s.k === 'tasks' && !s.abpar) {
+      const b = B[at(s.bid)];
+      if (parB(b) && host) { host.cols.push(colOf(s, host.cols.length)); const items = host.cols.flatMap(c => c.items);
+        R[host.i] = { ...host.s, items, segs: [{ t: 'cols', cols: host.cols }], abpar: true, parIn: true }; return; }
+      if (!parB(b)) host = { i: R.length, s, cols: [colOf(s, 0)] };
+    }
+    R.push(s);
+  });
+  return R;
+}
 // Bausteine, die nur Aufgaben je einer anderen Gruppe enthalten (z. B. über ⋯ zugeordnet), laufen parallel und kommen auf eine Folie
 function presMerge(S, m) {
   const R = [];
@@ -136,10 +157,10 @@ const presOn = b => b.pres === true;
 const presBtn = b => PRES_OPT.has(b.type) ? `<button type="button" class="pres-tg${presOn(b) ? ' on' : ''}" data-act="pres-tg" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht in der Präsentation auf einer eigenen Folie · klicken zum Entfernen' : 'Steht nicht in der Präsentation · klicken, um ihn auf eine Folie zu bringen'}"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="10" rx="1.2"/><path d="M10 11.5v3M7 14.5h6"/>${presOn(b) ? '<path d="m7 6.5 2 2 4-4"/>' : ''}</svg><span>${presOn(b) ? 'Auf der Folie' : 'Auf die Folie'}</span></button>` : '';
 function presSlidesAB(off, lab, abId) {
   const sh = state.sheet, m = sh.meta; const v = { ...sheetView(), lehrer: false, grp: 'all', pres: true };
-  const mats = presCollect(true); const S = []; let t = 0;
+  const mats = presCollect(true); const S = []; let t = 0; const TN = {};
   sh.blocks.forEach(b => {
     if (!blockVisible(b, v)) return;
-    if (b.type === 'tasks') { if (rst(b)) t = 0; const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it), rkn = itRkN(it, m); if (!fo && !rkn) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo || rkn ? 0 : t, fo, rkn, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
+    if (b.type === 'tasks') { t = tnAt(b, t, TN); const its = itemsFor(b, v); const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0); const L = []; its.forEach((it, k) => { const fo = itFo(it), rkn = itRkN(it, m); if (!fo && !rkn) t++; if (tfStr(it.text).trim() && !off.has(b.id + ':' + idx[k])) L.push({ no: fo || rkn ? 0 : t, fo, rkn, it, g: itGrp(b, it, m), bid: b.id, bmin: itMin(b), btimer: b.timer || '' }); }); if (L.length) S.push(presTaskSlide(L, b.id, m)); return; }
     if (off.has(b.id)) return;
     if (PRES_OPT.has(b.type) && !presOn(b)) return;
     if (b.type === 'step') { const f = stepSlideFol(b) || (PP.edit && b.pp && stepFol(b) !== 'aus' ? 'text' : ''); if (f === 'quiz') { const Q = qzList(b); Q.forEach((x, i) => S.push({ k: 'step', b, fol: f, qz: x, qi: i, qn: Q.length })); } else if (f) S.push({ k: 'step', b, fol: f }); return; }
@@ -154,7 +175,7 @@ function presSlidesAB(off, lab, abId) {
     else if (b.type === 'phrases' && phrGroups(b).length) S.push({ k: 'phr', b });
     else if (b.type === 'match') { const ML = mtLayout(b); if (ML.left.length || ML.right.length) S.push({ k: 'match', b, M: ML }); }
   });
-  const R = m.groupsOn ? presMerge(S, m) : S;
+  const R = presParMerge(m.groupsOn ? presMerge(S, m) : S, sh);
   const qk = abId ? 'qr:' + abId : 'qr';
   if (m.dg && m.dg.id && !off.has(qk)) R.push({ k: 'qr', link: dgLink(m.dg.id) });
   if (lab) R.forEach(x => { x.ab = lab; });
@@ -165,11 +186,11 @@ function presPick() {
   const P = state.sheet; const multi = !!P.abs; const L = [{ key: 'title', label: 'Titelfolie' }];
   const short = (x, n) => { const p = plainText(x || '').replace(/\s+/g, ' ').trim(); return p.length > n ? p.slice(0, n - 1).replace(/\s+\S*$/, '') + ' …' : p; };
   stABs().forEach(A => {
-    const m = A.meta; const num = numbering({ ...P, meta: m, blocks: A.blocks }); let t = 0;
+    const m = A.meta; const num = numbering({ ...P, meta: m, blocks: A.blocks }); let t = 0; const TN = {};
     if (multi) L.push({ key: 'ab:' + A.id, label: `${abLabel(m, A.k)} · ${short(m.title, 50) || 'ohne Titel'} (Zwischenfolie)`, head: true });
     A.blocks.forEach(b => {
       if (b.type === 'material') { const z = num[b.id] || {}; L.push({ key: b.id, opt: b, label: `${z.tag || 'M' + (z.m || '')} · ${short(b.title, 60) || (b.post ? 'Post' : 'ohne Titel')}` }); }
-      else if (b.type === 'tasks') { if (rst(b)) t = 0; b.items.forEach((it, i) => { const rkn = itRkN(it, P.meta); if (!itFo(it) && !rkn) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
+      else if (b.type === 'tasks') { t = tnAt(b, t, TN); b.items.forEach((it, i) => { const rkn = itRkN(it, P.meta); if (!itFo(it) && !rkn) t++; const g = itGrp(b, it, P.meta); if (tfStr(it.text).trim()) L.push({ key: b.id + ':' + i, label: `${itPh(it) === 'ha' ? 'Hausaufgabe' : itFo(it) ? 'Auftrag (nur Folie)' : rkn ? 'Raketenaufgabe' : 'Aufgabe ' + t}${g ? ' · ' + grpName(P.meta, g) : ''} · ${short(it.text, 64)}`, task: true }); }); }
       else if (b.type === 'tafel') L.push({ key: b.id, opt: b, label: 'Tafelbild · ' + (tfStrip(b.title || '').trim() || TF_TPL[tfTpl(b)].label) });
       else if (b.type === 'step') { if (stepSlideFol(b)) L.push({ key: b.id, label: `${itPh(b) ? PHASEN[itPh(b)].label : 'Schritt'} · ${stepLabel(b)}`, task: true }); }
       else if (b.type === 'info') L.push({ key: b.id, opt: b, label: (b.kind || 'Info') + (b.title ? ' · ' + short(b.title, 50) : '') });
