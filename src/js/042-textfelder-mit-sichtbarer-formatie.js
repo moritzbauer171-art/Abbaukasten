@@ -51,7 +51,7 @@ function rtSerialize(root, opt = {}) {
     if (tn === 'MARK') f.m = 1;
     if (st.fontWeight) f.b = st.fontWeight === 'bold' || st.fontWeight === 'bolder' || +st.fontWeight >= 600 ? 1 : 0;
     if (st.fontStyle) f.i = st.fontStyle === 'italic' ? 1 : 0;
-    const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : td === 'none' ? 0 : f.u;
+    const td = (tn === 'A' || (el.closest && el.closest('a[href]'))) ? '' : (st.textDecorationLine || st.textDecoration); if (td) f.u = /underline/.test(td) ? 1 : td === 'none' ? 0 : f.u;
     const bg = st.backgroundColor; if (bg) f.m = isHighlight(bg) ? 1 : /^(transparent|rgba\(0, 0, 0, 0\))$/.test(bg) ? 0 : f.m;
     return f;
   };

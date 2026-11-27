@@ -389,6 +389,9 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); retu
 const RT_ESC = '\\*+=_^-.)•';
 const RT_MK = { b: '**', i: '*', u: '++', m: '==' };
 const RT_FL = ['b', 'i', 'u', 'm'];
+// Unterstreichungen (++…++) zählen bzw. entfernen – z. B. Links, die beim Einfügen aus Webseiten unterstrichen übernommen wurden
+const ulCount = s => Math.floor((String(s || '').match(/(?<!\\)\+\+/g) || []).length / 2);
+const ulStrip = s => String(s || '').replace(/(?<!\\)\+\+/g, '');
 const LIST_LINE = /^(?:([-•])|(\d{1,2})[.)])\s+(.*)$/;
 function inlineTokens(str) {
   str = String(str ?? '');

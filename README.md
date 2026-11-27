@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Links aus Webseiten** werden beim Einfügen nicht mehr als Unterstreichung übernommen; im Material gibt es „Alle Unterstreichungen im Text entfernen“.
 - **Vorschau bleibt stehen**: Beim Neuaufbau nach einer Änderung (z. B. Worterklärung) behält die Vorschau ihre Höhe und Scrollposition.
 - **Wahlaufgaben**: Im Aufgabenbaustein „Wahlaufgabe“ anhaken – die Aufgaben werden Alternativen mit einer Nummer (3 a/b/c), Arbeitsanweisung „Wählen Sie eine der folgenden Aufgaben aus.“ (änderbar) und Schwierigkeitsgrad ★☆☆/★★☆/★★★ je Aufgabe; auf Blatt, Folie, Word und im Erwartungshorizont.
 - **Abstände der Seite**: „Abstand nach dem Kopf“ und „Rand unten“ stehen bei neuen Blättern auf „normal“; neue Stufe „weniger“ (weniger / normal / mehr / viel).

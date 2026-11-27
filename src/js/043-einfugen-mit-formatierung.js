@@ -49,7 +49,7 @@ function htmlToRaw(html, mode, opt = {}) {
     if (tn === 'MARK') f.m = 1;
     const fw = st.fontWeight; if (fw) f.b = fw === 'bold' || fw === 'bolder' || +fw >= 600 ? 1 : 0;
     if (st.fontStyle) f.i = /italic|oblique/.test(st.fontStyle) ? 1 : 0;
-    const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : /none/.test(td) ? 0 : f.u;
+    const td = (tn === 'A' || (el.closest && el.closest('a[href]'))) ? '' : (st.textDecorationLine || st.textDecoration); if (td) f.u = /underline/.test(td) ? 1 : /none/.test(td) ? 0 : f.u;
     if (isHighlight(st.backgroundColor, sa)) f.m = 1;
     return f;
   };

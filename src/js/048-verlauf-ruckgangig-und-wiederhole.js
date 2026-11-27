@@ -376,6 +376,7 @@ function onClick(e) {
     case 'fold-all': state.allOpen = false; state.closed = new Set(['meta', 'seite', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
     case 'unfold-all': state.allOpen = true; state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'wl': { const it = b.items[+a.dataset.i]; if (it) { it.wl = it.wl === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
+    case 'mat-noul': { const n = ulCount(b.text); b.text = ulStrip(b.text); changed(true); toast(n === 1 ? '1 Unterstreichung entfernt' : n + ' Unterstreichungen entfernt', 'Rückgängig', histUndo); return; }
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'arb': { const it = b.items[+a.dataset.i]; if (it) { const k = a.dataset.v, L = arbOf(it); it.arb = L.includes(k) ? L.filter(x => x !== k) : [...L, k]; if (!it.arb.length) delete it.arb; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;

@@ -4161,7 +4161,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = 'ed4bfcf4bb';
+const LW_BUILD = '43f3ac0634';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -4552,6 +4552,9 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); retu
 const RT_ESC = '\\*+=_^-.)•';
 const RT_MK = { b: '**', i: '*', u: '++', m: '==' };
 const RT_FL = ['b', 'i', 'u', 'm'];
+// Unterstreichungen (++…++) zählen bzw. entfernen – z. B. Links, die beim Einfügen aus Webseiten unterstrichen übernommen wurden
+const ulCount = s => Math.floor((String(s || '').match(/(?<!\\)\+\+/g) || []).length / 2);
+const ulStrip = s => String(s || '').replace(/(?<!\\)\+\+/g, '');
 const LIST_LINE = /^(?:([-•])|(\d{1,2})[.)])\s+(.*)$/;
 function inlineTokens(str) {
   str = String(str ?? '');
@@ -12007,7 +12010,7 @@ function rtSerialize(root, opt = {}) {
     if (tn === 'MARK') f.m = 1;
     if (st.fontWeight) f.b = st.fontWeight === 'bold' || st.fontWeight === 'bolder' || +st.fontWeight >= 600 ? 1 : 0;
     if (st.fontStyle) f.i = st.fontStyle === 'italic' ? 1 : 0;
-    const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : td === 'none' ? 0 : f.u;
+    const td = (tn === 'A' || (el.closest && el.closest('a[href]'))) ? '' : (st.textDecorationLine || st.textDecoration); if (td) f.u = /underline/.test(td) ? 1 : td === 'none' ? 0 : f.u;
     const bg = st.backgroundColor; if (bg) f.m = isHighlight(bg) ? 1 : /^(transparent|rgba\(0, 0, 0, 0\))$/.test(bg) ? 0 : f.m;
     return f;
   };
@@ -12124,7 +12127,7 @@ function htmlToRaw(html, mode, opt = {}) {
     if (tn === 'MARK') f.m = 1;
     const fw = st.fontWeight; if (fw) f.b = fw === 'bold' || fw === 'bolder' || +fw >= 600 ? 1 : 0;
     if (st.fontStyle) f.i = /italic|oblique/.test(st.fontStyle) ? 1 : 0;
-    const td = st.textDecorationLine || st.textDecoration; if (td) f.u = /underline/.test(td) ? 1 : /none/.test(td) ? 0 : f.u;
+    const td = (tn === 'A' || (el.closest && el.closest('a[href]'))) ? '' : (st.textDecorationLine || st.textDecoration); if (td) f.u = /underline/.test(td) ? 1 : /none/.test(td) ? 0 : f.u;
     if (isHighlight(st.backgroundColor, sa)) f.m = 1;
     return f;
   };
@@ -12552,6 +12555,7 @@ function bodyFor(b, num) {
       ${poem ? fWord('text', 'Gedicht', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Gedicht`, mode: 'inline', rows: 12, ph: 'Gedicht einfügen oder abtippen', cls: 'serif', hint: 'Jede Zeile ist ein Vers, eine Leerzeile beginnt eine neue Strophe. Gezählt werden Verse. Text markieren zum Hervorheben.' })
         : fWord('text', 'Text', b.text, { bid: b.id, gl: true, head: `${num[b.id] && num[b.id].tag || 'Material'} · Text`, mode: 'inline', rows: 9, ph: 'Originaltext einfügen', cls: 'serif', hd: true, hint: 'Enter = neue Zeile, Leerzeile = neuer Absatz, jede weitere Leerzeile bleibt auf dem Blatt sichtbar. „## “ am Zeilenanfang macht eine Zwischenüberschrift. Text aus PDFs wird beim Einfügen zu Fließtext zusammengezogen; Strg+Umschalt+V behält die Zeilen. Text markieren zum Hervorheben.' })}
       <div class="ocr-link"><button class="link" type="button" data-act="ocr-open">${CAM_SVG}Text aus Foto oder PDF übernehmen</button>${poem ? '' : '<button class="link" type="button" data-act="mat-h" title="Neue Zwischenüberschrift an der Schreibmarke (sonst am Ende)">+ Zwischenüberschrift</button>'}</div>
+      ${ulCount(b.text) ? `<div class="ul-hint"><button class="link" type="button" data-act="mat-noul">Alle Unterstreichungen im Text entfernen (${ulCount(b.text)})</button></div>` : ''}
       ${!poem && matHasH(b.text) ? `<div class="chks">${fCheck('hdCount', 'Zwischenüberschriften bei den Zeilennummern mitzählen', b.hdCount)}</div>` : ''}
       ${glossRows(b)}
       ${fText('source', 'Quelle', b.source, 'Autor: Titel. Ort: Verlag Jahr, S. …')}
@@ -13221,6 +13225,7 @@ function onClick(e) {
     case 'fold-all': state.allOpen = false; state.closed = new Set(['meta', 'seite', ...blocks.filter(x => x.type !== 'pagebreak').map(x => x.id)]); saveClosed(); renderEditor(); return;
     case 'unfold-all': state.allOpen = true; state.closed = new Set(); saveClosed(); renderEditor(); return;
     case 'wl': { const it = b.items[+a.dataset.i]; if (it) { it.wl = it.wl === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
+    case 'mat-noul': { const n = ulCount(b.text); b.text = ulStrip(b.text); changed(true); toast(n === 1 ? '1 Unterstreichung entfernt' : n + ' Unterstreichungen entfernt', 'Rückgängig', histUndo); return; }
     case 'soz': { const it = b.items[+a.dataset.i]; if (it) { it.soz = it.soz === a.dataset.v ? '' : a.dataset.v; changed(true); } return; }
     case 'arb': { const it = b.items[+a.dataset.i]; if (it) { const k = a.dataset.v, L = arbOf(it); it.arb = L.includes(k) ? L.filter(x => x !== k) : [...L, k]; if (!it.arb.length) delete it.arb; changed(true); } return; }
     case 'fmt': b.fmt = { ...(b.fmt || {}), [a.dataset.f]: a.dataset.v }; changed(true); return;
