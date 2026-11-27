@@ -135,7 +135,7 @@ function pruefList() {
       if (String(b.memo || '').trim()) add(b.id, `${lab}: ${String(b.memo).trim().slice(0, 80)}`);
       if (!String(b.text || '').trim()) add(b.id, `${lab} hat noch keinen Text.`);
       if (!String(b.source || '').trim()) add(b.id, `${lab} hat keine Quellenangabe.`, 'n'); }
-    if (b.type === 'tasks') (b.items || []).forEach(it => { if (itFo(it)) return; const lab = itRkN(it) ? 'Die Raketenaufgabe' : `Aufgabe ${++tno}`; if (!String(it.text || '').trim()) add(b.id, `${lab} ist leer.`); else if (!ehLines(it).length) add(b.id, `${lab} hat noch keine Erwartung.`, 'n'); });
+    if (b.type === 'tasks') (b.items || []).forEach(it => { if (itFo(it)) return; const lab = itRkN(it) ? 'Die Raketenaufgabe' : wxIdx(b, it) > 0 ? `Aufgabe ${tno}${wxLet(b, it)}` : `Aufgabe ${++tno}${wxLet(b, it)}`; if (!String(it.text || '').trim()) add(b.id, `${lab} ist leer.`); else if (!ehLines(it).length) add(b.id, `${lab} hat noch keine Erwartung.`, 'n'); });
     if ((b.type === 'info' || b.type === 'text') && !plainText(b.text || '').trim()) add(b.id, `${typeLabel(b)} ist noch leer.`);
     if (b.type === 'heading' && !String(b.text || '').trim()) add(b.id, 'Eine Überschrift ist leer.', 'n');
     if (b.type === 'image' && !b.src) add(b.id, 'Ein Bild-Baustein hat noch kein Bild.');
@@ -218,10 +218,10 @@ function bodyFor(b, num) {
       ${fText('memo', 'Notiz für mich (wird nicht gedruckt)', b.memo, '')}</div>` : ''}</div>`; }
     case 'tasks': {
       const start = num[b.id].from; const nos = itNos(b, start); const bm = moreOn('b:' + b.id);
-      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : '', b.par ? 'arbeitsteilig' : ''].filter(Boolean).join(' · ');
+      const bSum = [tfStr(b.title).trim() ? '„' + plainText(b.title).trim().slice(0, 24) + '“' : '', itMin(b) ? itMin(b) + ' Min.' : '', b.timer ? 'Timer' : '', b.restart ? 'neu bei 1' : '', b.par ? 'arbeitsteilig' : '', b.wahl ? 'Wahlaufgabe' : ''].filter(Boolean).join(' · ');
       const hasPrev = state.sheet.blocks.slice(0, state.sheet.blocks.indexOf(b)).some(x => x.type === 'tasks');
       return `${b.items.map((it, i) => `<div class="task-ed${itFo(it) ? ' fo' : ''}">
-          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : itRkN(it) ? `<span class="no rk" title="Raketenaufgabe – zählt nicht mit">${RK_SVG}</span>` : `<span class="no">${nos[i]}</span>`}${opSelect(i)}
+          <div class="task-ed-h">${itFo(it) ? `<span class="no fo" title="Nur auf der Folie: steht in Präsentation und PowerPoint, nicht auf dem Arbeitsblatt"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${AREA_IC.pres}</svg></span>` : itRkN(it) ? `<span class="no rk" title="Raketenaufgabe – zählt nicht mit">${RK_SVG}</span>` : `<span class="no">${nos[i]}</span>`}${wahlB(b) && itCnt0(it) ? `<span class="seg sm wl-seg" role="group" aria-label="Schwierigkeit">${Object.entries(WL).map(([k, x]) => `<button type="button" data-act="wl" data-i="${i}" data-v="${k}" aria-pressed="${it.wl === k}" title="${x.n}">${x.s}</button>`).join('')}</span>` : ''}${opSelect(i)}
             <button class="ib" type="button" data-act="task-up" data-i="${i}" title="Nach oben"${i === 0 ? ' disabled' : ''}>${I.up}</button>
             <button class="ib" type="button" data-act="task-del" data-i="${i}" title="Aufgabe entfernen">${I.x}</button></div>
           ${rtField(`items.${i}.text`, it.text, { rows: 2, ph: state.sheet.meta.anrede === 'du' ? 'Analysiere …' : 'Analysieren Sie …', aria: nos[i] ? `Aufgabe ${nos[i]}` : 'Auftrag nur auf der Folie' })}
@@ -231,6 +231,7 @@ function bodyFor(b, num) {
           ${taskExtras(b, i, it)}
         </div>`).join('')}
         <button class="link" type="button" data-act="task-add">+ Aufgabe</button>
+        ${b.wahl || b.items.filter(it => itCnt0(it)).length >= 2 ? `<div class="wx-set"><div class="chks">${fCheck('wahl', 'Wahlaufgabe: eine dieser Aufgaben auswählen (eine Nummer, a/b/c, mit Schwierigkeitsgrad)', b.wahl)}</div>${b.wahl ? fText('wahlText', 'Arbeitsanweisung', b.wahlText || '', wahlIntro({}, state.sheet.meta)) : ''}</div>` : ''}
         ${b.items.some(it => it.rk) ? `<div class="rk-set"><span>${RK_SVG}Raketenaufgaben</span><div class="seg sm" role="group" aria-label="Darstellung der Raketenaufgaben"><button type="button" data-act="rk-style" data-v="nr" aria-pressed="${rkStyle(state.sheet.meta) === 'nr'}">Rakete an der Nummer</button><button type="button" data-act="rk-style" data-v="abschnitt" aria-pressed="${rkStyle(state.sheet.meta) === 'abschnitt'}">Eigener Abschnitt am Ende</button></div>${rkStyle(state.sheet.meta) === 'abschnitt' ? `<input type="text" class="rk-hd" data-rkh value="${esc(state.sheet.meta.rkHead || '')}" placeholder="Für alle, die schon fertig sind" aria-label="Überschrift des Raketen-Abschnitts">` : ''}<small class="hint">Gilt für das ganze Blatt.</small></div>` : ''}
         <div class="more-card">${moreBtn('b:' + b.id, bSum, 'Mehr zum Baustein: Überschrift, Zeit, Timer, arbeitsteilig')}${bm ? `<div class="more-in">${fText('title', 'Überschrift (optional)', b.title, 'Arbeitsaufträge')}
         ${timeCtl(b, 'Zeit (Min.)')}

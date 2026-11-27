@@ -758,7 +758,7 @@ async function exportPPTX() {
         const fs = [36, 32, 30, 28, 26, 24, 22, 20, 18, 16, 14].find(f => total(f) <= BH - 0.1) || 14;
         const put = (x, ix, iy, w, col) => {
           const meta = tsMeta(x, s, m, col); const h = itemH(x, w, fs, col);
-          if (multi) sl.addText(itPh(x.it) === 'ha' ? 'HA' : x.no ? String(x.no) : '•', { shape: 'roundRect', rectRadius: 0.06, x: ix, y: iy + fs * 0.08 / 72, w: 0.4, h: 0.4, fill: { color: ACC }, fontFace: F, fontSize: itPh(x.it) === 'ha' ? 11 : 15, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle', margin: 0 });
+          if (multi) sl.addText(itPh(x.it) === 'ha' ? 'HA' : x.no ? String(x.no) + (x.wx || '') : '•', { shape: 'roundRect', rectRadius: 0.06, x: ix, y: iy + fs * 0.08 / 72, w: 0.4, h: 0.4, fill: { color: ACC }, fontFace: F, fontSize: itPh(x.it) === 'ha' ? 11 : 15, bold: true, color: 'FFFFFF', align: 'center', valign: 'middle', margin: 0 });
           const runs = stepRuns([x.it], fs); if (meta) { runs[runs.length - 1].options.breakLine = true; runs.push({ text: meta, options: { fontSize: metaFs(fs), color: '6B7280', bold: true, paraSpaceBefore: 2 } }); }
           sl.addText(runs, { x: ix + BW, y: iy, w: w - BW, h, fontFace: F, fontSize: fs, color: INK, valign: 'top', margin: 0, lineSpacingMultiple: 1.1 });
           return h;

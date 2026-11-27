@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Wahlaufgaben**: Im Aufgabenbaustein „Wahlaufgabe“ anhaken – die Aufgaben werden Alternativen mit einer Nummer (3 a/b/c), Arbeitsanweisung „Wählen Sie eine der folgenden Aufgaben aus.“ (änderbar) und Schwierigkeitsgrad ★☆☆/★★☆/★★★ je Aufgabe; auf Blatt, Folie, Word und im Erwartungshorizont.
 - **Abstände der Seite**: „Abstand nach dem Kopf“ und „Rand unten“ stehen bei neuen Blättern auf „normal“; neue Stufe „weniger“ (weniger / normal / mehr / viel).
 - **Bilder aus der Zwischenablage**: Strg+V (⌘V) fügt ein kopiertes Bild als neuen Bild-Baustein hinter dem gewählten ein bzw. füllt einen leeren, gewählten Bild-Baustein.
 - **Chats auf den Folien nur auf Wunsch** (Knopf „Auf die Folie“ wie bei Material). Bei arbeitsteiligen Aufgaben stehen gleiche Aufträge einmal über die ganze Folie, nur abweichende (z. B. Raketenaufgaben) in Spalten.

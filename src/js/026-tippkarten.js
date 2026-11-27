@@ -4,7 +4,7 @@ function tipCards() {
   for (const b of sh.blocks) {
     if (b.type !== 'tasks') continue; t = tnAt(b, t, TN);
     const v = sheetView(); if (!blockVisible(b, v)) continue;
-    for (const it of itemsFor(b, v)) { t++; const tips = tipsOf(it); tips.forEach((tx, j) => cards.push({ no: t, lvl: j + 1, of: tips.length, text: tx, grp: itGrp(b, it, meta) ? grpName(meta, itGrp(b, it, meta)) : '' })); }
+    for (const it of itemsFor(b, v)) { if (wxIdx(b, it, meta) <= 0) t++; const tips = tipsOf(it); tips.forEach((tx, j) => cards.push({ no: t, lvl: j + 1, of: tips.length, text: tx, grp: itGrp(b, it, meta) ? grpName(meta, itGrp(b, it, meta)) : '' })); }
   }
   return cards;
 }

@@ -21,8 +21,8 @@ function ehMarkdown() {
     if (b.type !== 'tasks') return; t = tnAt(b, t, TN); const vEH = sheetView(); if (!blockVisible(b, vEH)) return;
     const itsEH = itemsFor(b, vEH); if (itMin(b) && itsEH.length) L.push('', `_Bearbeitungszeit: ${itMin(b)} Min.${itsEH.length > 1 ? ` für die Aufgaben ${t + 1}–${t + itsEH.length}` : ''}_`);
     itsEH.forEach(it => {
-      t++; const ops = detectOps(it.text); const r = opsRange(ops);
-      L.push('', `### Aufgabe ${t}${itGrp(b, it, m) ? ` (${grpName(m, itGrp(b, it, m))})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', (plainMd(it.text) || '–').split('\n').map(l => '> ' + l).join('\n'), '');
+      if (wxIdx(b, it, m, itsEH) <= 0) t++; const ops = detectOps(it.text); const r = opsRange(ops);
+      L.push('', `### Aufgabe ${t}${wxLet(b, it, m, itsEH)}${wlTag(b, it) ? ' (' + wlTag(b, it).n + ')' : ''}${itGrp(b, it, m) ? ` (${grpName(m, itGrp(b, it, m))})` : ''}${it.tag ? ` · ${it.tag}` : ''}`, '', (plainMd(it.text) || '–').split('\n').map(l => '> ' + l).join('\n'), '');
       const info = [ops.length ? 'Operator: ' + ops.map(o => o.op).join(', ') : '', r ? 'AFB ' + afbLabel(r) : '', SOZ[it.soz] ? SOZ[it.soz].label : '', itPh(it) ? 'Phase: ' + PHASEN[itPh(it)].label : '', it.pts ? 'Gewichtung: ' + it.pts : ''].filter(Boolean).join(' · ');
       if (info) L.push(`_${info}_`, '');
       const rl = rlpOf(it); if (rl.length) L.push('**Standards**', '', ...rl.map(id => { const x = rlpInfo(id); return `- ${x.own ? '' : x.code + ': '}${x.t}`; }), '');

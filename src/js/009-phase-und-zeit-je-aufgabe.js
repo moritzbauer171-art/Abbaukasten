@@ -14,7 +14,7 @@ const isRes = b => !!(b && b.res);
 // Alle Aufgaben des Blatts mit Nummer, Phase und Minuten
 function ablaufOf(sh) {
   const rows = []; let t = 0; const TN = {}; const m = sh.meta || {};
-  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } t = tnAt(b, t, TN); const its = b.items || []; const nAb = its.filter(it => !itFo(it) && !itRkN(it, sh.meta)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
+  (sh.blocks || []).forEach(b => { if (b.type === 'step') { rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: isRes(b) }); return; } if (b.type !== 'tasks') { if (!PHT_NO.has(b.type) && (itPh(b) || itMin(b))) rows.push({ no: 0, it: b, b, ph: itPh(b), min: itMin(b), g: '', res: false }); return; } t = tnAt(b, t, TN); const its = b.items || []; const nAb = its.filter(it => itCnt(b, it, sh.meta)).length; const n0 = nAb ? t + 1 : 0; t += nAb; if (!its.length) return;
     const phs = its.map(it => itPh(it)); const ph = phs.every(p => p === 'ha') ? 'ha' : (phs.find(p => p && p !== 'ha') || ''); const gs = [...new Set(its.map(it => itGrp(b, it, m)))];
     // Zeit eines Bausteins mit Aufgaben verschiedener Phasen: zu gleichen Teilen auf die Phasen seiner Aufgaben verteilt
     const cnt = {}; its.filter(it => ph === 'ha' || itPh(it) !== 'ha').forEach(it => { const k = itPh(it) || ''; cnt[k] = (cnt[k] || 0) + 1; });

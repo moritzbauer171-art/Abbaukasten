@@ -249,13 +249,23 @@ const rst = b => !!b.restart && !foOnly(b);
 // Arbeitsteiliger Aufgabenbaustein (b.par): läuft parallel zum Aufgabenbaustein davor, beginnt mit derselben Nummer;
 // der nächste normale Baustein zählt hinter der höchsten Nummer weiter. TN = Zähler-Gedächtnis je Durchlauf.
 const parB = b => !!(b && b.type === 'tasks' && b.par);
+// Wahlaufgabe (b.wahl): die zählbaren Aufgaben des Bausteins sind Alternativen mit einer Nummer (3a, 3b, 3c),
+// je mit Schwierigkeitsgrad it.wl (b ★ / s ★★ / e ★★★). L = die Liste, aus der gezählt wird (z. B. itemsFor).
+const wahlB = b => !!(b && b.type === 'tasks' && b.wahl);
+const itCnt0 = (it, m) => !itFo(it) && !itRkN(it, m);
+function wxIdx(b, it, m, L) { if (!wahlB(b)) return -1; const C = (L || b.items || []).filter(x => itCnt0(x, m)); return C.length > 1 ? C.indexOf(it) : -1; }
+const itCnt = (b, it, m, L) => itCnt0(it, m) && wxIdx(b, it, m, L) <= 0;
+const wxLet = (b, it, m, L) => { const i = wxIdx(b, it, m, L); return i >= 0 ? String.fromCharCode(97 + i) : ''; };
+const WL = { b: { s: '★☆☆', n: 'leicht' }, s: { s: '★★☆', n: 'mittel' }, e: { s: '★★★', n: 'schwer' } };
+const wlTag = (b, it) => (wahlB(b) && WL[it.wl] ? WL[it.wl] : null);
+const wahlIntro = (b, m) => String(b.wahlText || '').trim() || (m && m.anrede === 'du' ? 'Wähle eine der folgenden Aufgaben aus.' : 'Wählen Sie eine der folgenden Aufgaben aus.');
 function tnAt(b, t, TN) {
   if (rst(b)) { t = 0; TN.s = null; TN.hi = null; }
   if (parB(b) && TN.s != null) { TN.hi = Math.max(TN.hi || 0, t); return TN.s; }
   if (TN.hi != null) { t = Math.max(t, TN.hi); TN.hi = null; }
   TN.s = t; return t;
 }
-const itNos = (b, from) => { let c = from; return (b.items || []).map(it => (itFo(it) || itRkN(it) ? 0 : c++)); };
+const itNos = (b, from) => { let c = from; return (b.items || []).map(it => { if (itFo(it) || itRkN(it)) return 0; const L = wxLet(b, it); return L ? (L === 'a' ? c++ : c - 1) + L : c++; }); };
 const blockVisible = (b, v) => (!v || v.grp === 'all' || !b.group || b.group === v.grp) && lvOk(b, v) && !(v && !v.pres && foOnly(b));
 // Aufgaben der gewählten Stufe: nur die Aufgaben dieser Stufe, mit dem Text für Basis oder Experte, wenn einer eingetragen ist
 const grpOk = (x, v) => !v || !v.grp || v.grp === 'all' || !x.grp || x.grp === v.grp;
@@ -282,7 +292,7 @@ function buildCover(meta, sh, v, body) {
   const ex = meta.exam || {};
   const vis = sh.blocks.filter(b => blockVisible(b, v)); const mtags = matTags(vis); const mats = vis.filter(b => mtags[b.id]);
   const tasks = []; let t = 0; const TN = {};
-  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; t = tnAt(b, t, TN); itemsFor(b, v).forEach(it => { t++; tasks.push({ no: t, pts: it.pts || '' }); }); });
+  sh.blocks.forEach(b => { if (b.type !== 'tasks' || !blockVisible(b, v)) return; t = tnAt(b, t, TN); { const IT = itemsFor(b, v); IT.forEach(it => { if (wxIdx(b, it, sh.meta, IT) <= 0) t++; tasks.push({ no: t, pts: it.pts || '' }); }); } });
   const sub = [meta.course, ex.halbjahr].filter(Boolean).map(esc).join(' · ');
   const node = el(`<div class="blk blk-cover" data-bid="meta">
     <div class="cv-top"><span>${esc(meta.school || '')}</span><span>${esc(meta.course || '')}</span></div>

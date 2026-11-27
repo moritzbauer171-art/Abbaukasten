@@ -14,7 +14,7 @@ function vpRows() {
       const idx = b.items.map((it, i) => (itOk(it, v) ? i : -1)).filter(i => i >= 0);
       const ITb = itemsFor(b, v); const bRows = []; const allHa = ITb.length > 0 && ITb.every(it => itPh(it) === 'ha'); const bgs = [...new Set(ITb.map(it => itGrp(b, it, m)))]; const bg = bgs.length === 1 ? bgs[0] : '';
       ITb.forEach((it, k) => {
-        const fo = itFo(it); if (!fo && !itRkN(it, m)) t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
+        const fo = itFo(it); if (itCnt(b, it, m)) t++; if (!tfStr(it.text).trim()) return; const ph = itPh(it); const plain = plainText(it.text);
         const refs = [...new Set((plain.match(/\b(?:M|Q|D)\s?\d+\b|\bAbb\.\s?\d+\b/g) || []).map(x => x.replace(/\s+/g, '')))];
         const media = fo ? ['Folie', ...(refs.length ? [`${ab} (${refs.join(', ')})`] : [])] : [refs.length ? `${ab} (${refs.join(', ')})` : mats.length === 1 ? `${ab} (${tags[mats[0].id]})` : ab];
         if (ph === 'sich') tafel.forEach(x => media.push('Tafelbild' + (tfStr(x.title).trim() ? ': ' + tfStrip(x.title) : '')));

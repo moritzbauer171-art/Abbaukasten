@@ -225,7 +225,7 @@ async function exportDOCX() {
       parts.push(xtbl([TW(44), CW - TW(44)], frow('Name', '') + frow('Datum', ex.datum) + (ex.zeit ? frow('Bearbeitungszeit', ex.zeit) : '') + (ex.hilfsmittel ? frow('Hilfsmittel', ex.hilfsmittel) : ''), fbd));
       const matsC = blocksV.filter(b => tagsW[b.id]);
       if (matsC.length) { parts.push(xp(xr('Materialgrundlage', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 })); matsC.forEach(b => parts.push(xp(xr(tagsW[b.id] + '   ', { b: 1, sz: 20, color: A }) + xrInline(matTitle(b) || 'ohne Titel', { sz: 20 }), { after: 40 }))); }
-      const tl = []; let tt = 0; const TN = {}; blocksV.forEach(b => { if (b.type !== 'tasks') return; tt = tnAt(b, tt, TN); itemsFor(b, v).forEach(it => { tt++; tl.push([String(tt), it.pts || '']); }); });
+      const tl = []; let tt = 0; const TN = {}; blocksV.forEach(b => { if (b.type !== 'tasks') return; tt = tnAt(b, tt, TN); itemsFor(b, v).forEach(it => { if (wxIdx(b, it, m) <= 0) tt++; tl.push([String(tt), it.pts || '']); }); });
       if (tl.length) {
         parts.push(xp(xr('Aufgaben', { b: 1, caps: 1, sz: 16, color: A, sp: 14 }), { before: 360, after: 80 }));
         const bd = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(q => LINE(q, 4, RULE)).join('');
@@ -410,16 +410,17 @@ async function exportDOCX() {
           const bmW = itMin(b); const anyMin = ITW.some(it => v.lehrer && itPh(it)) || ((v.lehrer || m.showMin) && bmW && ITW.length);
           const afbW = (showA || anyPts || anyMin) ? TW(20) : 0; const nW = TW(9); const tW = CW - nW - sW - afbW;
           const rows = ITW.map((it, ii) => {
-            const rkn = itRkN(it, m); if (!rkn) tNo++;
+            const rkn = itRkN(it, m); const wxW = wxLet(b, it, m, ITW); if (itCnt(b, it, m, ITW)) tNo++; const wlW = wlTag(b, it);
             const r = opsRange(detectOps(it.text));
-            const mnW = ii === 0 && bmW ? bmW + ' Min.' + (ITW.length > 1 ? ` (für ${tNo}–${tNo + ITW.length - 1})` : '') : '', phW = itPh(it);
+            const mnW = ii === 0 && bmW ? bmW + ' Min.' + (ITW.length > 1 && !wahlB(b) ? ` (für ${tNo}–${tNo + ITW.length - 1})` : '') : '', phW = itPh(it);
             const rt = [isK && it.pts ? [it.pts, 1] : null, showA && r ? ['AFB ' + afbLabel(r), 0] : null, v.lehrer && phW ? [PHASEN[phW].label, 0] : null, v.lehrer && mnW ? [mnW, 0] : !v.lehrer && m.showMin && mnW ? ['ca. ' + mnW, 0] : null].filter(Boolean);
             const rkAbW = rkStyle(m) === 'abschnitt';
-            const cells = xtc(xp(rkn ? xr('🚀', { sz: 21 }) : xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
+            const wxRow = wxW === 'a' ? xtr(xtc(xp(xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW }) + (sW ? xtc(xp(''), { w: sW }) : '') + xtc(xp(xr('Wahlaufgabe: ', { b: 1, sz: 21 }) + xr(wahlIntro(b, m), { sz: 21 })), { w: tW }) + (afbW ? xtc(xp(''), { w: afbW }) : ''), { cant: 1 }) : '';
+            const cells = xtc(xp(rkn ? xr('🚀', { sz: 21 }) : wxW ? xr(wxW + ')', { b: 1, sz: 21, color: A }) : xr(String(tNo), { b: 1, sz: 21, color: A })), { w: nW })
               + (sW ? xtc(xp((sozRel[it.soz] ? picXml(sozRel[it.soz], 288000, 216000, SOZ[it.soz].label) : '') + arbOf(it).filter(k => arbRel[k]).map(k => picXml(arbRel[k], 198000, 198000, ARB[k].label)).join('')), { w: sW }) : '')
-              + xtc((() => { const tt = taskText(it, m); const tagS = [v.grp === 'all' && m.groupsOn && it.grp ? grpName(m, it.grp) : '', it.tag || ''].filter(Boolean).join(' · '); const tagR = tagS ? xr(tagS.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; const tp = lvTipOf(it, v, m); const tipP = tp ? xp(xr('Tipp: ', { b: 1, sz: 17, color: A }) + xrInline(tp, { sz: 17, color: GREY }), { before: 40 }) : ''; return (/\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 }))) + tipP + arbHints(it).map(h => xp(xr(h, { i: 1, sz: 18, color: GREY }), { before: 40 })).join(''); })(), { w: tW })
+              + xtc((() => { const tt = taskText(it, m); const tagS = [wlW ? wlW.s : '', v.grp === 'all' && m.groupsOn && it.grp ? grpName(m, it.grp) : '', it.tag || ''].filter(Boolean).join(' · '); const tagR = tagS ? xr(tagS.toUpperCase() + '  ', { b: 1, sz: 15, color: A }) : ''; const tp = lvTipOf(it, v, m); const tipP = tp ? xp(xr('Tipp: ', { b: 1, sz: 17, color: A }) + xrInline(tp, { sz: 17, color: GREY }), { before: 40 }) : ''; return (/\n/.test(tt.trim()) ? (tagR ? xp(tagR) : '') + xpRich(tt, { sz: 21 }, { gap: 60 }) : xp(tagR + xrInline(tt, { sz: 21 }))) + tipP + arbHints(it).map(h => xp(xr(h, { i: 1, sz: 18, color: GREY }), { before: 40 })).join(''); })(), { w: tW })
               + (afbW ? xtc(rt.map(([t, bold]) => xp(xr(t, { sz: bold ? 18 : 15, b: bold, color: bold ? '1C1F27' : GREY }), { jc: 'right' })).join('') || xp(''), { w: afbW }) : '');
-            let row = (it.rk && rkAbW && !(ITW[ii - 1] && ITW[ii - 1].rk) ? xtr(xtc(xp(xr('🚀  ', { sz: 17 }) + xr(rkHead(m), { b: 1, sz: 17, color: A }), { before: 160, after: 40, keepNext: true, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="${A}"/></w:pBdr>` }), { w: nW + sW + tW + afbW, span: 2 + (sW ? 1 : 0) + (afbW ? 1 : 0) }), { cant: 1 }) : '') + xtr(cells, { cant: 1 });
+            let row = (it.rk && rkAbW && !(ITW[ii - 1] && ITW[ii - 1].rk) ? xtr(xtc(xp(xr('🚀  ', { sz: 17 }) + xr(rkHead(m), { b: 1, sz: 17, color: A }), { before: 160, after: 40, keepNext: true, bdr: `<w:pBdr><w:bottom w:val="single" w:sz="6" w:space="2" w:color="${A}"/></w:pBdr>` }), { w: nW + sW + tW + afbW, span: 2 + (sW ? 1 : 0) + (afbW ? 1 : 0) }), { cant: 1 }) : '') + wxRow + xtr(cells, { cant: 1 });
             const eh = v.lehrer ? ehLines(it) : []; const rl = v.lehrer ? rlpOf(it) : [];
             if (eh.length || rl.length) {
               const ehCell = (eh.length ? xp(xr('ERWARTUNG', { b: 1, sz: 13, color: '6A707C', sp: 10 })) + eh.map(q => xp(xr('– ', { sz: 19 }) + xrInline(q, { sz: 19 }), { ind: `<w:ind w:left="${TW(3)}" w:hanging="${TW(3)}"/>` })).join('') : '')

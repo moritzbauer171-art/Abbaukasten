@@ -3,7 +3,7 @@ const rlpSheetLabel = sh => { const m = sh.meta || {}; return m.nr ? 'AB ' + m.n
 function rlpCoverage(sheets) {
   const cov = {}; let nTasks = 0, nTagged = 0;
   sheets.forEach(sh => { let t = 0; const TN = {}; (sh.blocks || []).forEach(b => { if (b.type !== 'tasks') return; t = tnAt(b, t, TN); (b.items || []).forEach(it => {
-    const fo = itFo(it); if (!fo && !itRkN(it)) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
+    const fo = itFo(it); if (itCnt(b, it)) t++; nTasks++; const ids = rlpOf(it); if (ids.length) nTagged++;
     ids.forEach(id => { const c = cov[id] || (cov[id] = { n: 0, by: [] }); c.n++; let e = c.by.find(x => x.sh === sh); if (!e) c.by.push(e = { sh, t: [] }); if (!fo && !e.t.includes(t)) e.t.push(t); });
   }); }); });
   return { cov, nTasks, nTagged };
@@ -128,7 +128,7 @@ function outChecks() {
         if (!String(b.text || '').trim()) warn(`${lab} hat noch keinen Text.`);
         if (!String(b.source || '').trim()) note(`${lab} hat keine Quellenangabe.`);
       }
-      if (b.type === 'tasks') itemsFor(b, v).forEach(it => { tno++; if (!String(it.text || '').trim()) warn(`Aufgabe ${tno} ist leer.`); });
+      if (b.type === 'tasks') itemsFor(b, v).forEach(it => { if (wxIdx(b, it) <= 0) tno++; if (!String(it.text || '').trim()) warn(`Aufgabe ${tno} ist leer.`); });
       if (b.type === 'heading' && !String(b.text || '').trim()) note('Eine Überschrift ist leer.');
       if (b.type === 'image' && !b.src) warn('Ein Bild-Baustein hat noch kein Bild.');
       if (b.type === 'match' && !mtLayout(b).sol.some(x => x.rk >= 0)) warn(b.sort ? 'Ein Sortieren-Baustein hat noch kein Wort mit Oberbegriff.' : 'Ein Zuordnen-Baustein hat noch keine vollständigen Paare.');
