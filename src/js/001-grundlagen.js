@@ -68,7 +68,9 @@ const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
 const SUPABASE = { url: 'https://beggvunasgsckybbsbnc.supabase.co', key: 'sb_publishable_xf8Ep709gm3S3YLVXXsv_w_tIY1_hTb', table: 'ab_arbeitsblaetter' };
 const INFO_KINDS = ['Info','Merke','Tipp','Hinweis','Methode','Definition'];
 // Zusätzlicher Abstand bei Überschriften (mm): mehr / viel
-const H_SP = { top: { m: 4, l: 9 }, bot: { m: 3, l: 7 } };
+// Abstand nach dem Kopf: mehr = Polster darunter, weniger = zieht den nächsten Baustein heran (in px, damit das Setzen es mitrechnet)
+const headSp = (node, meta) => { const v = H_SP.top[meta.headGap]; if (v > 0) node.style.paddingBottom = v + 'mm'; else if (v < 0) node.style.marginBottom = (v * MMPX) + 'px'; };
+const H_SP = { top: { w: -2.5, m: 4, l: 9 }, bot: { m: 3, l: 7 } };
 // Piktogramme der Bausteine (24er-Raster, Strich in Textfarbe)
 const TYPE_ICON = {
   meta: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8.5h16M7 5.8h5M7.5 12.5h9M7.5 16h6"/>',

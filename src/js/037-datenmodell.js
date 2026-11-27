@@ -2,7 +2,7 @@
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: k.school,
-    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: k.stufe === 'gs' ? 'fibel' : 'klar', headGap: 'm', botGap: 'm',
+    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: k.stufe === 'gs' ? 'fibel' : 'klar', headGap: 'n', botGap: 'n',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     levelsOn: false, lvTip: true, groupsOn: false, groups: [{ k: 'A', name: '', add: 'für Gruppe 1 und 3' }, { k: 'B', name: '', add: 'für Gruppe 2 und 4' }], paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }

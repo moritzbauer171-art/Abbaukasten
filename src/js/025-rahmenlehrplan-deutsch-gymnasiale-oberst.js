@@ -296,7 +296,7 @@ function buildCover(meta, sh, v, body) {
 function buildRunHead(meta, body) {
   const ex = meta.exam || {};
   const node = el(`<div class="blk run-head" data-bid="meta"><span>${[ex.label || 'Klausur', meta.course].filter(Boolean).map(esc).join(' · ')}</span><span>Name <i></i></span></div>`);
-  if (H_SP.top[meta.headGap]) node.style.paddingBottom = H_SP.top[meta.headGap] + 'mm';
+  headSp(node, meta);
   body.appendChild(node); return { type: 'head', el: node };
 }
 function buildGroupBadge(meta, g, body) {

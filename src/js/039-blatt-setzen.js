@@ -16,7 +16,7 @@ function numbering(sheet) {
 function el(html) { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
 
 function buildHead(meta, body) {
-  const node = el(headHTML(meta)); if (H_SP.top[meta.headGap]) node.style.paddingBottom = H_SP.top[meta.headGap] + 'mm';
+  const node = el(headHTML(meta)); headSp(node, meta);
   body.appendChild(node);
   return { type: 'head', el: node };
 }
@@ -313,7 +313,7 @@ function nestedAssemble(n, heads, body, atoms, extra) {
 
 function measure(it) {
   const r0 = it.el.getBoundingClientRect();
-  it.h = r0.height;
+  it.h = r0.height + (it.type === 'head' ? (parseFloat(it.el.style.marginBottom) || 0) : 0);
   if (!it.atoms || !it.atoms.length) { it.atoms = null; return; }
   const rs = it.atoms.map(a => a.getBoundingClientRect());
   const tops = rs.map(r => r.top - r0.top);

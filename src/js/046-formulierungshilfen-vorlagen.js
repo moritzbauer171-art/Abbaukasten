@@ -358,7 +358,7 @@ function seiteCard() {
   const m = state.sheet.meta; const closed = state.closed.has('seite');
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
-  const paper = m.paper || 'a4'; const gl = { n: 'normal', m: 'mehr', l: 'viel' };
+  const paper = m.paper || 'a4'; const gl = { w: 'weniger', n: 'normal', m: 'mehr', l: 'viel' };
   const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', a4q: 'A4 quer', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'seite' ? ' sel' : ''}" data-bid="seite">
     <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('seite')}</span><span class="kind">Seite</span><span class="sum">${esc(sum)}</span></div>
@@ -366,7 +366,7 @@ function seiteCard() {
       ${designEditor(m)}
       ${colors}
       <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
-      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
+      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['w', 'weniger'], ['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
 
     </div></div>`;
 }

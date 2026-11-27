@@ -4151,7 +4151,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = 'afdcdfa479';
+const LW_BUILD = '8ebfe5842f';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -4221,7 +4221,9 @@ const KL = id => KLASSEN.find(k => k.id === id) || KLASSEN[0];
 const SUPABASE = { url: 'https://beggvunasgsckybbsbnc.supabase.co', key: 'sb_publishable_xf8Ep709gm3S3YLVXXsv_w_tIY1_hTb', table: 'ab_arbeitsblaetter' };
 const INFO_KINDS = ['Info','Merke','Tipp','Hinweis','Methode','Definition'];
 // Zusätzlicher Abstand bei Überschriften (mm): mehr / viel
-const H_SP = { top: { m: 4, l: 9 }, bot: { m: 3, l: 7 } };
+// Abstand nach dem Kopf: mehr = Polster darunter, weniger = zieht den nächsten Baustein heran (in px, damit das Setzen es mitrechnet)
+const headSp = (node, meta) => { const v = H_SP.top[meta.headGap]; if (v > 0) node.style.paddingBottom = v + 'mm'; else if (v < 0) node.style.marginBottom = (v * MMPX) + 'px'; };
+const H_SP = { top: { w: -2.5, m: 4, l: 9 }, bot: { m: 3, l: 7 } };
 // Piktogramme der Bausteine (24er-Raster, Strich in Textfarbe)
 const TYPE_ICON = {
   meta: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8.5h16M7 5.8h5M7.5 12.5h9M7.5 16h6"/>',
@@ -9486,7 +9488,7 @@ const QR = (() => {
 /* ================= Ansicht: Fassung, Gruppen, Papier ================= */
 const GEO = { a4: { avail: 264 }, a4q: { avail: 177 }, a5: { avail: 182 } };
 // Freiraum über der Fußzeile (mm): normal / mehr / viel
-const BOT_GAP = { a4: { '': 9, m: 17, l: 27 }, a5: { '': 6, m: 11, l: 18 } };
+const BOT_GAP = { a4: { '': 9, w: 4, m: 17, l: 27 }, a5: { '': 6, w: 3, m: 11, l: 18 } };
 function sheetView() { const m = state.sheet.meta; return { lehrer: state.fassung === 'lehrer', grp: m.groupsOn && grpList(m).some(g => g.k === state.grp) ? state.grp : 'all', lvl: state.sheet.meta.levelsOn ? (state.lvl || 'all') : 'all' }; }
 const LV = { b: { name: 'Basis', sym: '★' }, s: { name: 'Standard', sym: '★★' }, e: { name: 'Experte', sym: '★★★' } };
 /* ================= Rahmenlehrplan Deutsch, gymnasiale Oberstufe (Teil C) =================
@@ -9787,7 +9789,7 @@ function buildCover(meta, sh, v, body) {
 function buildRunHead(meta, body) {
   const ex = meta.exam || {};
   const node = el(`<div class="blk run-head" data-bid="meta"><span>${[ex.label || 'Klausur', meta.course].filter(Boolean).map(esc).join(' · ')}</span><span>Name <i></i></span></div>`);
-  if (H_SP.top[meta.headGap]) node.style.paddingBottom = H_SP.top[meta.headGap] + 'mm';
+  headSp(node, meta);
   body.appendChild(node); return { type: 'head', el: node };
 }
 function buildGroupBadge(meta, g, body) {
@@ -10704,7 +10706,7 @@ function setOut(k) {
 function defaultMeta(nr, klasse) {
   const k = KL(klasse);
   return { nr: nr || '', title: '', topic: '', course: k.course, school: k.school,
-    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: k.stufe === 'gs' ? 'fibel' : 'klar', headGap: 'm', botGap: 'm',
+    fmtV: 2, showName: true, showDate: true, showAFB: false, opBold: true, accent: k.accent, lineStep: 5, anrede: k.anrede, design: k.stufe === 'gs' ? 'fibel' : 'klar', headGap: 'n', botGap: 'n',
     mode: 'blatt', exam: { label: 'Klausur', halbjahr: '', datum: '', zeit: '', hilfsmittel: 'Wörterbuch der deutschen Rechtschreibung' },
     levelsOn: false, lvTip: true, groupsOn: false, groups: [{ k: 'A', name: '', add: 'für Gruppe 1 und 3' }, { k: 'B', name: '', add: 'für Gruppe 2 und 4' }], paper: 'a4', cardsPer: 3, kk: { ...KK_DEF } };
 }
@@ -11212,7 +11214,7 @@ function numbering(sheet) {
 function el(html) { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
 
 function buildHead(meta, body) {
-  const node = el(headHTML(meta)); if (H_SP.top[meta.headGap]) node.style.paddingBottom = H_SP.top[meta.headGap] + 'mm';
+  const node = el(headHTML(meta)); headSp(node, meta);
   body.appendChild(node);
   return { type: 'head', el: node };
 }
@@ -11509,7 +11511,7 @@ function nestedAssemble(n, heads, body, atoms, extra) {
 
 function measure(it) {
   const r0 = it.el.getBoundingClientRect();
-  it.h = r0.height;
+  it.h = r0.height + (it.type === 'head' ? (parseFloat(it.el.style.marginBottom) || 0) : 0);
   if (!it.atoms || !it.atoms.length) { it.atoms = null; return; }
   const rs = it.atoms.map(a => a.getBoundingClientRect());
   const tops = rs.map(r => r.top - r0.top);
@@ -12674,7 +12676,7 @@ function seiteCard() {
   const m = state.sheet.meta; const closed = state.closed.has('seite');
   const colors = DESIGNS[designOf(m)].mono ? '<div class="f"><span>Farbe</span><small>Dieses Design ist einfarbig.</small></div>'
     : `<div class="f"><span>Farbe</span><div class="swatches">${Object.entries(ACCENTS).map(([k, a]) => `<button type="button" class="sw" data-act="accent" data-v="${k}" aria-pressed="${m.accent === k}"><i style="background:${a.c}"></i>${a.name}</button>`).join('')}</div><small>Graphit eignet sich für Schwarz-Weiß-Drucker.</small></div>`;
-  const paper = m.paper || 'a4'; const gl = { n: 'normal', m: 'mehr', l: 'viel' };
+  const paper = m.paper || 'a4'; const gl = { w: 'weniger', n: 'normal', m: 'mehr', l: 'viel' };
   const sum = [DESIGNS[designOf(m)].label, DESIGNS[designOf(m)].mono ? '' : (ACCENTS[m.accent] || {}).name, { a4: 'A4', a4q: 'A4 quer', buch: 'A5 als Buch', a5x2: 'A5 doppelt' }[paper], 'Abstände ' + (m.headGap === m.botGap ? gl[m.headGap || 'n'] : gl[m.headGap || 'n'] + '/' + gl[m.botGap || 'n'])].filter(Boolean).join(' · ');
   return `<div class="card${closed ? ' closed' : ''}${state.sel === 'seite' ? ' sel' : ''}" data-bid="seite">
     <div class="card-h" data-act="toggle"><button type="button" class="chev" data-act="toggle" aria-expanded="${!closed}" title="${closed ? 'Aufklappen' : 'Zuklappen'}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button><span class="kind-i">${typeIcon('seite')}</span><span class="kind">Seite</span><span class="sum">${esc(sum)}</span></div>
@@ -12682,7 +12684,7 @@ function seiteCard() {
       ${designEditor(m)}
       ${colors}
       <div class="f"><span>Papier</span><div class="seg sm" role="group" aria-label="Papier">${[['a4', 'A4'], ['a4q', 'A4 quer'], ['buch', 'A5 als Buch'], ['a5x2', 'A5 doppelt']].map(([v, t]) => `<button type="button" data-act="paper" data-v="${v}" aria-pressed="${paper === v}">${t}</button>`).join('')}</div><small>${paper === 'buch' ? 'Zwei A5-Seiten nebeneinander auf A4 quer, wie ein aufgeschlagenes Buch.' : paper === 'a5x2' ? 'Dieselbe A5-Seite zweimal auf A4 quer, zum Schneiden.' : 'Normales A4 hoch.'}</small></div>
-      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
+      <div class="row">${[['headGap', 'Abstand nach dem Kopf'], ['botGap', 'Rand unten']].map(([f, l]) => `<div class="f"><span>${l}</span><div class="seg sm" role="group" aria-label="${l}">${[['w', 'weniger'], ['n', 'normal'], ['m', 'mehr'], ['l', 'viel']].map(([v, t]) => `<button type="button" data-act="meta-set" data-f="${f}" data-v="${v}" aria-pressed="${((m[f] || 'n') === 'n' ? 'n' : m[f]) === v}">${t}</button>`).join('')}</div></div>`).join('')}</div>
 
     </div></div>`;
 }
@@ -16853,7 +16855,7 @@ async function exportDOCX() {
       try { const n = media.length + 1; media.push({ n, bytes: await arbPNG(k, acc.c), ext: 'png' }); arbRel[k] = n; } catch {}
     }
     const picXml = (rel, cx, cy, label) => { const id = ++drawId; return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="${xesc(label)}" descr="${xesc(label)}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="${id}" name="soz${rel}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rIdImg${rel}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`; };
-    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/><w:footnotePr><w:numRestart w:val="eachSect"/></w:footnotePr>${first ? '' : '<w:type w:val="continuous"/>'}${QUER ? '<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>' : '<w:pgSz w:w="11906" w:h="16838"/>'}<w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
+    const sect = (ln, two) => `<w:sectPr><w:footerReference w:type="default" r:id="rIdFtr"/><w:footnotePr><w:numRestart w:val="eachSect"/></w:footnotePr>${first ? '' : '<w:type w:val="continuous"/>'}${QUER ? '<w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/>' : '<w:pgSz w:w="11906" w:h="16838"/>'}<w:pgMar w:top="${TW(14)}" w:right="${TW(18)}" w:bottom="${TW(25 + ({ w: -5, m: 8, l: 18 }[m.botGap] || 0))}" w:left="${TW(18)}" w:header="${TW(8)}" w:footer="${TW(8)}" w:gutter="0"/>${ln ? `<w:lnNumType w:countBy="${step}" w:distance="${TW(3)}" w:restart="newSection"/>` : ''}${two ? `<w:cols w:num="2" w:space="${TW(9)}"/>` : '<w:cols w:space="708"/>'}</w:sectPr>`;
     const closeSect = (ln, two) => { parts.push(xp('', { line: 20, rule: 'exact', mark: 2, sect: sect(ln, two) })); first = false; secOpen = false; };
     const spacer = () => xp('', { line: TW(5), rule: 'exact', mark: 4 });
 
