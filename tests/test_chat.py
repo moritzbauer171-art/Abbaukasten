@@ -5,7 +5,7 @@ from conftest import OUT
 from test_quer_beschriftung import docx
 
 def chat(style='gruen', **kw):
-    b = {'id': 'c1', 'type': 'chat', 'title': 'Chat der Klasse 10b', 'style': style, 'head': {'name': 'Klasse 10b 📚', 'sub': ''},
+    b = {'id': 'c1', 'type': 'chat', 'pres': True, 'title': 'Chat der Klasse 10b', 'style': style, 'head': {'name': 'Klasse 10b 📚', 'sub': ''},
          'people': [{'n': 'Ich'}, {'n': 'Lea'}, {'n': 'Tom'}],
          'msgs': [{'sys': True, 't': 'Heute'}, {'p': 1, 't': 'Habt ihr die Aufgabe schon?', 'z': '18:02'}, {'p': 1, 't': 'Bis morgen oder?', 'z': '18:02'},
                   {'p': 2, 't': 'Welche Aufgabe?? 😅', 'z': '18:04'}, {'p': 0, 't': 'Die zu Anne Frank, S. 34', 'z': '18:05'}, {'p': 1, 't': '', 'z': '18:06'}],
@@ -97,3 +97,11 @@ def test_chat_quelle(lw):
         pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
     assert 'Quelle:' in pg.locator('.pr .pr-slide .ch-fk').inner_text()
     pg.locator('.pr .pr-slide').screenshot(path=str(OUT / 'chat_q_folie.png'))
+
+def test_chat_nicht_automatisch_auf_folie(lw):
+    pg = lw.open(); lw.new_lesson(pg)
+    lw.setup(pg, [{'id': 'c9', 'type': 'chat', 'title': 'Testchat', 'style': 'gruen', 'head': {'name': 'A', 'sub': ''}, 'people': [], 'msgs': [{'who': 'a', 'text': 'Hallo'}]}, {'id': 't9', 'type': 'tasks', 'title': '', 'items': [{'text': 'Analysieren Sie den Chat.', 'soz': 'ea'}]}])
+    ks = pg.evaluate("__PS(true).map(s => s.k)")
+    assert 'chat' not in ks and 'tasks' in ks, ks
+    pg.evaluate("__S.sheet.blocks[0].pres = true")
+    assert 'chat' in pg.evaluate("__PS(true).map(s => s.k)")

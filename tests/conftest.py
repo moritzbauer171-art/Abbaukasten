@@ -17,6 +17,7 @@ LIBS = pathlib.Path(os.environ['LW_LIBS']) if os.environ.get('LW_LIBS') else Non
 HOOKS = [('const state = {', 'const state = window.__S = {'),
          ('function renderEditor(focusSel) {', 'window.__RE = () => renderEditor(); function renderEditor(focusSel) {'),
          ('function openPres(start, opts = {}) {', 'window.__OP = (...a) => openPres(...a);\nfunction openPres(start, opts = {}) {'),
+         ('function presSlides(quiet) {', 'window.__PS = q => presSlides(q); function presSlides(quiet) {'),
          ('function renderPreview() {', 'window.__RP = () => renderPreview(); function renderPreview() {'),
          ('async function openFass() {', 'window.__FA = () => openFass(); async function openFass() {'),
          ('function saveNow() {', 'window.__SV = () => saveNow(); function saveNow() {'),

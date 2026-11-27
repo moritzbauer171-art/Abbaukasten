@@ -384,8 +384,10 @@ const tsSoz = s => { const z = [...new Set(s.items.map(x => x.it.soz).filter(k =
 const tsCols = s => s.segs.reduce((a, g) => (g.t === 'cols' ? Math.max(a, g.cols.length) : a), 0);
 function tsKick(s, m) {
   const its = s.items; const nos = its.map(x => x.no).filter(Boolean); const cons = nos.every((n, i) => !i || n === nos[i - 1] + 1); const one = its.length === 1 ? its[0] : null; const ng = tsCols(s);
+  if (s.abpar && s.parIn) { const ns = [...new Set(its.map(x => x.no).filter(Boolean))].sort((a, b) => a - b);
+    return [ns.length === 1 ? 'Aufgabe ' + ns[0] : ns.length ? 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1] : '', 'Arbeitsteilig · ' + s.ngr + ' Gruppen parallel'].filter(Boolean).join(' · '); }
   if (s.abpar) { const C = s.segs[0].cols.map(c => c.items.map(x => x.no).filter(Boolean).join(',')); const ns = s.segs[0].cols[0].items.map(x => x.no).filter(Boolean);
-    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + (s.parIn ? ' Gruppen' : ' ABs') + ' parallel'].filter(Boolean).join(' · '); }
+    const same = C.every(x => x === C[0]) && ns.length; return [same ? (ns.length === 1 ? 'Aufgabe ' + ns[0] : 'Aufgaben ' + ns[0] + '–' + ns[ns.length - 1]) : '', 'Arbeitsteilig · ' + ng + ' ABs' + ' parallel'].filter(Boolean).join(' · '); }
   const num = tsHaAll(s) || !nos.length ? '' : nos.length === 1 ? 'Aufgabe ' + nos[0] : 'Aufgaben ' + (cons ? nos[0] + '–' + nos[nos.length - 1] : nos.join(', '));
   return [num, ng ? ng + ' Gruppen parallel' : '', one && one.g ? grpName(m, one.g) : '', one && one.it.tag ? one.it.tag : ''].filter(Boolean).join(' · ');
 }

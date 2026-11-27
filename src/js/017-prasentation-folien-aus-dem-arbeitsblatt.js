@@ -123,6 +123,19 @@ function presTaskSlide(L, bid, m) {
 }
 // Arbeitsteilige Aufgabenbausteine (b.par) kommen auf die Folie des Aufgabenbausteins davor: je Baustein eine Spalte,
 // Spaltenkopf = Überschrift des Bausteins oder die Überschrift davor („Fensterseite – MyAI in Snapchat“)
+// Gleiche Aufträge (gleicher Text, Sozialform, Art) an derselben Stelle in allen Gruppen stehen einmal über die ganze Breite,
+// nur die abweichenden (z. B. die Raketenaufgabe) bekommen Spalten
+const parKey = x => [plainText(tfStr(x.it.text)).replace(/\s+/g, ' ').trim().toLowerCase(), x.it.soz || '', x.fo ? 'f' : '', x.rkn ? 'r' : '', x.no || 0].join('|');
+function parSegs(cols) {
+  const n = Math.max(...cols.map(c => c.items.length)); const segs = []; const items = [];
+  for (let i = 0; i < n; i++) {
+    const xs = cols.map(c => c.items[i]); const same = xs.every(x => x && parKey(x) === parKey(xs[0]));
+    if (same) { const x = { ...xs[0], abl: '' }; items.push(x); const L = segs[segs.length - 1]; if (L && L.t === 'rows') L.items.push(x); else segs.push({ t: 'rows', items: [x] }); continue; }
+    let C = segs[segs.length - 1]; if (!C || C.t !== 'cols') { C = { t: 'cols', cols: cols.map(c => ({ ...c, items: [] })) }; segs.push(C); }
+    xs.forEach((x, k) => { if (x) { C.cols[k].items.push(x); items.push(x); } });
+  }
+  return { items, segs };
+}
 function presParMerge(S, sh) {
   const B = sh.blocks; const at = id => B.findIndex(x => x.id === id);
   const colOf = (s, k) => { const i = at(s.bid), b = B[i]; let n = b && tfStr(b.title).trim() ? plainText(b.title).trim() : '';
@@ -135,7 +148,7 @@ function presParMerge(S, sh) {
     if (s.k === 'tasks' && !s.abpar) {
       const b = B[at(s.bid)];
       if (parB(b) && host) { host.cols.push(colOf(s, host.cols.length)); const items = host.cols.flatMap(c => c.items);
-        R[host.i] = { ...host.s, items, segs: [{ t: 'cols', cols: host.cols }], abpar: true, parIn: true }; return; }
+        R[host.i] = { ...host.s, ...parSegs(host.cols), abpar: true, parIn: true, ngr: host.cols.length }; return; }
       if (!parB(b)) host = { i: R.length, s, cols: [colOf(s, 0)] };
     }
     R.push(s);
@@ -152,7 +165,7 @@ function presMerge(S, m) {
   });
   return R;
 }
-const PRES_OPT = new Set(['material', 'tafel', 'info', 'quote', 'image', 'table', 'phrases', 'match']);
+const PRES_OPT = new Set(['chat', 'material', 'tafel', 'info', 'quote', 'image', 'table', 'phrases', 'match']);
 const presOn = b => b.pres === true;
 const presBtn = b => PRES_OPT.has(b.type) ? `<button type="button" class="pres-tg${presOn(b) ? ' on' : ''}" data-act="pres-tg" aria-pressed="${presOn(b)}" title="${presOn(b) ? 'Steht in der Präsentation auf einer eigenen Folie · klicken zum Entfernen' : 'Steht nicht in der Präsentation · klicken, um ihn auf eine Folie zu bringen'}"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="10" rx="1.2"/><path d="M10 11.5v3M7 14.5h6"/>${presOn(b) ? '<path d="m7 6.5 2 2 4-4"/>' : ''}</svg><span>${presOn(b) ? 'Auf der Folie' : 'Auf die Folie'}</span></button>` : '';
 function presSlidesAB(off, lab, abId) {

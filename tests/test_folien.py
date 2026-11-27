@@ -90,8 +90,10 @@ def test_seite_arbeitsteilig_fenster_wand(lw):
     tF = {'id': 'tf', 'type': 'tasks', 'title': '', 'items': [{'text': 'Analysieren Sie MyAI.', 'soz': 'ga'}, {'text': 'Vergleichen Sie MyAI.', 'soz': 'ga'}, {'text': 'Rakete MyAI', 'rk': True}]}
     hW = {'id': 'hw', 'type': 'heading', 'text': 'Wandseite - Das Beispiel MetaAI'}
     tW = {'id': 'tw', 'type': 'tasks', 'title': '', 'items': [{'text': 'Analysieren Sie MetaAI.', 'soz': 'ga'}, {'text': 'Vergleichen Sie MetaAI.', 'soz': 'ga'}]}
+    tF2 = {'id': 'tf2', 'type': 'tasks', 'title': '', 'items': [{'text': 'Analysieren Sie den Chatbot.'}, {'text': 'Notieren Sie Belege.'}, {'text': 'Rakete MyAI', 'rk': True}]}
+    tW2 = {'id': 'tw2', 'type': 'tasks', 'title': '', 'par': True, 'items': [{'text': 'Analysieren Sie den Chatbot.'}, {'text': 'Notieren Sie Belege.'}, {'text': 'Rakete MetaAI', 'rk': True}]}
     tE = {'id': 'te', 'type': 'tasks', 'title': '', 'items': [{'text': 'Sichern Sie im Plenum.', 'soz': 'ea'}]}
-    lw.setup(pg, [t0, {'id': 'p1', 'type': 'pagebreak'}, hF, tF, {'id': 'p2', 'type': 'pagebreak'}, hW, tW, {'id': 'p3', 'type': 'pagebreak'}, tE]); pg.evaluate("__RP()"); pg.wait_for_timeout(700)
+    lw.setup(pg, [t0, {'id': 'p1', 'type': 'pagebreak'}, hF, tF, {'id': 'p2', 'type': 'pagebreak'}, hW, tW, {'id': 'p3', 'type': 'pagebreak'}, tE, {'id': 'p4', 'type': 'pagebreak'}, {'id': 'h3', 'type': 'heading', 'text': 'Fensterseite'}, tF2, {'id': 'p5', 'type': 'pagebreak'}, {'id': 'h4', 'type': 'heading', 'text': 'Wandseite'}, tW2]); pg.evaluate("__RP()"); pg.wait_for_timeout(700)
     pg.locator('#pages .page').first.hover(); pg.wait_for_timeout(300)
     assert not pg.locator('#pg-split').is_visible()
     pg.locator('#pages .page').nth(2).hover(); pg.wait_for_timeout(300)
@@ -106,3 +108,7 @@ def test_seite_arbeitsteilig_fenster_wand(lw):
         pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(350)
     t = pg.locator('.pr .pr-slide').inner_text()
     assert pg.locator('.pr .pr-slide .pr-col').count() == 2 and 'Analysieren Sie MyAI' in t and 'Analysieren Sie MetaAI' in t and 'Fensterseite' in t and 'Wandseite' in t, t
+
+    # gleiche Aufträge einmal über die ganze Breite, nur die Raketen in Spalten
+    sl = [x for x in pg.evaluate("__PS(true).filter(s => s.abpar).map(s => s.segs.map(g => g.t === 'rows' ? 'r' + g.items.length : 'c' + g.cols.map(c => c.items.length).join('/')))")]
+    assert sl[-1] == ['r2', 'c1/1'], sl
