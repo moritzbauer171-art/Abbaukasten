@@ -421,3 +421,5 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .bub-row{margin-top:8px;padding:8px 10px;border:1px solid var(--line,#e3e5ea);border-radius:10px}
 .bub-row-h{display:flex;align-items:center;gap:8px}.bub-row-h b{width:20px;height:20px;border-radius:50%;background:var(--tinte,#2B45B8);color:#fff;font-size:11px;display:grid;place-items:center}.bub-row-h .ib{margin-left:auto}
 .bub-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.bub-add .btn{display:inline-flex;align-items:center;gap:5px}
+/* eigene Schriftgröße für einen Aufgabenbaustein */
+.blk-tasks.tfs .task-body{font-size:var(--tfs)!important}
