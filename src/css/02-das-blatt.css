@@ -399,3 +399,4 @@ body.tbm-on #pv-tools,body.tbm-on #pv-ins{display:none!important}
 .pr-wl{float:left;color:var(--acc);margin-right:.45em;letter-spacing:.02em;white-space:nowrap;font-size:.8em;line-height:1.6em}
 .wl-seg{margin-left:4px}.wl-seg button{font-size:11px;letter-spacing:.02em;padding:2px 6px}
 .wx-set{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--tinte-soft,#EEF1FB)}.wx-set .f{margin-top:6px}
+#preview-scroll{overflow-anchor:none}

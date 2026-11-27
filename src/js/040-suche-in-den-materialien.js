@@ -75,7 +75,8 @@ function renderPreview0() {
   }
   let out;
   try { out = state.out === 'tipps' ? layoutTipps() : state.out === 'karten' ? layoutKarten() : state.out === 'tafel' ? layoutTafel() : state.out === 'a3' || state.out === 'a4' ? layoutA3() : state.out === 'exit' ? layoutExit() : layout(); if (state.out === 'blatt' && zlSync()) out = layout(); } catch (err) { console.error(err); return; }
-  const host = $('#pages'); host.innerHTML = '';
+  // Neuaufbau ohne Springen: Höhe halten, solange die Seiten neu eingesetzt werden, danach die Scrollposition wiederherstellen
+  const host = $('#pages'); const scP = $('#preview-scroll'); const top0 = scP ? scP.scrollTop : 0; host.style.minHeight = host.offsetHeight + 'px'; host.innerHTML = '';
   if (!out.length) host.appendChild(el(`<div class="pv-empty">${state.out === 'exit' ? 'Noch kein Exit-Ticket. Leg links unter „Exit-Tickets“ eines an und trag die Fragen ein.' : state.out === 'a3' ? 'Noch keine A3-Vorlage. Wähl links unter „A3-Vorlagen“ eine Vorlage, etwa Placemat oder Lernplakat.' : state.out === 'a4' ? 'Noch keine A4-Vorlage. Wähl links unter „A4-Vorlagen“ eine Vorlage, etwa Karten zum Ausschneiden.' : state.out === 'tafel' ? 'Noch kein Tafelbild. Füg links unten bei den Bausteinen „Tafelbild“ hinzu.' : state.out === 'tipps' ? 'Noch keine Tippkarten. Öffne unter einer Aufgabe „Tipps“ und trag bis zu drei gestufte Hilfen ein.' : 'Noch keine Tafelkarten. Leg links mit „+ Begriff“ die erste Karte an.'}</div>`));
   out.forEach(({ pg, over }) => {
     pg.classList.add('pout');
@@ -93,7 +94,7 @@ function renderPreview0() {
     : `${cnt} ${cnt === 1 ? one : many}${kH ? ` auf ${out.length} ${out.length === 1 ? 'Blatt' : 'Blättern'}` : ''} · ${unit}`;
   if (state.out === 'karten') { const ov = document.querySelector('#editor [data-kkover]'); if (ov) ov.innerHTML = state.kkOver ? `<small class="gl-warn">${state.kkOver} ${state.kkOver === 1 ? 'Karte ist' : 'Karten sind'} für die feste Größe zu voll und ${state.kkOver === 1 ? 'wird' : 'werden'} kleiner gesetzt.</small>` : ''; }
   $('#pv-hint').hidden = true;
-  renderOut(); applyScale(); markSel(); markZl(); lbArrows(host); chatLines(host);
+  renderOut(); applyScale(); host.style.minHeight = ''; if (scP && Math.abs(scP.scrollTop - top0) > 1) scP.scrollTop = top0; markSel(); markZl(); lbArrows(host); chatLines(host);
 }
 function applyScale() {
   const pane = $('#preview-scroll'); const cs = getComputedStyle(pane);
