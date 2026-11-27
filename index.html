@@ -4144,7 +4144,7 @@ body.home-on{overflow:hidden}
 (() => {
 'use strict';
 
-const LW_BUILD = '16d21902f6';
+const LW_BUILD = '532490895a';
 /* ================= Grundlagen ================= */
 const MMPX = 96 / 25.4;
 // Digitale Fassung per Link (…/#d=ID): Die Seite zeigt nur das Blatt für Schülerinnen und Schüler
@@ -10035,7 +10035,7 @@ function chatHTML(b, tag) {
   const sb = ip ? `<div class="ch-sb"><b>9:41</b><span class="ch-isl"></span><span class="ch-sbi"><svg viewBox="0 0 18 12" aria-hidden="true"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.5 6.9a6.4 6.4 0 0 1 9 0l-1.5 1.5a4.3 4.3 0 0 0-6 0zM1.2 4.6a9.6 9.6 0 0 1 13.6 0l-1.5 1.5a7.5 7.5 0 0 0-10.6 0z"/></svg><svg viewBox="0 0 27 12" aria-hidden="true"><rect x=".6" y=".6" width="22.5" height="10.8" rx="3.2" fill="none" stroke="currentColor" stroke-width="1.1" opacity=".45"/><rect x="2.3" y="2.3" width="16" height="7.4" rx="1.8"/><path d="M24.6 4.2v3.6a1.9 1.9 0 0 0 0-3.6z" opacity=".5"/></svg></span></div>` : '';
   const home = ip ? '<div class="ch-home"><span></span></div>' : '';
   const w = Math.max(40, Math.min(100, +b.width || 72));
-  return `<div class="blk blk-chat cs-${st}${ip ? ' ch-ip' : o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%;--chs:${(w / 72).toFixed(3)}">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${sb}${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}${home}</div>${b.fiktiv !== false ? '<div class="ch-fk">Fiktiver Chatverlauf</div>' : ''}</div>`;
+  return `<div class="blk blk-chat cs-${st}${ip ? ' ch-ip' : o.frame !== false ? ' frm' : ''}${o.ln ? ' ch-ln' : ''}" data-step="${Math.max(1, +(state.sheet && state.sheet.meta && state.sheet.meta.lineStep) || 5)}" style="--chw:${w}%;--chs:${(w / 72).toFixed(3)}">${tag || b.title ? `<div class="mat-head">${tag ? `<span class="mat-no">${tag}</span>` : ''}<span class="mat-title">${inlineHTML(b.title || '') || '&nbsp;'}</span></div>` : ''}<div class="ch-ph">${sb}${head}<div class="ch-b">${body || '<div class="ch-sys"><span>Noch keine Nachrichten</span></div>'}</div>${bar}${home}</div>${b.fiktiv !== false || String(b.source || '').trim() ? `<div class="ch-fk">${[b.fiktiv !== false ? 'Fiktiver Chatverlauf' : '', String(b.source || '').trim() ? 'Quelle: ' + inlineHTML(String(b.source).trim()) : ''].filter(Boolean).join(' · ')}</div>` : ''}</div>`;
 }
 
 // Zeilenangaben im Chat: nach dem Setzen die gedruckten Zeilen in den Blasen zählen, jede 5. am Rand vermerken.
@@ -10499,7 +10499,7 @@ function gTargets(bid) {
   switch (b.type) {
     case 'tasks': return [[b, 'title'], ...b.items.flatMap(it => [[it, 'text'], [it, 'eh'], [it, 'tag'], ...(Array.isArray(it.tips) ? it.tips.map((_, j) => [it.tips, j]) : [])])];
     case 'info': return [[b, 'title'], [b, 'text']];
-    case 'chat': return [[b, 'title'], ...(b.msgs || []).map(m => [m, 't'])];
+    case 'chat': return [[b, 'title'], [b, 'source'], ...(b.msgs || []).map(m => [m, 't'])];
     case 'phrases': return [[b, 'title'], ...(b.groups || []).flatMap(g => [[g, 'head'], [g, 'text']])];
     case 'step': return ['title', 'head', 'text', 'quote', 'author', 'cap', 'note', 'eh', 'media', 'qs'].map(k => [b, k]);
     case 'a3': a3Norm(b); return [[b, 'title'], [b, 'task'], [b, 'impulse'], [b, 'rules'], ...['legend', 'sections', 'cols', 'aspects', 'experts'].flatMap(k => b[k].map((_, i) => [b[k], i]))];
@@ -12707,6 +12707,7 @@ function chatEdHTML(b) {
       <div class="ch-mr-h">${m.sys ? '<b style="font-size:12.5px">Hinweis in der Mitte</b>' : pseg(i, Math.max(0, Math.min(P.length - 1, +m.p || 0)))}<span class="sp"></span>${m.sys ? '' : `<input class="ch-zi" data-k="msgs.${i}.z" value="${esc(m.z || '')}" placeholder="Zeit" aria-label="Uhrzeit Nachricht ${i + 1}">`}<button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="-1" title="nach oben" aria-label="Nachricht nach oben"${i === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-act="chat-mv" data-i="${i}" data-d="1" title="nach unten" aria-label="Nachricht nach unten"${i === M.length - 1 ? ' disabled' : ''}>↓</button><button class="ib" type="button" data-act="chat-del" data-i="${i}" title="Nachricht löschen" aria-label="Nachricht ${i + 1} löschen">${I.x}</button></div>
       ${rtField(`msgs.${i}.t`, m.t || '', { mode: 'inline', rows: 2, ph: m.sys ? 'z. B. Heute · Tom wurde hinzugefügt' : 'Nachricht … (leer = Linien zum Ausfüllen)', aria: `Nachricht ${i + 1}` })}</div>`).join('')}</div>
       <div class="row" style="gap:14px"><button class="link" type="button" data-act="chat-add">+ Nachricht</button><button class="link" type="button" data-act="chat-sys">+ Hinweis in der Mitte</button></div></div>
+    ${fText('source', 'Quelle (optional)', b.source, 'z. B. nachgestellt nach: Instagram-Kommentare zu …, abgerufen am 26.11.2026')}
     <div class="f"><span>Format</span><div class="seg sm" role="group" aria-label="Format"><button type="button" data-act="chat-dev" data-v="" aria-pressed="${o.dev !== 'iphone'}">Frei – Höhe nach Inhalt</button><button type="button" data-act="chat-dev" data-v="iphone" aria-pressed="${o.dev === 'iphone'}">iPhone</button></div>${o.dev === 'iphone' ? '<small class="hint">Wie ein echter Bildschirm: Passen nicht alle Nachrichten hinein, werden oben die älteren abgeschnitten – wie beim Scrollen.</small>' : ''}</div>
     <label class="f"><span>${o.dev === 'iphone' ? 'Größe' : 'Breite'}: ${Math.round(+b.width || 72)} %</span><input type="range" min="40" max="100" step="2" value="${+b.width || 72}" data-k="width" data-num="1"></label>
     <div class="chks">${fCheck('opt.ln', 'Zeilenangaben (für Textbelege)', !!o.ln)}${o.dev === 'iphone' ? '' : fCheck('opt.frame', 'Handyrahmen', o.frame !== false)}${fCheck('opt.time', 'Uhrzeiten', o.time !== false)}${fCheck('opt.read', 'Lesehäkchen', o.read !== false)}${P.length > 2 ? fCheck('opt.names', 'Namen in der Gruppe', o.names !== false) : ''}${fCheck('opt.bar', 'Eingabezeile unten', o.bar !== false)}${fCheck('fiktiv', 'Hinweis „Fiktiver Chatverlauf“', b.fiktiv !== false)}</div>`;
@@ -16910,7 +16911,7 @@ async function exportDOCX() {
             rows.push(xtr(me && st !== 'dunkel' ? sp + bub : bub + sp, { cant: 1 }));
           });
           parts.push(xtbl([bw, gap], rows.join(''), NOB, '', ind));
-          if (b.fiktiv !== false) parts.push(xp(xr('Fiktiver Chatverlauf', { i: 1, sz: 14, color: '888888' }), { jc: 'center', before: 40 }));
+          if (b.fiktiv !== false || String(b.source || '').trim()) parts.push(xp((b.fiktiv !== false ? xr('Fiktiver Chatverlauf', { i: 1, sz: 14, color: '888888' }) : '') + (b.fiktiv !== false && String(b.source || '').trim() ? xr(' · ', { sz: 14, color: '888888' }) : '') + (String(b.source || '').trim() ? xr('Quelle: ', { i: 1, sz: 14, color: '888888' }) + xrInline(String(b.source).trim(), { i: 1, sz: 14, color: '888888' }) : ''), { jc: 'center', before: 40 }));
           break;
         }
         case 'info': {

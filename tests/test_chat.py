@@ -82,3 +82,18 @@ def test_chat_snap_und_iphone(lw):
     # Querformat: iPhone wird kleiner, bleibt auf einer Seite
     pg.evaluate("__S.sheet.meta.paper = 'a4q'; __RE(); __RP()"); pg.wait_for_timeout(700)
     assert pg.locator('#pages .page').count() == 1
+
+def test_chat_quelle(lw):
+    pg = lw.open(); lw.new_lesson(pg); lw.setup(pg, [chat('gruen')]); pg.evaluate("__RP()"); pg.wait_for_timeout(400)
+    pg.locator('#editor [data-k="source"]').fill('nachgestellt nach Kommentaren auf Instagram, 26.11.2026'); pg.wait_for_timeout(700)
+    t = pg.locator('#pages .ch-fk').inner_text()
+    assert 'Fiktiver Chatverlauf' in t and 'Quelle: nachgestellt nach Kommentaren' in t
+    pg.locator('#editor [data-k="fiktiv"]').uncheck(); pg.wait_for_timeout(600)
+    t = pg.locator('#pages .ch-fk').inner_text(); assert t.startswith('Quelle:') and 'Fiktiv' not in t
+    xml = docx(pg, 'chat_q.docx'); assert 'nachgestellt nach Kommentaren' in xml
+    pg.keyboard.press('Escape'); pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
+    for _ in range(5):
+        if pg.locator('.pr .pr-slide .blk-chat').count(): break
+        pg.keyboard.press('ArrowRight'); pg.wait_for_timeout(400)
+    assert 'Quelle:' in pg.locator('.pr .pr-slide .ch-fk').inner_text()
+    pg.locator('.pr .pr-slide').screenshot(path=str(OUT / 'chat_q_folie.png'))
