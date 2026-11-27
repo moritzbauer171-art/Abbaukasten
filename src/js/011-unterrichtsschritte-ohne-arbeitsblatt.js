@@ -27,7 +27,7 @@ const STEP_TPL = {
   ausblick: { g: 'end', label: 'Ausblick', ph: 'refl', soz: 'pl', min: 3, fol: 'text', head: 'Ausblick', text: 'In der nächsten Stunde …', note: '', eh: '' },
   frei: { g: '', label: 'Eigener Schritt', ph: '', soz: '', min: '', fol: 'text', head: '', text: '', note: '', eh: '' }
 };
-const STEP_FOL = [['titel', 'Großer Titel (schlicht)'], ['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['video', 'Video (YouTube)'], ['aus', 'keine Folie']];
+const STEP_FOL = [['titel', 'Großer Titel (schlicht)'], ['text', 'Impuls oder Auftrag'], ['frage', 'Stundenfrage'], ['quiz', 'Quiz'], ['zitat', 'Zitat'], ['bild', 'Bild'], ['video', 'Video (YouTube, ARD)'], ['aus', 'keine Folie']];
 const QZ_L = 'ABCD';
 const qzNew = (t = 'mc') => ({ t, q: '', o: ['', '', '', ''], ok: 0, a: '' });
 function qzNorm(b) { if (!Array.isArray(b.qz) || !b.qz.length) b.qz = [qzNew(), qzNew(), qzNew()]; b.qz = b.qz.map(x => ({ ...qzNew(), ...(x && typeof x === 'object' ? x : {}), o: [0, 1, 2, 3].map(i => String(((x && x.o) || [])[i] || '')) })); return b.qz; }
@@ -65,9 +65,14 @@ function ytSec(v) {
 }
 const ytFmt = n => { n = Math.max(0, n | 0); const h = Math.floor(n / 3600), m = Math.floor(n % 3600 / 60), x = n % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0'); };
 // ARD Mediathek: die Video-ID (beginnt mit „Y3JpZDovL“) steht am Ende des normalen Links; abgespielt wird über den offiziellen ARD-Player (/embed/)
-function ardId(u) { const m = String(u || '').trim().match(/ardmediathek\.de\/(?:[^?#]*\/)?(Y3JpZDovL[A-Za-z0-9_-]+)/); return m ? m[1] : ''; }
+// Die ID ist das letzte Stück des Pfads hinter /video/ (bzw. /player/, /embed/), z. B. „Y3JpZDovL…“ oder „YTliNWY4…“
+function ardId(u) {
+  const m = String(u || '').trim().match(/^(?:https?:\/\/)?(?:[a-z0-9-]+\.)?ardmediathek\.de(\/[^?#]*)/i); if (!m) return '';
+  const P = m[1].split('/').filter(Boolean); const k = P.findIndex(x => /^(video|player|embed|live)$/i.test(x)); if (k < 0 || k === P.length - 1) return '';
+  const id = P[P.length - 1]; return /^[A-Za-z0-9_-]{16,}$/.test(id) && /\d/.test(id) && /[A-Z]/.test(id) ? id : '';
+}
 function ytInfo(b) {
-  const aid = ardId(b.yt); if (aid) { const raw = String(b.yt).trim(); return { kind: 'ard', id: aid, st: 0, en: 0, watch: /^https?:\/\//.test(raw) ? raw.split('#')[0] : 'https://www.ardmediathek.de/video/' + aid }; }
+  const aid = ardId(b.yt); if (aid) { const raw = String(b.yt).trim(); return { kind: 'ard', id: aid, st: 0, en: 0, watch: /^https?:\/\//.test(raw) ? raw.split('#')[0].replace(/^http:/, 'https:') : 'https://www.ardmediathek.de/video/' + aid }; }
   const id = ytId(b.yt); if (!id) return null;
   const urlT = (String(b.yt).match(/[?&#](?:t|start)=([0-9hms:]+)/) || [])[1];
   const st = ytSec(b.ytS) || ytSec(urlT), en = ytSec(b.ytE);

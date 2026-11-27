@@ -121,6 +121,12 @@ def test_video_ard_mediathek(lw):
     v = pg.evaluate("__YI(__S.sheet.blocks[1])")
     assert v['kind'] == 'ard' and v['id'] == 'Y3JpZDovL2JyLmRlL2Jyb2FkY2FzdC9GMjAyNldPMDA0MzE0QTA'
     assert pg.evaluate("__YE(__YI(__S.sheet.blocks[1]), true)") == 'https://www.ardmediathek.de/embed/Y3JpZDovL2JyLmRlL2Jyb2FkY2FzdC9GMjAyNldPMDA0MzE0QTA'
+    # Link wie aus der Adresszeile (ohne www, mit http, andere ID-Form)
+    u2 = 'http://ardmediathek.de/video/kinder-und-familienfilme/wo-ist-anne-frank/hr/YTliNWY4NTUtZTFjMC00Mzg5LTk1MTItZDA4MmVmZjQ4MDJh?isChildContent'
+    v2 = pg.evaluate("u => __YI({ yt: u })", u2)
+    assert v2['kind'] == 'ard' and v2['id'] == 'YTliNWY4NTUtZTFjMC00Mzg5LTk1MTItZDA4MmVmZjQ4MDJh' and v2['watch'].startswith('https://')
+    assert pg.evaluate("u => __YI({ yt: u })", 'https://www.ardmediathek.de/sendung/tatort/Y3JpZDovL2Rhc2Vyc3RlLmRlL3RhdG9ydA') is None
+    assert pg.evaluate("u => __YI({ yt: u })", 'https://www.ardmediathek.de/video/kinder-und-familienfilme') is None
     pg.route('https://www.ardmediathek.de/**', lambda r: r.fulfill(status=200, body='<html><body>ARD</body></html>', content_type='text/html'))
     pg.evaluate("__OP(0)"); pg.wait_for_timeout(1000)
     for _ in range(8):
