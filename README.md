@@ -6,6 +6,7 @@ Arbeitsblätter für den Deutschunterricht aus Bausteinen setzen, als A4 ansehen
 
 ## Was die Seite kann
 
+- **Zeit der Stunde in der Präsentation**: Die Uhr in der Leiste ist ein Knopf – Zeitfenster der Schule wählen oder Beginn und Länge eintragen; Stundenende, Uhr und Timer richten sich sofort danach.
 - **Schriftgröße der Arbeitsaufträge** je Aufgabenbaustein (9–24 pt, unter „Mehr“), auf Wunsch für alle Aufgaben des Blatts; gilt für Blatt und Word.
 - **Videos aus der ARD Mediathek**: Im Video-Schritt neben YouTube-Links auch Links aus der ARD Mediathek – abgespielt im offiziellen ARD-Player (/embed/) auf der Folie, lädt erst beim Klick; QR-Code und PowerPoint-Link führen zur Mediathek.
 - **Sprech-, Denk-, Ruf- und Flüsterblasen auf Bildern** im Comic-Stil (Bild-Baustein → „+ Sprechblase“ usw.): frei verschiebbar über die ganze Breite, z. B. links und rechts neben dem Foto; Schwanz bzw. Gedankenbläschen zeigen auf eine Person; Comic-Schrift; mit Text oder leer mit Linien zum Ausfüllen. Auf Blatt, Folie, PowerPoint und Word; im Blatt direkt verschiebbar.

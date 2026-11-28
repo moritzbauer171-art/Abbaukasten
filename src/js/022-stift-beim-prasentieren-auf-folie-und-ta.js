@@ -203,7 +203,7 @@ function openPres(start, opts = {}) {
   const ov = el(`<div class="pr" role="dialog" aria-label="Präsentation" tabindex="-1"><div class="pr-stage"><div class="pr-slide"></div></div>
     <div class="pr-bar"><button type="button" data-p="prev" aria-label="Zurück" title="Zurück (Pfeil links)">‹</button><span class="pr-n" aria-live="polite"></span><button type="button" data-p="next" aria-label="Weiter" title="Weiter (Pfeil rechts oder Leertaste)">›</button><span class="sep"></span>
     <button type="button" data-p="tip" title="Nächsten Tipp zeigen (H)">Tipp</button><button type="button" data-p="eh" aria-pressed="false" title="Erwartung zeigen oder verbergen (E)">Erwartung</button>
-    <span class="pr-clock" title="Uhrzeit und Stundenende"></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><button type="button" data-p="tmshow" class="pr-tmshow" title="Anzeige wechseln: Restminuten, Endzeit oder beides · gilt für alle Stunden">${TM_SHOW[tmMode()].label}</button><span class="pr-tl"></span></span><span class="sep"></span>
+    <span class="pr-slotw"><button type="button" class="pr-clock" data-p="slot" aria-expanded="false" aria-haspopup="true" title="Zeit der Stunde: Zeitfenster oder Beginn und Länge wählen"></button></span><span class="pr-tm"><button type="button" data-p="timer" title="Timer starten oder anhalten (T)">Timer starten</button><button type="button" data-p="tminus" title="Eine Minute weniger (−)" aria-label="Eine Minute weniger">−1</button><button type="button" data-p="tplus" title="Eine Minute mehr (+)" aria-label="Eine Minute mehr">+1</button><button type="button" data-p="treset" title="Timer zurücksetzen" aria-label="Timer zurücksetzen">↺</button><button type="button" data-p="tmshow" class="pr-tmshow" title="Anzeige wechseln: Restminuten, Endzeit oder beides · gilt für alle Stunden">${TM_SHOW[tmMode()].label}</button><span class="pr-tl"></span></span><span class="sep"></span>
     ${!opts.board && fotoOK() && state.sheet && state.sheet.id ? '<button type="button" data-p="fotos" class="pr-fotos" aria-expanded="false" title="Fotos vom iPad oder Handy: QR-Code, Vorschau und Sicherungsfolie (F)">📷 Fotos<i class="pr-fobadge" hidden></i></button>' : ''}<span class="pr-ytb" hidden><button type="button" data-p="ytbig" aria-pressed="false" title="Video bildschirmfüllend (V)">Video groß</button><button type="button" data-p="ytauf" aria-pressed="false" title="Beobachtungsauftrag über dem Video ein- oder ausblenden (A)">Auftrag</button></span><button type="button" data-p="laser" aria-pressed="false" title="Laserpointer (L)">Laser</button><button type="button" data-p="black" aria-pressed="false" title="Bildschirm bzw. Beamer schwarz (Punkt) oder weiß (Komma); die Referentenansicht bleibt sichtbar">Schwarz</button>${window.abDesktop && window.abDesktop.audSwap ? '<button type="button" data-p="swap" class="pr-swap" title="Beamerfenster und Referentenansicht auf die jeweils anderen Bildschirme tauschen">Bildschirme tauschen</button>' : ''}<button type="button" data-p="mode">Tafelansicht</button><button type="button" data-p="tools" aria-expanded="false" title="Timer, Ampel, Arbeitsform, Lautstärke, Würfel, Namen, Gruppen, Uhr, Zeichnen, Notiz, QR-Code und Hintergrund">Werkzeuge</button><button type="button" data-p="notime" aria-pressed="false" title="Zeiten, Timer und Uhr auf den Folien aus- oder einblenden (Z) · wird je Klasse gemerkt">Zeit ausblenden</button><button type="button" data-p="ref" aria-pressed="false" title="Zweiter Bildschirm: Folien auf dem Beamer, hier die Referentenansicht mit nächster Folie, Notizen und Uhr">Referentenansicht</button><button type="button" data-p="full">Vollbild</button><button type="button" data-p="close">Schließen</button></div><aside class="pr-side" aria-label="Referentenansicht"></aside></div>`);
   setAccent(ov, m);
   // Zeit ausblenden (für Klassen, die Zeitdruck stresst): Timer laufen weiter, sind aber unsichtbar; gemerkt je Klasse
@@ -242,7 +242,7 @@ function openPres(start, opts = {}) {
     setPat: v => { curSl().pat = v; show(); }, curPat: () => (curSl() || {}).pat || 'weiss', close: opts.board ? null : () => boardSet(false) });
   const T = { left: 0, full: 0, run: false, end: 0, id: 0, slide: -1, cid: 0 };
   // Uhrzeit-Plan der Stunde; gilt nur, solange die Uhr in der Stundenzeit liegt (sonst wie bisher Minuten herunterzählen)
-  const PLAN = uhrOn() ? stPlan() : null;
+  let PLAN = uhrOn() ? stPlan() : null;
   const slideBid = sl => (sl.k === 'step' ? sl.b && sl.b.id : sl.k === 'tasks' ? ((sl.items || []).find(x => (x.bmin || 0) === tsMin(sl)) || {}).bid : null);
   const clockEnd = sl => { if (!PLAN) return null; const n = nowMin(); if (n < PLAN.s0 - 10 || n > PLAN.end) return null; const r = planEnd(PLAN, slideBid(sl), n); if (!r) return null; return Date.now() + Math.max(1, r.end - n) * 60000; };
   const hhmm = ms => { const d = new Date(ms); return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -276,7 +276,7 @@ function openPres(start, opts = {}) {
       el2.innerHTML = `<b>${main}</b>${sub ? `<small>${sub}</small>` : ''}`; el2.classList.toggle('pr-tm-ende', !over && md === 'ende' && !!bis); el2.classList.toggle('end', mine && T.left <= 0 && !T.run && T.full > 0); el2.classList.toggle('run', mine && T.run); el2.classList.toggle('low', low); }
     const tb = slide.querySelector('.pr-tbar'); if (tb) { const f = mine && T.full ? T.left / T.full : 1; tb.firstChild.style.width = (f * 100).toFixed(2) + '%'; tb.classList.toggle('end', mine && T.left <= 0 && T.full > 0); tb.classList.toggle('run', mine && T.run); tb.classList.toggle('low', low); }
     slide.classList.toggle('t-low', low && T.run);
-    { const c = $p('.pr-clock'); if (c) c.textContent = PLAN ? `${hmFmt(nowMin())} · Ende ${hmFmt(PLAN.end)}` : ''; }
+    { const c = $p('.pr-clock'); if (c) { const vp = vpOf(), z = vp.slot && zeitenOf(state.sheet.meta.school).find(x => x.id === vp.slot); c.textContent = PLAN ? `${hmFmt(nowMin())} · Ende ${hmFmt(PLAN.end)}` : uhrOn() ? '🕑 Stunde wählen' : ''; c.title = (z ? (z.l ? z.l + ' · ' : '') + z.s + '–' + z.e + ' · ' : '') + 'Zeit der Stunde ändern'; } }
     $p('.pr-tm').hidden = !el2 && !T.run;
     $p('[data-p="timer"]').textContent = T.run ? 'Timer anhalten' : (mine && T.left > 0 && T.left < T.full ? 'Timer fortsetzen' : 'Timer starten');
     $p('[data-p="timer"]').disabled = !el2 && !T.run;
@@ -360,6 +360,25 @@ function openPres(start, opts = {}) {
   };
   window.addEventListener('pagehide', () => { try { if (AW && !AW.closed) AW.close(); } catch {} });
   if (PLAN) T.cid = setInterval(() => { if (!T.run) tmShow(); }, 15000);
+  // Zeit der Stunde direkt in der Präsentation wählen (Zeitfenster der Schule oder Beginn + Länge)
+  const slotClose = () => { const m = $p('.pr-slotm'); if (m) m.remove(); const b = $p('.pr-clock'); if (b) b.setAttribute('aria-expanded', 'false'); };
+  const slotApply = (start, len, id) => {
+    const vp = vpOf(), m = state.sheet.meta; if (id) vp.slot = id; else delete vp.slot; vp.start = start; if (len > 0) m.lesson = String(len);
+    timeSync(null); changed(false); PLAN = uhrOn() ? stPlan() : null; clearInterval(T.cid); if (PLAN) T.cid = setInterval(() => { if (!T.run) tmShow(); }, 15000);
+    tmShow(); mirror(); slotClose(); toast(`Stunde: ${start}–${hmFmt(hm(start) + (Number(m.lesson) || 45))} Uhr`);
+  };
+  const slotOpen = () => {
+    if ($p('.pr-slotm')) return slotClose();
+    const Z = zeitenOf(state.sheet.meta.school).filter(z => z.s && z.e), vp = vpOf(), m = state.sheet.meta;
+    const w = el(`<div class="pr-slotm" role="dialog" aria-label="Zeit der Stunde"><b>Zeit der Stunde</b>${Z.length ? `<div class="pr-slotl">${Z.map(z => `<button type="button" data-z="${esc(z.id)}" aria-pressed="${vp.slot === z.id}"><span>${esc(z.l || '')}</span><i>${esc(z.s)}–${esc(z.e)}</i></button>`).join('')}</div>` : '<small>Zeitfenster deiner Schule legst du in den Einstellungen an.</small>'}
+      <div class="pr-slotc"><label>Beginn <input type="text" inputmode="numeric" data-zs value="${esc(vp.start || hmFmt(nowMin()))}" placeholder="08:00"></label><label>Länge <input type="number" min="10" max="240" step="5" data-zl value="${Number(m.lesson) || 45}"> Min.</label><button type="button" class="pr-sloto" data-zok>Übernehmen</button></div></div>`);
+    $p('.pr-slotw').appendChild(w); $p('.pr-clock').setAttribute('aria-expanded', 'true');
+    w.addEventListener('click', e => { e.stopPropagation(); const zb = e.target.closest('[data-z]'); if (zb) { const z = Z.find(x => x.id === zb.dataset.z); if (z) slotApply(z.s, hm(z.e) - hm(z.s), z.id); return; }
+      if (e.target.closest('[data-zok]')) { const s = w.querySelector('[data-zs]').value.trim().replace('.', ':'); if (!Number.isFinite(hm(s))) { w.querySelector('[data-zs]').focus(); return; } slotApply(hmFmt(hm(s)), +w.querySelector('[data-zl]').value || 45, ''); } });
+    w.addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Escape') slotClose(); if (e.key === 'Enter') w.querySelector('[data-zok]').click(); });
+    (w.querySelector('[aria-pressed="true"]') || w.querySelector('button')).focus();
+  };
+  ov.addEventListener('pointerdown', e => { if ($p('.pr-slotm') && !e.target.closest('.pr-slotw')) slotClose(); });
   const tick = () => { T.left = Math.max(0, Math.round((T.end - Date.now()) / 1000));
     if (T.full >= 60 && T.left > 0 && T.left <= T.full * 0.3) { if (!T.lowRung && !ov.classList.contains('pr-notime')) tbSoft(); T.lowRung = true; } else if (T.left > T.full * 0.3) T.lowRung = false; if (T.left <= 0) { T.run = false; clearInterval(T.id); } tmShow(); };
   const tmToggle = () => {
@@ -495,7 +514,7 @@ function openPres(start, opts = {}) {
     else if (k === 'fotos') foPanT();
     else if (k === 'ytbig') ytBigSet(!ytBig);
     else if (k === 'ytauf') ytAufSet();
-    else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tmshow') { const ks = Object.keys(TM_SHOW); state.prefs.tmShow = ks[(ks.indexOf(tmMode()) + 1) % ks.length]; savePrefs(); b.textContent = TM_SHOW[tmMode()].label; tmShow(); } else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
+    else if (k === 'slot') slotOpen(); else if (k === 'notime') ntToggle(); else if (k === 'timer') tmToggle(); else if (k === 'treset') tmReset(); else if (k === 'tmshow') { const ks = Object.keys(TM_SHOW); state.prefs.tmShow = ks[(ks.indexOf(tmMode()) + 1) % ks.length]; savePrefs(); b.textContent = TM_SHOW[tmMode()].label; tmShow(); } else if (k === 'tplus') tmAdj(1); else if (k === 'tminus') tmAdj(-1);
     else if (k === 'full') { try { if (document.fullscreenElement) document.exitFullscreen(); else if (ov.requestFullscreen) ov.requestFullscreen().catch(() => toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.')); } catch { toast('Vollbild ist hier nicht möglich. Im Browser geht es mit F11.'); } }
   });
   document.addEventListener('keydown', key, true); window.addEventListener('resize', () => { scale(); sideKey = ''; refSide(); });
